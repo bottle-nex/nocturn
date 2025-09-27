@@ -88,15 +88,4 @@ export const templates: Template[] = [
         bars: ['#C5172E', '#FDFAF6', '#FFCC00', '#1DCD9F', '#000000'],
         src: 'blue-template',
     },
-    {
-        id: 'LIGHT_BLUE',
-        name: 'Blue',
-        background_color: '#FB4141',
-        text_color: '#EEEEEE',
-        border_color: '#EEEEEE',
-        accent_type: 'slash',
-        accent_color: '#EEEEEE',
-        bars: ['#C5172E', '#FDFAF6', '#FFCC00', '#1DCD9F', '#000000'],
-        src: 'blue-template',
-    },
 ];
