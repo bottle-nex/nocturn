@@ -6,7 +6,6 @@ export default function HomeDashboard() {
         <div className="relative top-4 h-full w-full border rounded-xl overflow-hidden select-none flex gap-2 bg-neutral-950/50">
             <div className="w-[40rem] h-full flex flex-col relative">
                 <InvertedQuizCards />
-
             </div>
 
             <div className="w-full h-full flex flex-col space-y-3 p-5 text-7xl relative pb-6">
@@ -15,11 +14,13 @@ export default function HomeDashboard() {
                         <div className="bg-[#211c14] hover:bg-[#271f11] h-full w-full flex flex-col rounded-xl p-6">
                             <div className="w-full flex flex-col gap-y-3 pt-4 px-3">
                                 <span className="text-[30px] font-bold tracking-wider">
-                                    Create_ 
+                                    Create_
                                 </span>
                                 <span className="text-[18px] font-medium leading-6 tracking-wide">
                                     The only quiz game where your knowledge isn&apos;t just power,{' '}
-                                    <span className="text-[#ad7416] font-medium">it&apos;s profit</span>
+                                    <span className="text-[#ad7416] font-medium">
+                                        it&apos;s profit
+                                    </span>
                                 </span>
                             </div>
                         </div>
@@ -31,7 +32,9 @@ export default function HomeDashboard() {
                                 </span>
                                 <span className="text-[18px] font-normal leading-6 tracking-wide">
                                     The only quiz game where your knowledge isn&apos;t just power,{' '}
-                                    <span className="text-[#0c919e] font-medium">it&apos;s profit</span>
+                                    <span className="text-[#0c919e] font-medium">
+                                        it&apos;s profit
+                                    </span>
                                 </span>
                             </div>
                         </div>
@@ -45,7 +48,9 @@ export default function HomeDashboard() {
                                 </span>
                                 <span className="text-[18px] font-normal leading-6 tracking-wide">
                                     The only quiz game where your knowledge isn&apos;t just power,{' '}
-                                    <span className="text-[#105ada] font-medium">it&apos;s profit</span>
+                                    <span className="text-[#105ada] font-medium">
+                                        it&apos;s profit
+                                    </span>
                                 </span>
                             </div>
                         </div>
@@ -55,25 +60,27 @@ export default function HomeDashboard() {
                                 <span className="text-[28px] font-medium tracking-wider">#Win</span>
                                 <span className="text-[18px] font-normal leading-6 tracking-wide">
                                     The only quiz game where your knowledge isn&apos;t just power,{' '}
-                                    <span className="text-[#81a710] font-medium">it&apos;s profit</span>
+                                    <span className="text-[#81a710] font-medium">
+                                        it&apos;s profit
+                                    </span>
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className='w-full h-full border-3 border-[#222222] rounded-2xl overflow-hidden'>
-                    <div className='h-[3rem] w-full text-[16px] text-neutral-300 tracking-wide flex justify-between items-center px-13 bg-[#222222]'>
+                <div className="w-full h-full border-3 border-[#222222] rounded-2xl overflow-hidden">
+                    <div className="h-[3rem] w-full text-[16px] text-neutral-300 tracking-wide flex justify-between items-center px-13 bg-[#222222]">
                         <span>STATUS</span>
                         <span>QUIZ TITLE</span>
                         <span>STAKE AMOUNT</span>
                     </div>
 
-                    <div className='h-full w-full bg-neutral-900/40'>
-                        <div className='h-[3.5rem] w-full text-[18px] text-neutral-200 tracking-wide flex justify-between items-center px-8'>
-                            <div className='flex justify-center items-center gap-x-2'>
+                    <div className="h-full w-full bg-neutral-900/40">
+                        <div className="h-[3.5rem] w-full text-[18px] text-neutral-200 tracking-wide flex justify-between items-center px-8">
+                            <div className="flex justify-center items-center gap-x-2">
                                 {/* status */}
-                                <span className='bg-[#10be03] h-2 w-2 rounded-full flex justify-center items-center'/>
+                                <span className="bg-[#10be03] h-2 w-2 rounded-full flex justify-center items-center" />
                                 Disbursed
                             </div>
 
@@ -87,7 +94,6 @@ export default function HomeDashboard() {
                                 $40
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>

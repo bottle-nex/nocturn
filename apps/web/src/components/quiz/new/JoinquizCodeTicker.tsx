@@ -1,6 +1,5 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { cn } from '@/lib/utils';
-import { USER_TYPE } from '@/types/prisma-types';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -8,18 +7,14 @@ interface JoinQuizCodeTickerProps {
     spectatorCode?: string;
     participantCode?: string;
     link?: string;
-    user?: USER_TYPE[];
     position?: 'r' | 'l' | 't' | 'b' | 'tr' | 'tl' | 'br' | 'bl' | 'center';
-    copyCode?: string;
 }
 
 export default function JoinQuizCodeTicker({
     spectatorCode,
     participantCode,
     link,
-    user,
     position = 't',
-    copyCode,
 }: JoinQuizCodeTickerProps) {
     const [copiedSpectator, setCopiedSpectator] = useState<boolean>(false);
     const [copiedParticipant, setCopiedParticipant] = useState<boolean>(false);
@@ -133,7 +128,7 @@ export default function JoinQuizCodeTicker({
                     <span>{spectatorCode ? `${addHyphen(spectatorCode)}` : 'Click to Copy'}</span>
                 </div>
             </ToolTipComponent>
-            
+
             {link && (
                 <>
                     <span className="text-sm text-dark-base">or copy this </span>
@@ -158,7 +153,7 @@ export default function JoinQuizCodeTicker({
                     </ToolTipComponent>
                 </>
             )}
-            
+
             <span className="text-sm text-dark-base"> | Participants code</span>
             <ToolTipComponent
                 content={`The code lets your participants join the quiz and expires in 2 days`}

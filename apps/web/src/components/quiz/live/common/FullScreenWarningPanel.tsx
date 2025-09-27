@@ -17,7 +17,7 @@ const points = [
 
 export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarningPanelProps) {
     return (
-        <OpacityBackground className='dark:bg-neutral-900/30 backdrop-blur-[1px]'>
+        <OpacityBackground className="dark:bg-neutral-900/30 backdrop-blur-[1px]">
             <UtilityCard
                 className={cn(
                     'bg-neutral-900 border border-neutral-700 shadow-2xl',
@@ -44,9 +44,7 @@ export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarni
                         {points.map((point, index) => (
                             <div key={index} className="flex items-start gap-x-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-neutral-300 mt-2 flex-shrink-0" />
-                                <p className="text-neutral-300 text-sm leading-relaxed">
-                                    {point}
-                                </p>
+                                <p className="text-neutral-300 text-sm leading-relaxed">{point}</p>
                             </div>
                         ))}
                     </div>
@@ -69,6 +67,5 @@ export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarni
                 </div>
             </UtilityCard>
         </OpacityBackground>
-
     );
 }
