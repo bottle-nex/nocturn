@@ -5,44 +5,71 @@ import { CheckIcon, CopyIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface JoinQuizCodeTickerProps {
-    code?: string;
+    spectatorCode?: string;
+    participantCode?: string;
     link?: string;
-    user?: USER_TYPE;
+    user?: USER_TYPE[];
     position?: 'r' | 'l' | 't' | 'b' | 'tr' | 'tl' | 'br' | 'bl' | 'center';
     copyCode?: string;
 }
 
 export default function JoinQuizCodeTicker({
+    spectatorCode,
+    participantCode,
     link,
-    code,
-    user = USER_TYPE.SPECTATOR,
+    user,
     position = 't',
     copyCode,
 }: JoinQuizCodeTickerProps) {
-    const [copied, setCopied] = useState<boolean>(false);
+    const [copiedSpectator, setCopiedSpectator] = useState<boolean>(false);
+    const [copiedParticipant, setCopiedParticipant] = useState<boolean>(false);
+    const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
     useEffect(() => {
-        if (copied) {
-            setTimeout(() => {
-                setCopied(false);
+        if (copiedSpectator) {
+            const timeout = setTimeout(() => {
+                setCopiedSpectator(false);
             }, 2000);
+            return () => clearTimeout(timeout);
         }
-    }, [copied]);
+    }, [copiedSpectator]);
 
-    function copyCodeHandler() {
-        if (code) {
-            navigator.clipboard.writeText(addHyphen(code));
-            setCopied(true);
-        } else if (copyCode) {
-            navigator.clipboard.writeText(addHyphen(copyCode));
-            setCopied(true);
+    useEffect(() => {
+        if (copiedParticipant) {
+            const timeout = setTimeout(() => {
+                setCopiedParticipant(false);
+            }, 2000);
+            return () => clearTimeout(timeout);
+        }
+    }, [copiedParticipant]);
+
+    useEffect(() => {
+        if (copiedLink) {
+            const timeout = setTimeout(() => {
+                setCopiedLink(false);
+            }, 2000);
+            return () => clearTimeout(timeout);
+        }
+    }, [copiedLink]);
+
+    function copySpectatorCodeHandler() {
+        if (spectatorCode) {
+            navigator.clipboard.writeText(addHyphen(spectatorCode));
+            setCopiedSpectator(true);
+        }
+    }
+
+    function copyParticipantCodeHandler() {
+        if (participantCode) {
+            navigator.clipboard.writeText(addHyphen(participantCode));
+            setCopiedParticipant(true);
         }
     }
 
     function copyLinkHandler() {
         if (!link) return;
         navigator.clipboard.writeText(link);
-        setCopied(true);
+        setCopiedLink(true);
     }
 
     function getPosition(): string {
@@ -63,8 +90,10 @@ export default function JoinQuizCodeTicker({
                 return 'bottom-2 right-2';
             case 'bl':
                 return 'bottom-2 left-2';
+            case 'center':
+                return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
             default:
-                return 'top-1/2 left-1/2 -translate-1/2';
+                return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
         }
     }
 
@@ -75,26 +104,22 @@ export default function JoinQuizCodeTicker({
     return (
         <div
             className={cn(
-                'bg-neutral-200 px-3 py-1.5 rounded-md font-light z-50',
+                'bg-neutral-200 px-3 py-1.5 rounded-md font-light z-50 w-fit',
                 'flex items-center justify-center gap-x-2 cursor-pointer',
-                'max-w-[90vw] flex-wrap text-center',
+                'whitespace-nowrap text-center',
                 'absolute',
                 getPosition(),
             )}
         >
-            {user === USER_TYPE.SPECTATOR ? (
-                <span className="text-sm text-dark-base">Spectators | Use code</span>
-            ) : (
-                <span className="text-sm text-dark-base">Copy it to join participants</span>
-            )}
+            <span className="text-sm text-dark-base">Spectators | Use code</span>
             <ToolTipComponent
-                content={`The code lets your ${user === USER_TYPE.SPECTATOR ? 'audience join the presentation' : 'participants join the quiz'} and expires in 2 days`}
+                content={`The code lets your audience join the presentation and expires in 2 days`}
             >
                 <div
-                    onClick={copyCodeHandler}
+                    onClick={copySpectatorCodeHandler}
                     className="bg-dark-base text-light-base py-0.5 px-2 rounded-sm tracking-widest flex items-center justify-center gap-x-1 group"
                 >
-                    {!copied ? (
+                    {!copiedSpectator ? (
                         <CopyIcon
                             className="max-w-0 group-hover:max-w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden"
                             size={12}
@@ -105,9 +130,10 @@ export default function JoinQuizCodeTicker({
                             size={12}
                         />
                     )}
-                    <span>{code ? `${addHyphen(code)}` : 'Click to Copy'}</span>
+                    <span>{spectatorCode ? `${addHyphen(spectatorCode)}` : 'Click to Copy'}</span>
                 </div>
             </ToolTipComponent>
+            
             {link && (
                 <>
                     <span className="text-sm text-dark-base">or copy this </span>
@@ -116,7 +142,7 @@ export default function JoinQuizCodeTicker({
                             onClick={copyLinkHandler}
                             className="bg-dark-base text-light-base py-0.5 px-2 rounded-sm tracking-widest flex items-center justify-center gap-x-1 group"
                         >
-                            {!copied ? (
+                            {!copiedLink ? (
                                 <CopyIcon
                                     className="max-w-0 group-hover:max-w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden"
                                     size={12}
@@ -132,6 +158,29 @@ export default function JoinQuizCodeTicker({
                     </ToolTipComponent>
                 </>
             )}
+            
+            <span className="text-sm text-dark-base"> | Participants code</span>
+            <ToolTipComponent
+                content={`The code lets your participants join the quiz and expires in 2 days`}
+            >
+                <div
+                    onClick={copyParticipantCodeHandler}
+                    className="bg-dark-base text-light-base py-0.5 px-2 rounded-sm tracking-widest flex items-center justify-center gap-x-1 group"
+                >
+                    {!copiedParticipant ? (
+                        <CopyIcon
+                            className="max-w-0 group-hover:max-w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden"
+                            size={12}
+                        />
+                    ) : (
+                        <CheckIcon
+                            className="max-w-0 group-hover:max-w-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden"
+                            size={12}
+                        />
+                    )}
+                    <span>code</span>
+                </div>
+            </ToolTipComponent>
         </div>
     );
 }
