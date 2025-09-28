@@ -123,6 +123,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             const participants = await tx.participant.findMany({
                 where: {
                     quizId: quizId,
+                    isKicked: false,
                 },
                 select: {
                     id: true,
@@ -158,6 +159,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             const spectators = await tx.spectator.findMany({
                 where: {
                     quizId: quizId,
+                    isKicked: false,
                 },
                 select: {
                     id: true,
@@ -184,11 +186,13 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     });
                     break;
 
+                // returning the participant data if the participant is not kicked
                 case USER_TYPE.PARTICIPANT:
                     userData = await tx.participant.findFirst({
                         where: {
                             quizId: quizId,
                             id: userId,
+                            isKicked: false,
                         },
                         select: {
                             id: true,
@@ -207,11 +211,13 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     });
                     break;
 
+                // returning the spectator data if the spectator is not kicked
                 case USER_TYPE.SPECTATOR:
                     userData = await tx.spectator.findFirst({
                         where: {
                             quizId: quizId,
                             id: userId,
+                            isKicked: false,
                         },
                         select: {
                             id: true,

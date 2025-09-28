@@ -214,6 +214,7 @@ export default class WebsocketServer {
                     message.only_socket_id,
                 );
                 break;
+
             case MESSAGE_TYPES.HOST_EMITS_HINT:
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.PARTICIPANT,
