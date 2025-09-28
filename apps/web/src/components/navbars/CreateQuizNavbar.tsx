@@ -13,7 +13,7 @@ export default function CreateQuizNavBar() {
     const { appearing, setAppearing } = useSideBarStore();
 
     return (
-        <div className="w-full h-20 bg-light-base dark:bg-dark-base/30 flex items-center justify-between px-12">
+        <div className="w-full h-20 bg-light-base dark:bg-dark-primary/30 flex items-center justify-between px-12">
             <div className="px-4 flex items-center justify-between w-full">
                 <div className="flex justify-center items-center gap-x-2">
                     <FiMenu

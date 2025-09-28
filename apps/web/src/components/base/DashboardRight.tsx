@@ -17,40 +17,49 @@ export default function DashboardRight(): JSX.Element {
     const { value } = useHomeRendererStore();
 
     function renderDashboard() {
+        // Pass the available height to each component
+        const containerProps = {
+            style: { height: '100%' },
+            className: 'h-full',
+        };
+
         switch (value) {
             case HomeRendererEnum.DASHBOARD:
-                return <HomeDashboard />;
+                return <HomeDashboard {...containerProps} />;
             case HomeRendererEnum.MY_QUIZ:
-                return <HomeMyQuiz />;
+                return <HomeMyQuiz {...containerProps} />;
             case HomeRendererEnum.CREATE_QUIZ:
-                return <HomeCreateQuiz />;
+                return <HomeCreateQuiz {...containerProps} />;
             case HomeRendererEnum.ANALYTICS:
-                return <HomeAnalytics />;
+                return <HomeAnalytics {...containerProps} />;
             case HomeRendererEnum.WALLET:
-                return <HomeWallet />;
+                return <HomeWallet {...containerProps} />;
             case HomeRendererEnum.LEADERBOARD:
-                return <HomeLeaderboards />;
+                return <HomeLeaderboards {...containerProps} />;
             case HomeRendererEnum.HISTORY:
-                return <HomeHistory />;
+                return <HomeHistory {...containerProps} />;
             case HomeRendererEnum.SETTINGS:
-                return <HomeSettings />;
+                return <HomeSettings {...containerProps} />;
             case HomeRendererEnum.HELP:
-                return <HomeHelp />;
+                return <HomeHelp {...containerProps} />;
             case HomeRendererEnum.REVIEW:
                 return <ReviewBackground />;
             default:
-                return <div>Dashboard</div>;
+                return <div className="h-full">Dashboard</div>;
         }
     }
 
     return (
         <motion.div
-            className="flex-1 h-full overflow-hidden bg-neutral-50 dark:bg-dark-primary/30 rounded-tl-xl"
+            className="h-screen bg-light-base dark:bg-dark-primary/30 rounded-tl-xl flex flex-col w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
         >
-            <div className="pt-[4rem] h-full flex flex-col gap-y-4">{renderDashboard()}</div>
+            <div className="h-[5rem] flex-shrink-0" />
+            <div className="flex-1 dark:bg-dark-primary/90 bg-neutral-200 border-l-[1px] border-t-[1px] dark:border-neutral-800 border-neutral-300 rounded-tl-xl p-8 min-h-0">
+                {renderDashboard()}
+            </div>
         </motion.div>
     );
 }

@@ -1,10 +1,12 @@
 import { TbPlus } from 'react-icons/tb';
 import HeadAndSubHead from '../content/HeadAndSubHead';
 import UtilityCard from '../utility/UtilityCard';
+import { HomeDashboardProps } from './HomeDashboard';
+import { cn } from '@/lib/utils';
 
-export default function HomeCreateQuiz() {
+export default function HomeCreateQuiz({ style, className }: HomeDashboardProps) {
     return (
-        <div className="p-8 flex flex-col items-start justify-start">
+        <div className={cn('p-8 flex flex-col items-start justify-start', className)} style={style}>
             <HeadAndSubHead
                 heading="Create Quiz"
                 subHeading="Manage your quizzes, analytics, and more"
