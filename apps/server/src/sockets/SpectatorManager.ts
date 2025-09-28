@@ -137,6 +137,7 @@ export default class SpectatorManager {
 
             case MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION:
                 this.handle_spectator_leave_gamesession(ws);
+                break;
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
                 this.handle_spectator_lifeline_response(payload, ws);
                 break;

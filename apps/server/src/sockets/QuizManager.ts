@@ -40,7 +40,7 @@ export default class QuizManager {
             where: { id: game_session_id },
         });
         //     this.broadcast_to_session()
-        ULT_TO_PARTICIPANT: if (!game_session) {
+        if (!game_session) {
             throw new Error('Game session not found');
         }
 

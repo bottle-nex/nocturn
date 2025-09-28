@@ -371,7 +371,7 @@ export default class RedisCache {
             await this.redis_cache.hset(key, participant_id, 'used');
             await this.redis_cache.expire(key, 60 * 60 * 24);
         } catch (error) {
-            console.error('Error caching lifline usage');
+            console.error('Error caching lifline usage: ', error);
             return null;
         }
     }

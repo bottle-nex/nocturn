@@ -145,6 +145,7 @@ export default class ParticipantManager {
 
             case MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION:
                 this.handle_participant_leave_gamesession(ws);
+                break;
             case MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE:
                 this.handle_participant_request_lifeline(payload, ws);
                 break;
@@ -209,7 +210,7 @@ export default class ParticipantManager {
             console.error('Failed to record lifeline usage:', err);
         });
 
-        let lifelineSession = await this.redis_cache.get_active_lifeline_session(
+        const lifelineSession = await this.redis_cache.get_active_lifeline_session(
             gameSessionId,
             questionId,
         );

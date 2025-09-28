@@ -246,6 +246,7 @@ export default class WebsocketServer {
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.PARTICIPANT,
                 ]);
+                break;
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
