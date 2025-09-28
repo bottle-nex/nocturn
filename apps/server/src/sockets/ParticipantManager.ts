@@ -18,6 +18,7 @@ export interface ParticipantManagerDependencies {
     subscriber: Redis;
     socket_mapping: Map<string, CustomWebSocket>;
     session_participants_mapping: Map<string, Set<string>>;
+    session_spectators_mapping: Map<string, Set<string>>;
     quizManager: QuizManager;
     databaseQueue: DatabaseQueue;
     redis_cache: RedisCache;
@@ -27,6 +28,7 @@ export default class ParticipantManager {
     private publisher: Redis;
     private subscriber: Redis;
     private session_participants_mapping: Map<string, Set<string>>;
+    private session_spectators_mapping: Map<string, Set<string>>;
     private quizManager: QuizManager;
     private socket_mapping: Map<string, CustomWebSocket>;
     private database_queue: DatabaseQueue;
@@ -39,6 +41,7 @@ export default class ParticipantManager {
         this.subscriber = dependencies.subscriber;
         this.socket_mapping = dependencies.socket_mapping;
         this.session_participants_mapping = dependencies.session_participants_mapping;
+        this.session_spectators_mapping = dependencies.session_spectators_mapping;
         this.quizManager = dependencies.quizManager;
         this.database_queue = dependencies.databaseQueue;
         this.redis_cache = dependencies.redis_cache;
@@ -63,6 +66,24 @@ export default class ParticipantManager {
 
         ws.id = new_participant_socket_id;
         ws.user = decoded_cookie_payload;
+
+        const hasUsedLifeline = await this.database_queue.check_lifeline_usage(
+            decoded_cookie_payload.userId,
+            decoded_cookie_payload.gameSessionId,
+        );
+
+        if (hasUsedLifeline) {
+            await this.redis_cache.cache_participant_lifeline_used(
+                decoded_cookie_payload.gameSessionId,
+                decoded_cookie_payload.userId,
+            );
+        }
+
+        const initialStatus = {
+            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            payload: { hasUsedLifeline },
+        };
+        ws.send(JSON.stringify(initialStatus));
 
         this.socket_mapping.set(new_participant_socket_id, ws);
         this.participant_socket_mapping.set(
@@ -125,11 +146,184 @@ export default class ParticipantManager {
             case MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION:
                 this.handle_participant_leave_gamesession(ws);
                 break;
+            case MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE:
+                this.handle_participant_request_lifeline(payload, ws);
+                break;
 
             default:
                 console.error('Unknown message type at participant manager', type);
                 break;
         }
+    }
+
+    private async handle_participant_request_lifeline(payload: any, ws: CustomWebSocket) {
+        const { gameSessionId, userId } = ws.user;
+        const { questionId } = payload;
+
+        // if question is in active phase
+        const gameSession = await this.redis_cache.get_game_session(gameSessionId);
+        if (!gameSession || gameSession.currentPhase !== QuizPhase.QUESTION_ACTIVE) {
+            const error_message = {
+                type: MESSAGE_TYPES.LIFELINE_TIMEOUT,
+                payload: { error: 'Lifeline cannot be used now' },
+            };
+            ws.send(JSON.stringify(error_message));
+            return;
+        }
+
+        // if participant has already used lifeline
+        let hasUsedLifeline = await this.redis_cache.get_cached_lifeline_usage(
+            gameSessionId,
+            userId,
+        );
+
+        if (hasUsedLifeline == null) {
+            hasUsedLifeline = await this.database_queue.check_lifeline_usage(userId, gameSessionId);
+            if (hasUsedLifeline) {
+                await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
+            }
+        }
+
+        if (hasUsedLifeline) {
+            const error_message = {
+                type: MESSAGE_TYPES.LIFELINE_TIMEOUT,
+                payload: { error: 'Lifeline already used' },
+            };
+            ws.send(JSON.stringify(error_message));
+            return;
+        }
+
+        // if spectators are available
+        const spectatorSocketIds = this.session_spectators_mapping.get(gameSessionId);
+        if (!spectatorSocketIds || spectatorSocketIds.size === 0) {
+            const error_message = {
+                type: MESSAGE_TYPES.LIFELINE_TIMEOUT,
+                payload: { error: 'No spectators available to help' },
+            };
+            ws.send(JSON.stringify(error_message));
+            return;
+        }
+
+        await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
+
+        this.database_queue.create_lifeline_usage(userId, gameSessionId).catch((err) => {
+            console.error('Failed to record lifeline usage:', err);
+        });
+
+        const lifelineSession = await this.redis_cache.get_active_lifeline_session(
+            gameSessionId,
+            questionId,
+        );
+
+        if (!lifelineSession) {
+            const expiresAt = Date.now() + 15 * 1000; // 15 seconds from now
+            await this.redis_cache.set_active_lifeline_session(
+                gameSessionId,
+                questionId,
+                [userId],
+                expiresAt,
+            );
+
+            const pub_sub_message: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+                payload: {
+                    questionId,
+                    expiresAt,
+                    participantCount: 1,
+                },
+            };
+            this.quizManager.publish_event_to_redis(gameSessionId, pub_sub_message);
+
+            setTimeout(() => {
+                this.process_lifeline_results(gameSessionId, questionId);
+            }, 15000);
+        } else {
+            if (!lifelineSession.participants.includes(userId)) {
+                lifelineSession.participants.push(userId);
+                await this.redis_cache.set_active_lifeline_session(
+                    gameSessionId,
+                    questionId,
+                    lifelineSession.participants,
+                    lifelineSession.expires_at,
+                );
+
+                const pub_sub_message: PubSubMessageTypes = {
+                    type: MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+                    payload: {
+                        questionId,
+                        expiresAt: lifelineSession.expires_at,
+                        participantCount: lifelineSession.participants.length,
+                    },
+                };
+                this.quizManager.publish_event_to_redis(gameSessionId, pub_sub_message);
+            }
+        }
+
+        const confirmation = {
+            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            payload: {
+                status: 'requested',
+                expiresAt: lifelineSession?.expires_at || Date.now() + 15000,
+            },
+        };
+        ws.send(JSON.stringify(confirmation));
+    }
+
+    private async process_lifeline_results(gameSessionId: string, questionId: string) {
+        const lifelineSession = await this.redis_cache.get_active_lifeline_session(
+            gameSessionId,
+            questionId,
+        );
+
+        if (!lifelineSession) return;
+
+        const responses = lifelineSession.responses;
+        const optionCounts: { [key: number]: number } = {};
+
+        Object.values(responses).forEach((option: any) => {
+            optionCounts[option] = (optionCounts[option] || 0) + 1;
+        });
+
+        let mostPopularOption: any = null;
+        let maxCount = 0;
+
+        Object.entries(optionCounts).forEach(([option, count]) => {
+            if (count > maxCount) {
+                maxCount = count;
+                mostPopularOption = parseInt(option);
+            }
+        });
+
+        const maxCountEntries = Object.entries(optionCounts).filter(
+            ([, count]) => count === maxCount,
+        );
+        if (maxCountEntries.length > 1 && maxCount > 0) {
+            mostPopularOption = null;
+        }
+
+        for (const participantId of lifelineSession.participants) {
+            const socketId = this.participant_socket_mapping.get(participantId);
+            if (socketId) {
+                const socket = this.socket_mapping.get(socketId);
+                if (socket && socket.readyState === 1) {
+                    // WebSocket.OPEN = 1
+                    const resultMessage = {
+                        type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                        payload: {
+                            mostPopularOption,
+                            totalResponses: Object.keys(responses).length,
+                            questionId,
+                            optionBreakdown: optionCounts,
+                            wasSuccessful: mostPopularOption !== null,
+                        },
+                    };
+
+                    socket.send(JSON.stringify(resultMessage));
+                }
+            }
+        }
+
+        await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
     }
 
     private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
@@ -288,7 +482,7 @@ export default class ParticipantManager {
 
         // delete the user from the database
         // either do this or add another schema for showing this user was removed
-        this.database_queue.delete_participant(user_id, game_session_id);
+        // this.database_queue.delete_participant(user_id, game_session_id);
     }
 
     private cleanup_existing_partiicpant_socket(

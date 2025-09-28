@@ -362,4 +362,100 @@ export default class RedisCache {
             return null;
         }
     }
+
+    //  <------------------ LIFELINE ------------------>
+
+    public async cache_participant_lifeline_used(game_session_id: string, participant_id: string) {
+        try {
+            const key = this.get_lifeline_key(game_session_id);
+            await this.redis_cache.hset(key, participant_id, 'used');
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+        } catch (error) {
+            console.error('Error caching lifline usage: ', error);
+            return null;
+        }
+    }
+
+    public async get_cached_lifeline_usage(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<boolean | null> {
+        try {
+            const key = this.get_lifeline_key(game_session_id);
+            const result = await this.redis_cache.hget(key, participant_id);
+            return result === 'used' ? true : result === null ? null : false;
+        } catch (error) {
+            console.error('Error checking cached lifeline usage:', error);
+            return null;
+        }
+    }
+
+    public get_active_lifeline_key(game_session_id: string, question_id: string): string {
+        return RedisCache.get_active_lifeline_key(game_session_id, question_id);
+    }
+
+    public async set_active_lifeline_session(
+        game_session_id: string,
+        question_id: string,
+        participants: string[],
+        expires_at: number,
+    ) {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const data = {
+                participants,
+                expires_at,
+                responses: {},
+                created_at: Date.now(),
+            };
+            await this.redis_cache.set(key, JSON.stringify(data), 'EX', 20);
+        } catch (error) {
+            console.error('Error setting active lifeline session:', error);
+        }
+    }
+
+    public async get_active_lifeline_session(game_session_id: string, question_id: string) {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const data = await this.redis_cache.get(key);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error('Error getting active lifeline session:', error);
+            return null;
+        }
+    }
+
+    public async add_spectator_lifeline_response(
+        game_session_id: string,
+        question_id: string,
+        spectator_id: string,
+        selected_option: number,
+    ) {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const session = await this.get_active_lifeline_session(game_session_id, question_id);
+
+            if (!session) return false;
+
+            session.responses[spectator_id] = selected_option;
+            await this.redis_cache.set(key, JSON.stringify(session), 'EX', 20);
+            return true;
+        } catch (error) {
+            console.error('Error adding spectator lifeline response:', error);
+            return false;
+        }
+    }
+
+    public delete_active_lifeline_session(game_session_id: string, question_id: string) {
+        const key = this.get_active_lifeline_key(game_session_id, question_id);
+        return this.redis_cache.del(key);
+    }
+
+    private get_lifeline_key(game_session_id: string): string {
+        return `game_session:${game_session_id}:lifelines`;
+    }
+
+    private static get_active_lifeline_key(game_session_id: string, question_id: string): string {
+        return `game_session:${game_session_id}:lifeline:${question_id}`;
+    }
 }

@@ -123,6 +123,37 @@ export function useSubscribeEventHandlers() {
             MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
             SubscribeEventHandlers.handleSpectatorLeaveGameSession,
         );
+        // lifeline events
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+            SubscribeEventHandlers.handleSpectatorLifelineInvitation,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+            SubscribeEventHandlers.handleLifelineResultToParticipant,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.LIFELINE_TIMEOUT,
+            SubscribeEventHandlers.handleLifelineTimeout,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            SubscribeEventHandlers.handleParticipantRequestLifelineConfirmation,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+            SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS,
+            SubscribeEventHandlers.handleParticipantLifelineStatus,
+        );
+
         return () => {
             unsubscribeToHandler(
                 MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION,
@@ -225,6 +256,36 @@ export function useSubscribeEventHandlers() {
             unsubscribeToHandler(
                 MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
                 SubscribeEventHandlers.handleSpectatorLeaveGameSession,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+                SubscribeEventHandlers.handleSpectatorLifelineInvitation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                SubscribeEventHandlers.handleLifelineResultToParticipant,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.LIFELINE_TIMEOUT,
+                SubscribeEventHandlers.handleLifelineTimeout,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                SubscribeEventHandlers.handleParticipantRequestLifelineConfirmation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+                SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS,
+                SubscribeEventHandlers.handleParticipantLifelineStatus,
             );
         };
     }, [subscribeToHandler, unsubscribeToHandler]);

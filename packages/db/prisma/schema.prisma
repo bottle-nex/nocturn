@@ -118,6 +118,7 @@ model Participant {
   quizId               String
   quiz                 Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
   Response             Response[]
+  lifelineUsage       LifelineUsage[]
 
   @@map("participants")
 }
@@ -171,6 +172,7 @@ model GameSession {
   responses    Response[]
   eliminations Elimination[]
   chatMessage  ChatMessage[]
+  lifelineUsage LifelineUsage[]
 
   @@map("game_sessions")
 }
@@ -261,6 +263,18 @@ model ChatReaction {
   reaction      Interactions
 
   reactedAt DateTime @default(now())
+}
+
+model LifelineUsage {
+  id              String      @id @default(cuid())
+  participantId   String
+  participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  gameSessionId   String
+  gameSession     GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+  usedAt          DateTime    @default(now())
+
+  @@unique([participantId, gameSessionId])
+  @@map("lifeline_usage")
 }
 
 enum QuizStatus {
