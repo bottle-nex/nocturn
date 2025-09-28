@@ -137,11 +137,54 @@ export default class SpectatorManager {
 
             case MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION:
                 this.handle_spectator_leave_gamesession(ws);
+            case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
+                this.handle_spectator_lifeline_response(payload, ws);
                 break;
 
             default:
                 console.error('Unknown message type: ', type);
                 break;
+        }
+    }
+
+    private async handle_spectator_lifeline_response(payload: any, ws: CustomWebSocket) {
+        const { gameSessionId } = ws.user;
+        const { questionId, selectedOption } = payload;
+
+        if (typeof selectedOption !== 'number' || selectedOption < 0 || selectedOption > 3) {
+            const error_essage = {
+                type: MESSAGE_TYPES.LIFELINE_TIMEOUT,
+                payload: { error: 'Invalid response' },
+            };
+            ws.send(JSON.stringify(error_essage));
+            return;
+        }
+
+        const lifelineSession = await this.redis_cache.get_active_lifeline_session(
+            gameSessionId,
+            questionId,
+        );
+
+        if (!lifelineSession || Date.now() > lifelineSession.expires_at) {
+            return;
+        }
+
+        const success = await this.redis_cache.add_spectator_lifeline_response(
+            gameSessionId,
+            questionId,
+            ws.user.userId,
+            selectedOption,
+        );
+
+        if (success) {
+            const confirmation = {
+                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+                payload: {
+                    status: 'recorded',
+                    selectedOption,
+                },
+            };
+            ws.send(JSON.stringify(confirmation));
         }
     }
 
@@ -337,6 +380,6 @@ export default class SpectatorManager {
 
         // delete the user from the database
         // either do this or add another schema for showing this user was removed
-        this.database_queue.delete_spectator(user_id, game_session_id);
+        // this.database_queue.delete_spectator(user_id, game_session_id);
     }
 }

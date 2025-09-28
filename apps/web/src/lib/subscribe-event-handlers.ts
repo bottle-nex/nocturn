@@ -400,6 +400,10 @@ export class SubscribeEventHandlers {
         });
     }
 
+    // static handleParticipantRequestLifeline(payload: unknown) {
+
+    // }
+
     static handleHostLaunchQuestion() {}
 
     // <---------------------- RESPONSE-EVENTS ---------------------->
@@ -424,5 +428,115 @@ export class SubscribeEventHandlers {
         const message = payload as QuizType;
         const { updateQuiz } = useLiveQuizStore.getState();
         updateQuiz(message);
+    }
+
+    // <---------------------- LIFELINE_EVENTS ---------------------->
+
+    static handleSpectatorLifelineInvitation(payload: unknown) {
+        const message = payload as {
+            questionId: string;
+            expiresAt: number;
+            participantCount: number;
+        };
+
+        const { setActiveLifelineSession } = useLiveQuizStore.getState();
+
+        setActiveLifelineSession({
+            questionId: message.questionId,
+            expiresAt: message.expiresAt,
+            participantCount: message.participantCount,
+            isActive: true,
+        });
+
+        toast.info(`Lifeline requested by ${message.participantCount} participants`);
+    }
+
+    static handleLifelineResultToParticipant(payload: unknown) {
+        const message = payload as {
+            mostPopularOption: number | null;
+            totalResponses: number;
+            questionId: string;
+            optionBreakdown: { [key: number]: number };
+            wasSuccessful: boolean;
+        };
+
+        const { setLifelineResult } = useLiveQuizStore.getState();
+        setLifelineResult({
+            mostPopularOption: message.mostPopularOption,
+            totalResponses: message.totalResponses,
+            wasSuccessful: message.wasSuccessful,
+            optionBreakdown: message.optionBreakdown,
+        });
+
+        if (message.wasSuccessful) {
+            toast.success(
+                `Lifeline result: Option ${message.mostPopularOption! + 1} (${message.totalResponses} responses)`,
+            );
+        } else {
+            toast.warning(`Lifeline inconclusive (${message.totalResponses} responses)`);
+        }
+    }
+
+    static handleLifelineTimeout(payload: unknown) {
+        const message = payload as {
+            error: string;
+        };
+        toast.error(message.error);
+    }
+
+    static handleParticipantRequestLifelineConfirmation(payload: unknown) {
+        const message = payload as {
+            status: string;
+            expiresAt: number;
+            hasUsedLifeline?: boolean;
+        };
+
+        const { setLifelineRequested, setHasUsedLifeline } = useLiveQuizStore.getState();
+
+        if (message.hasUsedLifeline !== undefined) {
+            setHasUsedLifeline(message.hasUsedLifeline);
+        }
+
+        if (message.status === 'requested') {
+            setLifelineRequested(true, message.expiresAt);
+            toast.success('Lifeline requested! Waiting for spectator help...');
+        }
+    }
+
+    static handleParticipantInitialLifelineStatus(payload: unknown) {
+        const message = payload as {
+            hasUsedLifeline: boolean;
+            status?: string;
+            expiresAt?: number;
+        };
+
+        const { setHasUsedLifeline, setLifelineRequested } = useLiveQuizStore.getState();
+
+        if (message.hasUsedLifeline !== undefined) {
+            setHasUsedLifeline(message.hasUsedLifeline);
+        }
+
+        if (message.status === 'requested' && message.expiresAt) {
+            setLifelineRequested(true, message.expiresAt);
+            toast.success('Lifeline requested! Waiting for spectator help...');
+        }
+    }
+
+    static handleSpectatorLifelineResponseConfirmation(payload: unknown) {
+        const message = payload as {
+            status: string;
+            selectedOption: number;
+        };
+
+        if (message.status === 'recorded') {
+            toast.success(`Your lifeline response recorded: Option ${message.selectedOption + 1}`);
+        }
+    }
+
+    static handleParticipantLifelineStatus(payload: unknown) {
+        const { hasUsedLifeline } = payload as { hasUsedLifeline: boolean };
+        const { setHasUsedLifeline } = useLiveQuizStore.getState();
+
+        setHasUsedLifeline(hasUsedLifeline);
     }
 }

@@ -39,8 +39,8 @@ export default class QuizManager {
         const game_session = await prisma.gameSession.findUnique({
             where: { id: game_session_id },
         });
-
-        if (!game_session) {
+        //     this.broadcast_to_session()
+        ULT_TO_PARTICIPANT: if (!game_session) {
             throw new Error('Game session not found');
         }
 
@@ -138,6 +138,9 @@ export default class QuizManager {
             console.error('Quiz not found');
             return;
         }
+
+        // clear the key
+        // const activeLifelineKey = `game_session:${data.gameSessionId}:lifeline:${data.questionId}`;
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
         if (!question) {

@@ -246,6 +246,26 @@ export default class WebsocketServer {
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.PARTICIPANT,
                 ]);
+            case MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION:
+                this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
+                break;
+            case MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT:
+                this.broadcast_to_session(
+                    game_session_id,
+                    message,
+                    [USER_TYPE.PARTICIPANT],
+                    message.only_socket_id,
+                    message.exclude_socket_id,
+                );
+                break;
+            case MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS:
+                this.broadcast_to_session(
+                    game_session_id,
+                    message,
+                    [USER_TYPE.PARTICIPANT],
+                    message.exclude_socket_id,
+                    message.only_socket_id,
+                );
                 break;
         }
     }
@@ -345,6 +365,7 @@ export default class WebsocketServer {
             quizManager: this.quizManager,
             databaseQueue: this.database_queue,
             redis_cache: this.redis_cache,
+            session_spectators_mapping: this.session_spectators_mapping,
         });
         this.spectator_manager = new SpectatorManager({
             publisher: this.publisher,
