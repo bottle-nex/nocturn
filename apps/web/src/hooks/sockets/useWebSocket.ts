@@ -139,36 +139,37 @@ export const useWebSocket = () => {
         }
     }
 
-<<<<<<< HEAD
     function handleParticipantLeaveGameSession(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
-=======
-    function handleParticipantRequestLifeline(payload: unknown) {
-        const message: MessagePayload = {
-            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
->>>>>>> bfe9373 (lifeline schema + lifeline most opted opn feat added)
             payload: payload,
         };
         if (socket.current) {
             socket.current.send_message(message);
         }
     }
-<<<<<<< HEAD
+
+    function handleParticipantRequestLifeline(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
     function handleSettingsChangeEvent(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.SETTINGS_CHANGE,
             payload: payload,
         };
-
-=======
+    }
 
     function handleSpectatorLifelineResponse(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
             payload: payload,
         };
->>>>>>> bfe9373 (lifeline schema + lifeline most opted opn feat added)
         if (socket.current) {
             socket.current.send_message(message);
         }
@@ -188,12 +189,9 @@ export const useWebSocket = () => {
         handleSendHostLaunchQuestion,
         handleParticipantResponseMessage,
         handleLaunchHintEvent,
-<<<<<<< HEAD
         handleParticipantLeaveGameSession,
         handleSettingsChangeEvent,
-=======
         handleParticipantRequestLifeline,
         handleSpectatorLifelineResponse,
->>>>>>> bfe9373 (lifeline schema + lifeline most opted opn feat added)
     };
 };

@@ -257,7 +257,7 @@ export function useSubscribeEventHandlers() {
                 MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
                 SubscribeEventHandlers.handleSpectatorLeaveGameSession,
             );
-            
+
             unsubscribeToHandler(
                 MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
                 SubscribeEventHandlers.handleSpectatorLifelineInvitation,
