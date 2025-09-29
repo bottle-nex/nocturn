@@ -64,6 +64,34 @@
     }
 }
 
+/* Regular */
+@font-face {
+  font-family: 'Nocturn';
+  src: url('/fonts/Nocturn-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold */
+@font-face {
+  font-family: 'Nocturn';
+  src: url('/fonts/Nocturn-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Nocturn';
+  src: url('/fonts/Nocturn-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 :root {
     --radius: 0.625rem;
     --background: oklch(1 0 0);
@@ -143,6 +171,10 @@
     html {
         scroll-behavior: smooth;
     }
+}
+
+body {
+    font-family: 'Nocturn', sans-serif;
 }
 
 @keyframes fadeIn {
