@@ -9,7 +9,7 @@ import {
     SpectatorNameChangeEvent,
 } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
-import prisma from '@repo/db/client';
+import prisma, { QuizStatus } from '@repo/db/client';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
@@ -153,11 +153,13 @@ export default class SpectatorManager {
         const { questionId, selectedOption } = payload;
 
         if (typeof selectedOption !== 'number' || selectedOption < 0 || selectedOption > 3) {
-            const error_essage = {
-                type: MESSAGE_TYPES.LIFELINE_TIMEOUT,
-                payload: { error: 'Invalid response' },
-            };
-            ws.send(JSON.stringify(error_essage));
+            console.error('Invalid option selected');
+            return;
+        }
+
+        const gameSession = await this.redis_cache.get_game_session(gameSessionId);
+        if (!gameSession || gameSession.currentPhase !== 'QUESTION_ACTIVE') {
+            console.log('Cannot vote,question not active');
             return;
         }
 
@@ -166,7 +168,14 @@ export default class SpectatorManager {
             questionId,
         );
 
-        if (!lifelineSession || Date.now() > lifelineSession.expires_at) {
+        if (!lifelineSession) {
+            console.log('No active lifeline session');
+            return;
+        }
+
+        if (Date.now() > lifelineSession.expiresAt) {
+            console.log('Lifeline session expired');
+            await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
             return;
         }
 
@@ -177,16 +186,29 @@ export default class SpectatorManager {
             selectedOption,
         );
 
-        if (success) {
-            const confirmation = {
-                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
-                payload: {
-                    status: 'recorded',
-                    selectedOption,
-                },
-            };
-            ws.send(JSON.stringify(confirmation));
+        if (!success) {
+            console.error('Failed to record lifeline response');
+            return;
         }
+
+        const response_message: PubSubMessageTypes = {
+            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+            payload: {
+                questionId,
+                spectatorId: ws.user.userId,
+                selectedOption,
+            },
+        };
+        this.quizManager.publish_event_to_redis(gameSessionId, response_message);
+
+        const confirmation = {
+            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+            payload: {
+                status: 'recorded',
+                selectedOption,
+            },
+        };
+        ws.send(JSON.stringify(confirmation));
     }
 
     private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {

@@ -110,7 +110,6 @@ export default class WebsocketServer {
                     message.exclude_socket_id,
                 );
                 break;
-
             case MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE:
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.PARTICIPANT,
@@ -118,14 +117,12 @@ export default class WebsocketServer {
                     USER_TYPE.SPECTATOR,
                 ]);
                 break;
-
             case MESSAGE_TYPES.SPECTATOR_JOIN_GAME_SESSION:
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                 ]);
                 break;
-
             case MESSAGE_TYPES.SPECTATOR_NAME_CHANGE:
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.HOST,
@@ -181,31 +178,24 @@ export default class WebsocketServer {
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_HOST:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
                 break;
-
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_SPECTATOR:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
-
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_PARTICIPANT:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.PARTICIPANT]);
                 break;
-
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_HOST:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
                 break;
-
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_SPECTATOR:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
-
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_PARTICIPANT:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.PARTICIPANT]);
                 break;
-
             case MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
                 break;
-
             case MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE:
                 this.broadcast_to_session(
                     game_session_id,
@@ -215,7 +205,6 @@ export default class WebsocketServer {
                     message.only_socket_id,
                 );
                 break;
-
             case MESSAGE_TYPES.QUESTION_ALREADY_ASKED:
                 this.broadcast_to_session(
                     game_session_id,
@@ -236,7 +225,7 @@ export default class WebsocketServer {
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
-                    USER_TYPE.PARTICIPANT,
+                    USER_TYPE.PARTICIPANT,  // No expiry - session ends when phase changes
                 ]);
                 break;
 
@@ -247,25 +236,18 @@ export default class WebsocketServer {
                     USER_TYPE.PARTICIPANT,
                 ]);
                 break;
+
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION:
                 this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
-            case MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT:
+
+            case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
                 this.broadcast_to_session(
                     game_session_id,
                     message,
                     [USER_TYPE.PARTICIPANT],
-                    message.only_socket_id,
-                    message.exclude_socket_id,
-                );
-                break;
-            case MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS:
-                this.broadcast_to_session(
-                    game_session_id,
-                    message,
-                    [USER_TYPE.PARTICIPANT],
-                    message.exclude_socket_id,
-                    message.only_socket_id,
+                    undefined,
+                    message.requestedParticipantId,
                 );
                 break;
         }

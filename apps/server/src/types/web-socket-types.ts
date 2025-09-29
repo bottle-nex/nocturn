@@ -25,17 +25,17 @@ export interface CookiePayload {
 
 export type PubSubMessageTypes =
     | {
-          type: MESSAGE_TYPES;
-          payload: any;
-          exclude_socket_id?: string;
-          only_socket_id?: never;
-      }
+        type: MESSAGE_TYPES;
+        payload: any;
+        exclude_socket_id?: string;
+        only_socket_id?: never;
+    }
     | {
-          type: MESSAGE_TYPES;
-          payload: any;
-          exclude_socket_id?: never;
-          only_socket_id?: string;
-      };
+        type: MESSAGE_TYPES;
+        payload: any;
+        exclude_socket_id?: never;
+        only_socket_id?: string;
+    };
 
 export enum Interactions {
     THUMBS_UP = 'THUMBS_UP',
@@ -63,17 +63,19 @@ export enum MESSAGE_TYPES {
     PARTICIPANT_RESPONDED_MESSAGE = 'PARTICIPANT_RESPONDED_MESSAGE',
     PARTICIPANT_LEAVE_GAME_SESSION = 'PARTICIPANT_LEAVE_GAME_SESSION',
 
-    SPECTATOR_LEAVE_GAME_SESSION = 'SPECTATOR_LEAVE_GAME_SESSION',
-    PARTICIPANT_REQUEST_LIFELINE = 'PARTICIPANT_REQUEST_LIFELINE',
-    PARTICIPANT_LIFELINE_STATUS = 'PARTICIPANT_LIFELINE_STATUS',
-
-    SPECTATOR_JOIN_GAME_SESSION = 'SPECTATOR_JOIN_GAME_SESSION',
-    SPECTATOR_NAME_CHANGE = 'SPECTATOR_NAME_CHANGE',
+    // lifeline types
     SPECTATOR_LIFELINE_INVITATION = 'SPECTATOR_LIFELINE_INVITATION',
     SPECTATOR_LIFELINE_RESPONSE = 'SPECTATOR_LIFELINE_RESPONSE',
+    SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION = 'SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION',
+    SPECTATOR_LEAVE_GAME_SESSION = 'SPECTATOR_LEAVE_GAME_SESSION',
+    SPECTATOR_JOIN_GAME_SESSION = 'SPECTATOR_JOIN_GAME_SESSION',
+    SPECTATOR_NAME_CHANGE = 'SPECTATOR_NAME_CHANGE',
 
+    PARTICIPANT_REQUEST_LIFELINE = 'PARTICIPANT_REQUEST_LIFELINE',
     LIFELINE_RESULT_TO_PARTICIPANT = 'LIFELINE_RESULT_TO_PARTICIPANT',
     LIFELINE_TIMEOUT = 'LIFELINE_TIMEOUT',
+    PARTICIPANT_LIFELINE_STATUS = 'PARTICIPANT_LIFELINE_STATUS',
+
 
     CHAT_REACTION_EVENT = 'CHAT_REACTION_EVENT',
     CHAT_MESSAGE = 'CHAT_MESSAGE',

@@ -20,42 +20,51 @@ import {
 import { ChatMessageType, ChatReactionType } from '@/types/web-socket-types';
 import { toast } from 'sonner';
 
+// FIX: Type guards for better type safety
+const isParticipant = (payload: unknown): payload is ParticipantType => {
+    return typeof payload === 'object' && payload !== null && 'id' in payload;
+};
+
+const isSpectator = (payload: unknown): payload is SpectatorType => {
+    return typeof payload === 'object' && payload !== null && 'id' in payload;
+};
+
 export class SubscribeEventHandlers {
     // <---------------------- PARTICIPANT-EVENTS ---------------------->
-
     static handleIncomingMessage(payload: unknown) {
+        if (!isParticipant(payload)) return;
         const { upsertParticipant } = useLiveParticipantsStore.getState();
-        upsertParticipant(payload as ParticipantType);
+        upsertParticipant(payload);
     }
 
     static handleIncomingNameChangeMessage(payload: unknown) {
+        if (!isParticipant(payload)) return;
         const { upsertParticipant } = useLiveParticipantsStore.getState();
         const { updateParticipantData } = useLiveParticipantStore.getState();
 
-        const message = payload as ParticipantType;
         upsertParticipant({
-            id: message.id,
-            nickname: message.nickname,
+            id: payload.id,
+            nickname: payload.nickname,
             isNameChanged: true,
         } as ParticipantType);
+
         updateParticipantData({
-            id: message.id,
-            nickname: message.nickname,
+            id: payload.id,
+            nickname: payload.nickname,
             isNameChanged: true,
         } as ParticipantType);
     }
 
     static handleParticipantLeaveGameSession(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null || !('userId' in payload)) return;
         const message = payload as { userId: string };
-
         const { removeParticipant } = useLiveParticipantsStore.getState();
-
         removeParticipant(message.userId);
     }
 
     // <---------------------- GAME-SESSION-EVENTS ---------------------->
-
     static handleIncomingQuestionPreviewPageChange(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {
             id: string;
             screen: SpectatorScreenEnum | ParticipantScreenEnum;
@@ -73,55 +82,43 @@ export class SubscribeEventHandlers {
     }
 
     static handleIncomingQuestionAlreadyAskedEvent(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null || !('error' in payload)) return;
         const message = payload as {
             error: string;
             questionId: string;
             questionIndex: number;
         };
-        // toast should appear, currenlty not working
         toast.error(message.error);
     }
 
     // <---------------------- SPECTATOR-EVENTS ---------------------->
-
     static handleSpectatorNameChangeMessage(payload: unknown) {
+        if (!isSpectator(payload)) return;
         const { upsertSpectator } = useLiveSpectatorsStore.getState();
         const { updateSpectatorData } = useLiveSpectatorStore.getState();
-        const message = payload as SpectatorType;
 
         upsertSpectator({
-            id: message.id,
-            nickname: message.nickname,
+            id: payload.id,
+            nickname: payload.nickname,
             isNameChanged: true,
         } as SpectatorType);
+
         updateSpectatorData({
-            id: message.id,
-            nickname: message.nickname,
+            id: payload.id,
+            nickname: payload.nickname,
             isNameChanged: true,
         } as SpectatorType);
     }
 
     static handleSpectatorLeaveGameSession(payload: unknown) {
-        const { userId } = payload as {
-            userId: string;
-        };
+        if (typeof payload !== 'object' || payload === null || !('userId' in payload)) return;
+        const { userId } = payload as { userId: string };
         const { removeSpectator } = useLiveSpectatorsStore.getState();
         removeSpectator(userId);
     }
 
-    // static handleSpectatorIncomingResultsPhase(payload: unknown) {
-    //     const resultsPhasePayload = payload as {
-    //         scores: { participantId: string; score: number }[];
-    //         correctAnswer: number;
-    //         spectatorScreen: SpectatorScreenEnum;
-    //         startTime: number;
-    //     };
-
-    //     const { updateCurrentQuestion, updateGameSession } = useLiveQuizStore.getState();
-
-    // }
-
     static handleSpectatorIncomingReadingPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const readingPhasePayload = payload as {
             spectatorScreen: SpectatorScreenEnum;
             currentQuestionIndex: number;
@@ -132,7 +129,12 @@ export class SubscribeEventHandlers {
             currentPhase: QuizPhaseEnum;
         };
 
-        const { updateGameSession, updateCurrentQuestion } = useLiveQuizStore.getState();
+        // FIX: Batch state updates to prevent race conditions
+        const { updateGameSession, updateCurrentQuestion, resetLiveResponses, clearLifelineData } =
+            useLiveQuizStore.getState();
+
+        resetLiveResponses();
+        clearLifelineData();
 
         updateCurrentQuestion({
             question: readingPhasePayload.questionTitle,
@@ -149,6 +151,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleSpectatorIncomingActivePhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             spectatorScreen: SpectatorScreenEnum;
             startTime: number;
@@ -171,6 +174,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleSpectatorIncomingResultsPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const resultsPhasePayload = payload as {
             scores: {
                 id: string;
@@ -196,6 +200,7 @@ export class SubscribeEventHandlers {
 
         updateParticipants(resultsPhasePayload.scores);
         setResponses(resultsPhasePayload.responses);
+
         updateCurrentQuestion({
             correctAnswer: resultsPhasePayload.correctAnswer,
             explanation: resultsPhasePayload.explanation,
@@ -207,50 +212,47 @@ export class SubscribeEventHandlers {
             phaseStartTime: resultsPhasePayload.startTime,
         });
     }
+
     static handleIncomingHintEvents(payload: unknown) {
-        const { hint } = payload as {
-            hint: string;
-        };
+        if (typeof payload !== 'object' || payload === null || !('hint' in payload)) return;
+        const { hint } = payload as { hint: string };
         const { updateCurrentQuestion } = useLiveQuizStore.getState();
-        updateCurrentQuestion({
-            hint: hint,
-        });
+        updateCurrentQuestion({ hint });
     }
 
     static handleIncomingNewSpectator(payload: unknown) {
+        if (!isSpectator(payload)) return;
         const { upsertSpectator } = useLiveSpectatorsStore.getState();
-        upsertSpectator(payload as SpectatorType);
+        upsertSpectator(payload);
     }
 
     // <---------------------- CHAT/INTERACTION-EVENTS ---------------------->
-
     static handleIncomingChatReactionMessage(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const { addChatReaction } = useLiveQuizGlobalChatStore.getState();
         const message = payload as ChatReactionType;
-
         addChatReaction(message);
     }
 
     static handleIncomingChatMessage(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null || !('payload' in payload)) return;
         const { addChatMessage } = useLiveQuizGlobalChatStore.getState();
         const messagePayload = payload as { id: string; payload: ChatMessageType };
         const chat = messagePayload.payload;
-
         addChatMessage(chat);
     }
 
     static handleIncomingReactionEvent(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null || !('payload' in payload)) return;
         const { addChatReaction } = useLiveQuizGlobalChatStore.getState();
-
         const reactionPayload = payload as { id: string; payload: ChatReactionType };
         const reaction = reactionPayload.payload;
-
         addChatReaction(reaction);
     }
 
     // <---------------------- HOST-PHASE-EVENTS ---------------------->
-
     static handleHostIncomingReadingPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const readingPhasePayload = payload as {
             currentQuestionIndex: number;
             currentQuestionId: string;
@@ -273,6 +275,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleHostIncomingActivePhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
             hostScreen: HostScreenEnum;
@@ -294,6 +297,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleHostIncomingResultsPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const resultsPhasePayload = payload as {
             scores: { id: string; totalScore: number }[];
             correctAnswer: number;
@@ -312,8 +316,8 @@ export class SubscribeEventHandlers {
     }
 
     // <---------------------- PARTICIPANT-PHASE-EVENTS ---------------------->
-
     static handleParticipantIncomingReadingPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const readingPhasePayload = payload as {
             currentQuestionIndex: number;
             currentQuestionId: string;
@@ -324,7 +328,12 @@ export class SubscribeEventHandlers {
             participantScreen: ParticipantScreenEnum;
         };
 
-        const { updateGameSession, updateCurrentQuestion } = useLiveQuizStore.getState();
+        // FIX: Batch state updates
+        const { updateGameSession, updateCurrentQuestion, resetLiveResponses, clearLifelineData } =
+            useLiveQuizStore.getState();
+
+        resetLiveResponses();
+        clearLifelineData();
 
         updateCurrentQuestion({
             question: readingPhasePayload.questionTitle,
@@ -341,6 +350,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleParticipantIncomingActivePhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
             participantScreen: string;
@@ -363,6 +373,7 @@ export class SubscribeEventHandlers {
     }
 
     static handleParticipantIncomingResultsPhase(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const resultsPhasePayload = payload as {
             scores: {
                 id: string;
@@ -388,6 +399,7 @@ export class SubscribeEventHandlers {
 
         updateParticipants(resultsPhasePayload.scores);
         setResponses(resultsPhasePayload.responses);
+
         updateCurrentQuestion({
             correctAnswer: resultsPhasePayload.correctAnswer,
             explanation: resultsPhasePayload.explanation,
@@ -400,43 +412,43 @@ export class SubscribeEventHandlers {
         });
     }
 
-    // static handleParticipantRequestLifeline(payload: unknown) {
-
-    // }
-
-    static handleHostLaunchQuestion() {}
+    static handleHostLaunchQuestion() {
+        // Empty handler - implement as needed
+    }
 
     // <---------------------- RESPONSE-EVENTS ---------------------->
-
     static handleParticipantIncomingRespondedMessage(payload: unknown) {
-        const message = payload as {
-            error: string;
-        };
+        if (typeof payload !== 'object' || payload === null || !('error' in payload)) return;
+        const message = payload as { error: string };
         toast.warning(message.error);
     }
 
     static handleHostIncomingResponseMessage(payload: unknown) {
-        const message = payload as {
-            selectedAnswer: number;
-        };
+        if (typeof payload !== 'object' || payload === null || !('selectedAnswer' in payload)) return;
+        const message = payload as { selectedAnswer: number };
 
         const { updateLiveResponses } = useLiveQuizHostStore.getState();
         updateLiveResponses(message.selectedAnswer);
+
+        const { updateLiveResponse } = useLiveQuizStore.getState();
+        updateLiveResponse(message.selectedAnswer);
     }
 
     static handleSettingschange(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const message = payload as QuizType;
         const { updateQuiz } = useLiveQuizStore.getState();
         updateQuiz(message);
     }
 
     // <---------------------- LIFELINE_EVENTS ---------------------->
-
     static handleSpectatorLifelineInvitation(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {
             questionId: string;
             expiresAt: number;
-            participantCount: number;
+            participantCount?: number;
+            status: string;
         };
 
         const { setActiveLifelineSession } = useLiveQuizStore.getState();
@@ -445,22 +457,24 @@ export class SubscribeEventHandlers {
             questionId: message.questionId,
             expiresAt: message.expiresAt,
             participantCount: message.participantCount,
-            isActive: true,
+            isActive: message.status === 'active',
         });
 
-        toast.info(`Lifeline requested by ${message.participantCount} participants`);
+        toast.info('A participant needs help!');
     }
 
     static handleLifelineResultToParticipant(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {
             mostPopularOption: number | null;
             totalResponses: number;
             questionId: string;
-            optionBreakdown: { [key: number]: number };
+            optionBreakdown: number[];
             wasSuccessful: boolean;
         };
 
-        const { setLifelineResult } = useLiveQuizStore.getState();
+        const { setLifelineResult, setHasUsedLifeline } = useLiveQuizStore.getState();
+
         setLifelineResult({
             mostPopularOption: message.mostPopularOption,
             totalResponses: message.totalResponses,
@@ -468,75 +482,80 @@ export class SubscribeEventHandlers {
             optionBreakdown: message.optionBreakdown,
         });
 
-        if (message.wasSuccessful) {
+        setHasUsedLifeline(true);
+
+        if (message.wasSuccessful && message.mostPopularOption !== null) {
             toast.success(
-                `Lifeline result: Option ${message.mostPopularOption! + 1} (${message.totalResponses} responses)`,
+                `Spectators suggest: Option ${message.mostPopularOption + 1} (${message.totalResponses} votes)`,
+                { duration: 5000 },
             );
         } else {
-            toast.warning(`Lifeline inconclusive (${message.totalResponses} responses)`);
+            toast.warning(`No clear consensus from spectators (${message.totalResponses} votes)`);
         }
     }
 
-    static handleLifelineTimeout(payload: unknown) {
-        const message = payload as {
-            error: string;
-        };
-        toast.error(message.error);
-    }
-
-    static handleParticipantRequestLifelineConfirmation(payload: unknown) {
+    static handleSpectatorLifelineResponseConfirmation(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {
             status: string;
-            expiresAt: number;
-            hasUsedLifeline?: boolean;
+            selectedOption: number;
         };
 
-        const { setLifelineRequested, setHasUsedLifeline } = useLiveQuizStore.getState();
+        const { setSpectatorVote } = useLiveQuizStore.getState();
 
-        if (message.hasUsedLifeline !== undefined) {
-            setHasUsedLifeline(message.hasUsedLifeline);
+        if (message.status === 'recorded') {
+            setSpectatorVote(message.selectedOption);
+            toast.success(`Your help has been recorded: Option ${message.selectedOption + 1}`);
         }
+    }
 
-        if (message.status === 'requested') {
-            setLifelineRequested(true, message.expiresAt);
-            toast.success('Lifeline requested! Waiting for spectator help...');
-        }
+    static handleSpectatorLifelineResponse(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as {
+            questionId: string;
+            spectatorId: string;
+            selectedOption: number;
+        };
+
+        const { addLifelineVote } = useLiveQuizStore.getState();
+        addLifelineVote(message.spectatorId, message.selectedOption);
     }
 
     static handleParticipantInitialLifelineStatus(payload: unknown) {
-        const message = payload as {
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as { 
             hasUsedLifeline: boolean;
             status?: string;
             expiresAt?: number;
         };
 
         const { setHasUsedLifeline, setLifelineRequested } = useLiveQuizStore.getState();
+        setHasUsedLifeline(message.hasUsedLifeline);
 
-        if (message.hasUsedLifeline !== undefined) {
-            setHasUsedLifeline(message.hasUsedLifeline);
+        if (message.status === 'requested' && message.expiresAt) {
+            setLifelineRequested(true, message.expiresAt);
+        }
+    }
+
+    static handleParticipantRequestLifelineConfirmation(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as {
+            hasUsedLifeline?: boolean;
+            status?: string;
+            expiresAt?: number;
+            error?: string;
+        };
+
+        const { setLifelineRequested } = useLiveQuizStore.getState();
+
+        if (message.error) {
+            toast.error(message.error);
+            return;
         }
 
         if (message.status === 'requested' && message.expiresAt) {
             setLifelineRequested(true, message.expiresAt);
-            toast.success('Lifeline requested! Waiting for spectator help...');
+            toast.success('Lifeline requested! Spectators are being asked to help...');
         }
-    }
-
-    static handleSpectatorLifelineResponseConfirmation(payload: unknown) {
-        const message = payload as {
-            status: string;
-            selectedOption: number;
-        };
-
-        if (message.status === 'recorded') {
-            toast.success(`Your lifeline response recorded: Option ${message.selectedOption + 1}`);
-        }
-    }
-
-    static handleParticipantLifelineStatus(payload: unknown) {
-        const { hasUsedLifeline } = payload as { hasUsedLifeline: boolean };
-        const { setHasUsedLifeline } = useLiveQuizStore.getState();
-
-        setHasUsedLifeline(hasUsedLifeline);
     }
 }

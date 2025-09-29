@@ -140,7 +140,6 @@ export default class QuizManager {
         }
 
         // clear the key
-        // const activeLifelineKey = `game_session:${data.gameSessionId}:lifeline:${data.questionId}`;
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
         if (!question) {
@@ -223,6 +222,8 @@ export default class QuizManager {
             console.error('Quiz not found');
             return;
         }
+
+        await this.redis_cache.cleanup_all_lifeline_sessions(data.gameSessionId);
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
 
