@@ -9,7 +9,7 @@ import {
     SpectatorNameChangeEvent,
 } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
-import prisma, { QuizStatus } from '@repo/db/client';
+import prisma from '@repo/db/client';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
@@ -159,7 +159,7 @@ export default class SpectatorManager {
 
         const gameSession = await this.redis_cache.get_game_session(gameSessionId);
         if (!gameSession || gameSession.currentPhase !== 'QUESTION_ACTIVE') {
-            console.log('Cannot vote,question not active');
+            console.error('Cannot vote,question not active');
             return;
         }
 
@@ -169,12 +169,12 @@ export default class SpectatorManager {
         );
 
         if (!lifelineSession) {
-            console.log('No active lifeline session');
+            console.error('No active lifeline session');
             return;
         }
 
         if (Date.now() > lifelineSession.expiresAt) {
-            console.log('Lifeline session expired');
+            console.error('Lifeline session expired');
             await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
             return;
         }

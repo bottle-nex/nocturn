@@ -25,17 +25,17 @@ export interface CookiePayload {
 
 export type PubSubMessageTypes =
     | {
-        type: MESSAGE_TYPES;
-        payload: any;
-        exclude_socket_id?: string;
-        only_socket_id?: never;
-    }
+          type: MESSAGE_TYPES;
+          payload: any;
+          exclude_socket_id?: string;
+          only_socket_id?: never;
+      }
     | {
-        type: MESSAGE_TYPES;
-        payload: any;
-        exclude_socket_id?: never;
-        only_socket_id?: string;
-    };
+          type: MESSAGE_TYPES;
+          payload: any;
+          exclude_socket_id?: never;
+          only_socket_id?: string;
+      };
 
 export enum Interactions {
     THUMBS_UP = 'THUMBS_UP',
@@ -75,7 +75,6 @@ export enum MESSAGE_TYPES {
     LIFELINE_RESULT_TO_PARTICIPANT = 'LIFELINE_RESULT_TO_PARTICIPANT',
     LIFELINE_TIMEOUT = 'LIFELINE_TIMEOUT',
     PARTICIPANT_LIFELINE_STATUS = 'PARTICIPANT_LIFELINE_STATUS',
-
 
     CHAT_REACTION_EVENT = 'CHAT_REACTION_EVENT',
     CHAT_MESSAGE = 'CHAT_MESSAGE',

@@ -12,12 +12,12 @@ type QuizWithQuestions = Quiz & {
     questions: Question[];
 };
 
-interface LifelineSession {
-    requestingParticipantId: string;
-    expiresAt: number;
-    responses: Record<string, number>;
-    created_at: number;
-}
+// interface LifelineSession {
+//     requestingParticipantId: string;
+//     expiresAt: number;
+//     responses: Record<string, number>;
+//     created_at: number;
+// }
 
 export default class RedisCache {
     private redis_cache: Redis;
@@ -485,12 +485,12 @@ export default class RedisCache {
             const session = await this.get_active_lifeline_session(game_session_id, question_id);
 
             if (!session) {
-                console.log('No active lifeline session found');
+                console.error('No active lifeline session found');
                 return false;
             }
 
             if (Date.now() > session.expiresAt) {
-                console.log('Lifeline session expired');
+                console.error('Lifeline session expired');
                 await this.delete_active_lifeline_session(game_session_id, question_id);
                 return false;
             }
@@ -544,8 +544,7 @@ export default class RedisCache {
                 }
             });
 
-            const wasSuccessful =
-                totalResponses >= 3 && maxVotes > totalResponses * 0.5;
+            const wasSuccessful = totalResponses >= 3 && maxVotes > totalResponses * 0.5;
 
             return {
                 optionCounts,

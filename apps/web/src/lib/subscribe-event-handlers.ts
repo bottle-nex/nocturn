@@ -424,7 +424,8 @@ export class SubscribeEventHandlers {
     }
 
     static handleHostIncomingResponseMessage(payload: unknown) {
-        if (typeof payload !== 'object' || payload === null || !('selectedAnswer' in payload)) return;
+        if (typeof payload !== 'object' || payload === null || !('selectedAnswer' in payload))
+            return;
         const message = payload as { selectedAnswer: number };
 
         const { updateLiveResponses } = useLiveQuizHostStore.getState();
@@ -523,7 +524,7 @@ export class SubscribeEventHandlers {
 
     static handleParticipantInitialLifelineStatus(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
-        const message = payload as { 
+        const message = payload as {
             hasUsedLifeline: boolean;
             status?: string;
             expiresAt?: number;

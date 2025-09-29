@@ -225,7 +225,7 @@ export default class WebsocketServer {
                 this.broadcast_to_session(game_session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
-                    USER_TYPE.PARTICIPANT,  // No expiry - session ends when phase changes
+                    USER_TYPE.PARTICIPANT, // No expiry - session ends when phase changes
                 ]);
                 break;
 

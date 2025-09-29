@@ -166,14 +166,17 @@ export default class ParticipantManager {
                 type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
                 payload: {
                     hasUsedLifeline: false,
-                    error: 'Lifeline can only be used during active questions'
+                    error: 'Lifeline can only be used during active questions',
                 },
             };
             ws.send(JSON.stringify(error_message));
             return;
         }
 
-        let hasUsedLifeline = await this.redis_cache.get_cached_lifeline_usage(gameSessionId, userId);
+        let hasUsedLifeline = await this.redis_cache.get_cached_lifeline_usage(
+            gameSessionId,
+            userId,
+        );
         if (hasUsedLifeline === null) {
             hasUsedLifeline = await this.database_queue.check_lifeline_usage(userId, gameSessionId);
             if (hasUsedLifeline) {
@@ -252,7 +255,7 @@ export default class ParticipantManager {
             const results = await this.redis_cache.get_lifeline_results(gameSessionId, questionId);
 
             if (!results) {
-                console.log('No lifeline results found');
+                console.error('No lifeline results found');
                 return;
             }
 
@@ -271,7 +274,9 @@ export default class ParticipantManager {
             this.quizManager.publish_event_to_redis(gameSessionId, result_message);
 
             await this.redis_cache.cache_participant_lifeline_used(gameSessionId, participantId);
-            this.database_queue.create_lifeline_usage(participantId, gameSessionId).catch(console.error);
+            this.database_queue
+                .create_lifeline_usage(participantId, gameSessionId)
+                .catch(console.error);
 
             await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
         } catch (error) {

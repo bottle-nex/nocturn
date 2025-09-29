@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { FaDotCircle, FaRegCircle, FaLifeRing } from 'react-icons/fa';
 import { MdHelp, MdTimer, MdCheckCircle } from 'react-icons/md';
 import { QuizPhaseEnum } from '@/types/prisma-types';
@@ -24,8 +24,6 @@ export default function ParticipantQuestionActiveOptions() {
         lifelineExpiresAt,
         lifelineResult,
         hasUsedLifeline,
-        getLifelineVoteCounts,
-        activeLifelineSession
     } = useLiveQuizStore();
 
     const { handleParticipantResponseMessage, handleParticipantRequestLifeline } = useWebSocket();
@@ -36,13 +34,11 @@ export default function ParticipantQuestionActiveOptions() {
     const { setResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
 
-    // Reset on question change
     useEffect(() => {
         setSelected(null);
         setAlreadyResponded(false);
     }, [currentQuestion?.id, setAlreadyResponded]);
 
-    // Timer for lifeline countdown
     useEffect(() => {
         if (lifelineRequested && lifelineExpiresAt) {
             const interval = setInterval(() => {
@@ -62,19 +58,17 @@ export default function ParticipantQuestionActiveOptions() {
         }
     }, [lifelineRequested, lifelineExpiresAt]);
 
-    if (!currentQuestion) return null;
-
     const maxHeight = 12;
     const barColors = template?.bars ?? (['#3b82f6'] as Hex[]);
 
-    const liveVoteCounts = useMemo(() => {
-        if (!lifelineRequested || !activeLifelineSession?.isActive) {
-            return [0, 0, 0, 0];
-        }
-        return getLifelineVoteCounts(); // Call it here
-    }, [lifelineRequested, activeLifelineSession, getLifelineVoteCounts]);
+    // const liveVoteCounts = useMemo(() => {
+    //     if (!lifelineRequested || !activeLifelineSession?.isActive) {
+    //         return [0, 0, 0, 0];
+    //     }
+    //     return getLifelineVoteCounts();
+    // }, [lifelineRequested, activeLifelineSession, getLifelineVoteCounts]);
 
-    const totalVotes = liveVoteCounts.reduce((sum, count) => sum + count, 0);
+    if (!currentQuestion) return null;
 
     const canRequestLifeline =
         gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
@@ -105,17 +99,16 @@ export default function ParticipantQuestionActiveOptions() {
         });
     }
 
-    // FIXED: Visual highlight for lifeline suggestion
     const getOptionStyle = (idx: number, color: Hex, isSelected: boolean) => {
         const isLifelineSuggestion =
             lifelineResult?.wasSuccessful && lifelineResult.mostPopularOption === idx;
 
         let boxShadow = isSelected
             ? `0 0 0 1px ${color}55, 0 10px 30px ${color}25`
-            : '0 6px 20px rgba(0,0,0,0.25)';
+            : '0 6px 20px #00000040';
 
         if (isLifelineSuggestion && !isSelected) {
-            boxShadow = `0 0 0 2px #10b981, 0 6px 20px rgba(16, 185, 129, 0.3)`;
+            boxShadow = `0 0 0 2px #10b981, 0 6px 20px #10b9814d`;
         }
 
         return {
@@ -132,14 +125,8 @@ export default function ParticipantQuestionActiveOptions() {
 
     return (
         <div className="w-full flex flex-col items-center justify-center gap-y-5 p-8 rounded-xl z-20">
-
             <div className="absolute top-0 right-0 z-50">
-                <LiveResponseBars
-                    position="top-right"
-                    size="md"
-                    showPercentages
-                    animated
-                />
+                <LiveResponseBars position="top-right" size="md" showPercentages animated />
             </div>
 
             <div className="w-full flex flex-col gap-3 mb-4">
@@ -153,8 +140,8 @@ export default function ParticipantQuestionActiveOptions() {
                             !canRequestLifeline
                                 ? 'bg-gray-500 border-gray-400 cursor-not-allowed opacity-50 text-gray-300'
                                 : lifelineRequested
-                                    ? 'bg-yellow-600 border-yellow-500 cursor-not-allowed text-white animate-pulse'
-                                    : 'bg-blue-600 border-blue-500 hover:bg-blue-700 hover:border-blue-600 cursor-pointer text-white hover:shadow-xl transform hover:scale-105',
+                                  ? 'bg-yellow-600 border-yellow-500 cursor-not-allowed text-white animate-pulse'
+                                  : 'bg-blue-600 border-blue-500 hover:bg-blue-700 hover:border-blue-600 cursor-pointer text-white hover:shadow-xl transform hover:scale-105',
                         )}
                     >
                         <FaLifeRing className="w-4 h-4" />
@@ -219,7 +206,6 @@ export default function ParticipantQuestionActiveOptions() {
                             {lifelineResult.totalResponses !== 1 ? 's' : ''} responded
                         </div>
 
-                        {/* Show vote breakdown */}
                         <div className="mt-3 grid grid-cols-4 gap-2">
                             {lifelineResult.optionBreakdown.map((votes: number, idx: number) => (
                                 <div
@@ -238,7 +224,6 @@ export default function ParticipantQuestionActiveOptions() {
                 )}
             </div>
 
-            {/* Options */}
             <div
                 className={cn(
                     'w-full h-full flex items-end justify-center',
@@ -260,10 +245,10 @@ export default function ParticipantQuestionActiveOptions() {
                                     'group relative isolate flex w-full select-none items-stretch overflow-hidden rounded-2xl',
                                     'border border-white/10 bg-white/[0.03] transition-transform',
                                     !isDisabled &&
-                                    'cursor-pointer hover:-translate-y-0.5 active:translate-y-0',
+                                        'cursor-pointer hover:-translate-y-0.5 active:translate-y-0',
                                     isDisabled && 'opacity-50 cursor-not-allowed',
                                     isLifelineSuggestion &&
-                                    'ring-2 ring-green-400 ring-opacity-60 animate-pulse',
+                                        'ring-2 ring-green-400 ring-opacity-60 animate-pulse',
                                 )}
                                 style={getOptionStyle(idx, color, isSelected)}
                             >

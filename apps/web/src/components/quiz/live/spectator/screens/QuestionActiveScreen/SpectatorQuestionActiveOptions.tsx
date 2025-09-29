@@ -3,7 +3,6 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { useState, useEffect } from 'react';
 
 export default function SpectatorQuestionActiveOptions() {
     const {
@@ -16,8 +15,8 @@ export default function SpectatorQuestionActiveOptions() {
     const { handleSpectatorLifelineResponse } = useWebSocket();
 
     const spectatorVotedOption =
-        lifelineVotes && typeof (lifelineVotes as any).self === 'number'
-            ? (lifelineVotes as any).self as number
+        lifelineVotes && typeof lifelineVotes.self === 'number'
+            ? (lifelineVotes.self as number)
             : null;
 
     const template = templates.find((t) => t.id === liveQuiz?.theme);
@@ -25,9 +24,7 @@ export default function SpectatorQuestionActiveOptions() {
     const barColors = template?.bars ?? ['#3b82f6'];
     const maxHeight = 12;
 
-    const canVote =
-        activeLifelineSession?.isActive &&
-        spectatorVotedOption === null;
+    const canVote = activeLifelineSession?.isActive && spectatorVotedOption === null;
 
     function handleLifelineOptionSelect(index: number) {
         if (!canVote || !currentQuestion) return;

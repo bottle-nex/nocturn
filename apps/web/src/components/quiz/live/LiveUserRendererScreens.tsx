@@ -81,7 +81,7 @@ export default function LiveUserRendererScreens() {
     }
 
     function accept() {
-        requestFullscreen(); 
+        requestFullscreen();
         setFullscreenAccepted(true);
     }
 

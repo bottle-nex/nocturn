@@ -8,9 +8,8 @@ interface LifelineResult {
     optionBreakdown: number[];
 }
 
-// New interface for tracking live responses
 interface LiveResponseData {
-    optionCounts: number[]; // [option0Count, option1Count, option2Count, option3Count]
+    optionCounts: number[];
     totalResponses: number;
     lastUpdated: number;
 }
@@ -38,7 +37,7 @@ interface LiveQuizStore {
     setHasUsedLifeline: (used: boolean) => void;
     lifelineActive: boolean;
     setLifelineActive: (active: boolean) => void;
-    lifelineVotes: Record<string, number>; // { spectatorId: selectedOption }
+    lifelineVotes: Record<string, number>;
     updateLifelineVote: (spectatorId: string, option: number) => void;
     setSpectatorVote: (selectedOption: number) => void; // helper for spectator confirmation
     clearLifelineVotes: () => void;
@@ -57,14 +56,12 @@ interface LiveQuizStore {
         isActive: boolean;
     } | null;
     setActiveLifelineSession: (
-        session:
-            | {
-                questionId: string;
-                expiresAt: number;
-                participantCount?: number;
-                isActive: boolean;
-            }
-            | null,
+        session: {
+            questionId: string;
+            expiresAt: number;
+            participantCount?: number;
+            isActive: boolean;
+        } | null,
     ) => void;
 
     resetQuestionLifelineState: () => void;
@@ -80,23 +77,24 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
     quiz: {} as QuizType,
     updateQuiz: (updatedFields: Partial<QuizType>) => {
         set((state) => {
-            const updatedQuiz = {
+            const updatedQuiz: QuizType = {
                 ...state.quiz,
                 ...updatedFields,
-            } as QuizType;
+            };
 
             let currentQuestion = state.currentQuestion;
+
             if (
-                // if the incoming update has questions and we don't have a currentQuestion, pick first unasked
                 updatedFields.questions &&
                 updatedFields.questions.length > 0 &&
                 !state.currentQuestion
             ) {
-                const firstAvailableQuestion = (updatedFields.questions as QuestionType[])
-                    .filter((q) => q && !(q as any).isAsked)
+                const questions = updatedFields.questions as QuestionType[];
+                const firstAvailableQuestion = questions
+                    .filter((q) => q && !q.isAsked)
                     .sort((a, b) => (a?.orderIndex || 0) - (b?.orderIndex || 0))[0];
 
-                currentQuestion = firstAvailableQuestion ?? (updatedFields.questions as QuestionType[])[0];
+                currentQuestion = firstAvailableQuestion ?? questions[0];
             }
 
             return {
@@ -117,7 +115,7 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
     currentQuestion: null,
     updateCurrentQuestion: (updateFields: Partial<QuestionType>) => {
         set((state) => {
-            if (updateFields && (updateFields as any).question && (updateFields as any).id) {
+            if (updateFields.id && updateFields.question) {
                 return {
                     currentQuestion: updateFields as QuestionType,
                 };
@@ -133,7 +131,7 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
     nextQuestion: null,
     updateNextQuestion: (updateFields: Partial<QuestionType>) => {
         set((state) => {
-            if ((updateFields as any).id && (updateFields as any).question) {
+            if (updateFields.id && updateFields.question) {
                 return {
                     nextQuestion: updateFields as QuestionType,
                 };
@@ -183,7 +181,7 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
         const { optionCounts, totalResponses } = get().liveResponses;
         if (totalResponses === 0) return [0, 0, 0, 0];
 
-        return optionCounts.map(count => Math.round((count / totalResponses) * 100));
+        return optionCounts.map((count) => Math.round((count / totalResponses) * 100));
     },
 
     // Lifeline state
@@ -253,7 +251,6 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
                 lastUpdated: Date.now(),
             },
         }),
-
 
     lifelineVotesBySpectator: {},
 
