@@ -1,9 +1,8 @@
-import { cleanWebSocketClient } from "@/lib/singleton-socket";
-import { useLiveParticipantStore } from "@/store/live-quiz/useLiveQuizUserStore"
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { toast } from "sonner";
-
+import { cleanWebSocketClient } from '@/lib/singleton-socket';
+import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 export const useParticipantWarning = () => {
     const { participantData } = useLiveParticipantStore();
@@ -15,5 +14,5 @@ export const useParticipantWarning = () => {
             cleanWebSocketClient();
             toast.error("You've been kicked!");
         }
-    }, [participantData?.isKicked])
-}
+    }, [router, participantData?.isKicked]);
+};

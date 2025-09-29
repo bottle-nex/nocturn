@@ -118,7 +118,7 @@ export const useWebSocket = () => {
             socket.current.send_message(message);
         }
     }
-  
+
     function handleLaunchHintEvent(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.HOST_EMITS_HINT,
@@ -182,10 +182,10 @@ export const useWebSocket = () => {
     function handleAddParticipantWarningCount(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.PARTICIPANT_WARNING_COUNT,
-            payload: payload, 
+            payload: payload,
         };
 
-        if(socket.current) {
+        if (socket.current) {
             socket.current.send_message(message);
         }
     }

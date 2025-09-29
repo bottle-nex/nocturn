@@ -455,8 +455,8 @@ export default class ParticipantManager {
 
         if (!participant_cache) return;
 
-            if (participant_cache.warningCount + 1 >= 5) {
-                const event_data: PubSubMessageTypes = {
+        if (participant_cache.warningCount + 1 >= 5) {
+            const event_data: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                 payload: {
                     userId: userId,
@@ -470,12 +470,12 @@ export default class ParticipantManager {
         }
 
         this.database_queue.update_participant(
-            userId, {
-            warningCount: participant_cache.warningCount + 1,
-        },
+            userId,
+            {
+                warningCount: participant_cache.warningCount + 1,
+            },
             game_session_id,
         );
-
     }
 
     private cleanup_existing_partiicpant_socket(

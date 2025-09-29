@@ -56,7 +56,9 @@ export default function ParticipantMainScreen() {
         function handleChange() {
             if (!document.fullscreenElement) {
                 if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
-                    toast.error('Kindly swtich to full-screen mode, if the quiz starts you will be kicked as per your warnings.');
+                    toast.error(
+                        'Kindly swtich to full-screen mode, if the quiz starts you will be kicked as per your warnings.',
+                    );
                 } else {
                     handleAddParticipantWarningCount({});
                 }
@@ -64,7 +66,7 @@ export default function ParticipantMainScreen() {
         }
         document.addEventListener('fullscreenchange', handleChange);
         return () => document.removeEventListener('fullscreenchange', handleChange);
-    }, [gameSession?.participantScreen]);
+    }, [gameSession?.participantScreen, handleAddParticipantWarningCount]);
 
     useEffect(() => {
         function handleChange() {
@@ -77,11 +79,7 @@ export default function ParticipantMainScreen() {
     const [allowed, setAllowed] = useState(false);
 
     useEffect(() => {
-        if (
-            currentUserType === USER_TYPE.PARTICIPANT &&
-            fullscreenAccepted &&
-            isFullscreen
-        ) {
+        if (currentUserType === USER_TYPE.PARTICIPANT && fullscreenAccepted && isFullscreen) {
             setAllowed(true);
         } else {
             setAllowed(false);
@@ -101,17 +99,17 @@ export default function ParticipantMainScreen() {
 
     function requestFullscreen() {
         if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(() => { });
+            document.documentElement.requestFullscreen().catch(() => {});
         }
     }
 
     function renderHostScreenPanels() {
-        if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) return <ParticipantLobbyScreen />;
+        if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY)
+            return <ParticipantLobbyScreen />;
 
         if (!allowed) return;
 
         switch (gameSession?.participantScreen) {
-
             case ParticipantScreenEnum.QUESTION_MOTIVATION:
                 return <ParticipantMotivationScreen />;
 
@@ -127,10 +125,9 @@ export default function ParticipantMainScreen() {
     }
     return (
         <div className="h-full relative w-full flex z-20">
-            {currentUserType === USER_TYPE.PARTICIPANT &&
-                !allowed && (
-                    <FullScreenWarningPanel accept={accept} deny={deny} />
-                )}
+            {currentUserType === USER_TYPE.PARTICIPANT && !allowed && (
+                <FullScreenWarningPanel accept={accept} deny={deny} />
+            )}
             {renderHostScreenPanels()}
             <ParticipantMainFooter />
             <ParticipantPanelRenderer />

@@ -21,9 +21,7 @@ export default function LiveUserRendererScreens() {
     useWebSocket();
     useSubscribeEventHandlers();
 
-
     function renderCurrentUserScreen() {
-
         switch (currentUserType) {
             case USER_TYPE.HOST:
                 return <HostMainScreen />;

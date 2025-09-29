@@ -18,7 +18,6 @@ import {
     SpectatorType,
 } from '@/types/prisma-types';
 import { ChatMessageType, ChatReactionType } from '@/types/web-socket-types';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 // FIX: Type guards for better type safety
@@ -63,7 +62,7 @@ export class SubscribeEventHandlers {
         const { participantData } = useLiveParticipantStore.getState();
         const { removeParticipant } = useLiveParticipantsStore.getState();
         removeParticipant(message.userId);
-        if(message.userId === participantData?.id) participantData.isKicked = true;
+        if (message.userId === participantData?.id) participantData.isKicked = true;
     }
 
     // <---------------------- GAME-SESSION-EVENTS ---------------------->
@@ -121,7 +120,7 @@ export class SubscribeEventHandlers {
         const { spectatorData } = useLiveSpectatorStore.getState();
 
         removeSpectator(userId);
-        if(userId === spectatorData?.id) spectatorData.isKicked = true;
+        if (userId === spectatorData?.id) spectatorData.isKicked = true;
     }
 
     static handleSpectatorIncomingReadingPhase(payload: unknown) {
