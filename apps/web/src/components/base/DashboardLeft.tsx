@@ -44,7 +44,6 @@ function BigDashboardLeft({
             className={cn(
                 'h-full bg-light-base dark:bg-dark-primary/30 shrink-0 w-[300px]',
                 'hidden lg:flex flex-col items-start py-6 pt-[3rem]',
-                '',
             )}
         >
             {/* <AppLogo className="px-4" /> */}

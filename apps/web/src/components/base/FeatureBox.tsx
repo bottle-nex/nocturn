@@ -1,6 +1,5 @@
 'use client';
 
-import { IoMdArrowRoundForward } from 'react-icons/io';
 import FeatureBoxComponent from '../ui/FeatureBoxComponent';
 import { PartyPopper } from '../ui/animated-icons/PartyPopper';
 import { ChartNoAxes } from '../ui/animated-icons/ChartNoAxes';
@@ -56,7 +55,7 @@ export default function FeatureBox() {
                     scrollTrigger: {
                         trigger: containerRef.current,
                         start: 'top 80%',
-                        toggleActions: 'play none none reset', // 🔥 ensures replay on re-entry
+                        toggleActions: 'play none none reset',
                     },
                 },
             );
@@ -73,7 +72,7 @@ export default function FeatureBox() {
                     scrollTrigger: {
                         trigger: containerRef.current,
                         start: 'top 80%',
-                        toggleActions: 'play none none reset', // 🔥 replay when re-visible
+                        toggleActions: 'play none none reset',
                     },
                 },
             );
@@ -83,11 +82,22 @@ export default function FeatureBox() {
     }, []);
 
     return (
-        <div ref={containerRef} className="flex flex-col w-full mt-40 select-none px-20">
+        <div
+            ref={containerRef}
+            className="flex flex-col w-full mt-40 select-none min-h-[calc(100vh-180px)]"
+        >
             <div
                 className={`${boldonse.className} text-[100px] tracking-wider relative text-[#e4e4e4] leading-24 flex flex-col`}
             >
-                <span ref={triangulumRef} className="outlined-text w-full flex justify-end">
+                <span
+                    ref={triangulumRef}
+                    className="outlined-text w-full flex justify-end font-medium"
+                    style={{
+                        color: '#facc15',
+                        WebkitTextStroke: '1px #000',
+                        WebkitTextFillColor: '#facc15',
+                    }}
+                >
                     NOCTURN
                 </span>
                 <span
@@ -98,17 +108,18 @@ export default function FeatureBox() {
                 </span>
             </div>
 
-            <div className="w-full flex justify-center mt-10">
+            <div className="w-full flex justify-center mt-10 flex-1">
                 <FeatureBoxComponent
                     title="Create"
                     description="Craft quizzes with your own style and make learning fun."
                     buttonText="Create Now"
-                    buttonIcon={<IoMdArrowRoundForward />}
+                    color={'#FF6B6B'}
                     buttonOnClick={handleGoToApp}
                     backgroundSvg={(hovered: boolean) => (
                         <Folder
                             width={200}
                             height={200}
+                            stroke="#FF6B6B"
                             animateState={hovered ? 'animate' : 'normal'}
                         />
                     )}
@@ -118,14 +129,14 @@ export default function FeatureBox() {
                     title="Compete"
                     description="Join thrilling challenges, race against time, and test your skills."
                     buttonText="Play Now"
-                    buttonIcon={<IoMdArrowRoundForward />}
+                    color="#FFD93D"
                     buttonOnClick={handleCompeteClick}
                     backgroundSvg={(hovered: boolean) => (
                         <ChartNoAxes
                             strokeWidth={0.1}
                             height={200}
                             width={200}
-                            stroke="#03AAAA"
+                            stroke="#FFD93D"
                             animateState={hovered ? 'animate' : 'normal'}
                         />
                     )}
@@ -135,14 +146,14 @@ export default function FeatureBox() {
                     title="Win"
                     description="Climb the leaderboard, unlock rewards, and celebrate your victories."
                     buttonText="Start Winning"
-                    buttonIcon={<IoMdArrowRoundForward />}
+                    color="#4ECDC4"
                     buttonOnClick={handleGoToApp}
                     backgroundSvg={(hovered: boolean) => (
                         <PartyPopper
                             strokeWidth={0.1}
                             height={200}
                             width={200}
-                            stroke="#FF5C7D"
+                            stroke="#4ECDC4"
                             animateState={hovered ? 'animate' : 'normal'}
                         />
                     )}
