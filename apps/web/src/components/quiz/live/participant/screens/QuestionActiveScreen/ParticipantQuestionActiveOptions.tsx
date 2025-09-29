@@ -7,7 +7,9 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { useState, useEffect } from 'react';
 import { FaDotCircle, FaRegCircle, FaLifeRing } from 'react-icons/fa';
-import { MdHelp, MdTimer } from 'react-icons/md';
+import { MdHelp, MdTimer, MdCheckCircle } from 'react-icons/md';
+import { QuizPhaseEnum } from '@/types/prisma-types';
+import { LiveResponseBars } from './LiveBars';
 
 type Hex = `#${string}`;
 
@@ -15,6 +17,7 @@ export default function ParticipantQuestionActiveOptions() {
     const {
         currentQuestion,
         quiz: liveQuiz,
+        gameSession,
         alreadyResponded,
         setAlreadyResponded,
         lifelineRequested,
@@ -36,7 +39,6 @@ export default function ParticipantQuestionActiveOptions() {
         setAlreadyResponded(false);
     }, [currentQuestion?.id, setAlreadyResponded]);
 
-    // Timer for lifeline countdown
     useEffect(() => {
         if (lifelineRequested && lifelineExpiresAt) {
             const interval = setInterval(() => {
@@ -51,19 +53,28 @@ export default function ParticipantQuestionActiveOptions() {
             }, 1000);
 
             return () => clearInterval(interval);
+        } else {
+            setTimeLeft(null);
         }
     }, [lifelineRequested, lifelineExpiresAt]);
 
+    const maxHeight = 12;
+    const barColors = template?.bars ?? (['#3b82f6'] as Hex[]);
+
+    // const liveVoteCounts = useMemo(() => {
+    //     if (!lifelineRequested || !activeLifelineSession?.isActive) {
+    //         return [0, 0, 0, 0];
+    //     }
+    //     return getLifelineVoteCounts();
+    // }, [lifelineRequested, activeLifelineSession, getLifelineVoteCounts]);
+
     if (!currentQuestion) return null;
 
-    const maxHeight = 12;
-
-    function hexWithAlpha(hex: Hex, alphaHex: string) {
-        if (!/^#([0-9A-Fa-f]{6})$/.test(hex)) return hex;
-        return `${hex}${alphaHex}` as Hex;
-    }
-
-    const barColors = template?.bars ?? (['#3b82f6'] as Hex[]);
+    const canRequestLifeline =
+        gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
+        !hasUsedLifeline &&
+        !alreadyResponded &&
+        !lifelineRequested;
 
     function handleSelectOption(index: number) {
         if (selected !== null) return;
@@ -81,24 +92,23 @@ export default function ParticipantQuestionActiveOptions() {
     }
 
     function handleRequestLifeline() {
-        if (!currentQuestion || hasUsedLifeline || alreadyResponded || lifelineRequested) return;
+        if (!canRequestLifeline || !currentQuestion) return;
 
         handleParticipantRequestLifeline({
             questionId: currentQuestion.id,
         });
     }
 
-    // Apply lifeline suggestion highlighting
     const getOptionStyle = (idx: number, color: Hex, isSelected: boolean) => {
         const isLifelineSuggestion =
             lifelineResult?.wasSuccessful && lifelineResult.mostPopularOption === idx;
 
         let boxShadow = isSelected
-            ? `0 0 0 1px ${hexWithAlpha(color, '55')}, 0 10px 30px ${hexWithAlpha(color, '25')}`
-            : '0 6px 20px rgba(0,0,0,0.25)';
+            ? `0 0 0 1px ${color}55, 0 10px 30px ${color}25`
+            : '0 6px 20px #00000040';
 
         if (isLifelineSuggestion && !isSelected) {
-            boxShadow = `0 0 0 2px #10b981, 0 6px 20px rgba(16, 185, 129, 0.3)`;
+            boxShadow = `0 0 0 2px #10b981, 0 6px 20px #10b9814d`;
         }
 
         return {
@@ -107,17 +117,27 @@ export default function ParticipantQuestionActiveOptions() {
         };
     };
 
+    const getVotePercentage = (idx: number): number => {
+        if (!lifelineResult || lifelineResult.totalResponses === 0) return 0;
+        const votes = lifelineResult.optionBreakdown[idx] || 0;
+        return Math.round((votes / lifelineResult.totalResponses) * 100);
+    };
+
     return (
         <div className="w-full flex flex-col items-center justify-center gap-y-5 p-8 rounded-xl z-20">
+            <div className="absolute top-0 right-0 z-50">
+                <LiveResponseBars position="top-right" size="md" showPercentages animated />
+            </div>
+
             <div className="w-full flex flex-col gap-3 mb-4">
                 <div className="flex justify-center">
                     <button
                         onClick={handleRequestLifeline}
-                        disabled={hasUsedLifeline || alreadyResponded || lifelineRequested}
+                        disabled={!canRequestLifeline}
                         className={cn(
                             'flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200',
                             'border shadow-lg',
-                            hasUsedLifeline || alreadyResponded
+                            !canRequestLifeline
                                 ? 'bg-gray-500 border-gray-400 cursor-not-allowed opacity-50 text-gray-300'
                                 : lifelineRequested
                                   ? 'bg-yellow-600 border-yellow-500 cursor-not-allowed text-white animate-pulse'
@@ -129,21 +149,21 @@ export default function ParticipantQuestionActiveOptions() {
                             'Lifeline Used'
                         ) : lifelineRequested ? (
                             <>
-                                <MdTimer className="w-4 h-4" />
+                                <MdTimer className="w-4 h-4 animate-spin" />
                                 {`Waiting... ${timeLeft || 0}s`}
                             </>
                         ) : (
-                            'Request Lifeline'
+                            'Ask Spectators for Help'
                         )}
                     </button>
                 </div>
 
                 {lifelineRequested && (
-                    <div className="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 p-3 rounded-lg">
-                        <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                    <div className="bg-neutral-900 dark:bg-dark-base/70 border p-3 rounded-lg">
+                        <div className="flex items-center gap-2 dark:text-neutral-200">
                             <MdHelp className="w-4 h-4" />
                             <span className="text-sm font-medium">
-                                Spectators are helping you! Wait for their response...
+                                Spectators are helping you! Results coming soon...
                             </span>
                         </div>
                     </div>
@@ -167,10 +187,13 @@ export default function ParticipantQuestionActiveOptions() {
                             )}
                         >
                             {lifelineResult.wasSuccessful ? (
-                                <>
-                                    <span className="text-green-500">✓</span> Spectators suggest:
-                                    Option {(lifelineResult.mostPopularOption || 0) + 1}
-                                </>
+                                <div className="flex items-center gap-2">
+                                    <MdCheckCircle className="w-4 h-4 text-green-500" />
+                                    <span>
+                                        Spectators suggest: Option{' '}
+                                        {(lifelineResult.mostPopularOption || 0) + 1}
+                                    </span>
+                                </div>
                             ) : (
                                 <>
                                     <span className="text-orange-500">!</span> No clear consensus
@@ -181,6 +204,21 @@ export default function ParticipantQuestionActiveOptions() {
                         <div className="text-xs opacity-75">
                             {lifelineResult.totalResponses} spectator
                             {lifelineResult.totalResponses !== 1 ? 's' : ''} responded
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-4 gap-2">
+                            {lifelineResult.optionBreakdown.map((votes: number, idx: number) => (
+                                <div
+                                    key={idx}
+                                    className="text-center p-2 rounded bg-white/50 dark:bg-black/20"
+                                >
+                                    <div className="text-xs font-bold">Opt {idx + 1}</div>
+                                    <div className="text-sm">{votes} votes</div>
+                                    <div className="text-xs opacity-75">
+                                        {getVotePercentage(idx)}%
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -209,7 +247,8 @@ export default function ParticipantQuestionActiveOptions() {
                                     !isDisabled &&
                                         'cursor-pointer hover:-translate-y-0.5 active:translate-y-0',
                                     isDisabled && 'opacity-50 cursor-not-allowed',
-                                    isLifelineSuggestion && 'ring-2 ring-green-400 ring-opacity-60',
+                                    isLifelineSuggestion &&
+                                        'ring-2 ring-green-400 ring-opacity-60 animate-pulse',
                                 )}
                                 style={getOptionStyle(idx, color, isSelected)}
                             >
@@ -223,9 +262,6 @@ export default function ParticipantQuestionActiveOptions() {
                                                 ? 'border-transparent'
                                                 : 'border-white/25 group-hover:border-white/50',
                                         )}
-                                        style={{
-                                            background: isSelected ? 'transparent' : 'transparent',
-                                        }}
                                     >
                                         {isSelected ? (
                                             <FaDotCircle
@@ -242,7 +278,9 @@ export default function ParticipantQuestionActiveOptions() {
                                         {isLifelineSuggestion && (
                                             <div className="flex items-center gap-1 text-green-500 text-xs font-medium">
                                                 <FaLifeRing className="w-3 h-3" />
-                                                <span className="hidden sm:inline">Suggested</span>
+                                                <span className="hidden sm:inline">
+                                                    Suggested ({getVotePercentage(idx)}%)
+                                                </span>
                                             </div>
                                         )}
                                     </div>

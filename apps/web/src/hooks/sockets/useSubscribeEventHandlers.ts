@@ -135,23 +135,18 @@ export function useSubscribeEventHandlers() {
         );
 
         subscribeToHandler(
-            MESSAGE_TYPES.LIFELINE_TIMEOUT,
-            SubscribeEventHandlers.handleLifelineTimeout,
-        );
-
-        subscribeToHandler(
             MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
             SubscribeEventHandlers.handleParticipantRequestLifelineConfirmation,
         );
 
         subscribeToHandler(
             MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
-            SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
+            SubscribeEventHandlers.handleSpectatorLifelineResponse,
         );
 
         subscribeToHandler(
-            MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS,
-            SubscribeEventHandlers.handleParticipantLifelineStatus,
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+            SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
         );
 
         return () => {
@@ -269,8 +264,8 @@ export function useSubscribeEventHandlers() {
             );
 
             unsubscribeToHandler(
-                MESSAGE_TYPES.LIFELINE_TIMEOUT,
-                SubscribeEventHandlers.handleLifelineTimeout,
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+                SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
             );
 
             unsubscribeToHandler(
@@ -280,12 +275,7 @@ export function useSubscribeEventHandlers() {
 
             unsubscribeToHandler(
                 MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
-                SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
-            );
-
-            unsubscribeToHandler(
-                MESSAGE_TYPES.PARTICIPANT_LIFELINE_STATUS,
-                SubscribeEventHandlers.handleParticipantLifelineStatus,
+                SubscribeEventHandlers.handleSpectatorLifelineResponse,
             );
         };
     }, [subscribeToHandler, unsubscribeToHandler]);
