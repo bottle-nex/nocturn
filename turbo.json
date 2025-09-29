@@ -3,8 +3,13 @@
   "ui": "tui",
   "globalEnv": [
     "GOOGLE_CLIENT_ID",
+    "SERVER_NODE_ENV",
+    "GITHUB_TOKEN",
     "GOOGLE_CLIENT_SECRET",
-    "NODE_ENV"
+    "NEXTAUTH_URL",
+    "GITHUB_CLIENT_ID",
+    "GITHUB_CLIENT_SECRET"
+
   ],
   "tasks": {
     "build": {
@@ -37,6 +42,13 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "remove-logs": {
+      "cache": false,
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "**/*.{ts,tsx,js,jsx}"
+      ]
     }
   }
 }

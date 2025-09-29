@@ -14,7 +14,14 @@ import prisma, {
 import RedisCache from '../cache/RedisCache';
 import { redisCacheInstance } from '../services/init-services';
 import { ReactorType } from '../types/web-socket-types';
-const REDIS_URL = process.env.REDIS_URL;
+import { env } from '../configs/env';
+import { v4 as uuid } from 'uuid';
+const REDIS_URL = env.SERVER_REDIS_URL;
+
+interface CreateLifelineUsageJob {
+    participant_id: string;
+    game_session_id: string;
+}
 
 interface UpdateGameSessionJobtype {
     id: string;
@@ -128,6 +135,37 @@ export default class DatabaseQueue {
             QueueJobTypes.CREATE_PARTICIPANT_RESPONSE,
             this.create_participant_response_processor.bind(this),
         );
+        this.database_queue.process(
+            QueueJobTypes.CREATE_LIFELINE_USAGE,
+            this.create_lifeline_usage_processor.bind(this),
+        );
+    }
+
+    private async create_lifeline_usage_processor(
+        job: Bull.Job,
+    ): Promise<{ success: boolean; lifelineUsage?: any } | { success: boolean; error: string }> {
+        try {
+            const { participant_id, game_session_id }: CreateLifelineUsageJob = job.data;
+
+            const lifelineUsage = await prisma.lifelineUsage.create({
+                data: {
+                    id: uuid(),
+                    participant: { connect: { id: participant_id } },
+                    gameSession: { connect: { id: game_session_id } },
+                },
+            });
+
+            return {
+                success: true,
+                lifelineUsage,
+            };
+        } catch (error) {
+            console.error('Error while creating lifeline usage: ', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+            };
+        }
     }
 
     private async update_spectator_processor(
@@ -458,5 +496,39 @@ export default class DatabaseQueue {
                 { ...this.default_job_options, ...options },
             )
             .catch((err) => console.error('Failed to enqueue participant response: ', err));
+    }
+
+    public async create_lifeline_usage(
+        participant_id: string,
+        game_session_id: string,
+        options?: Partial<JobOption>,
+    ) {
+        return await this.database_queue
+            .add(
+                QueueJobTypes.CREATE_LIFELINE_USAGE,
+                { participant_id, game_session_id },
+                { ...this.default_job_options, ...options },
+            )
+            .catch((err) => console.error('Failed to enqueue lifeline response: ', err));
+    }
+
+    public async check_lifeline_usage(
+        participantId: string,
+        gameSessionId: string,
+    ): Promise<boolean> {
+        try {
+            const usage = await prisma.lifelineUsage.findUnique({
+                where: {
+                    participantId_gameSessionId: {
+                        participantId,
+                        gameSessionId,
+                    },
+                },
+            });
+            return !!usage;
+        } catch (error) {
+            console.error('Error checking lifeline usage:', error);
+            return false;
+        }
     }
 }

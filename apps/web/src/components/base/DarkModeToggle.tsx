@@ -24,7 +24,7 @@ export default function DarkModeToggle() {
                 <button
                     type="button"
                     onClick={toggleTheme}
-                    className="flex items-center gap-2 px-3 py-2 dark:bg-neutral-600/30 bg-neutral-500/20 rounded-lg transition-all duration-200 transform hover:scale-105"
+                    className="flex items-center gap-2 px-3 py-2 dark:bg-neutral-600/30 bg-neutral-500/20 rounded-lg transition-all duration-200 transform hover:scale-105 !cursor-pointer"
                 >
                     {theme === 'dark' ? (
                         <CiLight className="text-xl" />

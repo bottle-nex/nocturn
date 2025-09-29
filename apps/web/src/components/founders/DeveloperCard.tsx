@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import GitHubCalendar from 'react-github-calendar';
+import { useTheme } from 'next-themes';
 
 interface DeveloperCardProps {
     name: string;
@@ -34,6 +35,8 @@ export default function DeveloperCard({
     githubUsername,
     className,
 }: DeveloperCardProps) {
+    const { theme } = useTheme();
+
     return (
         <div className={`w-full select-none flex justify-center ${className}`}>
             <style>{cardAnimations}</style>
@@ -62,8 +65,12 @@ export default function DeveloperCard({
                         </div>
 
                         <div className="flex flex-col text-[14px] px-3 justify-center gap-y-0.5">
-                            <span className="text-[16px] font-normal">{name}</span>
-                            <span className="text-[14px]">{role}</span>
+                            <span className="text-[16px] font-normal dark:text-white text-gray-900">
+                                {name}
+                            </span>
+                            <span className="text-[14px] dark:text-gray-300 text-gray-600">
+                                {role}
+                            </span>
                         </div>
                     </div>
 
@@ -72,7 +79,7 @@ export default function DeveloperCard({
                             href={twitterUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[#c3afee] transition-all transform duration-150 tracking-wider"
+                            className="dark:text-white text-gray-700 dark:hover:text-[#c3afee] hover:text-[#9573E1] transition-all transform duration-150 tracking-wider"
                         >
                             Twitter
                         </a>
@@ -80,7 +87,7 @@ export default function DeveloperCard({
                             href={githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[#c3afee] transition-all transform duration-150 tracking-wider"
+                            className="dark:text-white text-gray-700 dark:hover:text-[#c3afee] hover:text-[#9573E1] transition-all transform duration-150 tracking-wider"
                         >
                             GitHub
                         </a>
@@ -88,7 +95,7 @@ export default function DeveloperCard({
                             href={linkedinUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-[#c3afee] transition-all transform duration-150 tracking-wider"
+                            className="dark:text-white text-gray-700 dark:hover:text-[#c3afee] hover:text-[#9573E1] transition-all transform duration-150 tracking-wider"
                         >
                             LinkedIn
                         </a>
@@ -102,9 +109,9 @@ export default function DeveloperCard({
                             blockSize={8}
                             blockMargin={3}
                             fontSize={10}
-                            colorScheme="dark"
+                            colorScheme={theme === 'dark' ? 'dark' : 'light'}
                             theme={{
-                                light: ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'],
+                                light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
                                 dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
                             }}
                             style={{

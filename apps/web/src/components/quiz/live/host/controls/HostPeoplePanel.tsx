@@ -27,6 +27,7 @@ export default function HostPeoplePanel() {
 
     return (
         <div className="w-full h-full flex flex-col overflow-hidden py-2 overflow-y-auto custom-scrollbar relative">
+            <div className="flex-1">{renderPanel()}</div>
             <div className="sticky top-0 z-10 w-full px-6 py-2">
                 <div className="grid grid-cols-2 gap-3 dark:bg-neutral-800 backdrop-blur-md rounded-xl border shadow-md">
                     {Object.values(PeopleViewType).map((tab) => (
@@ -34,7 +35,7 @@ export default function HostPeoplePanel() {
                             key={tab}
                             onClick={() => setView(tab)}
                             className={cn(
-                                'px-4 py-2 rounded-xl text-xs font-medium transition-all bg-transparent dark:bg-transparent col-span-1 lowercase',
+                                'px-4 py-2 rounded-xl text-xs font-medium transition-all bg-transparent dark:bg-transparent col-span-1 lowercase  cursor-pointer',
                                 {
                                     'bg-white/30 dark:bg-neutral-950/50 text-dark-base dark:text-white shadow':
                                         view === tab,
@@ -47,8 +48,6 @@ export default function HostPeoplePanel() {
                     ))}
                 </div>
             </div>
-
-            <div className="flex-1">{renderPanel()}</div>
         </div>
     );
 }

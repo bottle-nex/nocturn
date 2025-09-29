@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import prisma from '@repo/db/client';
+import { env } from '../../configs/env';
 
 export default async function signInController(req: Request, res: Response) {
     const { user } = req.body;
@@ -38,7 +39,7 @@ export default async function signInController(req: Request, res: Response) {
             email: myUser.email,
             id: myUser.id,
         };
-        const secret = process.env.JWT_SECRET;
+        const secret = env.SERVER_JWT_SECRET;
         if (!secret) {
             res.status(300).json({
                 message: 'Server error',

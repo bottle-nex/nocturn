@@ -70,7 +70,6 @@ export default class QuizController {
     ): Promise<quiz_controller> {
         try {
             let quiz = await this.find_quiz(quizId);
-
             if (!quiz) {
                 quiz = await prisma.quiz.create({
                     data: {

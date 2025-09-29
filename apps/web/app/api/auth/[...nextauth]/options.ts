@@ -1,5 +1,6 @@
 import { Account, AuthOptions, ISODateString } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import GitHubProvider from 'next-auth/providers/github';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
 import { SIGNIN_URL } from 'routes/api_routes';
@@ -25,7 +26,7 @@ export const authOption: AuthOptions = {
     callbacks: {
         async signIn({ user, account }: { user: UserType; account: Account | null }) {
             try {
-                if (account?.provider === 'google') {
+                if (account?.provider === 'google' || account?.provider === 'github') {
                     const response = await axios.post(`${SIGNIN_URL}`, {
                         user,
                         account,
@@ -66,6 +67,10 @@ export const authOption: AuthOptions = {
                     response_type: 'code',
                 },
             },
+        }),
+        GitHubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID || '',
+            clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
         }),
     ],
 };

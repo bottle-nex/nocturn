@@ -6,6 +6,8 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import OnOffToggle from '../../common/OnOffToggle';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
+import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 
 enum SettingsView {
     HOST = 'HOST',
@@ -13,15 +15,42 @@ enum SettingsView {
     PARTICIPANT = 'PARTICIPANT',
 }
 
+interface QuizSetting {
+    liveChat: boolean;
+    interactionMode: boolean;
+    watchLeaderBoard: boolean;
+    allowNewSpectator: boolean;
+}
+
 export default function HostSettingsPanel() {
     const [view, setView] = useState<SettingsView>(SettingsView.HOST);
-
-    const [chatEnabled, setChatEnabled] = useState<boolean>(false);
     const [leaderboardEnabled, setLeaderboardEnabled] = useState<boolean>(false);
-    const [joinSpectatorsEnabled, setJoinSpectatorsEnabled] = useState<boolean>(false);
     const [participantsLeaderboardEnabled, setParticipantsLeaderboardEnabled] =
         useState<boolean>(false);
     const [interactionsForMeEnabled, setInteractionsForMeEnabled] = useState<boolean>(false);
+    const { handleSettingsChangeEvent } = useWebSocket();
+    const { quiz, updateQuiz } = useLiveQuizStore();
+    const [settings, setSettings] = useState<QuizSetting>({
+        liveChat: quiz.liveChat,
+        interactionMode: false,
+        watchLeaderBoard: false,
+        allowNewSpectator: quiz.allowNewSpectator,
+    });
+
+    function handleSettingsChange<K extends keyof QuizSetting>(key: K, value: QuizSetting[K]) {
+        setSettings((prev: QuizSetting) => {
+            const newSettings = { ...prev, [key]: value };
+            handleSettingsChangeEvent({
+                liveChat: newSettings.liveChat,
+                allowNewSpectator: newSettings.allowNewSpectator,
+            });
+            return newSettings;
+        });
+
+        updateQuiz({
+            [key]: value,
+        });
+    }
 
     return (
         <div className="w-full h-full flex flex-col overflow-hidden py-2 overflow-y-auto custom-scrollbar relative">
@@ -65,8 +94,8 @@ export default function HostSettingsPanel() {
                             title="Chats"
                             description="Chat for spectators"
                             tooltip="Enable/Disable chat-option for spectators"
-                            value={chatEnabled}
-                            onChange={setChatEnabled}
+                            value={settings.liveChat}
+                            onChange={(val) => handleSettingsChange('liveChat', val)}
                         />
                         <SettingRow
                             title="Leaderboard"
@@ -76,11 +105,11 @@ export default function HostSettingsPanel() {
                             onChange={setLeaderboardEnabled}
                         />
                         <SettingRow
-                            title="Join Spectators"
+                            title="Allow new spectators"
                             description="Join quiz for spectators"
                             tooltip="Enable/Disable join for new spectators"
-                            value={joinSpectatorsEnabled}
-                            onChange={setJoinSpectatorsEnabled}
+                            value={settings.allowNewSpectator}
+                            onChange={(val) => handleSettingsChange('allowNewSpectator', val)}
                         />
                     </div>
                 )}
@@ -106,7 +135,7 @@ interface SettingsRowProps {
     description: string;
     tooltip: string;
     value?: boolean;
-    onChange?: (val: boolean) => void;
+    onChange: (val: boolean) => void;
 }
 
 export function SettingRow({

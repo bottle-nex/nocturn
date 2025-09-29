@@ -1,6 +1,6 @@
 'use client';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { Button } from '@/components/ui/button';
@@ -16,46 +16,29 @@ export default function ParticipantQuestionResultsRenderer() {
     const { participantData } = useLiveParticipantStore();
     const { currentQuestion, setAlreadyResponded } = useLiveQuizStore();
 
-    const sortedParticipants = [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
-    const [dateTime, setDateTime] = useState<string>('');
+    const sortedParticipants = useMemo(() => {
+        return [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
+    }, [participants]);
+
     const colorMapRef = useRef<Map<string, string>>(new Map());
 
-    useEffect(() => {
-        const updateDateTime = () => {
-            const now = new Date();
-            const date = now.toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: '2-digit',
-            });
+    // Memoize participant colors calculation
+    const participantColors = useMemo(() => {
+        return sortedParticipants.map((participant, index) => {
+            const { id } = participant;
 
-            const time = now.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            });
-            setDateTime(`${date} | ${time}`);
-        };
-        updateDateTime();
-        const interval = setInterval(updateDateTime, 1000);
-        return () => clearInterval(interval);
-    }, []);
+            if (!colorMapRef.current.has(id)) {
+                const rank = index + 1;
+                colorMapRef.current.set(id, getRandomColor(rank));
+            }
 
-    useEffect(() => {
-        setAlreadyResponded(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+            return colorMapRef.current.get(id)!;
+        });
+    }, [sortedParticipants]);
 
-    const participantColors = sortedParticipants.map((participant, index) => {
-        const { id } = participant;
-
-        if (!colorMapRef.current.has(id)) {
-            const rank = index + 1;
-            colorMapRef.current.set(id, getRandomColor(rank));
-        }
-
-        return colorMapRef.current.get(id)!;
-    });
+    const visibleBars = useMemo(() => {
+        return sortedParticipants.slice(0, 6);
+    }, [sortedParticipants]);
 
     const [currentUser, setCurrentUser] = useState<ParticipantType | null>(null);
     const [yourRank, setYourRank] = useState<number>(1);
@@ -63,10 +46,14 @@ export default function ParticipantQuestionResultsRenderer() {
     const [yourAnswer, setYourAnswer] = useState<number | undefined>();
 
     useEffect(() => {
+        setAlreadyResponded(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         if (!participantData) return;
 
         const user = sortedParticipants.find((p) => p.id === participantData.id);
-        // take participant data if not found
         setCurrentUser(user ?? participantData);
 
         if (!user) return;
@@ -75,8 +62,10 @@ export default function ParticipantQuestionResultsRenderer() {
         setYourRank(index >= 0 ? index + 1 : 1);
 
         setYourStreak(user?.longestStreak ?? 0);
-        setYourAnswer(getResponse(user.id)?.selectedAnswer);
-    }, [participantData, sortedParticipants, responses, getResponse]);
+
+        const response = getResponse(user.id);
+        setYourAnswer(response?.selectedAnswer);
+    }, [participantData, sortedParticipants, responses, getResponse]); // Removed getResponse from dependencies
 
     if (!currentQuestion) {
         return (
@@ -84,11 +73,9 @@ export default function ParticipantQuestionResultsRenderer() {
         );
     }
 
-    const visibleBars = sortedParticipants.slice(0, 6);
-
     return (
-        <div className="w-full h-full bg-black/20 overflow-hidden flex justify-center items-center relative z-80 p-2 sm:p-4">
-            <div className="w-full max-w-7xl h-[95vh] sm:h-[90vh] md:h-[85vh] lg:h-[80%] flex flex-col justify-between rounded-xl sm:rounded-2xl bg-black border relative shadow-lg overflow-hidden">
+        <div className="w-full h-full bg-black/20 overflow-hidden flex justify-center items-center relative z-0 p-2 sm:p-4">
+            <div className="w-full max-w-7xl h-[95vh] sm:h-[90vh] md:h-[85vh] lg:h-[80%] flex flex-col justify-between rounded-xl sm:rounded-2xl bg-neutral-950 border relative shadow-lg overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none z-0 fade-dots opacity-35">
                     <DotPattern />
                 </div>
@@ -119,7 +106,7 @@ export default function ParticipantQuestionResultsRenderer() {
 
                             return (
                                 <LeaderboardParticipantBar
-                                    key={index}
+                                    key={p.id} // Use participant ID as key instead of index
                                     baseHeight={baseHeight}
                                     color={color ?? '#ccc'}
                                     nickname={p.nickname}
@@ -139,9 +126,6 @@ export default function ParticipantQuestionResultsRenderer() {
                             <GoShareAndroid className="w-4 h-4" />
                         </Button>
                     </ToolTipComponent>
-                    <span className="absolute bottom-3 sm:bottom-3.5 text-neutral-300 left-3 sm:left-5 text-xs sm:text-sm">
-                        {dateTime}
-                    </span>
                 </div>
             </div>
         </div>

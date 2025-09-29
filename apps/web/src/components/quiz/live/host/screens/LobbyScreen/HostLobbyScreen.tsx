@@ -7,7 +7,6 @@ export default function HostLobbyScreen() {
         <div className="w-full h-full flex">
             <HostLobbyRenderer />
             <HostLobbyFooter />
-            {/* <WaitingLobbyHostRight /> */}
         </div>
     );
 }

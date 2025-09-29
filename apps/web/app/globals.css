@@ -48,6 +48,20 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
+
+    @keyframes cell-ripple {
+        0% {
+            opacity: 0.4;
+        }
+        50% {
+            opacity: 0.8;
+        }
+        100% {
+            opacity: 0.4;
+        }
+    }
 }
 
 :root {
@@ -123,9 +137,11 @@
     * {
         @apply border-border outline-ring/50;
     }
-
     body {
         @apply bg-background text-foreground;
+    }
+    html {
+        scroll-behavior: smooth;
     }
 }
 
@@ -179,12 +195,13 @@
     animation-delay: 0.6s;
 }
 
-
 .fade-dots {
-    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    mask-image:
+        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
         linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
     mask-composite: intersect;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
         linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
     -webkit-mask-composite: destination-in;
     mask-repeat: no-repeat;
@@ -200,7 +217,6 @@
 
 @layer utilities {
     @keyframes float {
-
         0%,
         100% {
             transform: translateY(0);

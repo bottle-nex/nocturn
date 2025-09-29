@@ -4,6 +4,7 @@ import { USER_TYPE } from '../../types/web-socket-types';
 import { quizControllerInstance } from '../../services/init-services';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
+import { env } from '../../configs/env';
 
 export default async function launchQuizController(req: Request, res: Response) {
     const userId = req.user?.id;
@@ -80,7 +81,7 @@ export default async function launchQuizController(req: Request, res: Response) 
 
         res.cookie('token', secureTokenData, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: env.SERVER_NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 60 * 60 * 24 * 1000,
         });

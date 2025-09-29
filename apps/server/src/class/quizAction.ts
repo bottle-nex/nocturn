@@ -3,8 +3,9 @@ import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { CookiePayload, USER_TYPE } from '../types/web-socket-types';
+import { env } from '../configs/env';
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = env.SERVER_JWT_SECRET;
 
 export default class QuizAction {
     private static generateSpectatorCode = customAlphabet(

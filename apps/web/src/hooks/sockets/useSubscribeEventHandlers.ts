@@ -11,6 +11,12 @@ export function useSubscribeEventHandlers() {
             MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION,
             SubscribeEventHandlers.handleIncomingMessage,
         );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+            SubscribeEventHandlers.handleParticipantLeaveGameSession,
+        );
+
         subscribeToHandler(
             MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE,
             SubscribeEventHandlers.handleIncomingNameChangeMessage,
@@ -23,6 +29,11 @@ export function useSubscribeEventHandlers() {
         subscribeToHandler(
             MESSAGE_TYPES.SPECTATOR_JOIN_GAME_SESSION,
             SubscribeEventHandlers.handleIncomingNewSpectator,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.HOST_EMITS_HINT,
+            SubscribeEventHandlers.handleIncomingHintEvents,
         );
 
         subscribeToHandler(
@@ -103,10 +114,49 @@ export function useSubscribeEventHandlers() {
             SubscribeEventHandlers.handleParticipantIncomingRespondedMessage,
         );
 
+        subscribeToHandler(
+            MESSAGE_TYPES.SETTINGS_CHANGE,
+            SubscribeEventHandlers.handleSettingschange,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
+            SubscribeEventHandlers.handleSpectatorLeaveGameSession,
+        );
+        // lifeline events
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+            SubscribeEventHandlers.handleSpectatorLifelineInvitation,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+            SubscribeEventHandlers.handleLifelineResultToParticipant,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            SubscribeEventHandlers.handleParticipantRequestLifelineConfirmation,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+            SubscribeEventHandlers.handleSpectatorLifelineResponse,
+        );
+
+        subscribeToHandler(
+            MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+            SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
+        );
+
         return () => {
             unsubscribeToHandler(
                 MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION,
                 SubscribeEventHandlers.handleIncomingMessage,
+            );
+            unsubscribeToHandler(
+                MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                SubscribeEventHandlers.handleParticipantLeaveGameSession,
             );
             unsubscribeToHandler(
                 MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE,
@@ -189,6 +239,43 @@ export function useSubscribeEventHandlers() {
             unsubscribeToHandler(
                 MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
                 SubscribeEventHandlers.handleParticipantIncomingRespondedMessage,
+            );
+            unsubscribeToHandler(
+                MESSAGE_TYPES.HOST_EMITS_HINT,
+                SubscribeEventHandlers.handleIncomingHintEvents,
+            );
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SETTINGS_CHANGE,
+                SubscribeEventHandlers.handleSettingschange,
+            );
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
+                SubscribeEventHandlers.handleSpectatorLeaveGameSession,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+                SubscribeEventHandlers.handleSpectatorLifelineInvitation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                SubscribeEventHandlers.handleLifelineResultToParticipant,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+                SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                SubscribeEventHandlers.handleParticipantRequestLifelineConfirmation,
+            );
+
+            unsubscribeToHandler(
+                MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+                SubscribeEventHandlers.handleSpectatorLifelineResponse,
             );
         };
     }, [subscribeToHandler, unsubscribeToHandler]);

@@ -1,13 +1,14 @@
 'use client';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { HostScreenEnum } from '@/types/prisma-types';
-import LobbyScreen from './screens/LobbyScreen/HostLobbyScreen';
+import HostLobbyScreen from './screens/LobbyScreen/HostLobbyScreen';
 import HostQuestionPreviewScreen from './screens/QuestionPreviewScreen/HostQuestionPreviewScreen';
 import HostMainFooter from './HostMainFooter';
 import HostPanelRenderer from './controls/HostPanelRenderer';
 import HostQuestionResultsScreen from './screens/QuestionResultsScreen/HostQuestionResultsScreen';
 import HostQuestionActiveScreen from './screens/QuestionActiveScreen/HostQuestionActiveScreen';
 import HostQuestionReadingScreen from './screens/QuestionReadingScreen/HostQuestionReadingScreen';
+import FinalResultsScreen from '../common/FinalResultsScreen';
 
 export default function HostMainScreen() {
     const { gameSession } = useLiveQuizStore();
@@ -15,7 +16,7 @@ export default function HostMainScreen() {
     function renderHostScreenPanels() {
         switch (gameSession?.hostScreen) {
             case HostScreenEnum.LOBBY:
-                return <LobbyScreen />;
+                return <HostLobbyScreen />;
 
             case HostScreenEnum.QUESTION_PREVIEW:
                 return <HostQuestionPreviewScreen />;
@@ -28,6 +29,9 @@ export default function HostMainScreen() {
 
             case HostScreenEnum.QUESTION_RESULTS:
                 return <HostQuestionResultsScreen />;
+
+            case HostScreenEnum.FINAL_RESULTS:
+                return <FinalResultsScreen />;
         }
     }
 

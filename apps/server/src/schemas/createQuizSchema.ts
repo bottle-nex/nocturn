@@ -11,7 +11,7 @@ export enum TemplateEnum {
 }
 
 export enum Interactions {
-    THUMBS_UP = 'THUMBS_UP',
+    TUMBS_UP = 'THUMBS_UP',
     DOLLAR = 'DOLLAR',
     BULB = 'BULB',
     HEART = 'HEART',
@@ -23,9 +23,11 @@ const questionSchema = z.object({
     options: z.array(z.string().min(1)).min(4),
     correctAnswer: z.number(),
     explanation: z.string().optional(),
+    hint: z.string().optional(),
     difficulty: z.number(),
     basePoints: z.number(),
-    timeLimit: z.number(),
+    timeLimit: z.number().min(1).max(600),
+    readingTime: z.number().min(1).max(600),
     orderIndex: z.number(),
     imageUrl: z.string().optional(),
 });

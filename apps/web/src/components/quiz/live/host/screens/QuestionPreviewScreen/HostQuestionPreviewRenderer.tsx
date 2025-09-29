@@ -5,7 +5,6 @@ import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import Image from 'next/image';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import HostQuestionPreviewOptions from './HostQuestionPreviewOptions';
-import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { QuestionType } from '@/types/prisma-types';
 import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
@@ -15,30 +14,11 @@ export default function HostQuestionPreviewRenderer() {
     const canvasWidth = useWidth(canvasRef);
     const { currentQuestion, nextQuestion, quiz, updateCurrentQuestion, updateQuiz } =
         useLiveQuizStore();
-    const { handleSendHostLaunchQuestion } = useWebSocket();
     const { session } = useUserSessionStore();
-
-    function handleLaunchQuestion(e: KeyboardEvent) {
-        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && currentQuestion) {
-            e.preventDefault();
-            handleSendHostLaunchQuestion({
-                questionId: currentQuestion?.id,
-                questionIndex: currentQuestion?.orderIndex,
-            });
-        }
-    }
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleLaunchQuestion);
-        return () => {
-            document.removeEventListener('keydown', handleLaunchQuestion);
-        };
-    });
 
     useEffect(() => {
         if (!quiz) return;
 
-        // if no questions present, fetch it from backend
         if (quiz.questions === undefined || quiz.questions.length === 0) {
             async function fetchQuestion() {
                 if (!quiz) return;
@@ -72,6 +52,7 @@ export default function HostQuestionPreviewRenderer() {
             // this will only hit if the quiz ends
             return;
         }
+
         updateCurrentQuestion(nextQuestion);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quiz]);

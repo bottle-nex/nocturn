@@ -163,18 +163,6 @@ export default class WebSocketClient {
         this.message_queue = [];
     }
 
-    public force_reconnect() {
-        if (!this.is_manually_closed) {
-            this.is_connected = false;
-            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                this.ws.close();
-            }
-            this.reconnect_attempts = 0;
-            this.reconnect_delay = 1000;
-            this.attempt_reconnect();
-        }
-    }
-
     public get_status() {
         return {
             is_connected: this.is_connected,

@@ -47,6 +47,7 @@ export interface QuizType {
     autoSave: boolean;
     liveChat: boolean;
     spectatorMode: boolean;
+    allowNewSpectator: boolean;
 
     questions: QuestionType[];
     participants?: ParticipantType[];
@@ -59,9 +60,11 @@ export interface QuestionType {
     options: string[];
     correctAnswer: number;
     explanation?: string;
+    hint?: string;
     difficulty: number;
     basePoints: number;
     timeLimit: number;
+    readingTime: number;
     orderIndex: number;
     imageUrl?: string;
     quizId: string;
@@ -76,6 +79,8 @@ export interface ParticipantType {
     ipAddress?: string | null;
     isEliminated: boolean;
     isNameChanged: boolean;
+    warningCount: number;
+    isKicked: boolean;
     eliminatedAt?: Date | null;
     eliminatedAtQuestion?: string | null;
     finalRank?: number | null;
@@ -91,6 +96,8 @@ export interface SpectatorType {
     id: string;
     nickname: string;
     isNameChanged: boolean;
+    warningCount: number;
+    isKicked: boolean;
     avatar?: string | null;
     ipAddress?: string | null;
     connectionId?: string | null;

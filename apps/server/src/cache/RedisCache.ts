@@ -1,15 +1,23 @@
 import { GameSession, Question, Response, Spectator } from '@repo/db/client';
 import Redis from 'ioredis';
 import { Participant, Quiz } from '@repo/db/client';
+import { env } from '../configs/env';
 
 const SECONDS = 60;
 const MINUTES = 60;
 const HOURS = 24;
-const REDIS_URL = process.env.REDIS_URL;
+const REDIS_URL = env.SERVER_REDIS_URL;
 
 type QuizWithQuestions = Quiz & {
     questions: Question[];
 };
+
+// interface LifelineSession {
+//     requestingParticipantId: string;
+//     expiresAt: number;
+//     responses: Record<string, number>;
+//     created_at: number;
+// }
 
 export default class RedisCache {
     private redis_cache: Redis;
@@ -94,7 +102,6 @@ export default class RedisCache {
             return Object.entries(data).map(([id, value]) => {
                 const participant = JSON.parse(value);
 
-                // this will always include participant_id
                 if (fields && fields.length > 0) {
                     const filtered: any = { id };
                     for (const field of fields) {
@@ -105,7 +112,6 @@ export default class RedisCache {
                     return filtered;
                 }
 
-                // if no field specified return complete participant
                 return { id, ...participant };
             });
         } catch (err) {
@@ -187,37 +193,31 @@ export default class RedisCache {
             const data = await this.redis_cache.hgetall(key);
             if (!data) return [];
 
-            return (
-                Object.entries(data)
+            return Object.entries(data)
+                .filter(
+                    ([unique_key]) =>
+                        unique_key.startsWith(`${question_id}`) ||
+                        unique_key.startsWith(`${question_id}_`),
+                )
+                .map(([unique_key, value]) => {
+                    const response = JSON.parse(value);
+                    const participant_id = unique_key.split('_')[1];
 
-                    // filter responses for this question
-                    .filter(
-                        ([unique_key]) =>
-                            unique_key.startsWith(`${question_id}`) ||
-                            unique_key.startsWith(`${question_id}_`),
-                    )
-                    .map(([unique_key, value]) => {
-                        const response = JSON.parse(value);
-                        const participant_id = unique_key.split('_')[1];
-
-                        // this will always includeresponseId and participantId
-                        if (fields && fields.length > 0) {
-                            const filtered: any = {
-                                id: response.id,
-                                participantId: participant_id,
-                            };
-                            for (const field of fields) {
-                                if (response[field] !== undefined) {
-                                    filtered[field] = response[field];
-                                }
+                    if (fields && fields.length > 0) {
+                        const filtered: any = {
+                            id: response.id,
+                            participantId: participant_id,
+                        };
+                        for (const field of fields) {
+                            if (response[field] !== undefined) {
+                                filtered[field] = response[field];
                             }
-                            return filtered;
                         }
+                        return filtered;
+                    }
 
-                        // if no field specified return complete response
-                        return { id: response.id, participantId: participant_id, ...response };
-                    })
-            );
+                    return { id: response.id, participantId: participant_id, ...response };
+                });
         } catch (err) {
             console.error('Error in get_all_question_responses:', err);
             return [];
@@ -259,6 +259,33 @@ export default class RedisCache {
         }
     }
 
+    public async get_all_spectators(game_session_id: string, fields?: (keyof Spectator)[]) {
+        const key = this.get_spectator_key(game_session_id);
+        try {
+            const data = await this.redis_cache.hgetall(key);
+            if (!data) return [];
+
+            return Object.entries(data).map(([id, value]) => {
+                const spectator = JSON.parse(value);
+
+                if (fields && fields.length > 0) {
+                    const filtered: any = { id };
+                    for (const field of fields) {
+                        if (spectator[field] !== undefined) {
+                            filtered[field] = spectator[field];
+                        }
+                    }
+                    return filtered;
+                }
+
+                return { id, ...spectator };
+            });
+        } catch (err) {
+            console.error('Error in get_all_spectators:', err);
+            return [];
+        }
+    }
+
     public async delete_spectator(game_session_id: string, spectator_id: string) {
         const key = this.get_spectator_key(game_session_id);
         try {
@@ -274,7 +301,7 @@ export default class RedisCache {
 
     //  <------------------ QUIZ ------------------>
 
-    public async set_quiz(game_session_id: string, quiz_id: string, quiz: Partial<Quiz>) {
+    public async set_quiz(game_session_id: string, quiz: Partial<Quiz>) {
         try {
             const key = this.get_quiz_key(game_session_id);
 
@@ -300,7 +327,6 @@ export default class RedisCache {
             for (const [key, value] of Object.entries(data)) {
                 try {
                     const parsedValue = JSON.parse(value);
-
                     parsed[key as keyof Quiz] = parsedValue;
                 } catch (parseError) {
                     if (key === 'questions') {
@@ -310,7 +336,6 @@ export default class RedisCache {
                         );
                         return null;
                     }
-
                     parsed[key as keyof Quiz] = value as any;
                 }
             }
@@ -359,6 +384,189 @@ export default class RedisCache {
         } catch (err) {
             console.error(`Error reading lock owner ${lock_key}:`, err);
             return null;
+        }
+    }
+
+    //  <------------------ LIFELINE-EVENTS ------------------>
+
+    public async cache_participant_lifeline_used(game_session_id: string, participant_id: string) {
+        try {
+            const key = this.get_lifeline_key(game_session_id);
+            await this.redis_cache.hset(key, participant_id, 'used');
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+        } catch (error) {
+            console.error('Error caching lifeline usage: ', error);
+            return null;
+        }
+    }
+
+    public async get_cached_lifeline_usage(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<boolean | null> {
+        try {
+            const key = this.get_lifeline_key(game_session_id);
+            const result = await this.redis_cache.hget(key, participant_id);
+            return result === 'used' ? true : result === null ? null : false;
+        } catch (error) {
+            console.error('Error checking cached lifeline usage:', error);
+            return null;
+        }
+    }
+
+    private get_lifeline_key(game_session_id: string): string {
+        return `game_session:${game_session_id}:lifelines`;
+    }
+
+    public async set_active_lifeline_session(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        expiry_seconds: number = 60,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const data = {
+                questionId: question_id,
+                participantId: participant_id,
+                responses: {},
+                createdAt: Date.now(),
+                expiresAt: Date.now() + expiry_seconds * 1000,
+            };
+            await this.redis_cache.set(key, JSON.stringify(data), 'EX', expiry_seconds);
+            return true;
+        } catch (error) {
+            console.error('Error setting active lifeline session:', error);
+            return false;
+        }
+    }
+
+    public async get_active_lifeline_session(
+        game_session_id: string,
+        question_id: string,
+    ): Promise<{
+        questionId: string;
+        participantId: string;
+        responses: Record<string, number>;
+        createdAt: number;
+        expiresAt: number;
+    } | null> {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const data = await this.redis_cache.get(key);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error('Error getting active lifeline session:', error);
+            return null;
+        }
+    }
+
+    public async delete_active_lifeline_session(game_session_id: string, question_id: string) {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            await this.redis_cache.del(key);
+        } catch (error) {
+            console.error('Error deleting active lifeline session:', error);
+        }
+    }
+
+    private get_active_lifeline_key(game_session_id: string, question_id: string): string {
+        return `game_session:${game_session_id}:lifeline:${question_id}`;
+    }
+
+    public async add_spectator_lifeline_response(
+        game_session_id: string,
+        question_id: string,
+        spectator_id: string,
+        selected_option: number,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const session = await this.get_active_lifeline_session(game_session_id, question_id);
+
+            if (!session) {
+                console.error('No active lifeline session found');
+                return false;
+            }
+
+            if (Date.now() > session.expiresAt) {
+                console.error('Lifeline session expired');
+                await this.delete_active_lifeline_session(game_session_id, question_id);
+                return false;
+            }
+
+            session.responses[spectator_id] = selected_option;
+
+            const remainingTTL = Math.ceil((session.expiresAt - Date.now()) / 1000);
+            if (remainingTTL <= 0) {
+                await this.delete_active_lifeline_session(game_session_id, question_id);
+                return false;
+            }
+
+            await this.redis_cache.set(key, JSON.stringify(session), 'EX', remainingTTL);
+            return true;
+        } catch (error) {
+            console.error('Error adding spectator lifeline response:', error);
+            return false;
+        }
+    }
+
+    public async get_lifeline_results(
+        game_session_id: string,
+        question_id: string,
+    ): Promise<{
+        optionCounts: number[];
+        totalResponses: number;
+        mostPopularOption: number | null;
+        wasSuccessful: boolean;
+    } | null> {
+        try {
+            const session = await this.get_active_lifeline_session(game_session_id, question_id);
+            if (!session) return null;
+
+            const optionCounts = [0, 0, 0, 0];
+            let totalResponses = 0;
+
+            Object.values(session.responses).forEach((option) => {
+                if (option >= 0 && option <= 3) {
+                    optionCounts[option]!++;
+                    totalResponses++;
+                }
+            });
+
+            let mostPopularOption: number | null = null;
+            let maxVotes = 0;
+
+            optionCounts.forEach((count, index) => {
+                if (count > maxVotes) {
+                    maxVotes = count;
+                    mostPopularOption = index;
+                }
+            });
+
+            const wasSuccessful = totalResponses >= 3 && maxVotes > totalResponses * 0.5;
+
+            return {
+                optionCounts,
+                totalResponses,
+                mostPopularOption,
+                wasSuccessful,
+            };
+        } catch (error) {
+            console.error('Error getting lifeline results:', error);
+            return null;
+        }
+    }
+
+    public async cleanup_all_lifeline_sessions(game_session_id: string): Promise<void> {
+        try {
+            const pattern = `game_session:${game_session_id}:lifeline:*`;
+            const keys = await this.redis_cache.keys(pattern);
+            if (keys.length > 0) {
+                await this.redis_cache.del(...keys);
+            }
+        } catch (error) {
+            console.error('Error cleaning up lifeline sessions:', error);
         }
     }
 }

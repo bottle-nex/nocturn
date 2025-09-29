@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '../ui/button';
 import { RiUserFill } from 'react-icons/ri';
-import { SiSolana } from 'react-icons/si';
 import { Input } from '../ui/input';
 import { MdChevronRight } from 'react-icons/md';
 import { cn } from '@/lib/utils';
@@ -24,8 +23,8 @@ export default function DashboardStakedAmountCard() {
     }
 
     return (
-        <div className="flex-1 py-7 md:py-12 h-full w-full">
-            <div className="bg-primary h-full max-h-[24rem] rounded-4xl p-6 relative overflow-hidden select-none">
+        <div className="flex-1 overflow-hidden w-full">
+            <div className="bg-primary h-full rounded-3xl p-6 relative overflow-hidden select-none">
                 <div className="flex flex-col justify-between gap-y-2 h-full">
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-col items-start gap-y-2">
@@ -57,14 +56,14 @@ export default function DashboardStakedAmountCard() {
                                 </Button>
                             </form>
                         </div>
-                        <div>
+                        {/* <div>
                             <h2 className="text-xl font-semibold">Staked Amount</h2>
                             <span className="font-light text-sm">updated 1 day ago</span>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="w-full flex flex-col gap-y-3 sm:flex-row-reverse sm:items-end justify-between ">
                         {/* staked amount */}
-                        <div className="w-full flex justify-end flex-col gap-y-3 group">
+                        {/* <div className="w-full flex justify-end flex-col gap-y-3 group">
                             <div className="flex items-center justify-end gap-x-2 text-white/80">
                                 <span className="font-light">Staked amount</span>
                                 <div className="relative">
@@ -78,7 +77,7 @@ export default function DashboardStakedAmountCard() {
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* participants */}
                         <div className="flex justify-start sm:justify-between flex-col gap-y-3">

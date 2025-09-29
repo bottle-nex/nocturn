@@ -13,6 +13,8 @@ import prisma from '@repo/db/client';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
+import QuizSettings from '../class/quizSettings';
+import { quizSettingInstance } from '../services/init-services';
 
 interface SpectatorManagerDependencies {
     publisher: Redis;
@@ -29,6 +31,7 @@ export default class SpectatorManager {
     private quizManager: QuizManager;
     private socket_mapping: Map<string, CustomWebSocket>;
     private database_queue: DatabaseQueue;
+    private quiz_settings: QuizSettings;
     redis_cache: RedisCache;
 
     private spectator_socket_mapping: Map<string, string> = new Map(); // Map<spectatorId, socketId>
@@ -39,6 +42,7 @@ export default class SpectatorManager {
         this.socket_mapping = dependencies.socket_mapping;
         this.database_queue = dependencies.database_queue;
         this.redis_cache = dependencies.redis_cache;
+        this.quiz_settings = quizSettingInstance;
     }
 
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
@@ -102,12 +106,12 @@ export default class SpectatorManager {
         });
 
         ws.on('close', () => {
+            // this.handle_spectator_leave_gamesession(ws);
             this.cleanup_spectator_socket(ws);
         });
 
         ws.on('error', (error) => {
             console.error('WebSocket error:', error);
-            this.cleanup_spectator_socket(ws);
         });
     }
 
@@ -131,10 +135,80 @@ export default class SpectatorManager {
                 this.handle_incoming_chat_reaction_event(payload, ws);
                 break;
 
+            case MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION:
+                this.handle_spectator_leave_gamesession(ws);
+                break;
+            case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
+                this.handle_spectator_lifeline_response(payload, ws);
+                break;
+
             default:
                 console.error('Unknown message type: ', type);
                 break;
         }
+    }
+
+    private async handle_spectator_lifeline_response(payload: any, ws: CustomWebSocket) {
+        const { gameSessionId } = ws.user;
+        const { questionId, selectedOption } = payload;
+
+        if (typeof selectedOption !== 'number' || selectedOption < 0 || selectedOption > 3) {
+            console.error('Invalid option selected');
+            return;
+        }
+
+        const gameSession = await this.redis_cache.get_game_session(gameSessionId);
+        if (!gameSession || gameSession.currentPhase !== 'QUESTION_ACTIVE') {
+            console.error('Cannot vote,question not active');
+            return;
+        }
+
+        const lifelineSession = await this.redis_cache.get_active_lifeline_session(
+            gameSessionId,
+            questionId,
+        );
+
+        if (!lifelineSession) {
+            console.error('No active lifeline session');
+            return;
+        }
+
+        if (Date.now() > lifelineSession.expiresAt) {
+            console.error('Lifeline session expired');
+            await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
+            return;
+        }
+
+        const success = await this.redis_cache.add_spectator_lifeline_response(
+            gameSessionId,
+            questionId,
+            ws.user.userId,
+            selectedOption,
+        );
+
+        if (!success) {
+            console.error('Failed to record lifeline response');
+            return;
+        }
+
+        const response_message: PubSubMessageTypes = {
+            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+            payload: {
+                questionId,
+                spectatorId: ws.user.userId,
+                selectedOption,
+            },
+        };
+        this.quizManager.publish_event_to_redis(gameSessionId, response_message);
+
+        const confirmation = {
+            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+            payload: {
+                status: 'recorded',
+                selectedOption,
+            },
+        };
+        ws.send(JSON.stringify(confirmation));
     }
 
     private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
@@ -207,7 +281,7 @@ export default class SpectatorManager {
             type: MESSAGE_TYPES.SPECTATOR_NAME_CHANGE,
             payload: {
                 id: ws.user.userId,
-                nickname: data.nickname,
+                nickname: data.spectator.nickname,
             },
         };
 
@@ -217,6 +291,11 @@ export default class SpectatorManager {
     private async handle_send_chat_message(payload: IncomingChatMessage, ws: CustomWebSocket) {
         const { gameSessionId, quizId, userId: sender_id, role: sender_role } = ws.user;
         const { senderName, message, repliedToId, senderAvatar } = payload;
+
+        const is_chat_allowed = this.quiz_settings.quiz_settings_mapping.get(
+            ws.user.gameSessionId,
+        )?.liveChat;
+        if (!is_chat_allowed) return;
 
         if (!quizId || !sender_id || !message) {
             console.error('Missing required fields in chat message payload:', {
@@ -300,5 +379,30 @@ export default class SpectatorManager {
 
     private generateSocketId(): string {
         return uuid();
+    }
+
+    private async handle_spectator_leave_gamesession(ws: CustomWebSocket) {
+        const { gameSessionId: game_session_id } = ws.user;
+        const user_id = ws.user.userId;
+
+        const spectator_cache = await this.redis_cache.get_spectator(game_session_id, user_id);
+
+        if (!spectator_cache) {
+            return;
+        }
+
+        const event_data: PubSubMessageTypes = {
+            type: MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION,
+            payload: {
+                userId: user_id,
+            },
+            exclude_socket_id: ws.id,
+        };
+
+        this.quizManager.publish_event_to_redis(game_session_id, event_data);
+
+        // delete the user from the database
+        // either do this or add another schema for showing this user was removed
+        // this.database_queue.delete_spectator(user_id, game_session_id);
     }
 }

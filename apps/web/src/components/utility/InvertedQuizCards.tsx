@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import BackendActions from '@/lib/backend/quiz-backend-actions';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { QuizStatusEnum } from '@/types/prisma-types';
+import Image from 'next/image'; // ✅ import Image for illustration
 
 export default function InvertedQuizCards() {
     const { session } = useUserSessionStore();
@@ -55,7 +56,7 @@ export default function InvertedQuizCards() {
             setOpenQuizOptionId(null);
         } catch (err) {
             console.error('Quiz deletion failed: ', err);
-            toast.error('Failed to delted quiz');
+            toast.error('Failed to delete the quiz');
         }
     }
 
@@ -112,8 +113,8 @@ export default function InvertedQuizCards() {
     }
 
     return (
-        <div className="max-h-[24rem] h-full flex flex-row items-start justify-center mt-8">
-            {quizs.length > 0 && (
+        <div className="relative max-h-[24rem] h-full flex flex-row items-start justify-center">
+            {quizs.length > 0 ? (
                 <div className="mt-12 relative w-[20rem] h-fit">
                     <div className="absolute bottom-6 left-3 w-[90%] h-full rounded-3xl bg-dark-base/50 dark:bg-neutral-100/50 scale-95 z-0"></div>
                     <UtilityCard className="relative bg-dark-base dark:bg-neutral-200 max-w-[20rem] w-[20rem] rounded-3xl z-10 shadow-lg border-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0 cursor-pointer">
@@ -225,6 +226,19 @@ export default function InvertedQuizCards() {
                             ))}
                         </div>
                     </UtilityCard>
+                </div>
+            ) : (
+                <div className="absolute bottom-10 right-10 flex flex-col items-center justify-center">
+                    <div className="relative h-48 w-48 mb-4">
+                        <Image
+                            src="/illustrations/working.svg"
+                            alt="No quizzes"
+                            fill
+                            className="object-cover"
+                            unoptimized
+                        />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Start by creating a quiz</p>
                 </div>
             )}
         </div>

@@ -38,31 +38,37 @@ export const ShinyButton = React.forwardRef<HTMLButtonElement, ShinyButtonProps>
             <motion.button
                 ref={ref}
                 className={cn(
-                    'relative cursor-pointer rounded-lg px-6 py-2 font-medium backdrop-blur-xl border transition-shadow duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,var(--primary)/10%_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_var(--primary)/10%]',
+                    'relative cursor-pointer rounded-full px-4 py-2 font-light backdrop-blur-xl border transition-shadow duration-300 ease-in-out hover:shadow dark:bg-[radial-gradient(circle_at_50%_0%,var(--primary)/10%_0%,transparent_60%)] dark:hover:shadow-[0_0_20px_var(--primary)/10%]',
+                    // make the button a flex container
+                    'flex items-center justify-center gap-x-1',
                     className,
                 )}
                 {...animationProps}
                 {...props}
             >
+                {/* Shiny text overlay */}
                 <span
-                    className="relative block size-full text-sm uppercase tracking-wide text-[rgb(0,0,0,65%)] dark:font-light dark:text-[rgb(255,255,255,90%)]"
+                    className="absolute inset-0 block rounded-full"
+                    style={{
+                        mask: 'linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box exclude, linear-gradient(rgb(0,0,0), rgb(0,0,0))',
+                        WebkitMask:
+                            'linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box exclude, linear-gradient(rgb(0,0,0), rgb(0,0,0))',
+                        backgroundImage:
+                            'linear-gradient(-75deg,var(--primary)/10% calc(var(--x)+20%),var(--primary)/50% calc(var(--x)+25%),var(--primary)/10% calc(var(--x)+100%))',
+                    }}
+                />
+                {/* Children wrapper for mask effect */}
+                <span
+                    className="relative flex items-center justify-center gap-x-1 text-[13px] text-[rgb(0,0,0,65%)] dark:text-white tracking-wide"
                     style={{
                         maskImage:
+                            'linear-gradient(-75deg,var(--primary) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),var(--primary) calc(var(--x) + 100%))',
+                        WebkitMaskImage:
                             'linear-gradient(-75deg,var(--primary) calc(var(--x) + 20%),transparent calc(var(--x) + 30%),var(--primary) calc(var(--x) + 100%))',
                     }}
                 >
                     {children}
                 </span>
-                <span
-                    style={{
-                        mask: 'linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box exclude,linear-gradient(rgb(0,0,0), rgb(0,0,0))',
-                        WebkitMask:
-                            'linear-gradient(rgb(0,0,0), rgb(0,0,0)) content-box exclude,linear-gradient(rgb(0,0,0), rgb(0,0,0))',
-                        backgroundImage:
-                            'linear-gradient(-75deg,var(--primary)/10% calc(var(--x)+20%),var(--primary)/50% calc(var(--x)+25%),var(--primary)/10% calc(var(--x)+100%))',
-                    }}
-                    className="absolute inset-0 z-10 block rounded-[inherit] p-px"
-                />
             </motion.button>
         );
     },

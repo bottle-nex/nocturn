@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { parse } from 'cookie';
 import prisma from '@repo/db/client';
-import { CookiePayload } from '../../types/web-socket-types';
+import { CookiePayload, USER_TYPE } from '../../types/web-socket-types';
 import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
 import { QuizPhase } from '.prisma/client';
@@ -45,13 +45,14 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     eliminationThreshold: true,
                     timeBonus: true,
                     liveChat: true,
+                    allowNewSpectator: true,
                     spectatorMode: true,
                     basePointsPerQuestion: true,
                     pointsMultiplier: true,
                     prizePool: true,
                     currency: true,
                     interactions: true,
-                    ...(role === 'HOST' && {
+                    ...(role === USER_TYPE.HOST && {
                         spectatorCode: true,
                         participantCode: true,
                     }),
@@ -68,13 +69,14 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                             email: true,
                         },
                     },
-                    ...(role === 'HOST' && {
+                    ...(role === USER_TYPE.HOST && {
                         questions: {
                             select: {
                                 id: true,
                                 question: true,
                                 options: true,
                                 explanation: true,
+                                hint: true,
                                 difficulty: true,
                                 basePoints: true,
                                 timeLimit: true,
@@ -121,6 +123,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             const participants = await tx.participant.findMany({
                 where: {
                     quizId: quizId,
+                    isKicked: false,
                 },
                 select: {
                     id: true,
@@ -143,6 +146,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     select: {
                         id: true,
                         question: true,
+                        orderIndex: role === USER_TYPE.HOST,
                         ...(questionId &&
                             (gameSession?.currentPhase === QuizPhase.QUESTION_ACTIVE ||
                                 gameSession?.currentPhase === QuizPhase.SHOW_RESULTS) && {
@@ -155,6 +159,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             const spectators = await tx.spectator.findMany({
                 where: {
                     quizId: quizId,
+                    isKicked: false,
                 },
                 select: {
                     id: true,
@@ -167,7 +172,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             let userData = null;
 
             switch (role) {
-                case 'HOST':
+                case USER_TYPE.HOST:
                     userData = await tx.user.findUnique({
                         where: { id: userId },
                         select: {
@@ -181,11 +186,13 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     });
                     break;
 
-                case 'PARTICIPANT':
+                // returning the participant data if the participant is not kicked
+                case USER_TYPE.PARTICIPANT:
                     userData = await tx.participant.findFirst({
                         where: {
                             quizId: quizId,
                             id: userId,
+                            isKicked: false,
                         },
                         select: {
                             id: true,
@@ -204,11 +211,13 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     });
                     break;
 
-                case 'SPECTATOR':
+                // returning the spectator data if the spectator is not kicked
+                case USER_TYPE.SPECTATOR:
                     userData = await tx.spectator.findFirst({
                         where: {
                             quizId: quizId,
                             id: userId,
+                            isKicked: false,
                         },
                         select: {
                             id: true,

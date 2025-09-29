@@ -79,14 +79,14 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
             >
                 <div className="flex flex-col gap-y-3 ">
                     <div className="w-[6rem] flex-shrink-0">
-                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                        <div className="bg-light-base dark:bg-dark-primary/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
                             {option_one.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10',
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10 cursor-pointer',
                                             `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
                                         )}
                                     >
@@ -109,7 +109,7 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10',
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10 cursor-pointer',
                                             `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
                                         )}
                                     >

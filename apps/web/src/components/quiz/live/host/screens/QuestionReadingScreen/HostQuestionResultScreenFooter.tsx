@@ -13,7 +13,7 @@ export default function HostQuestionResultScreenFooter() {
     return (
         <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit">
             <Button
-                className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-black dark:hover:-translate-y-0.5 z-20"
+                className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-black dark:hover:-translate-y-0.5 z-20 cursor-pointer"
                 onClick={handleQuestionPreviewPageChange}
             >
                 Get Started

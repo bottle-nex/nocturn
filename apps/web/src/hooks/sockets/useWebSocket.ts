@@ -119,9 +119,69 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleLaunchHintEvent(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.HOST_EMITS_HINT,
+            payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     function handleParticipantResponseMessage(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE,
+            payload: payload,
+        };
+
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
+    function handleParticipantLeaveGameSession(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
+    function handleParticipantRequestLifeline(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+    function handleSettingsChangeEvent(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.SETTINGS_CHANGE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
+    function handleSpectatorLifelineResponse(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
+    function handleAddParticipantWarningCount(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.PARTICIPANT_WARNING_COUNT,
             payload: payload,
         };
 
@@ -143,5 +203,11 @@ export const useWebSocket = () => {
         handleSendChatReactionMessage,
         handleSendHostLaunchQuestion,
         handleParticipantResponseMessage,
+        handleLaunchHintEvent,
+        handleParticipantLeaveGameSession,
+        handleSettingsChangeEvent,
+        handleAddParticipantWarningCount,
+        handleParticipantRequestLifeline,
+        handleSpectatorLifelineResponse,
     };
 };

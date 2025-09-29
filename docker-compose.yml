@@ -3,7 +3,7 @@ version: "3.8"
 services:
   redis:
     image: redis:7-alpine
-    container_name: redis-server
+    container_name: nocturn-redis
     ports:
       - "6379:6379"
     volumes:
@@ -14,20 +14,33 @@ services:
 
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: redis-commander
+    container_name: nocturn-redis-commander
     depends_on:
       - redis
     ports:
       - "8081:8081"
     environment:
-      - REDIS_HOSTS=local:redis:6379
-      - HTTP_USER=admin
-      - HTTP_PASSWORD=secret
+      REDIS_HOSTS: local:redis:6379
+      HTTP_USER: admin
+      HTTP_PASSWORD: secret
     networks:
       - redis-network
 
+  postgres:
+    image: postgres:16
+    container_name: nocturn-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nocturn_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   redis_data:
+  postgres_data:
 
 networks:
   redis-network:

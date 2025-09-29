@@ -100,7 +100,7 @@ function BigHomeNavbar({
                         variant="outline"
                         size="sm"
                         className={cn(
-                            'font-light text-[13px] tracking-wide flex items-center gap-x-2 transition-transform hover:-translate-y-0.5',
+                            'font-light text-[13px] tracking-wide flex items-center gap-x-2 transition-transform hover:-translate-y-0.5 !cursor-pointer',
                             isWalletConnected
                                 ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
                                 : 'text-primary border-primary hover:!text-primary ',
@@ -118,7 +118,7 @@ function BigHomeNavbar({
                         onClick={createNewQuizHandler}
                         className={cn(
                             'font-light text-[13px] tracking-wide flex items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-[10] rounded-lg',
-                            'bg-dark-base dark:bg-light-base dark:hover:bg-light-base hover:bg-dark-base',
+                            'bg-dark-base dark:bg-light-base dark:hover:bg-light-base hover:bg-dark-base cursor-pointer',
                         )}
                     >
                         Create Quiz
@@ -162,10 +162,10 @@ function SmallHomeNavbar({
                         <DarkModeToggle />
                     </div>
                     <Button
-                        variant="outline"
+                        variant={'outline'}
                         size="sm"
                         className={cn(
-                            'flex items-center gap-x-2 font-light text-[13px] tracking-wide transition-transform hover:-translate-y-0.5',
+                            'flex items-center gap-x-2 font-light text-[13px] tracking-wide transition-transform hover:-translate-y-0.5 !cursor-pointer',
                             isWalletConnected
                                 ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
                                 : 'text-primary border-primary hover:!text-primary ',

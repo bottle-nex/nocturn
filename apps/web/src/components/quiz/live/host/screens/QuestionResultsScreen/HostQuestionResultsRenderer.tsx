@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import CountDownClock from '@/components/ui/CountDownClock';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
@@ -8,6 +9,7 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { HostScreenEnum } from '@/types/prisma-types';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import { MdNavigateNext } from 'react-icons/md';
 
 export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
@@ -77,17 +79,18 @@ export default function HostQuestionResultsRenderer() {
                     <div>Participants and Spectators are now seeing results of this question</div>
                 </div>
 
-                <div
+                <Button
                     className={cn(
-                        'absolute bottom-4 left-5',
-                        'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary',
-                        'px-3.5 py-1.5 text-[18px] rounded-md',
+                        'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
+                        'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary text-xs',
+                        'px-3.5 !pl-4 py-1.5 text-xs rounded-md tracking-wider',
                         'hover:-translate-y-0.5 transition-all transform duration-150',
                     )}
                     onClick={handleOnClick}
                 >
                     Next Question
-                </div>
+                    <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />
+                </Button>
             </div>
         </div>
     );

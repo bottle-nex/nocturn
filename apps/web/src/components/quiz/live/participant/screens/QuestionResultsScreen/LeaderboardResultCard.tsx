@@ -16,7 +16,8 @@ export default function LeaderboardResultCard({
     rank: number;
     streak: number;
 }) {
-    const isCorrect = userAnswer != null && userAnswer === currentQuestion?.correctAnswer;
+    const hasAnswered = userAnswer !== undefined;
+    const isCorrect = hasAnswered && userAnswer === currentQuestion?.correctAnswer;
 
     return (
         <div className="w-full max-w-[37rem] mx-auto flex flex-col gap-y-3">
@@ -88,7 +89,7 @@ export default function LeaderboardResultCard({
                                     'border rounded-lg sm:rounded-xl p-3 sm:p-4',
                                 )}
                             >
-                                {userAnswer ? (
+                                {hasAnswered ? (
                                     <div className="flex items-center justify-between text-neutral-300 text-sm sm:text-base">
                                         <span
                                             className={`font-medium ${isCorrect ? 'text-teal-300' : 'text-rose-300'}`}
@@ -96,7 +97,7 @@ export default function LeaderboardResultCard({
                                             Your Answer
                                         </span>
                                         <span className="truncate ml-2">
-                                            {currentQuestion?.options[userAnswer]}{' '}
+                                            {currentQuestion?.options[userAnswer!]}{' '}
                                             {isCorrect ? '✓' : '✗'}
                                         </span>
                                     </div>
@@ -112,12 +113,12 @@ export default function LeaderboardResultCard({
             </div>
             <div
                 className={cn(
-                    'w-full bg-white/7 backdrop-blur-3xl border border-slate-700/40 rounded-lg sm:rounded-xl shadow-2xl overflow-hidden p-3 sm:p-4 lg:p-5 ',
-                    'text-neutral-300',
+                    'w-full bg-white/7 backdrop-blur-3xl border border-slate-700/40 rounded-lg sm:rounded-xl shadow-2xl overflow-hidden p-3 sm:p-4 lg:px-5 lg:py-4 ',
+                    'text-neutral-300 text-left',
                 )}
             >
                 {currentQuestion?.explanation ? (
-                    <div>{currentQuestion?.explanation}</div>
+                    <div className="text-sm">{currentQuestion?.explanation}</div>
                 ) : (
                     <div>No explanation provided</div>
                 )}

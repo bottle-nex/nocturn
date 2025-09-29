@@ -13,20 +13,9 @@ type FooterSection = {
     delay: string;
 };
 
-const obj = [
-    {
-        icon: FaXTwitter,
-        url: 'https://x.com/triangulum-x',
-    },
-    {
-        icon: FaGithub,
-        url: 'https://github.com/celestium-x/triangulum-x',
-    },
-];
-
 const footerSections: FooterSection[] = [
     {
-        title: 'Try Triangulum',
+        title: 'Try Nocturn',
         items: [
             { label: 'Overview', href: '/overview' },
             { label: 'Features', href: '/features' },
@@ -49,6 +38,7 @@ const footerSections: FooterSection[] = [
         items: [
             { label: 'Documentation', href: '/docs' },
             { label: 'Privacy policy', href: '/privacy' },
+            { label: 'Contributors', href: '/contributors' },
             { label: 'Security', href: '/security' },
             { label: 'Safety', href: '/safety' },
             { label: 'Legal', href: '/legal' },
@@ -81,26 +71,46 @@ export default function HomeScreenFooter() {
     return (
         <footer
             id="animated-footer"
-            className="relative w-full min-h-5xl pb-50 text-white overflow-hidden select-none"
+            className="relative w-full min-h-5xl pb-50 dark:text-white text-neutral-950 overflow-hidden select-none"
         >
             <div
                 className={cn(
-                    'absolute inset-0 transition-all duration-[1500ms] ease-out',
+                    'absolute inset-0 transition-all duration-[1500ms] ease-out dark:block hidden',
                     isVisible ? 'opacity-100' : 'opacity-0',
                 )}
                 style={{
                     background: `
                             radial-gradient(ellipse at center bottom, 
-                            rgba(255, 165, 80, 0.3) 0%, 
-                            rgba(255, 140, 60, 0.25) 15%, 
-                            rgba(220, 100, 40, 0.2) 25%, 
-                            rgba(180, 80, 35, 0.15) 35%, 
-                            rgba(120, 60, 30, 0.12) 45%, 
-                            rgba(80, 50, 40, 0.1) 55%, 
+                            rgba(120, 80, 200, 0.3) 0%, 
+                            rgba(100, 70, 180, 0.25) 15%, 
+                            rgba(80, 60, 160, 0.2) 25%, 
+                            rgba(60, 50, 140, 0.15) 35%, 
+                            rgba(40, 40, 120, 0.12) 45%, 
+                            rgba(30, 30, 100, 0.1) 55%, 
                             #0A0A0A 65%, 
                             #0A0A0A 100%
                         )
                     `,
+                }}
+            />
+            <div
+                className={cn(
+                    'absolute inset-0 transition-all duration-[1500ms] ease-out dark:hidden block',
+                    isVisible ? 'opacity-100' : 'opacity-0',
+                )}
+                style={{
+                    background: `
+                                radial-gradient(ellipse at center bottom, 
+                                    rgba(120, 80, 200, 0.15) 0%, 
+                                    rgba(100, 70, 180, 0.12) 15%, 
+                                    rgba(80, 60, 160, 0.1) 25%, 
+                                    rgba(60, 50, 140, 0.08) 35%, 
+                                    rgba(40, 40, 120, 0.06) 45%, 
+                                    rgba(30, 30, 100, 0.04) 55%, 
+                                    #f5f5f5 65%, 
+                                    #f5f5f5
+                                )
+                            `,
                 }}
             />
             <div
@@ -113,25 +123,30 @@ export default function HomeScreenFooter() {
                 <div className="grid grid-cols-4 gap-40">
                     <div
                         className={cn(
-                            'flex-col transition-all duration-1000 ease-out',
+                            'flex-col items-start transition-all duration-1000 ease-out',
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6',
                         )}
                         style={{ transitionDelay: '600ms' }}
                     >
                         <AppLogo />
                         <div className="w-full flex gap-x-2 px-2.5 pt-4">
-                            {obj.map((item, idx) => (
+                            {[FaXTwitter, FaGithub].map((Icon, idx) => (
                                 <span
                                     key={idx}
-                                    onClick={() => window.open(item.url, '_blank')}
                                     className={cn(
-                                        'h-10 w-10 rounded-full border p-2 flex justify-center items-center bg-neutral-900/70 cursor-pointer',
-                                        'transition-all duration-700 ease-out hover:scale-110 hover:bg-neutral-800/80',
+                                        'h-10 w-10 rounded-full border p-2 flex justify-center items-center',
+                                        'dark:bg-neutral-900/70 bg-white/80 dark:hover:bg-neutral-800/80 hover:bg-gray-50/90',
+                                        'dark:border-neutral-700 border-gray-200',
+                                        'transition-all duration-700 ease-out hover:scale-110',
+                                        'dark:text-white text-gray-700',
+                                        'shadow-sm dark:shadow-none',
                                         isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
                                     )}
-                                    style={{ transitionDelay: `${800 + idx * 100}ms` }}
+                                    style={{
+                                        transitionDelay: `${800 + idx * 100}ms`,
+                                    }}
                                 >
-                                    <item.icon className="h-4.5 w-4.5" />
+                                    <Icon className="h-4.5 w-4.5" />
                                 </span>
                             ))}
                         </div>
@@ -166,7 +181,7 @@ export default function HomeScreenFooter() {
                                         }}
                                         onClick={() => router.push(item.href)}
                                     >
-                                        <span className="text-gray-200 hover:text-[#9573E1] transition-colors duration-300 text-sm">
+                                        <span className="dark:text-gray-200 text-gray-700 dark:hover:text-[#9573E1] hover:text-[#9573E1] transition-colors duration-300 text-sm">
                                             {item.label}
                                         </span>
                                     </li>

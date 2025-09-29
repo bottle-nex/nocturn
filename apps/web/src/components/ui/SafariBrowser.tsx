@@ -22,7 +22,7 @@ export default function SafariBrowser({
         <svg
             viewBox="0 0 1203 753"
             xmlns="http://www.w3.org/2000/svg"
-            className={`w-full h-auto ${className}`} // responsive scaling
+            className={`w-full h-auto ${className}`}
             {...props}
         >
             <g clipPath="url(#path0)">
@@ -46,7 +46,6 @@ export default function SafariBrowser({
                 <circle cx="47" cy="25" r="6" className="fill-[#E5E5E5] dark:fill-[#404040]" />
                 <circle cx="67" cy="25" r="6" className="fill-[#E5E5E5] dark:fill-[#404040]" />
 
-                {/* address bar */}
                 <path
                     d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"
                     className="fill-[#E5E5E5] dark:fill-[#404040]"

@@ -36,6 +36,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
                         question: true,
                         options: true,
                         explanation: true,
+                        hint: true,
                         difficulty: true,
                         basePoints: true,
                         timeLimit: true,

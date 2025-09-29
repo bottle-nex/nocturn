@@ -22,7 +22,7 @@ export default function ParticipantQuestionActiveRenderer() {
         <div
             ref={canvasRef}
             className={cn(
-                'w-full h-full overflow-hidden flex flex-col items-center justify-center space-y-10 z-[100]',
+                'w-full h-full overflow-hidden flex flex-col items-center justify-center space-y-10',
                 'relative p-8',
             )}
         >

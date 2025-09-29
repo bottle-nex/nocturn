@@ -1,16 +1,15 @@
-use anchor_lang::prelude::*;
+pub mod data;
+pub mod func;
 
-declare_id!("DmzXrTkrEZMubw5Sv1SjbR9bPJVp1qY2QKbLn31TE3JT");
+use anchor_lang::prelude::*;
+use func::*;
+
+declare_id!("3ULNo29njjmDEyLr8DSyyJUDgnZW5BqPGrHFXVP2fjKL");
 
 #[program]
 pub mod contract {
     use super::*;
-
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
-        Ok(())
+    pub fn create_quiz(ctx: Context<CreateQuiz>) -> Result<()> {
+        func::create_quiz::create_quiz(ctx)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

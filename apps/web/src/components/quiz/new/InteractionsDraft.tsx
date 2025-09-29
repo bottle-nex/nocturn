@@ -21,8 +21,7 @@ interface InteractionIconProps {
 
 export default function InteractionsDraft() {
     const { setState } = useDraftRendererStore();
-    const [enabled, setEnabled] = useState<boolean>(false);
-    const { quiz, toggleInteraction } = useNewQuizStore();
+    const { quiz, toggleInteraction, updateQuiz } = useNewQuizStore();
     const [hoveredType, setHoveredType] = useState<InteractionEnum | null>(null);
 
     const interactionIcons: InteractionIconProps[] = [
@@ -101,7 +100,11 @@ export default function InteractionsDraft() {
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         Enable live chat
                     </span>
-                    <Switch checked={enabled} onCheckedChange={setEnabled} />
+                    <Switch
+                        className="cursor-pointer"
+                        checked={quiz.liveChat}
+                        onCheckedChange={(checked) => updateQuiz({ liveChat: checked })}
+                    />
                 </div>
             </div>
 
@@ -118,7 +121,11 @@ export default function InteractionsDraft() {
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         Enable spectator mode
                     </span>
-                    <Switch checked={enabled} onCheckedChange={setEnabled} />
+                    <Switch
+                        className="cursor-pointer"
+                        checked={quiz.spectatorMode}
+                        onCheckedChange={(checked) => updateQuiz({ spectatorMode: checked })}
+                    />
                 </div>
             </div>
         </div>

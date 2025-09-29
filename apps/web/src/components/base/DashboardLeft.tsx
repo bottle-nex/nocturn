@@ -10,7 +10,6 @@ import { FiX } from 'react-icons/fi';
 import gsap from 'gsap';
 
 import {
-    TbSquareLetterTFilled,
     TbDashboard,
     TbPlus,
     TbTrophy,
@@ -21,7 +20,7 @@ import {
     TbSettings,
     TbHelp,
 } from 'react-icons/tb';
-import { AppLogo } from '../ui/svg/AppLogo';
+import AppLogo from '../app/AppLogo';
 
 export default function DashboardLeft(): JSX.Element {
     const { value, setValue } = useHomeRendererStore();
@@ -43,21 +42,11 @@ function BigDashboardLeft({
     return (
         <div
             className={cn(
-                'h-full bg-light-base dark:bg-dark-base/10 shrink-0 w-[300px]',
-                'hidden lg:flex flex-col justify-start items-center py-6',
-                '',
+                'h-full bg-light-base dark:bg-dark-primary/30 shrink-0 w-[300px]',
+                'hidden lg:flex flex-col items-start py-6 pt-[3rem]',
             )}
         >
-            <LogoOption
-                icon={
-                    <TbSquareLetterTFilled
-                        size={28}
-                        className="group-hover:-translate-x-1 transition-transform ease-in"
-                    />
-                }
-                label="Triangulum"
-            />
-
+            {/* <AppLogo className="px-4" /> */}
             <DashboardOptions value={value} setValue={setValue} />
         </div>
     );
@@ -115,15 +104,7 @@ function SmallDashboardLeft({
             )}
         >
             <div className="w-full flex items-center justify-between pr-10 ">
-                <LogoOption
-                    icon={
-                        <AppLogo
-                            size={28}
-                            className="group-hover:-translate-x-1 transition-transform ease-in "
-                        />
-                    }
-                    label="Triangulum"
-                />
+                <AppLogo />
 
                 <FiX size={20} onClick={handleClose} className="cursor-pointer" />
             </div>
@@ -261,16 +242,16 @@ interface OptionProps {
     isActive?: boolean;
 }
 
-function LogoOption({ icon, label }: OptionProps) {
-    return (
-        <button className="flex items-center justify-start gap-3 w-full px-4 h-10">
-            <div className="flex items-center justify-center shrink-0">{icon}</div>
-            <span className="text-xl text-dark-base dark:text-light-base font-bold whitespace-nowrap overflow-hidden leading-none">
-                {label}
-            </span>
-        </button>
-    );
-}
+// function LogoOption({ icon, label }: OptionProps) {
+//     return (
+//         <button className="flex items-center justify-start gap-3 w-full px-4 h-10">
+//             <div className="flex items-center justify-center shrink-0">{icon}</div>
+//             <span className="text-xl text-dark-base dark:text-light-base font-bold whitespace-nowrap overflow-hidden leading-none">
+//                 {label}
+//             </span>
+//         </button>
+//     );
+// }
 
 function NavOption({ icon, label, onClick, isActive }: OptionProps) {
     return (

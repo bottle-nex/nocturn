@@ -13,21 +13,9 @@ export default function OnOffToggle({ value, onChange }: ToggleSwitchProps) {
         >
             <div
                 className={`absolute top-1 left-1 h-6 w-12 rounded-full bg-neutral-800 dark:bg-white transition-all duration-300 ${
-                    value ? 'translate-x-0' : 'translate-x-[56px]'
+                    value ? 'translate-x-[56px]' : 'translate-x-0'
                 }`}
             />
-
-            <div className="flex-1 flex items-center justify-center z-10 text-sm font-medium select-none">
-                <span
-                    className={`transition-colors duration-300 ${
-                        value
-                            ? 'text-white dark:text-black'
-                            : 'text-neutral-500 dark:text-neutral-300'
-                    }`}
-                >
-                    On
-                </span>
-            </div>
 
             <div className="flex-1 flex items-center justify-center z-10 text-sm font-medium select-none">
                 <span
@@ -38,6 +26,18 @@ export default function OnOffToggle({ value, onChange }: ToggleSwitchProps) {
                     }`}
                 >
                     Off
+                </span>
+            </div>
+
+            <div className="flex-1 flex items-center justify-center z-10 text-sm font-medium select-none">
+                <span
+                    className={`transition-colors duration-300 ${
+                        value
+                            ? 'text-white dark:text-black'
+                            : 'text-neutral-500 dark:text-neutral-300'
+                    }`}
+                >
+                    On
                 </span>
             </div>
         </div>

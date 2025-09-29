@@ -7,7 +7,7 @@ import { useLiveQuizExpandableCardForSpectatorStore } from '@/store/live-quiz/us
 import SpectatorSettingsPanel from './SpectatorSettingsPanel';
 import SpectatorLeaderboardPanel from './SpectatorLeaderboardPanel';
 
-export default function SpectatorChannelRenderer() {
+export default function SpectatorPanelRenderer() {
     const expandableCardRef = useRef<HTMLDivElement>(null);
     const { type, setType, setIsExpanded, isExpanded } =
         useLiveQuizExpandableCardForSpectatorStore();

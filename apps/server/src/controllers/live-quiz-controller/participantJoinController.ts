@@ -5,6 +5,7 @@ import QuizAction from '../../class/quizAction';
 import { participantJoinSchema } from '../../schemas/participantJoinSchema';
 import { USER_TYPE } from '../../types/web-socket-types';
 import { redisCacheInstance } from '../../services/init-services';
+import { env } from '../../configs/env';
 
 export default async function participantJoinController(req: Request, res: Response) {
     const parseResult = participantJoinSchema.safeParse(req.body);
@@ -105,7 +106,7 @@ export default async function participantJoinController(req: Request, res: Respo
         try {
             res.cookie('token', secureTokenData, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: env.SERVER_NODE_ENV === 'production',
                 sameSite: 'lax',
                 maxAge: 24 * 60 * 60 * 1000,
             });

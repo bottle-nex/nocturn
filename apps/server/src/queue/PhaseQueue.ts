@@ -3,6 +3,8 @@ import RedisCache from '../cache/RedisCache';
 import { redisCacheInstance } from '../services/init-services';
 import QuizManager from '../sockets/QuizManager';
 import { PhaseTransitionJob } from '../types/web-socket-types';
+import { env } from '../configs/env';
+const REDIS_URL = env.SERVER_REDIS_URL;
 
 export default class PhaseQueue {
     private phase_queue: Bull.Queue;
@@ -13,12 +15,12 @@ export default class PhaseQueue {
     private quiz_manager!: QuizManager;
 
     constructor() {
-        this.server_id = process.env.SERVER_ID || `server_${Math.random()}`;
+        this.server_id = `server_${Math.random()}`;
         this.phase_queue = new Bull('phase-transitions', {
-            redis: { host: 'localhost', port: 6379 },
+            redis: REDIS_URL,
         });
         this.setup_queue_events();
-        this.elect_queue_processor();
+        // this.elect_queue_processor();
         this.setup_shutdown_hooks();
     }
 
@@ -65,6 +67,7 @@ export default class PhaseQueue {
                         ttl,
                     );
                     if (acquired) {
+                        console.warn('Became the leader of the fleet');
                         this.is_queue_processor = true;
                         this.start_processing_jobs();
                     }

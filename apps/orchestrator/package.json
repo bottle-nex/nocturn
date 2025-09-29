@@ -1,0 +1,21 @@
+{
+  "name": "orchestrator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --external:@prisma/client --external:express --external:jsonwebtoken --external:@aws-sdk/client-s3 --external:@aws-sdk/s3-request-presigner --external:bull --external:ioredis --external:ws ",
+    "start": "node dist/index.js",
+    "dev": "yarn build && yarn start",
+    "remove-logs": "npx ts-node src/scripts/remove-logs.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bull": "4.16.5",
+    "dotenv": "^17.2.2",
+    "ioredis": "^5.7.0",
+    "zod": "^4.1.11"
+  }
+}

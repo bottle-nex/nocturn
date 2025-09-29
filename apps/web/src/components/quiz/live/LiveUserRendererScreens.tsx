@@ -1,3 +1,5 @@
+'use client';
+
 import { useUserRoleStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import HostMainScreen from './host/HostMainScreen';
 import SpectatorMainScreen from './spectator/SpectatorMainScreen';
@@ -7,23 +9,29 @@ import CanvasAccents from '@/components/utility/CanvasAccents';
 import ParticipantMainScreen from './participant/ParticipantMainScreen';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useSubscribeEventHandlers } from '@/hooks/sockets/useSubscribeEventHandlers';
-import { TbSquareLetterTFilled } from 'react-icons/tb';
-import { cn } from '@/lib/utils';
+import AppLogo from '@/components/app/AppLogo';
+import { USER_TYPE } from '@/types/prisma-types';
 
 export default function LiveUserRendererScreens() {
     const { currentUserType } = useUserRoleStore();
     const { quiz } = useLiveQuizStore();
+
     const template = quiz?.theme ? templates.find((template) => template.id === quiz.theme) : null;
+
     useWebSocket();
     useSubscribeEventHandlers();
+
     function renderCurrentUserScreen() {
         switch (currentUserType) {
-            case 'HOST':
+            case USER_TYPE.HOST:
                 return <HostMainScreen />;
-            case 'PARTICIPANT':
+
+            case USER_TYPE.PARTICIPANT:
                 return <ParticipantMainScreen />;
-            case 'SPECTATOR':
+
+            case USER_TYPE.SPECTATOR:
                 return <SpectatorMainScreen />;
+
             default:
                 return <div>Unknown</div>;
         }
@@ -37,18 +45,9 @@ export default function LiveUserRendererScreens() {
                 color: template?.text_color,
             }}
         >
-            <div
-                className={cn(
-                    'flex items-center justify-center gap-x-2 cursor-pointer group absolute top-7 left-7',
-                )}
-            >
-                <TbSquareLetterTFilled
-                    size={28}
-                    className="group-hover:-translate-x-1 transition-transform ease-in"
-                />
-                <span className="text-xl font-medium">Triangulum</span>
-            </div>
+            <AppLogo className="absolute top-4 left-4" />
             <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />
+
             {renderCurrentUserScreen()}
         </div>
     );

@@ -4,6 +4,7 @@ import GenerateUser from '../../class/generateUser';
 import { redisCacheInstance } from '../../services/init-services';
 import QuizAction from '../../class/quizAction';
 import { USER_TYPE } from '../../types/web-socket-types';
+import { env } from '../../configs/env';
 
 export default async function spectatorJoinQuizViaURLController(req: Request, res: Response) {
     const redisCache = redisCacheInstance;
@@ -119,7 +120,7 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
         try {
             res.cookie('token', secureTokenData, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: env.SERVER_NODE_ENV === 'production',
                 sameSite: 'lax',
                 maxAge: 24 * 60 * 60 * 1000,
             });

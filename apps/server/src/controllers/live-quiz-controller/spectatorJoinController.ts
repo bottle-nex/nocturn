@@ -5,6 +5,7 @@ import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
 import { USER_TYPE } from '../../types/web-socket-types';
 import { redisCacheInstance } from '../../services/init-services';
+import { env } from '../../configs/env';
 
 export default async function spectatorJoinController(req: Request, res: Response) {
     const parsedData = spectatorJoinSchema.safeParse(req.body);
@@ -99,7 +100,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
         try {
             res.cookie('token', secureTokenData, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: env.SERVER_NODE_ENV === 'production',
                 sameSite: 'lax',
                 maxAge: 24 * 60 * 60 * 1000,
             });

@@ -32,7 +32,7 @@ export default function HostQuestionActiveOptions() {
                             key={idx}
                             className="flex flex-col items-center justify-end h-full flex-1 min-w-0 px-1"
                         >
-                            <div className="text-xs sm:text-sm text-white font-semibold mb-1">
+                            <div className="text-xs sm:text-sm font-semibold mb-1">
                                 {votes > 0 && votes}
                             </div>
                             <div

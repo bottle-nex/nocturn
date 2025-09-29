@@ -1,17 +1,20 @@
-import HeadAndSubHead from '../content/HeadAndSubHead';
-import DashboardStakedAmountCard from '../utility/DashboardStakedAmountCard';
+'use client';
+import { cn } from '@/lib/utils';
 import InvertedQuizCards from '../utility/InvertedQuizCards';
 
-export default function HomeDashboard() {
+export interface StyleInterface {
+    style?: React.CSSProperties;
+}
+
+export interface HomeDashboardProps extends StyleInterface {
+    className: string;
+}
+
+export default function HomeDashboard({ style, className }: HomeDashboardProps) {
     return (
-        <div className="p-8 relative">
-            <HeadAndSubHead
-                heading="Dashboard"
-                subHeading="Manage your quizzes, analytics, and more"
-            />
-            <div className="flex flex-col items-start lg:flex-row lg:gap-x-12 lg:items-center gap-4 h-[24rem]">
+        <div className={cn('flex flex-col', className)} style={style}>
+            <div className="w-[24rem] h-full flex flex-col relative">
                 <InvertedQuizCards />
-                <DashboardStakedAmountCard />
             </div>
         </div>
     );

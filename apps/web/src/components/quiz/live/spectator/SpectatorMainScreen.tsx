@@ -30,7 +30,7 @@ export default function SpectatorMainScreen() {
         }
     }
     return (
-        <div className="h-full relative w-full flex z-100">
+        <div className="h-full relative w-full flex">
             {renderHostScreenPanels()}
             <SpectatorMainFooter />
             <SpectatorPanelRenderer />

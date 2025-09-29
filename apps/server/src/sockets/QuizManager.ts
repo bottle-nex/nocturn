@@ -39,7 +39,7 @@ export default class QuizManager {
         const game_session = await prisma.gameSession.findUnique({
             where: { id: game_session_id },
         });
-
+        //     this.broadcast_to_session()
         if (!game_session) {
             throw new Error('Game session not found');
         }
@@ -58,7 +58,7 @@ export default class QuizManager {
         }
 
         await this.redis_cache.set_game_session(game_session_id, game_session);
-        await this.redis_cache.set_quiz(game_session_id, quiz_id, quiz);
+        await this.redis_cache.set_quiz(game_session_id, quiz);
     }
 
     public async onParticipantConnect(decoded_cookie_payload: CookiePayload) {
@@ -67,6 +67,9 @@ export default class QuizManager {
             decoded_cookie_payload.gameSessionId,
             particpant_id,
         );
+        if (!particicpant_cache) {
+            return;
+        }
         const participant: Partial<Participant> = {
             id: particicpant_cache.id,
             avatar: particicpant_cache.avatar,
@@ -135,6 +138,8 @@ export default class QuizManager {
             console.error('Quiz not found');
             return;
         }
+
+        // clear the key
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
         if (!question) {
@@ -217,6 +222,8 @@ export default class QuizManager {
             console.error('Quiz not found');
             return;
         }
+
+        await this.redis_cache.cleanup_all_lifeline_sessions(data.gameSessionId);
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
 

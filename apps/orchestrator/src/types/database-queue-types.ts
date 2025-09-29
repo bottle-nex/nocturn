@@ -1,0 +1,16 @@
+export interface JobOption {
+  attempts?: number;
+  delay?: number;
+  removeOnComplete?: number;
+  removeOnFail?: number;
+}
+
+export enum QueueJobTypes {
+  UPDATE_GAME_SESSION = "UPDATE_GAME_SESSION",
+  UPDATE_QUIZ = "UPDATE_QUIZ",
+  UPDATE_PARTICIPANT = "UPDATE_PARTICIPANT",
+  UPDATE_SPECTATOR = "UPDATE_SPECTATOR",
+  CREATE_CHAT_MESSAGE = "CREATE_CHAT_MESSAGE",
+  CREATE_CHAT_REACTION = "CREATE_CHAT_REACTION",
+  CREATE_PARTICIPANT_RESPONSE = "CREATE_PARTICIPANT_RESPONSE",
+}

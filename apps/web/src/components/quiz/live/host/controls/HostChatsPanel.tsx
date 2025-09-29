@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import TextArea from '@/components/ui/textarea';
+import TextArea from '@/components/ui/chat-textarea';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { cn } from '@/lib/utils';

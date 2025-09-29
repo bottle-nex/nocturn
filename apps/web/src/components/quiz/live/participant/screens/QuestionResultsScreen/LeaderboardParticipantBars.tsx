@@ -2,8 +2,7 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { useRef } from 'react';
 
 export default function LeaderboardParticipantBar({
     baseHeight,
@@ -23,15 +22,6 @@ export default function LeaderboardParticipantBar({
     you: boolean;
 }) {
     const barRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const variation = Math.floor(Math.random() * 11) - 5;
-            const newHeight = Math.max(baseHeight + variation, 30);
-            gsap.to(barRef.current, { height: newHeight, duration: 1, ease: 'power2.inOut' });
-        }, 1500);
-
-        return () => clearInterval(interval);
-    }, [baseHeight]);
 
     const crownColors: Record<number, string> = {
         1: '#FFD700',

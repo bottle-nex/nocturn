@@ -10,13 +10,15 @@ import { FaLightbulb } from 'react-icons/fa';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import DifficultyTicker from '@/components/tickers/DifficultyTicker';
 import { QuestionType } from '@/types/prisma-types';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
-export default function HostQuestionReviewFooter() {
+export default function HostQuestionPreviewFooter() {
     const { quiz, currentQuestion, updateQuiz, updateCurrentQuestion } = useLiveQuizStore();
     const template = templates.find((t) => t.id === quiz?.theme);
     const { session } = useUserSessionStore();
     const [openExplanation, setOpenExplanation] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const { handleSendHostLaunchQuestion } = useWebSocket();
     // @ts-expect-error: _count is not typed but exists on quiz
     const totalQuestions = quiz?._count.questions;
 
@@ -27,6 +29,27 @@ export default function HostQuestionReviewFooter() {
             handleNextQuestion();
         }
     };
+
+    function handleLaunchQuestion() {
+        handleSendHostLaunchQuestion({
+            questionId: currentQuestion?.id,
+            questionIndex: currentQuestion?.orderIndex,
+        });
+    }
+
+    useEffect(() => {
+        function checkKeyPress(e: KeyboardEvent) {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && currentQuestion) {
+                e.preventDefault();
+                handleLaunchQuestion();
+            }
+        }
+
+        document.addEventListener('keydown', checkKeyPress);
+        return () => {
+            document.removeEventListener('keydown', checkKeyPress);
+        };
+    });
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -211,10 +234,10 @@ export default function HostQuestionReviewFooter() {
                             size={32}
                             className="rounded-full p-1.5 cursor-pointer"
                         />
-                        {openExplanation && currentQuestion?.explanation && (
+                        {openExplanation && currentQuestion?.hint && (
                             <UtilityCard className="absolute bottom-10 min-w-[16rem] w-fit px-4 py-2 text-wrap">
                                 <div className="text-sm tracking-wide dark:text-light-base text-dark-primary font-light">
-                                    {currentQuestion?.explanation}
+                                    {currentQuestion?.hint}
                                 </div>
                             </UtilityCard>
                         )}
@@ -238,7 +261,10 @@ export default function HostQuestionReviewFooter() {
                     difficulty={currentQuestion?.difficulty}
                 />
                 <div className="flex justify-center group">
-                    <div className="flex items-center gap-x-1.5 bg-neutral-100 w-fit px-4 py-2.5 rounded-full shadow-md">
+                    <div
+                        onClick={() => handleLaunchQuestion()}
+                        className="flex items-center gap-x-1.5 bg-neutral-100 w-fit px-4 py-2.5 rounded-full shadow-md z-10"
+                    >
                         <div className="text-xs text-neutral-700 font-light tracking-wide">
                             Press
                         </div>

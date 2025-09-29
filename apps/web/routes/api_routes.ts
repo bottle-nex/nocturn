@@ -21,3 +21,6 @@ export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';
 export const GET_CHATS_URL = '/quiz/get-messages';
+
+export const ALL_CONTRIBUTORS_DETAILS_URL =
+    'https://api.github.com/repos/celestium-x/triangulum-x/contributors';

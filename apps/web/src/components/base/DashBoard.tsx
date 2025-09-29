@@ -32,7 +32,7 @@ export default function DashBoard(): JSX.Element {
         getUserAllQuizs();
     }, [session?.user.token, setAllQuizs]);
     return (
-        <div className="flex h-screen border-t-[1px] border-neutral-300 dark:border-neutral-700">
+        <div className="flex h-screen">
             <DashboardLeft />
             <DashboardRight />
         </div>
