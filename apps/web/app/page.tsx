@@ -13,6 +13,7 @@ import { AiFillDollarCircle } from 'react-icons/ai';
 import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
 import Faq from '@/components/base/Faq';
+import BigAnimatedText from '@/components/ui/BigAnimatedText';
 
 export const mini_descriptions = [
     {
@@ -58,7 +59,7 @@ export default function Home() {
                 <FeatureBox />
             </div>
 
-            <div>
+            <div className="bg-gradient-to-b dark:from-dark-primary dark:to-[#141414] from-light-base to-[#fbf9f0]">
                 <div className="mx-auto w-fit mt-20 dark:bg-neutral-800 bg-neutral-300 px-6 py-2.5 rounded-md text-sm">
                     More about @Nocturn
                 </div>
@@ -86,6 +87,7 @@ export default function Home() {
                 </div>
                 <CustomFeatureComponent />
                 <Faq />
+                <BigAnimatedText />
             </div>
 
             <div className="fixed bottom-6 right-8 z-90">

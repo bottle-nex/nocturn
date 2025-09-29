@@ -12,7 +12,8 @@ export default function Faq() {
     return (
         <motion.div
             ref={ref}
-            className="rounded-4xl h-[300vh] w-full mt-40"
+            className="rounded-4xl h-[350vh] mt-40 w-full"
+            style={{ willChange: 'transform, opacity, background-color' }}
             initial={{
                 backgroundColor: 'rgb(14, 4, 35)',
                 opacity: 0,
@@ -41,6 +42,7 @@ export default function Faq() {
                 },
             }}
         >
+            {/* <div className='capitalize text-7xl text-center font-black select-none -translate-y-20'>we are open source</div> */}
             <motion.div
                 className="flex justify-center h-full"
                 initial={{ opacity: 0, y: 40 }}

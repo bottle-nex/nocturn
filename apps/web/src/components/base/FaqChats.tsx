@@ -32,18 +32,20 @@ const ChatMessage = ({ text, side, className }: ChatMessageProps) => {
 
     return (
         <motion.div
-            ref={ref}
+            initial={{ opacity: 0, x: initialX }}
+            animate={controls}
             className={cn(
-                'p-4 my-0.5 text-sm px-4 py-2 w-[20rem]',
+                'p-4 my-0.5 text-sm px-4 py-2 max-w-[22rem] w-fit flex items-center justify-center',
                 side === 'left'
                     ? 'bg-neutral-900 text-neutral-200 self-start rounded-full'
                     : 'bg-neutral-200 text-black self-end rounded-xl border border-neutral-900',
                 className,
             )}
-            initial={{ opacity: 0, x: initialX }}
-            animate={controls}
         >
-            {text}
+            <span>{side === 'left' && 'Q. '}</span>
+            <motion.div ref={ref} className={cn('p-4 my-0.5 text-sm px-4 py-2 w-fit', className)}>
+                {text}
+            </motion.div>
         </motion.div>
     );
 };
