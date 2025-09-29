@@ -66,7 +66,7 @@ export default function Home() {
                 <div className="mx-auto w-fit mt-8 rounded-md text-5xl font-light">
                     Many enter, only the winner survives.
                 </div>
-                <div className="mx-auto w-fit max-w-[50rem] text-center mt-8 font-light">
+                <div className="mx-auto w-fit max-w-[50rem] text-center mt-8 text-md font-normal">
                     Nocturn is a decentralized quiz platform where participants compete for staked
                     Solana prize pools, spectators can boost rewards, and winners earn exclusive
                     NFTs to prove their victory.

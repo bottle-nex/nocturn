@@ -42,7 +42,6 @@ export default function Faq() {
                 },
             }}
         >
-            {/* <div className='capitalize text-7xl text-center font-black select-none -translate-y-20'>we are open source</div> */}
             <motion.div
                 className="flex justify-center h-full"
                 initial={{ opacity: 0, y: 40 }}
@@ -54,8 +53,8 @@ export default function Faq() {
                 }}
             >
                 <div className="mt-52">
-                    <h1 className="text-sm font-normal text-center">You ask, we answer</h1>
-                    <h6 className="font-black text-8xl max-w-[60rem] mt-8 text-center">
+                    <h1 className="text-sm font-normal text-center">You ask, we answer..</h1>
+                    <h6 className="font-bold text-7xl max-w-[52rem] mt-8 text-center">
                         Most Common Question
                     </h6>
                     <FaqChats

@@ -128,7 +128,7 @@ export default function BigAnimatedText() {
                         );
                     })}
                 </div>
-                <div className="max-w-[40rem] text-center">
+                <div className="max-w-[40rem] text-center text-md font-normal">
                     This isn&apos;t your grandmas GK quiz. Here, you stake tokens, flex knowledge,
                     and pray your last three brain cells don&apos;t betray you on question 7. Every
                     round feels like Squid Game but with fewer fatalities and more wallets.
