@@ -27,7 +27,9 @@ export default function ParticipantMainScreen() {
 
     const { handleParticipantLeaveGameSession, handleAddParticipantWarningCount } = useWebSocket();
     const router = useRouter();
+
     useParticipantWarning();
+    // add useWebSocket and useSubcribeEventHandler here and same in the SpectatorMainScreen, HostMainScreen
 
     useEffect(() => {
         function checkKeyPress(e: KeyboardEvent) {
@@ -126,7 +128,9 @@ export default function ParticipantMainScreen() {
     return (
         <div className="h-full relative w-full flex z-20">
             {currentUserType === USER_TYPE.PARTICIPANT &&
-                !allowed && <FullScreenWarningPanel accept={accept} deny={deny} />}
+                !allowed && (
+                    <FullScreenWarningPanel accept={accept} deny={deny} />
+                )}
             {renderHostScreenPanels()}
             <ParticipantMainFooter />
             <ParticipantPanelRenderer />

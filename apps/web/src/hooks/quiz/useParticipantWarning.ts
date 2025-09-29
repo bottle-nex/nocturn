@@ -11,8 +11,8 @@ export const useParticipantWarning = () => {
 
     useEffect(() => {
         if (participantData?.isKicked) {
-            cleanWebSocketClient();
             router.back();
+            cleanWebSocketClient();
             toast.error("You've been kicked!");
         }
     }, [participantData?.isKicked])
