@@ -11,8 +11,10 @@ import {
 } from '@/store/live-quiz/useLiveQuizUserStore';
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
+import { toast } from 'sonner';
 
 export interface NewProps {
     params: Promise<{
@@ -22,6 +24,8 @@ export interface NewProps {
 
 export default function New({ params }: NewProps) {
     const { quizId } = use(params);
+    const router = useRouter();
+
     const { quiz, updateQuiz, updateGameSession, updateCurrentQuestion } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
@@ -44,8 +48,9 @@ export default function New({ params }: NewProps) {
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    // updateCurrentQuestion(data.currentQ);
-                    updateCurrentQuestion(data.question);
+                    if (data.question) {
+                        updateCurrentQuestion(data.question);
+                    }
                     switch (data.role) {
                         case 'HOST':
                             setHostData(data.userData);
@@ -59,8 +64,12 @@ export default function New({ params }: NewProps) {
                         default:
                             break;
                     }
+                } else {
+                    toast.success('sdchvskdbvdksb');
+                    router.back();
                 }
             } catch (error) {
+                router.back();
                 console.error('Error fetching live data:', error);
             }
         }
@@ -77,6 +86,7 @@ export default function New({ params }: NewProps) {
         setSpectators,
         setChatMessages,
         updateCurrentQuestion,
+        router,
     ]);
 
     if (!quiz) {
