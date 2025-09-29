@@ -107,6 +107,7 @@ model Participant {
   ipAddress            String?
   isNameChanged        Boolean    @default(false)
   warningCount         Int        @default(0)
+  isKicked             Boolean    @default(false)
   isEliminated         Boolean    @default(false)
   eliminatedAt         DateTime?
   eliminatedAtQuestion String?
@@ -128,6 +129,8 @@ model Spectator {
   nickname      String
   avatar        String?
   isNameChanged Boolean  @default(false)
+  warningCount         Int        @default(0)
+  isKicked             Boolean    @default(false)
   ipAddress     String?
   connectionId  String?
   joinedAt      DateTime @default(now())

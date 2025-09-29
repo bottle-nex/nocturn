@@ -79,6 +79,8 @@ export interface ParticipantType {
     ipAddress?: string | null;
     isEliminated: boolean;
     isNameChanged: boolean;
+    warningCount: number;
+    isKicked: boolean;
     eliminatedAt?: Date | null;
     eliminatedAtQuestion?: string | null;
     finalRank?: number | null;
@@ -94,6 +96,8 @@ export interface SpectatorType {
     id: string;
     nickname: string;
     isNameChanged: boolean;
+    warningCount: number;
+    isKicked: boolean;
     avatar?: string | null;
     ipAddress?: string | null;
     connectionId?: string | null;

@@ -118,7 +118,7 @@ export default class ParticipantManager {
         });
 
         ws.on('close', () => {
-            this.handle_participant_leave_gamesession(ws);
+            // this.handle_participant_leave_gamesession(ws);
             this.cleanup_participant_socket(ws);
         });
 
@@ -148,6 +148,10 @@ export default class ParticipantManager {
                 break;
             case MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE:
                 this.handle_participant_request_lifeline(payload, ws);
+                break;
+
+            case MESSAGE_TYPES.PARTICIPANT_WARNING_COUNT:
+                this.handle_participant_warning_count(ws);
                 break;
 
             default:
@@ -441,6 +445,37 @@ export default class ParticipantManager {
         // delete the user from the database
         // either do this or add another schema for showing this user was removed
         // this.database_queue.delete_participant(user_id, game_session_id);
+    }
+
+    private async handle_participant_warning_count(ws: CustomWebSocket) {
+        const { gameSessionId: game_session_id } = ws.user;
+        const { userId } = ws.user;
+
+        const participant_cache = await this.redis_cache.get_participant(game_session_id, userId);
+
+        if (!participant_cache) return;
+
+        if (participant_cache.warningCount + 1 >= 5) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                payload: {
+                    userId: userId,
+                },
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+
+            // mark them to be kicked
+            this.database_queue.update_participant(userId, { isKicked: true }, game_session_id);
+            return;
+        }
+
+        this.database_queue.update_participant(
+            userId,
+            {
+                warningCount: participant_cache.warningCount + 1,
+            },
+            game_session_id,
+        );
     }
 
     private cleanup_existing_partiicpant_socket(

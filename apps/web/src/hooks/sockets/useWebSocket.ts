@@ -118,6 +118,7 @@ export const useWebSocket = () => {
             socket.current.send_message(message);
         }
     }
+
     function handleLaunchHintEvent(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.HOST_EMITS_HINT,
@@ -178,6 +179,17 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleAddParticipantWarningCount(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.PARTICIPANT_WARNING_COUNT,
+            payload: payload,
+        };
+
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
         subscribeToHandler,
         unsubscribeToHandler,
@@ -194,6 +206,7 @@ export const useWebSocket = () => {
         handleLaunchHintEvent,
         handleParticipantLeaveGameSession,
         handleSettingsChangeEvent,
+        handleAddParticipantWarningCount,
         handleParticipantRequestLifeline,
         handleSpectatorLifelineResponse,
     };
