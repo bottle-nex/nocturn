@@ -12,6 +12,7 @@ import { BiSolidBrain } from 'react-icons/bi';
 import { AiFillDollarCircle } from 'react-icons/ai';
 import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
+import Faq from '@/components/base/Faq';
 
 export const mini_descriptions = [
     {
@@ -32,7 +33,7 @@ export const mini_descriptions = [
     {
         icon: <FaWallet />,
         description: 'Wallet-native onboarding.',
-        color: '#6A4C93',
+        color: '#734aac',
     },
 ];
 
@@ -84,6 +85,7 @@ export default function Home() {
                     ))}
                 </div>
                 <CustomFeatureComponent />
+                <Faq />
             </div>
 
             <div className="fixed bottom-6 right-8 z-90">

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 export default function HomeMyQuiz({ style, className }: HomeDashboardProps) {
     return (
-        <div className={cn("flex flex-col", className)} style={style}>
+        <div className={cn('flex flex-col', className)} style={style}>
             <HeadAndSubHead
                 heading="My Quizzes"
                 subHeading="Manage your quizzes, analytics, and more"

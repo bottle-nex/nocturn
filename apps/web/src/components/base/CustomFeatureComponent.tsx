@@ -45,9 +45,9 @@ export default function CustomFeatureComponent() {
                 <div className="flex justify-center relative z-10 w-full max-w-[60rem] mx-auto">
                     <div
                         className={cn(
-                            'w-full h-[70vh] border rounded-3xl flex justify-center items-center',
-                            'bg-gradient-to-b from-neutral-50 via-neutral-100 to-neutral-50', // light mode
-                            'dark:bg-gradient-to-b dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950', // dark mode
+                            'w-full h-[70vh] border rounded-3xl flex justify-center items-center ',
+                            'bg-gradient-to-b from-neutral-50 via-neutral-300 to-neutral-50',
+                            'dark:bg-gradient-to-b dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950',
                             'relative shadow-2xl shadow-neutral-300/20 dark:shadow-neutral-800/20 drop-shadow-2xl',
                             'transition-all duration-800 ease-out',
                             isVisible
@@ -57,7 +57,7 @@ export default function CustomFeatureComponent() {
                     >
                         <div
                             className={cn(
-                                'h-55 w-30 absolute -left-10 p-1 -top-5 flex flex-col gap-1 rounded-2xl border border-neutral-300 bg-neutral-50 dark:border-neutral-900 dark:bg-neutral-950',
+                                'h-55 w-30 absolute -left-10 p-1 -top-5 flex flex-col gap-1 rounded-2xl border border-neutral-300 bg-neutral-50 dark:border-neutral-900 dark:bg-neutral-950 z-10',
                                 'transition-all duration-700 ease-out',
                                 isVisible
                                     ? 'transform translate-x-0 opacity-100'
@@ -108,7 +108,13 @@ export default function CustomFeatureComponent() {
                                             : 'transform scale-0 opacity-0',
                                     )}
                                 >
-                                    <Image src={src} alt="Avatar" width={100} height={100} unoptimized />
+                                    <Image
+                                        src={src}
+                                        alt="Avatar"
+                                        width={100}
+                                        height={100}
+                                        unoptimized
+                                    />
                                 </div>
                             ))}
                             <ToolTipComponent content="Yupp! Scalability is not an issue">
@@ -128,7 +134,17 @@ export default function CustomFeatureComponent() {
                         </div>
 
                         <div className="w-[240px] absolute -right-20 -bottom-8">
-                            <Iphone tilted src={iphoneImage} />
+                            <Iphone src={iphoneImage} />
+                        </div>
+
+                        <div className="bg-[#ffe9b0] w-[40%] h-[40vh] absolute bottom-0 left-0 rounded-bl-3xl z-0">
+                            <div className="bg-[#FFC738] absolute bottom-0 left-0 w-full h-[80%] rounded-bl-3xl z-10" />
+                        </div>
+                        <div className="bg-[#bdaaf5] w-[40%] h-[50vh] absolute bottom-0 right-[50%] rounded-t-3xl z-10 translate-x-1/2">
+                            <div className="bg-[#594595] absolute bottom-0 right-[50%] w-full h-[80%] rounded-t-3xl z-20 translate-x-1/2" />
+                        </div>
+                        <div className="bg-[#f4a9a7] w-[40%] h-[40vh] absolute bottom-0 right-0 rounded-br-3xl z-0">
+                            <div className="bg-[#FF3F3D] absolute bottom-0 right-0 w-full h-[80%] rounded-br-3xl z-10" />
                         </div>
                     </div>
                 </div>
