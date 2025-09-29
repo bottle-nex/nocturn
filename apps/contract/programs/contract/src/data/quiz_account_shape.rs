@@ -2,10 +2,10 @@ use anchor_lang::prelude::*;
 
 #[account]
 pub struct QuizAccountShape {
-    quiz_id: String,
-    stake_amount: u64,
-    host_pub_key: Pubkey,
-    host_id: String,
+    pub quiz_id: String,
+    pub prize: u64,
+    pub host_pub_key: Pubkey,
+    pub host_id: String,
 }
 
 impl QuizAccountShape {

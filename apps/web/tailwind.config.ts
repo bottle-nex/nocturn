@@ -11,7 +11,7 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
-                mono: ['"Geist Mono"', 'monospace'],
+                nocturn: ['Nocturn', 'sans-serif'],
             },
             colors: {
                 dark: {

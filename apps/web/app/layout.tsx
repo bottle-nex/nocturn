@@ -6,13 +6,6 @@ import SessionSetter from '@/components/utility/SessionSetter';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import Providers from './providers';
-import { Poppins } from 'next/font/google';
-
-const poppins = Poppins({
-    subsets: ['latin'],
-    display: 'swap',
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-});
 
 export const metadata: Metadata = {
     title: 'Nocturn',
@@ -27,7 +20,7 @@ export default async function RootLayout({
     const session = await getServerSession(authOption);
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`${poppins.className}`}>
+            <body>
                 <ThemeProvider attribute="class" defaultTheme="system">
                     <Toaster theme="dark" />
                     <Providers>{children}</Providers>

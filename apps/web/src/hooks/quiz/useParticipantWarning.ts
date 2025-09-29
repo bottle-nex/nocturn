@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export const useParticipantWarning = () => {
-    const { participantData } = useLiveParticipantStore();
+    const { participantData, removeParticipantData } = useLiveParticipantStore();
     const router = useRouter();
 
     useEffect(() => {
@@ -13,6 +13,7 @@ export const useParticipantWarning = () => {
             router.back();
             cleanWebSocketClient();
             toast.error("You've been kicked!");
+            removeParticipantData();
         }
-    }, [router, participantData?.isKicked]);
+    }, [router, participantData?.isKicked, removeParticipantData]);
 };

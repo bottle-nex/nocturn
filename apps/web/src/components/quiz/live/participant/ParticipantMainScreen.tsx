@@ -66,7 +66,8 @@ export default function ParticipantMainScreen() {
         }
         document.addEventListener('fullscreenchange', handleChange);
         return () => document.removeEventListener('fullscreenchange', handleChange);
-    }, [gameSession?.participantScreen, handleAddParticipantWarningCount]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gameSession?.participantScreen]);
 
     useEffect(() => {
         function handleChange() {

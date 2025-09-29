@@ -206,12 +206,12 @@ export default class DatabaseQueue {
                 },
                 data: participant,
             });
-
             await this.redis_cache.set_participants(
                 game_session_id,
                 updatedParticipant.id,
                 updatedParticipant,
             );
+
             return { success: true, participant: updatedParticipant };
         } catch (error) {
             console.error(`Error while updating participant: `, error);

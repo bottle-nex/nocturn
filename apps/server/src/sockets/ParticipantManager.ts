@@ -449,9 +449,12 @@ export default class ParticipantManager {
 
     private async handle_participant_warning_count(ws: CustomWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
-        const { userId } = ws.user;
+        const { userId: participant_id } = ws.user;
 
-        const participant_cache = await this.redis_cache.get_participant(game_session_id, userId);
+        const participant_cache = await this.redis_cache.get_participant(
+            game_session_id,
+            participant_id,
+        );
 
         if (!participant_cache) return;
 
@@ -459,18 +462,25 @@ export default class ParticipantManager {
             const event_data: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                 payload: {
-                    userId: userId,
+                    userId: participant_id,
                 },
             };
             this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
             // mark them to be kicked
-            this.database_queue.update_participant(userId, { isKicked: true }, game_session_id);
+            this.database_queue.update_participant(
+                participant_id,
+                { isKicked: true },
+                game_session_id,
+            );
             return;
         }
+        this.redis_cache.set_participants(game_session_id, participant_id, {
+            warningCount: participant_cache.warningCount + 1,
+        });
 
         this.database_queue.update_participant(
-            userId,
+            participant_id,
             {
                 warningCount: participant_cache.warningCount + 1,
             },
