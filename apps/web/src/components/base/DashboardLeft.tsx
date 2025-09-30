@@ -126,7 +126,8 @@ function DashboardOptions({
     const upperDashboardOptions: OptionProps[] = [
         {
             icon: <TbDashboard size={20} />,
-            label: 'Dashboard',
+            label: "Dashboard",
+            color: "#3B82F6", // Blue
             onClick: () => {
                 setValue(HomeRendererEnum.DASHBOARD);
                 close?.();
@@ -135,7 +136,8 @@ function DashboardOptions({
         },
         {
             icon: <TbTrophy size={20} />,
-            label: 'My Quizzes',
+            label: "My Quizzes",
+            color: "#F97316", // Orange
             onClick: () => {
                 setValue(HomeRendererEnum.MY_QUIZ);
                 close?.();
@@ -144,7 +146,8 @@ function DashboardOptions({
         },
         {
             icon: <TbPlus size={20} />,
-            label: 'Create Quiz',
+            label: "Create Quiz",
+            color: "#22C55E", // Green
             onClick: () => {
                 setValue(HomeRendererEnum.CREATE_QUIZ);
                 close?.();
@@ -153,7 +156,8 @@ function DashboardOptions({
         },
         {
             icon: <TbChartBar size={20} />,
-            label: 'Analytics',
+            label: "Analytics",
+            color: "#8B5CF6", // Purple
             onClick: () => {
                 setValue(HomeRendererEnum.ANALYTICS);
                 close?.();
@@ -162,7 +166,8 @@ function DashboardOptions({
         },
         {
             icon: <TbWallet size={20} />,
-            label: 'Wallet',
+            label: "Wallet",
+            color: "#14B8A6", // Teal
             onClick: () => {
                 setValue(HomeRendererEnum.WALLET);
                 close?.();
@@ -171,7 +176,8 @@ function DashboardOptions({
         },
         {
             icon: <TbCrown size={20} />,
-            label: 'Leaderboards',
+            label: "Leaderboards",
+            color: "#EAB308", // Gold/Yellow
             onClick: () => {
                 setValue(HomeRendererEnum.LEADERBOARD);
                 close?.();
@@ -180,7 +186,8 @@ function DashboardOptions({
         },
         {
             icon: <TbHistory size={20} />,
-            label: 'History',
+            label: "History",
+            color: "#64748B", // Slate Gray
             onClick: () => {
                 setValue(HomeRendererEnum.HISTORY);
                 close?.();
@@ -192,7 +199,8 @@ function DashboardOptions({
     const lowerDashboardOptions: OptionProps[] = [
         {
             icon: <MdRateReview size={20} />,
-            label: 'Leave a review',
+            label: "Leave a review",
+            color: "#F43F5E", // Rose
             onClick: () => {
                 setValue(HomeRendererEnum.REVIEW);
                 close?.();
@@ -201,7 +209,8 @@ function DashboardOptions({
         },
         {
             icon: <TbSettings size={20} />,
-            label: 'Settings',
+            label: "Settings",
+            color: "#6B7280", // Gray
             onClick: () => {
                 setValue(HomeRendererEnum.SETTINGS);
                 close?.();
@@ -210,7 +219,8 @@ function DashboardOptions({
         },
         {
             icon: <TbHelp size={20} />,
-            label: 'Help & Support',
+            label: "Help & Support",
+            color: "#0EA5E9", // Sky Blue
             onClick: () => {
                 setValue(HomeRendererEnum.HELP);
                 close?.();
@@ -218,6 +228,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.HELP,
         },
     ];
+
 
     return (
         <>
@@ -239,31 +250,25 @@ interface OptionProps {
     icon: React.ReactNode;
     label: string;
     onClick?: () => void;
+    color: string;
     isActive?: boolean;
 }
 
-// function LogoOption({ icon, label }: OptionProps) {
-//     return (
-//         <button className="flex items-center justify-start gap-3 w-full px-4 h-10">
-//             <div className="flex items-center justify-center shrink-0">{icon}</div>
-//             <span className="text-xl text-dark-base dark:text-light-base font-bold whitespace-nowrap overflow-hidden leading-none">
-//                 {label}
-//             </span>
-//         </button>
-//     );
-// }
-
-function NavOption({ icon, label, onClick, isActive }: OptionProps) {
+function NavOption({ icon, label, onClick, isActive, color }: OptionProps) {
     return (
         <div
             onClick={onClick}
             className={cn(
-                'flex items-center justify-start gap-3 w-full px-4 h-10 hover:bg-light-base dark:hover:bg-dark-primary rounded-lg cursor-pointer transition-colors',
+                'flex items-center justify-start gap-3 w-full px-2 h-10 hover:bg-light-base dark:hover:bg-dark-primary rounded-lg cursor-pointer transition-colors',
                 isActive && 'bg-light-base dark:bg-dark-primary',
             )}
         >
-            <div className="flex items-center justify-center shrink-0 w-5 h-5">{icon}</div>
-            <span className="text-sm text-dark-primary dark:text-light-base font-normal whitespace-nowrap overflow-hidden leading-none">
+            <div
+                style={{
+                    backgroundColor: `${color}`,
+                }}
+                className="flex items-center justify-center shrink-0 w-8 h-8 rounded-sm p-1">{icon}</div>
+            <span className="text-sm tracking-wide text-dark-primary dark:text-light-base font-normal whitespace-nowrap overflow-hidden leading-none">
                 {label}
             </span>
         </div>

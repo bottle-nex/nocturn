@@ -4,6 +4,8 @@ import DarkModeToggle from '../base/DarkModeToggle';
 import NavbarSigninAction from './NavbarSigninAction';
 import { useEffect, useState } from 'react';
 import NocturnLogo from '../ui/svg/NocturnLogo';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 const navItems = [
     { name: 'Features', link: '#features' },
@@ -14,11 +16,16 @@ const navItems = [
 export default function Navbar() {
     const [isVisible, setIsVisible] = useState<boolean>(true);
     const [lastScrollY, setLastScrollY] = useState<number>(0);
+    const { theme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         function handleScroll() {
             const currentScrollY = window.scrollY;
-
             if (currentScrollY === 0) {
                 setIsVisible(true);
             } else {
@@ -28,42 +35,46 @@ export default function Navbar() {
                     setIsVisible(false);
                 }
             }
-
             setLastScrollY(currentScrollY);
         }
-
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
-
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, [lastScrollY]);
 
+    const currentTheme = mounted ? (resolvedTheme || theme) : 'light';
+    const isDark = currentTheme === 'dark';
+    if(!mounted) return;
     return (
         <div
             className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-3
                 transition-all duration-500 ease-in-out 
                 ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
         >
-            <div className="dark:bg-neutral-900 bg-neutral-200 border dark:border-neutral-700 border-neutral-300 px-2 py-[5px] rounded-lg">
-                <div className="flex items-center justify-between gap-x-2 w-full">
-                    <div className="w-8 h-7 bg-primary flex items-center justify-center px-[2px] rounded-sm">
-                        <NocturnLogo className="w-12 h-auto" />
+            <div className="relative w-[24rem] h-12">
+                <Image
+                    src={isDark ? "/images/navbar-dark.svg" : "/images/navbar-light.svg"}
+                    alt="navbar"
+                    fill
+                    className="pointer-events-none select-none"
+                    priority
+                />
+                <div className="absolute inset-0 z-10 flex items-center justify-between px-5 -mt-1">
+                    <div className="w-8 h-7 bg-primary flex items-center justify-center px-[2px] rounded-sm flex-shrink-0">
+                        <NocturnLogo className="w-12 h-auto cursor-pointer" />
                     </div>
-                    <div className="flex flex-row items-center justify-center gap-x-3">
+                    <div className="flex flex-row items-center justify-center gap-x-2">
                         <NavItems items={navItems} />
                         <DarkModeToggle />
-                        <div className="w-px h-6 border-l-1 dark:border-neutral-500 border-neutral-600" />
-                        <a
-                            className={`relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5 text-xs`}
-                        >
+                        <div className="w-px h-6 border-l border-neutral-600 dark:border-neutral-500" />
+                        <a className="relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5 text-xs cursor-pointer">
                             <span className="relative z-20">products</span>
                         </a>
                     </div>
                 </div>
             </div>
-
             <NavbarSigninAction />
         </div>
     );
