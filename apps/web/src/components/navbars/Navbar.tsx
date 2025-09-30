@@ -44,9 +44,9 @@ export default function Navbar() {
         };
     }, [lastScrollY]);
 
-    const currentTheme = mounted ? (resolvedTheme || theme) : 'light';
+    const currentTheme = mounted ? resolvedTheme || theme : 'light';
     const isDark = currentTheme === 'dark';
-    if(!mounted) return;
+    if (!mounted) return;
     return (
         <div
             className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-3
@@ -55,7 +55,7 @@ export default function Navbar() {
         >
             <div className="relative w-[24rem] h-12">
                 <Image
-                    src={isDark ? "/images/navbar-dark.svg" : "/images/navbar-light.svg"}
+                    src={isDark ? '/images/navbar-dark.svg' : '/images/navbar-light.svg'}
                     alt="navbar"
                     fill
                     className="pointer-events-none select-none"
