@@ -60,10 +60,10 @@ export default function Home() {
             </div>
 
             <div className="bg-gradient-to-b dark:from-dark-primary dark:to-[#141414] from-light-base to-[#fbf9f0]">
-                <div className="mx-auto w-fit mt-20 dark:bg-neutral-800 bg-neutral-300 px-6 py-2.5 rounded-md text-sm">
+                <div className="mx-auto w-fit mt-20 dark:bg-neutral-800 bg-neutral-300 px-6 py-2.5 rounded-md text-sm select-none">
                     More about @Nocturn
                 </div>
-                <div className="mx-auto w-fit mt-8 rounded-md text-5xl font-light">
+                <div className="mx-auto w-fit mt-8 rounded-md text-5xl font-semibold">
                     Many enter, only the winner survives.
                 </div>
                 <div className="mx-auto w-fit max-w-[50rem] text-center mt-8 text-md font-normal">

@@ -40,7 +40,7 @@ export default function CustomFeatureComponent() {
     }, []);
 
     return (
-        <div ref={ref} className="w-full flex select-none h-full justify-center gap-x-10 mt-20">
+        <section ref={ref} className="w-full flex select-none h-full justify-center gap-x-10 mt-20">
             <div className="flex select-none p-2 rounded-3xl relative w-full">
                 <div className="flex justify-center relative z-10 w-full max-w-[60rem] mx-auto">
                     <div
@@ -149,6 +149,6 @@ export default function CustomFeatureComponent() {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }

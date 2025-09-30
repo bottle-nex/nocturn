@@ -35,7 +35,7 @@ const ChatMessage = ({ text, side, className }: ChatMessageProps) => {
             initial={{ opacity: 0, x: initialX }}
             animate={controls}
             className={cn(
-                'p-4 my-0.5 text-sm px-4 py-2 max-w-[22rem] w-fit flex items-center justify-centerf font-normal',
+                'p-4 my-0.5 text-sm tracking-wide leading-5 px-4 py-2 max-w-[22rem] w-fit flex items-center justify-centerf font-normal',
                 side === 'left'
                     ? 'bg-neutral-900 text-neutral-200 self-start rounded-full'
                     : 'bg-neutral-200 text-black self-end rounded-xl border border-neutral-900',

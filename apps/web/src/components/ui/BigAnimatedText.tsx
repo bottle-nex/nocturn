@@ -91,8 +91,8 @@ export default function BigAnimatedText() {
         <div className="px-40 w-full h-[100vh] flex justify-center items-center">
             <div className="flex flex-col items-center gap-y-12">
                 <div className="max-w-[36rem] relative">
-                    <h1 className="text-center text-8xl font-black scale-110 -mt-10 dark:text-[#fcf9f0]">
-                        Playing Data Quest to Build
+                    <h1 className="text-center text-8xl font-bold scale-110 -mt-10 dark:text-[#fcf9f0]">
+                        Playing Data Quest to Win Crypto
                     </h1>
 
                     {contentCycles.map((contentList, idx) => {
