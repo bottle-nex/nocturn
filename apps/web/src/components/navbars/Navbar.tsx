@@ -22,7 +22,6 @@ export default function Navbar() {
             if (currentScrollY === 0) {
                 setIsVisible(true);
             } else {
-
                 if (currentScrollY < lastScrollY) {
                     setIsVisible(true);
                 } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
@@ -42,11 +41,12 @@ export default function Navbar() {
     }, [lastScrollY]);
 
     return (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-3
+        <div
+            className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-3
                 transition-all duration-500 ease-in-out 
-                ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-
-            <div className='dark:bg-neutral-900 bg-neutral-200 border dark:border-neutral-700 border-neutral-300 px-2 py-[5px] rounded-lg'>
+                ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
+        >
+            <div className="dark:bg-neutral-900 bg-neutral-200 border dark:border-neutral-700 border-neutral-300 px-2 py-[5px] rounded-lg">
                 <div className="flex items-center justify-between gap-x-2 w-full">
                     <div className="w-8 h-7 bg-primary flex items-center justify-center px-[2px] rounded-sm">
                         <NocturnLogo className="w-12 h-auto" />
@@ -55,7 +55,9 @@ export default function Navbar() {
                         <NavItems items={navItems} />
                         <DarkModeToggle />
                         <div className="w-px h-6 border-l-1 dark:border-neutral-500 border-neutral-600" />
-                        <a className={`relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5 text-xs`}>
+                        <a
+                            className={`relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5 text-xs`}
+                        >
                             <span className="relative z-20">products</span>
                         </a>
                     </div>

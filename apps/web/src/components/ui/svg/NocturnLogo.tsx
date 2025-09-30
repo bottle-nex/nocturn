@@ -1,5 +1,5 @@
 interface NocturnLogoProps {
-    className?: string
+    className?: string;
     width?: number | string;
     height?: number | string;
 }
@@ -7,7 +7,7 @@ interface NocturnLogoProps {
 export default function NocturnLogo({ className, width = 50, height = 28 }: NocturnLogoProps) {
     return (
         <svg
-            className={`block ${className || ""}`}
+            className={`block ${className || ''}`}
             width={width}
             height={height}
             viewBox="0 0 250 100"
