@@ -1,16 +1,19 @@
 interface NocturnLogoProps {
+    className?: string
     width?: number | string;
     height?: number | string;
 }
 
-export default function NocturnLogo({ width = 50, height = 28 }: NocturnLogoProps) {
+export default function NocturnLogo({ className, width = 50, height = 28 }: NocturnLogoProps) {
     return (
         <svg
+            className={`block ${className || ""}`}
             width={width}
             height={height}
-            viewBox="0 0 250 138"
+            viewBox="0 0 250 100"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
         >
             <g filter="url(#filter0_d_160_178)">
                 <mask id="path-1-inside-1_160_178" fill="white">

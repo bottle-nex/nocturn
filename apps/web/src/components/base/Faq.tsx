@@ -11,8 +11,9 @@ export default function Faq() {
 
     return (
         <motion.div
+            id='faq'
             ref={ref}
-            className="rounded-4xl h-[350vh] mt-40 w-full"
+            className="rounded-4xl h-[300vh] mt-40 w-full"
             style={{ willChange: 'transform, opacity, background-color' }}
             initial={{
                 backgroundColor: 'rgb(14, 4, 35)',

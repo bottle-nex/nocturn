@@ -34,7 +34,7 @@ export default function LandingPage() {
                     className="text-7xl font-bold text-transparent bg-clip-text tracking-tight
                         bg-gradient-to-b
                         from-black/60 via-black/80 to-black 
-                        dark:from-white/20 dark:via-light-base/50 dark:to-white/80"
+                        dark:from-white/20 dark:via-light-base/50 dark:to-light-primary/80"
                 >
                     Stake. Quiz. Compete
                     <br />

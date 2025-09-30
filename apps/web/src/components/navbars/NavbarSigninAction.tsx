@@ -22,15 +22,17 @@ export default function NavbarSigninAction() {
 
     return (
         <div className="">
-            <Button
+             <Button
                 onClick={handler}
                 className={cn(
-                    'font-light text-[13px] tracking-wide flex items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-[10] pr-1 rounded-lg',
-                    'bg-dark-base dark:bg-light-base dark:hover:bg-light-base hover:bg-dark-base',
+                    '!rounded-[2rem] hover:!rounded-[0.50rem]',
+                    'font-seminold text-[13px] text-dark-primary !bg-[#ffcc00] tracking-wide flex items-center justify-center hover:-translate-y-0.5 cursor-pointer z-[10] py-5 !px-5',
+                    '!transition-all !duration-200 !ease-[cubic-bezier(0.4,0,0.2,1)]',
+                    'shadow-[inset_0_2px_4px_rgba(255,255,255,0.25)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.35)]'
                 )}
             >
                 <span>{session?.user ? 'Go to app' : 'Sign in'}</span>
-                <MdChevronRight className="text-neutral-300 dark:text-dark-base" />
+                <MdChevronRight />
             </Button>
             <LoginModal opensignInModal={opensignInModal} setOpenSignInModal={setOpenSignInModal} />
         </div>
