@@ -27,14 +27,14 @@ export default function NavItems({ items, className }: NavItemsProps) {
                 <a
                     onMouseEnter={() => setHovered(idx)}
                     onClick={item.onClick}
-                    className={`relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5`}
+                    className={`relative text-neutral-600 dark:text-neutral-300 px-2 py-1 cursor-pointer`}
                     key={`link-${idx}`}
                     href={item.link}
                 >
                     {hovered === idx && (
                         <motion.div
                             layoutId="hovered"
-                            className="absolute inset-0 h-full w-full rounded-full bg-gray-100 dark:bg-neutral-900"
+                            className="absolute inset-0 h-full w-full rounded-full bg-gray-100 dark:bg-neutral-700/50 py-1"
                         />
                     )}
                     <span className="relative z-20">{item.name}</span>

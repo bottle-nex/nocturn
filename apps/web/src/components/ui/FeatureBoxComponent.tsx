@@ -43,7 +43,7 @@ export default function FeatureBoxComponent({
                 {title}
             </div>
 
-            <div className="h-[20%] text-start text-[#7D8187] group-hover:text-dark-base group-hover:dark:text-light-base px-7">
+            <div className="h-[20%] text-start text-[#7D8187] group-hover:text-dark-base group-hover:dark:text-light-base px-7 tracking-wide">
                 {description}
             </div>
 
