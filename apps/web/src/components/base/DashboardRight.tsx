@@ -57,7 +57,7 @@ export default function DashboardRight(): JSX.Element {
             transition={{ duration: 0.3 }}
         >
             <div className="h-[5rem] flex-shrink-0" />
-            <div className="flex-1 dark:bg-dark-primary/90 bg-neutral-200 border-l-[1px] border-t-[1px] dark:border-neutral-800 border-neutral-300 rounded-tl-xl p-8 min-h-0">
+            <div className="flex-1 dark:bg-dark-primary/90 bg-neutral-200 border-l-[1px] border-t-[1px] dark:border-neutral-800 border-neutral-300 rounded-tl-xl min-h-0">
                 {renderDashboard()}
             </div>
         </motion.div>
