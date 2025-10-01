@@ -3,31 +3,31 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
+import { useEffect } from 'react';
 
 export default function SpectatorQuestionActiveOptions() {
     const {
         currentQuestion,
         quiz: liveQuiz,
         activeLifelineSession,
-        lifelineVotes,
+        spectatorOwnVote,
+        clearLifelineData,
     } = useLiveQuizStore();
 
     const { handleSpectatorLifelineResponse } = useWebSocket();
-
-    const spectatorVotedOption =
-        lifelineVotes && typeof lifelineVotes.self === 'number'
-            ? (lifelineVotes.self as number)
-            : null;
 
     const template = templates.find((t) => t.id === liveQuiz?.theme);
     const options = Array.isArray(currentQuestion?.options) ? currentQuestion.options : [];
     const barColors = template?.bars ?? ['#3b82f6'];
     const maxHeight = 12;
 
-    const canVote = activeLifelineSession?.isActive && spectatorVotedOption === null;
+    const canVote = activeLifelineSession?.isActive && spectatorOwnVote === null;
 
     function handleLifelineOptionSelect(index: number) {
         if (!canVote || !currentQuestion) return;
+
+        const { setSpectatorVote } = useLiveQuizStore.getState();
+        setSpectatorVote(index);
 
         handleSpectatorLifelineResponse({
             questionId: currentQuestion.id,
@@ -35,13 +35,21 @@ export default function SpectatorQuestionActiveOptions() {
         });
     }
 
-    if (!currentQuestion || !activeLifelineSession?.isActive) return null;
+    useEffect(() => {
+        if (!activeLifelineSession?.isActive) {
+            clearLifelineData();
+        }
+    }, [activeLifelineSession?.isActive, clearLifelineData]);
+
+    if (!currentQuestion) return null;
 
     return (
         <div className="relative w-full h-full p-4">
-            <div className="absolute top-4 left-4 dark:bg-dark-base dark:text-neutral-200 px-4 py-2 rounded shadow-md z-50 font-semibold text-sm">
-                Lifeline demanded — start voting
-            </div>
+            {activeLifelineSession?.isActive && (
+                <div className="absolute top-4 left-4 bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-lg z-50 font-semibold text-sm animate-pulse">
+                    Lifeline Active — Help the participant!
+                </div>
+            )}
 
             <div
                 className={cn(
@@ -51,7 +59,7 @@ export default function SpectatorQuestionActiveOptions() {
             >
                 {options.map((option, idx) => {
                     const color = barColors[idx % barColors.length];
-                    const isSelected = spectatorVotedOption === idx;
+                    const isSelected = spectatorOwnVote === idx;
 
                     return (
                         <div key={idx} className="flex flex-col gap-y-2 w-full">
@@ -74,6 +82,9 @@ export default function SpectatorQuestionActiveOptions() {
                                 <div className="flex-1 text-sm md:text-base text-center font-medium">
                                     {option}
                                 </div>
+                                {isSelected && (
+                                    <div className="ml-2 text-green-400 font-bold">✓</div>
+                                )}
                             </div>
 
                             <div className="flex flex-col items-center justify-end h-full flex-1 min-w-0 px-1">

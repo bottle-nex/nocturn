@@ -35,6 +35,7 @@ export type PubSubMessageTypes =
           payload: any;
           exclude_socket_id?: never;
           only_socket_id?: string;
+          requested_participant_id?: string;
       };
 
 export enum Interactions {
@@ -71,6 +72,7 @@ export enum MESSAGE_TYPES {
     SPECTATOR_LEAVE_GAME_SESSION = 'SPECTATOR_LEAVE_GAME_SESSION',
     SPECTATOR_JOIN_GAME_SESSION = 'SPECTATOR_JOIN_GAME_SESSION',
     SPECTATOR_NAME_CHANGE = 'SPECTATOR_NAME_CHANGE',
+    LIFELINE_LIVE_UPDATE = 'LIFELINE_LIVE_UPDATE',
 
     PARTICIPANT_REQUEST_LIFELINE = 'PARTICIPANT_REQUEST_LIFELINE',
     LIFELINE_RESULT_TO_PARTICIPANT = 'LIFELINE_RESULT_TO_PARTICIPANT',
