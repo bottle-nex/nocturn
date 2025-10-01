@@ -139,7 +139,7 @@ export default class QuizManager {
             return;
         }
 
-        // clear the key
+        //clear the key here
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
         if (!question) {
@@ -149,7 +149,7 @@ export default class QuizManager {
         }
 
         const now = Date.now();
-        const buffer = 2 * SECONDS; // 2 seconds
+        const buffer = 2 * SECONDS;
         const question_active_time = question.timeLimit * SECONDS;
 
         const start_time = now + buffer;

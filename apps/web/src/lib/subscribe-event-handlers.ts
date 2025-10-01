@@ -135,7 +135,6 @@ export class SubscribeEventHandlers {
             currentPhase: QuizPhaseEnum;
         };
 
-        // FIX: Batch state updates to prevent race conditions
         const { updateGameSession, updateCurrentQuestion, resetLiveResponses, clearLifelineData } =
             useLiveQuizStore.getState();
 
@@ -143,6 +142,7 @@ export class SubscribeEventHandlers {
         clearLifelineData();
 
         updateCurrentQuestion({
+            id: readingPhasePayload.currentQuestionId,
             question: readingPhasePayload.questionTitle,
         });
 
@@ -342,6 +342,7 @@ export class SubscribeEventHandlers {
         clearLifelineData();
 
         updateCurrentQuestion({
+            id: readingPhasePayload.currentQuestionId,
             question: readingPhasePayload.questionTitle,
         });
 
@@ -449,6 +450,7 @@ export class SubscribeEventHandlers {
     }
 
     // <---------------------- LIFELINE_EVENTS ---------------------->
+
     static handleSpectatorLifelineInvitation(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {
@@ -467,7 +469,7 @@ export class SubscribeEventHandlers {
             isActive: message.status === 'active',
         });
 
-        toast.info('A participant needs help!');
+        toast.info('A participant needs help! Cast your vote.');
     }
 
     static handleLifelineResultToParticipant(payload: unknown) {
@@ -508,11 +510,8 @@ export class SubscribeEventHandlers {
             selectedOption: number;
         };
 
-        const { setSpectatorVote } = useLiveQuizStore.getState();
-
         if (message.status === 'recorded') {
-            setSpectatorVote(message.selectedOption);
-            toast.success(`Your help has been recorded: Option ${message.selectedOption + 1}`);
+            toast.success(`Your vote has been recorded: Option ${message.selectedOption + 1}`);
         }
     }
 
@@ -553,16 +552,27 @@ export class SubscribeEventHandlers {
             error?: string;
         };
 
-        const { setLifelineRequested } = useLiveQuizStore.getState();
-
         if (message.error) {
             toast.error(message.error);
             return;
         }
 
+        const { setLifelineRequested } = useLiveQuizStore.getState();
+
         if (message.status === 'requested' && message.expiresAt) {
             setLifelineRequested(true, message.expiresAt);
             toast.success('Lifeline requested! Spectators are being asked to help...');
         }
+    }
+
+    static handleLifelineLiveUpdate(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as {
+            questionId: string;
+            optionBreakdown: number[];
+        };
+
+        const { updateLifelineLiveVotes } = useLiveQuizStore.getState();
+        updateLifelineLiveVotes(message.optionBreakdown);
     }
 }
