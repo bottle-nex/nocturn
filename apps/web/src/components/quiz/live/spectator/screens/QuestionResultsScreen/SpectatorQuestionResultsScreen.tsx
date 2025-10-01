@@ -94,7 +94,7 @@ export default function ParticipantQuestionResultsRenderer() {
 
                 <div className="flex justify-center items-center px-4 sm:px-6 lg:px-7 py-4 sm:py-6 lg:py-7">
                     <h2 className="text-white text-lg sm:text-xl md:text-2xl font-extralight select-none tracking-wider">
-                        QUIZ RESULTS
+                        QUESTION RESULTS
                     </h2>
                 </div>
 

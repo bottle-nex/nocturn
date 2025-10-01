@@ -8,9 +8,10 @@ import {
     PubSubMessageTypes,
     SECONDS,
 } from '../types/web-socket-types';
-import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '.prisma/client';
+import { HostScreen, ParticipantScreen, QuizPhase, QuizStatus, SessionStatus, SpectatorScreen } from '.prisma/client';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
+import { PublicKey } from 'jsonwebtoken';
 
 export interface QuizManagerDependencies {
     publisher: Redis;
@@ -302,5 +303,33 @@ export default class QuizManager {
             },
         };
         this.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_spectator);
+    }
+
+    public async distribute_prize(
+        game_session_id: string,
+        quiz_id: string,
+        first: PublicKey,
+        second: PublicKey,
+        third: PublicKey,
+    ) {
+        // call the contract here with these pub-keys
+
+        // after success
+        this.database_queue.update_game_session(
+            game_session_id,
+            {
+                status: SessionStatus.COMPLETED,
+            },
+            game_session_id,
+        );
+
+        this.database_queue.update_quiz(
+            quiz_id,
+            {
+                status: QuizStatus.PAYOUT_COMPLETED,
+                endedAt: new Date(),
+            },
+            game_session_id,
+        );
     }
 }

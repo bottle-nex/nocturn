@@ -16,9 +16,10 @@ import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
 import PhaseQueue from '../queue/PhaseQueue';
-import { QuizPhase } from '.prisma/client';
+import { QuizPhase, QuizStatus, SessionStatus } from '.prisma/client';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
+import { PublicKey } from 'jsonwebtoken';
 
 export interface HostManagerDependencies {
     publisher: Redis;
@@ -113,6 +114,10 @@ export default class HostManager {
 
             case MESSAGE_TYPES.SETTINGS_CHANGE:
                 this.handle_settings_change(ws, payload);
+                break;
+
+            case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
+                this.handle_quiz_results(ws);
                 break;
 
             default:
@@ -278,13 +283,6 @@ export default class HostManager {
         });
     }
 
-    private async validateHostInDB(quizId: string, hostId: string): Promise<boolean> {
-        const quiz = await prisma.quiz.findUnique({
-            where: { id: quizId, hostId },
-        });
-        return !!quiz;
-    }
-
     private async handle_host_question_preview_page_change(ws: CustomWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const gameSession = await this.redis_cache.get_game_session(game_session_id);
@@ -401,6 +399,78 @@ export default class HostManager {
             .catch((err) => {
                 console.error('Failed to enqueue chat reaction: ', err);
             });
+    }
+
+    private async handle_quiz_results(ws: CustomWebSocket) {
+        const { gameSessionId: game_session_id, quizId: quiz_id } = ws.user;
+
+        const quiz = await this.redis_cache.get_quiz(game_session_id);
+        if (!quiz) return;
+
+        const questions = quiz.questions?.filter((q) => !q.isAsked);
+
+        if (!questions || questions.length !== 0) {
+            // show messaage that quiz is not ended yet
+            return;
+        }
+
+        const scores = await this.redis_cache.get_all_participants(game_session_id, [
+            'correctAnswers',
+            'finalRank',
+            'isKicked',
+            'longestStreak',
+            'totalScore',
+        ]);
+
+        // filter out the kicked participants
+        const final_scores = scores.filter((s) => !s.isKicked);
+
+        const event_data: PubSubMessageTypes = {
+            type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
+            payload: {
+                scores: final_scores,
+                screen: ParticipantScreen.QUIZ_RESULTS,
+            },
+        };
+
+        this.quizManager.publish_event_to_redis(game_session_id, event_data);
+
+        this.database_queue.update_game_session(
+            game_session_id,
+            {
+                hostScreen: HostScreen.QUIZ_RESULTS,
+                spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                currentPhase: QuizPhase.QUIZ_RESULTS,
+                // this is setting the quiz completed if the quiz has no prize
+                status: !!quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
+            },
+            game_session_id,
+        );
+
+        this.database_queue.update_quiz(
+            quiz_id,
+            {
+                status: !!quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
+            },
+            game_session_id,
+        );
+
+        // here call another function for processing the transaction of the winner if prize exists
+
+        if (!quiz.prizePool) {
+            const rankers = final_scores.sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
+
+            this.quizManager.distribute_prize(game_session_id, quiz_id, rankers[0], rankers[1], rankers[2]);
+        }
+
+    }
+
+    private async validateHostInDB(quizId: string, hostId: string): Promise<boolean> {
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: quizId, hostId },
+        });
+        return !!quiz;
     }
 
     private generateSocketId(): string {
