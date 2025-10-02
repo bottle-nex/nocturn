@@ -539,42 +539,38 @@ export default class ParticipantManager {
     private async handle_participant_warning_count(ws: CustomWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
+        const participants_key = this.redis_cache.get_participants_key(game_session_id);
 
-        const participant_cache = await this.redis_cache.get_participant(
-            game_session_id,
-            participant_id,
-        );
+        try {
+            const new_warning_count = await this.redis_cache.redis_cache.hincrby(
+                participants_key,
+                `${participant_id}.warningCount`,
+                1,
+            );
 
-        if (!participant_cache) return;
+            if (new_warning_count >= 5) {
+                const event_data: PubSubMessageTypes = {
+                    type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                    payload: { userId: participant_id },
+                };
+                this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        if (participant_cache.warningCount + 1 >= 5) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
-                payload: {
-                    userId: participant_id,
-                },
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+                await this.database_queue.update_participant(
+                    participant_id,
+                    { isKicked: true },
+                    game_session_id,
+                );
+                return;
+            }
 
-            // mark them to be kicked
-            this.database_queue.update_participant(
+            await this.database_queue.update_participant(
                 participant_id,
-                { isKicked: true },
+                { warningCount: new_warning_count },
                 game_session_id,
             );
-            return;
+        } catch (err) {
+            console.error('Error while updating participant warning count', err);
         }
-        this.redis_cache.set_participants(game_session_id, participant_id, {
-            warningCount: participant_cache.warningCount + 1,
-        });
-
-        this.database_queue.update_participant(
-            participant_id,
-            {
-                warningCount: participant_cache.warningCount + 1,
-            },
-            game_session_id,
-        );
     }
 
     private cleanup_existing_partiicpant_socket(

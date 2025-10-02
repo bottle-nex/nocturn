@@ -73,6 +73,7 @@ model Quiz {
   questions    Question[]
   GameSession  GameSession?
   chatMessage  ChatMessage[]
+  cdoBets      CDOBets[]
 
   @@map("quizzes")
 }
@@ -101,25 +102,26 @@ model Question {
 }
 
 model Participant {
-  id                   String     @id @default(cuid())
+  id                   String          @id @default(cuid())
   nickname             String
   avatar               String?
   ipAddress            String?
-  isNameChanged        Boolean    @default(false)
-  warningCount         Int        @default(0)
-  isKicked             Boolean    @default(false)
-  isEliminated         Boolean    @default(false)
+  isNameChanged        Boolean         @default(false)
+  warningCount         Int             @default(0)
+  isKicked             Boolean         @default(false)
+  isEliminated         Boolean         @default(false)
   eliminatedAt         DateTime?
   eliminatedAtQuestion String?
   finalRank            Int?
-  totalScore           Int        @default(0)
-  correctAnswers       Int        @default(0)
-  longestStreak        Int        @default(0)
+  totalScore           Int             @default(0)
+  correctAnswers       Int             @default(0)
+  longestStreak        Int             @default(0)
   walletAddress        String?
   quizId               String
-  quiz                 Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz                 Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
   Response             Response[]
-  lifelineUsage       LifelineUsage[]
+  lifelineUsage        LifelineUsage[]
+  cdoBets              CDOBets[]
 
   @@map("participants")
 }
@@ -129,8 +131,8 @@ model Spectator {
   nickname      String
   avatar        String?
   isNameChanged Boolean  @default(false)
-  warningCount         Int        @default(0)
-  isKicked             Boolean    @default(false)
+  warningCount  Int      @default(0)
+  isKicked      Boolean  @default(false)
   ipAddress     String?
   connectionId  String?
   joinedAt      DateTime @default(now())
@@ -170,11 +172,11 @@ model GameSession {
   phaseStartTime DateTime? // when current phase started (absolute time from server)
   phaseEndTime   DateTime?
 
-  quizId       String        @unique
-  quiz         Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  responses    Response[]
-  eliminations Elimination[]
-  chatMessage  ChatMessage[]
+  quizId        String          @unique
+  quiz          Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  responses     Response[]
+  eliminations  Elimination[]
+  chatMessage   ChatMessage[]
   lifelineUsage LifelineUsage[]
 
   @@map("game_sessions")
@@ -269,15 +271,29 @@ model ChatReaction {
 }
 
 model LifelineUsage {
-  id              String      @id @default(cuid())
-  participantId   String
-  participant     Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  gameSessionId   String
-  gameSession     GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
-  usedAt          DateTime    @default(now())
+  id            String      @id @default(cuid())
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  gameSessionId String
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+  usedAt        DateTime    @default(now())
 
   @@unique([participantId, gameSessionId])
   @@map("lifeline_usage")
+}
+
+model CDOBets {
+  id          String    @id @default(cuid())
+  quizId      String
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  stakeAmount Int
+  betStatus   BetStatus
+
+  questionId    String
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@map("cdo_bets")
 }
 
 enum QuizStatus {
@@ -357,4 +373,10 @@ enum ReactorType {
 enum ImagePosition {
   RIGHT
   LEFT
+}
+
+enum BetStatus {
+  WON
+  PENDING
+  LOST
 }

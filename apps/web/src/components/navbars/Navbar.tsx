@@ -49,7 +49,7 @@ export default function Navbar() {
     if (!mounted) return;
     return (
         <div
-            className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-3
+            className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center gap-x-2
                 transition-all duration-500 ease-in-out 
                 ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
         >
@@ -61,7 +61,7 @@ export default function Navbar() {
                     className="pointer-events-none select-none"
                     priority
                 />
-                <div className="absolute inset-0 z-10 flex items-center justify-between px-5 -mt-1">
+                <div className="absolute inset-0 z-10 flex items-center justify-between px-5 -mt-1.5">
                     <div className="w-8 h-7 bg-primary flex items-center justify-center px-[2px] rounded-sm flex-shrink-0">
                         <NocturnLogo className="w-12 h-auto cursor-pointer" />
                     </div>
@@ -69,7 +69,7 @@ export default function Navbar() {
                         <NavItems items={navItems} />
                         <DarkModeToggle />
                         <div className="w-px h-6 border-l border-neutral-600 dark:border-neutral-500" />
-                        <a className="relative text-neutral-600 dark:text-neutral-300 px-2 py-0.5 text-xs cursor-pointer">
+                        <a className="relative text-neutral-600 dark:text-neutral-300 py-0.5 text-xs cursor-pointer  pr-1">
                             <span className="relative z-20">products</span>
                         </a>
                     </div>
