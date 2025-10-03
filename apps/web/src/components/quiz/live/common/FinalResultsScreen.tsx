@@ -5,7 +5,6 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { Button } from '@/components/ui/button';
 import { GoShareAndroid } from 'react-icons/go';
-import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { DotPattern } from '@/components/magicui/dot-pattern';
 import { ParticipantType } from '@/types/prisma-types';
 import LeaderboardParticipantBar from '../participant/screens/QuestionResultsScreen/LeaderboardParticipantBars';
@@ -13,7 +12,6 @@ import LeaderboardParticipantBar from '../participant/screens/QuestionResultsScr
 export default function FinalResultsScreen() {
     const { participants, responses, getResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
-    const { currentQuestion, setAlreadyResponded } = useLiveQuizStore();
 
     const sortedParticipants = [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
     const [dateTime, setDateTime] = useState<string>('');
@@ -38,11 +36,6 @@ export default function FinalResultsScreen() {
         updateDateTime();
         const interval = setInterval(updateDateTime, 1000);
         return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        setAlreadyResponded(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const participantColors = sortedParticipants.map((participant, index) => {

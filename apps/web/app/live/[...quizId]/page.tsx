@@ -26,7 +26,7 @@ export default function New({ params }: NewProps) {
     const { quizId } = use(params);
     const router = useRouter();
 
-    const { quiz, updateQuiz, updateGameSession, updateCurrentQuestion } = useLiveQuizStore();
+    const { quiz, updateQuiz, updateGameSession, updateCurrentQuestion, setIsNextQuestonAvailable } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
     const { setSpectatorData } = useLiveSpectatorStore();
@@ -51,6 +51,7 @@ export default function New({ params }: NewProps) {
                     if (data.question) {
                         updateCurrentQuestion(data.question);
                     }
+                    setIsNextQuestonAvailable(Boolean(data.isNextQuestonAvailable));
                     switch (data.role) {
                         case 'HOST':
                             setHostData(data.userData);
@@ -65,7 +66,6 @@ export default function New({ params }: NewProps) {
                             break;
                     }
                 } else {
-                    toast.success('sdchvskdbvdksb');
                     router.back();
                 }
             } catch (error) {
@@ -86,6 +86,7 @@ export default function New({ params }: NewProps) {
         setSpectators,
         setChatMessages,
         updateCurrentQuestion,
+        setIsNextQuestonAvailable,
         router,
     ]);
 

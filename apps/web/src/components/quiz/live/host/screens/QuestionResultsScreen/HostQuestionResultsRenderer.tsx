@@ -8,15 +8,17 @@ import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { HostScreenEnum } from '@/types/prisma-types';
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MdNavigateNext } from 'react-icons/md';
 
 export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, updateGameSession } = useLiveQuizStore();
+    const { currentQuestion, isNextQuestionAvailable, gameSession, updateGameSession } = useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
+    const [quizEnded, setQuizEnded] = useState<boolean>(false);
+    const { handleHostQuizResults } = useWebSocket();
 
     useEffect(() => {
         emptyLiveResponses();
@@ -31,9 +33,20 @@ export default function HostQuestionResultsRenderer() {
         );
     }
 
+    useEffect(() => {
+        if (!isNextQuestionAvailable) {
+            setQuizEnded(true);
+            alert(isNextQuestionAvailable);
+        }
+    }, [])
+
     function handleOnClick() {
-        handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
-        updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
+        if (quizEnded) {
+            handleHostQuizResults({})
+        } else {
+            handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
+            updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
+        }
     }
 
     return (
@@ -88,7 +101,7 @@ export default function HostQuestionResultsRenderer() {
                     )}
                     onClick={handleOnClick}
                 >
-                    Next Question
+                    {quizEnded ? 'Final Results' : 'Next Question'}
                     <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />
                 </Button>
             </div>

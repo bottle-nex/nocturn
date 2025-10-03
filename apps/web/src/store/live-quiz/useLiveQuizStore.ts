@@ -25,6 +25,8 @@ interface LiveQuizStore {
     updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
     alreadyResponded: boolean;
     setAlreadyResponded: (value: boolean) => void;
+    isNextQuestionAvailable: boolean;
+    setIsNextQuestonAvailable: (value: boolean) => void;
 
     liveResponses: LiveResponseData;
     updateLiveResponse: (selectedOption: number) => void;
@@ -143,6 +145,9 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
 
     alreadyResponded: false,
     setAlreadyResponded: (value) => set({ alreadyResponded: value }),
+
+    isNextQuestionAvailable: false,
+    setIsNextQuestonAvailable: (value: boolean) => set({ isNextQuestionAvailable: value }),
 
     liveResponses: {
         optionCounts: [0, 0, 0, 0],
