@@ -19,7 +19,6 @@ import PhaseQueue from '../queue/PhaseQueue';
 import { QuizPhase, QuizStatus, SessionStatus } from '.prisma/client';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
-import { PublicKey } from 'jsonwebtoken';
 
 export interface HostManagerDependencies {
     publisher: Redis;
@@ -443,7 +442,7 @@ export default class HostManager {
                 participantScreen: ParticipantScreen.QUIZ_RESULTS,
                 currentPhase: QuizPhase.QUIZ_RESULTS,
                 // this is setting the quiz completed if the quiz has no prize
-                status: !!quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
+                status: quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
             },
             game_session_id,
         );
@@ -451,7 +450,7 @@ export default class HostManager {
         this.database_queue.update_quiz(
             quiz_id,
             {
-                status: !!quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
+                status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
             },
             game_session_id,
         );
@@ -461,9 +460,14 @@ export default class HostManager {
         if (!quiz.prizePool) {
             const rankers = final_scores.sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
 
-            this.quizManager.distribute_prize(game_session_id, quiz_id, rankers[0], rankers[1], rankers[2]);
+            this.quizManager.distribute_prize(
+                game_session_id,
+                quiz_id,
+                rankers[0],
+                rankers[1],
+                rankers[2],
+            );
         }
-
     }
 
     private async validateHostInDB(quizId: string, hostId: string): Promise<boolean> {

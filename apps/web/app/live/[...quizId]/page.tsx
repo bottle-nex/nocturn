@@ -14,7 +14,6 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
-import { toast } from 'sonner';
 
 export interface NewProps {
     params: Promise<{
@@ -26,7 +25,13 @@ export default function New({ params }: NewProps) {
     const { quizId } = use(params);
     const router = useRouter();
 
-    const { quiz, updateQuiz, updateGameSession, updateCurrentQuestion, setIsNextQuestonAvailable } = useLiveQuizStore();
+    const {
+        quiz,
+        updateQuiz,
+        updateGameSession,
+        updateCurrentQuestion,
+        setIsNextQuestonAvailable,
+    } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
     const { setSpectatorData } = useLiveSpectatorStore();

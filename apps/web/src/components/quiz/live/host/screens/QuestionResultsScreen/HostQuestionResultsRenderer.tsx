@@ -15,7 +15,8 @@ export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, isNextQuestionAvailable, gameSession, updateGameSession } = useLiveQuizStore();
+    const { currentQuestion, isNextQuestionAvailable, gameSession, updateGameSession } =
+        useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
     const [quizEnded, setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults } = useWebSocket();
@@ -38,11 +39,11 @@ export default function HostQuestionResultsRenderer() {
             setQuizEnded(true);
             alert(isNextQuestionAvailable);
         }
-    }, [])
+    }, [isNextQuestionAvailable]);
 
     function handleOnClick() {
         if (quizEnded) {
-            handleHostQuizResults({})
+            handleHostQuizResults({});
         } else {
             handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
             updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });

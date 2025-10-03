@@ -196,7 +196,7 @@ export const useWebSocket = () => {
             payload: payload,
         };
 
-        if(socket.current) {
+        if (socket.current) {
             socket.current.send_message(message);
         }
     }

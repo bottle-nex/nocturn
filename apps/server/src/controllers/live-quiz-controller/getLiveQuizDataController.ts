@@ -150,8 +150,8 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                         ...(questionId &&
                             (gameSession?.currentPhase === QuizPhase.QUESTION_ACTIVE ||
                                 gameSession?.currentPhase === QuizPhase.SHOW_RESULTS) && {
-                            options: true,
-                        }),
+                                options: true,
+                            }),
                     },
                 });
             }
@@ -231,7 +231,16 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     break;
             }
 
-            return { quiz, gameSession, userData, participants, spectators, currentQ, question, isNextQuestionAvailable };
+            return {
+                quiz,
+                gameSession,
+                userData,
+                participants,
+                spectators,
+                currentQ,
+                question,
+                isNextQuestionAvailable,
+            };
         });
 
         if (!result.quiz || !result.gameSession) {
@@ -266,7 +275,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             question: result.question,
             isNextQuestionAvailable: result.isNextQuestionAvailable,
         };
-        console.log(responseData);
 
         if (!data.success || !data.messages || data.error) {
             res.status(200).json(responseData);

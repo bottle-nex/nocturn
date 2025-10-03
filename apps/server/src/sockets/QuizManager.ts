@@ -8,7 +8,14 @@ import {
     PubSubMessageTypes,
     SECONDS,
 } from '../types/web-socket-types';
-import { HostScreen, ParticipantScreen, QuizPhase, QuizStatus, SessionStatus, SpectatorScreen } from '.prisma/client';
+import {
+    HostScreen,
+    ParticipantScreen,
+    QuizPhase,
+    QuizStatus,
+    SessionStatus,
+    SpectatorScreen,
+} from '.prisma/client';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 import { PublicKey } from 'jsonwebtoken';
@@ -308,9 +315,9 @@ export default class QuizManager {
     public async distribute_prize(
         game_session_id: string,
         quiz_id: string,
-        first: PublicKey,
-        second: PublicKey,
-        third: PublicKey,
+        _first: PublicKey,
+        _second: PublicKey,
+        _third: PublicKey,
     ) {
         // call the contract here with these pub-keys
 
