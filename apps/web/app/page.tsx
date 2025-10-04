@@ -14,6 +14,7 @@ import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
 import Faq from '@/components/base/Faq';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
+import AnimatedHorizontalBars from '@/components/ui/AnimatedHorizontalBars';
 
 export const mini_descriptions = [
     {
@@ -88,6 +89,7 @@ export default function Home() {
                 <CustomFeatureComponent />
                 <Faq />
                 <BigAnimatedText />
+                <AnimatedHorizontalBars />
             </div>
 
             <div className="fixed bottom-6 right-8 z-90">

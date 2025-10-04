@@ -253,6 +253,7 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.LIFELINE_LIVE_UPDATE:
+                // send to requested participant id
                 break;
         }
     }
