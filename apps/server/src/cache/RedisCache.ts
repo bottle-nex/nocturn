@@ -20,7 +20,7 @@ type QuizWithQuestions = Quiz & {
 // }
 
 export default class RedisCache {
-    private redis_cache: Redis;
+    public redis_cache: Redis;
 
     constructor() {
         this.redis_cache = new Redis(REDIS_URL!);
@@ -143,7 +143,7 @@ export default class RedisCache {
         }
     }
 
-    private get_participants_key(game_session_id: string) {
+    public get_participants_key(game_session_id: string) {
         return `game_session:${game_session_id}:participants`;
     }
 

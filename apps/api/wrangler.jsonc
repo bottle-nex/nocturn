@@ -1,0 +1,8 @@
+{
+  "name": "hono-worker",
+  "compatibility_date": "2025-10-03",
+  "main": "src/index.ts",
+  "dev": {
+    "port": 8787
+  }
+}

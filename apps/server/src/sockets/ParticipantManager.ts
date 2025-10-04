@@ -309,9 +309,11 @@ export default class ParticipantManager {
                 },
             };
             ws.send(JSON.stringify(confirmation));
-            // setTimeout(async () => {
-            //     await this.send_lifeline_results_to_all_requesting_participants(gameSessionId, questionId);
-            // }, expirySeconds * 1000);
+            // sending to only requesting participants
+            await this.send_lifeline_results_to_all_requesting_participants(
+                gameSessionId,
+                questionId,
+            );
         }
     }
 
@@ -327,51 +329,53 @@ export default class ParticipantManager {
         return counts;
     }
 
-    // private async send_lifeline_results_to_all_requesting_participants(
-    //     gameSessionId: string,
-    //     questionId: string,
-    // ): Promise<void> {
-    //     try {
-    //         const session = await this.redis_cache.get_active_lifeline_session(gameSessionId, questionId);
-    //         if (!session) {
-    //             console.error('No lifeline session found');
-    //             return;
-    //         }
+    private async send_lifeline_results_to_all_requesting_participants(
+        gameSessionId: string,
+        questionId: string,
+    ): Promise<void> {
+        try {
+            const session = await this.redis_cache.get_active_lifeline_session(
+                gameSessionId,
+                questionId,
+            );
+            if (!session) {
+                console.error('No lifeline session found');
+                return;
+            }
 
-    //         const results = await this.redis_cache.get_lifeline_results(gameSessionId, questionId);
-    //         if (!results) {
-    //             console.error('No lifeline results found');
-    //             return;
-    //         }
+            const results = await this.redis_cache.get_lifeline_results(gameSessionId, questionId);
+            if (!results) {
+                console.error('No lifeline results found');
+                return;
+            }
 
-    //         // Send results to each requesting participant
-    //         for (const participantId of session.requestingParticipants) {
-    //             const socketId = this.participant_socket_mapping.get(participantId);
-    //             if (socketId) {
-    //                 const result_message = {
-    //                     type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
-    //                     payload: {
-    //                         questionId,
-    //                         mostPopularOption: results.mostPopularOption,
-    //                         totalResponses: results.totalResponses,
-    //                         wasSuccessful: results.wasSuccessful,
-    //                         optionBreakdown: results.optionCounts,
-    //                     },
-    //                 };
+            // Send results to each requesting participant
+            for (const participantId of session.requestingParticipants) {
+                const socketId = this.participant_socket_mapping.get(participantId);
+                if (socketId) {
+                    const result_message = {
+                        type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                        payload: {
+                            questionId,
+                            mostPopularOption: results.mostPopularOption,
+                            totalResponses: results.totalResponses,
+                            wasSuccessful: results.wasSuccessful,
+                            optionBreakdown: results.optionCounts,
+                        },
+                    };
 
-    //                 const socket = this.socket_mapping.get(socketId);
-    //                 if (socket && socket.readyState === WebSocket.OPEN) {
-    //                     socket.send(JSON.stringify(result_message));
-    //                 }
-    //             }
+                    const socket = this.socket_mapping.get(socketId);
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify(result_message));
+                    }
+                }
+            }
 
-    //         }
-
-    //         await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
-    //     } catch (error) {
-    //         console.error('Error sending lifeline results:', error);
-    //     }
-    // }
+            await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
+        } catch (error) {
+            console.error('Error sending lifeline results:', error);
+        }
+    }
 
     private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
         const { reactionType } = payload;
@@ -535,42 +539,38 @@ export default class ParticipantManager {
     private async handle_participant_warning_count(ws: CustomWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
+        const participants_key = this.redis_cache.get_participants_key(game_session_id);
 
-        const participant_cache = await this.redis_cache.get_participant(
-            game_session_id,
-            participant_id,
-        );
+        try {
+            const new_warning_count = await this.redis_cache.redis_cache.hincrby(
+                participants_key,
+                `${participant_id}.warningCount`,
+                1,
+            );
 
-        if (!participant_cache) return;
+            if (new_warning_count >= 5) {
+                const event_data: PubSubMessageTypes = {
+                    type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                    payload: { userId: participant_id },
+                };
+                this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        if (participant_cache.warningCount + 1 >= 5) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
-                payload: {
-                    userId: participant_id,
-                },
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+                await this.database_queue.update_participant(
+                    participant_id,
+                    { isKicked: true },
+                    game_session_id,
+                );
+                return;
+            }
 
-            // mark them to be kicked
-            this.database_queue.update_participant(
+            await this.database_queue.update_participant(
                 participant_id,
-                { isKicked: true },
+                { warningCount: new_warning_count },
                 game_session_id,
             );
-            return;
+        } catch (err) {
+            console.error('Error while updating participant warning count', err);
         }
-        this.redis_cache.set_participants(game_session_id, participant_id, {
-            warningCount: participant_cache.warningCount + 1,
-        });
-
-        this.database_queue.update_participant(
-            participant_id,
-            {
-                warningCount: participant_cache.warningCount + 1,
-            },
-            game_session_id,
-        );
     }
 
     private cleanup_existing_partiicpant_socket(
