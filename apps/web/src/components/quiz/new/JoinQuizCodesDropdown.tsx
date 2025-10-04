@@ -28,10 +28,6 @@ export default function JoinQuizCodesDropdown({
 
     useHandleClickOutside([containerRef], () => setOpen(false));
 
-    function addHyphen(str: string): string {
-        return str.match(/.{1,3}/g)?.join('-') ?? str;
-    }
-
     useEffect(() => {
         if (copiedSpectator) {
             const timeout = setTimeout(() => {

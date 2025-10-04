@@ -2,7 +2,6 @@
 import WaitingLobbyAvatars from '../../../common/Avatars';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
-import JoinQuizCodeTicker from '@/components/quiz/new/JoinquizCodeTicker';
 import JoinQuizCodesDropdown from '@/components/quiz/new/JoinQuizCodesDropdown';
 
 export default function HostLobbyRenderer() {

@@ -44,15 +44,28 @@ export default class SpectatorManager {
         this.session_spectators_mapping = dependencies.session_spectator_mapping;
         this.quizManager = dependencies.quizManager;
         this.socket_mapping = dependencies.socket_mapping;
-
         this.database_queue = dependencies.database_queue;
         this.redis_cache = dependencies.redis_cache;
         this.quiz_settings = quizSettingInstance;
-
         this.participant_socket_mapping = dependencies.participant_socket_mapping;
     }
 
+    private is_new_spectator_allowed(game_session_id: string): boolean {
+        const quiz_settings = this.quiz_settings.quiz_settings_mapping.get(game_session_id);
+        if (!quiz_settings?.allowNewSpectator) {
+            return false;
+        }
+        return true;
+    }
+
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+        const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
+
+        if (!is_new_spectator_allowed) {
+            ws.close();
+            return;
+        }
+
         const is_valid_spectator = await this.validateSpectatorInDb(payload.quizId, payload.userId);
 
         if (!is_valid_spectator) {

@@ -1,7 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
 import InvertedQuizCards from '../utility/InvertedQuizCards';
-import { useTheme } from 'next-themes';
 
 export interface StyleInterface {
     style?: React.CSSProperties;
@@ -12,7 +11,6 @@ export interface HomeDashboardProps extends StyleInterface {
 }
 
 export default function HomeDashboard({ style, className }: HomeDashboardProps) {
-    const { theme } = useTheme();
     return (
         <div className={cn('flex flex-col overflow-hidden relative', className)} style={style}>
             <div className="w-[24rem] flex flex-col relative p-8">
