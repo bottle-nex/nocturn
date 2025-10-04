@@ -101,12 +101,12 @@ export default function ParticipantQuestionActiveOptions() {
 
     return (
         <div className="w-full flex flex-col items-center justify-center gap-y-5 p-8 rounded-xl z-10 relative">
-
-
             {shouldShowBars && barData && (
                 <div className="fixed inset-0 pointer-events-none">
                     <div className="absolute top-4 right-4 w-full max-w-xs bg-neutral-900/80 backdrop-blur-md border border-white/10 rounded-lg shadow-lg p-3 space-y-3 z-50 pointer-events-auto flex flex-col">
-                        <span className='py-1 w-full flex justify-center items-center'>Spectator Votes</span>
+                        <span className="py-1 w-full flex justify-center items-center">
+                            Spectator Votes
+                        </span>
                         {barData.map((votes: number, idx: number) => {
                             const color = barColors[idx % barColors.length] as Hex;
                             const percentage = getVotePercentage(idx);
@@ -162,8 +162,7 @@ export default function ParticipantQuestionActiveOptions() {
                     const isSelected = selected === idx;
                     const isDisabled = selected !== null && !isSelected;
                     const isLifelineSuggestion =
-                        lifelineResult?.wasSuccessful &&
-                        lifelineResult.mostPopularOption === idx;
+                        lifelineResult?.wasSuccessful && lifelineResult.mostPopularOption === idx;
 
                     return (
                         <div key={idx} className="flex flex-col gap-y-2 w-full">
@@ -173,10 +172,9 @@ export default function ParticipantQuestionActiveOptions() {
                                     'group relative isolate flex w-full select-none items-stretch overflow-hidden rounded-2xl',
                                     'border border-white/10 bg-white/[0.03] transition-transform',
                                     !isDisabled &&
-                                    'cursor-pointer hover:-translate-y-0.5 active:translate-y-0',
+                                        'cursor-pointer hover:-translate-y-0.5 active:translate-y-0',
                                     isDisabled && 'opacity-50 cursor-not-allowed',
-                                    isLifelineSuggestion &&
-                                    'ring-2 ring-green-400 ring-opacity-60',
+                                    isLifelineSuggestion && 'ring-2 ring-green-400 ring-opacity-60',
                                 )}
                                 style={getOptionStyle(idx, color, isSelected)}
                             >
