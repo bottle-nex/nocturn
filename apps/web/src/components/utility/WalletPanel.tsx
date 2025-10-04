@@ -4,15 +4,10 @@ import { RxCross2 } from 'react-icons/rx';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Roboto } from 'next/font/google';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { cn } from '@/lib/utils';
 import { ConnectedWalletInfoCard } from '../ui/ConnectedWalletInfoCard';
 import Image from 'next/image';
-
-const roboto = Roboto({
-    subsets: ['latin'],
-});
 
 interface WalletPanelProps {
     close: () => void;
@@ -88,8 +83,7 @@ export const WalletPanel = ({ close }: WalletPanelProps) => {
     return createPortal(
         <div
             className={cn(
-                'fixed inset-0 z-50 flex items-center justify-center bg-black/40 text-[#D8CFBC] select-none',
-                roboto.className,
+                'fixed inset-0 z-50 flex items-center justify-center bg-black/40 text-[#D8CFBC] select-none tracking-wide',
             )}
         >
             <div

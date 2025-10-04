@@ -8,19 +8,15 @@ import { JSX, useEffect, useRef } from 'react';
 import { MdRateReview } from 'react-icons/md';
 import { FiX } from 'react-icons/fi';
 import gsap from 'gsap';
-
-import {
-    TbDashboard,
-    TbPlus,
-    TbTrophy,
-    TbChartBar,
-    TbWallet,
-    TbCrown,
-    TbHistory,
-    TbSettings,
-    TbHelp,
-} from 'react-icons/tb';
+import { TbLayoutDashboardFilled } from 'react-icons/tb';
+import { MdInventory } from 'react-icons/md';
 import AppLogo from '../app/AppLogo';
+import { SiGoogleanalytics } from 'react-icons/si';
+import { IoWallet } from 'react-icons/io5';
+import { DiGoogleAnalytics } from 'react-icons/di';
+import { RiFolderHistoryFill } from 'react-icons/ri';
+import { FaHandsHelping } from 'react-icons/fa';
+import { IoIosCreate, IoMdSettings } from 'react-icons/io';
 
 export default function DashboardLeft(): JSX.Element {
     const { value, setValue } = useHomeRendererStore();
@@ -125,9 +121,9 @@ function DashboardOptions({
 }): JSX.Element {
     const upperDashboardOptions: OptionProps[] = [
         {
-            icon: <TbDashboard size={20} />,
+            icon: <TbLayoutDashboardFilled size={20} />,
             label: 'Dashboard',
-            color: '#3B82F6', // Blue
+            color: '#4469ef', // Blue
             onClick: () => {
                 setValue(HomeRendererEnum.DASHBOARD);
                 close?.();
@@ -135,7 +131,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.DASHBOARD,
         },
         {
-            icon: <TbTrophy size={20} />,
+            icon: <MdInventory size={20} />,
             label: 'My Quizzes',
             color: '#F97316', // Orange
             onClick: () => {
@@ -145,7 +141,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.MY_QUIZ,
         },
         {
-            icon: <TbPlus size={20} />,
+            icon: <IoIosCreate size={20} />,
             label: 'Create Quiz',
             color: '#22C55E', // Green
             onClick: () => {
@@ -155,7 +151,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.CREATE_QUIZ,
         },
         {
-            icon: <TbChartBar size={20} />,
+            icon: <DiGoogleAnalytics size={20} />,
             label: 'Analytics',
             color: '#8B5CF6', // Purple
             onClick: () => {
@@ -165,7 +161,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.ANALYTICS,
         },
         {
-            icon: <TbWallet size={20} />,
+            icon: <IoWallet size={20} />,
             label: 'Wallet',
             color: '#14B8A6', // Teal
             onClick: () => {
@@ -175,7 +171,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.WALLET,
         },
         {
-            icon: <TbCrown size={20} />,
+            icon: <SiGoogleanalytics size={20} />,
             label: 'Leaderboards',
             color: '#EAB308', // Gold/Yellow
             onClick: () => {
@@ -185,9 +181,9 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.LEADERBOARD,
         },
         {
-            icon: <TbHistory size={20} />,
+            icon: <RiFolderHistoryFill size={20} />,
             label: 'History',
-            color: '#64748B', // Slate Gray
+            color: '#64748B',
             onClick: () => {
                 setValue(HomeRendererEnum.HISTORY);
                 close?.();
@@ -208,7 +204,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.REVIEW,
         },
         {
-            icon: <TbSettings size={20} />,
+            icon: <IoMdSettings size={20} />,
             label: 'Settings',
             color: '#6B7280', // Gray
             onClick: () => {
@@ -218,7 +214,7 @@ function DashboardOptions({
             isActive: value === HomeRendererEnum.SETTINGS,
         },
         {
-            icon: <TbHelp size={20} />,
+            icon: <FaHandsHelping size={20} />,
             label: 'Help & Support',
             color: '#0EA5E9', // Sky Blue
             onClick: () => {
@@ -264,7 +260,8 @@ function NavOption({ icon, label, onClick, isActive, color }: OptionProps) {
         >
             <div
                 style={{
-                    backgroundColor: `${color}`,
+                    color: `${color}`,
+                    backgroundColor: `${color}80`,
                 }}
                 className="flex items-center justify-center shrink-0 w-8 h-8 rounded-sm p-1"
             >
