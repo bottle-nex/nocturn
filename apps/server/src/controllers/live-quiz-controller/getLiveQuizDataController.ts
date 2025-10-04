@@ -170,6 +170,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
             // Role-specific data
             let userData = null;
+            let isNextQuestionAvailable = false;
 
             switch (role) {
                 case USER_TYPE.HOST:
@@ -184,6 +185,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                             isVerified: true,
                         },
                     });
+                    isNextQuestionAvailable = !!quiz?.questions.find((q) => !q.isAsked);
                     break;
 
                 // returning the participant data if the participant is not kicked
@@ -229,7 +231,16 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     break;
             }
 
-            return { quiz, gameSession, userData, participants, spectators, currentQ, question };
+            return {
+                quiz,
+                gameSession,
+                userData,
+                participants,
+                spectators,
+                currentQ,
+                question,
+                isNextQuestionAvailable,
+            };
         });
 
         if (!result.quiz || !result.gameSession) {
@@ -262,6 +273,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             currentQ: result.currentQ,
             role,
             question: result.question,
+            isNextQuestionAvailable: result.isNextQuestionAvailable,
         };
 
         if (!data.success || !data.messages || data.error) {

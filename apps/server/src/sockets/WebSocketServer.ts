@@ -253,7 +253,12 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.LIFELINE_LIVE_UPDATE:
-                // send to requested participant id
+            case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
+                this.broadcast_to_session(game_session_id, message, [
+                    USER_TYPE.PARTICIPANT,
+                    USER_TYPE.SPECTATOR,
+                    USER_TYPE.HOST,
+                ]);
                 break;
         }
     }

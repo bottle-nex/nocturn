@@ -14,5 +14,5 @@ export const useSpectatorWarning = () => {
             router.back();
             toast.error("You've been kicked!");
         }
-    }, [router, spectatorData?.isKicked]);
+    }, [spectatorData?.isKicked, router]);
 };
