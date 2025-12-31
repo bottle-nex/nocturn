@@ -13,11 +13,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@nocturn/database": "workspace:*",
     "bull": "4.16.5",
     "dotenv": "^17.2.2",
+    "esbuild": "^0.25.6",
     "ioredis": "^5.7.0",
-    "zod": "^4.1.11",
-    "@nocturn/database": "workspace:*"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@nocturn/typescript-config": "workspace:*"

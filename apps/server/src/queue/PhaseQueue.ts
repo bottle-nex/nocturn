@@ -11,7 +11,7 @@ export default class PhaseQueue {
     private is_queue_processor: boolean = false;
     private server_id: string;
     private redis_cache: RedisCache = redisCacheInstance;
-    private electionIntervalId?: NodeJS.Timeout;
+    private electionIntervalId?: ReturnType<typeof setTimeout>;
     private quiz_manager!: QuizManager;
 
     constructor() {

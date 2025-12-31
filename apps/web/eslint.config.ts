@@ -1,9 +1,16 @@
+import type { Linter } from 'eslint';
 import { nextJsConfig } from '@nocturn/eslint-config/next-js';
 import prettierConfig from 'eslint-config-prettier';
 
-const config = [
+const config: Linter.Config[] = [
     {
-        ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/build/**'],
+        ignores: [
+            '**/node_modules/**',
+            '**/.next/**',
+            '**/dist/**',
+            '**/build/**',
+            'next-env.d.ts',
+        ],
     },
     ...(Array.isArray(nextJsConfig) ? nextJsConfig : [nextJsConfig]),
     {

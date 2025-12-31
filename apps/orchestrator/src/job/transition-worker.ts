@@ -19,7 +19,7 @@ import {
   ParticipantScreen,
   QuizPhase,
   SpectatorScreen,
-} from ".prisma/client";
+} from "@nocturn/database";
 
 export default class TransitionWorker {
   private redis_cache: RedisCache;

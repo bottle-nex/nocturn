@@ -26,6 +26,13 @@ export default function HostQuestionResultsRenderer() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (!isNextQuestionAvailable) {
+            setQuizEnded(true);
+            alert(isNextQuestionAvailable);
+        }
+    }, [isNextQuestionAvailable]);
+
     if (!currentQuestion || !gameSession) {
         return (
             <div className="text-center text-neutral-400 w-full">
@@ -33,13 +40,6 @@ export default function HostQuestionResultsRenderer() {
             </div>
         );
     }
-
-    useEffect(() => {
-        if (!isNextQuestionAvailable) {
-            setQuizEnded(true);
-            alert(isNextQuestionAvailable);
-        }
-    }, [isNextQuestionAvailable]);
 
     function handleOnClick() {
         if (quizEnded) {

@@ -1,6 +1,7 @@
 import Bull, { JobOptions } from "bull";
-import prisma, {
+import {
   GameSession,
+  prisma,
   Participant,
   Prisma,
   Quiz,
