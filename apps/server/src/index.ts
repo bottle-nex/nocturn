@@ -28,5 +28,5 @@ app.use('/api/v1', router);
 new WebsocketServer(server);
 
 server.listen(PORT, () => {
-    console.warn('Application started at port : ', PORT);
+    console.warn('Application started at port @ ', PORT);
 });
