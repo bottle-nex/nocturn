@@ -247,6 +247,15 @@ export default class WebsocketServer {
                     message.requestedParticipantId,
                 );
                 break;
+
+            case MESSAGE_TYPES.LIFELINE_LIVE_UPDATE:
+            case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
+                this.broadcast_to_session(game_session_id, message, [
+                    USER_TYPE.PARTICIPANT,
+                    USER_TYPE.SPECTATOR,
+                    USER_TYPE.HOST,
+                ]);
+                break;
         }
     }
 
@@ -352,6 +361,8 @@ export default class WebsocketServer {
             subscriber: this.subscriber,
             socket_mapping: this.socket_mapping,
             session_spectator_mapping: this.session_spectators_mapping,
+            session_participant_mapping: this.session_participants_mapping,
+            participant_socket_mapping: this.participant_manager.get_participant_socket_mapping(),
             quizManager: this.quizManager,
             database_queue: this.database_queue,
             redis_cache: this.redis_cache,

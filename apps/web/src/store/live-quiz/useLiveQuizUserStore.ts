@@ -30,6 +30,7 @@ interface LiveParticipantStore {
     participantData: ParticipantType | null;
     updateParticipantData: (updatedFields: Partial<ParticipantType>) => void;
     setParticipantData: (data: ParticipantType) => void;
+    removeParticipantData: () => void;
 }
 
 export const useLiveParticipantStore = create<LiveParticipantStore>((set) => ({
@@ -54,6 +55,9 @@ export const useLiveParticipantStore = create<LiveParticipantStore>((set) => ({
     },
     setParticipantData: (data: ParticipantType) => {
         set({ participantData: data });
+    },
+    removeParticipantData: () => {
+        set({ participantData: null });
     },
 }));
 

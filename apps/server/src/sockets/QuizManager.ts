@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import RedisCache from '../cache/RedisCache';
-import { Participant, Spectator, prisma } from '@nocturn/database';
+import { Participant, QuizStatus, SessionStatus, Spectator, prisma } from '@nocturn/database';
 import {
     CookiePayload,
     MESSAGE_TYPES,
@@ -11,6 +11,7 @@ import {
 import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
+import { PublicKey } from 'jsonwebtoken';
 
 export interface QuizManagerDependencies {
     publisher: Redis;
@@ -139,7 +140,7 @@ export default class QuizManager {
             return;
         }
 
-        // clear the key
+        //clear the key here
 
         const question = quiz.questions?.find((q) => q.id === data.questionId);
         if (!question) {
@@ -149,7 +150,7 @@ export default class QuizManager {
         }
 
         const now = Date.now();
-        const buffer = 2 * SECONDS; // 2 seconds
+        const buffer = 2 * SECONDS;
         const question_active_time = question.timeLimit * SECONDS;
 
         const start_time = now + buffer;
@@ -302,5 +303,33 @@ export default class QuizManager {
             },
         };
         this.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_spectator);
+    }
+
+    public async distribute_prize(
+        game_session_id: string,
+        quiz_id: string,
+        _first: PublicKey,
+        _second: PublicKey,
+        _third: PublicKey,
+    ) {
+        // call the contract here with these pub-keys
+
+        // after success
+        this.database_queue.update_game_session(
+            game_session_id,
+            {
+                status: SessionStatus.COMPLETED,
+            },
+            game_session_id,
+        );
+
+        this.database_queue.update_quiz(
+            quiz_id,
+            {
+                status: QuizStatus.PAYOUT_COMPLETED,
+                endedAt: new Date(),
+            },
+            game_session_id,
+        );
     }
 }

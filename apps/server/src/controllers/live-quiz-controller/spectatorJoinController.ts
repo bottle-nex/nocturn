@@ -29,6 +29,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
             select: {
                 id: true,
                 status: true,
+                allowNewSpectator: true,
             },
         });
 
@@ -36,6 +37,14 @@ export default async function spectatorJoinController(req: Request, res: Respons
             res.status(404).json({
                 success: false,
                 message: 'Invalid quiz code. Please check and try again.',
+            });
+            return;
+        }
+
+        if (!quiz.allowNewSpectator) {
+            res.status(200).json({
+                success: false,
+                message: 'No new spectaors are allowed for this quiz.',
             });
             return;
         }

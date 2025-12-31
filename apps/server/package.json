@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --minify --external:@prisma/client --external:express --external:jsonwebtoken --external:@aws-sdk/* --external:ioredis --external:ws --external:@google/genai --external:razorpay --external:winston --external:zod --external:stripe --external:bullmq --external:cookie-parser --external:cors --external:dotenv --external:langchain --external:@langchain/* --external:@opentelemetry/*",
+    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --minify --external:@prisma/client --external:express --external:jsonwebtoken --external:@aws-sdk/* --external:ioredis --external:ws --external:winston --external:zod --external:cookie-parser --external:cors --external:dotenv",
     "start": "node dist/index.js",
     "dev": "pnpm build && pnpm start",
     "lint": "eslint './src/**/*.{ts,js}'",
@@ -22,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "bcryptjs": "^3.0.2",
+    "@prisma/instrumentation": "^7.1.0",
     "bull": "^4.16.5",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",

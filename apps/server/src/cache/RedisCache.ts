@@ -20,7 +20,7 @@ type QuizWithQuestions = Quiz & {
 // }
 
 export default class RedisCache {
-    private redis_cache: Redis;
+    public redis_cache: Redis;
 
     constructor() {
         this.redis_cache = new Redis(REDIS_URL!);
@@ -143,7 +143,7 @@ export default class RedisCache {
         }
     }
 
-    private get_participants_key(game_session_id: string) {
+    public get_participants_key(game_session_id: string) {
         return `game_session:${game_session_id}:participants`;
     }
 
@@ -418,49 +418,6 @@ export default class RedisCache {
         return `game_session:${game_session_id}:lifelines`;
     }
 
-    public async set_active_lifeline_session(
-        game_session_id: string,
-        question_id: string,
-        participant_id: string,
-        expiry_seconds: number = 60,
-    ): Promise<boolean> {
-        try {
-            const key = this.get_active_lifeline_key(game_session_id, question_id);
-            const data = {
-                questionId: question_id,
-                participantId: participant_id,
-                responses: {},
-                createdAt: Date.now(),
-                expiresAt: Date.now() + expiry_seconds * 1000,
-            };
-            await this.redis_cache.set(key, JSON.stringify(data), 'EX', expiry_seconds);
-            return true;
-        } catch (error) {
-            console.error('Error setting active lifeline session:', error);
-            return false;
-        }
-    }
-
-    public async get_active_lifeline_session(
-        game_session_id: string,
-        question_id: string,
-    ): Promise<{
-        questionId: string;
-        participantId: string;
-        responses: Record<string, number>;
-        createdAt: number;
-        expiresAt: number;
-    } | null> {
-        try {
-            const key = this.get_active_lifeline_key(game_session_id, question_id);
-            const data = await this.redis_cache.get(key);
-            return data ? JSON.parse(data) : null;
-        } catch (error) {
-            console.error('Error getting active lifeline session:', error);
-            return null;
-        }
-    }
-
     public async delete_active_lifeline_session(game_session_id: string, question_id: string) {
         try {
             const key = this.get_active_lifeline_key(game_session_id, question_id);
@@ -567,6 +524,82 @@ export default class RedisCache {
             }
         } catch (error) {
             console.error('Error cleaning up lifeline sessions:', error);
+        }
+    }
+
+    public async set_active_lifeline_session(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        expiry_seconds: number = 60,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const existing = await this.get_active_lifeline_session(game_session_id, question_id);
+
+            if (existing) {
+                if (!existing.requestingParticipants.includes(participant_id)) {
+                    existing.requestingParticipants.push(participant_id);
+                    const remainingTTL = Math.ceil((existing.expiresAt - Date.now()) / 1000);
+                    if (remainingTTL > 0) {
+                        await this.redis_cache.set(
+                            key,
+                            JSON.stringify(existing),
+                            'EX',
+                            remainingTTL,
+                        );
+                        return true;
+                    }
+                }
+                return true;
+            }
+
+            const data = {
+                questionId: question_id,
+                requestingParticipants: [participant_id],
+                responses: {},
+                createdAt: Date.now(),
+                expiresAt: Date.now() + expiry_seconds * 1000,
+            };
+            await this.redis_cache.set(key, JSON.stringify(data), 'EX', expiry_seconds);
+            return true;
+        } catch (error) {
+            console.error('Error setting active lifeline session:', error);
+            return false;
+        }
+    }
+
+    public async get_active_lifeline_session(
+        game_session_id: string,
+        question_id: string,
+    ): Promise<{
+        questionId: string;
+        requestingParticipants: string[];
+        responses: Record<string, number>;
+        createdAt: number;
+        expiresAt: number;
+    } | null> {
+        try {
+            const key = this.get_active_lifeline_key(game_session_id, question_id);
+            const data = await this.redis_cache.get(key);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error('Error getting active lifeline session:', error);
+            return null;
+        }
+    }
+
+    public async has_participant_requested_lifeline(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+    ): Promise<boolean> {
+        try {
+            const session = await this.get_active_lifeline_session(game_session_id, question_id);
+            return session?.requestingParticipants.includes(participant_id) ?? false;
+        } catch (error) {
+            console.error('Error checking participant lifeline request:', error);
+            return false;
         }
     }
 }

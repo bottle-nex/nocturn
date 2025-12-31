@@ -190,6 +190,17 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleHostQuizResults(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
+            payload: payload,
+        };
+
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
         subscribeToHandler,
         unsubscribeToHandler,
@@ -209,5 +220,6 @@ export const useWebSocket = () => {
         handleAddParticipantWarningCount,
         handleParticipantRequestLifeline,
         handleSpectatorLifelineResponse,
+        handleHostQuizResults,
     };
 };

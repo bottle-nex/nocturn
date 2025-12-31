@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-
 @custom-variant dark (&:is(.dark *));
 @import './theme.css';
 
@@ -62,6 +61,33 @@
             opacity: 0.4;
         }
     }
+}
+
+/* Regular */
+@font-face {
+    font-family: 'Nocturn';
+    src: url('/fonts/Nocturn-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Nocturn';
+    src: url('/fonts/Nocturn-semibold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Nocturn';
+    src: url('/fonts/Nocturn-bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
 }
 
 :root {
@@ -145,6 +171,10 @@
     }
 }
 
+body {
+    font-family: 'Nocturn', sans-serif;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -196,24 +226,31 @@
 }
 
 .fade-dots {
-    mask-image:
-        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
-        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-    mask-composite: intersect;
-    -webkit-mask-image:
-        linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
-        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-    -webkit-mask-composite: destination-in;
-    mask-repeat: no-repeat;
-    mask-size: 100% 100%;
-    pointer-events: none;
+	-webkit-mask-image:
+		linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+		linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+	mask-image:
+		linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+		linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+
+	-webkit-mask-composite: destination-in;
+	mask-composite: intersect;
+
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+
+	-webkit-mask-size: 100% 100%;
+	mask-size: 100% 100%;
+
+	pointer-events: none;
 }
 
+
 .outlined-text {
-    color: transparent;
-    -webkit-text-stroke: 1px #c4c4c4;
-    text-stroke: 2px #c4c4c4;
+	-webkit-text-stroke: 2px #c4c4c4;
+	color: transparent;
 }
+
 
 @layer utilities {
     @keyframes float {

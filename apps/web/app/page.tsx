@@ -14,6 +14,7 @@ import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
 import Faq from '@/components/base/Faq';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
+import AnimatedHorizontalBars from '@/components/ui/AnimatedHorizontalBars';
 
 export const mini_descriptions = [
     {
@@ -60,13 +61,13 @@ export default function Home() {
             </div>
 
             <div className="bg-gradient-to-b dark:from-dark-primary dark:to-[#141414] from-light-base to-[#fbf9f0]">
-                <div className="mx-auto w-fit mt-20 dark:bg-neutral-800 bg-neutral-300 px-6 py-2.5 rounded-md text-sm">
+                <div className="mx-auto w-fit mt-20 dark:bg-neutral-800 bg-neutral-300 px-6 py-2.5 rounded-md text-sm select-none">
                     More about @Nocturn
                 </div>
-                <div className="mx-auto w-fit mt-8 rounded-md text-5xl font-light">
+                <div className="mx-auto w-fit mt-8 rounded-md text-5xl font-semibold">
                     Many enter, only the winner survives.
                 </div>
-                <div className="mx-auto w-fit max-w-[50rem] text-center mt-8 font-light">
+                <div className="mx-auto w-fit max-w-[50rem] text-center mt-8 text-md font-normal">
                     Nocturn is a decentralized quiz platform where participants compete for staked
                     Solana prize pools, spectators can boost rewards, and winners earn exclusive
                     NFTs to prove their victory.
@@ -88,6 +89,7 @@ export default function Home() {
                 <CustomFeatureComponent />
                 <Faq />
                 <BigAnimatedText />
+                <AnimatedHorizontalBars />
             </div>
 
             <div className="fixed bottom-6 right-8 z-90">

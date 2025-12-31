@@ -11,6 +11,7 @@ import {
 } from '@/store/live-quiz/useLiveQuizUserStore';
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 
@@ -22,7 +23,15 @@ export interface NewProps {
 
 export default function New({ params }: NewProps) {
     const { quizId } = use(params);
-    const { quiz, updateQuiz, updateGameSession, updateCurrentQuestion } = useLiveQuizStore();
+    const router = useRouter();
+
+    const {
+        quiz,
+        updateQuiz,
+        updateGameSession,
+        updateCurrentQuestion,
+        setIsNextQuestonAvailable,
+    } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
     const { setSpectatorData } = useLiveSpectatorStore();
@@ -44,8 +53,10 @@ export default function New({ params }: NewProps) {
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    // updateCurrentQuestion(data.currentQ);
-                    updateCurrentQuestion(data.question);
+                    if (data.question) {
+                        updateCurrentQuestion(data.question);
+                    }
+                    setIsNextQuestonAvailable(Boolean(data.isNextQuestonAvailable));
                     switch (data.role) {
                         case 'HOST':
                             setHostData(data.userData);
@@ -59,8 +70,11 @@ export default function New({ params }: NewProps) {
                         default:
                             break;
                     }
+                } else {
+                    router.back();
                 }
             } catch (error) {
+                router.back();
                 console.error('Error fetching live data:', error);
             }
         }
@@ -77,6 +91,8 @@ export default function New({ params }: NewProps) {
         setSpectators,
         setChatMessages,
         updateCurrentQuestion,
+        setIsNextQuestonAvailable,
+        router,
     ]);
 
     if (!quiz) {

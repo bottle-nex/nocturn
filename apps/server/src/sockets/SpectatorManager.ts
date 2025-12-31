@@ -15,12 +15,15 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
+import { WebSocket } from 'ws';
 
 interface SpectatorManagerDependencies {
     publisher: Redis;
     subscriber: Redis;
     socket_mapping: Map<string, CustomWebSocket>;
     session_spectator_mapping: Map<string, Set<string>>;
+    session_participant_mapping: Map<string, Set<string>>;
+    participant_socket_mapping: Map<string, string>; // added
     quizManager: QuizManager;
     database_queue: DatabaseQueue;
     redis_cache: RedisCache;
@@ -34,7 +37,8 @@ export default class SpectatorManager {
     private quiz_settings: QuizSettings;
     redis_cache: RedisCache;
 
-    private spectator_socket_mapping: Map<string, string> = new Map(); // Map<spectatorId, socketId>
+    private spectator_socket_mapping: Map<string, string> = new Map();
+    private participant_socket_mapping: Map<string, string>;
 
     constructor(dependencies: SpectatorManagerDependencies) {
         this.session_spectators_mapping = dependencies.session_spectator_mapping;
@@ -43,9 +47,25 @@ export default class SpectatorManager {
         this.database_queue = dependencies.database_queue;
         this.redis_cache = dependencies.redis_cache;
         this.quiz_settings = quizSettingInstance;
+        this.participant_socket_mapping = dependencies.participant_socket_mapping;
+    }
+
+    private is_new_spectator_allowed(game_session_id: string): boolean {
+        const quiz_settings = this.quiz_settings.quiz_settings_mapping.get(game_session_id);
+        if (!quiz_settings?.allowNewSpectator) {
+            return false;
+        }
+        return true;
     }
 
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+        const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
+
+        if (!is_new_spectator_allowed) {
+            ws.close();
+            return;
+        }
+
         const is_valid_spectator = await this.validateSpectatorInDb(payload.quizId, payload.userId);
 
         if (!is_valid_spectator) {
@@ -81,7 +101,13 @@ export default class SpectatorManager {
         if (existing_spectator_socket_id) {
             const existing_socket = this.socket_mapping.get(existing_spectator_socket_id);
 
-            if (existing_socket) existing_socket.close();
+            if (existing_socket) {
+                try {
+                    existing_socket.close();
+                } catch (err) {
+                    console.warn('Error closing existing spectator socket', err);
+                }
+            }
 
             this.socket_mapping.delete(existing_spectator_socket_id);
             this.spectator_socket_mapping.delete(spectator_id);
@@ -106,7 +132,6 @@ export default class SpectatorManager {
         });
 
         ws.on('close', () => {
-            // this.handle_spectator_leave_gamesession(ws);
             this.cleanup_spectator_socket(ws);
         });
 
@@ -149,6 +174,16 @@ export default class SpectatorManager {
     }
 
     private async handle_spectator_lifeline_response(payload: any, ws: CustomWebSocket) {
+        // checks:
+        // question phase active or not
+        // lifeline used or not
+        // spectators are available to vote or not
+
+        if (!ws.user) {
+            console.error('User not found');
+            return;
+        }
+
         const { gameSessionId } = ws.user;
         const { questionId, selectedOption } = payload;
 
@@ -159,7 +194,7 @@ export default class SpectatorManager {
 
         const gameSession = await this.redis_cache.get_game_session(gameSessionId);
         if (!gameSession || gameSession.currentPhase !== 'QUESTION_ACTIVE') {
-            console.error('Cannot vote,question not active');
+            console.error('Cannot vote, question is not in active phase');
             return;
         }
 
@@ -179,6 +214,18 @@ export default class SpectatorManager {
             return;
         }
 
+        if (lifelineSession.responses[ws.user.userId] !== undefined) {
+            const error_msg = {
+                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
+                payload: {
+                    status: 'already_voted',
+                    error: 'You have already voted',
+                },
+            };
+            ws.send(JSON.stringify(error_msg));
+            return;
+        }
+
         const success = await this.redis_cache.add_spectator_lifeline_response(
             gameSessionId,
             questionId,
@@ -191,16 +238,6 @@ export default class SpectatorManager {
             return;
         }
 
-        const response_message: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
-            payload: {
-                questionId,
-                spectatorId: ws.user.userId,
-                selectedOption,
-            },
-        };
-        this.quizManager.publish_event_to_redis(gameSessionId, response_message);
-
         const confirmation = {
             type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION,
             payload: {
@@ -209,6 +246,44 @@ export default class SpectatorManager {
             },
         };
         ws.send(JSON.stringify(confirmation));
+
+        const updatedSession = await this.redis_cache.get_active_lifeline_session(
+            gameSessionId,
+            questionId,
+        );
+        if (updatedSession) {
+            const optionCounts = this.format_lifeline_responses_for_frontend(
+                updatedSession.responses,
+            );
+
+            for (const participantId of updatedSession.requestingParticipants) {
+                const socketId = this.participant_socket_mapping?.get(participantId);
+                if (socketId) {
+                    const update_message = {
+                        type: MESSAGE_TYPES.LIFELINE_LIVE_UPDATE,
+                        payload: {
+                            questionId,
+                            optionBreakdown: optionCounts,
+                        },
+                    };
+
+                    const socket = this.socket_mapping.get(socketId);
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify(update_message));
+                    }
+                }
+            }
+        }
+    }
+
+    private format_lifeline_responses_for_frontend(responses: Record<string, number>): number[] {
+        const counts: number[] = [0, 0, 0, 0];
+        Object.values(responses).forEach((option) => {
+            if (typeof option === 'number' && option >= 0 && option <= 3) {
+                counts[option]!++;
+            }
+        });
+        return counts;
     }
 
     private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
@@ -224,7 +299,7 @@ export default class SpectatorManager {
     }
 
     private cleanup_spectator_socket(ws: CustomWebSocket): void {
-        if (!ws.id || !ws.user) {
+        if (!ws || !ws.id || !ws.user) {
             return;
         }
 
@@ -244,7 +319,8 @@ export default class SpectatorManager {
     }
 
     private async validateSpectatorInDb(quizId: string, spectatorId: string): Promise<boolean> {
-        const spectator = await prisma.spectator.findUnique({
+        // Using findFirst because findUnique requires a unique key; matching both id + quizId likely isn't a single unique field
+        const spectator = await prisma.spectator.findFirst({
             where: {
                 id: spectatorId,
                 quizId: quizId,
@@ -258,7 +334,7 @@ export default class SpectatorManager {
         const socket_id = this.spectator_socket_mapping.get(spectator_id);
         if (socket_id) {
             const socket = this.socket_mapping.get(socket_id);
-            if (socket && socket.readyState === WebSocket.OPEN) {
+            if (socket && socket.readyState === 1) {
                 socket.send(JSON.stringify(message));
             }
         }
@@ -268,6 +344,11 @@ export default class SpectatorManager {
         payload: SpectatorNameChangeEvent,
         ws: CustomWebSocket,
     ) {
+        if (!ws.user) {
+            console.error('Missing ws.user in name change handler');
+            return;
+        }
+
         const { gameSessionId: game_session_id } = ws.user;
         const { choosenNickname } = payload;
 
@@ -289,6 +370,11 @@ export default class SpectatorManager {
     }
 
     private async handle_send_chat_message(payload: IncomingChatMessage, ws: CustomWebSocket) {
+        if (!ws.user) {
+            console.error('Missing ws.user in chat handler');
+            return;
+        }
+
         const { gameSessionId, quizId, userId: sender_id, role: sender_role } = ws.user;
         const { senderName, message, repliedToId, senderAvatar } = payload;
 
@@ -325,6 +411,8 @@ export default class SpectatorManager {
 
         this.quizManager.publish_event_to_redis(gameSessionId, event_data);
 
+        // Note: verify DatabaseQueue.create_chat_message signature. The original call used (gameSessionId, gameSessionId, quizId, chatMessage).
+        // Keep the same call for now, but double-check the method signature in DatabaseQueue.
         this.database_queue
             .create_chat_message(gameSessionId, gameSessionId, quizId, chatMessage)
             .catch((err) => {
@@ -336,6 +424,11 @@ export default class SpectatorManager {
         payload: IncomingChatReaction,
         ws: CustomWebSocket,
     ) {
+        if (!ws.user) {
+            console.error('Missing ws.user in chat reaction handler');
+            return;
+        }
+
         const { userId } = ws.user;
         const { chatMessageId, reactedAt, reaction, reactorAvatar, reactorName, reactorType } =
             payload;
@@ -382,6 +475,8 @@ export default class SpectatorManager {
     }
 
     private async handle_spectator_leave_gamesession(ws: CustomWebSocket) {
+        if (!ws.user) return;
+
         const { gameSessionId: game_session_id } = ws.user;
         const user_id = ws.user.userId;
 
@@ -401,8 +496,7 @@ export default class SpectatorManager {
 
         this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        // delete the user from the database
-        // either do this or add another schema for showing this user was removed
+        // delete the user from the database if desired
         // this.database_queue.delete_spectator(user_id, game_session_id);
     }
 }

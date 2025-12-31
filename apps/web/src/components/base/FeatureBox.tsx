@@ -83,6 +83,7 @@ export default function FeatureBox() {
 
     return (
         <div
+            id="features"
             ref={containerRef}
             className="flex flex-col w-full mt-40 select-none min-h-[calc(100vh-180px)]"
         >

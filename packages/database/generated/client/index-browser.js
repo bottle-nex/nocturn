@@ -303,6 +303,15 @@ exports.Prisma.LifelineUsageScalarFieldEnum = {
   usedAt: 'usedAt'
 };
 
+exports.Prisma.CDOBetsScalarFieldEnum = {
+  id: 'id',
+  quizId: 'quizId',
+  stakeAmount: 'stakeAmount',
+  betStatus: 'betStatus',
+  questionId: 'questionId',
+  participantId: 'participantId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -364,7 +373,8 @@ exports.HostScreen = exports.$Enums.HostScreen = {
   QUESTION_PREVIEW: 'QUESTION_PREVIEW',
   QUESTION_READING: 'QUESTION_READING',
   QUESTION_ACTIVE: 'QUESTION_ACTIVE',
-  QUESTION_RESULTS: 'QUESTION_RESULTS'
+  QUESTION_RESULTS: 'QUESTION_RESULTS',
+  QUIZ_RESULTS: 'QUIZ_RESULTS'
 };
 
 exports.ParticipantScreen = exports.$Enums.ParticipantScreen = {
@@ -373,7 +383,8 @@ exports.ParticipantScreen = exports.$Enums.ParticipantScreen = {
   QUESTION_MOTIVATION: 'QUESTION_MOTIVATION',
   QUESTION_READING: 'QUESTION_READING',
   QUESTION_ACTIVE: 'QUESTION_ACTIVE',
-  QUESTION_RESULTS: 'QUESTION_RESULTS'
+  QUESTION_RESULTS: 'QUESTION_RESULTS',
+  QUIZ_RESULTS: 'QUIZ_RESULTS'
 };
 
 exports.SpectatorScreen = exports.$Enums.SpectatorScreen = {
@@ -381,19 +392,28 @@ exports.SpectatorScreen = exports.$Enums.SpectatorScreen = {
   QUESTION_MOTIVATION: 'QUESTION_MOTIVATION',
   QUESTION_READING: 'QUESTION_READING',
   QUESTION_ACTIVE: 'QUESTION_ACTIVE',
-  QUESTION_RESULTS: 'QUESTION_RESULTS'
+  QUESTION_RESULTS: 'QUESTION_RESULTS',
+  QUIZ_RESULTS: 'QUIZ_RESULTS'
 };
 
 exports.QuizPhase = exports.$Enums.QuizPhase = {
   QUESTION_READING: 'QUESTION_READING',
   QUESTION_ACTIVE: 'QUESTION_ACTIVE',
   SHOW_RESULTS: 'SHOW_RESULTS',
-  WAITING_NEXT: 'WAITING_NEXT'
+  WAITING_NEXT: 'WAITING_NEXT',
+  QUIZ_RESULTS: 'QUIZ_RESULTS',
+  TEST: 'TEST'
 };
 
 exports.ReactorType = exports.$Enums.ReactorType = {
   HOST: 'HOST',
   SPECTATOR: 'SPECTATOR'
+};
+
+exports.BetStatus = exports.$Enums.BetStatus = {
+  WON: 'WON',
+  PENDING: 'PENDING',
+  LOST: 'LOST'
 };
 
 exports.Prisma.ModelName = {
@@ -408,7 +428,8 @@ exports.Prisma.ModelName = {
   Review: 'Review',
   ChatMessage: 'ChatMessage',
   ChatReaction: 'ChatReaction',
-  LifelineUsage: 'LifelineUsage'
+  LifelineUsage: 'LifelineUsage',
+  CDOBets: 'CDOBets'
 };
 
 /**

@@ -47,8 +47,8 @@ router.post(
     launchQuizController,
 );
 router.post('/quiz/participant-join-quiz', participantJoinController);
-router.post('/quiz/spectator-join-quiz', spectatorJoinController);
 router.get('/quiz/spectator-join-quiz-via-link', spectatorJoinQuizViaURLController);
+router.post('/quiz/spectator-join-quiz', spectatorJoinController);
 router.get('/quiz/get-live-quiz-data/:quizId', getLiveQuizDataController);
 
 router.get('/quiz/get-sumarized-quiz/:quizId', authMiddleware, getLiveQuizSummarizedData);

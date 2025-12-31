@@ -11,19 +11,25 @@ CREATE TYPE "Interactions" AS ENUM ('THUMBS_UP', 'DOLLAR', 'BULB', 'HEART', 'SMI
 CREATE TYPE "SessionStatus" AS ENUM ('WAITING', 'LIVE', 'COMPLETED', 'PAUSED');
 
 -- CreateEnum
-CREATE TYPE "ParticipantScreen" AS ENUM ('LOBBY', 'COUNTDOWN', 'QUESTION_MOTIVATION', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS');
+CREATE TYPE "ParticipantScreen" AS ENUM ('LOBBY', 'COUNTDOWN', 'QUESTION_MOTIVATION', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS', 'QUIZ_RESULTS');
 
 -- CreateEnum
-CREATE TYPE "SpectatorScreen" AS ENUM ('LOBBY', 'QUESTION_MOTIVATION', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS');
+CREATE TYPE "SpectatorScreen" AS ENUM ('LOBBY', 'QUESTION_MOTIVATION', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS', 'QUIZ_RESULTS');
 
 -- CreateEnum
-CREATE TYPE "HostScreen" AS ENUM ('LOBBY', 'QUESTION_PREVIEW', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS');
+CREATE TYPE "HostScreen" AS ENUM ('LOBBY', 'QUESTION_PREVIEW', 'QUESTION_READING', 'QUESTION_ACTIVE', 'QUESTION_RESULTS', 'QUIZ_RESULTS');
 
 -- CreateEnum
-CREATE TYPE "QuizPhase" AS ENUM ('QUESTION_READING', 'QUESTION_ACTIVE', 'SHOW_RESULTS', 'WAITING_NEXT');
+CREATE TYPE "QuizPhase" AS ENUM ('QUESTION_READING', 'QUESTION_ACTIVE', 'SHOW_RESULTS', 'WAITING_NEXT', 'QUIZ_RESULTS');
 
 -- CreateEnum
 CREATE TYPE "ReactorType" AS ENUM ('HOST', 'SPECTATOR');
+
+-- CreateEnum
+CREATE TYPE "ImagePosition" AS ENUM ('RIGHT', 'LEFT');
+
+-- CreateEnum
+CREATE TYPE "BetStatus" AS ENUM ('WON', 'PENDING', 'LOST');
 
 -- CreateTable
 CREATE TABLE "hosts" (
@@ -49,6 +55,7 @@ CREATE TABLE "quizzes" (
     "theme" "Template" NOT NULL DEFAULT 'CLASSIC',
     "participantCode" TEXT,
     "spectatorCode" TEXT,
+    "spectatorLink" TEXT,
     "prizePool" DOUBLE PRECISION NOT NULL,
     "currency" TEXT NOT NULL DEFAULT 'SOL',
     "basePointsPerQuestion" INTEGER NOT NULL DEFAULT 100,
@@ -68,6 +75,7 @@ CREATE TABLE "quizzes" (
     "autoSave" BOOLEAN NOT NULL DEFAULT true,
     "liveChat" BOOLEAN NOT NULL DEFAULT false,
     "spectatorMode" BOOLEAN NOT NULL DEFAULT false,
+    "allowNewSpectator" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "quizzes_pkey" PRIMARY KEY ("id")
 );
@@ -79,12 +87,15 @@ CREATE TABLE "Question" (
     "options" TEXT[],
     "correctAnswer" INTEGER NOT NULL,
     "explanation" TEXT,
+    "hint" TEXT,
     "difficulty" INTEGER NOT NULL DEFAULT 1,
     "readingTime" INTEGER NOT NULL DEFAULT 7,
     "basePoints" INTEGER NOT NULL DEFAULT 100,
     "timeLimit" INTEGER NOT NULL DEFAULT 30,
+    "imagePosition" "ImagePosition" NOT NULL DEFAULT 'RIGHT',
     "orderIndex" INTEGER NOT NULL,
     "imageUrl" TEXT,
+    "isAsked" BOOLEAN NOT NULL DEFAULT false,
     "quizId" TEXT NOT NULL,
 
     CONSTRAINT "Question_pkey" PRIMARY KEY ("id")
@@ -98,6 +109,7 @@ CREATE TABLE "participants" (
     "ipAddress" TEXT,
     "isNameChanged" BOOLEAN NOT NULL DEFAULT false,
     "warningCount" INTEGER NOT NULL DEFAULT 0,
+    "isKicked" BOOLEAN NOT NULL DEFAULT false,
     "isEliminated" BOOLEAN NOT NULL DEFAULT false,
     "eliminatedAt" TIMESTAMP(3),
     "eliminatedAtQuestion" TEXT,
@@ -117,6 +129,8 @@ CREATE TABLE "spectators" (
     "nickname" TEXT NOT NULL,
     "avatar" TEXT,
     "isNameChanged" BOOLEAN NOT NULL DEFAULT false,
+    "warningCount" INTEGER NOT NULL DEFAULT 0,
+    "isKicked" BOOLEAN NOT NULL DEFAULT false,
     "ipAddress" TEXT,
     "connectionId" TEXT,
     "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -226,6 +240,28 @@ CREATE TABLE "ChatReaction" (
     CONSTRAINT "ChatReaction_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "lifeline_usage" (
+    "id" TEXT NOT NULL,
+    "participantId" TEXT NOT NULL,
+    "gameSessionId" TEXT NOT NULL,
+    "usedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "lifeline_usage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "cdo_bets" (
+    "id" TEXT NOT NULL,
+    "quizId" TEXT NOT NULL,
+    "stakeAmount" INTEGER NOT NULL,
+    "betStatus" "BetStatus" NOT NULL,
+    "questionId" TEXT NOT NULL,
+    "participantId" TEXT NOT NULL,
+
+    CONSTRAINT "cdo_bets_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "hosts_email_key" ON "hosts"("email");
 
@@ -246,6 +282,9 @@ CREATE UNIQUE INDEX "responses_participantId_questionId_key" ON "responses"("par
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Review_userId_key" ON "Review"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "lifeline_usage_participantId_gameSessionId_key" ON "lifeline_usage"("participantId", "gameSessionId");
 
 -- AddForeignKey
 ALTER TABLE "quizzes" ADD CONSTRAINT "quizzes_hostId_fkey" FOREIGN KEY ("hostId") REFERENCES "hosts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -288,3 +327,15 @@ ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_repliedToId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "ChatReaction" ADD CONSTRAINT "ChatReaction_chatMessageId_fkey" FOREIGN KEY ("chatMessageId") REFERENCES "ChatMessage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "lifeline_usage" ADD CONSTRAINT "lifeline_usage_participantId_fkey" FOREIGN KEY ("participantId") REFERENCES "participants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "lifeline_usage" ADD CONSTRAINT "lifeline_usage_gameSessionId_fkey" FOREIGN KEY ("gameSessionId") REFERENCES "game_sessions"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "cdo_bets" ADD CONSTRAINT "cdo_bets_quizId_fkey" FOREIGN KEY ("quizId") REFERENCES "quizzes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "cdo_bets" ADD CONSTRAINT "cdo_bets_participantId_fkey" FOREIGN KEY ("participantId") REFERENCES "participants"("id") ON DELETE CASCADE ON UPDATE CASCADE;

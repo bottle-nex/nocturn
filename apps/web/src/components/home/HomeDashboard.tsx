@@ -12,8 +12,8 @@ export interface HomeDashboardProps extends StyleInterface {
 
 export default function HomeDashboard({ style, className }: HomeDashboardProps) {
     return (
-        <div className={cn('flex flex-col', className)} style={style}>
-            <div className="w-[24rem] h-full flex flex-col relative">
+        <div className={cn('flex flex-col overflow-hidden relative', className)} style={style}>
+            <div className="w-[24rem] flex flex-col relative p-8">
                 <InvertedQuizCards />
             </div>
         </div>

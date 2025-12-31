@@ -207,12 +207,12 @@ export default class DatabaseQueue {
                 },
                 data: participant,
             });
-
             await this.redis_cache.set_participants(
                 game_session_id,
                 updatedParticipant.id,
                 updatedParticipant,
             );
+
             return { success: true, participant: updatedParticipant };
         } catch (error) {
             console.error(`Error while updating participant: `, error);
@@ -383,7 +383,7 @@ export default class DatabaseQueue {
 
     public async update_game_session(
         id: string,
-        gameSession: Prisma.GameSessionUpdateInput,
+        gameSession: any,
         game_session_id: string,
         options?: Partial<JobOption>,
     ) {

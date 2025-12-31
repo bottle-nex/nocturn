@@ -168,7 +168,6 @@ export default class ParticipantManager {
             const error_message = {
                 type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
                 payload: {
-                    hasUsedLifeline: false,
                     error: 'Lifeline can only be used during active questions',
                 },
             };
@@ -196,6 +195,33 @@ export default class ParticipantManager {
             return;
         }
 
+        const alreadyRequested = await this.redis_cache.has_participant_requested_lifeline(
+            gameSessionId,
+            questionId,
+            userId,
+        );
+
+        if (alreadyRequested) {
+            const currentSession = await this.redis_cache.get_active_lifeline_session(
+                gameSessionId,
+                questionId,
+            );
+            if (currentSession) {
+                const confirmation = {
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: {
+                        status: 'already_requested',
+                        expiresAt: currentSession.expiresAt,
+                        currentResponses: this.format_lifeline_responses_for_frontend(
+                            currentSession.responses,
+                        ),
+                    },
+                };
+                ws.send(JSON.stringify(confirmation));
+            }
+            return;
+        }
+
         const spectatorSocketIds = this.session_spectators_mapping.get(gameSessionId);
         if (!spectatorSocketIds || spectatorSocketIds.size === 0) {
             const error_message = {
@@ -206,80 +232,143 @@ export default class ParticipantManager {
             return;
         }
 
+        await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
+        this.database_queue.create_lifeline_usage(userId, gameSessionId).catch(console.error);
+
         const expirySeconds = 60;
-        const success = await this.redis_cache.set_active_lifeline_session(
+        const existingSession = await this.redis_cache.get_active_lifeline_session(
             gameSessionId,
             questionId,
-            userId,
-            expirySeconds,
         );
 
-        if (!success) {
-            const error_message = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: { error: 'Failed to create lifeline session' },
-            };
-            ws.send(JSON.stringify(error_message));
-            return;
-        }
-
-        const invitation_message: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
-            payload: {
+        if (existingSession) {
+            const success = await this.redis_cache.set_active_lifeline_session(
+                gameSessionId,
                 questionId,
-                status: 'active',
-                expiresAt: Date.now() + expirySeconds * 1000,
-                participantCount: 1,
-            },
-        };
-        this.quizManager.publish_event_to_redis(gameSessionId, invitation_message);
+                userId,
+                expirySeconds,
+            );
 
-        const confirmation = {
-            type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-            payload: {
-                hasUsedLifeline: false,
-                status: 'requested',
-                expiresAt: Date.now() + expirySeconds * 1000,
-            },
-        };
-        ws.send(JSON.stringify(confirmation));
+            if (!success) {
+                const error_message = {
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { error: 'Failed to join lifeline session' },
+                };
+                ws.send(JSON.stringify(error_message));
+                return;
+            }
 
-        setTimeout(async () => {
-            await this.send_lifeline_results_to_participant(gameSessionId, questionId, userId);
-        }, expirySeconds * 1000);
+            // send current voting state to this participant
+            const confirmation = {
+                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                payload: {
+                    status: 'joined_existing',
+                    expiresAt: existingSession.expiresAt,
+                    currentResponses: this.format_lifeline_responses_for_frontend(
+                        existingSession.responses,
+                    ),
+                    hasUsedLifeline: true,
+                },
+            };
+            ws.send(JSON.stringify(confirmation));
+        } else {
+            const success = await this.redis_cache.set_active_lifeline_session(
+                gameSessionId,
+                questionId,
+                userId,
+                expirySeconds,
+            );
+
+            if (!success) {
+                const error_message = {
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { error: 'Failed to create lifeline session' },
+                };
+                ws.send(JSON.stringify(error_message));
+                return;
+            }
+
+            const invitation_message: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
+                payload: {
+                    questionId,
+                    status: 'active',
+                    expiresAt: Date.now() + expirySeconds * 1000,
+                },
+            };
+            this.quizManager.publish_event_to_redis(gameSessionId, invitation_message);
+
+            const confirmation = {
+                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                payload: {
+                    status: 'requested',
+                    expiresAt: Date.now() + expirySeconds * 1000,
+                    currentResponses: { 0: 0, 1: 0, 2: 0, 3: 0 },
+                    hasUsedLifeline: true,
+                },
+            };
+            ws.send(JSON.stringify(confirmation));
+            // sending to only requesting participants
+            await this.send_lifeline_results_to_all_requesting_participants(
+                gameSessionId,
+                questionId,
+            );
+        }
     }
 
-    private async send_lifeline_results_to_participant(
+    private format_lifeline_responses_for_frontend(
+        responses: Record<string, number>,
+    ): Record<number, number> {
+        const counts: any = { 0: 0, 1: 0, 2: 0, 3: 0 };
+        Object.values(responses).forEach((option) => {
+            if (option >= 0 && option <= 3) {
+                counts[option]++;
+            }
+        });
+        return counts;
+    }
+
+    private async send_lifeline_results_to_all_requesting_participants(
         gameSessionId: string,
         questionId: string,
-        participantId: string,
     ): Promise<void> {
         try {
-            const results = await this.redis_cache.get_lifeline_results(gameSessionId, questionId);
+            const session = await this.redis_cache.get_active_lifeline_session(
+                gameSessionId,
+                questionId,
+            );
+            if (!session) {
+                console.error('No lifeline session found');
+                return;
+            }
 
+            const results = await this.redis_cache.get_lifeline_results(gameSessionId, questionId);
             if (!results) {
                 console.error('No lifeline results found');
                 return;
             }
 
-            const result_message: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
-                payload: {
-                    questionId,
-                    mostPopularOption: results.mostPopularOption,
-                    totalResponses: results.totalResponses,
-                    wasSuccessful: results.wasSuccessful,
-                    optionBreakdown: results.optionCounts,
-                },
-                only_socket_id: this.participant_socket_mapping.get(participantId),
-            };
+            // Send results to each requesting participant
+            for (const participantId of session.requestingParticipants) {
+                const socketId = this.participant_socket_mapping.get(participantId);
+                if (socketId) {
+                    const result_message = {
+                        type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                        payload: {
+                            questionId,
+                            mostPopularOption: results.mostPopularOption,
+                            totalResponses: results.totalResponses,
+                            wasSuccessful: results.wasSuccessful,
+                            optionBreakdown: results.optionCounts,
+                        },
+                    };
 
-            this.quizManager.publish_event_to_redis(gameSessionId, result_message);
-
-            await this.redis_cache.cache_participant_lifeline_used(gameSessionId, participantId);
-            this.database_queue
-                .create_lifeline_usage(participantId, gameSessionId)
-                .catch(console.error);
+                    const socket = this.socket_mapping.get(socketId);
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        socket.send(JSON.stringify(result_message));
+                    }
+                }
+            }
 
             await this.redis_cache.delete_active_lifeline_session(gameSessionId, questionId);
         } catch (error) {
@@ -448,33 +537,39 @@ export default class ParticipantManager {
 
     private async handle_participant_warning_count(ws: CustomWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
-        const { userId } = ws.user;
+        const { userId: participant_id } = ws.user;
+        const participants_key = this.redis_cache.get_participants_key(game_session_id);
 
-        const participant_cache = await this.redis_cache.get_participant(game_session_id, userId);
+        try {
+            const new_warning_count = await this.redis_cache.redis_cache.hincrby(
+                participants_key,
+                `${participant_id}.warningCount`,
+                1,
+            );
 
-        if (!participant_cache) return;
+            if (new_warning_count >= 5) {
+                const event_data: PubSubMessageTypes = {
+                    type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                    payload: { userId: participant_id },
+                };
+                this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        if (participant_cache.warningCount + 1 >= 5) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
-                payload: {
-                    userId: userId,
-                },
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+                await this.database_queue.update_participant(
+                    participant_id,
+                    { isKicked: true },
+                    game_session_id,
+                );
+                return;
+            }
 
-            // mark them to be kicked
-            this.database_queue.update_participant(userId, { isKicked: true }, game_session_id);
-            return;
+            await this.database_queue.update_participant(
+                participant_id,
+                { warningCount: new_warning_count },
+                game_session_id,
+            );
+        } catch (err) {
+            console.error('Error while updating participant warning count', err);
         }
-
-        this.database_queue.update_participant(
-            userId,
-            {
-                warningCount: participant_cache.warningCount + 1,
-            },
-            game_session_id,
-        );
     }
 
     private cleanup_existing_partiicpant_socket(
@@ -531,5 +626,9 @@ export default class ParticipantManager {
 
     private generateSocketId(): string {
         return uuid();
+    }
+
+    public get_participant_socket_mapping(): Map<string, string> {
+        return this.participant_socket_mapping;
     }
 }
