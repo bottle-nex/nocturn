@@ -26,6 +26,7 @@ export default async function launchQuizController(req: Request, res: Response) 
     }
 
     const parsed = createQuizSchema.safeParse(req.body);
+    console.log('parsed is : ', parsed);
     if (!parsed.success) {
         res.status(400).json({
             success: false,
@@ -39,6 +40,7 @@ export default async function launchQuizController(req: Request, res: Response) 
     const questions = input.questions;
 
     try {
+        console.log('i am here ');
         const data = await quizControllerInstance.update_quiz_status(
             QUIZ_STATUS.LAUNCH_QUIZ,
             quizId,
@@ -46,6 +48,8 @@ export default async function launchQuizController(req: Request, res: Response) 
             questions,
             userId,
         );
+
+        console.log('data is : ', data);
 
         if (
             !data ||
@@ -63,7 +67,7 @@ export default async function launchQuizController(req: Request, res: Response) 
         }
 
         const prev_status = data.status;
-
+        console.log('previous status : ', prev_status);
         if (prev_status === 'LIVE') {
             res.status(400).json({
                 success: false,
@@ -78,6 +82,7 @@ export default async function launchQuizController(req: Request, res: Response) 
             data.gameSession.id!,
             USER_TYPE.HOST,
         );
+        console.log('secure token data is : ', secureTokenData);
 
         res.cookie('token', secureTokenData, {
             httpOnly: true,

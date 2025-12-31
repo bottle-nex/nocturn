@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { prisma } from '@nocturn/database';
 import { env } from '../../configs/env';
+import { prisma } from '@nocturn/database';
 
 export default async function signInController(req: Request, res: Response) {
     const { user } = req.body;

@@ -8,10 +8,13 @@ import initServices from './services/init-services.ts';
 import { env } from './configs/env.ts';
 import { prisma } from '@nocturn/database';
 
+console.log('env is : ', env.DATABASE_URL);
+
 const PORT = env.SERVER_PORT;
 const WEB_URL = env.SERVER_WEB_URL;
 const app = express();
 const server = http.createServer(app);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -27,11 +30,11 @@ prisma.$connect().then(() => {
 prisma.user.findFirst().then((user) => {
     console.warn('First user in database: ', user);
 });
-// initServices();
+initServices();
 
 app.use('/api/v1', router);
 
-// new WebsocketServer(server);
+new WebsocketServer(server);
 
 server.listen(PORT, () => {
     console.warn('Application started at port : ', PORT);

@@ -1,11 +1,8 @@
 import { prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import { CookiePayload, USER_TYPE } from '../types/web-socket-types';
 import { env } from '../configs/env';
-dotenv.config();
-const JWT_SECRET = env.SERVER_JWT_SECRET;
 
 export default class QuizAction {
     private static generateSpectatorCode = customAlphabet(
@@ -76,7 +73,7 @@ export default class QuizAction {
             exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
         };
 
-        return jwt.sign(payload, JWT_SECRET!);
+        return jwt.sign(payload, env.SERVER_JWT_SECRET);
     }
 
     public static sanitizeGameSession(gameSession: any, role: string) {
@@ -110,13 +107,13 @@ export default class QuizAction {
         const payload = {
             quizId,
         };
-        const token = jwt.sign(payload, JWT_SECRET!);
+        const token = jwt.sign(payload, env.SERVER_JWT_SECRET);
         return `http://localhost:3000/join/${quizId}?spectator_token=${token}`;
     }
 
     public static verifyCookie(token: string): CookiePayload | null {
         try {
-            return jwt.verify(token, JWT_SECRET!) as CookiePayload;
+            return jwt.verify(token, env.SERVER_JWT_SECRET) as CookiePayload;
         } catch {
             return null;
         }

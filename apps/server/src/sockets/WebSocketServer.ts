@@ -3,7 +3,6 @@ import { Server } from 'http';
 import Redis from 'ioredis';
 import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import HostManager from './HostManager';
 import QuizManager from './QuizManager';
 import RedisCache from '../cache/RedisCache';
@@ -27,11 +26,8 @@ import {
 } from '../services/init-services';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
-import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
-
-dotenv.config();
-const JWT_SECRET = env.SERVER_JWT_SECRET;
+import { env } from '../configs/env';
 
 export default class WebsocketServer {
     private wss: WebSocketServer;
@@ -391,7 +387,7 @@ export default class WebsocketServer {
 
     private async extract_token(ws: CustomWebSocket, token: string, quizId: string): Promise<void> {
         try {
-            jwt.verify(token, JWT_SECRET!, async (err, decoded) => {
+            jwt.verify(token, env.SERVER_JWT_SECRET, async (err, decoded) => {
                 if (err) {
                     console.error('Error while verifying [JWT_SOCKET]', err);
                     ws.close();

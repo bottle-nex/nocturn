@@ -3,12 +3,9 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import QuizController from '../controllers/quiz-controller/quizController';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizManager from '../sockets/QuizManager';
-import dotenv from 'dotenv';
 import Redis from 'ioredis';
 import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
-
-dotenv.config();
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -20,11 +17,9 @@ export let quizSettingInstance: QuizSettings;
 export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 
-const REDIS_URL = env.SERVER_REDIS_URL;
-
 export default function initServices() {
-    publisherInstance = new Redis(REDIS_URL!);
-    subscriberInstance = new Redis(REDIS_URL!);
+    publisherInstance = new Redis(env.SERVER_REDIS_URL);
+    subscriberInstance = new Redis(env.SERVER_REDIS_URL);
     redisCacheInstance = new RedisCache();
 
     databaseQueueInstance = new DatabaseQueue();

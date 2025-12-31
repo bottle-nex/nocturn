@@ -17,6 +17,7 @@ const envSchema = z.object({
     SERVER_AWS_CLOUDFRONT_DOMAIN: z.string().min(1, 'CloudFront domain is required'),
     SERVER_REDIS_URL: z.url('Invalid Redis URL'),
     SERVER_WEB_URL: z.string().min(1),
+    DATABASE_URL: z.string(),
 });
 
 function parseEnv() {

@@ -11,30 +11,30 @@ export enum QUIZ_STATUS {
 
 type quiz_controller =
     | {
-          type: QUIZ_STATUS.SAVE_NEW_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          error?: unknown;
-          isHost?: boolean;
-      }
+        type: QUIZ_STATUS.SAVE_NEW_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        error?: unknown;
+        isHost?: boolean;
+    }
     | { type: QUIZ_STATUS.UPDATE_QUIZ; success: boolean; quiz?: Partial<Quiz>; error?: unknown }
     | {
-          type: QUIZ_STATUS.PUBLISH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      }
+        type: QUIZ_STATUS.PUBLISH_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        status?: QuizStatus;
+        error?: unknown;
+        isHost?: boolean;
+    }
     | {
-          type: QUIZ_STATUS.LAUNCH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          gameSession?: Partial<GameSession>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      };
+        type: QUIZ_STATUS.LAUNCH_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        gameSession?: Partial<GameSession>;
+        status?: QuizStatus;
+        error?: unknown;
+        isHost?: boolean;
+    };
 
 export default class QuizController {
     public async update_quiz_status(
@@ -44,6 +44,7 @@ export default class QuizController {
         questions: QuestionType[],
         hostId: number,
     ): Promise<quiz_controller | null> {
+        console.log('inside update quiz status');
         switch (status) {
             case QUIZ_STATUS.SAVE_NEW_QUIZ:
                 return await this.handle_save_new_quiz(quizId, quiz_data, questions, hostId);
@@ -256,6 +257,7 @@ export default class QuizController {
     ): Promise<quiz_controller> {
         try {
             const quiz = await this.find_quiz(quizId);
+            console.log("quiz ---------> ", quiz);
             let launching_quiz: { quiz: Partial<Quiz>; gameSession: Partial<GameSession> };
 
             if (quiz?.status === 'LIVE') {
