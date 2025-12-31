@@ -1,4 +1,4 @@
-import { nextJsConfig } from '@repo/eslint-config/next-js';
+import { nextJsConfig } from '@nocturn/eslint-config/next-js';
 import prettierConfig from 'eslint-config-prettier';
 
 const config = [

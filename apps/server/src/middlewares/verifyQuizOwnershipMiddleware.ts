@@ -1,4 +1,4 @@
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { NextFunction, Request, Response } from 'express';
 
 export default async function verifyQuizOwnershipMiddleware(

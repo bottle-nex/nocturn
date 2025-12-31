@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import prisma, { ParticipantScreen } from '@repo/db/client';
+import { ParticipantScreen, prisma } from '@nocturn/database';
 
 export default async function getQuestionResults(req: Request, res: Response) {
     try {

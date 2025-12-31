@@ -13,14 +13,14 @@
   "devDependencies": {
     "prettier": "^3.6.2",
     "turbo": "^2.5.4",
+    "prisma": "7.1.0",
     "typescript": "5.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "7.1.0"
   },
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "yarn@1.22.22",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "packageManager": "pnpm@9.15.4"
 }

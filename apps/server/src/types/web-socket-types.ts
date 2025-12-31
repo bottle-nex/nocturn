@@ -1,6 +1,5 @@
-import { QuizPhase } from '.prisma/client';
 import { WebSocket } from 'ws';
-
+import { QuizPhase } from '@nocturn/database';
 export interface CustomWebSocket extends WebSocket {
     id: string;
     user: CookiePayload;

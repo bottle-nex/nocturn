@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
 import { participantJoinSchema } from '../../schemas/participantJoinSchema';

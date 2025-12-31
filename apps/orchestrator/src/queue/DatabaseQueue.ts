@@ -9,7 +9,7 @@ import prisma, {
   ChatReaction,
   Interactions,
   Response,
-} from "@repo/db/client";
+} from "@nocturn/database";
 
 import { redisCacheInstance } from "../services/init-services";
 import { ReactorType } from "../types/types";

@@ -1,4 +1,4 @@
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import GenerateUser from '../../class/generateUser';
 import { redisCacheInstance } from '../../services/init-services';

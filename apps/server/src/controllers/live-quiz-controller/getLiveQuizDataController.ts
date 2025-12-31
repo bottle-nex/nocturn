@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { parse } from 'cookie';
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { CookiePayload, USER_TYPE } from '../../types/web-socket-types';
 import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
-import { QuizPhase } from '.prisma/client';
+import { QuizPhase } from '@prisma/client';
 
 function unauthorized(res: Response) {
     return res.status(401).json({ success: false, message: 'Unauthorized user' });

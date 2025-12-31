@@ -1,6 +1,6 @@
-import { GameSession, Question, Response, Spectator } from "@repo/db/client";
+import { GameSession, Question, Response, Spectator } from "@nocturn/database";
 import Redis from "ioredis";
-import { Participant, Quiz } from "@repo/db/client";
+import { Participant, Quiz } from "@nocturn/database";
 import dotenv from "dotenv";
 import { Env } from "../configs/env";
 dotenv.config();

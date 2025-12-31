@@ -1,4 +1,4 @@
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 
 export async function getLiveQuizSummarizedData(req: Request, res: Response) {

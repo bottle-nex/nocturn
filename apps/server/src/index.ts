@@ -6,6 +6,7 @@ import WebsocketServer from './sockets/WebSocketServer.ts';
 import http from 'http';
 import initServices from './services/init-services.ts';
 import { env } from './configs/env.ts';
+import { prisma } from '@nocturn/database';
 
 const PORT = env.SERVER_PORT;
 const WEB_URL = env.SERVER_WEB_URL;
@@ -19,12 +20,18 @@ app.use(
         credentials: true,
     }),
 );
+prisma.$connect().then(() => {
+    console.warn('Database connected');
+});
 
-initServices();
+prisma.user.findFirst().then((user) => {
+    console.warn('First user in database: ', user);
+});
+// initServices();
 
 app.use('/api/v1', router);
 
-new WebsocketServer(server);
+// new WebsocketServer(server);
 
 server.listen(PORT, () => {
     console.warn('Application started at port : ', PORT);

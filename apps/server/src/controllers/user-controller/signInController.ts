@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { env } from '../../configs/env';
 
 export default async function signInController(req: Request, res: Response) {
@@ -16,7 +16,7 @@ export default async function signInController(req: Request, res: Response) {
         if (existingUser) {
             myUser = await prisma.user.update({
                 where: {
-                    email: user.email!,
+                    email: user.email,
                 },
                 data: {
                     name: user.name,

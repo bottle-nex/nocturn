@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --external:@prisma/client --external:express --external:jsonwebtoken --external:@aws-sdk/client-s3 --external:@aws-sdk/s3-request-presigner --external:bull --external:ioredis --external:ws ",
     "start": "node dist/index.js",
-    "dev": "yarn build && yarn start",
+    "dev": "pnpm build && pnpm start",
     "lint": "eslint './src/**/*.{ts,js}'",
     "remove-logs": "npx ts-node src/scripts/remove-logs",
     "format": "prettier --write './src/**/*.{ts,tsx,js,jsx,json,md}'"
@@ -14,7 +14,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",
     "@aws-sdk/s3-request-presigner": "^3.850.0",
-    "@repo/db": "*",
+    "@nocturn/database": "workspace:*",
+    "@nocturn/typescript-config": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/ws": "^8.18.1",
@@ -41,6 +42,7 @@
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/uuid": "^11.0.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "eslint": "^9.32.0",

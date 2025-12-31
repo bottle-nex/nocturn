@@ -10,13 +10,18 @@ import {
     USER_TYPE,
 } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
-import prisma, { HostScreen, ParticipantScreen, SpectatorScreen } from '@repo/db/client';
+import {
+    prisma,
+    HostScreen,
+    ParticipantScreen,
+    SpectatorScreen,
+    QuizPhase,
+} from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
 import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
 import PhaseQueue from '../queue/PhaseQueue';
-import { QuizPhase } from '.prisma/client';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
 

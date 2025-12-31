@@ -7,11 +7,10 @@ import {
     ParticipantNameChangeEvent,
     PubSubMessageTypes,
 } from '../types/web-socket-types';
-import prisma from '@repo/db/client';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
-import { QuizPhase } from '.prisma/client';
+import { prisma, QuizPhase } from '@nocturn/database';
 
 export interface ParticipantManagerDependencies {
     publisher: Redis;

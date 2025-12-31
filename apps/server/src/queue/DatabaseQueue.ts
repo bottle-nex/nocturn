@@ -1,6 +1,7 @@
 import { JobOption, QueueJobTypes } from '../types/database-queue-types';
 import Bull from 'bull';
-import prisma, {
+import {
+    prisma,
     GameSession,
     Participant,
     Prisma,
@@ -10,7 +11,7 @@ import prisma, {
     ChatReaction,
     Interactions,
     Response,
-} from '@repo/db/client';
+} from '@nocturn/database';
 import RedisCache from '../cache/RedisCache';
 import { redisCacheInstance } from '../services/init-services';
 import { ReactorType } from '../types/web-socket-types';

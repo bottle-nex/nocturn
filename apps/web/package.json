@@ -21,7 +21,7 @@
         "@radix-ui/react-slot": "^1.2.3",
         "@radix-ui/react-switch": "^1.2.5",
         "@radix-ui/react-tooltip": "^1.2.7",
-        "@repo/ui": "*",
+        "@nocturn/ui": "workspace:*",
         "@solana/wallet-adapter-backpack": "^0.1.14",
         "@solana/wallet-adapter-base": "^0.9.27",
         "@solana/wallet-adapter-phantom": "^0.9.28",
@@ -69,8 +69,8 @@
         "zustand": "^5.0.6"
     },
     "devDependencies": {
-        "@repo/eslint-config": "*",
-        "@repo/typescript-config": "*",
+        "@nocturn/eslint-config": "workspace:*",
+        "@nocturn/typescript-config": "workspace:*",
         "@types/node": "^22.15.3",
         "@types/react": "19.1.0",
         "@types/react-dom": "19.1.1",

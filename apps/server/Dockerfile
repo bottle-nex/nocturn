@@ -1,19 +1,18 @@
 FROM node:20-bullseye-slim
 
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-COPY package.json yarn.lock turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/server/ ./apps/server/
 COPY packages/ ./packages/
 
-# Create a minimal workspace just for server dependencies
-RUN echo '{"name": "server-docker", "private": true, "workspaces": ["apps/server", "packages/*"]}' > package.json
-
-RUN yarn --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/apps/server
-RUN yarn build
+RUN pnpm build
 
 EXPOSE 8080
 
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]

@@ -1,12 +1,12 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@nocturn/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "esModuleInterop": true,
-    "moduleResolution": "nodenext",
+    "target": "es2017",
     "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": [
     "src"

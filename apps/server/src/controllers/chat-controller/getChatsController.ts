@@ -1,4 +1,4 @@
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { ChatMessageType, USER_TYPE } from '../../types/web-socket-types';
 
 type ReturnStatement = { success: boolean; messages?: ChatMessageType[]; error?: Error | string };

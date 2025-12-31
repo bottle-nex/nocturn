@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import RedisCache from '../cache/RedisCache';
-import prisma, { Participant, Spectator } from '@repo/db/client';
+import { Participant, Spectator, prisma } from '@nocturn/database';
 import {
     CookiePayload,
     MESSAGE_TYPES,
@@ -8,7 +8,7 @@ import {
     PubSubMessageTypes,
     SECONDS,
 } from '../types/web-socket-types';
-import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '.prisma/client';
+import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 

@@ -1,4 +1,4 @@
-import prisma, { GameSession, Quiz, QuizStatus } from '@repo/db/client';
+import { GameSession, Quiz, QuizStatus, prisma } from '@nocturn/database';
 import QuizAction from '../../class/quizAction';
 import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
 

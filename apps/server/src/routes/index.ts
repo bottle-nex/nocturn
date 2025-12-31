@@ -22,7 +22,7 @@ import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMid
 import getQuestionResults from '../controllers/live-quiz-controller/getQuestionResults';
 import spectatorJoinQuizViaURLController from '../controllers/live-quiz-controller/spectatorJoinQuizViaURLController';
 
-const router = Router();
+const router: Router = Router();
 
 router.post('/sign-in', signInController);
 router.post('/user/create-review', authMiddleware, reviewAppController);

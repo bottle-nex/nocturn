@@ -9,7 +9,7 @@ import {
     SpectatorNameChangeEvent,
 } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
-import prisma from '@repo/db/client';
+import { prisma } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
