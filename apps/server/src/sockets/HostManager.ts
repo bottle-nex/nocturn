@@ -22,7 +22,7 @@ import {
 import { v4 as uuid } from 'uuid';
 import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/DatabaseQueue';
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';

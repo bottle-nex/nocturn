@@ -9,7 +9,7 @@ import { env } from '../../configs/env';
 
 export default async function participantJoinController(req: Request, res: Response) {
     const parseResult = participantJoinSchema.safeParse(req.body);
-    const redisCache = redisCacheInstance;
+    const redis_cache = redisCacheInstance;
     if (!parseResult.success) {
         res.status(400).json({
             success: false,
@@ -79,7 +79,7 @@ export default async function participantJoinController(req: Request, res: Respo
                 },
             });
 
-            redisCache.set_participants(gameSession.id, participant.id, participant);
+            redis_cache.set_participant(gameSession.id, participant.id, participant);
 
             await tx.gameSession.update({
                 where: { id: gameSession.id },

@@ -8,7 +8,7 @@ import CanvasHeading from './CanvasHeading';
 import Image from 'next/image';
 import CanvasOptions from './CanvasOptions';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
-import useLiveTemplate from '@/hooks/useLiveTemplate';
+import { templates } from '@/lib/templates';
 
 export enum SELECTION_MODE {
     CANVAS = 'CANVAS',
@@ -24,7 +24,7 @@ export default function Canvas(): JSX.Element {
     const canvasRef = useRef<HTMLDivElement>(null);
     const { currentQuestionIndex, quiz } = useNewQuizStore();
     const currentQ = quiz.questions[currentQuestionIndex];
-    const template = useLiveTemplate();
+    const template = templates.find((t) => t.id === quiz.theme);
     const canvasWidth = useWidth(canvasRef);
 
     useEffect(() => {

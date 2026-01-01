@@ -12,7 +12,7 @@ import QuizManager from './QuizManager';
 import { prisma } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
 import { WebSocket } from 'ws';

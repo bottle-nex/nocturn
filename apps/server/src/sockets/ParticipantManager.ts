@@ -9,7 +9,7 @@ import {
 import { CustomWebSocket } from '../types/web-socket-types';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import { prisma, QuizPhase } from '@nocturn/database';
 import WebSocket from 'ws';
 import { socket_codes } from '@nocturn/types';
@@ -461,9 +461,8 @@ export default class ParticipantManager {
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
-
-        if (!quiz) {
-            console.error('Quiz not found');
+        if (!quiz || !participant) {
+            console.error('Quiz or participant not found');
             return;
         }
 
@@ -547,7 +546,7 @@ export default class ParticipantManager {
         try {
             const new_warning_count = await this.redis_cache.redis_cache.hincrby(
                 participants_key,
-                `${participant_id}.warningCount`,
+                `${participant_id}:warningCount`,
                 1,
             );
 

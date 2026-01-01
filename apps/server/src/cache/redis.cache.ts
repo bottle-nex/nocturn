@@ -82,28 +82,57 @@ export default class RedisCache {
 
     //  <------------------ PARTICIPANT ------------------>
 
-    public async get_participant(game_session_id: string, participant_id: string) {
-        const key = this.get_participants_key(game_session_id);
+    public async get_participant(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<Participant | null> {
+        const participant_key = this.get_participants_key(game_session_id);
         try {
-            const data = await this.redis_cache.hget(key, participant_id);
-            return data ? JSON.parse(data) : null;
+            const data = await this.redis_cache.hgetall(participant_key);
+            if (!data) return null;
+            const participant: Record<string, unknown> = {};
+            const field_prefix = `${participant_id}:`;
+
+            Object.entries(data).forEach(([field, value]) => {
+                if (field.startsWith(field_prefix)) {
+                    const field_name = field.slice(field_prefix.length);
+                    try {
+                        participant[field_name] = JSON.parse(value);
+                    } catch {
+                        participant[field_name] = value;
+                    }
+                }
+            });
+            return Object.keys(participant).length > 0 ? (participant as Participant) : null;
         } catch (err) {
-            console.error('Error in get_participant:', err);
+            console.error('Error in get_participant :', err);
             return null;
         }
     }
 
     public async get_all_participants(game_session_id: string, fields?: (keyof Participant)[]) {
-        const key = this.get_participants_key(game_session_id);
+        const participant_key = this.get_participants_key(game_session_id);
         try {
-            const data = await this.redis_cache.hgetall(key);
-            if (!data) return [];
+            const data = await this.redis_cache.hgetall(participant_key);
+            if (!data || Object.keys(data).length === 0) return [];
 
-            return Object.entries(data).map(([id, value]) => {
-                const participant = JSON.parse(value);
+            const participants_map: Record<string, Record<string, unknown>> = {};
 
+            Object.entries(data).forEach(([field, value]) => {
+                const [participant_id, field_name] = field.split(':');
+                if (!participants_map[participant_id]) {
+                    participants_map[participant_id] = {};
+                }
+                try {
+                    participants_map[participant_id][field_name] = JSON.parse(value);
+                } catch {
+                    participants_map[participant_id][field_name] = value;
+                }
+            });
+
+            return Object.entries(participants_map).map(([id, participant]) => {
                 if (fields && fields.length > 0) {
-                    const filtered: any = { id };
+                    const filtered: Record<string, unknown> = { id };
                     for (const field of fields) {
                         if (participant[field] !== undefined) {
                             filtered[field] = participant[field];
@@ -111,24 +140,31 @@ export default class RedisCache {
                     }
                     return filtered;
                 }
-
                 return { id, ...participant };
             });
         } catch (err) {
-            console.error('Error in get_all_participants:', err);
+            console.error('Error in get_all_participants_v2:', err);
             return [];
         }
     }
 
-    public async set_participants(
+    public async set_participant(
         game_session_id: string,
         participant_id: string,
         particpant: Partial<Participant>,
     ) {
         try {
-            const key = this.get_participants_key(game_session_id);
-            await this.redis_cache.hset(key, participant_id, JSON.stringify(particpant));
-            await this.redis_cache.expire(key, 60 * 60 * 24);
+            const participant_key = this.get_participants_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+
+            Object.entries(particpant).forEach(([field, value]) => {
+                const field_key = `${participant_id}:${field}`;
+                const field_value = typeof value === 'string' ? value : JSON.stringify(value);
+                pipeline.hset(participant_key, field_key, field_value);
+            });
+
+            await pipeline.exec();
+            await this.redis_cache.expire(participant_key, 60 * 60 * 24);
         } catch (err) {
             console.error('Error while setting participant in cache : ', err);
         }
@@ -137,9 +173,23 @@ export default class RedisCache {
     public async delete_participant(game_session_id: string, participant_id: string) {
         const key = this.get_participants_key(game_session_id);
         try {
-            await this.redis_cache.hdel(key, participant_id);
+            const data = await this.redis_cache.hgetall(key);
+            if (!data) return;
+
+            const fields_to_delete: string[] = [];
+            const prefix = `${participant_id}:`;
+
+            for (const field of Object.keys(data)) {
+                if (field.startsWith(prefix)) {
+                    fields_to_delete.push(field);
+                }
+            }
+
+            if (fields_to_delete.length > 0) {
+                await this.redis_cache.hdel(key, ...fields_to_delete);
+            }
         } catch (error) {
-            console.error('Error in delete-participant: ', error);
+            console.error('Error in delete_participant:', error);
         }
     }
 
