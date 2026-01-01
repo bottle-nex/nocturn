@@ -1,11 +1,35 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export async function getLiveQuizSummarizedData(req: Request, res: Response) {
-    const { quizId } = req.params;
-
     try {
-        const questions = await prisma.question.findMany({
+        const user = req.user;
+        if(!user) {
+            ResponseWriter.not_authorized(res);
+            return;
+        }
+
+        const { quizId } = req.params;
+        if(!quizId) {
+            ResponseWriter.invalid_data(res, 'quiz id not found', 400);
+            return;
+        }
+
+
+        const quiz = await prisma.quiz.findUnique({
+            where: {
+                id: quizId,
+                hostId: user.id.toString(),
+            },
+        });
+
+        if(!quiz) {
+            ResponseWriter.not_authorized(res, 'quiz not found');
+            return;
+        }
+
+        const quizQuestions = await prisma.question.findMany({
             where: { quizId },
             select: {
                 id: true,
@@ -21,17 +45,18 @@ export async function getLiveQuizSummarizedData(req: Request, res: Response) {
             },
         });
 
-        const summarizedQuestionData = questions.map((q) => ({
+        const questions = quizQuestions.map((q) => ({
             id: q.id,
             title: q.question.substring(0, 10) + '...',
             difficulty: q.difficulty,
         }));
 
-        res.status(201).json({ success: true, questions: summarizedQuestionData });
+        ResponseWriter.success(res, questions);
         return;
+
     } catch (err) {
         console.error('Unexpected error in getQuestionSummaries: ', err);
-        res.status(500).json({ success: false, message: 'Failed to fetch summarized data' });
+        ResponseWriter.system_error(res);
         return;
     }
 }
