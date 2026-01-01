@@ -12,7 +12,7 @@ import {
     Interactions,
     Response,
 } from '@nocturn/database';
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import { redisCacheInstance } from '../services/init-services';
 import { ReactorType } from '@nocturn/types';
 import { env } from '../configs/env';
@@ -207,7 +207,7 @@ export default class DatabaseQueue {
                 },
                 data: participant,
             });
-            await this.redis_cache.set_participants(
+            await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
                 updatedParticipant,

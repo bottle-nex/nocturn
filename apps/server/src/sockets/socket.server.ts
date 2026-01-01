@@ -5,7 +5,7 @@ import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
 import HostManager from './HostManager';
 import QuizManager from './QuizManager';
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import { URL } from 'url';
 import ParticipantManager from './ParticipantManager';
 import SpectatorManager from './SpectatorManager';

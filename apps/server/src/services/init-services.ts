@@ -1,4 +1,4 @@
-import RedisCache from '../cache/RedisCache';
+import RedisCache from '../cache/redis.cache';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import QuizController from '../controllers/quiz-controller/quizController';
 import PhaseQueue from '../queue/PhaseQueue';
