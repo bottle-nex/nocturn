@@ -77,11 +77,10 @@ export default async function readReviewController(req: Request, res: Response) 
                     count: item._count.rating,
                 })),
             },
-        }
+        };
 
         ResponseWriter.success(res, response, 'Reviews fetched successfully', 200);
         return;
-
     } catch (error: any) {
         console.error('Error in readReviewController:', error);
         ResponseWriter.system_error(res);

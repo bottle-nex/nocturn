@@ -7,10 +7,7 @@ export default async function getQuestionResults(req: Request, res: Response) {
         const { quizId, questionId } = req.body;
 
         if (!quizId || !questionId) {
-            ResponseWriter.invalid_data(
-                res,
-                'Incomplete request data',
-            );
+            ResponseWriter.invalid_data(res, 'Incomplete request data');
             return;
         }
 
@@ -69,12 +66,7 @@ export default async function getQuestionResults(req: Request, res: Response) {
             };
         });
 
-        ResponseWriter.success(
-            res,
-            data,
-            'Fetched question results successfully',
-            200,
-        );
+        ResponseWriter.success(res, data, 'Fetched question results successfully', 200);
         return;
     } catch (error) {
         console.error('Failed to fetch question results: ', error);
