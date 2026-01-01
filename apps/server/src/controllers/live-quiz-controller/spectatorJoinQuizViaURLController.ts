@@ -5,6 +5,7 @@ import { redisCacheInstance } from '../../services/init-services';
 import QuizAction from '../../class/quizAction';
 import { USER_TYPE } from '@nocturn/types';
 import { env } from '../../configs/env';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function spectatorJoinQuizViaURLController(req: Request, res: Response) {
     const redisCache = redisCacheInstance;
@@ -12,18 +13,12 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
     const spectatorToken = req.query.spectator_token as string;
 
     if (!quizId) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid request data',
-        });
+        ResponseWriter.invalid_data(res);
         return;
     }
 
     if (!spectatorToken) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid request data',
-        });
+        ResponseWriter.invalid_data(res);
         return;
     }
 
@@ -31,10 +26,7 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
         const verify_token = QuizAction.verifyCookie(spectatorToken);
 
         if (!verify_token) {
-            res.status(401).json({
-                success: false,
-                message: 'Invalid token',
-            });
+            ResponseWriter.invalid_data(res, 'Invalid token', 401);
             return;
         }
 
@@ -49,18 +41,18 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
         });
 
         if (!quiz) {
-            res.status(404).json({
-                success: false,
-                message: 'Invalid quiz code. Please check and try again.',
-            });
+            ResponseWriter.invalid_data(res, 'Invalid quiz code. Please check and try again.', 404);
             return;
         }
 
         if (!['LIVE'].includes(quiz.status)) {
-            res.status(403).json({
-                success: false,
-                message: 'Quiz is not available for joining at this time.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_NOT_LIVE',
+                'Quiz is not available for joining at this time.',
+                undefined,
+                403,
+            );
             return;
         }
 
@@ -73,10 +65,13 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
         });
 
         if (!gameSession) {
-            res.status(500).json({
-                success: false,
-                message: 'Quiz session is not available yet. Please try again later.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_SESSION_NOT_ACTIVE',
+                'Quiz session is not available yet. Please try again later.',
+                undefined,
+                500,
+            );
             return;
         }
 
@@ -125,6 +120,7 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
                 maxAge: 24 * 60 * 60 * 1000,
             });
 
+            // two data args
             res.status(200).json({
                 success: true,
                 message: 'Successfully joined the quiz!',
@@ -151,18 +147,18 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
                 .catch((cleanupErr) => {
                     console.error('Failed to cleanup after cookie error:', cleanupErr);
                 });
-            res.status(500).json({
-                success: false,
-                message: 'Could not set authentication cookie. Please try again.',
-            });
+            ResponseWriter.error(
+                res,
+                'FAILED_WHILE_SETTING_COOKIE',
+                'Could not set authentication cookie. Please try again.',
+                undefined,
+                500,
+            );
             return;
         }
     } catch (err) {
         console.error('Error while creating spectator', err);
-        res.status(500).json({
-            success: false,
-            message: 'Something went wrong while trying to join the quiz. Please try again.',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }
