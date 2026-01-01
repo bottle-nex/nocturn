@@ -6,16 +6,14 @@ import QuizAction from '../../class/quizAction';
 import { USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init-services';
 import { env } from '../../configs/env';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function spectatorJoinController(req: Request, res: Response) {
     const parsedData = spectatorJoinSchema.safeParse(req.body);
     const redisCache = redisCacheInstance;
 
     if (!parsedData.success) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid request data',
-        });
+        ResponseWriter.invalid_data(res);
         return;
     }
 
@@ -34,26 +32,29 @@ export default async function spectatorJoinController(req: Request, res: Respons
         });
 
         if (!quiz) {
-            res.status(404).json({
-                success: false,
-                message: 'Invalid quiz code. Please check and try again.',
-            });
+            ResponseWriter.not_found(res, 'Invalid quiz code. Please check and try again.');
             return;
         }
 
         if (!quiz.allowNewSpectator) {
-            res.status(200).json({
-                success: false,
-                message: 'No new spectaors are allowed for this quiz.',
-            });
+            ResponseWriter.custom(
+                res,
+                false,
+                'NOT_ALLOWED',
+                'No new spectaors are allowed for this quiz.',
+                200,
+            );
             return;
         }
 
         if (!['LIVE'].includes(quiz.status)) {
-            res.status(403).json({
-                success: false,
-                message: 'Quiz is not available for joining at this time.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_NOT_LIVE',
+                'Quiz is not available for joining at this time.',
+                undefined,
+                403,
+            );
             return;
         }
 
@@ -66,10 +67,13 @@ export default async function spectatorJoinController(req: Request, res: Respons
         });
 
         if (!gameSession) {
-            res.status(500).json({
-                success: false,
-                message: 'Quiz session is not available yet. Please try again later.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_SESSION_NOT_ACTIVE',
+                'Quiz session is not available yet. Please try again later.',
+                undefined,
+                500,
+            );
             return;
         }
 
@@ -133,25 +137,22 @@ export default async function spectatorJoinController(req: Request, res: Respons
                     console.error('Failed to cleanup after cookie error:', cleanupErr);
                 });
 
-            res.status(500).json({
-                success: false,
-                message: 'Could not set authentication cookie. Please try again.',
-            });
+            ResponseWriter.error(
+                res,
+                'FAILED_WHILE_SETTING_COOKIE',
+                'Could not set authentication cookie. Please try again.',
+                undefined,
+                500,
+            );
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Successfully joined the quiz!',
-            quizId: quiz.id,
-        });
+        const quizId = quiz.id;
+        ResponseWriter.success(res, quizId, 'Successfully joined the quiz!');
         return;
     } catch (error) {
         console.error('Error during spectator join:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Something went wrong while trying to join the quiz. Please try again.',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }
