@@ -1,5 +1,6 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function getSpectatorOnCall(req: Request, res: Response) {
     const { quizId } = req.params;
@@ -7,7 +8,7 @@ export default async function getSpectatorOnCall(req: Request, res: Response) {
     const limit = 18;
 
     if (!quizId) {
-        res.status(400).json({ message: 'Quiz-Id not found' });
+        ResponseWriter.not_found(res, 'quiz-id not found');
         return;
     }
 
@@ -34,6 +35,7 @@ export default async function getSpectatorOnCall(req: Request, res: Response) {
 
         const hasMore = (page + 1) * limit < totalSpectators;
 
+        // two args of data
         res.status(201).json({
             success: true,
             spectators,
@@ -43,10 +45,7 @@ export default async function getSpectatorOnCall(req: Request, res: Response) {
         return;
     } catch (error) {
         console.error('Error in fetching spectators: ', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching spectators',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }
