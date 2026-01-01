@@ -1,5 +1,6 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function readReviewController(req: Request, res: Response) {
     const { page = 1, limit = 10, rating, sortBy = 'createdAt', order = 'desc' } = req.query;
@@ -58,35 +59,32 @@ export default async function readReviewController(req: Request, res: Response) 
 
         const totalPages = Math.ceil(totalReviews / limitNum);
 
-        res.status(200).json({
-            success: true,
-            data: {
-                reviews,
-                pagination: {
-                    currentPage: pageNum,
-                    totalPages,
-                    totalReviews,
-                    hasNextPage: pageNum < totalPages,
-                    hasPrevPage: pageNum > 1,
-                    limit: limitNum,
-                },
-                stats: {
-                    averageRating: avgRating._avg.rating || 0,
-                    totalReviews,
-                    ratingDistribution: ratingDistribution.map((item) => ({
-                        rating: item.rating,
-                        count: item._count.rating,
-                    })),
-                },
+        const response = {
+            reviews,
+            pagination: {
+                currentPage: pageNum,
+                totalPages,
+                totalReviews,
+                hasNextPage: pageNum < totalPages,
+                hasPrevPage: pageNum > 1,
+                limit: limitNum,
             },
-            message: 'Reviews fetched successfully',
-        });
+            stats: {
+                averageRating: avgRating._avg.rating || 0,
+                totalReviews,
+                ratingDistribution: ratingDistribution.map((item) => ({
+                    rating: item.rating,
+                    count: item._count.rating,
+                })),
+            },
+        }
+
+        ResponseWriter.success(res, response, 'Reviews fetched successfully', 200);
+        return;
+
     } catch (error: any) {
         console.error('Error in readReviewController:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching reviews',
-            error: error.message,
-        });
+        ResponseWriter.system_error(res);
+        return;
     }
 }

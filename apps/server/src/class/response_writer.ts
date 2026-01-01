@@ -79,6 +79,56 @@ export default class ResponseWriter {
         this.send_response(res, response, 404);
     }
 
+    static system_error(res: Response) {
+        const response: CustomResponse = {
+            success: false,
+            message: 'Internal server error',
+            error: {
+                code: 'INTERNAL_SERVER_ERROR',
+            },
+            meta: { timestamp: new Date().toISOString() },
+        };
+        this.send_response(res, response, 500);
+    }
+
+    static invalid_data(
+        res: Response,
+        message: string = 'Invalid or Incomplete data provided',
+        status_code: number = 400,
+    ) {
+        const response: CustomResponse = {
+            success: false,
+            message,
+            error: {
+                code: 'INVALID_DATA',
+            },
+            meta: { timestamp: new Date().toISOString() },
+        };
+        this.send_response(res, response, status_code);
+    }
+
+    static custom<T>(
+        res: Response,
+        success: boolean,
+        code: string,
+        message: string,
+        status_code: number,
+        data?: T,
+        details?: string,
+    ) {
+        const response: CustomResponse = {
+            success,
+            data,
+            message,
+            error: {
+                code,
+                details,
+            },
+            meta: { timestamp: new Date().toISOString() },
+        };
+        this.send_response(res, response, status_code);
+    }
+
     static send_response<T>(res: Response, response: CustomResponse<T>, status_code: number) {
         res.status(status_code).json(response);
     }
