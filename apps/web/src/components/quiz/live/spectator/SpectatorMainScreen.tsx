@@ -1,6 +1,6 @@
 import SpectatorLobbyScreen from '@/components/spectator-controls/SpectatorLobbyScreen';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { SpectatorScreenEnum } from '@/types/prisma-types';
+import { SpectatorScreenEnum } from '@nocturn/types';
 import SpectatorMainFooter from './SpectatorMainFooter';
 import SpectatorPanelRenderer from './SpectatorChannelRenderer';
 import SpectatorMotivationScreen from './screens/QuestionMotivationScreen/SpectatorMotivationScreen';

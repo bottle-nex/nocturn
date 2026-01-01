@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { parse } from 'cookie';
 import { prisma, QuizPhase } from '@nocturn/database';
-import { CookiePayload, USER_TYPE } from '../../types/web-socket-types';
+import { CookiePayload, USER_TYPE } from '@nocturn/types';
 import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
+import ResponseWriter from '../../class/response_writer';
 
 function unauthorized(res: Response) {
     return res.status(401).json({ success: false, message: 'Unauthorized user' });
@@ -16,7 +17,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
     const { quizId: quizIdParams } = req.params;
 
     if (!token) {
-        unauthorized(res);
+        ResponseWriter.not_authorized(res);
         return;
     }
 
@@ -27,7 +28,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         const { quizId, gameSessionId, role, userId } = decoded as CookiePayload;
 
         if (!quizId || !gameSessionId || !role || !quizIdParams || quizIdParams !== quizId) {
-            return unauthorized(res);
+            return ResponseWriter.not_authorized(res);
         }
 
         const result = await prisma.$transaction(async (tx) => {
@@ -243,18 +244,12 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         });
 
         if (!result.quiz || !result.gameSession) {
-            res.status(404).json({
-                success: false,
-                message: 'Quiz or Game session not found',
-            });
+            ResponseWriter.not_found(res, 'Quiz or Game session not found');
             return;
         }
 
         if (!result.userData) {
-            res.status(404).json({
-                success: false,
-                message: `${role} data not found`,
-            });
+            ResponseWriter.not_found(res, `${role} data not found`);
             return;
         }
 
@@ -275,18 +270,12 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             isNextQuestionAvailable: result.isNextQuestionAvailable,
         };
 
-        if (!data.success || !data.messages || data.error) {
-            res.status(200).json(responseData);
-            return;
-        }
-
         if (data.messages) {
             responseData.messages = data.messages;
         }
-
-        res.status(200).json(responseData);
+        ResponseWriter.success(res, responseData);
         return;
-    } catch (err: any) {
+    } catch (err) {
         console.error('Unexpected error in getLiveQuizDataController:', err);
         unauthorized(res);
         return;

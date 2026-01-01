@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import { SELECTION_MODE } from './Canvas';
 import { Dispatch, MouseEvent, SetStateAction, useState, useEffect } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';

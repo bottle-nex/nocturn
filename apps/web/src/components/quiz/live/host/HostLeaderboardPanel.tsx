@@ -1,7 +1,7 @@
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import LeaderboardPanelComponent, { Player } from '../common/LeaderboardPanelComponent';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { QuizPhaseEnum } from '@/types/prisma-types';
+import { QuizPhaseEnum } from '@nocturn/types';
 
 export default function HostLeaderboardPanel() {
     const { participants } = useLiveParticipantsStore();

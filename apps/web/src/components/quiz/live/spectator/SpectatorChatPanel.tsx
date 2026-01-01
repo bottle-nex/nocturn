@@ -4,7 +4,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { cn } from '@/lib/utils';
 import { useLiveQuizExpandableCardForSpectatorStore } from '@/store/live-quiz/useLiveQuizExpandableCardForSpectatorStore';
-import { ChatMessageType, ChatReactionType, ReactorType } from '@/types/web-socket-types';
+import { ChatMessageType, ChatReactionType, ReactorType } from '@nocturn/types';
 import { useMemo, useRef, useState } from 'react';
 import { BiExpandAlt } from 'react-icons/bi';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';

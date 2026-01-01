@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useWebSocket } from './useWebSocket';
-import { MESSAGE_TYPES } from '@/types/web-socket-types';
+import { MESSAGE_TYPES } from '@nocturn/types';
 import { SubscribeEventHandlers } from '@/lib/subscribe-event-handlers';
 
 export function useSubscribeEventHandlers() {

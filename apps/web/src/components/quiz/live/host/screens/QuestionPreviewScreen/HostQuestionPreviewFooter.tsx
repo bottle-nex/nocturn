@@ -9,7 +9,7 @@ import { IoIosReturnLeft } from 'react-icons/io';
 import { FaLightbulb } from 'react-icons/fa';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import DifficultyTicker from '@/components/tickers/DifficultyTicker';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function HostQuestionPreviewFooter() {

@@ -6,7 +6,7 @@ import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import { cn } from '@/lib/utils';
 import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { HostScreenEnum } from '@/types/prisma-types';
+import { HostScreenEnum } from '@nocturn/types';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { MdNavigateNext } from 'react-icons/md';
@@ -29,7 +29,7 @@ export default function HostQuestionResultsRenderer() {
     useEffect(() => {
         if (!isNextQuestionAvailable) {
             setQuizEnded(true);
-            alert(isNextQuestionAvailable);
+            // alert(isNextQuestionAvailable);
         }
     }, [isNextQuestionAvailable]);
 

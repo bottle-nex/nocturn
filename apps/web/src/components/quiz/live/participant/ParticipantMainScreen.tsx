@@ -1,7 +1,7 @@
 'use client';
 
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { ParticipantScreenEnum, USER_TYPE } from '@/types/prisma-types';
+import { ParticipantScreenEnum, USER_TYPE } from '@nocturn/types';
 import ParticipantLobbyScreen from './screens/LobbyScreen/ParticipantLobbyScreen';
 import ParticipantMotivationScreen from './screens/QuestionMotivationScreen/ParticipantMotivationScreen';
 import ParticipantQuestionReadingScreen from './screens/QuestionReadingScreen/ParticipantQuestionReadingScreen';

@@ -1,4 +1,4 @@
-import { QuizStatusEnum } from '@/types/prisma-types';
+import { QuizStatusEnum } from '@nocturn/types';
 import React from 'react';
 
 interface QuizStatusTickerProps {

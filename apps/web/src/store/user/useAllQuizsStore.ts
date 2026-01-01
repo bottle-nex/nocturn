@@ -1,4 +1,4 @@
-import { QuizType } from '@/types/prisma-types';
+import { QuizType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface AllQuizsStoreType {

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
-import { USER_TYPE } from '../../types/web-socket-types';
+import { USER_TYPE } from '@nocturn/types';
 import { quizControllerInstance } from '../../services/init-services';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';

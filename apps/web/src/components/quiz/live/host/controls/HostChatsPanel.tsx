@@ -4,7 +4,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { cn } from '@/lib/utils';
 import { useLiveQuizExpandableCardForHostStore } from '@/store/live-quiz/useLiveQuizExpandableCardForHostStore';
-import { ChatMessageType, ChatReactionType, ReactorType } from '@/types/web-socket-types';
+import { ChatMessageType, ChatReactionType, ReactorType } from '@nocturn/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BiExpandAlt } from 'react-icons/bi';
 import { HiOutlineEmojiHappy } from 'react-icons/hi';
@@ -14,7 +14,7 @@ import { useLiveQuizGlobalChatStore } from '@/store/live-quiz/useLiveQuizGlobalC
 import { useLiveHostStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { IoClose } from 'react-icons/io5';
 import MessagesRenderer from '../../common/MessageRenderer';
-import { InteractionEnum } from '@/types/prisma-types';
+import { InteractionEnum } from '@nocturn/types';
 
 const emojiList = [
     '😀',

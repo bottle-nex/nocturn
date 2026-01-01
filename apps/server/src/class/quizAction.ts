@@ -1,7 +1,7 @@
 import { prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
-import { CookiePayload, USER_TYPE } from '../types/web-socket-types';
+import { CookiePayload, USER_TYPE } from '@nocturn/types';
 import { env } from '../configs/env';
 
 export default class QuizAction {

@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { templates } from '@/lib/templates';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { MESSAGE_TYPES } from '@/types/web-socket-types';
-import { InteractionEnum } from '@/types/prisma-types';
+import { MESSAGE_TYPES } from '@nocturn/types';
+import { InteractionEnum } from '@nocturn/types';
 
 interface LiveQuizInteractionTickerProps {
     className?: string;

@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { InteractionEnum } from '@/types/prisma-types';
+import { InteractionEnum } from '@nocturn/types';
 
 interface InteractionIconProps {
     icon: ReactElement;

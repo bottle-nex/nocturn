@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
-import { InteractionEnum } from '@/types/prisma-types';
-import { ChatMessageType } from '@/types/web-socket-types';
+import { InteractionEnum } from '@nocturn/types';
+import { ChatMessageType } from '@nocturn/types';
 import { MdOutlineAddReaction } from 'react-icons/md';
 import Reactions from '../quiz/live/common/Reactions';
 import { LuReplyAll } from 'react-icons/lu';

@@ -1,6 +1,6 @@
 import { cleanWebSocketClient, getWebSocketClient } from '@/lib/singleton-socket';
-import WebSocketClient, { MessagePayload } from '@/socket/socket';
-import { MESSAGE_TYPES } from '@/types/web-socket-types';
+import WebSocketClient, { MessagePayload } from '@/socket/socket.client';
+import { MESSAGE_TYPES } from '@nocturn/types';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -21,6 +21,7 @@ export const useWebSocket = () => {
             return;
         }
         lastQuizIdRef.current = quizId;
+
         socket.current = getWebSocketClient(quizId);
         return () => {
             if (lastQuizIdRef.current !== quizId) {

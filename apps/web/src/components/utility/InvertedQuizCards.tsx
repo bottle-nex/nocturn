@@ -18,7 +18,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from 'sonner';
 import BackendActions from '@/lib/backend/quiz-backend-actions';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { QuizStatusEnum } from '@/types/prisma-types';
+import { QuizStatusEnum } from '@nocturn/types';
 import Image from 'next/image'; // ✅ import Image for illustration
 
 export default function InvertedQuizCards() {

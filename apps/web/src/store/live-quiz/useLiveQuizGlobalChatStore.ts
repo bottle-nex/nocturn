@@ -1,4 +1,4 @@
-import { ChatMessageType, ChatReactionType } from '@/types/web-socket-types';
+import { ChatMessageType, ChatReactionType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LiveQuizGlobalChatStore {

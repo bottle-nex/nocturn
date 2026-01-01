@@ -1,4 +1,4 @@
-import WebSocketClient from '@/socket/socket';
+import WebSocketClient from '@/socket/socket.client';
 
 let client: WebSocketClient | null = null;
 let currentQuizId: string | null = null;

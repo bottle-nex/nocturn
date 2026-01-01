@@ -32,7 +32,7 @@ export default function ParticipantQuestionReadingScreen() {
                 'relative',
             )}
         >
-            <div className="min-h-[32rem] w-[90%] flex flex-col justify-between">
+            <div className="min-h-128 w-[90%] flex flex-col justify-between">
                 <div
                     className={cn('w-full text-3xl text-center')}
                     dangerouslySetInnerHTML={{ __html: currentQuestion.question }}

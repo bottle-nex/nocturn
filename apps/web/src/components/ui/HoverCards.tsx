@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { QuizType } from '@/types/prisma-types';
+import { QuizType } from '@nocturn/types';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { FaCalendar } from 'react-icons/fa6';

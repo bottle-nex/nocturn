@@ -1,4 +1,4 @@
-import { MESSAGE_TYPES } from '@/types/web-socket-types';
+import { MESSAGE_TYPES } from '@nocturn/types';
 
 export interface MessagePayload {
     type: MESSAGE_TYPES;

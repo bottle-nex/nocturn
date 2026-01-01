@@ -2,15 +2,17 @@ import Redis from 'ioredis';
 import QuizManager from './QuizManager';
 import {
     CookiePayload,
-    CustomWebSocket,
     MESSAGE_TYPES,
     ParticipantNameChangeEvent,
     PubSubMessageTypes,
-} from '../types/web-socket-types';
+} from '@nocturn/types';
+import { CustomWebSocket } from '../types/web-socket-types';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/RedisCache';
 import { prisma, QuizPhase } from '@nocturn/database';
+import WebSocket from 'ws';
+import { socket_codes } from '@nocturn/types';
 
 export interface ParticipantManagerDependencies {
     publisher: Redis;
@@ -52,6 +54,7 @@ export default class ParticipantManager {
             decoded_cookie_payload.userId,
         );
         if (!is_valid_participant) {
+            console.log('participant validation failed, closing socket 6');
             ws.close();
             return;
         }
@@ -539,7 +542,8 @@ export default class ParticipantManager {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
         const participants_key = this.redis_cache.get_participants_key(game_session_id);
-
+        const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
+        console.log('game session in warning count', participant);
         try {
             const new_warning_count = await this.redis_cache.redis_cache.hincrby(
                 participants_key,
@@ -579,7 +583,12 @@ export default class ParticipantManager {
         const existing_participant_socket_id = this.participant_socket_mapping.get(participant_id);
         if (existing_participant_socket_id) {
             const existing_socket = this.socket_mapping.get(existing_participant_socket_id);
-            if (existing_socket) existing_socket.close();
+            if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
+                existing_socket.close(
+                    socket_codes.DUPLICATE_CONNECTION,
+                    'Another participant has connected',
+                );
+            }
             this.socket_mapping.delete(existing_participant_socket_id);
             this.participant_socket_mapping.delete(participant_id);
             const session_participants_socket_ids =

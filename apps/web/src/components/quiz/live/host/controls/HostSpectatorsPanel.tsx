@@ -3,7 +3,7 @@
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { SpectatorType } from '@/types/prisma-types';
+import { SpectatorType } from '@nocturn/types';
 import axios from 'axios';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';

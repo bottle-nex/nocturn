@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
-import { QuizPhaseEnum } from '@/types/prisma-types';
+import { QuizPhaseEnum } from '@nocturn/types';
 
 type Hex = `#${string}`;
 

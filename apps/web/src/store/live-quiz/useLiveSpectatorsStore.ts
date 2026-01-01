@@ -1,4 +1,4 @@
-import { SpectatorType } from '@/types/prisma-types';
+import { SpectatorType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LiveSpectatorProps {

@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useLiveSpectatorStore } from '@/store/live-quiz/useLiveQuizUserStore';
-import { SpectatorNameChangeEvent } from '@/types/web-socket-types';
+import { SpectatorNameChangeEvent } from '@nocturn/types';
 import Image from 'next/image';
 import { FormEvent, useState } from 'react';
 import { IoPencil } from 'react-icons/io5';

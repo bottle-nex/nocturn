@@ -1,4 +1,4 @@
-import { ParticipantType, ResponseType } from '@/types/prisma-types';
+import { ParticipantType, ResponseType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LiveParticipantsStoreProps {

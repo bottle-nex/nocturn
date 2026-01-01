@@ -1,4 +1,4 @@
-import { GameSessionType, QuestionType, QuizType } from '@/types/prisma-types';
+import { GameSessionType, QuestionType, QuizType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LifelineResult {
