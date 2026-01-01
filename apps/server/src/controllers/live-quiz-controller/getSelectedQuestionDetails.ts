@@ -6,10 +6,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
     const { quizId, questionIndex } = req.params;
 
     if (!quizId || questionIndex === undefined || questionIndex === null) {
-        ResponseWriter.invalid_data(
-            res,
-            'Invalid request - quizId and questionIndex are required',
-        );
+        ResponseWriter.invalid_data(res, 'Invalid request - quizId and questionIndex are required');
         return;
     }
 
@@ -54,10 +51,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
         });
 
         if (!quiz) {
-            ResponseWriter.not_found(
-                res,
-                'Quiz not found',
-            );
+            ResponseWriter.not_found(res, 'Quiz not found');
             return;
         }
 
@@ -85,10 +79,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
         }
 
         const question = currentQuestion;
-        ResponseWriter.success(
-            res,
-            question,
-        );
+        ResponseWriter.success(res, question);
         return;
     } catch (error) {
         console.error('Unexpected error in getSelectedQuestionDetails: ', error);

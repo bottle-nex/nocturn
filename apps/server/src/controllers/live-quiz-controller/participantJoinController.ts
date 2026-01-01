@@ -145,16 +145,12 @@ export default async function participantJoinController(req: Request, res: Respo
                 'Could not set authentication cookie. Please try again.',
                 undefined,
                 500,
-            )
+            );
             return;
         }
 
         const quizId = quiz.id;
-        ResponseWriter.success(
-            res,
-            quizId,
-            'Successfully joined the quiz!',
-        );
+        ResponseWriter.success(res, quizId, 'Successfully joined the quiz!');
         return;
     } catch (err) {
         console.error('Error during participant join:', err);

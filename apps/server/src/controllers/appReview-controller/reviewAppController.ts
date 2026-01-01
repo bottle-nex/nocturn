@@ -41,7 +41,6 @@ export default async function reviewAppController(req: Request, res: Response) {
 
         ResponseWriter.success(res, review, 'Review submitted successfully', 200);
         return;
-
     } catch (error) {
         console.error('Error in Review file controller', error);
         ResponseWriter.system_error(res);

@@ -5,17 +5,16 @@ import ResponseWriter from '../../class/response_writer';
 export async function getLiveQuizSummarizedData(req: Request, res: Response) {
     try {
         const user = req.user;
-        if(!user) {
+        if (!user) {
             ResponseWriter.not_authorized(res);
             return;
         }
 
         const { quizId } = req.params;
-        if(!quizId) {
+        if (!quizId) {
             ResponseWriter.invalid_data(res, 'quiz id not found', 400);
             return;
         }
-
 
         const quiz = await prisma.quiz.findUnique({
             where: {
@@ -24,7 +23,7 @@ export async function getLiveQuizSummarizedData(req: Request, res: Response) {
             },
         });
 
-        if(!quiz) {
+        if (!quiz) {
             ResponseWriter.not_authorized(res, 'quiz not found');
             return;
         }
@@ -53,7 +52,6 @@ export async function getLiveQuizSummarizedData(req: Request, res: Response) {
 
         ResponseWriter.success(res, questions);
         return;
-
     } catch (err) {
         console.error('Unexpected error in getQuestionSummaries: ', err);
         ResponseWriter.system_error(res);
