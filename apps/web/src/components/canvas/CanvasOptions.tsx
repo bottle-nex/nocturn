@@ -5,7 +5,7 @@ import { SELECTION_MODE } from './Canvas';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { templates } from '@/lib/templates';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 
 interface CanvasOptionsProps {
     selectionMode: SELECTION_MODE;

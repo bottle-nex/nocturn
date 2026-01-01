@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { HostScreenEnum } from '@/types/prisma-types';
+import { HostScreenEnum } from '@nocturn/types';
 
 export default function HostQuestionResultScreenFooter() {
     const { updateGameSession } = useLiveQuizStore();

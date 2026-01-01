@@ -1,6 +1,6 @@
 'use client';
 import WaitingLobbyAvatar from '@/components/waitingRoom/Avatar';
-import { ParticipantType } from '@/types/prisma-types';
+import { ParticipantType } from '@nocturn/types';
 import { useState, useEffect, useCallback } from 'react';
 
 interface Position {

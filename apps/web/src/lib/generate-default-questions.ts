@@ -1,4 +1,4 @@
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import { v4 as uuid } from 'uuid';
 
 export function generateDefaultQuestions(): QuestionType[] {

@@ -1,5 +1,5 @@
 import { prisma } from '@nocturn/database';
-import { ChatMessageType, USER_TYPE } from '../../types/web-socket-types';
+import { ChatMessageType, USER_TYPE } from '@nocturn/types';
 
 type ReturnStatement = { success: boolean; messages?: ChatMessageType[]; error?: Error | string };
 

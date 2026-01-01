@@ -2,7 +2,7 @@ import express from 'express';
 import router from './routes/index.ts';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import WebsocketServer from './sockets/WebSocketServer.ts';
+import WebsocketServer from './sockets/socket.server.ts';
 import http from 'http';
 import initServices from './services/init-services.ts';
 import { env } from './configs/env.ts';

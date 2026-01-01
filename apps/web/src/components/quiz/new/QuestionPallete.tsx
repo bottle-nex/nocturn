@@ -8,7 +8,7 @@ import { Template, templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useSideBarStore } from '@/store/new-quiz/useSideBar';
-import { QuizType } from '@/types/prisma-types';
+import { QuizType } from '@nocturn/types';
 import { useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';

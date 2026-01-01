@@ -7,7 +7,7 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { FormEvent, useState } from 'react';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { ParticipantNameChangeEvent } from '@/types/web-socket-types';
+import { ParticipantNameChangeEvent } from '@nocturn/types';
 
 export default function WaitingLobbyParticipantRight() {
     const { quiz } = useLiveQuizStore();

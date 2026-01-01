@@ -1,6 +1,6 @@
 import { Template } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import CanvasAccents from '../utility/CanvasAccents';
 import { BsThreeDots } from 'react-icons/bs';
 import { MouseEvent, useState, useRef } from 'react';

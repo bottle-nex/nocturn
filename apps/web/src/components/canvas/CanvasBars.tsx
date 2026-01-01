@@ -1,5 +1,5 @@
 import { Template } from '@/lib/templates';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import { IoIosCheckmark } from 'react-icons/io';
 import { RxCross2 } from 'react-icons/rx';
 

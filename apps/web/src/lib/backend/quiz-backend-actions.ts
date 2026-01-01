@@ -1,4 +1,4 @@
-import { QuizType } from '@/types/prisma-types';
+import { QuizType } from '@nocturn/types';
 import axios from 'axios';
 import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
 

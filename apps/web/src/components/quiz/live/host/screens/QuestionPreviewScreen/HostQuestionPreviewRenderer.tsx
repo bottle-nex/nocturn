@@ -5,7 +5,7 @@ import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import Image from 'next/image';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import HostQuestionPreviewOptions from './HostQuestionPreviewOptions';
-import { QuestionType } from '@/types/prisma-types';
+import { QuestionType } from '@nocturn/types';
 import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 

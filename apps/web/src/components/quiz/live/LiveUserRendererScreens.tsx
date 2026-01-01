@@ -10,7 +10,7 @@ import ParticipantMainScreen from './participant/ParticipantMainScreen';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useSubscribeEventHandlers } from '@/hooks/sockets/useSubscribeEventHandlers';
 import AppLogo from '@/components/app/AppLogo';
-import { USER_TYPE } from '@/types/prisma-types';
+import { USER_TYPE } from '@nocturn/types';
 
 export default function LiveUserRendererScreens() {
     const { currentUserType } = useUserRoleStore();

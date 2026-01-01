@@ -1,7 +1,7 @@
 import MessageBubble from '@/components/ui/MessageBubble';
 import { cn } from '@/lib/utils';
-import { InteractionEnum } from '@/types/prisma-types';
-import { ChatMessageType, ChatReactionType } from '@/types/web-socket-types';
+import { InteractionEnum } from '@nocturn/types';
+import { ChatMessageType, ChatReactionType } from '@nocturn/types';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState } from 'react';
 

@@ -2,7 +2,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { templates } from '@/lib/templates';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { TemplateEnum } from '@/types/prisma-types';
+import { TemplateEnum } from '@nocturn/types';
 import Image from 'next/image';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import GenerateUser from '../../class/generateUser';
 import { redisCacheInstance } from '../../services/init-services';
 import QuizAction from '../../class/quizAction';
-import { USER_TYPE } from '../../types/web-socket-types';
+import { USER_TYPE } from '@nocturn/types';
 import { env } from '../../configs/env';
 
 export default async function spectatorJoinQuizViaURLController(req: Request, res: Response) {

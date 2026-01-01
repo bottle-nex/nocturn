@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { ParticipantType, QuestionType } from '@/types/prisma-types';
+import { ParticipantType, QuestionType } from '@nocturn/types';
 import Image from 'next/image';
 
 export default function LeaderboardResultCard({

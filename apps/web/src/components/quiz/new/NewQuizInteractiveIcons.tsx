@@ -11,7 +11,7 @@ import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftR
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { cn } from '@/lib/utils';
 import { SELECTION_MODE } from '@/components/canvas/Canvas';
-import { InteractionEnum } from '@/types/prisma-types';
+import { InteractionEnum } from '@nocturn/types';
 
 interface Icon {
     id: InteractionEnum;

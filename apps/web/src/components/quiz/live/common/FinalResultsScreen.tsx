@@ -6,7 +6,7 @@ import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore'
 import { Button } from '@/components/ui/button';
 import { GoShareAndroid } from 'react-icons/go';
 import { DotPattern } from '@/components/magicui/dot-pattern';
-import { ParticipantType } from '@/types/prisma-types';
+import { ParticipantType } from '@nocturn/types';
 import LeaderboardParticipantBar from '../participant/screens/QuestionResultsScreen/LeaderboardParticipantBars';
 
 export default function FinalResultsScreen() {

@@ -3,7 +3,7 @@ import { Switch } from '@/components/ui/switch';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
-import { ParticipantNameChangeEvent } from '@/types/web-socket-types';
+import { ParticipantNameChangeEvent } from '@nocturn/types';
 import Image from 'next/image';
 import { FormEvent, useState } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';

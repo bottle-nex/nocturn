@@ -1,4 +1,4 @@
-import { ParticipantType, SpectatorType, USER_TYPE, UserType } from '@/types/prisma-types';
+import { ParticipantType, SpectatorType, USER_TYPE, UserType } from '@nocturn/types';
 import { create } from 'zustand';
 
 // ---------------------------------------------------------------------------------------------->

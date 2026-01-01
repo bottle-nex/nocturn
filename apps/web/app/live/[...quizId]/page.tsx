@@ -9,6 +9,15 @@ import {
     useLiveSpectatorStore,
     useUserRoleStore,
 } from '@/store/live-quiz/useLiveQuizUserStore';
+import {
+    CustomResponse,
+    LiveQuizDataResponse,
+    ParticipantType,
+    SpectatorType,
+    USER_TYPE,
+    UserType,
+} from '@nocturn/types';
+
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -43,10 +52,14 @@ export default function New({ params }: NewProps) {
     useEffect(() => {
         async function getLiveData() {
             try {
-                const { data } = await axios.get(`${LIVE_QUIZ_DATA_URL}/${quizId}`, {
-                    withCredentials: true,
-                });
-                if (data.success) {
+                const { data: response } = await axios.get<CustomResponse<LiveQuizDataResponse>>(
+                    `${LIVE_QUIZ_DATA_URL}/${quizId}`,
+                    {
+                        withCredentials: true,
+                    },
+                );
+                if (response.success && response.data) {
+                    const data = response.data;
                     updateQuiz(data.quiz);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
@@ -56,16 +69,16 @@ export default function New({ params }: NewProps) {
                     if (data.question) {
                         updateCurrentQuestion(data.question);
                     }
-                    setIsNextQuestonAvailable(Boolean(data.isNextQuestonAvailable));
+                    setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
-                        case 'HOST':
-                            setHostData(data.userData);
+                        case USER_TYPE.HOST:
+                            setHostData(data.userData as UserType);
                             break;
-                        case 'PARTICIPANT':
-                            setParticipantData(data.userData);
+                        case USER_TYPE.PARTICIPANT:
+                            setParticipantData(data.userData as ParticipantType);
                             break;
-                        case 'SPECTATOR':
-                            setSpectatorData(data.userData);
+                        case USER_TYPE.SPECTATOR:
+                            setSpectatorData(data.userData as SpectatorType);
                             break;
                         default:
                             break;

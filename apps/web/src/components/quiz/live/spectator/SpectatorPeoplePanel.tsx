@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { SpectatorType } from '@/types/prisma-types';
+import { SpectatorType } from '@nocturn/types';
 import { QUIZ_URL } from 'routes/api_routes';
 
 interface SpectatorApiResponse {

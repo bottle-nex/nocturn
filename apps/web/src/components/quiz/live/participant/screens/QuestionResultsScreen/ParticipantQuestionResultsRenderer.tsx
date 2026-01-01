@@ -9,7 +9,7 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { DotPattern } from '@/components/magicui/dot-pattern';
 import LeaderboardResultCard from './LeaderboardResultCard';
 import LeaderboardParticipantBar from './LeaderboardParticipantBars';
-import { ParticipantType } from '@/types/prisma-types';
+import { ParticipantType } from '@nocturn/types';
 
 export default function ParticipantQuestionResultsRenderer() {
     const { participants, responses, getResponse } = useLiveParticipantsStore();

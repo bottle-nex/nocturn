@@ -3,12 +3,12 @@ import { cn } from '@/lib/utils';
 import { JSX, useEffect, useRef, useState } from 'react';
 import JoinQuizCodeTicker from '../quiz/new/JoinquizCodeTicker';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { templates } from '@/lib/templates';
 import CanvasAccents from '../utility/CanvasAccents';
 import CanvasHeading from './CanvasHeading';
 import Image from 'next/image';
 import CanvasOptions from './CanvasOptions';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
+import useLiveTemplate from '@/hooks/useLiveTemplate';
 
 export enum SELECTION_MODE {
     CANVAS = 'CANVAS',
@@ -19,13 +19,12 @@ export enum SELECTION_MODE {
 
 export default function Canvas(): JSX.Element {
     const [selectionMode, setSelectionMode] = useState<SELECTION_MODE>(SELECTION_MODE.CANVAS);
-
     const selectedStyles = 'border-2 border-[#5e59b3]';
     const [copied, setCopied] = useState<boolean>(false);
     const canvasRef = useRef<HTMLDivElement>(null);
     const { currentQuestionIndex, quiz } = useNewQuizStore();
     const currentQ = quiz.questions[currentQuestionIndex];
-    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
+    const template = useLiveTemplate();
     const canvasWidth = useWidth(canvasRef);
 
     useEffect(() => {
@@ -43,20 +42,17 @@ export default function Canvas(): JSX.Element {
     return (
         <div
             ref={canvasRef}
-            style={{ color: currentQTemplate?.text_color, boxSizing: 'border-box' }}
+            style={{ color: template?.text_color, boxSizing: 'border-box' }}
             onClick={canvasTapHandler}
             className={cn(
                 'w-full h-full p-0.5 rounded-[12px] relative overflow-hidden',
                 selectionMode === SELECTION_MODE.CANVAS && selectedStyles,
             )}
         >
-            <CanvasAccents
-                design={currentQTemplate?.accent_type}
-                accentColor={currentQTemplate?.accent_color}
-            />
+            <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />
 
             <div
-                style={{ backgroundColor: currentQTemplate?.background_color }}
+                style={{ backgroundColor: template?.background_color }}
                 className="bg-[#196cff] h-full rounded-md relative flex flex-col"
             >
                 <JoinQuizCodeTicker />

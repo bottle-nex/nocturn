@@ -5,7 +5,7 @@ import {
     QuizType,
     TemplateEnum,
     InteractionEnum,
-} from '@/types/prisma-types';
+} from '@nocturn/types';
 import { create } from 'zustand';
 
 interface NewQuizStoreTypes {

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import useLiveTemplate from '@/hooks/useLiveTemplate';
 
 interface CountDownClockProps {
     startTime: number | Date | string;
@@ -11,9 +12,8 @@ interface CountDownClockProps {
 
 export default function CountDownClock(props: CountDownClockProps) {
     const [currentTime, setCurrentTime] = useState(Date.now());
-
     const isSmartMode = props.startTime && props.endTime;
-
+    const template = useLiveTemplate();
     const getTimestamp = useCallback((time: number | Date | string) => {
         if (typeof time === 'number') return time;
         if (typeof time === 'string') return new Date(time).getTime();
@@ -90,9 +90,10 @@ export default function CountDownClock(props: CountDownClockProps) {
 
     return (
         <div
+            style={{ color: template?.text_color }}
             className={cn(
                 'flex items-center space-x-2 text-4xl font-bold text-white rounded-xl px-4 py-3',
-                'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary',
+                // 'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary',
             )}
         >
             {/* Minutes */}

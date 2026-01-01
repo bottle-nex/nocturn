@@ -1,4 +1,4 @@
-import { HostScreenEnum } from '@/types/prisma-types';
+import { HostScreenEnum } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LiveQuizHostStoreProps {

@@ -8,6 +8,8 @@ import {
 } from '@/store/live-quiz/useLiveQuizUserStore';
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import {
+    ChatMessageType,
+    ChatReactionType,
     GameSessionType,
     HostScreenEnum,
     ParticipantScreenEnum,
@@ -16,8 +18,7 @@ import {
     QuizType,
     SpectatorScreenEnum,
     SpectatorType,
-} from '@/types/prisma-types';
-import { ChatMessageType, ChatReactionType } from '@/types/web-socket-types';
+} from '@nocturn/types';
 import { toast } from 'sonner';
 
 // FIX: Type guards for better type safety

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { InteractionEnum } from '@/types/prisma-types';
+import { InteractionEnum } from '@nocturn/types';
 
 export default function Reactions({
     onReact,

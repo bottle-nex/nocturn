@@ -1,13 +1,13 @@
 import Redis from 'ioredis';
 import {
     CookiePayload,
-    CustomWebSocket,
     IncomingChatMessage,
     IncomingChatReaction,
     MESSAGE_TYPES,
     PubSubMessageTypes,
     SpectatorNameChangeEvent,
-} from '../types/web-socket-types';
+} from '@nocturn/types';
+import { CustomWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import { prisma } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
@@ -16,6 +16,7 @@ import RedisCache from '../cache/RedisCache';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
 import { WebSocket } from 'ws';
+import { socket_codes } from '@nocturn/types';
 
 interface SpectatorManagerDependencies {
     publisher: Redis;
@@ -62,7 +63,10 @@ export default class SpectatorManager {
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
 
         if (!is_new_spectator_allowed) {
-            ws.close();
+            ws.close(
+                socket_codes.SPECTATOR_LIMIT_REACHED,
+                'New spectators are not allowed at this time',
+            );
             return;
         }
 
@@ -97,13 +101,15 @@ export default class SpectatorManager {
 
     private cleanup_existing_spectator_socket(spectator_id: string, game_session_id: string) {
         const existing_spectator_socket_id = this.spectator_socket_mapping.get(spectator_id);
-
         if (existing_spectator_socket_id) {
             const existing_socket = this.socket_mapping.get(existing_spectator_socket_id);
 
-            if (existing_socket) {
+            if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
                 try {
-                    existing_socket.close();
+                    existing_socket.close(
+                        socket_codes.DUPLICATE_CONNECTION,
+                        'Another spectator has connected',
+                    );
                 } catch (err) {
                     console.warn('Error closing existing spectator socket', err);
                 }

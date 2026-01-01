@@ -1,0 +1,24 @@
+{
+  "name": "@nocturn/types",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "devDependencies": {
+    "@nocturn/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

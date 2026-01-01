@@ -14,7 +14,7 @@ import {
 } from '@nocturn/database';
 import RedisCache from '../cache/RedisCache';
 import { redisCacheInstance } from '../services/init-services';
-import { ReactorType } from '../types/web-socket-types';
+import { ReactorType } from '@nocturn/types';
 import { env } from '../configs/env';
 import { v4 as uuid } from 'uuid';
 const REDIS_URL = env.SERVER_REDIS_URL;

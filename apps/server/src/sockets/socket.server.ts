@@ -1,5 +1,5 @@
 import { WebSocket, WebSocketServer } from 'ws';
-import { Server } from 'http';
+import { IncomingMessage, Server } from 'http';
 import Redis from 'ioredis';
 import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
@@ -9,12 +9,8 @@ import RedisCache from '../cache/RedisCache';
 import { URL } from 'url';
 import ParticipantManager from './ParticipantManager';
 import SpectatorManager from './SpectatorManager';
-import {
-    CookiePayload,
-    CustomWebSocket,
-    MESSAGE_TYPES,
-    USER_TYPE,
-} from '../types/web-socket-types';
+import { CookiePayload, MESSAGE_TYPES, USER_TYPE } from '@nocturn/types';
+import { CustomWebSocket } from '../types/web-socket-types';
 import {
     databaseQueueInstance,
     phaseQueueInstance,
@@ -331,7 +327,7 @@ export default class WebsocketServer {
 
     private extract_session_id_from_channel(channel: string): string | null {
         const match = channel.match(/game_session:(.+)/);
-        return match ? match[1]! : null;
+        return match ? match[1] : null;
     }
 
     private initialize_managers() {
@@ -371,6 +367,7 @@ export default class WebsocketServer {
     // ws://localhost:8080?quizId=37r19273r69236r931r6
     private initialize() {
         this.wss.on('connection', (ws: CustomWebSocket, req) => {
+            console.log('new connection came');
             const url = new URL(req.url || '', `http://${req.headers.host}`);
             const quizId = url.searchParams.get('quizId');
             if (!quizId) {
@@ -381,7 +378,7 @@ export default class WebsocketServer {
         });
     }
 
-    private validate_connection(ws: CustomWebSocket, req: any, quizId: string) {
+    private validate_connection(ws: CustomWebSocket, req: IncomingMessage, quizId: string): void {
         const cookies = req.headers.cookie;
         if (!cookies) {
             ws.close();
@@ -405,10 +402,8 @@ export default class WebsocketServer {
                     return;
                 }
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
-
                 const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId}`;
                 this.subscriber.subscribe(redis_key);
-
                 if (decoded_cookie_payload.quizId !== quizId) {
                     console.error('Token validation failed');
                     ws.close();

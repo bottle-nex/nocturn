@@ -3,7 +3,7 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import { QuizSetting, quizSettingsSchema } from '../schemas/quizSettingsSchema';
 import { databaseQueueInstance, quizManagerInstance } from '../services/init-services';
 import QuizManager from '../sockets/QuizManager';
-import { MESSAGE_TYPES, PubSubMessageTypes } from '../types/web-socket-types';
+import { MESSAGE_TYPES, PubSubMessageTypes } from '@nocturn/types';
 
 export default class QuizSettings {
     public quiz_settings_mapping: Map<string, QuizSetting> = new Map();

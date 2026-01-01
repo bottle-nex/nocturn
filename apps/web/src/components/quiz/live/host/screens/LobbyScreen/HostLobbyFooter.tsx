@@ -4,7 +4,7 @@ import Image from 'next/image';
 import LiveQuizInteractionTicker from '../../../common/LiveQuizInteractionTicker';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { HostScreenEnum } from '@/types/prisma-types';
+import { HostScreenEnum } from '@nocturn/types';
 
 export default function HostLobbyFooter() {
     const { updateGameSession } = useLiveQuizStore();

@@ -10,7 +10,7 @@ import BackendActions from '@/lib/backend/quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
-import { QuizStatusEnum } from '@/types/prisma-types';
+import { QuizStatusEnum } from '@nocturn/types';
 import { toast } from 'sonner';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import AutoSaveComponent from '../utility/AutoSave';

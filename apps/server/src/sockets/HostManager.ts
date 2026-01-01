@@ -1,14 +1,14 @@
 import Redis from 'ioredis';
 import {
     CookiePayload,
-    CustomWebSocket,
     IncomingChatMessage,
     IncomingChatReaction,
     MESSAGE_TYPES,
     PubSubMessageTypes,
     SECONDS,
     USER_TYPE,
-} from '../types/web-socket-types';
+} from '@nocturn/types';
+import { CustomWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import {
     prisma,
@@ -26,6 +26,7 @@ import RedisCache from '../cache/RedisCache';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init-services';
+import { socket_codes } from '@nocturn/types';
 export interface HostManagerDependencies {
     publisher: Redis;
     subscriber: Redis;
@@ -59,6 +60,7 @@ export default class HostManager {
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
         if (!isValidHost) {
+            console.log('closing socket 7');
             ws.close();
             return;
         }
@@ -67,7 +69,10 @@ export default class HostManager {
         if (existing_host_socket_id) {
             const host_existing_socket = this.socketMapping.get(existing_host_socket_id);
             if (host_existing_socket && host_existing_socket.readyState === WebSocket.OPEN) {
-                host_existing_socket.close();
+                host_existing_socket.close(
+                    socket_codes.DUPLICATE_CONNECTION,
+                    'Another host has connected',
+                );
             }
         }
 
