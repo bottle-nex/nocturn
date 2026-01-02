@@ -1,12 +1,10 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function getAllQuizController(req: Request, res: Response) {
     if (!req.user?.id) {
-        res.status(401).json({
-            success: false,
-            message: 'User authentication required',
-        });
+        ResponseWriter.not_authorized(res, 'User authentication required');
         return;
     }
 
@@ -36,18 +34,11 @@ export default async function getAllQuizController(req: Request, res: Response) 
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Quizzes retrieved successfully',
-            quizzes,
-        });
+        ResponseWriter.success(res, quizzes, 'Quizzes retrieved successfully');
         return;
     } catch (err) {
         console.error('Error fetching quizzes:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching quizzes',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }
