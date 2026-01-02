@@ -14,7 +14,6 @@ import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
 import Faq from '@/components/base/Faq';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
-import AnimatedHorizontalBars from '@/components/ui/AnimatedHorizontalBars';
 
 export const mini_descriptions = [
     {
@@ -89,22 +88,12 @@ export default function Home() {
                 <CustomFeatureComponent />
                 <Faq />
                 <BigAnimatedText />
-                <AnimatedHorizontalBars />
             </div>
 
             <div className="fixed bottom-6 right-8 z-90">
                 <HomeScreenJoinQuizButton />
             </div>
 
-            <div className="w-full flex items-center justify-center">
-                <div
-                    className="text-[14rem] font-medium text-center 
-                    bg-gradient-to-b from-[rgba(116,74,199,0.3)] via-[rgba(116,74,199,0.1)] 
-                    to-white/10 dark:to-[#01011220] bg-clip-text text-transparent"
-                >
-                    NOCTURN
-                </div>
-            </div>
             <HomeScreenFooter />
         </div>
     );

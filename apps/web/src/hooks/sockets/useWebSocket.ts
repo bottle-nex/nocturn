@@ -160,6 +160,7 @@ export const useWebSocket = () => {
             socket.current.send_message(message);
         }
     }
+
     function handleSettingsChangeEvent(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.SETTINGS_CHANGE,
