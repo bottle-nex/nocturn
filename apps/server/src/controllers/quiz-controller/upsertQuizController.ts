@@ -2,25 +2,19 @@ import { Request, Response } from 'express';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { quizControllerInstance } from '../../services/init-services';
 import { QUIZ_STATUS } from './quizController';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function upsertQuizController(req: Request, res: Response) {
     const { quizId } = req.params;
+
     if (!quizId) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid quizId',
-            value: 'INVALID_QUIZID',
-        });
+        ResponseWriter.invalid_data(res, 'Invalid quizId');
         return;
     }
 
     const parsed = createQuizSchema.safeParse(req.body);
     if (!parsed.success) {
-        res.status(400).json({
-            success: false,
-            message: 'Error while creating quiz',
-            value: 'INVALID_QUIZ_FORMAT',
-        });
+        ResponseWriter.invalid_data(res, 'Error while creating quiz');
         return;
     }
 
@@ -29,11 +23,7 @@ export default async function upsertQuizController(req: Request, res: Response) 
     const questions = input.questions;
 
     if (!hostId) {
-        res.status(401).json({
-            success: false,
-            message: 'Unauthorized',
-            value: 'UNAUTHORIZED',
-        });
+        ResponseWriter.not_authorized(res, 'Unauthorized');
         return;
     }
 
@@ -48,28 +38,15 @@ export default async function upsertQuizController(req: Request, res: Response) 
 
         if (!data || !data.success || data.error || !data.quiz) {
             console.error('[CREATE_QUIZ_ERROR] ', data?.error);
-            res.status(500).json({
-                success: false,
-                message: 'Internal Server Error',
-                value: 'INTERNAL_SERVER_ERROR',
-            });
+            ResponseWriter.system_error(res);
             return;
         }
 
-        res.status(201).json({
-            success: true,
-            quiz: data.quiz,
-            message: 'Quiz created successfully',
-            value: 'QUIZ_CREATED',
-        });
+        ResponseWriter.created(res, data.quiz, 'Quiz created successfully');
         return;
     } catch (err) {
         console.error('[CREATE_QUIZ_ERROR] ', err);
-        res.status(500).json({
-            success: false,
-            message: 'Internal Server Error',
-            value: 'INTERNAL_SERVER_ERROR',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }

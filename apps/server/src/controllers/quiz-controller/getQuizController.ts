@@ -10,6 +10,7 @@ enum QuizResponseType {
     INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
 
+// check these, as these contain type
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
     const userId = req.user?.id;
     const quizId = req.params.quizId;
