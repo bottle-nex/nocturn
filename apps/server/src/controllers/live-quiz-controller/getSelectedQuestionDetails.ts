@@ -1,26 +1,25 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function getSelectedQuestionDetails(req: Request, res: Response) {
     const { quizId, questionIndex } = req.params;
 
     if (!quizId || questionIndex === undefined || questionIndex === null) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid request - quizId and questionIndex are required',
-            value: 'INVALID_REQUEST',
-        });
+        ResponseWriter.invalid_data(res, 'Invalid request - quizId and questionIndex are required');
         return;
     }
 
     const targetOrderIndex = Number(questionIndex);
 
     if (isNaN(targetOrderIndex) || targetOrderIndex < 0) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid questionIndex - must be a non-negative number',
-            value: 'INVALID_QUESTION_INDEX',
-        });
+        ResponseWriter.custom(
+            res,
+            false,
+            'INVALID_QUESTION_INDEX',
+            'Invalid questionIndex - must be a non-negative number',
+            400,
+        );
         return;
     }
 
@@ -52,11 +51,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
         });
 
         if (!quiz) {
-            res.status(404).json({
-                success: false,
-                message: 'Quiz not found',
-                value: 'QUIZ_NOT_FOUND',
-            });
+            ResponseWriter.not_found(res, 'Quiz not found');
             return;
         }
 
@@ -73,26 +68,22 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
         }
 
         if (!currentQuestion || currentQuestion.isAsked) {
-            res.status(404).json({
-                success: false,
-                message: 'No unasked questions available',
-                value: 'NO_AVAILABLE_QUESTION',
-            });
+            ResponseWriter.custom(
+                res,
+                false,
+                'NO_AVAILABLE_QUESTION',
+                'No unasked questions available',
+                404,
+            );
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            question: currentQuestion,
-        });
+        const question = currentQuestion;
+        ResponseWriter.success(res, question);
         return;
     } catch (error) {
         console.error('Unexpected error in getSelectedQuestionDetails: ', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch question data',
-            value: 'INTERNAL_SERVER_ERROR',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }

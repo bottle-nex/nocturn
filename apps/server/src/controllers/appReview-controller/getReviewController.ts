@@ -1,12 +1,10 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function getReviewController(req: Request, res: Response) {
     if (!req.user?.id) {
-        res.status(401).json({
-            success: false,
-            message: 'User authentication required',
-        });
+        ResponseWriter.not_authorized(res);
         return;
     }
 
@@ -31,15 +29,15 @@ export default async function getReviewController(req: Request, res: Response) {
         });
 
         if (!response) {
-            res.status(400).json({ message: 'Failed to fetch review' });
+            ResponseWriter.not_found(res, 'Failed to fetch reviews');
             return;
         }
 
-        res.status(201).json({ response, message: 'Fetched reviews successfully' });
+        ResponseWriter.success(res, response, 'Reviews fetched successfully', 201);
         return;
     } catch (error) {
         console.error('Error in fetching reviews: ', error);
-        res.status(500).json({ message: 'Internal server error while fetching reviews' });
+        ResponseWriter.system_error(res);
         return;
     }
 }

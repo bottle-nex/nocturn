@@ -6,10 +6,6 @@ import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
 import ResponseWriter from '../../class/response_writer';
 
-function unauthorized(res: Response) {
-    return res.status(401).json({ success: false, message: 'Unauthorized user' });
-}
-
 export default async function getLiveQuizDataController(req: Request, res: Response) {
     const cookieHeader = req.headers.cookie;
     const cookies = cookieHeader ? parse(cookieHeader) : {};
@@ -23,7 +19,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
     try {
         const decoded = QuizAction.verifyCookie(token);
-        if (typeof decoded !== 'object' || !decoded) return unauthorized(res);
+        if (typeof decoded !== 'object' || !decoded) return ResponseWriter.not_authorized(res);
 
         const { quizId, gameSessionId, role, userId } = decoded as CookiePayload;
 
@@ -277,7 +273,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         return;
     } catch (err) {
         console.error('Unexpected error in getLiveQuizDataController:', err);
-        unauthorized(res);
+        ResponseWriter.system_error(res);
         return;
     }
 }

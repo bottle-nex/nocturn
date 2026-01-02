@@ -2,33 +2,25 @@ import { Request, Response } from 'express';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { quizControllerInstance } from '../../services/init-services';
 import { QUIZ_STATUS } from './quizController';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function publishQuizController(req: Request, res: Response) {
     const userId = req.user?.id;
     const quizId = req.params.quizId;
 
     if (!userId) {
-        res.status(401).json({
-            success: false,
-            message: 'User authentication required',
-        });
+        ResponseWriter.not_authorized(res, 'User authentication required');
         return;
     }
+
     if (!quizId) {
-        res.status(400).json({
-            success: false,
-            message: 'Quiz ID is required',
-        });
+        ResponseWriter.invalid_data(res, 'Quiz ID is required');
         return;
     }
 
     const parsed = createQuizSchema.safeParse(req.body);
     if (!parsed.success) {
-        res.status(400).json({
-            success: false,
-            message: 'Error while creating quiz',
-            value: 'INVALID_QUIZ_FORMAT',
-        });
+        ResponseWriter.invalid_data(res, 'Error while creating quiz');
         return;
     }
 
@@ -45,10 +37,7 @@ export default async function publishQuizController(req: Request, res: Response)
 
     if (!data || data.error || !data.quiz) {
         console.error('Error publishing quiz:', data?.error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 
@@ -60,32 +49,26 @@ export default async function publishQuizController(req: Request, res: Response)
     }
 
     if (prev_status === 'PUBLISHED') {
-        res.status(400).json({
-            success: false,
-            message: 'Quiz is already published',
-        });
+        ResponseWriter.custom(
+            res,
+            false,
+            'QUIZ_ALREADY_PUBLISHED',
+            'Quiz is already published',
+            400,
+        );
         return;
     }
 
     if (quiz.status === 'LIVE') {
-        res.status(400).json({
-            success: false,
-            message: 'Quiz is live',
-        });
+        ResponseWriter.custom(res, false, 'QUIZ_ALREADY_LIVE', 'Quiz is live', 400);
         return;
     }
 
     try {
-        res.status(200).json({
-            success: true,
-            message: 'Quiz published successfully',
-        });
+        ResponseWriter.success(res, quiz, 'Quiz published successfully', 200);
         return;
     } catch (err) {
         console.error('Error publishing quiz:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        ResponseWriter.system_error(res);
     }
 }

@@ -1,16 +1,13 @@
 import { Request, Response } from 'express';
 import { ParticipantScreen, prisma } from '@nocturn/database';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function getQuestionResults(req: Request, res: Response) {
     try {
         const { quizId, questionId } = req.body;
 
         if (!quizId || !questionId) {
-            res.status(401).json({
-                success: false,
-                message: 'Incomplete request data',
-                value: 'INCOMPLETE_REQUEST_DATA',
-            });
+            ResponseWriter.invalid_data(res, 'Incomplete request data');
             return;
         }
 
@@ -69,11 +66,7 @@ export default async function getQuestionResults(req: Request, res: Response) {
             };
         });
 
-        res.status(200).json({
-            message: 'Fetched question results successfully',
-            data: data,
-            value: 'FETCHED_DATA',
-        });
+        ResponseWriter.success(res, data, 'Fetched question results successfully', 200);
         return;
     } catch (error) {
         console.error('Failed to fetch question results: ', error);
@@ -82,6 +75,7 @@ export default async function getQuestionResults(req: Request, res: Response) {
             message: 'failed to fetch question results',
             value: 'INTERNAL_SERVER_ERROR',
         });
+        ResponseWriter.system_error(res);
         return;
     }
 }

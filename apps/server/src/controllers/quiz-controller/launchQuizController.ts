@@ -5,29 +5,25 @@ import { quizControllerInstance } from '../../services/init-services';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { env } from '../../configs/env';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function launchQuizController(req: Request, res: Response) {
     const userId = req.user?.id;
     const quizId = req.params.quizId;
 
     if (!userId) {
-        res.status(401).json({
-            success: false,
-            message: 'User authentication required',
-        });
+        ResponseWriter.not_authorized(res, 'User authentication required');
         return;
     }
     if (!quizId) {
-        res.status(400).json({
-            success: false,
-            message: 'Quiz ID is required',
-        });
+        ResponseWriter.invalid_data(res, 'quiz id is required');
         return;
     }
 
     const parsed = createQuizSchema.safeParse(req.body);
     console.log('parsed is : ', parsed);
     if (!parsed.success) {
+        // contains value
         res.status(400).json({
             success: false,
             message: 'Error while creating quiz',
@@ -59,20 +55,14 @@ export default async function launchQuizController(req: Request, res: Response) 
             !data.gameSession
         ) {
             console.error('Error publishing quiz:', data?.error);
-            res.status(500).json({
-                success: false,
-                message: 'Internal server error',
-            });
+            ResponseWriter.system_error(res);
             return;
         }
 
         const prev_status = data.status;
         console.log('previous status : ', prev_status);
         if (prev_status === 'LIVE') {
-            res.status(400).json({
-                success: false,
-                message: 'Quiz is already live',
-            });
+            ResponseWriter.error(res, 'QUIZ_ALREADY_LIVE', 'quiz is already live', undefined, 400);
             return;
         }
 
@@ -91,20 +81,19 @@ export default async function launchQuizController(req: Request, res: Response) 
             maxAge: 60 * 60 * 24 * 1000,
         });
 
-        res.status(200).json({
-            success: true,
-            message: 'Quiz launched successfully',
-            data: {
+        ResponseWriter.success(
+            res,
+            {
                 quiz: data.quiz,
                 gameSession: data.gameSession,
             },
-        });
+            'quiz launched successfully',
+            200,
+        );
         return;
     } catch (err) {
         console.error('Error launching quiz:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        ResponseWriter.system_error(res);
+        return;
     }
 }

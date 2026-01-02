@@ -1,23 +1,18 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function deleteQuizController(req: Request, res: Response) {
     const quizId = req.params.quizId;
     const userId = req.user?.id;
 
     if (!userId) {
-        res.status(401).json({
-            success: false,
-            message: 'Unauthorized user',
-        });
+        ResponseWriter.not_authorized(res);
         return;
     }
     if (!quizId) {
-        res.status(400).json({
-            success: false,
-            message: 'Quiz id is required',
-        });
+        ResponseWriter.invalid_data(res, 'quiz id is required');
         return;
     }
 
@@ -34,32 +29,26 @@ export default async function deleteQuizController(req: Request, res: Response) 
         });
 
         if (!quiz) {
-            res.status(404).json({
-                success: false,
-                message: "Quiz doesn't exist or already deleted",
-            });
+            ResponseWriter.not_found(res, "quiz doesn't exist or already deleted");
             return;
         }
 
         if (quiz?.status === 'LIVE') {
-            res.status(409).json({
-                success: false,
-                message: "Quiz is live can't delete",
-            });
+            ResponseWriter.error(
+                res,
+                'CANNOT_DELETE_ONGOING_QUIZ',
+                "quiz is live can't delete",
+                undefined,
+                409,
+            );
             return;
         }
 
         QuizAction.deleteQuiz(quizId);
-        res.status(200).json({
-            success: true,
-            message: 'Quiz deleted Successfully',
-        });
+        ResponseWriter.success(res, undefined, 'Quiz deleted successfully');
         return;
     } catch {
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting message',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }

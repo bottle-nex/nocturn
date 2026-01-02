@@ -2,9 +2,11 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function signInController(req: Request, res: Response) {
     const { user } = req.body;
+
     try {
         const existingUser = await prisma.user.findUnique({
             where: {
@@ -39,27 +41,27 @@ export default async function signInController(req: Request, res: Response) {
             email: myUser.email,
             id: myUser.id,
         };
+
         const secret = env.SERVER_JWT_SECRET;
         if (!secret) {
-            res.status(300).json({
-                message: 'Server error',
-            });
+            ResponseWriter.system_error(res);
             return;
         }
+
         const token = jwt.sign(jwtPayload, secret);
 
-        res.json({
-            success: true,
-            user: myUser,
-            token: token,
-        });
+        ResponseWriter.success(
+            res,
+            {
+                user: myUser,
+                token,
+            },
+            'Authentication successful',
+        );
         return;
     } catch (err) {
         console.error(err);
-        res.status(500).json({
-            success: false,
-            error: 'Authentication failed',
-        });
+        ResponseWriter.custom(res, false, 'AUTHENTICATION_FAILED', 'Authentication failed', 500);
         return;
     }
 }

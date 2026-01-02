@@ -6,15 +6,13 @@ import { participantJoinSchema } from '../../schemas/participantJoinSchema';
 import { USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init-services';
 import { env } from '../../configs/env';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function participantJoinController(req: Request, res: Response) {
     const parseResult = participantJoinSchema.safeParse(req.body);
     const redis_cache = redisCacheInstance;
     if (!parseResult.success) {
-        res.status(400).json({
-            success: false,
-            message: 'Invalid request data',
-        });
+        ResponseWriter.invalid_data(res);
         return;
     }
 
@@ -30,18 +28,24 @@ export default async function participantJoinController(req: Request, res: Respo
         });
 
         if (!quiz) {
-            res.status(404).json({
-                success: false,
-                message: 'Invalid quiz code. Please check and try again.',
-            });
+            ResponseWriter.error(
+                res,
+                'INVALID_QUIZ_CODE',
+                'Invalid quiz code. Please check and try again.',
+                undefined,
+                404,
+            );
             return;
         }
 
         if (!['LIVE'].includes(quiz.status)) {
-            res.status(403).json({
-                success: false,
-                message: 'Quiz is not available for joining at this time.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_NOT_LIVE',
+                'Quiz is not available for joining at this time.',
+                undefined,
+                403,
+            );
             return;
         }
 
@@ -54,18 +58,24 @@ export default async function participantJoinController(req: Request, res: Respo
         });
 
         if (!gameSession) {
-            res.status(500).json({
-                success: false,
-                message: 'Quiz session is not available yet. Please try again later.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_SESSION_NOT_ACTIVE',
+                'Quiz session is not available yet. Please try again later.',
+                undefined,
+                500,
+            );
             return;
         }
 
         if (!['WAITING', 'STARTING'].includes(gameSession.status)) {
-            res.status(403).json({
-                success: false,
-                message: 'Quiz has already started. New participants cannot join.',
-            });
+            ResponseWriter.error(
+                res,
+                'QUIZ_STARTED',
+                'Quiz has already started. New participants cannot join.',
+                undefined,
+                403,
+            );
             return;
         }
 
@@ -129,25 +139,22 @@ export default async function participantJoinController(req: Request, res: Respo
                     console.error('Failed to cleanup after cookie error:', cleanupErr);
                 });
 
-            res.status(500).json({
-                success: false,
-                message: 'Could not set authentication cookie. Please try again.',
-            });
+            ResponseWriter.error(
+                res,
+                'FAILED_WHILE_SETTING_COOKIE',
+                'Could not set authentication cookie. Please try again.',
+                undefined,
+                500,
+            );
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Successfully joined the quiz!',
-            quizId: quiz.id,
-        });
+        const quizId = quiz.id;
+        ResponseWriter.success(res, quizId, 'Successfully joined the quiz!');
         return;
     } catch (err) {
         console.error('Error during participant join:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Something went wrong while trying to join the quiz. Please try again.',
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }

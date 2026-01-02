@@ -1,4 +1,4 @@
-export interface CustomResponse<T = undefined> {
+export interface CustomResponse<T = unknown> {
   success?: boolean;
   data?: T;
   message?: string;

@@ -1,20 +1,18 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
 
 export default async function reviewAppController(req: Request, res: Response) {
     const { rating, comment } = req.body;
     if (!rating || rating < 1 || rating > 5 || !comment.trim()) {
-        res.status(400).json({
-            message: 'Invalid input',
-        });
+        ResponseWriter.invalid_data(res);
         return;
     }
 
     const user = req.user;
     if (!user) {
-        return res.status(401).json({
-            message: 'Unauthorized user',
-        });
+        ResponseWriter.not_authorized(res);
+        return;
     }
 
     try {
@@ -41,15 +39,11 @@ export default async function reviewAppController(req: Request, res: Response) {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'Review submitted successfully',
-            review,
-        });
+        ResponseWriter.success(res, review, 'Review submitted successfully', 200);
+        return;
     } catch (error) {
-        res.status(500).json({
-            message: 'Error submitting review',
-        });
         console.error('Error in Review file controller', error);
+        ResponseWriter.system_error(res);
+        return;
     }
 }
