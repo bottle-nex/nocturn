@@ -7,13 +7,13 @@ import Beam from '@/components/ui/svg/Beam';
 import FeatureBox from '@/components/base/FeatureBox';
 import HomeScreenJoinQuizButton from '@/components/base/HomeScreenJoinQuizButton';
 import CustomFeatureComponent from '@/components/base/CustomFeatureComponent';
-import HomeScreenFooter from '@/components/base/HomeScreenFooter';
 import { BiSolidBrain } from 'react-icons/bi';
 import { AiFillDollarCircle } from 'react-icons/ai';
 import { RiNftFill } from 'react-icons/ri';
 import { FaWallet } from 'react-icons/fa';
 import Faq from '@/components/base/Faq';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
+import NewFooter from '@/components/base/NewFooter';
 
 export const mini_descriptions = [
     {
@@ -43,7 +43,7 @@ export default function Home() {
         <div
             className={cn(
                 'w-full h-full relative',
-                'bg-light-base dark:bg-dark-primary flex flex-col gap-y-30',
+                'bg-light-base dark:bg-dark-primary flex flex-col',
             )}
         >
             <Spotlight />
@@ -94,7 +94,8 @@ export default function Home() {
                 <HomeScreenJoinQuizButton />
             </div>
 
-            <HomeScreenFooter />
+            {/* <HomeScreenFooter /> */}
+            <NewFooter/>
         </div>
     );
 }
