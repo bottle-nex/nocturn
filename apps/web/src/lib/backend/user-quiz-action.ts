@@ -38,7 +38,7 @@ class UserQuizAction {
 
             if (data.success) {
                 toast.success(data.message);
-                return data.quizId;
+                return data.data;
             }
             toast.error(data.message);
             return;
@@ -66,7 +66,7 @@ class UserQuizAction {
 
             if (data.success) {
                 toast.success(data.message);
-                return data.quizId;
+                return data.data;
             }
             toast.error(data.message);
             return;
