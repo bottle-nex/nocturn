@@ -105,10 +105,7 @@ export default function ProfileMenu() {
                 </>
             )}
             {mounted && createPortal(dropdownContent, document.body)}
-            <LogoutModal
-                openLogoutModal={openLogoutModal}
-                setOpenLogoutModal={setOpenLogoutModal}
-            />
+            <LogoutModal />
         </div>
     );
 }

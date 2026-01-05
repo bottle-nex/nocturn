@@ -1,6 +1,4 @@
 "use client";
-
-import { Dispatch, SetStateAction } from "react";
 import OpacityBackground from "./OpacityBackground";
 import { Button } from "../ui/button";
 import { X, LogOut } from "lucide-react";
