@@ -1,18 +1,18 @@
-"use client";
-import { Press_Start_2P } from "next/font/google";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { useUserSessionStore } from "@/store/user/useUserSessionStore";
-import SigninModal from "../utility/SigninModal";
-import LogoutModal from "../utility/LogoutModal";
-import { useState } from "react";
-import { Input } from "../ui/input";
-import { X } from "lucide-react";
+'use client';
+import { Press_Start_2P } from 'next/font/google';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import SigninModal from '../utility/SigninModal';
+import LogoutModal from '../utility/LogoutModal';
+import { useState } from 'react';
+import { Input } from '../ui/input';
+import { X } from 'lucide-react';
 
 export const press = Press_Start_2P({
-    weight: "400",
-    subsets: ["latin"],
-})
+    weight: '400',
+    subsets: ['latin'],
+});
 
 interface NavItem {
     label: string;
@@ -34,28 +34,28 @@ export default function Navbar() {
 
     const navItems: NavItem[] = [
         {
-            label: "Home",
-            href: "/",
-            onClick: () => { },
+            label: 'Home',
+            href: '/',
+            onClick: () => {},
         },
         {
-            label: "Features",
-            href: "/features",
-            onClick: () => { },
+            label: 'Features',
+            href: '/features',
+            onClick: () => {},
         },
         {
-            label: "Pricing",
-            href: "/pricing",
-            onClick: () => { },
-        }
-    ]
+            label: 'Pricing',
+            href: '/pricing',
+            onClick: () => {},
+        },
+    ];
 
     function joinRoomHandler() {
         if (!session?.user.id) {
             setOpenSigninModal(true);
             return;
         }
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         setOpenJoinRoomBar(true);
     }
 
@@ -63,7 +63,9 @@ export default function Navbar() {
         <>
             <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-12 z-10">
                 <section>
-                    <span className={cn("text-white font-bold text-2xl", press.className)}>Nocturn</span>
+                    <span className={cn('text-white font-bold text-2xl', press.className)}>
+                        Nocturn
+                    </span>
                 </section>
                 <section className="h-full flex items-center justify-end">
                     <div className="h-full flex items-center justify-center gap-x-2 pr-4">
@@ -78,10 +80,16 @@ export default function Navbar() {
                             </Button>
                         ))}
                     </div>
-                    <Button onClick={handleAuthClick} className="h-full rounded-none bg-[#FF3F7F] hover:bg-white px-6 text-lg border-r border-black">
-                        {isLoggedIn ? "Logout" : "Login"}
+                    <Button
+                        onClick={handleAuthClick}
+                        className="h-full rounded-none bg-[#FF3F7F] hover:bg-white px-6 text-lg border-r border-black"
+                    >
+                        {isLoggedIn ? 'Logout' : 'Login'}
                     </Button>
-                    <Button onClick={joinRoomHandler} className="h-full rounded-none bg-[#22a094] hover:bg-white px-6 text-lg">
+                    <Button
+                        onClick={joinRoomHandler}
+                        className="h-full rounded-none bg-[#22a094] hover:bg-white px-6 text-lg"
+                    >
                         JOIN QUIZ
                     </Button>
                 </section>
@@ -91,7 +99,9 @@ export default function Navbar() {
             {openJoinRoomBar && (
                 <div className="bg-[#5c1dfb] flex items-center justify-center h-14 mt-20 gap-x-6 border-b-2 border-black">
                     <div className="flex items-center gap-x-4">
-                        <span className="text-xs font-black text-white uppercase tracking-[0.2em]">Enter Quiz Code</span>
+                        <span className="text-xs font-black text-white uppercase tracking-[0.2em]">
+                            Enter Quiz Code
+                        </span>
                         <Input
                             placeholder="1234-5678"
                             className="w-36 h-10 rounded-none bg-white! text-black text-center font-black text-lg tracking-[0.15em] uppercase border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] placeholder:text-black/70 placeholder:font-medium focus-visible:ring-0 focus-visible:border-black"
@@ -112,5 +122,5 @@ export default function Navbar() {
                 </div>
             )}
         </>
-    )
+    );
 }

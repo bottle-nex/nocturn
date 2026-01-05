@@ -1,11 +1,11 @@
-"use client";
-import OpacityBackground from "./OpacityBackground";
-import { Button } from "../ui/button";
-import { X, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { press } from "../test/Navbar";
-import { signOut } from "next-auth/react";
-import { useUserSessionStore } from "@/store/user/useUserSessionStore";
+'use client';
+import OpacityBackground from './OpacityBackground';
+import { Button } from '../ui/button';
+import { X, LogOut } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { press } from '../test/Navbar';
+import { signOut } from 'next-auth/react';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function LogoutModal() {
     const { openLogoutModal, setOpenLogoutModal } = useUserSessionStore();
@@ -13,7 +13,7 @@ export default function LogoutModal() {
     if (!openLogoutModal) return null;
 
     function handleLogout() {
-        signOut({ callbackUrl: "/" });
+        signOut({ callbackUrl: '/' });
     }
 
     return (
@@ -34,7 +34,9 @@ export default function LogoutModal() {
 
                 <div className="p-6 space-y-6">
                     <div className="mb-2">
-                        <span className={cn("text-black font-bold text-2xl", press.className)}>Nocturn</span>
+                        <span className={cn('text-black font-bold text-2xl', press.className)}>
+                            Nocturn
+                        </span>
                     </div>
 
                     <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">

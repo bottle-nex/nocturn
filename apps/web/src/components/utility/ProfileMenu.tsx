@@ -12,7 +12,7 @@ import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
 import LogoutModal from './LogoutModal';
 
 export default function ProfileMenu() {
-    const { session } = useUserSessionStore();
+    const { session, setOpenLogoutModal } = useUserSessionStore();
     const [dropdown, setDropdown] = useState<boolean>(false);
     const [dropdownPosition, setDropdownPosition] = useState({
         top: 0,
@@ -23,7 +23,6 @@ export default function ProfileMenu() {
     const [mounted, setMounted] = useState(false);
 
     useHandleClickOutside([dropdownRef], setDropdown);
-    const [openLogoutModal, setOpenLogoutModal] = useState<boolean>(false);
 
     useEffect(() => {
         setMounted(true);

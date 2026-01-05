@@ -1,19 +1,18 @@
-"use client";
-import Image from "next/image";
-import { Button } from "../ui/button";
-import { motion } from "framer-motion";
-import { useUserSessionStore } from "@/store/user/useUserSessionStore";
-import { useRouter } from "next/navigation";
-import { MdHomeFilled } from "react-icons/md";
-import { MdChevronRight } from "react-icons/md";
-
+'use client';
+import Image from 'next/image';
+import { Button } from '../ui/button';
+import { motion } from 'framer-motion';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { useRouter } from 'next/navigation';
+import { MdHomeFilled } from 'react-icons/md';
+import { MdChevronRight } from 'react-icons/md';
 
 export default function LandingSection() {
-    const { session, setOpenSigninModal } = useUserSessionStore()
+    const { session, setOpenSigninModal } = useUserSessionStore();
     const router = useRouter();
     function getStartedHandler() {
         if (session?.user.id) {
-            router.push("/home");
+            router.push('/home');
         } else {
             setOpenSigninModal(true);
         }
@@ -22,13 +21,20 @@ export default function LandingSection() {
     return (
         <main className="w-full relative min-h-screen bg-[#fff200] flex flex-col items-center justify-center border-b border-black">
             <section className="max-w-3xl text-center mt-60">
-                <Button onClick={getStartedHandler} className="text-xl text-black rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98">{session?.user.id ?
-                    <span className="flex items-center gap-x-2">
-                        <MdHomeFilled style={{ fontSize: 40 }} /> Home
-                    </span>
-                    :
-                    <span className="flex items-center gap-x-2">Get Started <MdChevronRight className="h-20 w-20" /></span>
-                }</Button>
+                <Button
+                    onClick={getStartedHandler}
+                    className="text-xl text-black rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98"
+                >
+                    {session?.user.id ? (
+                        <span className="flex items-center gap-x-2">
+                            <MdHomeFilled style={{ fontSize: 40 }} /> Home
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-x-2">
+                            Get Started <MdChevronRight className="h-20 w-20" />
+                        </span>
+                    )}
+                </Button>
                 <div className="relative">
                     <div className="absolute -top-20 -right-40  z-0">
                         <Image
@@ -36,12 +42,18 @@ export default function LandingSection() {
                             width={280}
                             height={280}
                             className="object-fit"
-                            src={"/illustrations/cat.png"}
+                            src={'/illustrations/cat.png'}
                         />
                     </div>
-                    <h1 className="text-8xl text-black mt-8 relative z-10">Put Your Money on Your Mind.</h1>
+                    <h1 className="text-8xl text-black mt-8 relative z-10">
+                        Put Your Money on Your Mind.
+                    </h1>
                 </div>
-                <p className="text-2xl mt-4 text-black">A high-stakes quiz arena where knowledge isn&apos;t just tested — it&apos;s wagered. Create or join competitive quizzes, stake real value, survive elimination rounds, and let skill decide the payout.</p>
+                <p className="text-2xl mt-4 text-black">
+                    A high-stakes quiz arena where knowledge isn&apos;t just tested — it&apos;s
+                    wagered. Create or join competitive quizzes, stake real value, survive
+                    elimination rounds, and let skill decide the payout.
+                </p>
             </section>
 
             <section className="max-w-6xl mx-auto border-4 border-black h-[40vh] w-full mb-40 mt-20 bg-[#FF3F7F] relative overflow-hidden">
@@ -74,7 +86,7 @@ export default function LandingSection() {
                         <div className="relative">
                             <motion.div
                                 className="w-24 h-24 border-4 border-black bg-[#FFC400] flex items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
-                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
                             >
                                 <span className="text-4xl font-black">?</span>
                             </motion.div>
@@ -119,7 +131,9 @@ export default function LandingSection() {
                     >
                         <div className="text-right space-y-3">
                             <div className="bg-black text-[#FFC400] px-3 py-1 inline-block">
-                                <span className="text-xs font-black tracking-wider">PRIZE POOL</span>
+                                <span className="text-xs font-black tracking-wider">
+                                    PRIZE POOL
+                                </span>
                             </div>
                             <p className="text-5xl font-black text-black leading-none">
                                 12.5 <span className="text-2xl">SOL</span>

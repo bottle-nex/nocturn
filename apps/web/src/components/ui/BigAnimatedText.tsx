@@ -68,7 +68,6 @@ export default function BigAnimatedText() {
         });
     }
 
-
     useEffect(() => {
         runAnimation();
     }, []);
