@@ -1,53 +1,78 @@
-import { signOut } from 'next-auth/react';
-import { Dispatch, SetStateAction } from 'react';
+'use client';
 import OpacityBackground from './OpacityBackground';
-import UtilityCard from './UtilityCard';
 import { Button } from '../ui/button';
+import { X, LogOut } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { press } from '../test/Navbar';
+import { signOut } from 'next-auth/react';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
-interface LogoutModalProps {
-    openLogoutModal: boolean;
-    setOpenLogoutModal: Dispatch<SetStateAction<boolean>>;
-}
+export default function LogoutModal() {
+    const { openLogoutModal, setOpenLogoutModal } = useUserSessionStore();
 
-export default function LogoutModal({ openLogoutModal, setOpenLogoutModal }: LogoutModalProps) {
-    async function LogoutHandler() {
-        signOut({
-            callbackUrl: '/',
-        });
+    if (!openLogoutModal) return null;
+
+    function handleLogout() {
+        signOut({ callbackUrl: '/' });
     }
 
     return (
-        <div>
-            {openLogoutModal && (
-                <OpacityBackground onBackgroundClick={() => setOpenLogoutModal(false)}>
-                    <UtilityCard className="max-w-md px-8 py-6 flex flex-col items-center justify-center space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">
-                                Log out ?
-                            </h2>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400 font-normal">
-                                You will be logged out of your session and redirected to the Sign in
-                                Page.
+        <OpacityBackground onBackgroundClick={() => setOpenLogoutModal(false)}>
+            <section className="relative bg-white border-2 border-black w-105 max-w-[90vw]">
+                <div className="bg-[#FF3F7F] border-b-2 border-black px-6 py-4 flex items-center justify-between">
+                    <h1 className="text-xl font-bold text-white tracking-wide">Sign out</h1>
+                    <button
+                        type="button"
+                        title="Close"
+                        aria-label="Close modal"
+                        onClick={() => setOpenLogoutModal(false)}
+                        className="text-white hover:text-black transition-colors cursor-pointer"
+                    >
+                        <X size={24} strokeWidth={2.5} />
+                    </button>
+                </div>
+
+                <div className="p-6 space-y-6">
+                    <div className="mb-2">
+                        <span className={cn('text-black font-bold text-2xl', press.className)}>
+                            Nocturn
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
+                        <div className="w-12 h-12 bg-[#FFC400] border-2 border-black flex items-center justify-center">
+                            <LogOut size={24} className="text-black" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-black">Leaving so soon?</h2>
+                            <p className="text-neutral-600 text-sm">
+                                Your progress is saved. Come back anytime!
                             </p>
                         </div>
+                    </div>
 
-                        <div className="flex gap-4 w-full">
-                            <Button
-                                onClick={() => setOpenLogoutModal(false)}
-                                className="w-1/2 px-4 py-2 text-sm dark:text-light-base text-dark-base bg-neutral-200 hover:bg-neutral-300 dark:bg-dark-primary/30 hover:dark:bg-dark-primary/50 cursor-pointer"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={LogoutHandler}
-                                className="w-1/2 px-4 py-2 text-sm bg-red-500 hover:bg-red-600 text-light-base cursor-pointer"
-                            >
-                                Sign Out
-                            </Button>
-                        </div>
-                    </UtilityCard>
-                </OpacityBackground>
-            )}
-        </div>
+                    <p className="text-neutral-500 text-sm text-center">
+                        Are you sure you want to sign out of your account?
+                    </p>
+
+                    <div className="flex gap-3">
+                        <Button
+                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-black py-6 font-medium"
+                            onClick={() => setOpenLogoutModal(false)}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-[#FF3F7F] hover:bg-[#ff2a6d] text-white py-6 font-medium"
+                            onClick={handleLogout}
+                        >
+                            <LogOut size={18} className="mr-2" />
+                            Sign out
+                        </Button>
+                    </div>
+                </div>
+            </section>
+        </OpacityBackground>
     );
 }

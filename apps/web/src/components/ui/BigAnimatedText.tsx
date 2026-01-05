@@ -25,9 +25,9 @@ export default function BigAnimatedText() {
 
     const positions = [
         'top-[-2.5rem] right-12',
-        'top-2 left-12',
+        '-top-8 left-12',
         'bottom-2 right-8',
-        'bottom-20 right-[40%] translate-x-1/2',
+        'bottom-16 right-[40%] translate-x-1/2',
         'bottom-[-2rem] left-8',
     ];
 
@@ -68,8 +68,6 @@ export default function BigAnimatedText() {
         });
     }
 
-    const roundings = ['rounded-full', 'rounded-xl', 'rounded-2xl', 'rounded-lg'];
-
     useEffect(() => {
         runAnimation();
     }, []);
@@ -78,7 +76,7 @@ export default function BigAnimatedText() {
         const interval = setInterval(() => {
             setCycleIndex((prev) => (prev + 1) % 3);
             setColorOrder(shuffleColors(COLORS));
-        }, 3000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, []);
@@ -88,19 +86,16 @@ export default function BigAnimatedText() {
     }, [cycleIndex, colorOrder]);
 
     return (
-        <div className="px-40 w-full h-[100vh] flex justify-center items-center">
+        <div className="w-full flex justify-center items-center h-150 max-w-6xl mx-auto">
             <div className="flex flex-col items-center gap-y-12">
-                <div className="max-w-[36rem] relative">
-                    <h1 className="text-center text-8xl font-bold scale-110 -mt-10 dark:text-[#fcf9f0]">
-                        Playing Data Quest to Win Crypto
+                <div className="relative max-w-3xl">
+                    <h1 className="text-center text-7xl font-bold text-black">
+                        Knowledge Is Power. Power Pays.
                     </h1>
 
                     {contentCycles.map((contentList, idx) => {
                         const content = contentList[cycleIndex];
                         const bgColor = colorOrder[idx] ?? COLORS[idx];
-
-                        const randomRounding =
-                            roundings[Math.floor(Math.random() * roundings.length)];
 
                         return (
                             <div
@@ -108,7 +103,7 @@ export default function BigAnimatedText() {
                                 ref={(el) => {
                                     boxesRef.current[idx] = el;
                                 }}
-                                className={`absolute ${positions[idx]} px-4 py-2.5 ${randomRounding} border dark:border-neutral-900 border-neutral-200 text-neutral-900 font-bold overflow-hidden`}
+                                className={`absolute shadow-custom ${positions[idx]} px-4 py-2.5 border dark:border-neutral-900 border-neutral-200 text-neutral-900 font-bold overflow-hidden`}
                                 style={{
                                     backgroundColor: bgColor,
                                 }}
@@ -128,7 +123,7 @@ export default function BigAnimatedText() {
                         );
                     })}
                 </div>
-                <div className="max-w-[40rem] text-center text-md font-normal">
+                <div className="max-w-160 text-center text-xl font-normal text-black">
                     This isn&apos;t your grandmas GK quiz. Here, you stake tokens, flex knowledge,
                     and pray your last three brain cells don&apos;t betray you on question 7. Every
                     round feels like Squid Game but with fewer fatalities and more wallets.

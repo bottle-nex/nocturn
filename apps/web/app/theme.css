@@ -36,3 +36,12 @@
 .animated-cards:hover::before {
     opacity: 1;
 }
+
+.shadow-custom {
+    box-shadow: 0 0 0 0 black;
+    transition: box-shadow 0.1s ease-out;
+}
+
+.shadow-custom:hover {
+    box-shadow: 5px 5px 0 0 black;
+}
