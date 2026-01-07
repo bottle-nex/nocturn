@@ -22,7 +22,7 @@ export default function DashBoard(): JSX.Element {
                     },
                 });
                 if (data.success) {
-                    setAllQuizs(data.quizzes);
+                    setAllQuizs(data.data);
                 }
             } catch (err) {
                 console.error('Error in getting all the quizzes', err);
