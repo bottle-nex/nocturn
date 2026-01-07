@@ -23,4 +23,4 @@ export const PARTICIPANT_URL = QUIZ_URL + '/participants';
 export const GET_CHATS_URL = '/quiz/get-messages';
 
 export const ALL_CONTRIBUTORS_DETAILS_URL =
-    'https://api.github.com/repos/celestium-x/triangulum-x/contributors';
+    'https://api.github.com/repos/bottle-nex/nocturn/contributors';

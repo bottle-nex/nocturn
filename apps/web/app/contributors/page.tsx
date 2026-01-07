@@ -1,11 +1,13 @@
-import AppLogo from '@/components/app/AppLogo';
-import DarkModeToggle from '@/components/base/DarkModeToggle';
-import PurpleFooter from '@/components/base/PurpleFooter';
-import { animations } from '@/components/founders/FounderBase';
-import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { cn } from '@/lib/utils';
 import { getAllContributors } from '@/server/get_contributors';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Press_Start_2P } from 'next/font/google';
+
+const press = Press_Start_2P({
+    weight: '400',
+    subsets: ['latin'],
+});
 
 export interface Contributor {
     login: string;
@@ -18,126 +20,195 @@ export interface Contributor {
 
 export default async function Page() {
     const contributors = await getAllContributors();
-
     return (
-        <div
-            className="relative w-full flex flex-col items-center justify-between 
-            bg-gradient-to-b from-[#f4f4f9] to-white text-neutral-900 
-            dark:text-white dark:from-[#20163560] dark:to-black 
-            select-none overflow-x-hidden"
-        >
-            <style>{animations}</style>
-
-            <div className="absolute top-0 left-0 w-[140vh] h-[120vh] pointer-events-none overflow-hidden">
-                <div
-                    className="w-full h-full"
-                    style={{
-                        background:
-                            'linear-gradient(135deg, rgba(149,115,225,0.3) 0%, rgba(149,115,225,0) 60%)',
-                        filter: 'blur(120px)',
-                        transform: 'rotate(-20deg) translate(-40%, -40%)',
-                        transformOrigin: 'top left',
-                        animation: 'fadeInLight 1.8s ease-out forwards',
-                    }}
-                />
-            </div>
-
-            <div
-                className="absolute h-full w-full max-h-[80px] border-b flex justify-start items-center px-3 sm:px-5
-                border-neutral-300 dark:border-neutral-800"
-                style={{ animation: 'slideDownFade 1s ease-out forwards' }}
-            >
-                <AppLogo />
-            </div>
-
-            <div className="w-full h-full max-w-4xl xl:max-w-5xl 2xl:max-w-5xl border-l border-r border-neutral-200 dark:border-neutral-800 pt-[80px] flex flex-col mx-auto px-2 sm:px-0">
-                <div
-                    className="h-16 sm:h-20 w-full border-b border-neutral-200 dark:border-neutral-800 
-                    flex p-3 sm:p-6 text-sm sm:text-md items-center justify-between font-light "
-                    style={{ animation: 'slideDownFade 1.2s ease-out forwards' }}
+        <main className="relative bg-[#f5f4f2] min-h-screen w-screen tracking-wider">
+            {/* Navbar */}
+            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center z-20 pl-12">
+                <Link href="/">
+                    <span className={cn('text-white font-bold text-2xl', press.className)}>
+                        Nocturn
+                    </span>
+                </Link>
+                <Link
+                    href="/"
+                    className="h-full flex items-center justify-center px-8 bg-[#FF3F7F] hover:bg-white text-black text-lg border-l-4 border-black transition-colors"
                 >
-                    <div className="text-xs sm:text-sm md:text-[18px] tracking-wider">
-                        WALL OF CONTRIBUTORS
+                    Back to Home
+                </Link>
+            </nav>
+
+            {/* Hero Section */}
+            <section className="pt-20 bg-[#90a7ed] border-b-4 border-black">
+                <div className="max-w-6xl mx-auto py-16 px-8">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-6xl font-black text-black tracking-tight">
+                                Wall of
+                                <br />
+                                <span className="text-white">Contributors</span>
+                            </h1>
+                            <p className="text-lg text-black/70 mt-4 max-w-md font-medium">
+                                The amazing humans who helped build Nocturn. Every commit counts.
+                            </p>
+                        </div>
+                        <div className="hidden md:block">
+                            <div
+                                className={cn(
+                                    'rotate-6 text-3xl font-black text-black px-6 py-4 bg-[#fff200]',
+                                    'border-4 border-black shadow-hard',
+                                    'transition-transform duration-200 ease-out',
+                                    'hover:translate-x-0.5 hover:translate-y-0.5'
+                                )}
+                            >
+                                THANK YOU!
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-xs sm:text-sm md:text-[18px] tracking-wider">
-                        <DarkModeToggle />
+
+                    {/* Stats */}
+                    <div className="flex gap-8 mt-12">
+                        <div
+                            className={cn(
+                                'bg-white border-4 border-black px-8 py-4 shadow-hard',
+                                'transition-transform duration-200 ease-out',
+                                'hover:translate-x-0.5 hover:translate-y-0.5'
+                            )}
+                        >
+                            <span className="text-4xl font-black text-black block">
+                                {contributors.length}
+                            </span>
+                            <span className="text-xs font-bold text-black/60 uppercase tracking-wider">
+                                Contributors
+                            </span>
+                        </div>
+                        <div
+                            className={cn(
+                                'bg-[#22a094] border-4 border-black px-8 py-4 shadow-hard',
+                                'transition-transform duration-200 ease-out',
+                                'hover:translate-x-0.5 hover:translate-y-0.5'
+                            )}
+                        >
+                            <span className="text-4xl font-black text-white block">
+                                {contributors.reduce((acc: number, c: Contributor) => acc + c.contributions, 0)}
+                            </span>
+                            <span className="text-xs font-bold text-black/60 uppercase tracking-wider">
+                                Total Commits
+                            </span>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <div className="px-20 py-16 relative">
+            <section className="max-w-6xl mx-auto py-16 px-8">
+                {contributors.length === 0 ? (
                     <div
                         className={cn(
-                            'absolute inset-0',
-                            '[background-size:20px_20px]',
-                            '[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]',
-                            'dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]',
+                            'bg-[#FF3F7F] border-4 border-black p-12 text-center shadow-hard'
                         )}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br dark:from-black/30 dark:via-black/50 dark:to-black/70 from-transparent to-[#f7f7fa] z-10 pointer-events-none" />
-                    {contributors.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center flex-1">
-                            <p className="text-gray-500 dark:text-gray-400 text-lg">
-                                No contributors found
-                            </p>
-                            <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                                Unable to load contributor data at this time
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 pb-8">
-                            {contributors.map((contributor: Contributor) => (
-                                <ToolTipComponent
-                                    key={contributor.id}
-                                    content={`${contributor.contributions} commits`}
+                    >
+                        <p className="text-2xl font-black text-black">No contributors found</p>
+                        <p className="text-black/70 mt-2">
+                            Unable to load contributor data at this time
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                        {contributors.map((contributor: Contributor, idx: number) => (
+                            <a
+                                key={contributor.id}
+                                href={contributor.html_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group"
+                            >
+                                <div
+                                    className={cn(
+                                        'relative border-4 border-black overflow-hidden',
+                                        'transition-all duration-200 ease-out shadow-hard',
+                                        'hover:translate-x-0.5 hover:translate-y-0.5',
+                                        idx % 5 === 0 && 'bg-[#fff200]',
+                                        idx % 5 === 1 && 'bg-[#FF3F7F]',
+                                        idx % 5 === 2 && 'bg-[#22a094]',
+                                        idx % 5 === 3 && 'bg-[#90a7ed]',
+                                        idx % 5 === 4 && 'bg-[#FFC400]'
+                                    )}
                                 >
-                                    <div className="relative group">
-                                        <div className="absolute w-32 h-32 dark:bg-white bg-neutral-900 rounded-2xl transition-transform duration-200 ease-in-out group-hover:translate-y-2 group-hover:-translate-x-2" />
-
-                                        <a
-                                            href={contributor.html_url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="relative w-32 h-32 flex flex-col items-center 
-                                            rounded-2xl transition-transform duration-200 
-                                            border-2 border-neutral-300 dark:border-neutral-900 
-                                        bg-white/70 dark:bg-white/10 z-10 overflow-hidden"
-                                        >
-                                            <Image
-                                                src={contributor.avatar_url}
-                                                alt="user"
-                                                fill
-                                                className="object-cover"
-                                            />
-
-                                            <div
-                                                className="absolute inset-x-0 bottom-0 px-2 py-1 text-center text-xs 
-      bg-neutral-200 text-neutral-900 
-      dark:bg-neutral-950 dark:text-white 
-      opacity-0 group-hover:opacity-100 transition-all duration-200 ease-in-out
-      translate-y-full group-hover:translate-y-0"
-                                            >
-                                                {contributor.login}
-                                            </div>
-                                        </a>
+                                    {/* Avatar */}
+                                    <div className="relative w-full aspect-square">
+                                        <Image
+                                            src={contributor.avatar_url}
+                                            alt={contributor.login}
+                                            fill
+                                            className="object-cover"
+                                        />
                                     </div>
-                                </ToolTipComponent>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
 
-            <div className="w-full flex items-center justify-center">
-                <div
-                    className="text-[14rem] font-medium text-center 
-                    bg-gradient-to-b from-[rgba(116,74,199,0.3)] via-[rgba(116,74,199,0.1)] 
-                    to-white/10 dark:to-[#01011220] bg-clip-text text-transparent"
-                >
-                    NOCTURN
-                </div>
-            </div>
+                                    {/* Info overlay */}
+                                    <div
+                                        className={cn(
+                                            'absolute inset-0 bg-black/90 flex flex-col items-center justify-center',
+                                            'opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                                        )}
+                                    >
+                                        <span className="text-white font-bold text-sm truncate max-w-[90%]">
+                                            {contributor.login}
+                                        </span>
+                                        <span className="text-[#fff200] font-black text-lg mt-1">
+                                            {contributor.contributions} commits
+                                        </span>
+                                    </div>
+                                </div>
 
-            <PurpleFooter />
-        </div>
+                                {/* Name badge */}
+                                <div
+                                    className={cn(
+                                        'mt-2 bg-black text-white px-3 py-1.5 text-xs font-bold',
+                                        'truncate text-center uppercase tracking-wider'
+                                    )}
+                                >
+                                    {contributor.login}
+                                </div>
+                            </a>
+                        ))}
+                    </div>
+                )}
+            </section>
+
+            {/* CTA Section */}
+            <section className="bg-[#fff200] border-t-4 border-black py-16">
+                <div className="max-w-4xl mx-auto text-center px-8">
+                    <h2 className="text-4xl font-black text-black mb-4">Want to Contribute?</h2>
+                    <p className="text-lg text-black/70 mb-8">
+                        Join our community and help make Nocturn even better.
+                    </p>
+                    <a
+                        href="https://github.com/bottle-nex/nocturn"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                            'inline-block bg-black text-white px-10 py-5',
+                            'font-black text-lg uppercase tracking-wider',
+                            'border-4 border-black shadow-custom',
+                            'transition-all duration-200 ease-out',
+                            'hover:bg-[#FF3F7F] hover:text-black'
+                        )}
+                    >
+                        View on GitHub
+                    </a>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-black py-8 px-12">
+                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    <span className={cn('text-white font-bold text-xl', press.className)}>
+                        Nocturn
+                    </span>
+                    <span className="text-white/60 text-sm">
+                        Built with love by the community
+                    </span>
+                </div>
+            </footer>
+        </main>
     );
 }
