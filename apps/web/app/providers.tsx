@@ -1,5 +1,4 @@
 'use client';
-
 import { ReactNode, useMemo } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { clusterApiUrl } from '@solana/web3.js';
@@ -19,10 +18,8 @@ export default function Providers({ children }: { children: ReactNode }) {
     );
 
     return (
-        <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-                {children}
-            </WalletProvider>
-        </ConnectionProvider>
+        <div>
+            {children}
+        </div>
     );
 }

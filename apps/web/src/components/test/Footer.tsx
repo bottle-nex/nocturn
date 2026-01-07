@@ -20,13 +20,12 @@ const footerLinks = {
 
 const socials = [
     { label: 'Twitter', href: 'https://twitter.com/nocturnxyz', image: '/socials/x.webp' },
-    // { label: "GitHub", href: "https://github.com/nocturnxyz", image: "/socials/github.png" },
 ];
 
 export default function Footer() {
     return (
         <>
-            <div className="w-full">
+            <div className="w-full -mt-16">
                 <Image
                     src="/images/footer-img.svg"
                     alt="Nocturn Logo"
