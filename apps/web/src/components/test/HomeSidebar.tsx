@@ -48,22 +48,22 @@ export default function HomeSidebar() {
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case SidebarTab.HOME:
-                return "Home Content";
-            case SidebarTab.TEAM:
-                return "Team Content";
-            case SidebarTab.ANALYTICS:
-                return "Analytics Content";
-            case SidebarTab.DOCUMENTS:
-                return "Documents Content";
-            case SidebarTab.SETTINGS:
-                return "Settings Content";
-            default:
-                return "Select a tab";
-        }
-    };
+    // const renderContent = () => {
+    //     switch (activeTab) {
+    //         case SidebarTab.HOME:
+    //             return "Home Content";
+    //         case SidebarTab.TEAM:
+    //             return "Team Content";
+    //         case SidebarTab.ANALYTICS:
+    //             return "Analytics Content";
+    //         case SidebarTab.DOCUMENTS:
+    //             return "Documents Content";
+    //         case SidebarTab.SETTINGS:
+    //             return "Settings Content";
+    //         default:
+    //             return "Select a tab";
+    //     }
+    // };
 
     return (
         <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 bg-light-prime dark:bg-dark-prime border-r">
