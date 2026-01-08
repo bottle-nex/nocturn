@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { press } from './Navbar';
+import { slackey } from './Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -39,8 +39,8 @@ export default function Footer() {
             <footer className="relative w-screen bg-black px-12 py-16 h-[55vh] flex flex-col justify-between">
                 <div className="grid grid-cols-2">
                     <section>
-                        <span className={cn('text-white font-bold text-6xl', press.className)}>
-                            Nocturn
+                        <span className={cn('text-white font-bold text-6xl', slackey.className)}>
+                            NOCTURN
                         </span>
                         <section className="w-full mr-40 gap-x-12 my-8">
                             {socials.map((social) => (

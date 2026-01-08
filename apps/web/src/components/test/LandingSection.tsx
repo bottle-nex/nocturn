@@ -1,15 +1,17 @@
 'use client';
+
 import Image from 'next/image';
 import { Button } from '../ui/button';
 import { motion } from 'framer-motion';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
-import { MdHomeFilled } from 'react-icons/md';
-import { MdChevronRight } from 'react-icons/md';
+import { MdHomeFilled, MdChevronRight } from 'react-icons/md';
+import { FaLocationArrow } from 'react-icons/fa6';
 
 export default function LandingSection() {
     const { session, setOpenSigninModal } = useUserSessionStore();
     const router = useRouter();
+
     function getStartedHandler() {
         if (session?.user.id) {
             router.push('/home');
@@ -19,8 +21,25 @@ export default function LandingSection() {
     }
 
     return (
-        <main className="w-full relative min-h-screen bg-[#fff200] flex flex-col items-center justify-center border-b border-black">
-            <section className="max-w-3xl text-center mt-60">
+        <main className="w-full relative min-h-screen bg-[#eceadd] flex flex-col items-center justify-center border-b border-black overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 z-0 dot-bg" />
+
+            <div className="absolute top-160 left-80 w-8 h-8 border-t-2 border-l-2 border-black/40 z-0" />
+            <div className="absolute top-160 right-80 w-8 h-8 border-t-2 border-r-2 border-black/40 z-0" />
+            <div className="absolute bottom-27.5 left-80 w-8 h-8 border-b-2 border-l-2 border-black/40 z-0" />
+            <div className="absolute bottom-27.5 right-80 w-8 h-8 border-b-2 border-r-2 border-black/40 z-0" />
+
+            <div className="neo-shadow absolute top-44 right-[15.5%] text-white font-semibold bg-[#2F73DC] px-4 py-1.5 text-lg z-10">
+                Yo, I just won 5 SOL
+            </div>
+
+            <div className="absolute top-54 right-[26%] text-3xl text-[#2F73DC] -rotate-180 z-10">
+                <FaLocationArrow />
+            </div>
+
+            {/* <FloatingStickers/> */}
+
+            <section className="max-w-3xl text-center mt-60 relative z-10">
                 <Button
                     onClick={getStartedHandler}
                     className="text-xl text-black rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98"
@@ -35,20 +54,16 @@ export default function LandingSection() {
                         </span>
                     )}
                 </Button>
+
                 <div className="relative">
-                    <div className="absolute -top-20 -right-40  z-0">
-                        <Image
-                            alt="cat"
-                            width={280}
-                            height={280}
-                            className="object-fit"
-                            src={'/illustrations/cat.png'}
-                        />
+                    <div className="absolute -top-20 -right-40 z-0">
+                        <Image alt="cat" width={280} height={280} src="/illustrations/cat.png" />
                     </div>
                     <h1 className="text-8xl text-black mt-8 relative z-10">
                         Put Your Money on Your Mind.
                     </h1>
                 </div>
+
                 <p className="text-2xl mt-4 text-black">
                     A high-stakes quiz arena where knowledge isn&apos;t just tested — it&apos;s
                     wagered. Create or join competitive quizzes, stake real value, survive
@@ -56,7 +71,7 @@ export default function LandingSection() {
                 </p>
             </section>
 
-            <section className="max-w-6xl mx-auto border-4 border-black h-[40vh] w-full mb-40 mt-20 bg-[#FF3F7F] relative overflow-hidden">
+            <section className="max-w-6xl mx-auto border-4 border-black h-[40vh] w-full mb-40 mt-20 bg-[#FF3F7F] relative overflow-hidden z-10">
                 <div className="absolute inset-0 flex items-center justify-between px-16">
                     <motion.div
                         className="flex flex-col gap-1"

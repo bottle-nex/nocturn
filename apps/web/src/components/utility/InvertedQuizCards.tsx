@@ -31,7 +31,7 @@ export default function InvertedQuizCards() {
     const { quiz, updateQuiz } = useNewQuizStore();
 
     const router = useRouter();
-    console.log(quizs);
+    // console.log(quizs);
     const displayQuizs = quizs.slice(0, 3);
 
     useHandleClickOutside([dropdownRef, optionRef], () => setOpenQuizOptionId(null));

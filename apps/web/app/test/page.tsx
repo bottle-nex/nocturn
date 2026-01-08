@@ -1,5 +1,5 @@
 import Footer from '@/components/test/Footer';
-import LandingSectionHeading from '@/components/test/LangingSection';
+import LandingSectionHeading from '@/components/test/LandingSection';
 import Navbar from '@/components/test/Navbar';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
 
