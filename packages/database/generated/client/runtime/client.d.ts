@@ -502,91 +502,91 @@ export declare type DevTypeMapFnDef = {
 };
 
 export declare namespace DMMF {
-  export {
-    datamodelEnumToSchemaEnum,
-    datamodelSchemaEnumToSchemaEnum,
-    Document_2 as Document,
-    Mappings,
-    OtherOperationMappings,
-    DatamodelEnum,
-    DatamodelSchemaEnum,
-    SchemaEnum,
-    EnumValue,
-    Datamodel,
-    uniqueIndex,
-    PrimaryKey,
-    Model,
-    FieldKind,
-    FieldNamespace,
-    FieldLocation,
-    Field,
-    FieldDefault,
-    FieldDefaultScalar,
-    Index,
-    IndexType,
-    IndexField,
-    SortOrder,
-    Schema,
-    Query,
-    QueryOutput,
-    TypeRef,
-    InputTypeRef,
-    SchemaArg,
-    OutputType,
-    SchemaField,
-    OutputTypeRef,
-    Deprecation,
-    InputType,
-    FieldRefType,
-    FieldRefAllowType,
-    ModelMapping,
-    ModelAction,
-    ReadonlyDeep_2 as ReadonlyDeep,
-  };
+    export {
+        datamodelEnumToSchemaEnum,
+        datamodelSchemaEnumToSchemaEnum,
+        Document_2 as Document,
+        Mappings,
+        OtherOperationMappings,
+        DatamodelEnum,
+        DatamodelSchemaEnum,
+        SchemaEnum,
+        EnumValue,
+        Datamodel,
+        uniqueIndex,
+        PrimaryKey,
+        Model,
+        FieldKind,
+        FieldNamespace,
+        FieldLocation,
+        Field,
+        FieldDefault,
+        FieldDefaultScalar,
+        Index,
+        IndexType,
+        IndexField,
+        SortOrder,
+        Schema,
+        Query,
+        QueryOutput,
+        TypeRef,
+        InputTypeRef,
+        SchemaArg,
+        OutputType,
+        SchemaField,
+        OutputTypeRef,
+        Deprecation,
+        InputType,
+        FieldRefType,
+        FieldRefAllowType,
+        ModelMapping,
+        ModelAction,
+        ReadonlyDeep_2 as ReadonlyDeep
+    }
 }
 
 declare namespace DMMF_2 {
-  export {
-    datamodelEnumToSchemaEnum,
-    datamodelSchemaEnumToSchemaEnum,
-    Document_2 as Document,
-    Mappings,
-    OtherOperationMappings,
-    DatamodelEnum,
-    DatamodelSchemaEnum,
-    SchemaEnum,
-    EnumValue,
-    Datamodel,
-    uniqueIndex,
-    PrimaryKey,
-    Model,
-    FieldKind,
-    FieldNamespace,
-    FieldLocation,
-    Field,
-    FieldDefault,
-    FieldDefaultScalar,
-    Index,
-    IndexType,
-    IndexField,
-    SortOrder,
-    Schema,
-    Query,
-    QueryOutput,
-    TypeRef,
-    InputTypeRef,
-    SchemaArg,
-    OutputType,
-    SchemaField,
-    OutputTypeRef,
-    Deprecation,
-    InputType,
-    FieldRefType,
-    FieldRefAllowType,
-    ModelMapping,
-    ModelAction,
-    ReadonlyDeep_2 as ReadonlyDeep,
-  };
+    export {
+        datamodelEnumToSchemaEnum,
+        datamodelSchemaEnumToSchemaEnum,
+        Document_2 as Document,
+        Mappings,
+        OtherOperationMappings,
+        DatamodelEnum,
+        DatamodelSchemaEnum,
+        SchemaEnum,
+        EnumValue,
+        Datamodel,
+        uniqueIndex,
+        PrimaryKey,
+        Model,
+        FieldKind,
+        FieldNamespace,
+        FieldLocation,
+        Field,
+        FieldDefault,
+        FieldDefaultScalar,
+        Index,
+        IndexType,
+        IndexField,
+        SortOrder,
+        Schema,
+        Query,
+        QueryOutput,
+        TypeRef,
+        InputTypeRef,
+        SchemaArg,
+        OutputType,
+        SchemaField,
+        OutputTypeRef,
+        Deprecation,
+        InputType,
+        FieldRefType,
+        FieldRefAllowType,
+        ModelMapping,
+        ModelAction,
+        ReadonlyDeep_2 as ReadonlyDeep
+    }
 }
 
 export declare function dmmfToRuntimeDataModel(dmmfDataModel: DMMF_2.Datamodel): RuntimeDataModel;
@@ -1760,15 +1760,15 @@ declare type MiddlewareArgsMapper<RequestArgs, MiddlewareArgs> = {
 };
 
 declare type Model = ReadonlyDeep_2<{
-  name: string;
-  dbName: string | null;
-  schema: string | null;
-  fields: Field[];
-  uniqueFields: string[][];
-  uniqueIndexes: uniqueIndex[];
-  documentation?: string;
-  primaryKey: PrimaryKey | null;
-  isGenerated?: boolean;
+    name: string;
+    dbName: string | null;
+    schema: string | null;
+    fields: Field[];
+    uniqueFields: string[][];
+    uniqueIndexes: uniqueIndex[];
+    documentation?: string;
+    primaryKey: PrimaryKey | null;
+    isGenerated?: boolean;
 }>;
 
 declare enum ModelAction {
@@ -1970,8 +1970,8 @@ declare interface PlaceholderFormat {
 }
 
 declare type PrimaryKey = ReadonlyDeep_2<{
-  name: string | null;
-  fields: string[];
+    name: string | null;
+    fields: string[];
 }>;
 
 export { PrismaClientInitializationError }
