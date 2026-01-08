@@ -96,7 +96,7 @@ export default function HostQuestionResultsRenderer() {
                 <Button
                     className={cn(
                         'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
-                        'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary text-xs',
+                        'bg-light-base dark:bg-dark-prime dark:text-light-base text-dark-prime text-xs',
                         'px-3.5 !pl-4 py-1.5 text-xs rounded-md tracking-wider',
                         'hover:-translate-y-0.5 transition-all transform duration-150',
                     )}

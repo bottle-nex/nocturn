@@ -110,7 +110,7 @@ export default function HostChatsPanel() {
     return (
         <div className="h-full flex flex-col justify-between">
             <div className="flex justify-between items-center px-7 py-4 border-b">
-                <span className="text-sm dark:text-light-base text-dark-primary">Chat</span>
+                <span className="text-sm dark:text-light-base text-dark-prime">Chat</span>
                 <ToolTipComponent content="Click to expand">
                     <Button
                         className="text-dark-base dark:text-light-base cursor-pointer dark:bg-neutral-600/30"

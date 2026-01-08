@@ -65,7 +65,7 @@ export default function SpectatorSettingsPanel() {
                             />
                         </form>
                     ) : (
-                        <span className="text-sm dark:text-light-base text-dark-primary">
+                        <span className="text-sm dark:text-light-base text-dark-prime">
                             {spectatorData?.nickname}
                         </span>
                     )}
@@ -77,7 +77,7 @@ export default function SpectatorSettingsPanel() {
                     ) : (
                         <IoPencil
                             size={20}
-                            className="cursor-pointer text-dark-primary dark:text-light-base"
+                            className="cursor-pointer text-dark-prime dark:text-light-base"
                             onClick={() => setIsEditing(true)}
                         />
                     )}

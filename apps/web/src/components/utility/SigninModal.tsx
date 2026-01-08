@@ -5,7 +5,6 @@ import { Button } from '../ui/button';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { press } from '../test/Navbar';
 import { signIn } from 'next-auth/react';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
@@ -36,7 +35,7 @@ export default function SigninModal() {
 
                 <div className="p-6 space-y-4">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl', press.className)}>
+                        <span className={cn('text-black font-bold text-2xl')}>
                             Nocturn
                         </span>
                     </div>

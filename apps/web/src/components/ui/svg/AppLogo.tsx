@@ -16,7 +16,7 @@ export function AppLogo({ size, className }: AppLogoProps) {
 function LightAppLogo({ size, className }: AppLogoProps) {
     return (
         <div
-            className={`dark:hidden bg-dark-base p-1.5 rounded-sm border border-dark-primary flex justify-center items-center `}
+            className={`dark:hidden bg-dark-base p-1.5 rounded-sm border border-dark-prime flex justify-center items-center `}
             style={{
                 height: size,
                 width: size,
@@ -40,7 +40,7 @@ function LightAppLogo({ size, className }: AppLogoProps) {
 function DarkAppLogo({ size, className }: AppLogoProps) {
     return (
         <div
-            className={`hidden dark:flex dark:bg-light-base p-1.5 rounded-sm border border-dark-primary justify-center items-center `}
+            className={`hidden dark:flex dark:bg-light-base p-1.5 rounded-sm border border-dark-prime justify-center items-center `}
             style={{
                 height: size,
                 width: size,

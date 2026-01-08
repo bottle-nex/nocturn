@@ -32,7 +32,7 @@ export default function UploadQuizImage() {
             <div className="w-full px-2 mt-6">
                 <DragImageBackground onDropFile={handleImageSelect} />
                 <div className="flex items-center gap-x-1">
-                    <span className="text-sm font-normal text-dark-primary dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
                         Add Image
                     </span>
                     <ToolTipComponent content="This image is particularly relevant to this question">
@@ -45,13 +45,13 @@ export default function UploadQuizImage() {
                 </span>
 
                 <div className="flex items-center justify-between gap-x-8 mt-4">
-                    <div className="relative flex-1 border border-neutral-300 dark:border-neutral-600 hover:border-primary dark:hover:border-primary transition-colors duration-200 bg-light-base dark:bg-dark-base rounded-md flex items-center justify-center cursor-pointer px-3 py-2">
+                    <div className="relative flex-1 border border-neutral-300 dark:border-neutral-600 hover:border-prime dark:hover:border-prime transition-colors duration-200 bg-light-base dark:bg-dark-base rounded-md flex items-center justify-center cursor-pointer px-3 py-2">
                         <FaMountainSun size={32} />
                         <span className="ml-3 text-xs text-neutral-500 dark:text-neutral-400">
                             Click to upload or drag an image here
                         </span>
                     </div>
-                    {loading && <Loader className="animate-spin text-primary" size={20} />}
+                    {loading && <Loader className="animate-spin text-prime" size={20} />}
                 </div>
 
                 <div className="flex items-center gap-x-3 mt-5 dark:text-neutral-300 text-neutral-700">
