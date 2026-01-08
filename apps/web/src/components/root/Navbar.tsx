@@ -61,7 +61,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-12 z-20">
+            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-10 z-30">
                 <section>
                     <span className={cn('text-white font-bold text-3xl', slackey.className)}>
                         NOCTURN
