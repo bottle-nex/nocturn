@@ -21,7 +21,12 @@ export default async function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body>
-                <ThemeProvider attribute="class" defaultTheme="system">
+                <ThemeProvider 
+                    attribute="class" 
+                    defaultTheme="dark"
+                    enableSystem={false}
+                    disableTransitionOnChange
+                >
                     <Toaster theme="dark" />
                     <Providers>{children}</Providers>
                     <SessionSetter session={session} />

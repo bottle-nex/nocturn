@@ -1,9 +1,9 @@
 @theme {
-    --color-primary: #8e46f3;
+    --color-prime: #FA5C5C;
     --color-light-base: #f5f5f5;
-    --color-light-primary: #fffaf0;
-    --color-dark-base: #121212;
-    --color-dark-primary: #0a0a0a;
+    --color-light-prime: #ffffff;
+    --color-dark-base: #161616;
+    --color-dark-prime: #0a0a0a;
 }
 
 @theme {
@@ -38,18 +38,35 @@
 }
 
 .shadow-custom {
-    box-shadow: 0 0 0 0 black;
+    box-shadow: 0 0 0 0 var(--color-dark-prime);
     transition: box-shadow 0.1s ease-out;
 }
 
 .shadow-custom:hover {
-    box-shadow: 5px 5px 0 0 black;
+    box-shadow: 5px 5px 0 0 var(--color-dark-prime);
+}
+
+:root.dark .shadow-custom {
+    box-shadow: 0 0 0 0 var(--color-light-prime);
+}
+
+:root.dark .shadow-custom:hover {
+    box-shadow: 5px 5px 0 0 var(--color-light-prime);
 }
 
 .shadow-hard {
-    box-shadow: 5px 5px 0 0 black;
+    box-shadow: 3px 3px 0 0 var(--color-dark-prime);
     transition: box-shadow 0.1s ease-out;
 }
+
 .shadow-hard:hover {
-    box-shadow: 3px 3px 0 0 black;
+    box-shadow: 1px 1px 0 0 var(--color-dark-prime);
+}
+
+:root.dark .shadow-hard {
+    box-shadow: 3px 3px 0 0 var(--color-light-prime);
+}
+
+:root.dark .shadow-hard:hover {
+    box-shadow: 1px 1px 0 0 var(--color-light-prime);
 }

@@ -117,7 +117,7 @@ export default function ShowInfoToggle() {
                     <div className="flex flex-col gap-y-6 mt-4">
                         <div className="flex flex-col gap-y-1">
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-dark-primary dark:text-light-base flex items-center gap-x-2">
+                                <span className="text-sm font-medium text-dark-prime dark:text-light-base flex items-center gap-x-2">
                                     <PiCurrencyDollar size={18} />
                                     Balance
                                 </span>
@@ -141,7 +141,7 @@ export default function ShowInfoToggle() {
 
                         <div className="flex flex-col gap-y-1">
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-dark-primary dark:text-light-base flex items-center gap-x-2">
+                                <span className="text-sm font-medium text-dark-prime dark:text-light-base flex items-center gap-x-2">
                                     <MdOutlineKey size={18} />
                                     Public Key
                                 </span>

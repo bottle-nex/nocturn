@@ -92,7 +92,7 @@ export default function New({ params }: NewProps) {
                 <div className="flex items-center justify-center w-full">Not allowed</div>
             )}
             {allowance === AllowanceEnum.LOADING && (
-                <div className="text-primary w-screen h-screen flex items-center justify-center">
+                <div className="text-prime w-screen h-screen flex items-center justify-center">
                     <Loader className="animate-spin" />
                 </div>
             )}

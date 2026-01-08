@@ -89,7 +89,7 @@ export default function InteractionsDraft() {
 
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-primary dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
                         Live chat
                     </span>
                     <ToolTipComponent content="Enable live chat for your audience to ask questions and interact with you">
@@ -110,7 +110,7 @@ export default function InteractionsDraft() {
 
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-primary dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
                         Spectator mode
                     </span>
                     <ToolTipComponent content="Enable spectator mode for your audience to ask questions and interact with you">

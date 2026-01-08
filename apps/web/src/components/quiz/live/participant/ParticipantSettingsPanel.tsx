@@ -35,7 +35,7 @@ export default function ParticipantSettingPanel() {
             <section className="px-4">
                 <div className="w-full px-2 mt-6">
                     <div className="flex items-center justify-start gap-x-1">
-                        <span className="text-sm font-normal text-dark-primary dark:text-light-base">
+                        <span className="text-sm font-normal text-dark-prime dark:text-light-base">
                             Name
                         </span>
                         <ToolTipComponent content="you can only change your name once">
@@ -68,7 +68,7 @@ export default function ParticipantSettingPanel() {
                                 disabled={participantData?.isNameChanged}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="py-5 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-light-base text-dark-primary"
+                                className="py-5 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none dark:text-light-base text-dark-prime"
                             />
                         </form>
                     )}
@@ -85,13 +85,13 @@ export default function ParticipantSettingPanel() {
                             className="rounded-full object-cover border border-neutral-300 dark:border-neutral-700"
                         />
                     )}
-                    <span className="text-sm dark:text-light-base text-dark-primary">
+                    <span className="text-sm dark:text-light-base text-dark-prime">
                         {participantData?.nickname}
                     </span>
                 </div>
                 <IoMdSettings
                     size={24}
-                    className="cursor-pointer text-dark-primary dark:text-light-base"
+                    className="cursor-pointer text-dark-prime dark:text-light-base"
                 />
             </div>
         </div>

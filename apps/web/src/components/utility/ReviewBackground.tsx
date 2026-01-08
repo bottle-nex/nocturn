@@ -16,7 +16,7 @@ export default function ReviewBackground() {
 
     return (
         <OpacityBackground
-            className="bg-dark-primary/90"
+            className="bg-dark-prime/90"
             onBackgroundClick={() => setValue(HomeRendererEnum.DASHBOARD)}
         >
             <UtilityCard className="dark:bg-neutral-950 w-full max-w-[60vw] max-h-[70vh] h-full relative overflow-hidden border dark:border-neutral-800 rounded-3xl">
