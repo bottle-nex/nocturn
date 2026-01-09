@@ -38,7 +38,7 @@ function BigDashboardLeft({
     return (
         <div
             className={cn(
-                'h-full bg-light-base dark:bg-dark-prime/30 shrink-0 w-[300px]',
+                'h-full bg-light-base dark:bg-dark-alpha/30 shrink-0 w-[300px]',
                 'hidden lg:flex flex-col items-start py-6 pt-[3rem]',
             )}
         >
@@ -254,8 +254,8 @@ function NavOption({ icon, label, onClick, isActive, color }: OptionProps) {
         <div
             onClick={onClick}
             className={cn(
-                'flex items-center justify-start gap-3 w-full px-2 h-10 hover:bg-light-base dark:hover:bg-dark-prime rounded-lg cursor-pointer transition-colors',
-                isActive && 'bg-light-base dark:bg-dark-prime',
+                'flex items-center justify-start gap-3 w-full px-2 h-10 hover:bg-light-base dark:hover:bg-dark-alpha rounded-lg cursor-pointer transition-colors',
+                isActive && 'bg-light-base dark:bg-dark-alpha',
             )}
         >
             <div
@@ -267,7 +267,7 @@ function NavOption({ icon, label, onClick, isActive, color }: OptionProps) {
             >
                 {icon}
             </div>
-            <span className="text-sm tracking-wide text-dark-prime dark:text-light-base font-normal whitespace-nowrap overflow-hidden leading-none">
+            <span className="text-sm tracking-wide text-dark-alpha dark:text-light-base font-normal whitespace-nowrap overflow-hidden leading-none">
                 {label}
             </span>
         </div>

@@ -58,13 +58,13 @@ export default function ProfileMenu() {
                             href="https://github.com/celestium-x/triangulum-x/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2.75 text-sm font-light text-dark-base dark:hover:bg-dark-prime/40 hover:bg-gray-200 dark:text-neutral-100 flex justify-between"
+                            className="px-4 py-2.75 text-sm font-light text-dark-base dark:hover:bg-dark-alpha/40 hover:bg-gray-200 dark:text-neutral-100 flex justify-between"
                         >
                             Github
                             <SiGithub size={16} />
                         </Link>
                         <div
-                            className="px-4 py-2.75 text-sm font-normal text-red-500 dark:hover:bg-dark-prime/40 hover:bg-gray-200 flex justify-between cursor-pointer"
+                            className="px-4 py-2.75 text-sm font-normal text-red-500 dark:hover:bg-dark-alpha/40 hover:bg-gray-200 flex justify-between cursor-pointer"
                             onClick={handler}
                         >
                             Sign Out

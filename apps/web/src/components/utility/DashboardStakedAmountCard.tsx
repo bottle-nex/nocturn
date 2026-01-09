@@ -24,7 +24,7 @@ export default function DashboardStakedAmountCard() {
 
     return (
         <div className="flex-1 overflow-hidden w-full">
-            <div className="bg-prime h-full rounded-3xl p-6 relative overflow-hidden select-none">
+            <div className="bg-alpha h-full rounded-3xl p-6 relative overflow-hidden select-none">
                 <div className="flex flex-col justify-between gap-y-2 h-full">
                     <div className="w-full flex items-center justify-between">
                         <div className="flex flex-col items-start gap-y-2">
@@ -40,8 +40,8 @@ export default function DashboardStakedAmountCard() {
                                         'max-w-[10rem] h-10',
                                         'placeholder:tracking-wider placeholder:text-center placeholder:text-gray-400',
                                         'text-center font-mono text-sm text-dark-base dark:text-light-base',
-                                        'border-prime dark:border-prime',
-                                        'focus:ring-2 focus:ring-prime focus:border-prime',
+                                        'border-alpha dark:border-alpha',
+                                        'focus:ring-2 focus:ring-alpha focus:border-alpha',
                                         'bg-light-base dark:bg-dark-base',
                                         'transition-all duration-200',
                                         'shadow-sm hover:shadow-md',

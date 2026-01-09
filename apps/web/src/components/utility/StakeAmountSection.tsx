@@ -7,7 +7,7 @@ export default function StakeAmountSection() {
         <div className="w-full px-2 mt-6 space-y-2">
             <div className="flex flex-col gap-x-1">
                 <div className="flex items-center gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Stake Amount
                     </span>
                     <ToolTipComponent content="Amount of SOL to be staked as quiz reward.">

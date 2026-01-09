@@ -111,7 +111,7 @@ const SpectatorPeoplePanel = forwardRef<HTMLDivElement>((_, ref) => {
                                     target.src = '/default-avatar.png';
                                 }}
                             />
-                            <span className="mt-2 text-[13px] text-dark-prime dark:text-neutral-300 break-words max-w-[5rem]">
+                            <span className="mt-2 text-[13px] text-dark-alpha dark:text-neutral-300 break-words max-w-[5rem]">
                                 {spectator.nickname?.split(' ')[0]}
                             </span>
                         </div>

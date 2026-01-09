@@ -125,7 +125,7 @@ export default function InvertedQuizCards() {
                                     key={idx}
                                     onClick={() => router.push(`/new/${quiz.id}`)}
                                     className={cn(
-                                        'flex items-start justify-between w-full hover:bg-dark-prime/10 hover:dark:bg-neutral-400/10 px-8 py-2 min-h-[60px] relative',
+                                        'flex items-start justify-between w-full hover:bg-dark-alpha/10 hover:dark:bg-neutral-400/10 px-8 py-2 min-h-[60px] relative',
                                         idx === displayQuizs.length - 1 && 'pb-7',
                                         idx === 0 && 'pt-7',
                                     )}

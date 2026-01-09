@@ -51,13 +51,13 @@ export default function DashboardRight(): JSX.Element {
 
     return (
         <motion.div
-            className="h-screen bg-light-base dark:bg-dark-prime/30 rounded-tl-xl flex flex-col w-full"
+            className="h-screen bg-light-base dark:bg-dark-alpha/30 rounded-tl-xl flex flex-col w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
         >
             <div className="h-[5rem] flex-shrink-0" />
-            <div className="flex-1 dark:bg-dark-prime/90 bg-neutral-200 border-l-[1px] border-t-[1px] dark:border-neutral-800 border-neutral-300 rounded-tl-xl min-h-0 overflow-hidden">
+            <div className="flex-1 dark:bg-dark-alpha/90 bg-neutral-200 border-l-[1px] border-t-[1px] dark:border-neutral-800 border-neutral-300 rounded-tl-xl min-h-0 overflow-hidden">
                 {renderDashboard()}
             </div>
         </motion.div>

@@ -59,11 +59,11 @@ function BigQuestionPallete({
     currentQTemplate,
 }: QuestionPallete) {
     return (
-        <UtilityCard className="hidden lg:flex max-w-[10rem] w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-prime p-0 flex-col items-center px-1 border-none h-full">
+        <UtilityCard className="hidden lg:flex max-w-[10rem] w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
                 onClick={addQuestion}
                 className={cn(
-                    'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-prime ',
+                    'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
                     'rounded-full m-0 mt-4 px-20 text-xs font-light flex items-center justify-center gap-x-2',
                 )}
             >
@@ -138,7 +138,7 @@ function SmallQuestionPallete({
         <UtilityCard
             ref={sidebarRef}
             className={cn(
-                'absolute left-0 top-0 z-40 flex max-w-[11rem] w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-prime/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
+                'absolute left-0 top-0 z-40 flex max-w-[11rem] w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
                 `${appearing ? '' : 'hidden'}`,
             )}
         >
@@ -146,7 +146,7 @@ function SmallQuestionPallete({
                 <Button
                     onClick={addQuestion}
                     className={cn(
-                        'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-prime ',
+                        'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
                         'rounded-full m-0 px-20 text-xs font-light flex items-center justify-center gap-x-2',
                     )}
                 >

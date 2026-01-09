@@ -15,7 +15,7 @@ export default function QuizCreationPanels({ quizId }: QuizCreationPanelsProps) 
     }, [quizId, updateQuiz]);
 
     return (
-        <div className="w-full h-full flex flex-row flex-1 dark:bg-dark-prime bg-neutral-200 overflow-hidden">
+        <div className="w-full h-full flex flex-row flex-1 dark:bg-dark-alpha bg-neutral-200 overflow-hidden">
             <QuizLeft />
             <QuizRight />
         </div>
