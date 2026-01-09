@@ -4,6 +4,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import '@theme-toggles/react/css/Classic.css';
 import { Classic } from '@theme-toggles/react';
+import { toast } from 'sonner';
 
 export default function DarkModeToggle() {
     const { resolvedTheme, setTheme } = useTheme();
@@ -20,6 +21,7 @@ export default function DarkModeToggle() {
             <Classic
                 toggled={isDark}
                 toggle={(next) => {
+                    toast.success('toggled');
                     const newVal = typeof next === 'function' ? next(isDark) : next;
                     setTheme(newVal ? 'dark' : 'light');
                 }}

@@ -3,20 +3,11 @@
 import { cn } from '@/lib/utils';
 import { AnimatedList } from '../magicui/animated-list';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { GET_REVIEW_URL } from 'routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-
-interface Review {
-    user: {
-        name: string;
-        image?: string;
-    };
-    comment: string;
-    createdAt: string;
-}
+import HomeDataActions from '@/lib/backend/home/home-data-actioms';
+import { ReviewDTO } from '@nocturn/types';
 
 function truncateChars(text: string, maxChars: number): string {
     if (!text) return '';
@@ -75,22 +66,14 @@ const Notification = ({
 };
 
 export default function ReviewLeftAnimatedList({ className }: { className?: string }) {
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<ReviewDTO[]>([]);
     const { session } = useUserSessionStore();
 
     useEffect(() => {
         async function fetchReviews() {
-            try {
-                const res = await axios.get(`${GET_REVIEW_URL}`, {
-                    headers: {
-                        Authorization: `Bearer ${session?.user.token}`,
-                    },
-                });
-                const data = res.data.response;
-                setReviews(data);
-            } catch (err) {
-                console.error('Error fetching reviews:', err);
-            }
+            const reviews = await HomeDataActions.get_reviews(session?.user.token);
+
+            if (reviews) setReviews(reviews);
         }
         fetchReviews();
     }, [session?.user.token]);
@@ -103,9 +86,9 @@ export default function ReviewLeftAnimatedList({ className }: { className?: stri
                 {reviews.map((item, idx) => (
                     <Notification
                         key={idx}
-                        name={item.user.name}
+                        name={item.user?.name}
                         comment={item.comment}
-                        image={item.user.image}
+                        image={item.user.image || ''}
                         time={format(new Date(item.createdAt), 'MMM d, yyyy')}
                     />
                 ))}

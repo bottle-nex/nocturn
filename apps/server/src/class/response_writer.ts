@@ -14,6 +14,7 @@ export default class ResponseWriter {
             message,
             meta: { timestamp: new Date().toISOString() },
         };
+
         this.send_response(res, response, status_code);
     }
 
