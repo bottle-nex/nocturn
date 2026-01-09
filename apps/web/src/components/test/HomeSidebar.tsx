@@ -82,7 +82,7 @@ export default function HomeSidebar() {
     };
 
     return (
-        <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 bg-light-prime dark:bg-dark-prime border-r">
+        <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 bg-light-alpha dark:bg-dark-alpha border-r">
             <nav className="flex flex-col p-4 gap-1">
                 {sidebarItems.map((item) => {
                     const isActive = activeTab === item.tab;
@@ -94,8 +94,8 @@ export default function HomeSidebar() {
                                 flex items-center justify-start gap-3 px-4 py-2.5 rounded-sm font-medium text-sm bg-transparent hover:bg-transparent shadow-none
                                 transition-colors duration-150
                                 ${isActive
-                                    ? 'text-prime border border-prime'
-                                    : 'text-dark-prime dark:text-light-prime hover:bg-light-base dark:hover:bg-dark-base'
+                                    ? 'text-alpha border border-alpha'
+                                    : 'text-dark-alpha dark:text-light-alpha hover:bg-light-base dark:hover:bg-dark-base'
                                 }
                             `}
                         >

@@ -142,7 +142,7 @@ export default function QuestionsDraft() {
             {/* Base Points */}
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Base Points
                     </span>
                     <ToolTipComponent content="This is the base points for this question">
@@ -166,7 +166,7 @@ export default function QuestionsDraft() {
             {/* Explanation */}
             <div className="w-full px-2 mt-3">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Add Explanation
                     </span>
                     <ToolTipComponent content="Provide a clear explanation visible after the question ends">
@@ -190,7 +190,7 @@ export default function QuestionsDraft() {
             {/* Timer */}
             <div className="w-full px-2 mt-3">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Timer
                     </span>
                     <ToolTipComponent content="Provide a short hint to help users answer this question effectively">
@@ -247,7 +247,7 @@ export default function QuestionsDraft() {
             {/* Hint */}
             <div className="w-full px-2 mt-3">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Add hint
                     </span>
                     <ToolTipComponent content="Provide a short hint to help users answer this question effectively">

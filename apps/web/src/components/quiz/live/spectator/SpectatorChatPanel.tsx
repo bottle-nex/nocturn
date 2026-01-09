@@ -75,7 +75,7 @@ export default function SpectatorChatPanel() {
     return (
         <div className="h-full flex flex-col justify-between">
             <div className="flex justify-between items-center px-7 py-4 border-b">
-                <span className="text-sm dark:text-light-base text-dark-prime text-wrap max-w-[80%]">
+                <span className="text-sm dark:text-light-base text-dark-alpha text-wrap max-w-[80%]">
                     {quiz.title.slice(0, 25)}...
                 </span>
                 <ToolTipComponent content="Click to expand">

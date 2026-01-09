@@ -79,7 +79,7 @@ export default function AdvancedDraft() {
             {/* Auto-Save Component */}
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Auto Save
                     </span>
                     <ToolTipComponent content="Turn this on to save your quiz questions automatically.">
@@ -101,7 +101,7 @@ export default function AdvancedDraft() {
             {/* Point Multiplier Component */}
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Points Multiplier
                     </span>
                     <ToolTipComponent content="Do you want to use point multiplier?">

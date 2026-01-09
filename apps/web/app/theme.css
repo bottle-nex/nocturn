@@ -1,9 +1,15 @@
 @theme {
-    --color-prime: #FA5C5C;
+    --color-alpha: #fa5c5c;
     --color-light-base: #f5f5f5;
-    --color-light-prime: #ffffff;
+    --color-light-alpha: #ffffff;
     --color-dark-base: #161616;
-    --color-dark-prime: #0a0a0a;
+    --color-dark-alpha: #0a0a0a;
+    /* Nocturn Design Language Colors */
+    --color-alpha: #E84545;
+    --color-beta: #903749;
+    --color-charlie: #53354A;
+    --color-delta: #2B2E4A;
+    --color-gamma: #F3ECE7;
 }
 
 @theme {
@@ -38,35 +44,35 @@
 }
 
 .shadow-custom {
-    box-shadow: 0 0 0 0 var(--color-dark-prime);
+    box-shadow: 0 0 0 0 var(--color-dark-alpha);
     transition: box-shadow 0.1s ease-out;
 }
 
 .shadow-custom:hover {
-    box-shadow: 5px 5px 0 0 var(--color-dark-prime);
+    box-shadow: 5px 5px 0 0 var(--color-dark-alpha);
 }
 
 :root.dark .shadow-custom {
-    box-shadow: 0 0 0 0 var(--color-light-prime);
+    box-shadow: 0 0 0 0 var(--color-light-alpha);
 }
 
 :root.dark .shadow-custom:hover {
-    box-shadow: 5px 5px 0 0 var(--color-light-prime);
+    box-shadow: 5px 5px 0 0 var(--color-light-alpha);
 }
 
 .shadow-hard {
-    box-shadow: 3px 3px 0 0 var(--color-dark-prime);
+    box-shadow: 3px 3px 0 0 var(--color-dark-alpha);
     transition: box-shadow 0.1s ease-out;
 }
 
 .shadow-hard:hover {
-    box-shadow: 1px 1px 0 0 var(--color-dark-prime);
+    box-shadow: 1px 1px 0 0 var(--color-dark-alpha);
 }
 
 :root.dark .shadow-hard {
-    box-shadow: 3px 3px 0 0 var(--color-light-prime);
+    box-shadow: 3px 3px 0 0 var(--color-light-alpha);
 }
 
 :root.dark .shadow-hard:hover {
-    box-shadow: 1px 1px 0 0 var(--color-light-prime);
+    box-shadow: 1px 1px 0 0 var(--color-light-alpha);
 }

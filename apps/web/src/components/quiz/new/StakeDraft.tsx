@@ -17,7 +17,7 @@ export default function StakeDraft() {
 
             <div className="w-full px-2">
                 <div className="flex items-center justify-start gap-x-1 mt-2">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Wallet Credentials
                     </span>
                     <ToolTipComponent content="See your wallet credentials here">
