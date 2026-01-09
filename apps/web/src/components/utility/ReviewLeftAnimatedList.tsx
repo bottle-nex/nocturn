@@ -9,15 +9,6 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import HomeDataActions from '@/lib/backend/home/home-data-actioms';
 import { ReviewDTO } from '@nocturn/types';
 
-interface Review {
-    user: {
-        name: string;
-        image?: string;
-    };
-    comment: string;
-    createdAt: string;
-}
-
 function truncateChars(text: string, maxChars: number): string {
     if (!text) return '';
     return text.length <= maxChars ? text : text.slice(0, maxChars) + '...';
@@ -82,8 +73,7 @@ export default function ReviewLeftAnimatedList({ className }: { className?: stri
         async function fetchReviews() {
             const reviews = await HomeDataActions.get_reviews(session?.user.token);
 
-            if(reviews) setReviews(reviews)
-
+            if (reviews) setReviews(reviews);
         }
         fetchReviews();
     }, [session?.user.token]);

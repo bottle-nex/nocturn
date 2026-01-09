@@ -21,7 +21,7 @@ export default function DarkModeToggle() {
             <Classic
                 toggled={isDark}
                 toggle={(next) => {
-                    toast.success('toggled')
+                    toast.success('toggled');
                     const newVal = typeof next === 'function' ? next(isDark) : next;
                     setTheme(newVal ? 'dark' : 'light');
                 }}

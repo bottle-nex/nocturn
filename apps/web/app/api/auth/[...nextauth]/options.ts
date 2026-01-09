@@ -32,11 +32,7 @@ export const authOption: AuthOptions = {
                         account,
                     });
 
-                    console.log("result: ", response);
-
                     const result = response.data;
-
-                    console.log("data: ", response.data);
 
                     if (result?.success) {
                         user.id = result.data.user.id.toString();
