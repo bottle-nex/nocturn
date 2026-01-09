@@ -33,9 +33,7 @@ export default function LogoutModal() {
 
                 <div className="p-6 space-y-6">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl')}>
-                            Nocturn
-                        </span>
+                        <span className={cn('text-black font-bold text-2xl')}>Nocturn</span>
                     </div>
 
                     <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
