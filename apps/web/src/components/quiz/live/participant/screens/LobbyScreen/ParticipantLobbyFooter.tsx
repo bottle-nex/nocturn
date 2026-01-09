@@ -7,9 +7,7 @@ export default function ParticipantLobbyFooter() {
     return (
         <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4">
             <div className="flex items-center gap-x-2 px-5 py-3 z-[20] bg-light-base dark:bg-dark-base rounded-full">
-                <span className="text-dark-alpha dark:text-light-base ml-3">
-                    Ready to begin ?
-                </span>
+                <span className="text-dark-alpha dark:text-light-base ml-3">Ready to begin ?</span>
                 <div className="flex -space-x-2">
                     {participants.slice(0, 3).map((participant, idx) => (
                         <div
