@@ -32,10 +32,15 @@ export const authOption: AuthOptions = {
                         account,
                     });
 
+                    console.log("result: ", response);
+
                     const result = response.data;
+
+                    console.log("data: ", response.data);
+
                     if (result?.success) {
-                        user.id = result.user.id.toString();
-                        user.token = result.token;
+                        user.id = result.data.user.id.toString();
+                        user.token = result.data.token;
                         return true;
                     }
                 }
