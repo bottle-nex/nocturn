@@ -21,8 +21,8 @@ export default async function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body>
-                <ThemeProvider 
-                    attribute="class" 
+                <ThemeProvider
+                    attribute="class"
                     defaultTheme="dark"
                     enableSystem={false}
                     disableTransitionOnChange
