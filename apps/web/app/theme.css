@@ -1,9 +1,9 @@
 @theme {
-    --color-primary: #8e46f3;
+    --color-prime: #FA5C5C;
     --color-light-base: #f5f5f5;
-    --color-light-primary: #fffaf0;
-    --color-dark-base: #121212;
-    --color-dark-primary: #0a0a0a;
+    --color-light-prime: #ffffff;
+    --color-dark-base: #161616;
+    --color-dark-prime: #0a0a0a;
 }
 
 @theme {
@@ -38,99 +38,35 @@
 }
 
 .shadow-custom {
-    box-shadow: 0 0 0 0 black;
+    box-shadow: 0 0 0 0 var(--color-dark-prime);
     transition: box-shadow 0.1s ease-out;
 }
 
 .shadow-custom:hover {
-    box-shadow: 5px 5px 0 0 black;
+    box-shadow: 5px 5px 0 0 var(--color-dark-prime);
 }
 
-.neo-shadow {
-    box-shadow: 4px 4px 0px #000;
+:root.dark .shadow-custom {
+    box-shadow: 0 0 0 0 var(--color-light-prime);
 }
 
-.grid-bg {
-    /* square grid */
-    background-image:
-        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
-
-    /* soft fade at edges */
-    mask-image: radial-gradient(
-        circle at center,
-        rgba(0, 0, 0, 1) 35%,
-        rgba(0, 0, 0, 0.85) 55%,
-        rgba(0, 0, 0, 0.4) 70%,
-        rgba(0, 0, 0, 0) 85%
-    );
-
-    -webkit-mask-image: radial-gradient(
-        circle at center,
-        rgba(0, 0, 0, 1) 35%,
-        rgba(0, 0, 0, 0.85) 55%,
-        rgba(0, 0, 0, 0.4) 70%,
-        rgba(0, 0, 0, 0) 85%
-    );
-
-    opacity: 0;
-    animation: gridFadeIn 1.2s ease-out forwards;
+:root.dark .shadow-custom:hover {
+    box-shadow: 5px 5px 0 0 var(--color-light-prime);
 }
 
-@keyframes gridFadeIn {
-    to {
-        opacity: 1;
-    }
+.shadow-hard {
+    box-shadow: 3px 3px 0 0 var(--color-dark-prime);
+    transition: box-shadow 0.1s ease-out;
 }
 
-.dot-bg {
-    /* dot pattern */
-    background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 2px);
-    background-size: 12px 12px;
-
-    /* TOP + EDGE fade */
-    mask-image:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 1) 18%,
-            rgba(0, 0, 0, 1) 75%,
-            rgba(0, 0, 0, 0.6) 100%
-        ),
-        radial-gradient(
-            circle at center,
-            rgba(0, 0, 0, 1) 35%,
-            rgba(0, 0, 0, 0.85) 55%,
-            rgba(0, 0, 0, 0.4) 70%,
-            rgba(0, 0, 0, 0) 90%
-        );
-
-    mask-composite: intersect;
-    -webkit-mask-composite: source-in;
-
-    -webkit-mask-image:
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0) 0%,
-            rgba(0, 0, 0, 1) 30%,
-            rgba(0, 0, 0, 1) 95%,
-            rgba(0, 0, 0, 0.6) 100%
-        ),
-        radial-gradient(
-            circle at center,
-            rgba(0, 0, 0, 1) 35%,
-            rgba(0, 0, 0, 0.85) 55%,
-            rgba(0, 0, 0, 0.4) 70%,
-            rgba(0, 0, 0, 0) 90%
-        );
-
-    opacity: 0;
-    animation: dotFadeIn 1.2s ease-out forwards;
+.shadow-hard:hover {
+    box-shadow: 1px 1px 0 0 var(--color-dark-prime);
 }
 
-@keyframes dotFadeIn {
-    to {
-        opacity: 1;
-    }
+:root.dark .shadow-hard {
+    box-shadow: 3px 3px 0 0 var(--color-light-prime);
+}
+
+:root.dark .shadow-hard:hover {
+    box-shadow: 1px 1px 0 0 var(--color-light-prime);
 }

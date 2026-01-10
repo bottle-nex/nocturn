@@ -1,5 +1,4 @@
 'use client';
-import { Press_Start_2P } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
@@ -9,11 +8,6 @@ import { useState } from 'react';
 import { Input } from '../ui/input';
 import { X } from 'lucide-react';
 import { Slackey } from 'next/font/google';
-
-export const press = Press_Start_2P({
-    weight: '400',
-    subsets: ['latin'],
-});
 
 export const slackey = Slackey({
     weight: '400',
@@ -42,17 +36,17 @@ export default function Navbar() {
         {
             label: 'Home',
             href: '/',
-            onClick: () => {},
+            onClick: () => { },
         },
         {
             label: 'Features',
             href: '/features',
-            onClick: () => {},
+            onClick: () => { },
         },
         {
             label: 'Pricing',
             href: '/pricing',
-            onClick: () => {},
+            onClick: () => { },
         },
     ];
 
@@ -67,7 +61,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-10 z-10">
+            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-12 z-20">
                 <section>
                     <span className={cn('text-white font-bold text-3xl', slackey.className)}>
                         NOCTURN

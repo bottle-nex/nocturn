@@ -79,15 +79,15 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
             >
                 <div className="flex flex-col gap-y-3 ">
                     <div className="w-[6rem] shrink-0">
-                        <div className="bg-light-base dark:bg-dark-primary/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                        <div className="bg-light-base dark:bg-dark-prime/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
                             {option_one.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10 cursor-pointer',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-prime/10 cursor-pointer',
+                                            `${state === option.type && 'hover:bg-purple-700/10 bg-prime/10 border border-purple-800'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">
@@ -109,8 +109,8 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10 cursor-pointer',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-prime/10 cursor-pointer',
+                                            `${state === option.type && 'hover:bg-purple-700/10 bg-prime/10 border border-purple-800'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">
@@ -151,8 +151,8 @@ export function SmallQuizRight(): JSX.Element {
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
+                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-prime/10',
+                                            `${state === option.type && 'hover:bg-purple-700/10 bg-prime/10 border border-purple-800'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">
@@ -174,8 +174,8 @@ export function SmallQuizRight(): JSX.Element {
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-primary/10',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-primary/10 border border-purple-800'}`,
+                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-prime/10',
+                                            `${state === option.type && 'hover:bg-purple-700/10 bg-prime/10 border border-purple-800'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">

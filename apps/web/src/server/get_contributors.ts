@@ -4,19 +4,19 @@ import { ALL_CONTRIBUTORS_DETAILS_URL } from 'routes/api_routes';
 
 export async function getAllContributors() {
     try {
-        const { data } = await axios.get(ALL_CONTRIBUTORS_DETAILS_URL, {
-            headers: {
-                Accept: 'application/vnd.github+json',
-                ...(process.env.GITHUB_TOKEN && {
-                    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-                }),
-            },
-        });
+        const headers: Record<string, string> = {
+            Accept: 'application/vnd.github+json',
+        };
 
+        const token = process.env.GITHUB_TOKEN;
+        if (token && token.startsWith('ghp_')) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+
+        const { data } = await axios.get(ALL_CONTRIBUTORS_DETAILS_URL, { headers });
         const botPatterns = [
             /bot$/i, // ends with 'bot'
-            /^.*bot.*$/i, // contains 'bot' anywhere
-            /temp/i, // contains 'temp'
+            /\[bot\]$/i, // ends with '[bot]'
             /^dependabot/i, // dependabot variations
             /^github-actions/i, // github actions
             /^renovate/i, // renovate bot
@@ -33,7 +33,8 @@ export async function getAllContributors() {
             const isBot = botPatterns.some((pattern) => pattern.test(contributor.login));
             return !isBot;
         });
-    } catch {
+    } catch (error) {
+        console.error('Failed to fetch contributors:', error);
         return [];
     }
 }

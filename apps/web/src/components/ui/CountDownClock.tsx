@@ -93,7 +93,7 @@ export default function CountDownClock(props: CountDownClockProps) {
             style={{ color: template?.text_color }}
             className={cn(
                 'flex items-center space-x-2 text-4xl font-bold text-white rounded-xl px-4 py-3',
-                // 'bg-light-base dark:bg-dark-primary dark:text-light-base text-dark-primary',
+                // 'bg-light-base dark:bg-dark-prime dark:text-light-base text-dark-prime',
             )}
         >
             {/* Minutes */}

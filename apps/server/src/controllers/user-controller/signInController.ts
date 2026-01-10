@@ -6,7 +6,7 @@ import ResponseWriter from '../../class/response_writer';
 
 export default async function signInController(req: Request, res: Response) {
     const { user } = req.body;
-
+    console.log('Sign-in attempt for user:', user);
     try {
         const existingUser = await prisma.user.findUnique({
             where: {

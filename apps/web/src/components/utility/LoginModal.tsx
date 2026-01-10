@@ -38,7 +38,7 @@ export default function LoginModal({ opensignInModal, setOpenSignInModal }: Logi
                         {/* Google Sign-in Button */}
                         <Button
                             onClick={() => signinHandler('GOOGLE')}
-                            className="w-full flex items-center justify-center gap-3 px-6 py-[22px] text-sm font-medium bg-neutral-200 hover:bg-neutral-200/70 dark:bg-dark-primary/30 hover:dark:bg-dark-primary/40 rounded-md border-[1px] border-neutral-300 dark:border-neutral-700 cursor-pointer"
+                            className="w-full flex items-center justify-center gap-3 px-6 py-[22px] text-sm font-medium bg-neutral-200 hover:bg-neutral-200/70 dark:bg-dark-prime/30 hover:dark:bg-dark-prime/40 rounded-md border-[1px] border-neutral-300 dark:border-neutral-700 cursor-pointer"
                         >
                             <Image
                                 src="/images/google.png"
@@ -55,9 +55,9 @@ export default function LoginModal({ opensignInModal, setOpenSignInModal }: Logi
 
                         <Button
                             onClick={() => signinHandler('GITHUB')}
-                            className="w-full flex items-center justify-center gap-3 px-6 py-[22px] text-sm font-medium bg-neutral-200 hover:bg-neutral-200/70 dark:bg-dark-primary/30 hover:dark:bg-dark-primary/40 rounded-md border-[1px] border-neutral-300 dark:border-neutral-700 cursor-pointer"
+                            className="w-full flex items-center justify-center gap-3 px-6 py-[22px] text-sm font-medium bg-neutral-200 hover:bg-neutral-200/70 dark:bg-dark-prime/30 hover:dark:bg-dark-prime/40 rounded-md border-[1px] border-neutral-300 dark:border-neutral-700 cursor-pointer"
                         >
-                            <FaGithub className="dark:text-light-base text-dark-primary text-[28px]" />
+                            <FaGithub className="dark:text-light-base text-dark-prime text-[28px]" />
                             <span className="text-white text-xs">Sign in with GitHub</span>
                         </Button>
 

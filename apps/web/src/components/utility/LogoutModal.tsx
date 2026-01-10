@@ -3,7 +3,6 @@ import OpacityBackground from './OpacityBackground';
 import { Button } from '../ui/button';
 import { X, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { press } from '../test/Navbar';
 import { signOut } from 'next-auth/react';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
@@ -34,7 +33,7 @@ export default function LogoutModal() {
 
                 <div className="p-6 space-y-6">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl', press.className)}>
+                        <span className={cn('text-black font-bold text-2xl')}>
                             Nocturn
                         </span>
                     </div>

@@ -149,7 +149,7 @@ export function SettingRow({
         <div className="flex justify-between items-center">
             <div className="flex flex-col gap-y-0.5">
                 <div className="flex items-center gap-x-1">
-                    <span className="text-sm font-normal text-dark-primary dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
                         {title}
                     </span>
                     <ToolTipComponent content={tooltip}>
