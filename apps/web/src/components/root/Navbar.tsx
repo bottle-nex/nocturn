@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Input } from '../ui/input';
 import { X } from 'lucide-react';
 import { Slackey } from 'next/font/google';
+import { fontAudio } from 'app/fonts/google_fonts';
 
 export const slackey = Slackey({
     weight: '400',
@@ -61,10 +62,10 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-12 z-20">
+            <nav className="h-20 bg-black border-b border-black w-full fixed top-0 flex justify-between items-center pl-10 z-30">
                 <section>
-                    <span className={cn('text-white font-bold text-3xl', slackey.className)}>
-                        NOCTURN
+                    <span className={cn('text-white font-bold text-3xl', fontAudio.className)}>
+                        nocturn
                     </span>
                 </section>
                 <section className="h-full flex items-center justify-end">
@@ -82,13 +83,13 @@ export default function Navbar() {
                     </div>
                     <Button
                         onClick={handleAuthClick}
-                        className="h-full rounded-none bg-[#FF3F7F] hover:bg-white px-6 text-lg border-r border-black"
+                        className="h-full rounded-none bg-alpha hover:bg-white hover:text-black px-6 text-lg border-r border-black"
                     >
                         {isLoggedIn ? 'Logout' : 'Login'}
                     </Button>
                     <Button
                         onClick={joinRoomHandler}
-                        className="h-full rounded-none bg-[#22a094] hover:bg-white px-6 text-lg"
+                        className="h-full rounded-none bg-eta hover:bg-white px-6 text-lg text-black"
                     >
                         JOIN QUIZ
                     </Button>

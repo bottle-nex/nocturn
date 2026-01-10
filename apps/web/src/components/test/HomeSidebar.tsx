@@ -64,7 +64,7 @@ export default function HomeSidebar() {
     //             return "Select a tab";
     //     }
     // };
-    const renderContent = () => {
+    const _renderContent = () => {
         switch (activeTab) {
             case SidebarTab.HOME:
                 return "Home Content";
