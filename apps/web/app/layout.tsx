@@ -27,7 +27,7 @@ export default async function RootLayout({
                     enableSystem={false}
                     disableTransitionOnChange
                 >
-                    <Toaster theme="dark" />
+                    <ToasterProvider />
                     <Providers>{children}</Providers>
                     <SessionSetter session={session} />
                 </ThemeProvider>
