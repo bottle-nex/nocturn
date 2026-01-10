@@ -36,17 +36,17 @@ export default function Navbar() {
         {
             label: 'Home',
             href: '/',
-            onClick: () => { },
+            onClick: () => {},
         },
         {
             label: 'Features',
             href: '/features',
-            onClick: () => { },
+            onClick: () => {},
         },
         {
             label: 'Pricing',
             href: '/pricing',
-            onClick: () => { },
+            onClick: () => {},
         },
     ];
 

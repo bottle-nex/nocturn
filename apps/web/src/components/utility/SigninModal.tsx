@@ -35,9 +35,7 @@ export default function SigninModal() {
 
                 <div className="p-6 space-y-4">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl')}>
-                            Nocturn
-                        </span>
+                        <span className={cn('text-black font-bold text-2xl')}>Nocturn</span>
                     </div>
                     <p className="text-neutral-600 text-sm mb-6">
                         Choose your preferred sign in method

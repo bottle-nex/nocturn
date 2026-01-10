@@ -19,11 +19,11 @@ export default function LandingPageCards() {
                             unoptimized
                         />
                     </div>
-                    <div className="absolute bg-prime inset-0 w-[85%] rounded-tr-[4rem] z-10">
-                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-prime h-full -mt-4">
+                    <div className="absolute bg-alpha inset-0 w-[85%] rounded-tr-[4rem] z-10">
+                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-alpha h-full -mt-4">
                             <MdChevronRight
                                 size={44}
-                                className="absolute top-10 right-8 dark:text-dark-prime text-light-base -rotate-45 bg-neutral-400/30 rounded-full p-1 cursor-pointer"
+                                className="absolute top-10 right-8 dark:text-dark-alpha text-light-base -rotate-45 bg-neutral-400/30 rounded-full p-1 cursor-pointer"
                             />
                             <div className="relative z-50 text-3xl font-bold">Quiz Builder</div>
                             <div className="relative z-50 text-sm font-light">
@@ -45,10 +45,10 @@ export default function LandingPageCards() {
                         />
                     </div>
                     <div className="absolute bg-orange-500 inset-0 w-[85%] rounded-tr-[4rem] z-10">
-                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-prime h-full -mt-4">
+                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-alpha h-full -mt-4">
                             <DiCoda
                                 size={32}
-                                className="absolute top-10 right-10 dark:text-dark-prime text-light-base"
+                                className="absolute top-10 right-10 dark:text-dark-alpha text-light-base"
                             />
                             <div className="relative z-50 text-3xl font-bold">
                                 Performance Insights
@@ -74,10 +74,10 @@ export default function LandingPageCards() {
                         />
                     </div>
                     <div className="absolute dark:bg-neutral-300 bg-neutral-800 inset-0 w-[85%] rounded-tr-[4rem] z-10">
-                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-prime h-full -mt-4">
+                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-alpha h-full -mt-4">
                             <MdChevronRight
                                 size={44}
-                                className="absolute top-10 right-8 dark:text-dark-prime text-light-base -rotate-45 bg-neutral-400/30 rounded-full p-1 cursor-pointer"
+                                className="absolute top-10 right-8 dark:text-dark-alpha text-light-base -rotate-45 bg-neutral-400/30 rounded-full p-1 cursor-pointer"
                             />
                             <div className="relative z-50 text-3xl font-bold">Quiz Builder</div>
                             <div className="relative z-50 text-sm font-light">
@@ -99,10 +99,10 @@ export default function LandingPageCards() {
                         />
                     </div>
                     <div className="absolute bg-emerald-500 inset-0 w-[85%] rounded-tr-[4rem] z-10">
-                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-prime h-full -mt-4">
+                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-alpha h-full -mt-4">
                             <DiCoda
                                 size={32}
-                                className="absolute top-10 right-10 dark:text-dark-prime text-light-base"
+                                className="absolute top-10 right-10 dark:text-dark-alpha text-light-base"
                             />
                             <div className="relative z-50 text-3xl font-bold">
                                 Performance Insights
@@ -125,10 +125,10 @@ export default function LandingPageCards() {
                         />
                     </div>
                     <div className="absolute bg-blue-500 inset-0 w-[85%] rounded-tr-[4rem] z-10">
-                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-prime h-full -mt-4">
+                        <div className="relative flex flex-col items-start justify-center px-12 gap-y-6 text-light-base dark:text-dark-alpha h-full -mt-4">
                             <DiCoda
                                 size={32}
-                                className="absolute top-10 right-10 dark:text-dark-prime text-light-base"
+                                className="absolute top-10 right-10 dark:text-dark-alpha text-light-base"
                             />
                             <div className="relative z-50 text-3xl font-bold">
                                 Performance Insights

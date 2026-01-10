@@ -57,7 +57,7 @@ export default async function Page() {
                                     'rotate-6 text-3xl font-black text-black px-6 py-4 bg-[#fff200]',
                                     'border-4 border-black shadow-hard',
                                     'transition-transform duration-200 ease-out',
-                                    'hover:translate-x-0.5 hover:translate-y-0.5'
+                                    'hover:translate-x-0.5 hover:translate-y-0.5',
                                 )}
                             >
                                 THANK YOU!
@@ -71,7 +71,7 @@ export default async function Page() {
                             className={cn(
                                 'bg-white border-4 border-black px-8 py-4 shadow-hard',
                                 'transition-transform duration-200 ease-out',
-                                'hover:translate-x-0.5 hover:translate-y-0.5'
+                                'hover:translate-x-0.5 hover:translate-y-0.5',
                             )}
                         >
                             <span className="text-4xl font-black text-black block">
@@ -85,11 +85,14 @@ export default async function Page() {
                             className={cn(
                                 'bg-[#22a094] border-4 border-black px-8 py-4 shadow-hard',
                                 'transition-transform duration-200 ease-out',
-                                'hover:translate-x-0.5 hover:translate-y-0.5'
+                                'hover:translate-x-0.5 hover:translate-y-0.5',
                             )}
                         >
                             <span className="text-4xl font-black text-white block">
-                                {contributors.reduce((acc: number, c: Contributor) => acc + c.contributions, 0)}
+                                {contributors.reduce(
+                                    (acc: number, c: Contributor) => acc + c.contributions,
+                                    0,
+                                )}
                             </span>
                             <span className="text-xs font-bold text-black/60 uppercase tracking-wider">
                                 Total Commits
@@ -103,7 +106,7 @@ export default async function Page() {
                 {contributors.length === 0 ? (
                     <div
                         className={cn(
-                            'bg-[#FF3F7F] border-4 border-black p-12 text-center shadow-hard'
+                            'bg-[#FF3F7F] border-4 border-black p-12 text-center shadow-hard',
                         )}
                     >
                         <p className="text-2xl font-black text-black">No contributors found</p>
@@ -130,7 +133,7 @@ export default async function Page() {
                                         idx % 5 === 1 && 'bg-[#FF3F7F]',
                                         idx % 5 === 2 && 'bg-[#22a094]',
                                         idx % 5 === 3 && 'bg-[#90a7ed]',
-                                        idx % 5 === 4 && 'bg-[#FFC400]'
+                                        idx % 5 === 4 && 'bg-[#FFC400]',
                                     )}
                                 >
                                     {/* Avatar */}
@@ -147,7 +150,7 @@ export default async function Page() {
                                     <div
                                         className={cn(
                                             'absolute inset-0 bg-black/90 flex flex-col items-center justify-center',
-                                            'opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+                                            'opacity-0 group-hover:opacity-100 transition-opacity duration-200',
                                         )}
                                     >
                                         <span className="text-white font-bold text-sm truncate max-w-[90%]">
@@ -163,7 +166,7 @@ export default async function Page() {
                                 <div
                                     className={cn(
                                         'mt-2 bg-black text-white px-3 py-1.5 text-xs font-bold',
-                                        'truncate text-center uppercase tracking-wider'
+                                        'truncate text-center uppercase tracking-wider',
                                     )}
                                 >
                                     {contributor.login}
@@ -190,7 +193,7 @@ export default async function Page() {
                             'font-black text-lg uppercase tracking-wider',
                             'border-4 border-black shadow-custom',
                             'transition-all duration-200 ease-out',
-                            'hover:bg-[#FF3F7F] hover:text-black'
+                            'hover:bg-[#FF3F7F] hover:text-black',
                         )}
                     >
                         View on GitHub
@@ -204,9 +207,7 @@ export default async function Page() {
                     <span className={cn('text-white font-bold text-xl', press.className)}>
                         Nocturn
                     </span>
-                    <span className="text-white/60 text-sm">
-                        Built with love by the community
-                    </span>
+                    <span className="text-white/60 text-sm">Built with love by the community</span>
                 </div>
             </footer>
         </main>

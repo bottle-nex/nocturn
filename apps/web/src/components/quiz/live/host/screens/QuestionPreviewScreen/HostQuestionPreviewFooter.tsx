@@ -236,7 +236,7 @@ export default function HostQuestionPreviewFooter() {
                         />
                         {openExplanation && currentQuestion?.hint && (
                             <UtilityCard className="absolute bottom-10 min-w-[16rem] w-fit px-4 py-2 text-wrap">
-                                <div className="text-sm tracking-wide dark:text-light-base text-dark-prime font-light">
+                                <div className="text-sm tracking-wide dark:text-light-base text-dark-alpha font-light">
                                     {currentQuestion?.hint}
                                 </div>
                             </UtilityCard>

@@ -1,16 +1,16 @@
-"use client";
-import ProfileMenu from "../utility/ProfileMenu";
-import { cn } from "@/lib/utils";
-import { Slackey } from "next/font/google";
-import { Button } from "../ui/button";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useState } from "react";
-import { Circle } from "lucide-react";
-import { WalletPanel } from "../utility/WalletPanel";
-import { FaWallet } from "react-icons/fa";
-import DarkModeToggle from "../base/DarkModeToggle";
-import { useRouter } from "next/navigation";
-import { v4 as uuid } from 'uuid'
+'use client';
+import ProfileMenu from '../utility/ProfileMenu';
+import { cn } from '@/lib/utils';
+import { Slackey } from 'next/font/google';
+import { Button } from '../ui/button';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useState } from 'react';
+import { Circle } from 'lucide-react';
+import { WalletPanel } from '../utility/WalletPanel';
+import { FaWallet } from 'react-icons/fa';
+import DarkModeToggle from '../base/DarkModeToggle';
+import { useRouter } from 'next/navigation';
+import { v4 as uuid } from 'uuid';
 
 export const slackey = Slackey({
     weight: '400',
@@ -27,11 +27,9 @@ export default function HomeNavbar() {
         router.push(`new/${newQuizUuid}`);
     }
     return (
-        <nav className="h-20 dark:bg-dark-prime bg-light-prime text-dark-prime dark:text-light-prime w-full fixed top-0 flex justify-between items-center px-12 z-20 border-b">
+        <nav className="h-20 dark:bg-dark-alpha bg-light-alpha text-dark-alpha dark:text-light-alpha w-full fixed top-0 flex justify-between items-center px-12 z-20 border-b">
             <section>
-                <span className={cn('font-bold text-3xl', slackey.className)}>
-                    NOCTURN
-                </span>
+                <span className={cn('font-bold text-3xl', slackey.className)}>NOCTURN</span>
             </section>
             <section className="flex items-center gap-x-4">
                 <DarkModeToggle />
@@ -50,18 +48,16 @@ export default function HomeNavbar() {
                     className={cn(
                         'font-bold text-[13px] tracking-wide flex items-center gap-x-2 rounded-full',
                         'transition-all duration-100',
-                        'bg-prime hover:bg-prime dark:bg-prime dark:hover:bg-prime text-light-prime',
+                        'bg-alpha hover:bg-alpha dark:bg-alpha dark:hover:bg-alpha text-light-alpha',
                     )}
                     onClick={() => setWalletPanel(!walletPanel)}
                 >
                     <FaWallet className="w-4 h-4" />
-                    {wallet && (
-                        <Circle className="w-2 h-2 fill-green-500 text-green-500" />
-                    )}
+                    {wallet && <Circle className="w-2 h-2 fill-green-500 text-green-500" />}
                 </Button>
                 <ProfileMenu />
             </section>
             {walletPanel && <WalletPanel close={() => setWalletPanel(false)} />}
         </nav>
-    )
+    );
 }

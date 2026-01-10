@@ -14,7 +14,7 @@ export default function WaitingLobbyHostRight() {
     const [name, setName] = useState(participantData?.nickname);
 
     return (
-        <div className="w-[40vw] max-w-[40vw] h-full flex flex-col justify-between bg-light-base dark:bg-neutral-900 rounded-l-xl border-l dark:border-neutral-700 border-neutral-200 z-[20] shadow-2xl px-6 py-6 dark:text-neutral-300 text-dark-prime">
+        <div className="w-[40vw] max-w-[40vw] h-full flex flex-col justify-between bg-light-base dark:bg-neutral-900 rounded-l-xl border-l dark:border-neutral-700 border-neutral-200 z-[20] shadow-2xl px-6 py-6 dark:text-neutral-300 text-dark-alpha">
             <div className="flex-shrink-0">
                 <h2 className="text-lg font-bold mb-2"># Quiz Details</h2>
                 <div className="text-sm font-normal tracking-wide mt-3">{quiz?.title}</div>

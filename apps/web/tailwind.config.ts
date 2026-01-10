@@ -14,6 +14,10 @@ const config: Config = {
             fontFamily: {
                 nocturn: ['Nocturn', 'sans-serif'],
             },
+            borderRadius: {
+                base: '4px',
+                prime: '8px',
+            },
             colors: {
                 dark: {
                     base: '#242424',

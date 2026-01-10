@@ -103,7 +103,7 @@ function BigHomeNavbar({
                             'font-light text-[13px] tracking-wide flex items-center gap-x-2 transition-transform hover:-translate-y-0.5 !cursor-pointer',
                             isWalletConnected
                                 ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
-                                : 'text-prime border-prime hover:!text-prime ',
+                                : 'text-alpha border-alpha hover:!text-alpha ',
                         )}
                         onClick={onWalletClick}
                     >
@@ -168,7 +168,7 @@ function SmallHomeNavbar({
                             'flex items-center gap-x-2 font-light text-[13px] tracking-wide transition-transform hover:-translate-y-0.5 !cursor-pointer',
                             isWalletConnected
                                 ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
-                                : 'text-prime border-prime hover:!text-prime ',
+                                : 'text-alpha border-alpha hover:!text-alpha ',
                         )}
                         onClick={onWalletClick}
                     >

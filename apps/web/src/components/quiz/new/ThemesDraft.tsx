@@ -24,7 +24,7 @@ export default function ThemesDraft() {
             </div>
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
-                    <span className="text-sm font-normal text-dark-prime dark:text-light-base">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Themes
                     </span>
                     <ToolTipComponent content="Enable spectator mode for your audience to ask questions and interact with you">

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import UtilityCard from './UtilityCard';
 import LogoutModal from './LogoutModal';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { IoChevronDownSharp } from "react-icons/io5";
+import { IoChevronDownSharp } from 'react-icons/io5';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { SiGithub } from 'react-icons/si';
@@ -58,13 +58,13 @@ export default function ProfileMenu() {
                             href="https://github.com/celestium-x/triangulum-x/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2.75 text-sm font-light text-dark-base dark:hover:bg-dark-prime/40 hover:bg-gray-200 dark:text-neutral-100 flex justify-between"
+                            className="px-4 py-2.75 text-sm font-light text-dark-base dark:hover:bg-dark-alpha/40 hover:bg-gray-200 dark:text-neutral-100 flex justify-between"
                         >
                             Github
                             <SiGithub size={16} />
                         </Link>
                         <div
-                            className="px-4 py-2.75 text-sm font-normal text-red-500 dark:hover:bg-dark-prime/40 hover:bg-gray-200 flex justify-between cursor-pointer"
+                            className="px-4 py-2.75 text-sm font-normal text-red-500 dark:hover:bg-dark-alpha/40 hover:bg-gray-200 flex justify-between cursor-pointer"
                             onClick={handler}
                         >
                             Sign Out
@@ -78,7 +78,10 @@ export default function ProfileMenu() {
     return (
         <div className="relative" ref={triggerRef}>
             {session?.user.image && (
-                <div onClick={() => setDropdown(true)} className='flex items-center justify-end gap-x-3 hover:bg-dark-base px-3 py-2 cursor-pointer'>
+                <div
+                    onClick={() => setDropdown(true)}
+                    className="flex items-center justify-end gap-x-3 hover:bg-dark-base px-3 py-2 cursor-pointer"
+                >
                     <Image
                         src={session?.user.image}
                         width={32}
@@ -86,7 +89,7 @@ export default function ProfileMenu() {
                         alt="user-logo"
                         className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
                     />
-                    <span className='font-semibold'>{session?.user.name}</span>
+                    <span className="font-semibold">{session?.user.name}</span>
                     <IoChevronDownSharp />
                 </div>
             )}

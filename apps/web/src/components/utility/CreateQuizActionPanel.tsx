@@ -48,7 +48,7 @@ export default function CreateQuizActionPanel({
                         key={action.name}
                         onClick={() => handleActionClick(action)}
                         className={cn(
-                            'flex flex-row items-start w-full gap-4 bg-transparent dark:hover:bg-dark-prime/20 hover:bg-dark-prime/10 text-left rounded-none border-none outline-none shadow-none focus:outline-none focus:ring-0 cursor-pointer',
+                            'flex flex-row items-start w-full gap-4 bg-transparent dark:hover:bg-dark-alpha/20 hover:bg-dark-alpha/10 text-left rounded-none border-none outline-none shadow-none focus:outline-none focus:ring-0 cursor-pointer',
                             index === 0 ? 'px-6 py-3 pt-5' : 'px-6 py-3',
                             index === actions.length - 1 ? 'pb-5' : '',
                         )}
