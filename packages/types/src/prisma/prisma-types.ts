@@ -175,6 +175,16 @@ export interface EliminationType {
   gameSession?: GameSessionType;
 }
 
+export interface ReviewType {
+  id: string;
+  userId: string;
+  user: UserType;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  updateAt: Date;
+}
+
 export enum TemplateEnum {
   CLASSIC = "CLASSIC",
   MODERN = "MODERN",

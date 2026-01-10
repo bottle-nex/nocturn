@@ -33,6 +33,7 @@ export const authOption: AuthOptions = {
                     });
 
                     const result = response.data;
+
                     if (result?.success) {
                         user.id = result.data.user.id.toString();
                         user.token = result.data.token;

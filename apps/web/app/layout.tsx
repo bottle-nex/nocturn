@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOption } from './api/auth/[...nextauth]/options';
 import SessionSetter from '@/components/utility/SessionSetter';
-import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import Providers from './providers';
+import ToasterProvider from '../src/providers/ToasterProvider';
 
 export const metadata: Metadata = {
     title: 'Nocturn',

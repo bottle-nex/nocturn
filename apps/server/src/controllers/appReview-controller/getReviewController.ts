@@ -1,6 +1,7 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
+import { ReviewDTO } from '@nocturn/types';
 
 export default async function getReviewController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -9,19 +10,16 @@ export default async function getReviewController(req: Request, res: Response) {
     }
 
     try {
-        const response = await prisma.review.findMany({
+        const response: ReviewDTO[] = await prisma.review.findMany({
             orderBy: {
                 createdAt: 'desc',
             },
             select: {
-                rating: true,
                 createdAt: true,
                 comment: true,
                 user: {
                     select: {
-                        id: true,
                         name: true,
-                        email: true,
                         image: true,
                     },
                 },
