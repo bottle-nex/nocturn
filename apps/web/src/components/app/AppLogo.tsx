@@ -23,8 +23,8 @@ export default function AppLogo({ className }: { className?: string }) {
             >
                 N
                 {
-                    <span className="translate-y-[7px]">
-                        <NocturnLogo className="mb-[9px]" />
+                    <span className="translate-y-1.75">
+                        <NocturnLogo className="mb-2.25" />
                     </span>
                 }
                 turn

@@ -251,7 +251,7 @@ importers:
         specifier: ^1.98.4
         version: 1.98.4(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)
       '@tailwindcss/postcss':
-        specifier: ^4.1.11
+        specifier: ^4.1.18
         version: 4.1.18
       '@theme-toggles/react':
         specifier: ^4.1.0
@@ -353,7 +353,7 @@ importers:
         specifier: ^3.3.1
         version: 3.4.0
       tailwindcss:
-        specifier: ^4.1.11
+        specifier: ^4.1.18
         version: 4.1.18
       three:
         specifier: ^0.179.1
