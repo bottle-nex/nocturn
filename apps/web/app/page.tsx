@@ -1,6 +1,6 @@
 import { Features } from '@/components/base/Features';
 import Footer from '@/components/root/Footer';
-import Navbar from '@/components/root/Navbar';
+import Navbar from '@/components/root/Navbar2';
 import LandingSectionTest from '@/components/test/LandingSectionTest';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
 
