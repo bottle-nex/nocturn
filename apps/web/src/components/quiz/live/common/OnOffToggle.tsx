@@ -21,7 +21,7 @@ export default function OnOffToggle({ value, onChange }: ToggleSwitchProps) {
                 <span
                     className={`transition-colors duration-300 ${
                         !value
-                            ? 'text-white dark:text-black'
+                            ? 'text-white dark:text-tprime'
                             : 'text-neutral-500 dark:text-neutral-300'
                     }`}
                 >
@@ -33,7 +33,7 @@ export default function OnOffToggle({ value, onChange }: ToggleSwitchProps) {
                 <span
                     className={`transition-colors duration-300 ${
                         value
-                            ? 'text-white dark:text-black'
+                            ? 'text-white dark:text-tprime'
                             : 'text-neutral-500 dark:text-neutral-300'
                     }`}
                 >

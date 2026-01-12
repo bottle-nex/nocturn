@@ -5,12 +5,14 @@
     --color-dark-base: #161616;
     --color-dark-alpha: #0a0a0a;
     /* Nocturn Design Language Colors */
-    --color-alpha: #E84545;
+    --color-alpha: #e84545;
     --color-beta: #903749;
-    --color-charlie: #53354A;
-    --color-delta: #2B2E4A;
-    --color-gamma: #F3ECE7;
-    --color-eta: #f6c453
+    --color-charlie: #53354a;
+    --color-delta: #2b2e4a;
+    --color-gamma: #f3ece7;
+    --color-eta: #f6c453;
+
+    --color-tprime: #2c2e2a;
 }
 
 @theme {
@@ -78,42 +80,53 @@
     box-shadow: 1px 1px 0 0 var(--color-light-alpha);
 }
 
-/* -------------------- Shadow Button -------------------- */
+/* -------------------- shadow button -------------------- */
 .shadow-button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-  /* background-color: #f6c453; */
+    /* background-color: #f6c453; */
 
-  cursor: pointer;
-  user-select: none;
+    cursor: pointer;
+    user-select: none;
 
-  /* soft offset shadow */
-  box-shadow: 4px 4px 0 0 #000;
+    /* soft offset shadow */
+    box-shadow: 4px 4px 0 0 #000;
 
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 /* Hover = lift */
 .shadow-button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 #000;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 #000;
 }
 
 /* Active / Click = press */
 .shadow-button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 0 #000;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 #000;
 }
 
 /* Keyboard accessibility */
 .shadow-button:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px #000,
-    4px 4px 0 0 #000;
+    outline: none;
+    box-shadow:
+        0 0 0 2px #000,
+        4px 4px 0 0 #000;
+}
+
+/* -------------------- noise bg -------------------- */
+.noise-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 1;
 }

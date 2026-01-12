@@ -52,10 +52,10 @@ export function Features() {
         <div className="w-full bg-[#90a7ed] h-[calc(100vh-160px)] py-12 flex flex-col justify-center">
             <div className="max-w-7xl mx-auto">
                 <div className="relative mx-auto w-fit flex items-center justify-center">
-                    <div className="text-center text-6xl font-semibold w-full text-black">
+                    <div className="text-center text-6xl font-semibold w-full text-tprime">
                         Features of Nocturn
                     </div>
-                    <div className="uppercase text-black absolute -right-58 z-10 cursor-pointer rotate-10 text-4xl font-black shadow-hard border-2 border-black transition-transform duration-200 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:scale-99 px-3 py-2 bg-white">
+                    <div className="uppercase text-tprime absolute -right-58 z-10 cursor-pointer rotate-10 text-4xl font-black shadow-hard border-2 border-black transition-transform duration-200 ease-out hover:translate-x-0.5 hover:translate-y-0.5 hover:scale-99 px-3 py-2 bg-white">
                         HAVE FUN!
                     </div>
                 </div>
@@ -69,8 +69,8 @@ export function Features() {
                         )}
                         key={idx}
                     >
-                        <h1 className="text-2xl font-bold text-black">{feature.title}</h1>
-                        <span className="text-base font-normal text-black">
+                        <h1 className="text-2xl font-bold text-tprime">{feature.title}</h1>
+                        <span className="text-base font-normal text-tprime">
                             {feature.description}
                         </span>
                     </div>

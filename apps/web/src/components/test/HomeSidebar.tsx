@@ -67,17 +67,17 @@ export default function HomeSidebar() {
     const _renderContent = () => {
         switch (activeTab) {
             case SidebarTab.HOME:
-                return "Home Content";
+                return 'Home Content';
             case SidebarTab.TEAM:
-                return "Team Content";
+                return 'Team Content';
             case SidebarTab.ANALYTICS:
-                return "Analytics Content";
+                return 'Analytics Content';
             case SidebarTab.DOCUMENTS:
-                return "Documents Content";
+                return 'Documents Content';
             case SidebarTab.SETTINGS:
-                return "Settings Content";
+                return 'Settings Content';
             default:
-                return "Select a tab";
+                return 'Select a tab';
         }
     };
 

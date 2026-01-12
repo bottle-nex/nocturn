@@ -27,7 +27,7 @@ export default function SigninModal() {
                         title="Close"
                         aria-label="Close modal"
                         onClick={() => setOpenSigninModal(false)}
-                        className="text-white hover:text-black transition-colors cursor-pointer"
+                        className="text-white hover:text-tprime transition-colors cursor-pointer"
                     >
                         <X size={24} strokeWidth={2.5} />
                     </button>
@@ -35,14 +35,14 @@ export default function SigninModal() {
 
                 <div className="p-6 space-y-4">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl')}>Nocturn</span>
+                        <span className={cn('text-tprime font-bold text-2xl')}>Nocturn</span>
                     </div>
                     <p className="text-neutral-600 text-sm mb-6">
                         Choose your preferred sign in method
                     </p>
 
                     <Button
-                        className="w-full rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-black py-6 font-medium"
+                        className="w-full rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-tprime py-6 font-medium"
                         onClick={() => singinHandler('github')}
                     >
                         <Image
@@ -56,7 +56,7 @@ export default function SigninModal() {
                     </Button>
 
                     <Button
-                        className="w-full rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-black py-6 font-medium"
+                        className="w-full rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-tprime py-6 font-medium"
                         onClick={() => singinHandler('google')}
                     >
                         <Image

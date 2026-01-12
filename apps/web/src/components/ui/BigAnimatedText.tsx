@@ -86,10 +86,10 @@ export default function BigAnimatedText() {
     }, [cycleIndex, colorOrder]);
 
     return (
-        <div className="w-full flex justify-center items-center h-150 max-w-6xl mx-auto">
+        <div className="w-full flex justify-center items-center h-150 mx-auto bg-white z-30">
             <div className="flex flex-col items-center gap-y-12">
                 <div className="relative max-w-3xl">
-                    <h1 className="text-center text-7xl font-bold text-black">
+                    <h1 className="text-center text-7xl font-bold text-tprime">
                         Knowledge Is Power. Power Pays.
                     </h1>
 
@@ -123,7 +123,7 @@ export default function BigAnimatedText() {
                         );
                     })}
                 </div>
-                <div className="max-w-160 text-center text-xl font-normal text-black">
+                <div className="max-w-160 text-center text-xl font-normal text-tprime">
                     This isn&apos;t your grandmas GK quiz. Here, you stake tokens, flex knowledge,
                     and pray your last three brain cells don&apos;t betray you on question 7. Every
                     round feels like Squid Game but with fewer fatalities and more wallets.
