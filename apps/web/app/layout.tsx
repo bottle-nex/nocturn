@@ -4,8 +4,8 @@ import { getServerSession } from 'next-auth';
 import { authOption } from './api/auth/[...nextauth]/options';
 import SessionSetter from '@/components/utility/SessionSetter';
 import { ThemeProvider } from 'next-themes';
-import Providers from './providers';
 import ToasterProvider from '../src/providers/ToasterProvider';
+import LenisProvider from '@/providers/LenisProvider';
 
 export const metadata: Metadata = {
     title: 'Nocturn',
@@ -21,16 +21,18 @@ export default async function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem={false}
-                    disableTransitionOnChange
-                >
-                    <ToasterProvider />
-                    <Providers>{children}</Providers>
-                    <SessionSetter session={session} />
-                </ThemeProvider>
+                <LenisProvider>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="dark"
+                        enableSystem={false}
+                        disableTransitionOnChange
+                    >
+                        <ToasterProvider />
+                        {children}
+                        <SessionSetter session={session} />
+                    </ThemeProvider>
+                </LenisProvider>
             </body>
         </html>
     );

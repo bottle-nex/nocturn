@@ -36,7 +36,7 @@ export default function UserTypeCard({
     return (
         <div
             className={cn(
-                'w-full h-full rounded-xl rounded-r-none flex flex-col p-6 items-center relative noise-bg',
+                'w-full h-full rounded-none flex flex-col p-6 items-center relative noise-bg',
                 bgClassname,
             )}
         >

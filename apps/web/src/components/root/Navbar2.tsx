@@ -35,7 +35,7 @@ export default function Navbar() {
 
             if (currentScrollY < lastScrollY) {
                 setIsNavbarVisible(true);
-            } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            } else if (currentScrollY > lastScrollY) {
                 setIsNavbarVisible(false);
             }
 
@@ -55,10 +55,10 @@ export default function Navbar() {
     }
 
     const navItems: NavItem[] = [
-        { label: 'Home', link: '/', onClick: () => {} },
-        { label: 'Features', link: '/features', onClick: () => {} },
-        { label: 'Invoicing', link: '/invoicing', onClick: () => {} },
-        { label: 'Docs', link: '/docs', onClick: () => {} },
+        { label: 'Home', link: '/', onClick: () => { } },
+        { label: 'Features', link: '/features', onClick: () => { } },
+        { label: 'Invoicing', link: '/invoicing', onClick: () => { } },
+        { label: 'Docs', link: '/docs', onClick: () => { } },
     ];
 
     return (
