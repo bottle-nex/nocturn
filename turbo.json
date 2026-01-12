@@ -12,6 +12,9 @@
 
   ],
   "tasks": {
+    "generate": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build"
