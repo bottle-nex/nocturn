@@ -20,7 +20,7 @@ export default function EmptyCanvas({ template, className, onClick }: EmptyCanva
                     backgroundColor: template?.background_color,
                     color: template?.text_color,
                 }}
-                className="w-full h-full rounded-sm flex justify-center items-center relative group"
+                className="w-full h-full rounded-[14px] flex justify-center items-center relative group"
             >
                 <CanvasAccents
                     design={template?.accent_type}

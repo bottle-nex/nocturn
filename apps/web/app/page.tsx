@@ -10,13 +10,10 @@ export default function Page() {
     return (
         <div className="min-h-screen overflow-x-hidden w-full bg-black relative">
             <Navbar />
-
             <LandingSectionTest />
-
             <div className="-mt-[100vh] relative z-20">
                 <NocturnFeatures />
             </div>
-
             <FeaturesSection />
             <UserTypeSection />
             <BigAnimatedText />
