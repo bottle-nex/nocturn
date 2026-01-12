@@ -31,7 +31,7 @@ export default async function Page() {
                 </Link>
                 <Link
                     href="/"
-                    className="h-full flex items-center justify-center px-8 bg-[#FF3F7F] hover:bg-white text-black text-lg border-l-4 border-black transition-colors"
+                    className="h-full flex items-center justify-center px-8 bg-[#FF3F7F] hover:bg-white text-tprime text-lg border-l-4 border-black transition-colors"
                 >
                     Back to Home
                 </Link>
@@ -42,19 +42,19 @@ export default async function Page() {
                 <div className="max-w-6xl mx-auto py-16 px-8">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-6xl font-black text-black tracking-tight">
+                            <h1 className="text-6xl font-black text-tprime tracking-tight">
                                 Wall of
                                 <br />
                                 <span className="text-white">Contributors</span>
                             </h1>
-                            <p className="text-lg text-black/70 mt-4 max-w-md font-medium">
+                            <p className="text-lg text-tprime/70 mt-4 max-w-md font-medium">
                                 The amazing humans who helped build Nocturn. Every commit counts.
                             </p>
                         </div>
                         <div className="hidden md:block">
                             <div
                                 className={cn(
-                                    'rotate-6 text-3xl font-black text-black px-6 py-4 bg-[#fff200]',
+                                    'rotate-6 text-3xl font-black text-tprime px-6 py-4 bg-eta',
                                     'border-4 border-black shadow-hard',
                                     'transition-transform duration-200 ease-out',
                                     'hover:translate-x-0.5 hover:translate-y-0.5',
@@ -74,10 +74,10 @@ export default async function Page() {
                                 'hover:translate-x-0.5 hover:translate-y-0.5',
                             )}
                         >
-                            <span className="text-4xl font-black text-black block">
+                            <span className="text-4xl font-black text-tprime block">
                                 {contributors.length}
                             </span>
-                            <span className="text-xs font-bold text-black/60 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-tprime/60 uppercase tracking-wider">
                                 Contributors
                             </span>
                         </div>
@@ -94,7 +94,7 @@ export default async function Page() {
                                     0,
                                 )}
                             </span>
-                            <span className="text-xs font-bold text-black/60 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-tprime/60 uppercase tracking-wider">
                                 Total Commits
                             </span>
                         </div>
@@ -106,11 +106,11 @@ export default async function Page() {
                 {contributors.length === 0 ? (
                     <div
                         className={cn(
-                            'bg-[#FF3F7F] border-4 border-black p-12 text-center shadow-hard',
+                            'bg-alpha border-4 border-black p-12 text-center shadow-hard',
                         )}
                     >
-                        <p className="text-2xl font-black text-black">No contributors found</p>
-                        <p className="text-black/70 mt-2">
+                        <p className="text-2xl font-black text-tprime">No contributors found</p>
+                        <p className="text-tprime/70 mt-2">
                             Unable to load contributor data at this time
                         </p>
                     </div>
@@ -178,10 +178,10 @@ export default async function Page() {
             </section>
 
             {/* CTA Section */}
-            <section className="bg-[#fff200] border-t-4 border-black py-16">
+            <section className="bg-eta border-t-4 border-black py-16">
                 <div className="max-w-4xl mx-auto text-center px-8">
-                    <h2 className="text-4xl font-black text-black mb-4">Want to Contribute?</h2>
-                    <p className="text-lg text-black/70 mb-8">
+                    <h2 className="text-4xl font-black text-tprime mb-4">Want to Contribute?</h2>
+                    <p className="text-lg text-tprime/70 mb-8">
                         Join our community and help make Nocturn even better.
                     </p>
                     <a
@@ -193,7 +193,7 @@ export default async function Page() {
                             'font-black text-lg uppercase tracking-wider',
                             'border-4 border-black shadow-custom',
                             'transition-all duration-200 ease-out',
-                            'hover:bg-[#FF3F7F] hover:text-black',
+                            'hover:bg-alpha hover:text-tprime',
                         )}
                     >
                         View on GitHub

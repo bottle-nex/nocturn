@@ -46,7 +46,7 @@ export default function HostLobbyFooter() {
             </div>
 
             <Button
-                className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-black dark:hover:-translate-y-0.5 z-20 cursor-pointer"
+                className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-tprime dark:hover:-translate-y-0.5 z-20 cursor-pointer"
                 onClick={handleOnClick}
             >
                 Get Started

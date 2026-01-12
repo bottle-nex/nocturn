@@ -35,7 +35,7 @@ export default function LandingRightSection() {
                             )}
                         >
                             {choice}
-                            {i === 1 && <GoStarFill/>}
+                            {i === 1 && <GoStarFill />}
                         </div>
                     ))}
                 </div>

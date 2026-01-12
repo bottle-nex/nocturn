@@ -42,7 +42,7 @@ export default function LandingSection() {
             <section className="max-w-3xl text-center mt-60 relative z-10">
                 <Button
                     onClick={getStartedHandler}
-                    className="text-xl text-black rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98"
+                    className="text-xl text-tprime rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98"
                 >
                     {session?.user.id ? (
                         <span className="flex items-center gap-x-2">
@@ -59,12 +59,12 @@ export default function LandingSection() {
                     <div className="absolute -top-20 -right-40 z-0">
                         <Image alt="cat" width={280} height={280} src="/illustrations/cat.png" />
                     </div>
-                    <h1 className="text-8xl text-black mt-8 relative z-10">
+                    <h1 className="text-8xl text-tprime mt-8 relative z-10">
                         Put Your Money on Your Mind.
                     </h1>
                 </div>
 
-                <p className="text-2xl mt-4 text-black">
+                <p className="text-2xl mt-4 text-tprime">
                     A high-stakes quiz arena where knowledge isn&apos;t just tested — it&apos;s
                     wagered. Create or join competitive quizzes, stake real value, survive
                     elimination rounds, and let skill decide the payout.
@@ -79,15 +79,15 @@ export default function LandingSection() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <span className="text-xs font-bold tracking-[0.3em] text-black uppercase mb-1">
+                        <span className="text-xs font-bold tracking-[0.3em] text-tprime uppercase mb-1">
                             LIVE NOW
                         </span>
-                        <h2 className="text-7xl font-black text-black tracking-tighter leading-[0.85] mb-3">
+                        <h2 className="text-7xl font-black text-tprime tracking-tighter leading-[0.85] mb-3">
                             THE
                             <br />
                             <span className="text-white">ARENA</span>
                         </h2>
-                        <p className="text-base font-medium text-black/70 max-w-xs leading-tight">
+                        <p className="text-base font-medium text-tprime/70 max-w-xs leading-tight">
                             High-stakes trivia where speed meets strategy. Winner takes all.
                         </p>
                     </motion.div>
@@ -110,19 +110,19 @@ export default function LandingSection() {
 
                         <div className="flex gap-10 text-center">
                             <div>
-                                <span className="text-4xl font-black text-black block leading-none">
+                                <span className="text-4xl font-black text-tprime block leading-none">
                                     10s
                                 </span>
-                                <span className="text-[10px] font-bold text-black/60 uppercase tracking-[0.2em] mt-1 block">
+                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
                                     Answer Time
                                 </span>
                             </div>
                             <div className="w-0.5 bg-black/30" />
                             <div>
-                                <span className="text-4xl font-black text-black block leading-none">
+                                <span className="text-4xl font-black text-tprime block leading-none">
                                     5x
                                 </span>
-                                <span className="text-[10px] font-bold text-black/60 uppercase tracking-[0.2em] mt-1 block">
+                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
                                     Multiplier
                                 </span>
                             </div>
@@ -131,7 +131,7 @@ export default function LandingSection() {
                                 <span className="text-4xl font-black text-white block leading-none">
                                     247
                                 </span>
-                                <span className="text-[10px] font-bold text-black/60 uppercase tracking-[0.2em] mt-1 block">
+                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
                                     Players Live
                                 </span>
                             </div>
@@ -150,7 +150,7 @@ export default function LandingSection() {
                                     PRIZE POOL
                                 </span>
                             </div>
-                            <p className="text-5xl font-black text-black leading-none">
+                            <p className="text-5xl font-black text-tprime leading-none">
                                 12.5 <span className="text-2xl">SOL</span>
                             </p>
                         </div>
@@ -164,7 +164,7 @@ export default function LandingSection() {
 
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-[#22a094] rounded-full animate-pulse" />
-                            <span className="text-[10px] text-black/50 uppercase tracking-[0.15em] font-bold">
+                            <span className="text-[10px] text-tprime/50 uppercase tracking-[0.15em] font-bold">
                                 Powered by Solana
                             </span>
                         </div>

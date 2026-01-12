@@ -25,7 +25,7 @@ export default function LogoutModal() {
                         title="Close"
                         aria-label="Close modal"
                         onClick={() => setOpenLogoutModal(false)}
-                        className="text-white hover:text-black transition-colors cursor-pointer"
+                        className="text-white hover:text-tprime transition-colors cursor-pointer"
                     >
                         <X size={24} strokeWidth={2.5} />
                     </button>
@@ -33,15 +33,15 @@ export default function LogoutModal() {
 
                 <div className="p-6 space-y-6">
                     <div className="mb-2">
-                        <span className={cn('text-black font-bold text-2xl')}>Nocturn</span>
+                        <span className={cn('text-tprime font-bold text-2xl')}>Nocturn</span>
                     </div>
 
                     <div className="flex items-center gap-4 p-4 bg-neutral-50 border-2 border-black">
                         <div className="w-12 h-12 bg-[#FFC400] border-2 border-black flex items-center justify-center">
-                            <LogOut size={24} className="text-black" />
+                            <LogOut size={24} className="text-tprime" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-black">Leaving so soon?</h2>
+                            <h2 className="text-lg font-bold text-tprime">Leaving so soon?</h2>
                             <p className="text-neutral-600 text-sm">
                                 Your progress is saved. Come back anytime!
                             </p>
@@ -54,7 +54,7 @@ export default function LogoutModal() {
 
                     <div className="flex gap-3">
                         <Button
-                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-black py-6 font-medium"
+                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-tprime py-6 font-medium"
                             onClick={() => setOpenLogoutModal(false)}
                         >
                             Cancel
