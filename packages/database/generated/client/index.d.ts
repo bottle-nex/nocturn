@@ -17,6 +17,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>;
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>;
 /**
+ * Model QuizViews
+ *
+ */
+export type QuizViews = $Result.DefaultSelection<Prisma.$QuizViewsPayload>;
+/**
  * Model Quiz
  *
  */
@@ -412,6 +417,16 @@ export class PrismaClient<
    * ```
    */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.quizViews`: Exposes CRUD operations for the **QuizViews** model.
+   * Example usage:
+   * ```ts
+   * // Fetch zero or more QuizViews
+   * const quizViews = await prisma.quizViews.findMany()
+   * ```
+   */
+  get quizViews(): Prisma.QuizViewsDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.quiz`: Exposes CRUD operations for the **Quiz** model.
@@ -985,6 +1000,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: "User";
+    QuizViews: "QuizViews";
     Quiz: "Quiz";
     Question: "Question";
     Participant: "Participant";
@@ -1021,6 +1037,7 @@ export namespace Prisma {
     meta: {
       modelProps:
         | "user"
+        | "quizViews"
         | "quiz"
         | "question"
         | "participant"
@@ -1107,6 +1124,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>;
             result: $Utils.Optional<UserCountAggregateOutputType> | number;
+          };
+        };
+      };
+      QuizViews: {
+        payload: Prisma.$QuizViewsPayload<ExtArgs>;
+        fields: Prisma.QuizViewsFieldRefs;
+        operations: {
+          findUnique: {
+            args: Prisma.QuizViewsFindUniqueArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload> | null;
+          };
+          findUniqueOrThrow: {
+            args: Prisma.QuizViewsFindUniqueOrThrowArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          findFirst: {
+            args: Prisma.QuizViewsFindFirstArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload> | null;
+          };
+          findFirstOrThrow: {
+            args: Prisma.QuizViewsFindFirstOrThrowArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          findMany: {
+            args: Prisma.QuizViewsFindManyArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>[];
+          };
+          create: {
+            args: Prisma.QuizViewsCreateArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          createMany: {
+            args: Prisma.QuizViewsCreateManyArgs<ExtArgs>;
+            result: BatchPayload;
+          };
+          createManyAndReturn: {
+            args: Prisma.QuizViewsCreateManyAndReturnArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>[];
+          };
+          delete: {
+            args: Prisma.QuizViewsDeleteArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          update: {
+            args: Prisma.QuizViewsUpdateArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          deleteMany: {
+            args: Prisma.QuizViewsDeleteManyArgs<ExtArgs>;
+            result: BatchPayload;
+          };
+          updateMany: {
+            args: Prisma.QuizViewsUpdateManyArgs<ExtArgs>;
+            result: BatchPayload;
+          };
+          updateManyAndReturn: {
+            args: Prisma.QuizViewsUpdateManyAndReturnArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>[];
+          };
+          upsert: {
+            args: Prisma.QuizViewsUpsertArgs<ExtArgs>;
+            result: $Utils.PayloadToResult<Prisma.$QuizViewsPayload>;
+          };
+          aggregate: {
+            args: Prisma.QuizViewsAggregateArgs<ExtArgs>;
+            result: $Utils.Optional<AggregateQuizViews>;
+          };
+          groupBy: {
+            args: Prisma.QuizViewsGroupByArgs<ExtArgs>;
+            result: $Utils.Optional<QuizViewsGroupByOutputType>[];
+          };
+          count: {
+            args: Prisma.QuizViewsCountArgs<ExtArgs>;
+            result: $Utils.Optional<QuizViewsCountAggregateOutputType> | number;
           };
         };
       };
@@ -2123,6 +2214,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit;
+    quizViews?: QuizViewsOmit;
     quiz?: QuizOmit;
     question?: QuestionOmit;
     participant?: ParticipantOmit;
@@ -2219,6 +2311,7 @@ export namespace Prisma {
   export type UserCountOutputType = {
     Quiz: number;
     reviews: number;
+    quizViews: number;
   };
 
   export type UserCountOutputTypeSelect<
@@ -2226,6 +2319,7 @@ export namespace Prisma {
   > = {
     Quiz?: boolean | UserCountOutputTypeCountQuizArgs;
     reviews?: boolean | UserCountOutputTypeCountReviewsArgs;
+    quizViews?: boolean | UserCountOutputTypeCountQuizViewsArgs;
   };
 
   // Custom InputTypes
@@ -2260,6 +2354,15 @@ export namespace Prisma {
   };
 
   /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountQuizViewsArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    where?: QuizViewsWhereInput;
+  };
+
+  /**
    * Count Type QuizCountOutputType
    */
 
@@ -2269,6 +2372,7 @@ export namespace Prisma {
     questions: number;
     chatMessage: number;
     cdoBets: number;
+    quizViews: number;
   };
 
   export type QuizCountOutputTypeSelect<
@@ -2279,6 +2383,7 @@ export namespace Prisma {
     questions?: boolean | QuizCountOutputTypeCountQuestionsArgs;
     chatMessage?: boolean | QuizCountOutputTypeCountChatMessageArgs;
     cdoBets?: boolean | QuizCountOutputTypeCountCdoBetsArgs;
+    quizViews?: boolean | QuizCountOutputTypeCountQuizViewsArgs;
   };
 
   // Custom InputTypes
@@ -2337,6 +2442,15 @@ export namespace Prisma {
     ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
   > = {
     where?: CDOBetsWhereInput;
+  };
+
+  /**
+   * QuizCountOutputType without action
+   */
+  export type QuizCountOutputTypeCountQuizViewsArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    where?: QuizViewsWhereInput;
   };
 
   /**
@@ -2762,6 +2876,7 @@ export namespace Prisma {
       lastLoginAt?: boolean;
       Quiz?: boolean | User$QuizArgs<ExtArgs>;
       reviews?: boolean | User$reviewsArgs<ExtArgs>;
+      quizViews?: boolean | User$quizViewsArgs<ExtArgs>;
       _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>;
     },
     ExtArgs["result"]["user"]
@@ -2836,6 +2951,7 @@ export namespace Prisma {
   > = {
     Quiz?: boolean | User$QuizArgs<ExtArgs>;
     reviews?: boolean | User$reviewsArgs<ExtArgs>;
+    quizViews?: boolean | User$quizViewsArgs<ExtArgs>;
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>;
   };
   export type UserIncludeCreateManyAndReturn<
@@ -2852,6 +2968,7 @@ export namespace Prisma {
     objects: {
       Quiz: Prisma.$QuizPayload<ExtArgs>[];
       reviews: Prisma.$ReviewPayload<ExtArgs>[];
+      quizViews: Prisma.$QuizViewsPayload<ExtArgs>[];
     };
     scalars: $Extensions.GetPayloadResult<
       {
@@ -3432,6 +3549,17 @@ export namespace Prisma {
         >
       | Null
     >;
+    quizViews<T extends User$quizViewsArgs<ExtArgs> = {}>(
+      args?: Subset<T, User$quizViewsArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      | $Result.GetResult<
+          Prisma.$QuizViewsPayload<ExtArgs>,
+          T,
+          "findMany",
+          GlobalOmitOptions
+        >
+      | Null
+    >;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3949,6 +4077,34 @@ export namespace Prisma {
   };
 
   /**
+   * User.quizViews
+   */
+  export type User$quizViewsArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    where?: QuizViewsWhereInput;
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    cursor?: QuizViewsWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: QuizViewsScalarFieldEnum | QuizViewsScalarFieldEnum[];
+  };
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<
@@ -3966,6 +4122,1324 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null;
+  };
+
+  /**
+   * Model QuizViews
+   */
+
+  export type AggregateQuizViews = {
+    _count: QuizViewsCountAggregateOutputType | null;
+    _min: QuizViewsMinAggregateOutputType | null;
+    _max: QuizViewsMaxAggregateOutputType | null;
+  };
+
+  export type QuizViewsMinAggregateOutputType = {
+    id: string | null;
+    quizId: string | null;
+    userId: string | null;
+    viewedAt: Date | null;
+  };
+
+  export type QuizViewsMaxAggregateOutputType = {
+    id: string | null;
+    quizId: string | null;
+    userId: string | null;
+    viewedAt: Date | null;
+  };
+
+  export type QuizViewsCountAggregateOutputType = {
+    id: number;
+    quizId: number;
+    userId: number;
+    viewedAt: number;
+    _all: number;
+  };
+
+  export type QuizViewsMinAggregateInputType = {
+    id?: true;
+    quizId?: true;
+    userId?: true;
+    viewedAt?: true;
+  };
+
+  export type QuizViewsMaxAggregateInputType = {
+    id?: true;
+    quizId?: true;
+    userId?: true;
+    viewedAt?: true;
+  };
+
+  export type QuizViewsCountAggregateInputType = {
+    id?: true;
+    quizId?: true;
+    userId?: true;
+    viewedAt?: true;
+    _all?: true;
+  };
+
+  export type QuizViewsAggregateArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Filter which QuizViews to aggregate.
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of QuizViews to fetch.
+     */
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the start position
+     */
+    cursor?: QuizViewsWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` QuizViews from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` QuizViews.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Count returned QuizViews
+     **/
+    _count?: true | QuizViewsCountAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the minimum value
+     **/
+    _min?: QuizViewsMinAggregateInputType;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     *
+     * Select which fields to find the maximum value
+     **/
+    _max?: QuizViewsMaxAggregateInputType;
+  };
+
+  export type GetQuizViewsAggregateType<T extends QuizViewsAggregateArgs> = {
+    [P in keyof T & keyof AggregateQuizViews]: P extends "_count" | "count"
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateQuizViews[P]>
+      : GetScalarType<T[P], AggregateQuizViews[P]>;
+  };
+
+  export type QuizViewsGroupByArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    where?: QuizViewsWhereInput;
+    orderBy?:
+      | QuizViewsOrderByWithAggregationInput
+      | QuizViewsOrderByWithAggregationInput[];
+    by: QuizViewsScalarFieldEnum[] | QuizViewsScalarFieldEnum;
+    having?: QuizViewsScalarWhereWithAggregatesInput;
+    take?: number;
+    skip?: number;
+    _count?: QuizViewsCountAggregateInputType | true;
+    _min?: QuizViewsMinAggregateInputType;
+    _max?: QuizViewsMaxAggregateInputType;
+  };
+
+  export type QuizViewsGroupByOutputType = {
+    id: string;
+    quizId: string;
+    userId: string;
+    viewedAt: Date;
+    _count: QuizViewsCountAggregateOutputType | null;
+    _min: QuizViewsMinAggregateOutputType | null;
+    _max: QuizViewsMaxAggregateOutputType | null;
+  };
+
+  type GetQuizViewsGroupByPayload<T extends QuizViewsGroupByArgs> =
+    Prisma.PrismaPromise<
+      Array<
+        PickEnumerable<QuizViewsGroupByOutputType, T["by"]> & {
+          [P in keyof T & keyof QuizViewsGroupByOutputType]: P extends "_count"
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], QuizViewsGroupByOutputType[P]>
+            : GetScalarType<T[P], QuizViewsGroupByOutputType[P]>;
+        }
+      >
+    >;
+
+  export type QuizViewsSelect<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = $Extensions.GetSelect<
+    {
+      id?: boolean;
+      quizId?: boolean;
+      userId?: boolean;
+      viewedAt?: boolean;
+      quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
+    },
+    ExtArgs["result"]["quizViews"]
+  >;
+
+  export type QuizViewsSelectCreateManyAndReturn<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = $Extensions.GetSelect<
+    {
+      id?: boolean;
+      quizId?: boolean;
+      userId?: boolean;
+      viewedAt?: boolean;
+      quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
+    },
+    ExtArgs["result"]["quizViews"]
+  >;
+
+  export type QuizViewsSelectUpdateManyAndReturn<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = $Extensions.GetSelect<
+    {
+      id?: boolean;
+      quizId?: boolean;
+      userId?: boolean;
+      viewedAt?: boolean;
+      quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+      user?: boolean | UserDefaultArgs<ExtArgs>;
+    },
+    ExtArgs["result"]["quizViews"]
+  >;
+
+  export type QuizViewsSelectScalar = {
+    id?: boolean;
+    quizId?: boolean;
+    userId?: boolean;
+    viewedAt?: boolean;
+  };
+
+  export type QuizViewsOmit<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = $Extensions.GetOmit<
+    "id" | "quizId" | "userId" | "viewedAt",
+    ExtArgs["result"]["quizViews"]
+  >;
+  export type QuizViewsInclude<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
+  };
+  export type QuizViewsIncludeCreateManyAndReturn<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
+  };
+  export type QuizViewsIncludeUpdateManyAndReturn<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    quiz?: boolean | QuizDefaultArgs<ExtArgs>;
+    user?: boolean | UserDefaultArgs<ExtArgs>;
+  };
+
+  export type $QuizViewsPayload<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    name: "QuizViews";
+    objects: {
+      quiz: Prisma.$QuizPayload<ExtArgs>;
+      user: Prisma.$UserPayload<ExtArgs>;
+    };
+    scalars: $Extensions.GetPayloadResult<
+      {
+        id: string;
+        quizId: string;
+        userId: string;
+        viewedAt: Date;
+      },
+      ExtArgs["result"]["quizViews"]
+    >;
+    composites: {};
+  };
+
+  type QuizViewsGetPayload<
+    S extends boolean | null | undefined | QuizViewsDefaultArgs,
+  > = $Result.GetResult<Prisma.$QuizViewsPayload, S>;
+
+  type QuizViewsCountArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = Omit<
+    QuizViewsFindManyArgs,
+    "select" | "include" | "distinct" | "omit"
+  > & {
+    select?: QuizViewsCountAggregateInputType | true;
+  };
+
+  export interface QuizViewsDelegate<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+    GlobalOmitOptions = {},
+  > {
+    [K: symbol]: {
+      types: Prisma.TypeMap<ExtArgs>["model"]["QuizViews"];
+      meta: { name: "QuizViews" };
+    };
+    /**
+     * Find zero or one QuizViews that matches the filter.
+     * @param {QuizViewsFindUniqueArgs} args - Arguments to find a QuizViews
+     * @example
+     * // Get one QuizViews
+     * const quizViews = await prisma.quizViews.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends QuizViewsFindUniqueArgs>(
+      args: SelectSubset<T, QuizViewsFindUniqueArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "findUnique",
+        GlobalOmitOptions
+      > | null,
+      null,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Find one QuizViews that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {QuizViewsFindUniqueOrThrowArgs} args - Arguments to find a QuizViews
+     * @example
+     * // Get one QuizViews
+     * const quizViews = await prisma.quizViews.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends QuizViewsFindUniqueOrThrowArgs>(
+      args: SelectSubset<T, QuizViewsFindUniqueOrThrowArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "findUniqueOrThrow",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Find the first QuizViews that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsFindFirstArgs} args - Arguments to find a QuizViews
+     * @example
+     * // Get one QuizViews
+     * const quizViews = await prisma.quizViews.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends QuizViewsFindFirstArgs>(
+      args?: SelectSubset<T, QuizViewsFindFirstArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "findFirst",
+        GlobalOmitOptions
+      > | null,
+      null,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Find the first QuizViews that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsFindFirstOrThrowArgs} args - Arguments to find a QuizViews
+     * @example
+     * // Get one QuizViews
+     * const quizViews = await prisma.quizViews.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends QuizViewsFindFirstOrThrowArgs>(
+      args?: SelectSubset<T, QuizViewsFindFirstOrThrowArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "findFirstOrThrow",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Find zero or more QuizViews that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all QuizViews
+     * const quizViews = await prisma.quizViews.findMany()
+     *
+     * // Get first 10 QuizViews
+     * const quizViews = await prisma.quizViews.findMany({ take: 10 })
+     *
+     * // Only select the `id`
+     * const quizViewsWithIdOnly = await prisma.quizViews.findMany({ select: { id: true } })
+     *
+     */
+    findMany<T extends QuizViewsFindManyArgs>(
+      args?: SelectSubset<T, QuizViewsFindManyArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    >;
+
+    /**
+     * Create a QuizViews.
+     * @param {QuizViewsCreateArgs} args - Arguments to create a QuizViews.
+     * @example
+     * // Create one QuizViews
+     * const QuizViews = await prisma.quizViews.create({
+     *   data: {
+     *     // ... data to create a QuizViews
+     *   }
+     * })
+     *
+     */
+    create<T extends QuizViewsCreateArgs>(
+      args: SelectSubset<T, QuizViewsCreateArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "create",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Create many QuizViews.
+     * @param {QuizViewsCreateManyArgs} args - Arguments to create many QuizViews.
+     * @example
+     * // Create many QuizViews
+     * const quizViews = await prisma.quizViews.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     */
+    createMany<T extends QuizViewsCreateManyArgs>(
+      args?: SelectSubset<T, QuizViewsCreateManyArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<BatchPayload>;
+
+    /**
+     * Create many QuizViews and returns the data saved in the database.
+     * @param {QuizViewsCreateManyAndReturnArgs} args - Arguments to create many QuizViews.
+     * @example
+     * // Create many QuizViews
+     * const quizViews = await prisma.quizViews.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Create many QuizViews and only return the `id`
+     * const quizViewsWithIdOnly = await prisma.quizViews.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    createManyAndReturn<T extends QuizViewsCreateManyAndReturnArgs>(
+      args?: SelectSubset<T, QuizViewsCreateManyAndReturnArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "createManyAndReturn",
+        GlobalOmitOptions
+      >
+    >;
+
+    /**
+     * Delete a QuizViews.
+     * @param {QuizViewsDeleteArgs} args - Arguments to delete one QuizViews.
+     * @example
+     * // Delete one QuizViews
+     * const QuizViews = await prisma.quizViews.delete({
+     *   where: {
+     *     // ... filter to delete one QuizViews
+     *   }
+     * })
+     *
+     */
+    delete<T extends QuizViewsDeleteArgs>(
+      args: SelectSubset<T, QuizViewsDeleteArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "delete",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Update one QuizViews.
+     * @param {QuizViewsUpdateArgs} args - Arguments to update one QuizViews.
+     * @example
+     * // Update one QuizViews
+     * const quizViews = await prisma.quizViews.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    update<T extends QuizViewsUpdateArgs>(
+      args: SelectSubset<T, QuizViewsUpdateArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "update",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Delete zero or more QuizViews.
+     * @param {QuizViewsDeleteManyArgs} args - Arguments to filter QuizViews to delete.
+     * @example
+     * // Delete a few QuizViews
+     * const { count } = await prisma.quizViews.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     *
+     */
+    deleteMany<T extends QuizViewsDeleteManyArgs>(
+      args?: SelectSubset<T, QuizViewsDeleteManyArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<BatchPayload>;
+
+    /**
+     * Update zero or more QuizViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many QuizViews
+     * const quizViews = await prisma.quizViews.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     *
+     */
+    updateMany<T extends QuizViewsUpdateManyArgs>(
+      args: SelectSubset<T, QuizViewsUpdateManyArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<BatchPayload>;
+
+    /**
+     * Update zero or more QuizViews and returns the data updated in the database.
+     * @param {QuizViewsUpdateManyAndReturnArgs} args - Arguments to update many QuizViews.
+     * @example
+     * // Update many QuizViews
+     * const quizViews = await prisma.quizViews.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *
+     * // Update zero or more QuizViews and only return the `id`
+     * const quizViewsWithIdOnly = await prisma.quizViews.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     *
+     */
+    updateManyAndReturn<T extends QuizViewsUpdateManyAndReturnArgs>(
+      args: SelectSubset<T, QuizViewsUpdateManyAndReturnArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "updateManyAndReturn",
+        GlobalOmitOptions
+      >
+    >;
+
+    /**
+     * Create or update one QuizViews.
+     * @param {QuizViewsUpsertArgs} args - Arguments to update or create a QuizViews.
+     * @example
+     * // Update or create a QuizViews
+     * const quizViews = await prisma.quizViews.upsert({
+     *   create: {
+     *     // ... data to create a QuizViews
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the QuizViews we want to update
+     *   }
+     * })
+     */
+    upsert<T extends QuizViewsUpsertArgs>(
+      args: SelectSubset<T, QuizViewsUpsertArgs<ExtArgs>>,
+    ): Prisma__QuizViewsClient<
+      $Result.GetResult<
+        Prisma.$QuizViewsPayload<ExtArgs>,
+        T,
+        "upsert",
+        GlobalOmitOptions
+      >,
+      never,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+
+    /**
+     * Count the number of QuizViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsCountArgs} args - Arguments to filter QuizViews to count.
+     * @example
+     * // Count the number of QuizViews
+     * const count = await prisma.quizViews.count({
+     *   where: {
+     *     // ... the filter for the QuizViews we want to count
+     *   }
+     * })
+     **/
+    count<T extends QuizViewsCountArgs>(
+      args?: Subset<T, QuizViewsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<"select", any>
+        ? T["select"] extends true
+          ? number
+          : GetScalarType<T["select"], QuizViewsCountAggregateOutputType>
+        : number
+    >;
+
+    /**
+     * Allows you to perform aggregations operations on a QuizViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+     **/
+    aggregate<T extends QuizViewsAggregateArgs>(
+      args: Subset<T, QuizViewsAggregateArgs>,
+    ): Prisma.PrismaPromise<GetQuizViewsAggregateType<T>>;
+
+    /**
+     * Group by QuizViews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {QuizViewsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     *
+     **/
+    groupBy<
+      T extends QuizViewsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<"skip", Keys<T>>,
+        Extends<"take", Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: QuizViewsGroupByArgs["orderBy"] }
+        : { orderBy?: QuizViewsGroupByArgs["orderBy"] },
+      OrderFields extends ExcludeUnderscoreKeys<
+        Keys<MaybeTupleToUnion<T["orderBy"]>>
+      >,
+      ByFields extends MaybeTupleToUnion<T["by"]>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T["having"]>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T["by"] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+        ? `Error: "by" must not be empty.`
+        : HavingValid extends False
+          ? {
+              [P in HavingFields]: P extends ByFields
+                ? never
+                : P extends string
+                  ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+                  : [
+                      Error,
+                      "Field ",
+                      P,
+                      ` in "having" needs to be provided in "by"`,
+                    ];
+            }[HavingFields]
+          : "take" extends Keys<T>
+            ? "orderBy" extends Keys<T>
+              ? ByValid extends True
+                ? {}
+                : {
+                    [P in OrderFields]: P extends ByFields
+                      ? never
+                      : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                  }[OrderFields]
+              : 'Error: If you provide "take", you also need to provide "orderBy"'
+            : "skip" extends Keys<T>
+              ? "orderBy" extends Keys<T>
+                ? ByValid extends True
+                  ? {}
+                  : {
+                      [P in OrderFields]: P extends ByFields
+                        ? never
+                        : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                    }[OrderFields]
+                : 'Error: If you provide "skip", you also need to provide "orderBy"'
+              : ByValid extends True
+                ? {}
+                : {
+                    [P in OrderFields]: P extends ByFields
+                      ? never
+                      : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`;
+                  }[OrderFields],
+    >(
+      args: SubsetIntersection<T, QuizViewsGroupByArgs, OrderByArg> &
+        InputErrors,
+    ): {} extends InputErrors
+      ? GetQuizViewsGroupByPayload<T>
+      : Prisma.PrismaPromise<InputErrors>;
+    /**
+     * Fields of the QuizViews model
+     */
+    readonly fields: QuizViewsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for QuizViews.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__QuizViewsClient<
+    T,
+    Null = never,
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+    GlobalOmitOptions = {},
+  > extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise";
+    quiz<T extends QuizDefaultArgs<ExtArgs> = {}>(
+      args?: Subset<T, QuizDefaultArgs<ExtArgs>>,
+    ): Prisma__QuizClient<
+      | $Result.GetResult<
+          Prisma.$QuizPayload<ExtArgs>,
+          T,
+          "findUniqueOrThrow",
+          GlobalOmitOptions
+        >
+      | Null,
+      Null,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(
+      args?: Subset<T, UserDefaultArgs<ExtArgs>>,
+    ): Prisma__UserClient<
+      | $Result.GetResult<
+          Prisma.$UserPayload<ExtArgs>,
+          T,
+          "findUniqueOrThrow",
+          GlobalOmitOptions
+        >
+      | Null,
+      Null,
+      ExtArgs,
+      GlobalOmitOptions
+    >;
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(
+      onfulfilled?:
+        | ((value: T) => TResult1 | PromiseLike<TResult1>)
+        | undefined
+        | null,
+      onrejected?:
+        | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+        | undefined
+        | null,
+    ): $Utils.JsPromise<TResult1 | TResult2>;
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(
+      onrejected?:
+        | ((reason: any) => TResult | PromiseLike<TResult>)
+        | undefined
+        | null,
+    ): $Utils.JsPromise<T | TResult>;
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
+  }
+
+  /**
+   * Fields of the QuizViews model
+   */
+  interface QuizViewsFieldRefs {
+    readonly id: FieldRef<"QuizViews", "String">;
+    readonly quizId: FieldRef<"QuizViews", "String">;
+    readonly userId: FieldRef<"QuizViews", "String">;
+    readonly viewedAt: FieldRef<"QuizViews", "DateTime">;
+  }
+
+  // Custom InputTypes
+  /**
+   * QuizViews findUnique
+   */
+  export type QuizViewsFindUniqueArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter, which QuizViews to fetch.
+     */
+    where: QuizViewsWhereUniqueInput;
+  };
+
+  /**
+   * QuizViews findUniqueOrThrow
+   */
+  export type QuizViewsFindUniqueOrThrowArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter, which QuizViews to fetch.
+     */
+    where: QuizViewsWhereUniqueInput;
+  };
+
+  /**
+   * QuizViews findFirst
+   */
+  export type QuizViewsFindFirstArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter, which QuizViews to fetch.
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of QuizViews to fetch.
+     */
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for QuizViews.
+     */
+    cursor?: QuizViewsWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` QuizViews from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` QuizViews.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of QuizViews.
+     */
+    distinct?: QuizViewsScalarFieldEnum | QuizViewsScalarFieldEnum[];
+  };
+
+  /**
+   * QuizViews findFirstOrThrow
+   */
+  export type QuizViewsFindFirstOrThrowArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter, which QuizViews to fetch.
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of QuizViews to fetch.
+     */
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for searching for QuizViews.
+     */
+    cursor?: QuizViewsWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` QuizViews from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` QuizViews.
+     */
+    skip?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     *
+     * Filter by unique combinations of QuizViews.
+     */
+    distinct?: QuizViewsScalarFieldEnum | QuizViewsScalarFieldEnum[];
+  };
+
+  /**
+   * QuizViews findMany
+   */
+  export type QuizViewsFindManyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter, which QuizViews to fetch.
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     *
+     * Determine the order of QuizViews to fetch.
+     */
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     *
+     * Sets the position for listing QuizViews.
+     */
+    cursor?: QuizViewsWhereUniqueInput;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Take `±n` QuizViews from the position of the cursor.
+     */
+    take?: number;
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     *
+     * Skip the first `n` QuizViews.
+     */
+    skip?: number;
+    distinct?: QuizViewsScalarFieldEnum | QuizViewsScalarFieldEnum[];
+  };
+
+  /**
+   * QuizViews create
+   */
+  export type QuizViewsCreateArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * The data needed to create a QuizViews.
+     */
+    data: XOR<QuizViewsCreateInput, QuizViewsUncheckedCreateInput>;
+  };
+
+  /**
+   * QuizViews createMany
+   */
+  export type QuizViewsCreateManyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * The data used to create many QuizViews.
+     */
+    data: QuizViewsCreateManyInput | QuizViewsCreateManyInput[];
+    skipDuplicates?: boolean;
+  };
+
+  /**
+   * QuizViews createManyAndReturn
+   */
+  export type QuizViewsCreateManyAndReturnArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelectCreateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * The data used to create many QuizViews.
+     */
+    data: QuizViewsCreateManyInput | QuizViewsCreateManyInput[];
+    skipDuplicates?: boolean;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsIncludeCreateManyAndReturn<ExtArgs> | null;
+  };
+
+  /**
+   * QuizViews update
+   */
+  export type QuizViewsUpdateArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * The data needed to update a QuizViews.
+     */
+    data: XOR<QuizViewsUpdateInput, QuizViewsUncheckedUpdateInput>;
+    /**
+     * Choose, which QuizViews to update.
+     */
+    where: QuizViewsWhereUniqueInput;
+  };
+
+  /**
+   * QuizViews updateMany
+   */
+  export type QuizViewsUpdateManyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * The data used to update QuizViews.
+     */
+    data: XOR<
+      QuizViewsUpdateManyMutationInput,
+      QuizViewsUncheckedUpdateManyInput
+    >;
+    /**
+     * Filter which QuizViews to update
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * Limit how many QuizViews to update.
+     */
+    limit?: number;
+  };
+
+  /**
+   * QuizViews updateManyAndReturn
+   */
+  export type QuizViewsUpdateManyAndReturnArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelectUpdateManyAndReturn<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * The data used to update QuizViews.
+     */
+    data: XOR<
+      QuizViewsUpdateManyMutationInput,
+      QuizViewsUncheckedUpdateManyInput
+    >;
+    /**
+     * Filter which QuizViews to update
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * Limit how many QuizViews to update.
+     */
+    limit?: number;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsIncludeUpdateManyAndReturn<ExtArgs> | null;
+  };
+
+  /**
+   * QuizViews upsert
+   */
+  export type QuizViewsUpsertArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * The filter to search for the QuizViews to update in case it exists.
+     */
+    where: QuizViewsWhereUniqueInput;
+    /**
+     * In case the QuizViews found by the `where` argument doesn't exist, create a new QuizViews with this data.
+     */
+    create: XOR<QuizViewsCreateInput, QuizViewsUncheckedCreateInput>;
+    /**
+     * In case the QuizViews was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<QuizViewsUpdateInput, QuizViewsUncheckedUpdateInput>;
+  };
+
+  /**
+   * QuizViews delete
+   */
+  export type QuizViewsDeleteArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    /**
+     * Filter which QuizViews to delete.
+     */
+    where: QuizViewsWhereUniqueInput;
+  };
+
+  /**
+   * QuizViews deleteMany
+   */
+  export type QuizViewsDeleteManyArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Filter which QuizViews to delete
+     */
+    where?: QuizViewsWhereInput;
+    /**
+     * Limit how many QuizViews to delete.
+     */
+    limit?: number;
+  };
+
+  /**
+   * QuizViews without action
+   */
+  export type QuizViewsDefaultArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
   };
 
   /**
@@ -4368,6 +5842,7 @@ export namespace Prisma {
       GameSession?: boolean | Quiz$GameSessionArgs<ExtArgs>;
       chatMessage?: boolean | Quiz$chatMessageArgs<ExtArgs>;
       cdoBets?: boolean | Quiz$cdoBetsArgs<ExtArgs>;
+      quizViews?: boolean | Quiz$quizViewsArgs<ExtArgs>;
       _count?: boolean | QuizCountOutputTypeDefaultArgs<ExtArgs>;
     },
     ExtArgs["result"]["quiz"]
@@ -4517,6 +5992,7 @@ export namespace Prisma {
     GameSession?: boolean | Quiz$GameSessionArgs<ExtArgs>;
     chatMessage?: boolean | Quiz$chatMessageArgs<ExtArgs>;
     cdoBets?: boolean | Quiz$cdoBetsArgs<ExtArgs>;
+    quizViews?: boolean | Quiz$quizViewsArgs<ExtArgs>;
     _count?: boolean | QuizCountOutputTypeDefaultArgs<ExtArgs>;
   };
   export type QuizIncludeCreateManyAndReturn<
@@ -4542,6 +6018,7 @@ export namespace Prisma {
       GameSession: Prisma.$GameSessionPayload<ExtArgs> | null;
       chatMessage: Prisma.$ChatMessagePayload<ExtArgs>[];
       cdoBets: Prisma.$CDOBetsPayload<ExtArgs>[];
+      quizViews: Prisma.$QuizViewsPayload<ExtArgs>[];
     };
     scalars: $Extensions.GetPayloadResult<
       {
@@ -5199,6 +6676,17 @@ export namespace Prisma {
         >
       | Null
     >;
+    quizViews<T extends Quiz$quizViewsArgs<ExtArgs> = {}>(
+      args?: Subset<T, Quiz$quizViewsArgs<ExtArgs>>,
+    ): Prisma.PrismaPromise<
+      | $Result.GetResult<
+          Prisma.$QuizViewsPayload<ExtArgs>,
+          T,
+          "findMany",
+          GlobalOmitOptions
+        >
+      | Null
+    >;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5847,6 +7335,34 @@ export namespace Prisma {
     take?: number;
     skip?: number;
     distinct?: CDOBetsScalarFieldEnum | CDOBetsScalarFieldEnum[];
+  };
+
+  /**
+   * Quiz.quizViews
+   */
+  export type Quiz$quizViewsArgs<
+    ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs,
+  > = {
+    /**
+     * Select specific fields to fetch from the QuizViews
+     */
+    select?: QuizViewsSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the QuizViews
+     */
+    omit?: QuizViewsOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: QuizViewsInclude<ExtArgs> | null;
+    where?: QuizViewsWhereInput;
+    orderBy?:
+      | QuizViewsOrderByWithRelationInput
+      | QuizViewsOrderByWithRelationInput[];
+    cursor?: QuizViewsWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: QuizViewsScalarFieldEnum | QuizViewsScalarFieldEnum[];
   };
 
   /**
@@ -22109,6 +23625,16 @@ export namespace Prisma {
   export type UserScalarFieldEnum =
     (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
 
+  export const QuizViewsScalarFieldEnum: {
+    id: "id";
+    quizId: "quizId";
+    userId: "userId";
+    viewedAt: "viewedAt";
+  };
+
+  export type QuizViewsScalarFieldEnum =
+    (typeof QuizViewsScalarFieldEnum)[keyof typeof QuizViewsScalarFieldEnum];
+
   export const QuizScalarFieldEnum: {
     id: "id";
     title: "title";
@@ -22601,6 +24127,7 @@ export namespace Prisma {
     lastLoginAt?: DateTimeFilter<"User"> | Date | string;
     Quiz?: QuizListRelationFilter;
     reviews?: ReviewListRelationFilter;
+    quizViews?: QuizViewsListRelationFilter;
   };
 
   export type UserOrderByWithRelationInput = {
@@ -22616,6 +24143,7 @@ export namespace Prisma {
     lastLoginAt?: SortOrder;
     Quiz?: QuizOrderByRelationAggregateInput;
     reviews?: ReviewOrderByRelationAggregateInput;
+    quizViews?: QuizViewsOrderByRelationAggregateInput;
   };
 
   export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -22635,6 +24163,7 @@ export namespace Prisma {
       lastLoginAt?: DateTimeFilter<"User"> | Date | string;
       Quiz?: QuizListRelationFilter;
       reviews?: ReviewListRelationFilter;
+      quizViews?: QuizViewsListRelationFilter;
     },
     "id" | "email" | "walletAddress"
   >;
@@ -22673,6 +24202,67 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string;
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string;
     lastLoginAt?: DateTimeWithAggregatesFilter<"User"> | Date | string;
+  };
+
+  export type QuizViewsWhereInput = {
+    AND?: QuizViewsWhereInput | QuizViewsWhereInput[];
+    OR?: QuizViewsWhereInput[];
+    NOT?: QuizViewsWhereInput | QuizViewsWhereInput[];
+    id?: StringFilter<"QuizViews"> | string;
+    quizId?: StringFilter<"QuizViews"> | string;
+    userId?: StringFilter<"QuizViews"> | string;
+    viewedAt?: DateTimeFilter<"QuizViews"> | Date | string;
+    quiz?: XOR<QuizScalarRelationFilter, QuizWhereInput>;
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>;
+  };
+
+  export type QuizViewsOrderByWithRelationInput = {
+    id?: SortOrder;
+    quizId?: SortOrder;
+    userId?: SortOrder;
+    viewedAt?: SortOrder;
+    quiz?: QuizOrderByWithRelationInput;
+    user?: UserOrderByWithRelationInput;
+  };
+
+  export type QuizViewsWhereUniqueInput = Prisma.AtLeast<
+    {
+      id?: string;
+      quizId_userId?: QuizViewsQuizIdUserIdCompoundUniqueInput;
+      AND?: QuizViewsWhereInput | QuizViewsWhereInput[];
+      OR?: QuizViewsWhereInput[];
+      NOT?: QuizViewsWhereInput | QuizViewsWhereInput[];
+      quizId?: StringFilter<"QuizViews"> | string;
+      userId?: StringFilter<"QuizViews"> | string;
+      viewedAt?: DateTimeFilter<"QuizViews"> | Date | string;
+      quiz?: XOR<QuizScalarRelationFilter, QuizWhereInput>;
+      user?: XOR<UserScalarRelationFilter, UserWhereInput>;
+    },
+    "id" | "quizId_userId"
+  >;
+
+  export type QuizViewsOrderByWithAggregationInput = {
+    id?: SortOrder;
+    quizId?: SortOrder;
+    userId?: SortOrder;
+    viewedAt?: SortOrder;
+    _count?: QuizViewsCountOrderByAggregateInput;
+    _max?: QuizViewsMaxOrderByAggregateInput;
+    _min?: QuizViewsMinOrderByAggregateInput;
+  };
+
+  export type QuizViewsScalarWhereWithAggregatesInput = {
+    AND?:
+      | QuizViewsScalarWhereWithAggregatesInput
+      | QuizViewsScalarWhereWithAggregatesInput[];
+    OR?: QuizViewsScalarWhereWithAggregatesInput[];
+    NOT?:
+      | QuizViewsScalarWhereWithAggregatesInput
+      | QuizViewsScalarWhereWithAggregatesInput[];
+    id?: StringWithAggregatesFilter<"QuizViews"> | string;
+    quizId?: StringWithAggregatesFilter<"QuizViews"> | string;
+    userId?: StringWithAggregatesFilter<"QuizViews"> | string;
+    viewedAt?: DateTimeWithAggregatesFilter<"QuizViews"> | Date | string;
   };
 
   export type QuizWhereInput = {
@@ -22716,6 +24306,7 @@ export namespace Prisma {
     > | null;
     chatMessage?: ChatMessageListRelationFilter;
     cdoBets?: CDOBetsListRelationFilter;
+    quizViews?: QuizViewsListRelationFilter;
   };
 
   export type QuizOrderByWithRelationInput = {
@@ -22753,6 +24344,7 @@ export namespace Prisma {
     GameSession?: GameSessionOrderByWithRelationInput;
     chatMessage?: ChatMessageOrderByRelationAggregateInput;
     cdoBets?: CDOBetsOrderByRelationAggregateInput;
+    quizViews?: QuizViewsOrderByRelationAggregateInput;
   };
 
   export type QuizWhereUniqueInput = Prisma.AtLeast<
@@ -22797,6 +24389,7 @@ export namespace Prisma {
       > | null;
       chatMessage?: ChatMessageListRelationFilter;
       cdoBets?: CDOBetsListRelationFilter;
+      quizViews?: QuizViewsListRelationFilter;
     },
     "id" | "participantCode" | "spectatorCode"
   >;
@@ -24078,6 +25671,7 @@ export namespace Prisma {
     lastLoginAt?: Date | string;
     Quiz?: QuizCreateNestedManyWithoutHostInput;
     reviews?: ReviewCreateNestedManyWithoutUserInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutUserInput;
   };
 
   export type UserUncheckedCreateInput = {
@@ -24093,6 +25687,7 @@ export namespace Prisma {
     lastLoginAt?: Date | string;
     Quiz?: QuizUncheckedCreateNestedManyWithoutHostInput;
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutUserInput;
   };
 
   export type UserUpdateInput = {
@@ -24108,6 +25703,7 @@ export namespace Prisma {
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     Quiz?: QuizUpdateManyWithoutHostNestedInput;
     reviews?: ReviewUpdateManyWithoutUserNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutUserNestedInput;
   };
 
   export type UserUncheckedUpdateInput = {
@@ -24123,6 +25719,7 @@ export namespace Prisma {
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     Quiz?: QuizUncheckedUpdateManyWithoutHostNestedInput;
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type UserCreateManyInput = {
@@ -24164,6 +25761,53 @@ export namespace Prisma {
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
 
+  export type QuizViewsCreateInput = {
+    id?: string;
+    viewedAt?: Date | string;
+    quiz: QuizCreateNestedOneWithoutQuizViewsInput;
+    user: UserCreateNestedOneWithoutQuizViewsInput;
+  };
+
+  export type QuizViewsUncheckedCreateInput = {
+    id?: string;
+    quizId: string;
+    userId: string;
+    viewedAt?: Date | string;
+  };
+
+  export type QuizViewsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    quiz?: QuizUpdateOneRequiredWithoutQuizViewsNestedInput;
+    user?: UserUpdateOneRequiredWithoutQuizViewsNestedInput;
+  };
+
+  export type QuizViewsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    quizId?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type QuizViewsCreateManyInput = {
+    id?: string;
+    quizId: string;
+    userId: string;
+    viewedAt?: Date | string;
+  };
+
+  export type QuizViewsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type QuizViewsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    quizId?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
   export type QuizCreateInput = {
     id?: string;
     title: string;
@@ -24198,6 +25842,7 @@ export namespace Prisma {
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateInput = {
@@ -24234,6 +25879,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUpdateInput = {
@@ -24278,6 +25924,7 @@ export namespace Prisma {
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateInput = {
@@ -24322,6 +25969,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizCreateManyInput = {
@@ -25701,6 +27349,12 @@ export namespace Prisma {
     none?: ReviewWhereInput;
   };
 
+  export type QuizViewsListRelationFilter = {
+    every?: QuizViewsWhereInput;
+    some?: QuizViewsWhereInput;
+    none?: QuizViewsWhereInput;
+  };
+
   export type SortOrderInput = {
     sort: SortOrder;
     nulls?: NullsOrder;
@@ -25711,6 +27365,10 @@ export namespace Prisma {
   };
 
   export type ReviewOrderByRelationAggregateInput = {
+    _count?: SortOrder;
+  };
+
+  export type QuizViewsOrderByRelationAggregateInput = {
     _count?: SortOrder;
   };
 
@@ -25814,6 +27472,42 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>;
   };
 
+  export type QuizScalarRelationFilter = {
+    is?: QuizWhereInput;
+    isNot?: QuizWhereInput;
+  };
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput;
+    isNot?: UserWhereInput;
+  };
+
+  export type QuizViewsQuizIdUserIdCompoundUniqueInput = {
+    quizId: string;
+    userId: string;
+  };
+
+  export type QuizViewsCountOrderByAggregateInput = {
+    id?: SortOrder;
+    quizId?: SortOrder;
+    userId?: SortOrder;
+    viewedAt?: SortOrder;
+  };
+
+  export type QuizViewsMaxOrderByAggregateInput = {
+    id?: SortOrder;
+    quizId?: SortOrder;
+    userId?: SortOrder;
+    viewedAt?: SortOrder;
+  };
+
+  export type QuizViewsMinOrderByAggregateInput = {
+    id?: SortOrder;
+    quizId?: SortOrder;
+    userId?: SortOrder;
+    viewedAt?: SortOrder;
+  };
+
   export type EnumTemplateFilter<$PrismaModel = never> = {
     equals?: $Enums.Template | EnumTemplateFieldRefInput<$PrismaModel>;
     in?: $Enums.Template[] | ListEnumTemplateFieldRefInput<$PrismaModel>;
@@ -25877,11 +27571,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null;
-  };
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput;
-    isNot?: UserWhereInput;
   };
 
   export type ParticipantListRelationFilter = {
@@ -26138,11 +27827,6 @@ export namespace Prisma {
       | $Enums.ImagePosition[]
       | ListEnumImagePositionFieldRefInput<$PrismaModel>;
     not?: NestedEnumImagePositionFilter<$PrismaModel> | $Enums.ImagePosition;
-  };
-
-  export type QuizScalarRelationFilter = {
-    is?: QuizWhereInput;
-    isNot?: QuizWhereInput;
   };
 
   export type ResponseListRelationFilter = {
@@ -27067,6 +28751,21 @@ export namespace Prisma {
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[];
   };
 
+  export type QuizViewsCreateNestedManyWithoutUserInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutUserInput,
+          QuizViewsUncheckedCreateWithoutUserInput
+        >
+      | QuizViewsCreateWithoutUserInput[]
+      | QuizViewsUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutUserInput
+      | QuizViewsCreateOrConnectWithoutUserInput[];
+    createMany?: QuizViewsCreateManyUserInputEnvelope;
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+  };
+
   export type QuizUncheckedCreateNestedManyWithoutHostInput = {
     create?:
       | XOR<QuizCreateWithoutHostInput, QuizUncheckedCreateWithoutHostInput>
@@ -27089,6 +28788,21 @@ export namespace Prisma {
       | ReviewCreateOrConnectWithoutUserInput[];
     createMany?: ReviewCreateManyUserInputEnvelope;
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[];
+  };
+
+  export type QuizViewsUncheckedCreateNestedManyWithoutUserInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutUserInput,
+          QuizViewsUncheckedCreateWithoutUserInput
+        >
+      | QuizViewsCreateWithoutUserInput[]
+      | QuizViewsUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutUserInput
+      | QuizViewsCreateOrConnectWithoutUserInput[];
+    createMany?: QuizViewsCreateManyUserInputEnvelope;
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
   };
 
   export type StringFieldUpdateOperationsInput = {
@@ -27157,6 +28871,34 @@ export namespace Prisma {
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[];
   };
 
+  export type QuizViewsUpdateManyWithoutUserNestedInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutUserInput,
+          QuizViewsUncheckedCreateWithoutUserInput
+        >
+      | QuizViewsCreateWithoutUserInput[]
+      | QuizViewsUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutUserInput
+      | QuizViewsCreateOrConnectWithoutUserInput[];
+    upsert?:
+      | QuizViewsUpsertWithWhereUniqueWithoutUserInput
+      | QuizViewsUpsertWithWhereUniqueWithoutUserInput[];
+    createMany?: QuizViewsCreateManyUserInputEnvelope;
+    set?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    disconnect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    delete?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    update?:
+      | QuizViewsUpdateWithWhereUniqueWithoutUserInput
+      | QuizViewsUpdateWithWhereUniqueWithoutUserInput[];
+    updateMany?:
+      | QuizViewsUpdateManyWithWhereWithoutUserInput
+      | QuizViewsUpdateManyWithWhereWithoutUserInput[];
+    deleteMany?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
+  };
+
   export type QuizUncheckedUpdateManyWithoutHostNestedInput = {
     create?:
       | XOR<QuizCreateWithoutHostInput, QuizUncheckedCreateWithoutHostInput>
@@ -27205,6 +28947,86 @@ export namespace Prisma {
       | ReviewUpdateManyWithWhereWithoutUserInput
       | ReviewUpdateManyWithWhereWithoutUserInput[];
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[];
+  };
+
+  export type QuizViewsUncheckedUpdateManyWithoutUserNestedInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutUserInput,
+          QuizViewsUncheckedCreateWithoutUserInput
+        >
+      | QuizViewsCreateWithoutUserInput[]
+      | QuizViewsUncheckedCreateWithoutUserInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutUserInput
+      | QuizViewsCreateOrConnectWithoutUserInput[];
+    upsert?:
+      | QuizViewsUpsertWithWhereUniqueWithoutUserInput
+      | QuizViewsUpsertWithWhereUniqueWithoutUserInput[];
+    createMany?: QuizViewsCreateManyUserInputEnvelope;
+    set?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    disconnect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    delete?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    update?:
+      | QuizViewsUpdateWithWhereUniqueWithoutUserInput
+      | QuizViewsUpdateWithWhereUniqueWithoutUserInput[];
+    updateMany?:
+      | QuizViewsUpdateManyWithWhereWithoutUserInput
+      | QuizViewsUpdateManyWithWhereWithoutUserInput[];
+    deleteMany?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
+  };
+
+  export type QuizCreateNestedOneWithoutQuizViewsInput = {
+    create?: XOR<
+      QuizCreateWithoutQuizViewsInput,
+      QuizUncheckedCreateWithoutQuizViewsInput
+    >;
+    connectOrCreate?: QuizCreateOrConnectWithoutQuizViewsInput;
+    connect?: QuizWhereUniqueInput;
+  };
+
+  export type UserCreateNestedOneWithoutQuizViewsInput = {
+    create?: XOR<
+      UserCreateWithoutQuizViewsInput,
+      UserUncheckedCreateWithoutQuizViewsInput
+    >;
+    connectOrCreate?: UserCreateOrConnectWithoutQuizViewsInput;
+    connect?: UserWhereUniqueInput;
+  };
+
+  export type QuizUpdateOneRequiredWithoutQuizViewsNestedInput = {
+    create?: XOR<
+      QuizCreateWithoutQuizViewsInput,
+      QuizUncheckedCreateWithoutQuizViewsInput
+    >;
+    connectOrCreate?: QuizCreateOrConnectWithoutQuizViewsInput;
+    upsert?: QuizUpsertWithoutQuizViewsInput;
+    connect?: QuizWhereUniqueInput;
+    update?: XOR<
+      XOR<
+        QuizUpdateToOneWithWhereWithoutQuizViewsInput,
+        QuizUpdateWithoutQuizViewsInput
+      >,
+      QuizUncheckedUpdateWithoutQuizViewsInput
+    >;
+  };
+
+  export type UserUpdateOneRequiredWithoutQuizViewsNestedInput = {
+    create?: XOR<
+      UserCreateWithoutQuizViewsInput,
+      UserUncheckedCreateWithoutQuizViewsInput
+    >;
+    connectOrCreate?: UserCreateOrConnectWithoutQuizViewsInput;
+    upsert?: UserUpsertWithoutQuizViewsInput;
+    connect?: UserWhereUniqueInput;
+    update?: XOR<
+      XOR<
+        UserUpdateToOneWithWhereWithoutQuizViewsInput,
+        UserUpdateWithoutQuizViewsInput
+      >,
+      UserUncheckedUpdateWithoutQuizViewsInput
+    >;
   };
 
   export type QuizCreateinteractionsInput = {
@@ -27304,6 +29126,21 @@ export namespace Prisma {
     connect?: CDOBetsWhereUniqueInput | CDOBetsWhereUniqueInput[];
   };
 
+  export type QuizViewsCreateNestedManyWithoutQuizInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutQuizInput,
+          QuizViewsUncheckedCreateWithoutQuizInput
+        >
+      | QuizViewsCreateWithoutQuizInput[]
+      | QuizViewsUncheckedCreateWithoutQuizInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutQuizInput
+      | QuizViewsCreateOrConnectWithoutQuizInput[];
+    createMany?: QuizViewsCreateManyQuizInputEnvelope;
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+  };
+
   export type ParticipantUncheckedCreateNestedManyWithoutQuizInput = {
     create?:
       | XOR<
@@ -27386,6 +29223,21 @@ export namespace Prisma {
       | CDOBetsCreateOrConnectWithoutQuizInput[];
     createMany?: CDOBetsCreateManyQuizInputEnvelope;
     connect?: CDOBetsWhereUniqueInput | CDOBetsWhereUniqueInput[];
+  };
+
+  export type QuizViewsUncheckedCreateNestedManyWithoutQuizInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutQuizInput,
+          QuizViewsUncheckedCreateWithoutQuizInput
+        >
+      | QuizViewsCreateWithoutQuizInput[]
+      | QuizViewsUncheckedCreateWithoutQuizInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutQuizInput
+      | QuizViewsCreateOrConnectWithoutQuizInput[];
+    createMany?: QuizViewsCreateManyQuizInputEnvelope;
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
   };
 
   export type EnumTemplateFieldUpdateOperationsInput = {
@@ -27594,6 +29446,34 @@ export namespace Prisma {
     deleteMany?: CDOBetsScalarWhereInput | CDOBetsScalarWhereInput[];
   };
 
+  export type QuizViewsUpdateManyWithoutQuizNestedInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutQuizInput,
+          QuizViewsUncheckedCreateWithoutQuizInput
+        >
+      | QuizViewsCreateWithoutQuizInput[]
+      | QuizViewsUncheckedCreateWithoutQuizInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutQuizInput
+      | QuizViewsCreateOrConnectWithoutQuizInput[];
+    upsert?:
+      | QuizViewsUpsertWithWhereUniqueWithoutQuizInput
+      | QuizViewsUpsertWithWhereUniqueWithoutQuizInput[];
+    createMany?: QuizViewsCreateManyQuizInputEnvelope;
+    set?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    disconnect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    delete?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    update?:
+      | QuizViewsUpdateWithWhereUniqueWithoutQuizInput
+      | QuizViewsUpdateWithWhereUniqueWithoutQuizInput[];
+    updateMany?:
+      | QuizViewsUpdateManyWithWhereWithoutQuizInput
+      | QuizViewsUpdateManyWithWhereWithoutQuizInput[];
+    deleteMany?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
+  };
+
   export type ParticipantUncheckedUpdateManyWithoutQuizNestedInput = {
     create?:
       | XOR<
@@ -27751,6 +29631,34 @@ export namespace Prisma {
       | CDOBetsUpdateManyWithWhereWithoutQuizInput
       | CDOBetsUpdateManyWithWhereWithoutQuizInput[];
     deleteMany?: CDOBetsScalarWhereInput | CDOBetsScalarWhereInput[];
+  };
+
+  export type QuizViewsUncheckedUpdateManyWithoutQuizNestedInput = {
+    create?:
+      | XOR<
+          QuizViewsCreateWithoutQuizInput,
+          QuizViewsUncheckedCreateWithoutQuizInput
+        >
+      | QuizViewsCreateWithoutQuizInput[]
+      | QuizViewsUncheckedCreateWithoutQuizInput[];
+    connectOrCreate?:
+      | QuizViewsCreateOrConnectWithoutQuizInput
+      | QuizViewsCreateOrConnectWithoutQuizInput[];
+    upsert?:
+      | QuizViewsUpsertWithWhereUniqueWithoutQuizInput
+      | QuizViewsUpsertWithWhereUniqueWithoutQuizInput[];
+    createMany?: QuizViewsCreateManyQuizInputEnvelope;
+    set?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    disconnect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    delete?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    connect?: QuizViewsWhereUniqueInput | QuizViewsWhereUniqueInput[];
+    update?:
+      | QuizViewsUpdateWithWhereUniqueWithoutQuizInput
+      | QuizViewsUpdateWithWhereUniqueWithoutQuizInput[];
+    updateMany?:
+      | QuizViewsUpdateManyWithWhereWithoutQuizInput
+      | QuizViewsUpdateManyWithWhereWithoutQuizInput[];
+    deleteMany?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
   };
 
   export type QuestionCreateoptionsInput = {
@@ -29693,6 +31601,7 @@ export namespace Prisma {
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutHostInput = {
@@ -29728,6 +31637,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutHostInput = {
@@ -29769,6 +31679,31 @@ export namespace Prisma {
 
   export type ReviewCreateManyUserInputEnvelope = {
     data: ReviewCreateManyUserInput | ReviewCreateManyUserInput[];
+    skipDuplicates?: boolean;
+  };
+
+  export type QuizViewsCreateWithoutUserInput = {
+    id?: string;
+    viewedAt?: Date | string;
+    quiz: QuizCreateNestedOneWithoutQuizViewsInput;
+  };
+
+  export type QuizViewsUncheckedCreateWithoutUserInput = {
+    id?: string;
+    quizId: string;
+    viewedAt?: Date | string;
+  };
+
+  export type QuizViewsCreateOrConnectWithoutUserInput = {
+    where: QuizViewsWhereUniqueInput;
+    create: XOR<
+      QuizViewsCreateWithoutUserInput,
+      QuizViewsUncheckedCreateWithoutUserInput
+    >;
+  };
+
+  export type QuizViewsCreateManyUserInputEnvelope = {
+    data: QuizViewsCreateManyUserInput | QuizViewsCreateManyUserInput[];
     skipDuplicates?: boolean;
   };
 
@@ -29870,6 +31805,320 @@ export namespace Prisma {
     updateAt?: DateTimeFilter<"Review"> | Date | string;
   };
 
+  export type QuizViewsUpsertWithWhereUniqueWithoutUserInput = {
+    where: QuizViewsWhereUniqueInput;
+    update: XOR<
+      QuizViewsUpdateWithoutUserInput,
+      QuizViewsUncheckedUpdateWithoutUserInput
+    >;
+    create: XOR<
+      QuizViewsCreateWithoutUserInput,
+      QuizViewsUncheckedCreateWithoutUserInput
+    >;
+  };
+
+  export type QuizViewsUpdateWithWhereUniqueWithoutUserInput = {
+    where: QuizViewsWhereUniqueInput;
+    data: XOR<
+      QuizViewsUpdateWithoutUserInput,
+      QuizViewsUncheckedUpdateWithoutUserInput
+    >;
+  };
+
+  export type QuizViewsUpdateManyWithWhereWithoutUserInput = {
+    where: QuizViewsScalarWhereInput;
+    data: XOR<
+      QuizViewsUpdateManyMutationInput,
+      QuizViewsUncheckedUpdateManyWithoutUserInput
+    >;
+  };
+
+  export type QuizViewsScalarWhereInput = {
+    AND?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
+    OR?: QuizViewsScalarWhereInput[];
+    NOT?: QuizViewsScalarWhereInput | QuizViewsScalarWhereInput[];
+    id?: StringFilter<"QuizViews"> | string;
+    quizId?: StringFilter<"QuizViews"> | string;
+    userId?: StringFilter<"QuizViews"> | string;
+    viewedAt?: DateTimeFilter<"QuizViews"> | Date | string;
+  };
+
+  export type QuizCreateWithoutQuizViewsInput = {
+    id?: string;
+    title: string;
+    description?: string | null;
+    theme?: $Enums.Template;
+    participantCode?: string | null;
+    spectatorCode?: string | null;
+    spectatorLink?: string | null;
+    prizePool: number;
+    currency?: string;
+    basePointsPerQuestion?: number;
+    pointsMultiplier?: number;
+    timeBonus?: boolean;
+    eliminationThreshold?: number;
+    questionTimeLimit?: number;
+    breakBetweenQuestions?: number;
+    status?: $Enums.QuizStatus;
+    interactions?: QuizCreateinteractionsInput | $Enums.Interactions[];
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    scheduledAt?: Date | string | null;
+    startedAt?: Date | string | null;
+    endedAt?: Date | string | null;
+    autoSave?: boolean;
+    liveChat?: boolean;
+    spectatorMode?: boolean;
+    allowNewSpectator?: boolean;
+    host: UserCreateNestedOneWithoutQuizInput;
+    participants?: ParticipantCreateNestedManyWithoutQuizInput;
+    spectators?: SpectatorCreateNestedManyWithoutQuizInput;
+    questions?: QuestionCreateNestedManyWithoutQuizInput;
+    GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
+    chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
+    cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+  };
+
+  export type QuizUncheckedCreateWithoutQuizViewsInput = {
+    id?: string;
+    title: string;
+    description?: string | null;
+    theme?: $Enums.Template;
+    participantCode?: string | null;
+    spectatorCode?: string | null;
+    spectatorLink?: string | null;
+    prizePool: number;
+    currency?: string;
+    basePointsPerQuestion?: number;
+    pointsMultiplier?: number;
+    timeBonus?: boolean;
+    eliminationThreshold?: number;
+    questionTimeLimit?: number;
+    breakBetweenQuestions?: number;
+    status?: $Enums.QuizStatus;
+    interactions?: QuizCreateinteractionsInput | $Enums.Interactions[];
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    scheduledAt?: Date | string | null;
+    startedAt?: Date | string | null;
+    endedAt?: Date | string | null;
+    hostId: string;
+    autoSave?: boolean;
+    liveChat?: boolean;
+    spectatorMode?: boolean;
+    allowNewSpectator?: boolean;
+    participants?: ParticipantUncheckedCreateNestedManyWithoutQuizInput;
+    spectators?: SpectatorUncheckedCreateNestedManyWithoutQuizInput;
+    questions?: QuestionUncheckedCreateNestedManyWithoutQuizInput;
+    GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
+    chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
+    cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+  };
+
+  export type QuizCreateOrConnectWithoutQuizViewsInput = {
+    where: QuizWhereUniqueInput;
+    create: XOR<
+      QuizCreateWithoutQuizViewsInput,
+      QuizUncheckedCreateWithoutQuizViewsInput
+    >;
+  };
+
+  export type UserCreateWithoutQuizViewsInput = {
+    id?: string;
+    name: string;
+    email: string;
+    image?: string | null;
+    walletAddress?: string | null;
+    isVerified?: boolean;
+    isActive?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    lastLoginAt?: Date | string;
+    Quiz?: QuizCreateNestedManyWithoutHostInput;
+    reviews?: ReviewCreateNestedManyWithoutUserInput;
+  };
+
+  export type UserUncheckedCreateWithoutQuizViewsInput = {
+    id?: string;
+    name: string;
+    email: string;
+    image?: string | null;
+    walletAddress?: string | null;
+    isVerified?: boolean;
+    isActive?: boolean;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    lastLoginAt?: Date | string;
+    Quiz?: QuizUncheckedCreateNestedManyWithoutHostInput;
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput;
+  };
+
+  export type UserCreateOrConnectWithoutQuizViewsInput = {
+    where: UserWhereUniqueInput;
+    create: XOR<
+      UserCreateWithoutQuizViewsInput,
+      UserUncheckedCreateWithoutQuizViewsInput
+    >;
+  };
+
+  export type QuizUpsertWithoutQuizViewsInput = {
+    update: XOR<
+      QuizUpdateWithoutQuizViewsInput,
+      QuizUncheckedUpdateWithoutQuizViewsInput
+    >;
+    create: XOR<
+      QuizCreateWithoutQuizViewsInput,
+      QuizUncheckedCreateWithoutQuizViewsInput
+    >;
+    where?: QuizWhereInput;
+  };
+
+  export type QuizUpdateToOneWithWhereWithoutQuizViewsInput = {
+    where?: QuizWhereInput;
+    data: XOR<
+      QuizUpdateWithoutQuizViewsInput,
+      QuizUncheckedUpdateWithoutQuizViewsInput
+    >;
+  };
+
+  export type QuizUpdateWithoutQuizViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    title?: StringFieldUpdateOperationsInput | string;
+    description?: NullableStringFieldUpdateOperationsInput | string | null;
+    theme?: EnumTemplateFieldUpdateOperationsInput | $Enums.Template;
+    participantCode?: NullableStringFieldUpdateOperationsInput | string | null;
+    spectatorCode?: NullableStringFieldUpdateOperationsInput | string | null;
+    spectatorLink?: NullableStringFieldUpdateOperationsInput | string | null;
+    prizePool?: FloatFieldUpdateOperationsInput | number;
+    currency?: StringFieldUpdateOperationsInput | string;
+    basePointsPerQuestion?: IntFieldUpdateOperationsInput | number;
+    pointsMultiplier?: FloatFieldUpdateOperationsInput | number;
+    timeBonus?: BoolFieldUpdateOperationsInput | boolean;
+    eliminationThreshold?: FloatFieldUpdateOperationsInput | number;
+    questionTimeLimit?: IntFieldUpdateOperationsInput | number;
+    breakBetweenQuestions?: IntFieldUpdateOperationsInput | number;
+    status?: EnumQuizStatusFieldUpdateOperationsInput | $Enums.QuizStatus;
+    interactions?: QuizUpdateinteractionsInput | $Enums.Interactions[];
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    scheduledAt?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
+    startedAt?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    autoSave?: BoolFieldUpdateOperationsInput | boolean;
+    liveChat?: BoolFieldUpdateOperationsInput | boolean;
+    spectatorMode?: BoolFieldUpdateOperationsInput | boolean;
+    allowNewSpectator?: BoolFieldUpdateOperationsInput | boolean;
+    host?: UserUpdateOneRequiredWithoutQuizNestedInput;
+    participants?: ParticipantUpdateManyWithoutQuizNestedInput;
+    spectators?: SpectatorUpdateManyWithoutQuizNestedInput;
+    questions?: QuestionUpdateManyWithoutQuizNestedInput;
+    GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
+    chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
+    cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+  };
+
+  export type QuizUncheckedUpdateWithoutQuizViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    title?: StringFieldUpdateOperationsInput | string;
+    description?: NullableStringFieldUpdateOperationsInput | string | null;
+    theme?: EnumTemplateFieldUpdateOperationsInput | $Enums.Template;
+    participantCode?: NullableStringFieldUpdateOperationsInput | string | null;
+    spectatorCode?: NullableStringFieldUpdateOperationsInput | string | null;
+    spectatorLink?: NullableStringFieldUpdateOperationsInput | string | null;
+    prizePool?: FloatFieldUpdateOperationsInput | number;
+    currency?: StringFieldUpdateOperationsInput | string;
+    basePointsPerQuestion?: IntFieldUpdateOperationsInput | number;
+    pointsMultiplier?: FloatFieldUpdateOperationsInput | number;
+    timeBonus?: BoolFieldUpdateOperationsInput | boolean;
+    eliminationThreshold?: FloatFieldUpdateOperationsInput | number;
+    questionTimeLimit?: IntFieldUpdateOperationsInput | number;
+    breakBetweenQuestions?: IntFieldUpdateOperationsInput | number;
+    status?: EnumQuizStatusFieldUpdateOperationsInput | $Enums.QuizStatus;
+    interactions?: QuizUpdateinteractionsInput | $Enums.Interactions[];
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    scheduledAt?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
+    startedAt?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    hostId?: StringFieldUpdateOperationsInput | string;
+    autoSave?: BoolFieldUpdateOperationsInput | boolean;
+    liveChat?: BoolFieldUpdateOperationsInput | boolean;
+    spectatorMode?: BoolFieldUpdateOperationsInput | boolean;
+    allowNewSpectator?: BoolFieldUpdateOperationsInput | boolean;
+    participants?: ParticipantUncheckedUpdateManyWithoutQuizNestedInput;
+    spectators?: SpectatorUncheckedUpdateManyWithoutQuizNestedInput;
+    questions?: QuestionUncheckedUpdateManyWithoutQuizNestedInput;
+    GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
+    chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
+    cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+  };
+
+  export type UserUpsertWithoutQuizViewsInput = {
+    update: XOR<
+      UserUpdateWithoutQuizViewsInput,
+      UserUncheckedUpdateWithoutQuizViewsInput
+    >;
+    create: XOR<
+      UserCreateWithoutQuizViewsInput,
+      UserUncheckedCreateWithoutQuizViewsInput
+    >;
+    where?: UserWhereInput;
+  };
+
+  export type UserUpdateToOneWithWhereWithoutQuizViewsInput = {
+    where?: UserWhereInput;
+    data: XOR<
+      UserUpdateWithoutQuizViewsInput,
+      UserUncheckedUpdateWithoutQuizViewsInput
+    >;
+  };
+
+  export type UserUpdateWithoutQuizViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    name?: StringFieldUpdateOperationsInput | string;
+    email?: StringFieldUpdateOperationsInput | string;
+    image?: NullableStringFieldUpdateOperationsInput | string | null;
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null;
+    isVerified?: BoolFieldUpdateOperationsInput | boolean;
+    isActive?: BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    Quiz?: QuizUpdateManyWithoutHostNestedInput;
+    reviews?: ReviewUpdateManyWithoutUserNestedInput;
+  };
+
+  export type UserUncheckedUpdateWithoutQuizViewsInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    name?: StringFieldUpdateOperationsInput | string;
+    email?: StringFieldUpdateOperationsInput | string;
+    image?: NullableStringFieldUpdateOperationsInput | string | null;
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null;
+    isVerified?: BoolFieldUpdateOperationsInput | boolean;
+    isActive?: BoolFieldUpdateOperationsInput | boolean;
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    Quiz?: QuizUncheckedUpdateManyWithoutHostNestedInput;
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput;
+  };
+
   export type UserCreateWithoutQuizInput = {
     id?: string;
     name: string;
@@ -29882,6 +32131,7 @@ export namespace Prisma {
     updatedAt?: Date | string;
     lastLoginAt?: Date | string;
     reviews?: ReviewCreateNestedManyWithoutUserInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutUserInput;
   };
 
   export type UserUncheckedCreateWithoutQuizInput = {
@@ -29896,6 +32146,7 @@ export namespace Prisma {
     updatedAt?: Date | string;
     lastLoginAt?: Date | string;
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutUserInput;
   };
 
   export type UserCreateOrConnectWithoutQuizInput = {
@@ -30183,6 +32434,31 @@ export namespace Prisma {
     skipDuplicates?: boolean;
   };
 
+  export type QuizViewsCreateWithoutQuizInput = {
+    id?: string;
+    viewedAt?: Date | string;
+    user: UserCreateNestedOneWithoutQuizViewsInput;
+  };
+
+  export type QuizViewsUncheckedCreateWithoutQuizInput = {
+    id?: string;
+    userId: string;
+    viewedAt?: Date | string;
+  };
+
+  export type QuizViewsCreateOrConnectWithoutQuizInput = {
+    where: QuizViewsWhereUniqueInput;
+    create: XOR<
+      QuizViewsCreateWithoutQuizInput,
+      QuizViewsUncheckedCreateWithoutQuizInput
+    >;
+  };
+
+  export type QuizViewsCreateManyQuizInputEnvelope = {
+    data: QuizViewsCreateManyQuizInput | QuizViewsCreateManyQuizInput[];
+    skipDuplicates?: boolean;
+  };
+
   export type UserUpsertWithoutQuizInput = {
     update: XOR<
       UserUpdateWithoutQuizInput,
@@ -30212,6 +32488,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     reviews?: ReviewUpdateManyWithoutUserNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutUserNestedInput;
   };
 
   export type UserUncheckedUpdateWithoutQuizInput = {
@@ -30226,6 +32503,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type ParticipantUpsertWithWhereUniqueWithoutQuizInput = {
@@ -30584,6 +32862,34 @@ export namespace Prisma {
     participantId?: StringFilter<"CDOBets"> | string;
   };
 
+  export type QuizViewsUpsertWithWhereUniqueWithoutQuizInput = {
+    where: QuizViewsWhereUniqueInput;
+    update: XOR<
+      QuizViewsUpdateWithoutQuizInput,
+      QuizViewsUncheckedUpdateWithoutQuizInput
+    >;
+    create: XOR<
+      QuizViewsCreateWithoutQuizInput,
+      QuizViewsUncheckedCreateWithoutQuizInput
+    >;
+  };
+
+  export type QuizViewsUpdateWithWhereUniqueWithoutQuizInput = {
+    where: QuizViewsWhereUniqueInput;
+    data: XOR<
+      QuizViewsUpdateWithoutQuizInput,
+      QuizViewsUncheckedUpdateWithoutQuizInput
+    >;
+  };
+
+  export type QuizViewsUpdateManyWithWhereWithoutQuizInput = {
+    where: QuizViewsScalarWhereInput;
+    data: XOR<
+      QuizViewsUpdateManyMutationInput,
+      QuizViewsUncheckedUpdateManyWithoutQuizInput
+    >;
+  };
+
   export type QuizCreateWithoutQuestionsInput = {
     id?: string;
     title: string;
@@ -30617,6 +32923,7 @@ export namespace Prisma {
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutQuestionsInput = {
@@ -30652,6 +32959,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutQuestionsInput = {
@@ -30762,6 +33070,7 @@ export namespace Prisma {
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutQuestionsInput = {
@@ -30805,6 +33114,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type ResponseUpsertWithWhereUniqueWithoutQuestionInput = {
@@ -30885,6 +33195,7 @@ export namespace Prisma {
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutParticipantsInput = {
@@ -30920,6 +33231,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutParticipantsInput = {
@@ -31090,6 +33402,7 @@ export namespace Prisma {
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutParticipantsInput = {
@@ -31133,6 +33446,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type ResponseUpsertWithWhereUniqueWithoutParticipantInput = {
@@ -31262,6 +33576,7 @@ export namespace Prisma {
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutSpectatorsInput = {
@@ -31297,6 +33612,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutSpectatorsInput = {
@@ -31368,6 +33684,7 @@ export namespace Prisma {
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutSpectatorsInput = {
@@ -31411,6 +33728,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizCreateWithoutGameSessionInput = {
@@ -31446,6 +33764,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutGameSessionInput = {
@@ -31481,6 +33800,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutGameSessionInput = {
@@ -31700,6 +34020,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutGameSessionInput = {
@@ -31743,6 +34064,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type ResponseUpsertWithWhereUniqueWithoutGameSessionInput = {
@@ -32497,6 +34819,7 @@ export namespace Prisma {
     updatedAt?: Date | string;
     lastLoginAt?: Date | string;
     Quiz?: QuizCreateNestedManyWithoutHostInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutUserInput;
   };
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -32511,6 +34834,7 @@ export namespace Prisma {
     updatedAt?: Date | string;
     lastLoginAt?: Date | string;
     Quiz?: QuizUncheckedCreateNestedManyWithoutHostInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutUserInput;
   };
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -32553,6 +34877,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     Quiz?: QuizUpdateManyWithoutHostNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutUserNestedInput;
   };
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -32567,6 +34892,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     lastLoginAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     Quiz?: QuizUncheckedUpdateManyWithoutHostNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutUserNestedInput;
   };
 
   export type GameSessionCreateWithoutChatMessageInput = {
@@ -32666,6 +34992,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutQuizInput;
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     cdoBets?: CDOBetsCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutChatMessageInput = {
@@ -32701,6 +35028,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutQuizInput;
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     cdoBets?: CDOBetsUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutChatMessageInput = {
@@ -33016,6 +35344,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutQuizNestedInput;
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutChatMessageInput = {
@@ -33059,6 +35388,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutQuizNestedInput;
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type ChatReactionUpsertWithWhereUniqueWithoutChatMessageInput = {
@@ -33619,6 +35949,7 @@ export namespace Prisma {
     questions?: QuestionCreateNestedManyWithoutQuizInput;
     GameSession?: GameSessionCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizUncheckedCreateWithoutCdoBetsInput = {
@@ -33654,6 +35985,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedCreateNestedManyWithoutQuizInput;
     GameSession?: GameSessionUncheckedCreateNestedOneWithoutQuizInput;
     chatMessage?: ChatMessageUncheckedCreateNestedManyWithoutQuizInput;
+    quizViews?: QuizViewsUncheckedCreateNestedManyWithoutQuizInput;
   };
 
   export type QuizCreateOrConnectWithoutCdoBetsInput = {
@@ -33775,6 +36107,7 @@ export namespace Prisma {
     questions?: QuestionUpdateManyWithoutQuizNestedInput;
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutCdoBetsInput = {
@@ -33818,6 +36151,7 @@ export namespace Prisma {
     questions?: QuestionUncheckedUpdateManyWithoutQuizNestedInput;
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type ParticipantUpsertWithoutCdoBetsInput = {
@@ -33933,6 +36267,12 @@ export namespace Prisma {
     updateAt?: Date | string;
   };
 
+  export type QuizViewsCreateManyUserInput = {
+    id?: string;
+    quizId: string;
+    viewedAt?: Date | string;
+  };
+
   export type QuizUpdateWithoutHostInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
@@ -33974,6 +36314,7 @@ export namespace Prisma {
     GameSession?: GameSessionUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateWithoutHostInput = {
@@ -34017,6 +36358,7 @@ export namespace Prisma {
     GameSession?: GameSessionUncheckedUpdateOneWithoutQuizNestedInput;
     chatMessage?: ChatMessageUncheckedUpdateManyWithoutQuizNestedInput;
     cdoBets?: CDOBetsUncheckedUpdateManyWithoutQuizNestedInput;
+    quizViews?: QuizViewsUncheckedUpdateManyWithoutQuizNestedInput;
   };
 
   export type QuizUncheckedUpdateManyWithoutHostInput = {
@@ -34078,6 +36420,24 @@ export namespace Prisma {
     comment?: StringFieldUpdateOperationsInput | string;
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string;
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type QuizViewsUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    quiz?: QuizUpdateOneRequiredWithoutQuizViewsNestedInput;
+  };
+
+  export type QuizViewsUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    quizId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type QuizViewsUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    quizId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
 
   export type ParticipantCreateManyQuizInput = {
@@ -34146,6 +36506,12 @@ export namespace Prisma {
     betStatus: $Enums.BetStatus;
     questionId: string;
     participantId: string;
+  };
+
+  export type QuizViewsCreateManyQuizInput = {
+    id?: string;
+    userId: string;
+    viewedAt?: Date | string;
   };
 
   export type ParticipantUpdateWithoutQuizInput = {
@@ -34389,6 +36755,24 @@ export namespace Prisma {
     betStatus?: EnumBetStatusFieldUpdateOperationsInput | $Enums.BetStatus;
     questionId?: StringFieldUpdateOperationsInput | string;
     participantId?: StringFieldUpdateOperationsInput | string;
+  };
+
+  export type QuizViewsUpdateWithoutQuizInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+    user?: UserUpdateOneRequiredWithoutQuizViewsNestedInput;
+  };
+
+  export type QuizViewsUncheckedUpdateWithoutQuizInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
+  };
+
+  export type QuizViewsUncheckedUpdateManyWithoutQuizInput = {
+    id?: StringFieldUpdateOperationsInput | string;
+    userId?: StringFieldUpdateOperationsInput | string;
+    viewedAt?: DateTimeFieldUpdateOperationsInput | Date | string;
   };
 
   export type ResponseCreateManyQuestionInput = {

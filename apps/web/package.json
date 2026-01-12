@@ -51,6 +51,7 @@
         "html2canvas": "^1.4.1",
         "konva": "^9.3.22",
         "lucide-react": "^0.544.0",
+        "moment": "^2.30.1",
         "motion": "^12.23.12",
         "next": "^15.3.0",
         "next-auth": "^4.24.11",

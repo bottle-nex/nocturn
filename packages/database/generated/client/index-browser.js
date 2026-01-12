@@ -133,6 +133,13 @@ exports.Prisma.UserScalarFieldEnum = {
   lastLoginAt: 'lastLoginAt'
 };
 
+exports.Prisma.QuizViewsScalarFieldEnum = {
+  id: 'id',
+  quizId: 'quizId',
+  userId: 'userId',
+  viewedAt: 'viewedAt'
+};
+
 exports.Prisma.QuizScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -418,6 +425,7 @@ exports.BetStatus = exports.$Enums.BetStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  QuizViews: 'QuizViews',
   Quiz: 'Quiz',
   Question: 'Question',
   Participant: 'Participant',

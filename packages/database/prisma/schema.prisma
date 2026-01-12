@@ -3,8 +3,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/client"
+  provider  = "prisma-client-js"
+  output    = "../generated/client"
   env_files = ["../../../.env"]
 }
 
@@ -18,13 +18,27 @@ model User {
   isVerified Boolean @default(false)
   isActive   Boolean @default(true)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  lastLoginAt DateTime @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  lastLoginAt DateTime    @default(now())
   Quiz        Quiz[]
   reviews     Review[]
+  quizViews   QuizViews[]
 
   @@map("hosts")
+}
+
+model QuizViews {
+  id       String   @id @default(cuid())
+  quizId   String
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  viewedAt DateTime @default(now())
+
+  @@unique([quizId, userId])
+  @@index([userId, viewedAt(sort: Desc)])
+  @@map("quiz_views")
 }
 
 model Quiz {
@@ -69,6 +83,7 @@ model Quiz {
   GameSession  GameSession?
   chatMessage  ChatMessage[]
   cdoBets      CDOBets[]
+  quizViews    QuizViews[]
 
   @@map("quizzes")
 }

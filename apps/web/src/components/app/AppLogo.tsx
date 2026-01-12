@@ -1,15 +1,14 @@
 import { cn } from '@/lib/utils';
-import { Major_Mono_Display } from 'next/font/google';
-import NocturnLogo from '../ui/svg/NocturnLogo';
+import Image from 'next/image';
 import Link from 'next/link';
 
-const major_mono_display = Major_Mono_Display({
-    subsets: ['latin'],
-    display: 'swap',
-    weight: ['400'],
-});
-
-export default function AppLogo({ className }: { className?: string }) {
+export default function AppLogo({
+    className,
+    withText,
+}: {
+    className?: string;
+    withText?: boolean;
+}) {
     return (
         <Link
             href={'/'}
@@ -18,17 +17,14 @@ export default function AppLogo({ className }: { className?: string }) {
                 className,
             )}
         >
-            <span
-                className={`text-[22px] text-neutral-900 dark:text-light-base font-medium tracking-wide flex items-center justify-center ${major_mono_display.className}`}
-            >
-                N
-                {
-                    <span className="translate-y-1.75">
-                        <NocturnLogo className="mb-2.25" />
+            <div className="flex items-center justify-start gap-x-2">
+                <Image src={'/icons/nocturn.png'} alt="Nocturn Logo" width={40} height={40} />
+                {withText && (
+                    <span className="font-bold text-lg text-black dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
+                        Nocturn
                     </span>
-                }
-                turn
-            </span>
+                )}
+            </div>
         </Link>
     );
 }

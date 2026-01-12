@@ -31,7 +31,7 @@ router.get('/user/get-review', authMiddleware, getReviewController);
 // //quiz-routes
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
-router.get('/quiz/get-all-quiz', authMiddleware, getAllQuizController);
+router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
 router.delete('/quiz/delete-quiz/:quizId', authMiddleware, deleteQuizController);
 router.post('/get-presigned-url', getPreSignedUrlController);
 router.post(

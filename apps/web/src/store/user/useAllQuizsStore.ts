@@ -2,8 +2,8 @@ import { QuizType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface AllQuizsStoreType {
-    quizs: QuizType[];
-    setAllQuizs: (quizs: QuizType[]) => void;
+    quizs: Partial<QuizType>[];
+    setAllQuizs: (quizs: Partial<QuizType>[]) => void;
     updateQuiz: (quizId: string, quiz: Partial<QuizType>) => void;
     deleteQuiz: (quizId: string) => void;
 }

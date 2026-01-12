@@ -1,5 +1,5 @@
 @theme {
-    --color-alpha: #fa5c5c;
+    /* --color-alpha: #fa5c5c; */
     --color-light-base: #f5f5f5;
     --color-light-alpha: #ffffff;
     --color-dark-base: #161616;
@@ -10,6 +10,7 @@
     --color-charlie: #53354A;
     --color-delta: #2B2E4A;
     --color-gamma: #F3ECE7;
+    --color-eta: #f6c453
 }
 
 @theme {
@@ -75,4 +76,42 @@
 
 :root.dark .shadow-hard:hover {
     box-shadow: 1px 1px 0 0 var(--color-light-alpha);
+}
+
+/* -------------------- Shadow Button -------------------- */
+.shadow-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* background-color: #f6c453; */
+
+  cursor: pointer;
+  /* soft offset shadow */
+  box-shadow: 4px 4px 0 0 #000;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Hover = lift */
+.shadow-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 #000;
+}
+
+/* Active / Click = press */
+.shadow-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+/* Keyboard accessibility */
+.shadow-button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #000,
+    4px 4px 0 0 #000;
 }

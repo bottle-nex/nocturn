@@ -631,7 +631,7 @@ export declare namespace DMMF {
     EnumValue,
     Datamodel,
     uniqueIndex,
-    alphaKey,
+    PrimaryKey,
     Model,
     FieldKind,
     FieldNamespace,
@@ -675,7 +675,7 @@ declare namespace DMMF_2 {
     EnumValue,
     Datamodel,
     uniqueIndex,
-    alphaKey,
+    PrimaryKey,
     Model,
     FieldKind,
     FieldNamespace,
@@ -2502,7 +2502,7 @@ declare type Model = ReadonlyDeep_2<{
   uniqueFields: string[][];
   uniqueIndexes: uniqueIndex[];
   documentation?: string;
-  alphaKey: alphaKey | null;
+  primaryKey: PrimaryKey | null;
   isGenerated?: boolean;
 }>;
 
@@ -2765,7 +2765,7 @@ declare interface PlaceholderFormat {
   hasNumbering: boolean;
 }
 
-declare type alphaKey = ReadonlyDeep_2<{
+declare type PrimaryKey = ReadonlyDeep_2<{
   name: string | null;
   fields: string[];
 }>;

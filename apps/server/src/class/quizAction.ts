@@ -118,4 +118,31 @@ export default class QuizAction {
             return null;
         }
     }
+
+    public static async record_quiz_view(
+        quizId: string,
+        userId: string,
+    ): Promise<{ created: boolean }> {
+        try {
+            await prisma.quizViews.upsert({
+                where: {
+                    quizId_userId: {
+                        quizId: quizId,
+                        userId: userId,
+                    },
+                },
+                update: {
+                    viewedAt: new Date(),
+                },
+                create: {
+                    quizId: quizId,
+                    userId: userId,
+                },
+            });
+            return { created: true };
+        } catch (err) {
+            console.error('Error recording quiz view:', err);
+            return { created: false };
+        }
+    }
 }
