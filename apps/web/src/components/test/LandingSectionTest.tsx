@@ -98,7 +98,7 @@ export function LandingSectionTest() {
                 </motion.div>
 
                 <div className="absolute bottom-0 w-full mr-65 flex justify-center z-0">
-                    <div className="relative h-[300px] w-[1300px]">
+                    <div className="relative h-75 w-325">
                         <Image
                             src="/images/hero.png"
                             alt=""

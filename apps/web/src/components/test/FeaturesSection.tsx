@@ -1,13 +1,9 @@
 'use client';
-
 import { motion, useInView } from 'framer-motion';
-import { Button } from '../ui/button';
-import { FiArrowUpRight } from 'react-icons/fi';
 import { useRef } from 'react';
 
 export default function FeaturesSection() {
     const topRef = useRef<HTMLDivElement>(null);
-
     const isTopInView = useInView(topRef, {
         margin: '-120px 0px -120px 0px',
     });

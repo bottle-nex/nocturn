@@ -99,16 +99,14 @@ export default function HomeSidebar() {
                             onClick={() => handleTabChange(item.tab)}
                             className={cn(
                                 'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
-                                "hover:bg-black/10 dark:hover:bg-white/10"
+                                'hover:bg-black/10 dark:hover:bg-white/10',
                             )}
                             key={item.tab}
                         >
                             {activeTab === item.tab && (
                                 <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-black dark:bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
                             )}
-                            <span className={cn('p-1 rounded', item.className)}>
-                                {item.icon}
-                            </span>
+                            <span className={cn('p-1 rounded', item.className)}>{item.icon}</span>
                             <span className="text-sm text-black dark:text-white">{item.label}</span>
                         </div>
                     ))}
@@ -121,7 +119,7 @@ export default function HomeSidebar() {
                             onClick={() => handleTabChange(item.tab)}
                             className={cn(
                                 'relative flex items-center gap-x-1 py-1.75 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
-                                "hover:bg-black/10 dark:hover:bg-white/10"
+                                'hover:bg-black/10 dark:hover:bg-white/10',
                             )}
                             key={item.tab}
                         >
