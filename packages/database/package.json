@@ -14,6 +14,7 @@
     "format": "prisma format",
     "generate": "prisma generate",
     "prebuild": "pnpm generate",
+    "build": "pnpm generate",
     "predev": "pnpm generate",
     "studio": "prisma studio"
   },
