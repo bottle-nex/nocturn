@@ -25,7 +25,7 @@ const socials = [
 export default function Footer() {
     return (
         <>
-            <div className="w-full -mt-16 z-30">
+            <div className="w-full -mt-16 z-30 relative">
                 <Image
                     src="/images/footer-img.svg"
                     alt="Nocturn Logo"

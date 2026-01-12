@@ -50,7 +50,7 @@ export default function UserTypeCard({
 
             <div
                 className={cn(
-                    'w-full max-w-[60%] flex flex-col items-start h-full mt-30 gap-y-8',
+                    'w-fit flex flex-col items-start h-full mt-30 gap-y-8 px-30',
                     textClassname,
                 )}
             >

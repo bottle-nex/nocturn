@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { fontAudio } from 'app/fonts/google_fonts';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -35,7 +34,7 @@ export default function NavItems({ items, className }: NavItemsProps) {
                 className,
             )}
         >
-            <div className={cn('px-4 text-[17px]', fontAudio.className)}>nocturn</div>
+            <div className={cn('px-4 text-base text-tprime font-semibold')}>Nocturn</div>
 
             <div>
                 {items.map((item, idx) => {

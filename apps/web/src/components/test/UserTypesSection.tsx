@@ -15,60 +15,78 @@ export default function UserTypeSection() {
 
     useLayoutEffect(() => {
         if (!sectionRef.current || !pinRef.current) return;
+
         const ctx = gsap.context(() => {
+            const total = cardsRef.current.length;
+
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: 'top top',
-                    end: '+=300%',
+                    end: '+=500%',
                     pin: pinRef.current,
                     pinSpacing: true,
-                    scrub: true,
+                    scrub: 1.2,
                 },
             });
 
-            const enter = 1;
-            const hold = 0.01;
-            const gap = 1;
+            const enterDuration = 1.6;
+            const holdAfterEnter = 1.8;
+            const stackDuration = 0.8;
+            const perCardGap = 2.6;
+            const longHoldAfterAll = 2.5;
+            const exitDuration = 1.2;
 
             const stackOffsetX = -50;
-            const stackScaleStep = 0;
-            const total = cardsRef.current.length;
 
             cardsRef.current.forEach((card, index) => {
-                const start = index * gap;
+                const start = index * perCardGap;
                 const depthIndex = total - 1 - index;
 
-                gsap.set(card, {
-                    zIndex: index + 1,
-                });
+                gsap.set(card, { zIndex: index + 1 });
 
                 tl.fromTo(
                     card,
-                    { y: 300, opacity: 0, scale: 0.9 },
+                    { y: 900, scale: 0.9, opacity: 1 },
                     {
                         y: 0,
-                        opacity: 1,
                         scale: 1,
-                        duration: enter,
-                        ease: 'power3.out',
+                        duration: enterDuration,
+                        ease: 'power2.out',
                     },
                     start,
                 );
 
-                tl.to(card, {}, start + enter + hold);
-
-                tl.set(card, { opacity: 1, y: 0 }, start + enter + hold);
+                tl.to(
+                    {},
+                    {
+                        duration: holdAfterEnter,
+                    },
+                    start + enterDuration,
+                );
 
                 tl.to(
                     card,
                     {
                         x: depthIndex * stackOffsetX,
-                        scale: 1 - depthIndex * stackScaleStep,
-                        duration: 0.45,
+                        duration: stackDuration,
                         ease: 'power2.out',
                     },
-                    start + enter + hold,
+                    start + enterDuration + holdAfterEnter,
+                );
+            });
+
+            tl.to({}, { duration: longHoldAfterAll });
+
+            cardsRef.current.forEach((card) => {
+                tl.to(
+                    card,
+                    {
+                        x: window.innerWidth + 300,
+                        duration: exitDuration,
+                        ease: 'power2.in',
+                    },
+                    '+=0.4',
                 );
             });
 
@@ -118,11 +136,11 @@ export default function UserTypeSection() {
                 <div className="absolute inset-0 bg-black" />
 
                 <div className="relative z-10 h-full w-full flex">
-                    <div className="w-[60%] h-full flex items-center justify-center">
+                    <div className="w-[55%] h-full flex items-center justify-center">
                         <div className="text-white text-6xl font-bold">Choose your role</div>
                     </div>
 
-                    <div className="relative w-[40%] h-full">
+                    <div className="relative w-[45%] h-full">
                         {cardData.map((card, index) => (
                             <div
                                 key={index}
@@ -148,7 +166,7 @@ const cardData = [
         userHeading: 'CREATOR',
         miniDesc: 'Put up the stakes, Call the shots',
         detailedDesc:
-            'The host creates and runs the quiz by staking Solana, putting real value on the line. They decide the quiz format, rules, difficulty, and reward pool, shaping the entire experience. By hosting, they turn a simple quiz into a high-stakes challenge where skill, speed, and strategy truly matter.',
+            'The host creates and runs the quiz by staking Solana, putting real value on the line.',
         bgClassname: 'bg-[#F54D25] text-white',
         textClassname: 'text-white',
         border: 'border-white',
@@ -162,7 +180,7 @@ const cardData = [
         userHeading: 'VIEWER',
         miniDesc: 'Sit back, jump in when needed',
         detailedDesc:
-            'Spectators are the live audience who watch the quiz unfold in real time. They aren’t just passive viewers, when lifelines are triggered, they can jump in to help participants make better choices. Their presence adds energy, interaction, and a community-driven feel to every game.',
+            'Spectators watch the quiz unfold live and help participants during lifelines.',
         bgClassname: 'bg-[#0881FE] text-white',
         textClassname: 'text-white',
         border: 'border-white',
@@ -175,8 +193,7 @@ const cardData = [
         userRole: 'Join as participant',
         userHeading: 'PLAYER',
         miniDesc: 'Outthink everyone, get paid',
-        detailedDesc:
-            'Spectators are the live audience who watch the quiz unfold in real time. They aren’t just passive viewers, when lifelines are triggered, they can jump in to help participants make better choices. Their presence adds energy, interaction, and a community-driven feel to every game.',
+        detailedDesc: 'Participants compete directly in the quiz, testing speed and strategy.',
         bgClassname: 'bg-[#EFC11D] text-black',
         textClassname: 'text-black',
         border: 'border-black',
