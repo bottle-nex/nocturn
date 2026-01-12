@@ -87,7 +87,7 @@ export default function HomeSidebar() {
     }
 
     return (
-        <aside className="w-60 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto rounded-sm pt-4 flex flex-col justify-between">
+        <aside className="w-72 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto rounded-sm pt-4 flex flex-col justify-between">
             <section>
                 <AppLogo withText className="px-4" />
                 <span className="block px-4 text-xs font-bold mt-4 text-neutral-500 dark:text-neutral-400">
@@ -98,14 +98,15 @@ export default function HomeSidebar() {
                         <div
                             onClick={() => handleTabChange(item.tab)}
                             className={cn(
-                                'flex items-center gap-x-2 hover:bg-neutral-300 dark:hover:bg-neutral-700 py-2 px-2 rounded cursor-pointer hover:text-black dark:hover:text-white border',
-                                activeTab === item.tab
-                                    ? 'border-black dark:border-white shadow-[2px_2px_0_0_#000000] dark:shadow-[2px_2px_0_0_#ffffff]'
-                                    : 'border-transparent',
+                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
+                                "hover:bg-black/10 dark:hover:bg-white/10"
                             )}
                             key={item.tab}
                         >
-                            <span className={cn('p-1 rounded-sm', item.className)}>
+                            {activeTab === item.tab && (
+                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-black dark:bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
+                            )}
+                            <span className={cn('p-1 rounded', item.className)}>
                                 {item.icon}
                             </span>
                             <span className="text-sm text-black dark:text-white">{item.label}</span>
@@ -114,19 +115,20 @@ export default function HomeSidebar() {
                 </section>
             </section>
             <section className="">
-                <section className="flex flex-col gap-y-1 mt-2 px-4">
+                <section className="flex flex-col mt-2 px-4">
                     {bottomItems.map((item: SidebarItem) => (
                         <div
                             onClick={() => handleTabChange(item.tab)}
                             className={cn(
-                                'relative flex items-center gap-x-2 py-1 px-2 rounded cursor-pointer hover:text-black dark:hover:text-white',
+                                'relative flex items-center gap-x-1 py-1.75 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
+                                "hover:bg-black/10 dark:hover:bg-white/10"
                             )}
                             key={item.tab}
                         >
                             {activeTab === item.tab && (
                                 <div className="absolute -left-1 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
                             )}
-                            <span className="text-[13px] text-black dark:text-white">
+                            <span className="text-[12px] text-black dark:text-white">
                                 {item.label}
                             </span>
                         </div>

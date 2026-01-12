@@ -1,0 +1,58 @@
+"use client";
+import StartWithAi from "./StartWithAi";
+import { IoArrowUpSharp } from "react-icons/io5";
+import { RiGeminiFill } from "react-icons/ri";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
+
+export default function HomeStartWithAi() {
+    const [input, setInput] = useState<string>("");
+    const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
+
+    function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+        setInput(e.target.value);
+    };
+
+    function handleAiFormSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (input.trim().length === 0) return;
+        setOpenAiComponent(true);
+    }
+
+    return (
+        <>
+            <section className="flex items-center justify-start gap-x-3 mt-10 w-full">
+                <form className="relative min-w-sm w-full h-15">
+                    <Input
+                        onChange={handleInputChange}
+                        placeholder="Start creating quiz with AI..."
+                        className={cn(
+                            "border hover:border-[#5769e7]",
+                            "rounded-sm h-full w-full pl-12",
+                            "bg-background",
+                            "placeholder:text-black/60 dark:placeholder:text-neutral-500 placeholder:text-base",
+                            "focus-visible:ring-4 focus-visible:ring-[#5769e750] focus-visible:border-[#5769e7]",
+                            "focus-visible:ring-offset-3 focus-visible:ring-offset-background"
+                        )}
+                    />
+
+
+                    <RiGeminiFill
+                        size={20}
+                        className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
+                    />
+                    <Button
+                        typeof="submit"
+                        className="absolute top-1/2 right-3 -translate-y-1/2 bg-black dark:bg-white h-9 w-9 rounded-full p-0 flex items-center justify-center dark:text-black text-white"
+                        onClick={handleAiFormSubmit}
+                        disabled={input.trim().length === 0}>
+                        <IoArrowUpSharp size={20} />
+                    </Button>
+                </form>
+            </section>
+            <StartWithAi setOpen={setOpenAiComponent} open={openAiComponent} />
+        </>
+    )
+}

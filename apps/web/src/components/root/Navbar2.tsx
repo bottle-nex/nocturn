@@ -50,7 +50,7 @@ export default function Navbar() {
     }
 
     const navItems: NavItem[] = [
-        { label: 'Home', link: '/', onClick: () => {} },
+        { label: 'Home', link: '/home', onClick: () => {} },
         { label: 'Features', link: '/features', onClick: () => {} },
         { label: 'Invoicing', link: '/invoicing', onClick: () => {} },
         { label: 'Docs', link: '/docs', onClick: () => {} },
@@ -111,7 +111,7 @@ export default function Navbar() {
                 ) : (
                     <Button
                         onClick={() => setOpenSigninModal(true)}
-                        className="h-13 text-[15px] rounded-[8px] bg-yellow-300 text-tprime font-semibold shadow-button z-10 tracking-widest hover:bg-yellow-300 !px-6"
+                        className="h-13 text-[15px] rounded-2 bg-yellow-300 text-tprime font-semibold shadow-button z-10 tracking-widest hover:bg-yellow-300 !px-6"
                     >
                         Sign In
                     </Button>
