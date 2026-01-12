@@ -90,16 +90,6 @@ export interface CookiePayload {
     exp: number;
 }
 
-export interface CollaborationCookiePayload {
-    userId: string;
-    quizId: string;
-    collabSessionId: string;
-    role: USER_TYPE;
-    tokenId: string;
-    iat: number;
-    exp: number;
-}
-
 export type PubSubMessageTypes =
     | {
         type: MESSAGE_TYPES;
