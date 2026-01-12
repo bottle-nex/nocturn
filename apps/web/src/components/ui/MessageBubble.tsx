@@ -47,7 +47,7 @@ export default function MessageBubble({
                 className={cn(
                     'relative min-w-[35px] rounded-md px-3 py-2 max-w-[55%] break-words',
                     colored
-                        ? 'bg-neutral-200 dark:bg-neutral-700 text-black dark:text-white rounded-xl'
+                        ? 'bg-neutral-200 dark:bg-neutral-700 text-tprime dark:text-white rounded-xl'
                         : 'bg-[#8e46f3] text-white',
                     isOwnMessage ? 'rounded-br-none' : 'rounded-bl-none',
                     'shadow-md transition-all duration-200 ease-in-out',

@@ -92,12 +92,12 @@ export default function LeaderboardParticipantBar({
                 </div>
 
                 {you && (
-                    <div className="absolute -bottom-1.5 sm:-bottom-2 flex justify-center items-center text-[10px] sm:text-[12px] bg-neutral-300 text-black px-1.5 sm:px-2 py-0.5 rounded-sm shadow-md border border-neutral-600 z-30">
+                    <div className="absolute -bottom-1.5 sm:-bottom-2 flex justify-center items-center text-[10px] sm:text-[12px] bg-neutral-300 text-tprime px-1.5 sm:px-2 py-0.5 rounded-sm shadow-md border border-neutral-600 z-30">
                         You
                     </div>
                 )}
 
-                <div className="-rotate-90 z-[20] text-black drop-shadow-2xl tracking-wide text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px]">
+                <div className="-rotate-90 z-[20] text-tprime drop-shadow-2xl tracking-wide text-xs sm:text-sm truncate max-w-[80px] sm:max-w-[100px]">
                     {nickname.split(' ')[0]}
                 </div>
             </div>

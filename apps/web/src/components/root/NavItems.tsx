@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { fontAudio } from 'app/fonts/google_fonts';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
@@ -28,43 +29,43 @@ export default function NavItems({ items, className }: NavItemsProps) {
         <motion.div
             onMouseLeave={() => setHovered(null)}
             className={cn(
-                'flex items-center gap-x-4 h-15 ',
-                'px-2.5 rounded-full',
-                'bg-black text-sm',
+                'flex items-center justify-between gap-x-4 h-15 w-200',
+                'px-2 rounded-[8px]',
+                'bg-white text-tprime',
                 className,
             )}
         >
-            {items.map((item, idx) => {
-                const isActive = active === idx;
-                const isHovered = hovered === idx;
+            <div className={cn('px-4 text-[17px]', fontAudio.className)}>nocturn</div>
 
-                return (
-                    <a
-                        key={`link-${idx}`}
-                        href={item.link}
-                        onMouseEnter={() => setHovered(idx)}
-                        onClick={() => handleClick(idx, item.onClick)}
-                        className={cn(
-                            'relative px-6 py-3 rounded-full cursor-pointer select-none',
-                            'text-gamma transition-colors',
-                        )}
-                    >
-                        {(isHovered || isActive) && (
-                            <motion.div
-                                layoutId="nav-pill"
-                                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                                className={cn(
-                                    'absolute inset-0 rounded-full',
-                                    'bg-alpha',
-                                    'shadow-[inset_0_3px_2px_rgba(0,0,0,0.4)]',
-                                )}
-                            />
-                        )}
+            <div>
+                {items.map((item, idx) => {
+                    const isActive = active === idx;
+                    const isHovered = hovered === idx;
 
-                        <span className="relative z-10">{item.label}</span>
-                    </a>
-                );
-            })}
+                    return (
+                        <a
+                            key={`link-${idx}`}
+                            href={item.link}
+                            onMouseEnter={() => setHovered(idx)}
+                            onClick={() => handleClick(idx, item.onClick)}
+                            className={cn(
+                                'relative px-6 py-3.5 cursor-pointer select-none',
+                                'text-tprime transition-colors text-base font-semibold',
+                            )}
+                        >
+                            {(isHovered || isActive) && (
+                                <motion.div
+                                    layoutId="nav-pill"
+                                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                                    className={cn('absolute inset-0 rounded-[6px]', 'bg-[#F5F1E4]')}
+                                />
+                            )}
+
+                            <span className="relative z-10">{item.label}</span>
+                        </a>
+                    );
+                })}
+            </div>
         </motion.div>
     );
 }

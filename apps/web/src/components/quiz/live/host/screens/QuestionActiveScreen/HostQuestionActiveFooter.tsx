@@ -49,7 +49,7 @@ export default function HostQuestionActiveFooter(): JSX.Element {
                     onMouseLeave={() => setOpenExplanation(false)}
                     type="button"
                     disabled={!currentQuestion?.hint || hintLaunched}
-                    className={`dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-black 
+                    className={`dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-tprime 
                         px-4 py-1.5 rounded-md border text-xs
                         ${
                             hintLaunched

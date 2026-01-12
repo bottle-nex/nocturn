@@ -83,13 +83,13 @@ export default function Navbar() {
                     </div>
                     <Button
                         onClick={handleAuthClick}
-                        className="h-full rounded-none bg-alpha hover:bg-white hover:text-black px-6 text-lg border-r border-black"
+                        className="h-full rounded-none bg-alpha hover:bg-white hover:text-tprime px-6 text-lg border-r border-black"
                     >
                         {isLoggedIn ? 'Logout' : 'Login'}
                     </Button>
                     <Button
                         onClick={joinRoomHandler}
-                        className="h-full rounded-none bg-eta hover:bg-white px-6 text-lg text-black"
+                        className="h-full rounded-none bg-eta hover:bg-white px-6 text-lg text-tprime"
                     >
                         JOIN QUIZ
                     </Button>
@@ -105,7 +105,7 @@ export default function Navbar() {
                         </span>
                         <Input
                             placeholder="1234-5678"
-                            className="w-36 h-10 rounded-none bg-white! text-black text-center font-black text-lg tracking-[0.15em] uppercase border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] placeholder:text-black/70 placeholder:font-medium focus-visible:ring-0 focus-visible:border-black"
+                            className="w-36 h-10 rounded-none bg-white! text-tprime text-center font-black text-lg tracking-[0.15em] uppercase border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] placeholder:text-tprime/70 placeholder:font-medium focus-visible:ring-0 focus-visible:border-black"
                         />
                         <Button className="h-10 rounded-none bg-[#FF3F7F] hover:bg-[#FF3F7F] text-white px-6 text-xs font-black uppercase tracking-[0.15em] border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] active:scale-98">
                             Join

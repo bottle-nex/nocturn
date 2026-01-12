@@ -124,7 +124,7 @@ export default function ParticipantQuestionResultsRenderer() {
 
                 <div className="relative px-4 sm:px-5 py-3 sm:py-4">
                     <ToolTipComponent content="Share results">
-                        <Button className="absolute bottom-3 sm:bottom-3.5 right-3 sm:right-4 text-black px-3 sm:px-4 py-1 rounded-md bg-light-base hover:bg-light-base/90 transition-all ease-in-out duration-100 text-sm">
+                        <Button className="absolute bottom-3 sm:bottom-3.5 right-3 sm:right-4 text-tprime px-3 sm:px-4 py-1 rounded-md bg-light-base hover:bg-light-base/90 transition-all ease-in-out duration-100 text-sm">
                             <GoShareAndroid className="w-4 h-4" />
                         </Button>
                     </ToolTipComponent>

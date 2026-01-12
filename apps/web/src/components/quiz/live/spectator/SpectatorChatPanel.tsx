@@ -134,7 +134,7 @@ export default function SpectatorChatPanel() {
                                     className="bg-neutral-300 p-[1px] absolute right-2 rounded-full"
                                     onClick={() => setSelectedReply(null)}
                                 >
-                                    <IoClose className="text-black size-3" />
+                                    <IoClose className="text-tprime size-3" />
                                 </div>
                             </div>
                         )}
