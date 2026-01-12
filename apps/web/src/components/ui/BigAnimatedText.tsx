@@ -86,7 +86,7 @@ export default function BigAnimatedText() {
     }, [cycleIndex, colorOrder]);
 
     return (
-        <div className="w-full flex justify-center items-center h-150 mx-auto bg-white z-30">
+        <div className="w-full flex justify-center items-center h-150 mx-auto bg-gamma relative z-30">
             <div className="flex flex-col items-center gap-y-12">
                 <div className="relative max-w-3xl">
                     <h1 className="text-center text-7xl font-bold text-tprime">

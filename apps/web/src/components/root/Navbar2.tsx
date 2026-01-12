@@ -20,14 +20,9 @@ interface NavItem {
 export default function Navbar() {
     const { session, setOpenSigninModal, setOpenLogoutModal } = useUserSessionStore();
     const isLoggedIn = !!session?.user?.id;
-
-    const [isFocused, setIsFocused] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-
-    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
-
-    const showInputBox = isHovered || isFocused;
+    const [showInputBox, setShowInputBox] = useState<boolean>(false);
+    const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(true);
+    const [lastScrollY, setLastScrollY] = useState<number>(0);
 
     useEffect(() => {
         function handleScroll() {
@@ -75,33 +70,30 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-x-4 h-15 w-fit rounded-[4px] mr-3 top-3.5 absolute right-10.5">
-                <div
-                    className="flex items-center gap-x-3"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
+                <div className="relative flex items-center">
+                    <Button
+                        onClick={() => setShowInputBox((prev) => !prev)}
+                        className="h-13 text-[15px] rounded-[8px] bg-white text-tprime font-semibold z-10 tracking-widest hover:bg-white !px-6 shadow-button"
+                    >
+                        Enter Quiz
+                    </Button>
+
                     <AnimatePresence>
                         {showInputBox && (
                             <motion.div
-                                initial={{ x: 30, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                exit={{ x: 30, opacity: 0 }}
+                                className="absolute top-full mt-3 right-0"
+                                initial={{ y: 10, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 10, opacity: 0 }}
                                 transition={{ duration: 0.25, ease: 'easeOut' }}
                             >
                                 <Input
                                     placeholder="secret code"
-                                    className="font-mono h-13 bg-white border border-black w-40 px-4 shadow-custom rounded-[8px]"
-                                    onFocus={() => setIsFocused(true)}
-                                    onBlur={() => setIsFocused(false)}
-                                    autoFocus={isHovered}
+                                    className="font-mono h-13 bg-white border border-black w-40 px-4 rounded-[8px]"
                                 />
                             </motion.div>
                         )}
                     </AnimatePresence>
-
-                    <Button className="h-13 text-[15px] rounded-[8px] bg-white text-tprime font-semibold z-10 tracking-widest hover:bg-white !px-6 shadow-button">
-                        Enter Quiz
-                    </Button>
                 </div>
 
                 {session?.user ? (

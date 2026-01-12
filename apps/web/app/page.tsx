@@ -1,22 +1,26 @@
-import Footer from '@/components/root/Footer';
 import Navbar from '@/components/root/Navbar2';
+import Footer from '@/components/root/Footer';
+import NocturnFeatures from '@/components/test/NocturnFeatures';
 import FeaturesSection from '@/components/test/FeaturesSection';
-import LandingSectionTest from '@/components/test/LandingSectionTest';
 import UserTypeSection from '@/components/test/UserTypesSection';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
+import { LandingSectionTest } from '@/components/test/LandingSectionTest';
 
 export default function Page() {
     return (
-        <main className="relative bg-black min-h-screen tracking-wider overflow-x-hidden">
+        <div className="min-h-screen overflow-x-hidden w-full bg-black relative">
             <Navbar />
-            <div className="flex flex-col items-center">
-                <LandingSectionTest />
-                <FeaturesSection />
-                <UserTypeSection />
-                {/* <Features /> */}
-                <BigAnimatedText />
-                <Footer />
+
+            <LandingSectionTest />
+
+            <div className="-mt-[100vh] relative z-20">
+                <NocturnFeatures />
             </div>
-        </main>
+
+            <FeaturesSection />
+            <UserTypeSection />
+            <BigAnimatedText />
+            <Footer />
+        </div>
     );
 }
