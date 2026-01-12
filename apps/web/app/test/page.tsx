@@ -18,7 +18,7 @@ import CanvasSkeleton from '@/components/skeletons/CanvasSkeleton';
 
 export default function Page() {
     const router = useRouter();
-    const [recentlyViewed, setRecentlyViewed] = useState<UserQuizResponse["recentlyViewed"]>([]);
+    const [recentlyViewed, setRecentlyViewed] = useState<UserQuizResponse['recentlyViewed']>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const { session } = useUserSessionStore();
     const { setAllQuizs } = useAllQuizsStore();
@@ -28,11 +28,14 @@ export default function Page() {
             setLoading(true);
             if (!session?.user.token) return;
             try {
-                const { data } = await axios.get<CustomResponse<UserQuizResponse>>(GET_ALL_OWNER_QUIZ_URL, {
-                    headers: {
-                        Authorization: `Bearer ${session?.user.token}`,
+                const { data } = await axios.get<CustomResponse<UserQuizResponse>>(
+                    GET_ALL_OWNER_QUIZ_URL,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`,
+                        },
                     },
-                });
+                );
                 if (data.success) {
                     setAllQuizs(data.data?.quizzes || []);
                     setRecentlyViewed(data.data?.recentlyViewed || []);
@@ -51,7 +54,6 @@ export default function Page() {
         const newQuizId = uuid();
         router.push(`/new/${newQuizId}`);
     }
-    console.log("Recently Viewed Quizzes:", recentlyViewed.length);
     return (
         <div className="bg-white dark:bg-zinc-900 w-full h-full rounded-sm px-12 py-10">
             <section className="flex items-center justify-between">
@@ -99,7 +101,9 @@ export default function Page() {
             )}
             {recentlyViewed.length > 0 && (
                 <section className="mt-8">
-                    <h2 className="text-lg font-normal text-black dark:text-white mb-4">Recently Viewed</h2>
+                    <h2 className="text-lg font-normal text-black dark:text-white mb-4">
+                        Recently Viewed
+                    </h2>
                     <div className="flex items-center gap-4 flex-wrap">
                         {recentlyViewed.map((quiz) => (
                             <RecentlyViewedCard key={quiz.id} quiz={quiz} />

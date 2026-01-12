@@ -73,12 +73,12 @@ export interface QuestionType {
 }
 
 export interface QuizViewsType {
-  id: string,
-  quizId: string,
-  userId: string,
-  user: UserType,
-  quiz: QuizType,
-  viewedAt: Date,
+  id: string;
+  quizId: string;
+  userId: string;
+  user: UserType;
+  quiz: QuizType;
+  viewedAt: Date;
 }
 
 export interface ParticipantType {
