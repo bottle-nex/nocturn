@@ -68,7 +68,11 @@ export const AnimatedThemeToggler = ({
 
     return (
         <button ref={buttonRef} onClick={toggleTheme} className={cn(className)} {...props}>
-            {isDark ? <IoSunny size={18} /> : <IoMoonSharp size={18} />}
+            {isDark ? (
+                <IoSunny className="text-black dark:text-white" size={18} />
+            ) : (
+                <IoMoonSharp className="text-black dark:text-white" size={18} />
+            )}
             <span className="sr-only">Toggle theme</span>
         </button>
     );

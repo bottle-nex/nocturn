@@ -16,7 +16,6 @@ export default function UtilityCard({ children, className, ref }: UtilityCardPro
             animate={{ opacity: 1 }}
             className={cn(
                 'border border-neutral-300 dark:border-neutral-700 shadow-lg px-4 py-2.5 rounded-xs',
-                'bg-light-base dark:bg-dark-base',
                 className,
             )}
         >

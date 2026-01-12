@@ -24,7 +24,7 @@ export function LandingLeftSection() {
                         />
                     </div>
                 </div>
-                <span className="font-black uppercase tracking-[0.2em] text-sm bg-eta/30 px-3 py-1 border-b-2 border-black">
+                <span className="font-black uppercase tracking-[0.2em] text-sm text-white bg-delta px-3 py-1 border-b-2 border-black">
                     Powered By SOLANA
                 </span>
             </motion.div>
@@ -33,7 +33,7 @@ export function LandingLeftSection() {
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 className={cn(
-                    'text-[clamp(4rem,10vw,8.5rem)] leading-[0.8] font-black uppercase tracking-tight mb-8',
+                    'text-[clamp(4rem,10vw,8.5rem)] leading-[0.8] font-black uppercase tracking-tight mb-8 text-dark-base',
                     fontAudio.className,
                 )}
             >

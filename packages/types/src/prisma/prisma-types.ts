@@ -72,6 +72,15 @@ export interface QuestionType {
   isAsked: boolean;
 }
 
+export interface QuizViewsType {
+  id: string;
+  quizId: string;
+  userId: string;
+  user: UserType;
+  quiz: QuizType;
+  viewedAt: Date;
+}
+
 export interface ParticipantType {
   id: string;
   nickname: string;

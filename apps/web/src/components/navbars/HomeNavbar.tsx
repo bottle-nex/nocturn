@@ -86,7 +86,7 @@ function BigHomeNavbar({
     onWalletClick,
 }: HomeNavbar) {
     return (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 py-4 rounded-2xl shadow-lg border bg-gradient-to-b dark:from-[#1c1c1c] dark:via-neutral-900 dark:to-[#1c1c1c] from-neutral-200 via-neutral-100 to-neutral-200 hidden xl:flex">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 py-4 rounded-2xl shadow-lg border bg-linear-to-b dark:from-[#1c1c1c] dark:via-neutral-900 dark:to-[#1c1c1c] from-neutral-200 via-neutral-100 to-neutral-200 hidden xl:flex">
             <div className="px-4 flex items-center justify-between w-full">
                 <AppLogo />
 
@@ -100,10 +100,10 @@ function BigHomeNavbar({
                         variant="outline"
                         size="sm"
                         className={cn(
-                            'font-light text-[13px] tracking-wide flex items-center gap-x-2 transition-transform hover:-translate-y-0.5 !cursor-pointer',
+                            'font-light text-[13px] tracking-wide flex items-center gap-x-2 transition-transform hover:-translate-y-0.5 cursor-pointer!',
                             isWalletConnected
-                                ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
-                                : 'text-alpha border-alpha hover:!text-alpha ',
+                                ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:text-green-600! hover:border-green-600/30! hover:bg-green-50! dark:hover:bg-green-950/10!'
+                                : 'text-alpha border-alpha hover:text-alpha!',
                         )}
                         onClick={onWalletClick}
                     >
@@ -117,7 +117,7 @@ function BigHomeNavbar({
                     <Button
                         onClick={createNewQuizHandler}
                         className={cn(
-                            'font-light text-[13px] tracking-wide flex items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-[10] rounded-lg',
+                            'font-light text-[13px] tracking-wide flex items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-10 rounded-lg',
                             'bg-dark-base dark:bg-light-base dark:hover:bg-light-base hover:bg-dark-base cursor-pointer',
                         )}
                     >
@@ -165,10 +165,10 @@ function SmallHomeNavbar({
                         variant={'outline'}
                         size="sm"
                         className={cn(
-                            'flex items-center gap-x-2 font-light text-[13px] tracking-wide transition-transform hover:-translate-y-0.5 !cursor-pointer',
+                            'flex items-center gap-x-2 font-light text-[13px] tracking-wide transition-transform hover:-translate-y-0.5 cursor-pointer!',
                             isWalletConnected
-                                ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:!text-green-600 hover:!border-green-600/30 hover:!bg-green-50 dark:hover:!bg-green-950/10'
-                                : 'text-alpha border-alpha hover:!text-alpha ',
+                                ? 'text-green-600 border-green-600/30 dark:border-green-600/30 bg-green-50 dark:bg-green-950/10 hover:text-green-600! hover:border-green-600/30! hover:bg-green-50! dark:hover:bg-green-950/10!'
+                                : 'text-alpha border-alpha hover:text-alpha!',
                         )}
                         onClick={onWalletClick}
                     >
@@ -181,7 +181,7 @@ function SmallHomeNavbar({
                     <Button
                         onClick={createNewQuizHandler}
                         className={cn(
-                            'hidden sm:flex font-light text-[13px] tracking-wide items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-[10] rounded-lg',
+                            'hidden sm:flex font-light text-[13px] tracking-wide items-center justify-center transition-transform hover:-translate-y-0.5 cursor-pointer z-10 rounded-lg',
                             'bg-dark-base dark:bg-light-base dark:hover:bg-light-base hover:bg-dark-base',
                         )}
                     >

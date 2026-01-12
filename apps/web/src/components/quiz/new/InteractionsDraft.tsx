@@ -71,7 +71,7 @@ export default function InteractionsDraft() {
                                 onClick={() => toggleInteraction(type)}
                                 onMouseEnter={() => setHoveredType(type)}
                                 onMouseLeave={() => setHoveredType(null)}
-                                className={`border-[1px] p-2 rounded-md cursor-pointer transition-all duration-200 ease-in-out
+                                className={`border p-2 rounded-md cursor-pointer transition-all duration-200 ease-in-out
                                     dark:border-neutral-600 border-neutral-300
                                     hover:shadow-sm
                                     ${

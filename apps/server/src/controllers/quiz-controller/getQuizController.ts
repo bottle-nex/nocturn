@@ -1,5 +1,6 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
+import QuizAction from '../../class/quizAction';
 
 enum QuizResponseType {
     QUIZ_FOUND = 'QUIZ_FOUND',
@@ -52,6 +53,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
         }
 
         if (quiz) {
+            await QuizAction.record_quiz_view(quizId, String(userId));
             const existedQuiz = await prisma.quiz.findUnique({
                 where: {
                     id: quizId,

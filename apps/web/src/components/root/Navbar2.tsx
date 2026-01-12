@@ -35,7 +35,7 @@ export default function Navbar() {
 
             if (currentScrollY < lastScrollY) {
                 setIsNavbarVisible(true);
-            } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            } else if (currentScrollY > lastScrollY) {
                 setIsNavbarVisible(false);
             }
 

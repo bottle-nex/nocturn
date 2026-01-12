@@ -12,9 +12,13 @@
 
   ],
   "tasks": {
+    "generate": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "^generate"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",

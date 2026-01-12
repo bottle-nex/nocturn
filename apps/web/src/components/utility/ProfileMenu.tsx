@@ -46,25 +46,25 @@ export default function ProfileMenu() {
         dropdown && mounted ? (
             <div
                 ref={dropdownRef}
-                className="fixed z-99999"
+                className="fixed"
                 style={{
                     top: `${dropdownPosition.top}px`,
                     right: `${dropdownPosition.right}px`,
                 }}
             >
-                <UtilityCard className="p-0 overflow-hidden bg-white dark:bg-dark-base shadow-lg border-none w-48">
+                <UtilityCard className="p-0 overflow-hidden bg-gamma dark:bg-dark-base dark:text-gamma text-dark-base shadow-lg w-48 rounded border border-neutral-300 dark:border-neutral-800">
                     <div>
                         <Link
                             href="https://github.com/celestium-x/triangulum-x/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2.75 text-sm font-light text-dark-base dark:hover:bg-dark-alpha/40 hover:bg-gray-200 dark:text-neutral-100 flex justify-between"
+                            className="px-4 py-2.75 text-sm font-light flex justify-between"
                         >
                             Github
                             <SiGithub size={16} />
                         </Link>
                         <div
-                            className="px-4 py-2.75 text-sm font-normal text-red-500 dark:hover:bg-dark-alpha/40 hover:bg-gray-200 flex justify-between cursor-pointer"
+                            className="px-4 py-2.75 text-sm font-normal text-red-500 flex justify-between cursor-pointer"
                             onClick={handler}
                         >
                             Sign Out
@@ -80,7 +80,7 @@ export default function ProfileMenu() {
             {session?.user.image && (
                 <div
                     onClick={() => setDropdown(true)}
-                    className="flex items-center justify-end gap-x-3 hover:bg-dark-base px-3 py-2 cursor-pointer"
+                    className="flex items-center justify-end gap-x-3 px-3 py-2 cursor-pointer dark:text-gamma text-dark-base"
                 >
                     <Image
                         src={session?.user.image}
@@ -89,7 +89,7 @@ export default function ProfileMenu() {
                         alt="user-logo"
                         className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
                     />
-                    <span className="font-semibold">{session?.user.name}</span>
+                    <span className="font-normal">{session?.user.name}</span>
                     <IoChevronDownSharp />
                 </div>
             )}

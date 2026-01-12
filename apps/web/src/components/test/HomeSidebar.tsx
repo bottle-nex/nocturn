@@ -1,10 +1,15 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { IoHomeSharp, IoPeopleSharp, IoSettingsSharp } from 'react-icons/io5';
+import { IoPeopleSharp, IoSettingsSharp } from 'react-icons/io5';
 import { HiChartBar, HiDocumentText } from 'react-icons/hi';
-import { Button } from '../ui/button';
+import { MdHomeFilled } from 'react-icons/md';
+import { cn } from '@/lib/utils';
+import AppLogo from '../app/AppLogo';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import Image from 'next/image';
+import DarkModeToggle from '../base/DarkModeToggle';
 
 export enum SidebarTab {
     HOME = 'home',
@@ -12,27 +17,59 @@ export enum SidebarTab {
     ANALYTICS = 'analytics',
     DOCUMENTS = 'documents',
     SETTINGS = 'settings',
+    TRASH = 'trash',
+    CHATS = 'chats',
 }
 
 interface SidebarItem {
     tab: SidebarTab;
     label: string;
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
+    className?: string;
 }
 
 const sidebarItems: SidebarItem[] = [
-    { tab: SidebarTab.HOME, label: 'Home', icon: <IoHomeSharp size={20} /> },
-    { tab: SidebarTab.TEAM, label: 'Team', icon: <IoPeopleSharp size={20} /> },
-    { tab: SidebarTab.ANALYTICS, label: 'Analytics', icon: <HiChartBar size={20} /> },
-    { tab: SidebarTab.DOCUMENTS, label: 'Documents', icon: <HiDocumentText size={20} /> },
-    { tab: SidebarTab.SETTINGS, label: 'Settings', icon: <IoSettingsSharp size={20} /> },
+    {
+        tab: SidebarTab.HOME,
+        label: 'Home',
+        icon: <MdHomeFilled size={20} />,
+        className: 'text-black bg-[#93BD57]',
+    },
+    {
+        tab: SidebarTab.TEAM,
+        label: 'Team',
+        icon: <IoPeopleSharp size={20} />,
+        className: 'text-black bg-[#5C6BC0]',
+    },
+    {
+        tab: SidebarTab.ANALYTICS,
+        label: 'Analytics',
+        icon: <HiChartBar size={20} />,
+        className: 'text-black bg-[#F6C90E]',
+    },
+    {
+        tab: SidebarTab.DOCUMENTS,
+        label: 'Documents',
+        icon: <HiDocumentText size={20} />,
+        className: 'text-black bg-[#FF7043]',
+    },
+    {
+        tab: SidebarTab.SETTINGS,
+        label: 'Settings',
+        icon: <IoSettingsSharp size={20} />,
+        className: 'text-black bg-[#9E9E9E]',
+    },
+];
+
+const bottomItems: SidebarItem[] = [
+    { tab: SidebarTab.CHATS, label: 'Chats' },
+    { tab: SidebarTab.TRASH, label: 'Trash' },
 ];
 
 export default function HomeSidebar() {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState<SidebarTab>(SidebarTab.HOME);
+    const searchParams = useSearchParams();
+    const { session } = useUserSessionStore();
 
     useEffect(() => {
         const tab = searchParams.get('tab');
@@ -41,71 +78,78 @@ export default function HomeSidebar() {
         }
     }, [searchParams]);
 
-    const handleTabClick = (tab: SidebarTab) => {
-        setActiveTab(tab);
-        const params = new URLSearchParams(searchParams.toString());
+    function handleTabChange(tab: SidebarTab) {
+        const params = new URLSearchParams(window.location.search);
         params.set('tab', tab);
-        router.push(`${pathname}?${params.toString()}`);
-    };
-
-    // const renderContent = () => {
-    //     switch (activeTab) {
-    //         case SidebarTab.HOME:
-    //             return "Home Content";
-    //         case SidebarTab.TEAM:
-    //             return "Team Content";
-    //         case SidebarTab.ANALYTICS:
-    //             return "Analytics Content";
-    //         case SidebarTab.DOCUMENTS:
-    //             return "Documents Content";
-    //         case SidebarTab.SETTINGS:
-    //             return "Settings Content";
-    //         default:
-    //             return "Select a tab";
-    //     }
-    // };
-    const _renderContent = () => {
-        switch (activeTab) {
-            case SidebarTab.HOME:
-                return 'Home Content';
-            case SidebarTab.TEAM:
-                return 'Team Content';
-            case SidebarTab.ANALYTICS:
-                return 'Analytics Content';
-            case SidebarTab.DOCUMENTS:
-                return 'Documents Content';
-            case SidebarTab.SETTINGS:
-                return 'Settings Content';
-            default:
-                return 'Select a tab';
-        }
-    };
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, '', newUrl);
+        setActiveTab(tab);
+    }
 
     return (
-        <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 bg-light-alpha dark:bg-dark-alpha border-r">
-            <nav className="flex flex-col p-4 gap-1">
-                {sidebarItems.map((item) => {
-                    const isActive = activeTab === item.tab;
-                    return (
-                        <Button
+        <aside className="w-60 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto rounded-sm pt-4 flex flex-col justify-between">
+            <section>
+                <AppLogo withText className="px-4" />
+                <span className="block px-4 text-xs font-bold mt-4 text-neutral-500 dark:text-neutral-400">
+                    MENU
+                </span>
+                <section className="flex flex-col gap-y-1 mt-2 px-4">
+                    {sidebarItems.map((item: SidebarItem) => (
+                        <div
+                            onClick={() => handleTabChange(item.tab)}
+                            className={cn(
+                                'flex items-center gap-x-2 hover:bg-neutral-300 dark:hover:bg-neutral-700 py-2 px-2 rounded cursor-pointer hover:text-black dark:hover:text-white border',
+                                activeTab === item.tab
+                                    ? 'border-black dark:border-white shadow-[2px_2px_0_0_#000000] dark:shadow-[2px_2px_0_0_#ffffff]'
+                                    : 'border-transparent',
+                            )}
                             key={item.tab}
-                            onClick={() => handleTabClick(item.tab)}
-                            className={`
-                                flex items-center justify-start gap-3 px-4 py-2.5 rounded-sm font-medium text-sm bg-transparent hover:bg-transparent shadow-none
-                                transition-colors duration-150
-                                ${
-                                    isActive
-                                        ? 'text-alpha border border-alpha'
-                                        : 'text-dark-alpha dark:text-light-alpha hover:bg-light-base dark:hover:bg-dark-base'
-                                }
-                            `}
                         >
-                            {item.icon}
-                            <span>{item.label}</span>
-                        </Button>
-                    );
-                })}
-            </nav>
+                            <span className={cn('p-1 rounded-sm', item.className)}>
+                                {item.icon}
+                            </span>
+                            <span className="text-sm text-black dark:text-white">{item.label}</span>
+                        </div>
+                    ))}
+                </section>
+            </section>
+            <section className="">
+                <section className="flex flex-col gap-y-1 mt-2 px-4">
+                    {bottomItems.map((item: SidebarItem) => (
+                        <div
+                            onClick={() => handleTabChange(item.tab)}
+                            className={cn(
+                                'relative flex items-center gap-x-2 py-1 px-2 rounded cursor-pointer hover:text-black dark:hover:text-white',
+                            )}
+                            key={item.tab}
+                        >
+                            {activeTab === item.tab && (
+                                <div className="absolute -left-1 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
+                            )}
+                            <span className="text-[13px] text-black dark:text-white">
+                                {item.label}
+                            </span>
+                        </div>
+                    ))}
+                </section>
+                {session?.user.email && (
+                    <div className="border-t border-black/10 dark:border-white/10 mt-6 flex justify-between items-center">
+                        <section className="flex items-center justify-start gap-x-2 text-black dark:text-white px-4 py-2">
+                            <Image
+                                src={session?.user.image}
+                                width={28}
+                                height={28}
+                                alt="user-logo"
+                                className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
+                            />
+                            <span className="text-base font">{session.user.name}</span>
+                        </section>
+                        <section className="">
+                            <DarkModeToggle />
+                        </section>
+                    </div>
+                )}
+            </section>
         </aside>
     );
 }

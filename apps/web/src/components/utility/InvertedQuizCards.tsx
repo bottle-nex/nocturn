@@ -114,28 +114,28 @@ export default function InvertedQuizCards() {
     }
 
     return (
-        <div className="relative max-h-[24rem] h-full flex flex-row items-start justify-center">
+        <div className="relative max-h-96 h-full flex flex-row items-start justify-center">
             {quizs.length > 0 ? (
                 <div className="mt-12 relative w-[20rem] h-fit">
-                    <div className="absolute bottom-6 left-3 w-[90%] h-full rounded-3xl bg-dark-base/50 dark:bg-neutral-100/50 scale-95 z-0"></div>
-                    <UtilityCard className="relative bg-dark-base dark:bg-neutral-200 max-w-[20rem] w-[20rem] rounded-3xl z-10 shadow-lg border-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0 cursor-pointer">
+                    <div className="absolute bottom-4 left-4 w-[90%] h-full rounded-sm bg-zinc-800/70 dark:bg-zinc-100/70 scale-99 z-0"></div>
+                    <UtilityCard className="relative bg-zinc-800 dark:bg-zinc-100 max-w-[20rem] w-[20rem] rounded-sm z-10 shadow-lg border-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0 cursor-pointer">
                         <div className="flex flex-col items-start justify-between h-fit select-none">
                             {displayQuizs.map((quiz, idx) => (
                                 <div
                                     key={idx}
                                     onClick={() => router.push(`/new/${quiz.id}`)}
                                     className={cn(
-                                        'flex items-start justify-between w-full hover:bg-dark-alpha/10 hover:dark:bg-neutral-400/10 px-8 py-2 min-h-[60px] relative',
+                                        'flex items-start justify-between w-full hover:bg-neutral-700 dark:hover:bg-neutral-200 px-8 py-2 min-h-15 relative',
                                         idx === displayQuizs.length - 1 && 'pb-7',
                                         idx === 0 && 'pt-7',
                                     )}
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <span className="dark:text-neutral-900 text-neutral-500 text-sm font-medium block truncate">
+                                        <span className="text-neutral-300 dark:text-neutral-700 text-sm font-medium block truncate">
                                             {quiz.title.slice(0, 28)}...
                                         </span>
                                         <div className="flex items-center justify-between mt-1">
-                                            <p className="dark:text-neutral-900 text-neutral-300 text-[11px] font-light tracking-wide">
+                                            <p className="text-neutral-500 dark:text-neutral-400 text-[11px] font-light tracking-wide">
                                                 {DateActions.formatFullDateTime(
                                                     new Date(quiz?.scheduledAt ?? Date.now()),
                                                 )}
@@ -147,11 +147,11 @@ export default function InvertedQuizCards() {
                                         </div>
                                     </div>
 
-                                    <div className="relative mt-4 ml-2 flex-shrink-0">
+                                    <div className="relative mt-4 ml-2 shrink-0">
                                         <span ref={optionRef}>
                                             <BsThreeDotsVertical
                                                 onClick={(e) => handleOpenOption(e, quiz.id)}
-                                                className="dark:text-neutral-900 text-neutral-500 cursor-pointer"
+                                                className="text-neutral-400 dark:text-neutral-600 cursor-pointer"
                                             />
                                         </span>
 
@@ -160,8 +160,8 @@ export default function InvertedQuizCards() {
                                                 ref={dropdownRef}
                                                 className={cn(
                                                     'absolute left-full top-full mt-1',
-                                                    'bg-light-base/90 dark:bg-dark-base/90 border border-neutral-200 dark:border-neutral-700',
-                                                    'w-[8rem] rounded-md overflow-hidden shadow-lg z-[1000]',
+                                                    'bg-zinc-900 dark:bg-white border border-neutral-700 dark:border-neutral-200',
+                                                    'w-32 rounded overflow-hidden shadow-lg z-1000',
                                                 )}
                                                 onClick={(e) => e.stopPropagation()}
                                             >
@@ -180,15 +180,15 @@ export default function InvertedQuizCards() {
                                                         handleLaunchQuiz(quiz.id);
                                                     }}
                                                     className={cn(
-                                                        'px-3 py-2 text-dark-base dark:text-neutral-300 w-full bg-transparent hover:bg-transparent cursor-pointer font-light shadow-none',
-                                                        'flex items-center justify-between dark:hover:bg-neutral-900 rounded-b-none',
+                                                        'px-3 py-2 text-neutral-300 dark:text-neutral-700 w-full cursor-pointer font-light shadow-none',
+                                                        'flex items-center justify-between hover:bg-neutral-800 dark:hover:bg-neutral-100 bg-transparent rounded-b-none',
                                                     )}
                                                 >
                                                     <span className="text-xs">launch</span>
                                                     <IoIosPlay size={12} />
                                                 </Button>
 
-                                                <hr className="border-0 h-[0.3px] bg-neutral-300 dark:bg-neutral-700" />
+                                                <hr className="border-0 h-px bg-neutral-800 dark:bg-neutral-300" />
 
                                                 <Button
                                                     onClick={() => {
@@ -196,15 +196,15 @@ export default function InvertedQuizCards() {
                                                         handlePublishQuiz(quiz.id);
                                                     }}
                                                     className={cn(
-                                                        'px-3 py-2 text-dark-base dark:text-neutral-300 w-full bg-transparent hover:bg-transparent cursor-pointer font-light shadow-none',
-                                                        'flex items-center justify-between dark:hover:bg-neutral-900 rounded-none',
+                                                        'px-3 py-2 text-neutral-300 dark:text-neutral-700 w-full bg-transparent hover:bg-neutral-800 dark:hover:bg-neutral-100 cursor-pointer font-light shadow-none',
+                                                        'flex items-center justify-between rounded-none',
                                                     )}
                                                 >
                                                     <span className="text-xs">publish</span>
                                                     <MdPublish size={12} />
                                                 </Button>
 
-                                                <hr className="border-0 h-[0.3px] bg-neutral-300 dark:bg-neutral-700" />
+                                                <hr className="border-0 h-px bg-neutral-800 dark:bg-neutral-300" />
 
                                                 <Button
                                                     onClick={() => {
@@ -212,9 +212,9 @@ export default function InvertedQuizCards() {
                                                         handleDeleteQuiz(quiz.id);
                                                     }}
                                                     className={cn(
-                                                        'px-3 py-2 text-red-500 w-full bg-transparent hover:bg-transparent cursor-pointer',
+                                                        'px-3 py-2 text-red-500 dark:text-red-600 w-full bg-transparent hover:bg-neutral-800 dark:hover:bg-neutral-100 cursor-pointer',
                                                         'flex items-center justify-between',
-                                                        'dark:hover:bg-neutral-900 rounded-md rounded-t-none',
+                                                        'rounded-md rounded-t-none',
                                                     )}
                                                 >
                                                     <span className="text-xs">delete</span>

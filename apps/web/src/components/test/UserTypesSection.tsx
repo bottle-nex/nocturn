@@ -15,7 +15,6 @@ export default function UserTypeSection() {
 
     useLayoutEffect(() => {
         if (!sectionRef.current || !pinRef.current) return;
-
         const ctx = gsap.context(() => {
             const tl = gsap.timeline({
                 scrollTrigger: {

@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { Button } from '../ui/button';
 import { motion } from 'framer-motion';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
 import { MdHomeFilled, MdChevronRight } from 'react-icons/md';
 import { FaLocationArrow } from 'react-icons/fa6';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function LandingSection() {
     const { session, setOpenSigninModal } = useUserSessionStore();

@@ -44,7 +44,7 @@ CREATE TABLE "hosts" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "lastLoginAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "hosts_pkey" alpha KEY ("id")
+    CONSTRAINT "hosts_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -77,7 +77,7 @@ CREATE TABLE "quizzes" (
     "spectatorMode" BOOLEAN NOT NULL DEFAULT false,
     "allowNewSpectator" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "quizzes_pkey" alpha KEY ("id")
+    CONSTRAINT "quizzes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -98,7 +98,7 @@ CREATE TABLE "Question" (
     "isAsked" BOOLEAN NOT NULL DEFAULT false,
     "quizId" TEXT NOT NULL,
 
-    CONSTRAINT "Question_pkey" alpha KEY ("id")
+    CONSTRAINT "Question_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -120,7 +120,7 @@ CREATE TABLE "participants" (
     "walletAddress" TEXT,
     "quizId" TEXT NOT NULL,
 
-    CONSTRAINT "participants_pkey" alpha KEY ("id")
+    CONSTRAINT "participants_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -136,7 +136,7 @@ CREATE TABLE "spectators" (
     "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "quizId" TEXT NOT NULL,
 
-    CONSTRAINT "spectators_pkey" alpha KEY ("id")
+    CONSTRAINT "spectators_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -164,7 +164,7 @@ CREATE TABLE "game_sessions" (
     "phaseEndTime" TIMESTAMP(3),
     "quizId" TEXT NOT NULL,
 
-    CONSTRAINT "game_sessions_pkey" alpha KEY ("id")
+    CONSTRAINT "game_sessions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -181,7 +181,7 @@ CREATE TABLE "responses" (
     "questionId" TEXT NOT NULL,
     "gameSessionId" TEXT NOT NULL,
 
-    CONSTRAINT "responses_pkey" alpha KEY ("id")
+    CONSTRAINT "responses_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -195,7 +195,7 @@ CREATE TABLE "eliminations" (
     "eliminatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "gameSessionId" TEXT NOT NULL,
 
-    CONSTRAINT "eliminations_pkey" alpha KEY ("id")
+    CONSTRAINT "eliminations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -207,7 +207,7 @@ CREATE TABLE "Review" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updateAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Review_pkey" alpha KEY ("id")
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -224,7 +224,7 @@ CREATE TABLE "ChatMessage" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "editedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "ChatMessage_pkey" alpha KEY ("id")
+    CONSTRAINT "ChatMessage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -237,7 +237,7 @@ CREATE TABLE "ChatReaction" (
     "reaction" "Interactions" NOT NULL,
     "reactedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "ChatReaction_pkey" alpha KEY ("id")
+    CONSTRAINT "ChatReaction_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -247,7 +247,7 @@ CREATE TABLE "lifeline_usage" (
     "gameSessionId" TEXT NOT NULL,
     "usedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "lifeline_usage_pkey" alpha KEY ("id")
+    CONSTRAINT "lifeline_usage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -259,7 +259,7 @@ CREATE TABLE "cdo_bets" (
     "questionId" TEXT NOT NULL,
     "participantId" TEXT NOT NULL,
 
-    CONSTRAINT "cdo_bets_pkey" alpha KEY ("id")
+    CONSTRAINT "cdo_bets_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
