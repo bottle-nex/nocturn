@@ -13,7 +13,7 @@ export const roboto = Roboto_Condensed({
     variable: '--font-roboto',
 });
 
-export function LandingSectionTest() {
+export default function NocturnLandingSection() {
     const textRef = useRef<HTMLDivElement>(null);
 
     const isInView = useInView(textRef, {
@@ -97,10 +97,10 @@ export function LandingSectionTest() {
                     </motion.div>
                 </motion.div>
 
-                <div className="absolute bottom-0 w-full mr-65 flex justify-center z-0">
-                    <div className="relative h-75 w-325">
+                <div className="absolute -bottom-30 w-full flex justify-center z-0">
+                    <div className="relative h-[600px] w-[900px]">
                         <Image
-                            src="/images/hero.png"
+                            src="/images/hero2.png"
                             alt=""
                             fill
                             className="object-cover"

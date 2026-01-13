@@ -89,7 +89,7 @@ export default function Navbar() {
                             >
                                 <Input
                                     placeholder="secret code"
-                                    className="font-mono h-13 bg-white border border-black w-40 px-4 rounded-[8px]"
+                                    className="font-mono h-13 !bg-white border border-black w-40 px-4 rounded-[8px]"
                                 />
                             </motion.div>
                         )}

@@ -8,7 +8,7 @@ import { AiOutlineLogin } from 'react-icons/ai';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function UserTypeSection() {
+export default function NocturnUsersSection() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
     const pinRef = useRef<HTMLDivElement | null>(null);
     const cardsRef = useRef<HTMLDivElement[]>([]);
@@ -166,13 +166,14 @@ const cardData = [
         userHeading: 'CREATOR',
         miniDesc: 'Put up the stakes, Call the shots',
         detailedDesc:
-            'The host creates and runs the quiz by staking Solana, putting real value on the line.',
+            'As a Creator, you design and run the entire quiz experience. You create questions, control the flow of the game, and stake Solana to put real value behind your quiz. By setting the rules and rewards, you turn knowledge into a high-stakes live event where you lead the action and challenge players to compete.',
         bgClassname: 'bg-[#F54D25] text-white',
         textClassname: 'text-white',
         border: 'border-white',
         buttonTitle: 'START CREATING',
         buttonIcon: <IoCreateSharp className="size-6" />,
-        buttonClassName: 'bg-transparent hover:bg-white hover:text-[#FB4914]',
+        buttonClassName:
+            'bg-transparent hover:bg-white hover:text-[#FB4914] text-white border-white',
     },
     {
         userType: 'SPECTATOR',
@@ -180,20 +181,22 @@ const cardData = [
         userHeading: 'VIEWER',
         miniDesc: 'Sit back, jump in when needed',
         detailedDesc:
-            'Spectators watch the quiz unfold live and help participants during lifelines.',
+            'As a Viewer, you watch the quiz unfold live and stay engaged without directly competing. You can follow the action in real time and step in during lifelines to help participants when they need it, making you part of the experience while staying risk-free.',
         bgClassname: 'bg-[#0881FE] text-white',
         textClassname: 'text-white',
         border: 'border-white',
         buttonTitle: 'JOIN AS VIEWER',
         buttonIcon: <AiOutlineLogin className="size-6" />,
-        buttonClassName: 'bg-transparent hover:bg-white hover:text-[#2AA0FE]',
+        buttonClassName:
+            'bg-transparent hover:bg-white hover:text-[#2AA0FE] text-white border-white',
     },
     {
         userType: 'PARTICIPANT',
         userRole: 'Join as participant',
         userHeading: 'PLAYER',
         miniDesc: 'Outthink everyone, get paid',
-        detailedDesc: 'Participants compete directly in the quiz, testing speed and strategy.',
+        detailedDesc:
+            'As a Player, you compete live against others by answering questions under time pressure. You rely on speed, accuracy, and strategy to outthink opponents and advance through the quiz, playing for rewards and the thrill of winning.',
         bgClassname: 'bg-[#EFC11D] text-black',
         textClassname: 'text-black',
         border: 'border-black',
