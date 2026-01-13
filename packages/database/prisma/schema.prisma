@@ -87,6 +87,7 @@ model Quiz {
   chatMessage  ChatMessage[]
   cdoBets      CDOBets[]
   quizViews    QuizViews[]
+  CollabSession CollabSession?
 
   @@map("quizzes")
 }
@@ -215,8 +216,10 @@ model Collaborator {
 model CollabSession {
   id            String         @id @default(cuid())
   hostId        String
+  quizId        String         @unique
 
-  host          User           @relation("HostSessions", fields: [id], references: [id])
+  host          User           @relation("HostSessions", fields: [hostId], references: [id])
+  quiz          Quiz           @relation(fields: [quizId], references: [id])
   collaborators Collaborator[]
 
   createdAt     DateTime       @default(now())
