@@ -50,17 +50,19 @@ export default function UserTypeCard({
 
             <div
                 className={cn(
-                    'w-fit flex flex-col items-start h-full mt-30 gap-y-8 px-30',
+                    'w-fit flex flex-col items-start h-full justify-center gap-y-8 px-30',
                     textClassname,
                 )}
             >
-                <div className="text-[96px] font-semibold leading-20 pt-10">{userHeading}</div>
+                <div className="text-[6rem] font-semibold leading-20 pt-10">{userHeading}</div>
 
                 <div className={cn('h-px w-full border-t', border)} />
 
-                <div className="text-4xl tracking-wide">{miniDesc}</div>
+                <div className="text-3xl tracking-wide font-normal">{miniDesc}</div>
 
-                <div className="text-[18px] font-semibold tracking-wide">{detailedDesc}</div>
+                <div className="text-base font-semibold tracking-wide">{detailedDesc}</div>
+
+                <div className={cn('h-px w-full border-t', border)} />
 
                 <Button
                     className={cn(

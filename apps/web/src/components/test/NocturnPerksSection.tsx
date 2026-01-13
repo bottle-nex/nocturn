@@ -24,7 +24,7 @@ const STEPS = [
     },
 ];
 
-export default function NocturnFeatures() {
+export default function NocturnPerksSection() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
     const pinRef = useRef<HTMLDivElement | null>(null);
     const headingRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +92,7 @@ export default function NocturnFeatures() {
     }, [activeStep]);
 
     return (
-        <div className="min-h-screen w-full py-20 flex flex-col bg-[#F5F1E4] rounded-t-3xl">
+        <div className="min-h-screen w-full py-20 flex flex-col bg-white">
             <div className="flex flex-col text-black px-60 text-7xl gap-y-1.5 font-semibold mb-10">
                 <div>The perks of quizzing</div>
                 <div className="text-tprime/80">with Nocturn</div>
