@@ -85,6 +85,7 @@ export default class CollaborationManager {
     private on_collaborator_connect(decoded_cookie_payload: CookiePayload) {
         try {
 
+            const collaborator_id = decoded_cookie_payload.userId;
 
             
         } catch (error) {

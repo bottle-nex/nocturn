@@ -111,6 +111,14 @@ export default class QuizAction {
         return `http://localhost:3000/join/${quizId}?spectator_token=${token}`;
     }
 
+    public static createCollaborationLink(quizId: string): string {
+        const payload = {
+            quizId,
+        };
+        const token = jwt.sign(payload, env.SERVER_JWT_SECRET);
+        return `http://localhost:3000/collab/${quizId}?collaborationToken=${token}`;
+    }
+
     public static verifyCookie(token: string): CookiePayload | null {
         try {
             return jwt.verify(token, env.SERVER_JWT_SECRET) as CookiePayload;
