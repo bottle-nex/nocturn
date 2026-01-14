@@ -15,6 +15,7 @@ import { CustomResponse, UserQuizResponse } from '@nocturn/types';
 import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
 import CanvasSkeleton from '@/components/skeletons/CanvasSkeleton';
 import HomeStartWithAi from '@/components/home/HomeStartWithAi';
+import HomeRightUpperSection from '@/components/home/HomeRightUpperSection';
 
 export default function Page() {
     const router = useRouter();
@@ -56,32 +57,7 @@ export default function Page() {
     }
     return (
         <div className="bg-white dark:bg-zinc-900 w-full h-full rounded-sm px-12 py-10">
-            <section className="flex items-center justify-between">
-                <div>
-                    <span className="text-4xl text-black dark:text-white">
-                        Welcome {session?.user.name}!
-                    </span>
-                </div>
-                <div className="flex items-center justify-end gap-4">
-                    <Button
-                        onClick={handleCreateNewQuiz}
-                        className="rounded-full w-32 bg-delta hover:bg-delta text-white active:scale-98"
-                    >
-                        <FiPlus />
-                        <span>New Quiz</span>
-                    </Button>
-                    <div className="relative max-w-sm w-full h-11">
-                        <Input
-                            placeholder="Serch your quizzes.."
-                            className="border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white rounded h-full w-full pl-10 focus:outline-none focus:border-neutral-800 dark:focus:border-neutral-600 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gamma/40 dark:placeholder:text-neutral-500"
-                        />
-                        <PiMagnifyingGlass
-                            size={20}
-                            className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
-                        />
-                    </div>
-                </div>
-            </section>
+            <HomeRightUpperSection />
             <HomeStartWithAi />
             <section className="w-[24rem] flex flex-col relative h-fit -ml-8 mt-6">
                 <InvertedQuizCards />

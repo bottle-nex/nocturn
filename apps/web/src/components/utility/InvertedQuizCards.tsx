@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import BackendActions from '@/lib/backend/quiz-backend-actions';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { QuizStatusEnum } from '@nocturn/types';
-import Image from 'next/image'; // ✅ import Image for illustration
+import Image from 'next/image';
 
 export default function InvertedQuizCards() {
     const { session } = useUserSessionStore();

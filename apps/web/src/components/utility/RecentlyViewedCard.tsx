@@ -19,7 +19,7 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
         router.push(`/new/${quiz.quiz?.id}`);
     }
     return (
-        <div onClick={handleCardClick} className="w-88 aspect-video rounded-sm">
+        <div onClick={handleCardClick} className="w-88 aspect-video rounded-sm ">
             {template && (
                 <EmptyCanvas
                     className="w-full aspect-video outline-2 outline-black/40 dark:outline-white/40"
