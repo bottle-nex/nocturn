@@ -73,7 +73,7 @@ export default function Navbar() {
                 <div className="relative flex items-center">
                     <Button
                         onClick={() => setShowInputBox((prev) => !prev)}
-                        className="h-13 text-[15px] rounded-[8px] bg-white text-tprime font-semibold z-10 tracking-widest hover:bg-white !px-6 shadow-button"
+                        className="h-13 text-[15px] rounded-[8px] bg-white text-tprime font-semibold z-10 tracking-widest hover:bg-white !px-6 shadow-sm shadow-black/10 ring-1 ring-black/10"
                     >
                         Enter Quiz
                     </Button>

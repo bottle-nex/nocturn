@@ -66,7 +66,7 @@ export default function UserTypeCard({
 
                 <Button
                     className={cn(
-                        'border h-14 text-[18px] flex items-center transition-colors duration-300',
+                        'border h-14 text-[18px] flex items-center transition-colors duration-300 rounded-[8px]',
                         buttonClassName,
                     )}
                 >
