@@ -1,4 +1,4 @@
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '../ui/button';
 import { IoArrowForwardOutline } from 'react-icons/io5';
