@@ -1,11 +1,12 @@
 'use client';
 import { FaGithub, FaRegCopyright, FaXTwitter } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Footer() {
     return (
         <>
-            {/* <div className="w-full -mt-16 z-30 relative">
+            <div className="w-full -mt-16 z-30 relative">
                 <Image
                     src="/images/footer-img.svg"
                     alt="Nocturn Logo"
@@ -14,6 +15,38 @@ export default function Footer() {
                     sizes="100vw"
                     className="w-full h-auto"
                 />
+            </div>
+            {/* <div className="h-auto w-full bg-black relative z-50 flex overflow-x-auto pt-20">
+                <div className='flex gap-x-3'>
+                    <div className="h-40 w-40 rounded-full relative overflow-hidden">
+                        <Image
+                            src={'/images/landing/solCoin.png'}
+                            alt=""
+                            className="object-contain"
+                            fill
+                            unoptimized
+                        />
+                    </div>
+
+                    <div className='h-auto w-auto min-w-fit bg-[#FB4914] flex justify-center items-center px-9 font-bold text-black text-8xl rounded-xl'>
+                        SOLANA STAKES
+                    </div>
+
+                    <div className="h-40 w-40 rounded-full relative overflow-hidden">
+                        <Image
+                            src={'/images/landing/solCoin.png'}
+                            alt=""
+                            className="object-contain"
+                            fill
+                            unoptimized
+                        />
+                    </div>
+
+                    <div className='h-auto w-auto min-w-fit bg-[#FB4914] flex justify-center items-center px-9 font-bold text-black text-8xl rounded-xl'>
+                        SOLANA STAKES
+                    </div>
+                </div>
+
             </div> */}
             <footer className="relative w-screen bg-black h-[50vh] flex items-center rounded-t-xl">
                 <div className="w-full h-full flex p-4">

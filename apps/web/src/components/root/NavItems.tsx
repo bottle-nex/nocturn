@@ -31,6 +31,7 @@ export default function NavItems({ items, className }: NavItemsProps) {
                 'flex items-center justify-between gap-x-4 h-15 w-200',
                 'px-2 rounded-[8px]',
                 'bg-white text-tprime',
+                'shadow-sm shadow-black/10 ring-1 ring-black/10',
                 className,
             )}
         >
