@@ -28,10 +28,7 @@ export default class CollabAction {
         return jwt.sign(payload, env.SERVER_JWT_SECRET);
     }
 
-    public static create_collaboration_link(
-        quiz_id: string,
-        role: CollabRole,
-    ): string {
+    public static create_collaboration_link(quiz_id: string, role: CollabRole): string {
         const payload = {
             quizId: quiz_id,
             role: role,
@@ -44,6 +41,7 @@ export default class CollabAction {
         try {
             return jwt.verify(token, env.SERVER_JWT_SECRET) as CollabCookiePayload;
         } catch (error) {
+            console.error('Error while verifying collaborator cookie: ', error);
             return null;
         }
     }

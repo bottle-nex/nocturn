@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { redisCacheInstance } from '../../services/init-services';
+// import { redisCacheInstance } from '../../services/init-services';
 import { prisma } from '@nocturn/database';
 import CollabAction from '../../class/collabAction';
 import { CollabRole } from '@nocturn/types';
@@ -13,7 +13,7 @@ export default async function collaboratorJoinController(req: Request, res: Resp
             return;
         }
 
-        const redis_cache = redisCacheInstance;
+        // const redis_cache = redisCacheInstance;
         const quiz_id = req.query.quizId as string;
 
         // link to collaborate
@@ -87,7 +87,7 @@ export default async function collaboratorJoinController(req: Request, res: Resp
             (c) => c.userId === user.id.toString(),
         );
 
-        if(!existing_collaborator) {
+        if (!existing_collaborator) {
             // create the collaborator
             // default role of the collaborator will be viewer
             await prisma.collaborator.create({
@@ -104,9 +104,7 @@ export default async function collaboratorJoinController(req: Request, res: Resp
             collab_session.id,
             CollabRole.VIEWER,
         );
-
-
-
+        console.error('use this: ', collaborator_token_data);
     } catch (error) {
         console.error('error in collaborator join controller: ', error);
         ResponseWriter.system_error(res);

@@ -45,7 +45,7 @@ export default async function startCollaborationController(req: Request, res: Re
         }
 
         // check if the quiz is in created state or not
-        if(!['CREATED'].includes(result.quiz.status)) {
+        if (!['CREATED'].includes(result.quiz.status)) {
             ResponseWriter.error(
                 res,
                 'QUIZ_NOT_AVAILABLE_FOR_EDITING',
@@ -93,11 +93,11 @@ export default async function startCollaborationController(req: Request, res: Re
             };
         });
 
+        console.error('use this: ', collab);
+
         // update the cache
 
         // set the cookie
-
-
 
         // connect to the ws server
     } catch (error) {

@@ -81,14 +81,14 @@ export default class CollaborationManager {
             ?.add(new_collaborator_socket_id);
     }
 
-    private on_collaborator_connect(decoded_cookie_payload: CookiePayload) {
-        try {
-            const collaborator_id = decoded_cookie_payload.userId;
-        } catch (error) {
-            console.error('error on collaborator connect: ', error);
-            return;
-        }
-    }
+    // private on_collaborator_connect(decoded_cookie_payload: CookiePayload) {
+    //     try {
+    //         const collaborator_id = decoded_cookie_payload.userId;
+    //     } catch (error) {
+    //         console.error('error on collaborator connect: ', error);
+    //         return;
+    //     }
+    // }
 
     private cleanup_existing_collaborator_socket(
         collaborator_id: string,
