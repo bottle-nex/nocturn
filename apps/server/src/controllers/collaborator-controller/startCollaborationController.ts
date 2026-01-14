@@ -1,20 +1,18 @@
-import { Request, Response } from "express";
-import ResponseWriter from "../../class/response_writer";
-import { CollabRole, prisma } from "@nocturn/database";
-
+import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
+import { CollabRole, prisma } from '@nocturn/database';
 
 export default async function startCollaborationController(req: Request, res: Response) {
     try {
-
         const user = req.user;
         const quiz_id = req.params.quizId;
 
-        if(!user) {
+        if (!user) {
             ResponseWriter.not_authorized(res, 'user authentication failed');
             return;
         }
 
-        if(!quiz_id) {
+        if (!quiz_id) {
             ResponseWriter.not_found(res, 'quiz id not found');
             return;
         }
@@ -41,16 +39,25 @@ export default async function startCollaborationController(req: Request, res: Re
             };
         });
 
-        if(!result.quiz) {
-            ResponseWriter.not_found(
+        if (!result.quiz) {
+            ResponseWriter.not_found(res, `quiz with id-${quiz_id} doesn't exist`);
+            return;
+        }
+
+        // check if the quiz is in created state or not
+        if(!['CREATED'].includes(result.quiz.status)) {
+            ResponseWriter.error(
                 res,
-                `quiz with id-${quiz_id} doesn't exist`,
+                'QUIZ_NOT_AVAILABLE_FOR_EDITING',
+                'quiz is not in created state',
+                undefined,
+                404,
             );
             return;
         }
 
         // check if the collab session already exists
-        if(result.collab_session) {
+        if (result.collab_session) {
             // conflict
             ResponseWriter.error(
                 res,
@@ -64,21 +71,20 @@ export default async function startCollaborationController(req: Request, res: Re
 
         // create a collaboration session and make the host a member
         const collab = await prisma.$transaction(async (tx) => {
-
             const session = await tx.collabSession.create({
                 data: {
                     hostId: user.id.toString(),
                     quizId: quiz_id,
                 },
             });
-            
+
             const member = await tx.collaborator.create({
                 data: {
                     sessionId: session.id,
                     userId: user.id.toString(),
                     role: CollabRole.HOST,
                     joinedAt: new Date(),
-                }
+                },
             });
 
             return {
@@ -90,12 +96,13 @@ export default async function startCollaborationController(req: Request, res: Re
         // update the cache
 
         // set the cookie
-        
+
+
+
         // connect to the ws server
-        
     } catch (error) {
         console.error('error in start collaboration controller: ', error);
         ResponseWriter.system_error(res);
-        return;  
+        return;
     }
 }

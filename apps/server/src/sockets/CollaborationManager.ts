@@ -79,15 +79,11 @@ export default class CollaborationManager {
         this.session_collaborators_mapping
             .get(decoded_cookie_payload.gameSessionId)
             ?.add(new_collaborator_socket_id);
-
     }
 
     private on_collaborator_connect(decoded_cookie_payload: CookiePayload) {
         try {
-
             const collaborator_id = decoded_cookie_payload.userId;
-
-            
         } catch (error) {
             console.error('error on collaborator connect: ', error);
             return;
@@ -134,7 +130,7 @@ export default class CollaborationManager {
             return !!user;
         } catch (error) {
             console.error('error while validating collaborator in db: ', error);
-            return false; 
+            return false;
         }
     }
 

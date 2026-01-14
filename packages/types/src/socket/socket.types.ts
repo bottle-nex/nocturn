@@ -1,4 +1,8 @@
-import { InteractionEnum, USER_TYPE } from "../prisma/prisma-types";
+import {
+    CollabRole,
+    InteractionEnum,
+    USER_TYPE,
+} from "../prisma/prisma-types";
 
 export enum MESSAGE_TYPES {
     HOST_JOIN_GAME_SESSION = "JOIN_GAME_SESSION",
@@ -88,6 +92,16 @@ export interface CookiePayload {
     tokenId: string;
     iat: number;
     exp: number;
+}
+
+export interface CollabCookiePayload {
+  userId: string;
+  quizId: string;
+  collabSessionId: string;
+  role: CollabRole;
+  tokenId: string;
+  iat: number;
+  exp: number;
 }
 
 export type PubSubMessageTypes =

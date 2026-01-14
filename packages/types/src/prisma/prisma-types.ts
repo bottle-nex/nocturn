@@ -274,3 +274,9 @@ export enum QuizPhaseEnum {
   SHOW_RESULTS = "SHOW_RESULTS",
   WAITING_NEXT = "WAITING_NEXT",
 }
+
+export enum CollabRole {
+  HOST = "HOST",
+  EDITOR = "EDITOR",
+  VIEWER = "VIEWER",
+}
