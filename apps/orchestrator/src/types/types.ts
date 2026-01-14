@@ -1,4 +1,4 @@
-import { QuizPhase } from "@nocturn/database";
+import { CollabRole, QuizPhase } from "@nocturn/database";
 
 export interface CustomWebSocket extends WebSocket {
   id: string;
@@ -10,6 +10,16 @@ export interface CookiePayload {
   quizId: string;
   gameSessionId: string;
   role: USER_TYPE;
+  tokenId: string;
+  iat: number;
+  exp: number;
+}
+
+export interface CollabCookiePayload {
+  userId: string;
+  quizId: string;
+  collabSessionId: string;
+  role: CollabRole;
   tokenId: string;
   iat: number;
   exp: number;

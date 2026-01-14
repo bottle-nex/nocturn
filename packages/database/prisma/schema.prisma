@@ -25,6 +25,9 @@ model User {
   reviews     Review[]
   quizViews   QuizViews[]
 
+  hostedSessions CollabSession[] @relation("HostSessions")
+  collaborators  Collaborator[]
+
   @@map("hosts")
 }
 
@@ -84,6 +87,7 @@ model Quiz {
   chatMessage  ChatMessage[]
   cdoBets      CDOBets[]
   quizViews    QuizViews[]
+  CollabSession CollabSession?
 
   @@map("quizzes")
 }
@@ -190,6 +194,38 @@ model GameSession {
   lifelineUsage LifelineUsage[]
 
   @@map("game_sessions")
+}
+
+model Collaborator {
+  id String @id @default(cuid())
+
+  sessionId String
+  userId    String
+
+  role CollabRole @default(VIEWER)
+
+  isBlocked Boolean   @default(false)
+  joinedAt  DateTime?
+
+  session CollabSession @relation(fields: [sessionId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
+
+  @@unique([sessionId, userId])
+}
+
+model CollabSession {
+  id            String         @id @default(cuid())
+  hostId        String
+  quizId        String         @unique
+
+  host          User           @relation("HostSessions", fields: [hostId], references: [id])
+  quiz          Quiz           @relation(fields: [quizId], references: [id])
+  collaborators Collaborator[]
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("collab_sessions")
 }
 
 model Response {
@@ -395,3 +431,10 @@ enum BetStatus {
   PENDING
   LOST
 }
+
+enum CollabRole {
+  HOST
+  EDITOR
+  VIEWER
+}
+
