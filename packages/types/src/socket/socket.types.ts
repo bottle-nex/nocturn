@@ -91,13 +91,13 @@ export interface CookiePayload {
 }
 
 export interface CollabCookiePayload {
-    userId: string;
-    quizId: string;
-    collabSessionId: string;
-    role: CollabRole;
-    tokenId: string;
-    iat: number;
-    exp: number;
+  userId: string;
+  quizId: string;
+  collabSessionId: string;
+  role: CollabRole;
+  tokenId: string;
+  iat: number;
+  exp: number;
 }
 
 export type PubSubMessageTypes =
