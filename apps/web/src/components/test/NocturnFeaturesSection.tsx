@@ -6,17 +6,17 @@ import { container, fadeUp } from '../animation/framer_motion';
 
 export default function NocturnFeaturesSection() {
     return (
-        <div className="w-full min-h-screen flex flex-col items-center bg-white overflow-hidden py-20 gap-y-20 relative">
+        <div className="w-full min-h-screen flex flex-col items-center bg-nlighter overflow-hidden py-20 gap-y-20 relative shadow-sm">
             <motion.div
                 variants={container}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: false, margin: '-120px' }}
-                className="w-full max-w-[80%] flex flex-col items-center text-7xl font-semibold gap-y-1.5 text-black"
+                viewport={{ once: true, margin: '-120px' }}
+                className="w-full max-w-[80%] flex flex-col items-center text-7xl font-semibold gap-y-1.5 text-ndarkest"
             >
                 <motion.span variants={fadeUp}>With great knowledge</motion.span>
 
-                <motion.span variants={fadeUp} className="text-black">
+                <motion.span variants={fadeUp} className="text-ndarkest">
                     comes great rewards
                 </motion.span>
             </motion.div>

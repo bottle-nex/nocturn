@@ -21,7 +21,7 @@ export default function NocturnLandingSection() {
     });
 
     return (
-        <section className="relative h-[200vh] w-full bg-[#8DD362]">
+        <section className="relative w-full bg-nprimary">
             <div className="sticky top-0 h-screen w-full flex justify-center overflow-hidden">
                 <motion.div
                     ref={textRef}
@@ -36,10 +36,10 @@ export default function NocturnLandingSection() {
                         },
                     }}
                     className={cn(
-                        'h-[70%] text-[#2C2E2A] flex flex-col justify-center items-center max-w-[70%] w-full -space-y-3 z-10',
+                        'h-[70%] text-ndarkest flex flex-col justify-center items-center max-w-[70%] w-full -space-y-2 z-10',
                     )}
                 >
-                    <div className="text-[9rem] flex flex-col items-center -space-y-20 tracking-tight font-semibold">
+                    <div className="text-[9rem] flex flex-col items-center -space-y-22 tracking-tight font-semibold">
                         <motion.span
                             variants={{
                                 hidden: { opacity: 0, y: 90, scale: 0.93 },
@@ -91,7 +91,7 @@ export default function NocturnLandingSection() {
                                 },
                             },
                         }}
-                        className="text-2xl tracking-[-0.020em]"
+                        className="text-2xl tracking-wide text-ndarkest"
                     >
                         Nocturn rewards certainity
                     </motion.div>

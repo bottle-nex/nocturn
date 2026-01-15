@@ -26,16 +26,24 @@ export default function NavItems({ items, className }: NavItemsProps) {
 
     return (
         <motion.div
+            initial={{ scale: 0.98, opacity: 0, filter: 'blur(10px)' }}
+            animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+            transition={{
+                type: 'spring',
+                stiffness: 400,
+                damping: 30,
+                mass: 0.8,
+            }}
             onMouseLeave={() => setHovered(null)}
             className={cn(
-                'flex items-center justify-between gap-x-4 h-15 w-200',
-                'px-2 rounded-[8px]',
-                'bg-white text-tprime',
-                'shadow-sm shadow-black/10 ring-1 ring-black/10',
+                'flex items-center justify-between gap-x-4 h-14 w-200',
+                'px-2 rounded-full',
+                'bg-nlighter text-nprime-darkest',
+                'shadow-sm shadow-ndarker/10 ring-1 ring-ndarker/10',
                 className,
             )}
         >
-            <div className={cn('px-4 text-base text-tprime font-semibold')}>Nocturn</div>
+            <div className={cn('px-4 text-base text-ndarkest tracking-wide')}>Nocturn</div>
 
             <div>
                 {items.map((item, idx) => {
@@ -50,14 +58,14 @@ export default function NavItems({ items, className }: NavItemsProps) {
                             onClick={() => handleClick(idx, item.onClick)}
                             className={cn(
                                 'relative px-6 py-3.5 cursor-pointer select-none',
-                                'text-tprime transition-colors text-base font-semibold',
+                                'text-[#3C315B] transition-colors text-base',
                             )}
                         >
                             {(isHovered || isActive) && (
                                 <motion.div
                                     layoutId="nav-pill"
                                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                                    className={cn('absolute inset-0 rounded-[6px]', 'bg-[#F5F1E4]')}
+                                    className={cn('absolute inset-0 rounded-full', 'bg-nlight')}
                                 />
                             )}
 

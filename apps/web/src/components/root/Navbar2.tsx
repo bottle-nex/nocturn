@@ -7,7 +7,6 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Input } from '../ui/input';
 import SigninModal from '../utility/SigninModal';
 import LogoutModal from '../utility/LogoutModal';
-import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -65,27 +64,69 @@ export default function Navbar() {
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
+            {/* navbar */}
             <div className="flex">
                 <NavItems items={navItems} className="absolute left-1/2 top-4 -translate-x-1/2" />
             </div>
 
-            <div className="flex items-center gap-x-4 h-15 w-fit rounded-[4px] mr-3 top-3.5 absolute right-10.5">
+            {/* right buttons */}
+            <div className="flex items-center gap-x-3 h-15 w-fit rounded-[4px] mr-3 top-3.5 absolute right-7">
                 <div className="relative flex items-center">
-                    <Button
+                    <motion.button
+                        initial={{ opacity: 0, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, filter: 'blur(0px)' }}
+                        transition={{
+                            type: 'spring',
+                            stiffness: 400,
+                            damping: 40,
+                        }}
                         onClick={() => setShowInputBox((prev) => !prev)}
-                        className="h-13 text-[15px] rounded-[8px] bg-white text-tprime font-semibold z-10 tracking-widest hover:bg-white !px-6 shadow-sm shadow-black/10 ring-1 ring-black/10"
+                        className={cn('relative z-10 cursor-pointer focus:outline-none')}
                     >
-                        Enter Quiz
-                    </Button>
+                        <motion.div
+                            whileHover={{
+                                scale: 1.01,
+                                y: -2,
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.12)',
+                            }}
+                            whileTap={{
+                                scale: 0.98,
+                                y: 0,
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.18)',
+                            }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                                mass: 0.8,
+                            }}
+                            className={cn(
+                                'h-12',
+                                'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.18)]',
+                                '!px-6.5',
+                                'rounded-full',
+                                'bg-ndarkest',
+                                'text-nlighter',
+                                'text-base',
+                                'tracking-wider',
+                                'shadow-sm shadow-black/10',
+                                'ring-1 ring-black/10',
+                                'flex items-center justify-center',
+                                'select-none',
+                            )}
+                        >
+                            <span>Enter Quiz</span>
+                        </motion.div>
+                    </motion.button>
 
                     <AnimatePresence>
                         {showInputBox && (
                             <motion.div
                                 className="absolute top-full mt-3 right-0"
-                                initial={{ y: 10, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 10, opacity: 0 }}
-                                transition={{ duration: 0.25, ease: 'easeOut' }}
+                                initial={{ y: -20, opacity: 0, scale: 0.8 }}
+                                animate={{ y: 0, opacity: 1, scale: 1 }}
+                                exit={{ y: -20, opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.2, ease: 'easeInOut' }}
                             >
                                 <Input
                                     placeholder="secret code"
@@ -98,7 +139,7 @@ export default function Navbar() {
 
                 {session?.user ? (
                     <div
-                        className="h-13 w-13 relative rounded-full border border-black overflow-hidden flex justify-center items-center text-tprime cursor-pointer shadow-button"
+                        className="h-12 w-12 relative rounded-full border-3 border-nradiant overflow-hidden flex justify-center items-center text-tprime cursor-pointer"
                         onClick={handleAuthClick}
                     >
                         <Image
@@ -109,12 +150,50 @@ export default function Navbar() {
                         />
                     </div>
                 ) : (
-                    <Button
+                    <motion.button
+                        initial={{ opacity: 0, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, filter: 'blur(0px)' }}
+                        transition={{
+                            type: 'spring',
+                            stiffness: 400,
+                            damping: 40,
+                        }}
                         onClick={() => setOpenSigninModal(true)}
-                        className="h-13 text-[15px] rounded-2 bg-yellow-300 text-tprime font-semibold shadow-button z-10 tracking-widest hover:bg-yellow-300 !px-6"
+                        className={cn('relative z-10 cursor-pointer focus:outline-none')}
                     >
-                        Sign In
-                    </Button>
+                        <motion.div
+                            whileHover={{
+                                scale: 1.01,
+                                y: -2,
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.12)',
+                            }}
+                            whileTap={{
+                                scale: 0.98,
+                                y: 0,
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.18)',
+                            }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 30,
+                                mass: 0.8,
+                            }}
+                            className={cn(
+                                'h-12',
+                                '!px-6',
+                                'rounded-full',
+                                'bg-nradiant',
+                                'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.18)]',
+                                'text-ndarkest',
+                                'text-[15px]',
+                                'tracking-widest',
+                                'flex items-center justify-center',
+                                'select-none',
+                            )}
+                        >
+                            Sign In
+                        </motion.div>
+                    </motion.button>
                 )}
             </div>
 

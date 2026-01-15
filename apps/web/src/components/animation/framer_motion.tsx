@@ -39,3 +39,55 @@ export const fadeUp: Variants = {
         },
     },
 };
+
+export const motionButtonVariants: Variants = {
+    rest: {
+        backgroundColor: '#3C315B',
+    },
+    hover: {
+        backgroundColor: '#F5F2FF',
+        transition: {
+            duration: 0.4,
+            ease: 'easeInOut',
+        },
+    },
+};
+
+export const frontText: Variants = {
+    rest: {
+        rotateX: 0,
+        y: 0,
+        opacity: 1,
+        color: '#F5F2FF',
+    },
+    hover: {
+        rotateX: -90,
+        y: '-50%',
+        opacity: 0,
+        color: '#3C315B',
+        transition: {
+            duration: 0.25,
+            ease: 'easeIn',
+        },
+    },
+};
+
+export const backText: Variants = {
+    rest: {
+        rotateX: 90,
+        y: '50%',
+        opacity: 0,
+        color: '#3C315B',
+    },
+    hover: {
+        rotateX: 0,
+        y: 0,
+        opacity: 1,
+        color: '#3C315B',
+        transition: {
+            duration: 0.25,
+            delay: 0.2,
+            ease: 'easeOut',
+        },
+    },
+};
