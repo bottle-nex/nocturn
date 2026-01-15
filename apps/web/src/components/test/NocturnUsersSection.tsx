@@ -34,7 +34,7 @@ export default function NocturnUsersSection() {
             const holdAfterEnter = 1.8;
             const stackDuration = 0.8;
             const perCardGap = 2.6;
-            const longHoldAfterAll = 2.5;
+            const longHoldAfterAll = 10;
             const exitDuration = 1.2;
 
             const stackOffsetX = -50;
@@ -47,8 +47,9 @@ export default function NocturnUsersSection() {
 
                 tl.fromTo(
                     card,
-                    { y: 900, scale: 0.9, opacity: 1 },
+                    { x: 200, y: 900, scale: 0.9, opacity: 1 },
                     {
+                        x: 0,
                         y: 0,
                         scale: 1,
                         duration: enterDuration,
@@ -136,11 +137,11 @@ export default function NocturnUsersSection() {
                 <div className="absolute inset-0 bg-black" />
 
                 <div className="relative z-10 h-full w-full flex">
-                    <div className="w-[55%] h-full flex items-center justify-center">
+                    <div className="w-[57%] h-full flex items-center justify-center">
                         <div className="text-white text-6xl font-bold">Choose your role</div>
                     </div>
 
-                    <div className="relative w-[45%] h-full">
+                    <div className="relative w-[43%] h-full">
                         {cardData.map((card, index) => (
                             <div
                                 key={index}

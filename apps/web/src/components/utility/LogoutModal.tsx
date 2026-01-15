@@ -1,10 +1,11 @@
 'use client';
 import OpacityBackground from './OpacityBackground';
-import { Button } from '../ui/button';
-import { X, LogOut } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { RxCross2 } from 'react-icons/rx';
 
 export default function LogoutModal() {
     const { openLogoutModal, setOpenLogoutModal } = useUserSessionStore();
@@ -17,22 +18,38 @@ export default function LogoutModal() {
 
     return (
         <OpacityBackground onBackgroundClick={() => setOpenLogoutModal(false)}>
-            <section className="relative bg-white border-2 border-black w-105 max-w-[90vw]">
-                <div className="bg-[#FF3F7F] border-b-2 border-black px-6 py-4 flex items-center justify-between">
-                    <h1 className="text-xl font-bold text-white tracking-wide">Sign out</h1>
-                    <button
+            <section className="relative bg-nlighter border-2 border-black max-w-85 w-full rounded-3xl overflow-hidden shadow-sm">
+                <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
+                    <div className="relative h-30 w-full bg-red-600">
+                        <Image
+                            src={'/images/landing/buttonPressRed.png'}
+                            alt="sign-in image"
+                            className="object-cover"
+                            fill
+                            unoptimized
+                        />
+                    </div>
+                    <motion.button
                         type="button"
-                        title="Close"
                         aria-label="Close modal"
                         onClick={() => setOpenLogoutModal(false)}
-                        className="text-white hover:text-tprime transition-colors cursor-pointer"
+                        className="text-ndarkest transition-colors cursor-pointer absolute right-3 top-3 bg-nlighter rounded-full p-1 hover:bg-ndarkest hover:text-nlighter shadow-sm"
                     >
-                        <X size={24} strokeWidth={2.5} />
-                    </button>
+                        <RxCross2 size={15} strokeWidth={0.8} className="" />
+                    </motion.button>
                 </div>
 
-                <div className="p-6 space-y-6">
-                    <div className="mb-2">
+                <div className="p-6 flex flex-col ">
+                    <div className="font-semibold text-ndarkest px-2 py-px text-sm rounded-[4px] mb-1 text-center">
+                        NOCTURN
+                    </div>
+                    <div className="text-ndarkest text-2xl font-bold mb-1 text-center">
+                        Leaving already?
+                    </div>
+                    <div className="text-ndarker text-[14px] mb-5 text-center flex flex-col -space-y-1 flex flex-col items-center">
+                        Your progress is saved. Come back anytime!
+                    </div>
+                    {/* <div className="mb-2">
                         <span className={cn('text-tprime font-bold text-2xl')}>Nocturn</span>
                     </div>
 
@@ -50,23 +67,23 @@ export default function LogoutModal() {
 
                     <p className="text-neutral-500 text-sm text-center">
                         Are you sure you want to sign out of your account?
-                    </p>
+                    </p> */}
 
                     <div className="flex gap-3">
-                        <Button
-                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-white hover:bg-neutral-50 text-tprime py-6 font-medium"
+                        <motion.button
+                            className="flex justify-center items-center w-full h-12 rounded-[8px] border-2 border-ndarkest bg-nlighter hover:bg-[#eae8f3] transition-colors transform duration-300 text-ndarkest py-6 font-medium cursor-pointer shadow-xs"
                             onClick={() => setOpenLogoutModal(false)}
                         >
                             Cancel
-                        </Button>
+                        </motion.button>
 
-                        <Button
-                            className="flex-1 rounded-none shadow-custom border-2 border-black bg-[#FF3F7F] hover:bg-[#ff2a6d] text-white py-6 font-medium"
+                        <motion.button
+                            className="flex justify-center items-center w-full h-12 rounded-[8px] border-2 border-ndarkest bg-[#CD0E0F] hover:bg-[#c50e0e] text-white py-6 font-medium cursor-pointer shadow-xs"
                             onClick={handleLogout}
                         >
                             <LogOut size={18} className="mr-2" />
                             Sign out
-                        </Button>
+                        </motion.button>
                     </div>
                 </div>
             </section>

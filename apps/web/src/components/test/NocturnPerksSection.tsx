@@ -92,11 +92,11 @@ export default function NocturnPerksSection() {
     }, [activeStep]);
 
     return (
-        <div className="min-h-screen w-full py-20 flex flex-col bg-white">
-            <div className="flex flex-col text-black px-60 text-7xl gap-y-1.5 font-semibold mb-10">
+        <div className="min-h-screen w-full py-20 flex flex-col bg-nlighter">
+            <div className="flex flex-col text-ndarkest px-60 text-7xl gap-y-1.5 font-semibold mb-10">
                 <div>The perks of quizzing</div>
-                <div className="text-tprime/80">with Nocturn</div>
-                <div className="text-2xl max-w-[50rem] flex mt-4 font-normal">
+                <div className="">with Nocturn</div>
+                <div className="text-2xl max-w-[50rem] flex mt-4 font-normal tracking-wide text-ndarker">
                     Normal quizzes often fall flat because they lack excitement, something that only
                     comes from having real stakes, strategic lifelines, and a sense of competition
                     that pushes players to give their best.
@@ -104,9 +104,10 @@ export default function NocturnPerksSection() {
             </div>
 
             <section ref={sectionRef} className="relative w-full" style={{ height: '300vh' }}>
-                <div ref={pinRef} className="h-screen w-full">
-                    <div className="h-screen w-full border-3 border-black ml-60 pt-10 rounded-3xl relative flex items-center">
-                        <div className="h-130 w-130 border-3 border-black absolute -left-30 rounded-3xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                <div ref={pinRef} className="h-screen w-full ">
+                    <div className="h-screen w-full border-3 border-ndarkest ml-60 pt-10 rounded-3xl relative flex items-center bg-nlight">
+                        {/* change rgb here to nprime-darker */}
+                        <div className="h-130 w-130 border-3 border-black absolute -left-30 rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                             <div className="h-full w-full overflow-hidden">
                                 <Image
                                     src={STEPS[activeStep].image}
@@ -121,15 +122,12 @@ export default function NocturnPerksSection() {
                         <div className="w-full h-full pl-140 flex flex-col justify-center">
                             <div
                                 ref={headingRef}
-                                className="text-5xl text-black font-semibold tracking-wide"
+                                className="text-5xl text-ndarkest font-semibold tracking-wide"
                             >
                                 {STEPS[activeStep].heading}
                             </div>
 
-                            <div
-                                ref={textRef}
-                                className="text-2xl text-tprime/80 mt-2 max-w-[30rem]"
-                            >
+                            <div ref={textRef} className="text-2xl text-ndarker mt-2 max-w-[30rem]">
                                 {STEPS[activeStep].text}
                             </div>
                         </div>

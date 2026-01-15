@@ -13,6 +13,18 @@
     --color-eta: #f6c453;
 
     --color-tprime: #2c2e2a;
+
+    /* nocturn primary colors */
+    --color-nprimary: #ab9ff2;
+
+    --color-ndark: #61587c;
+    --color-ndarker: #3c315b;
+    --color-ndarkest: #352b52;
+
+    --color-nlight: #e2dffe;
+    --color-nlighter: #f5f2ff;
+
+    --color-nradiant: #f1ff52;
 }
 
 @theme {

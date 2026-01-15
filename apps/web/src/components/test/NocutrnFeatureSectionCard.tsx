@@ -27,9 +27,9 @@ export default function NocturnFeaturesSectionCard({
             variants={container}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: '-120px' }}
+            viewport={{ once: true, margin: '-120px' }}
             className={cn(
-                'w-full flex justify-around pt-10 text-black',
+                'w-full flex justify-around pt-10 text-ndarkest',
                 invert && 'flex-row-reverse',
             )}
         >
@@ -48,13 +48,16 @@ export default function NocturnFeaturesSectionCard({
                         {heading2}
                     </motion.div>
 
-                    <motion.div variants={fadeUp} className="text-xl leading-relaxed">
+                    <motion.div
+                        variants={fadeUp}
+                        className="text-xl leading-relaxed text-nprime-darker"
+                    >
                         {description}
                     </motion.div>
                 </div>
 
                 <motion.div variants={fadeUp}>
-                    <Button className="bg-black text-white border-2 border-black text-xl h-13 hover:bg-white hover:text-black flex items-center gap-2 rounded-[8px]">
+                    <Button className="bg-ndarkest text-nlighter border-2 border-ndarkest text-xl h-13 hover:bg-transparent hover:text-ndarkest flex items-center gap-2 rounded-[8px] !px-6">
                         {buttonText}
                         <IoArrowForwardOutline className="size-5" />
                     </Button>
