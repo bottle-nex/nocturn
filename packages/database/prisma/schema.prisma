@@ -80,13 +80,13 @@ model Quiz {
   spectatorMode     Boolean @default(false)
   allowNewSpectator Boolean @default(true)
 
-  participants Participant[]
-  spectators   Spectator[]
-  questions    Question[]
-  GameSession  GameSession?
-  chatMessage  ChatMessage[]
-  cdoBets      CDOBets[]
-  quizViews    QuizViews[]
+  participants  Participant[]
+  spectators    Spectator[]
+  questions     Question[]
+  GameSession   GameSession?
+  chatMessage   ChatMessage[]
+  cdoBets       CDOBets[]
+  quizViews     QuizViews[]
   CollabSession CollabSession?
 
   @@map("quizzes")
@@ -214,16 +214,16 @@ model Collaborator {
 }
 
 model CollabSession {
-  id            String         @id @default(cuid())
-  hostId        String
-  quizId        String         @unique
+  id     String @id @default(cuid())
+  hostId String
+  quizId String @unique
 
   host          User           @relation("HostSessions", fields: [hostId], references: [id])
   quiz          Quiz           @relation(fields: [quizId], references: [id])
   collaborators Collaborator[]
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("collab_sessions")
 }
@@ -437,4 +437,3 @@ enum CollabRole {
   EDITOR
   VIEWER
 }
-
