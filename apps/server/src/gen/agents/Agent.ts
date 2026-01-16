@@ -1,5 +1,10 @@
+import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { Response } from "express";
+import { create_quiz_prompt } from "../prompts/createQuizPrompt";
+import { create_new_quiz_schema } from "../schemas/createNewQuizSchema";
+import { prisma } from "@nocturn/database";
+import { QuestionType } from "../../schemas/createQuizSchema";
 
 
 export default class Agent {
@@ -15,11 +20,56 @@ export default class Agent {
 
     public async create_new_quiz(
         instruction: string,
+        user_id: string,
     ) {
         try {
+
+            // get the chain
+            const chain = this.get_chain();
+            if(!chain) return;
+
+            const data = await chain.invoke({
+                instruction,
+            });
+
+            // we'll take time-limit and reading-time by default
+
+            // const questions: QuestionType[] = data.questions;
+
+            // create the quiz
+            const quiz = await prisma.quiz.create({
+                data: {
+                    hostId: user_id,
+                    title: "",
+                    prizePool: 0,
+                    questions: {
+                        create: {
+                            question: 
+                        }
+                    }
+                },
+            });
+
+
             
         } catch (error) {
             
+        }
+    }
+
+    private get_chain() {
+        try {
+            
+            const chain = RunnableSequence.from([
+                create_quiz_prompt,
+                this.model.withStructuredOutput(create_new_quiz_schema),
+            ]);
+
+            return chain;
+
+        } catch (error) {
+            console.error("error in creating chain: ", error);
+            return;
         }
     }
 
