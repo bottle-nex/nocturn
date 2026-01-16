@@ -99,6 +99,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.850.0
         version: 3.958.0
+      '@langchain/core':
+        specifier: ^1.1.15
+        version: 1.1.15(@opentelemetry/api@1.9.0)(openai@6.16.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))(zod@4.3.2))
       '@langchain/google-genai':
         specifier: ^2.1.10
         version: 2.1.10(@langchain/core@1.1.15(@opentelemetry/api@1.9.0)(openai@6.16.0(ws@8.18.3(bufferutil@4.1.0)(utf-8-validate@5.0.10))(zod@4.3.2)))

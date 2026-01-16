@@ -13,7 +13,7 @@ export default class Agent {
         });
     }
 
-    public async create_new_question(
+    public async create_new_quiz(
         instruction: string,
     ) {
         try {
