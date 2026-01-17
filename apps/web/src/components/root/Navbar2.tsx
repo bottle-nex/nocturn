@@ -9,6 +9,7 @@ import SigninModal from '../utility/SigninModal';
 import LogoutModal from '../utility/LogoutModal';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useJoinQuizStore } from '@/store/home/useJoinQuizStore';
 
 interface NavItem {
     label: string;
@@ -19,9 +20,9 @@ interface NavItem {
 export default function Navbar() {
     const { session, setOpenSigninModal, setOpenLogoutModal } = useUserSessionStore();
     const isLoggedIn = !!session?.user?.id;
-    const [showInputBox, setShowInputBox] = useState<boolean>(false);
     const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(true);
     const [lastScrollY, setLastScrollY] = useState<number>(0);
+    const { showJoinInput, toggleJoinInput } = useJoinQuizStore();
 
     useEffect(() => {
         function handleScroll() {
@@ -80,7 +81,7 @@ export default function Navbar() {
                             stiffness: 400,
                             damping: 40,
                         }}
-                        onClick={() => setShowInputBox((prev) => !prev)}
+                        onClick={toggleJoinInput}
                         className={cn('relative z-10 cursor-pointer focus:outline-none')}
                     >
                         <motion.div
@@ -120,9 +121,9 @@ export default function Navbar() {
                     </motion.button>
 
                     <AnimatePresence>
-                        {showInputBox && (
+                        {showJoinInput && (
                             <motion.div
-                                className="absolute top-full mt-3 right-0"
+                                className="absolute top-full mt-2.5 right-0"
                                 initial={{ y: -20, opacity: 0, scale: 0.8 }}
                                 animate={{ y: 0, opacity: 1, scale: 1 }}
                                 exit={{ y: -20, opacity: 0, scale: 0.8 }}
@@ -130,7 +131,7 @@ export default function Navbar() {
                             >
                                 <Input
                                     placeholder="secret code"
-                                    className="font-mono h-13 !bg-white border border-black w-40 px-4 rounded-[8px]"
+                                    className="h-12 !bg-nlighter text-black border border-black w-40 px-4 rounded-[8px] z-50 relative tracking-wider"
                                 />
                             </motion.div>
                         )}
@@ -180,13 +181,15 @@ export default function Navbar() {
                             }}
                             className={cn(
                                 'h-12',
-                                '!px-6',
+                                'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.18)]',
+                                '!px-6.5',
                                 'rounded-full',
                                 'bg-nradiant',
-                                'shadow-[0px_4px_8px_0px_rgba(0,0,0,0.18)]',
+                                'text-nlighter',
                                 'text-ndarkest',
-                                'text-[15px]',
-                                'tracking-widest',
+                                'tracking-wider',
+                                'shadow-sm shadow-black/10',
+                                'ring-1 ring-black/10',
                                 'flex items-center justify-center',
                                 'select-none',
                             )}

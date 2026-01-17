@@ -18,6 +18,8 @@ interface UserTypeCardData {
     bgClassname: string;
     textClassname: string;
     buttonClassName: string;
+
+    onClick: () => void;
 }
 
 export default function UserTypeCard({
@@ -32,6 +34,7 @@ export default function UserTypeCard({
     textClassname,
     buttonClassName,
     border,
+    onClick,
 }: UserTypeCardData) {
     return (
         <div
@@ -42,7 +45,10 @@ export default function UserTypeCard({
         >
             <div className="flex justify-between text-xl w-full font-semibold">
                 <div>{userType}</div>
-                <div className="flex items-center gap-x-1 hover:underline cursor-pointer">
+                <div
+                    onClick={onClick}
+                    className="flex items-center gap-x-1 hover:underline cursor-pointer"
+                >
                     {userRole}
                     <HiArrowNarrowRight className="size-6" />
                 </div>
@@ -65,6 +71,7 @@ export default function UserTypeCard({
                 <div className={cn('h-px w-full border-t', border)} />
 
                 <Button
+                    onClick={onClick}
                     className={cn(
                         'border h-14 text-[18px] flex items-center transition-colors duration-300 rounded-[8px]',
                         buttonClassName,
