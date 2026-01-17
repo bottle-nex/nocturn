@@ -5,6 +5,7 @@ import { create_quiz_prompt } from "../prompts/createQuizPrompt";
 import { create_new_quiz_schema } from "../schemas/createNewQuizSchema";
 import { prisma } from "@nocturn/database";
 import { QuestionType } from "../../schemas/createQuizSchema";
+import { env } from "../../configs/env";
 
 
 export default class Agent {
@@ -15,10 +16,12 @@ export default class Agent {
         this.model = new ChatGoogleGenerativeAI({
             model: 'gemini-2.5-flash',
             temperature: 0.2,
+            apiKey: env.SERVER_GEMINI_API_KEY,
         });
     }
 
     public async create_new_quiz(
+        res: Response,
         instruction: string,
         user_id: string,
     ) {
@@ -33,20 +36,31 @@ export default class Agent {
             });
 
             // we'll take time-limit and reading-time by default
+            const defaults = {
+                timeLimit: 30,
+                readingTime: 7,
+                basePoints: 20,
+            }
 
-            // const questions: QuestionType[] = data.questions;
+            const questions: QuestionType[] = data.questions.map((q, index) => {
+                return {
+                    ...q,
+                    timeLimit: defaults.timeLimit,
+                    readingTime: defaults.readingTime,
+                    basePoints: defaults.basePoints,
+                    orderIndex: index,
+                };
+            });
 
             // create the quiz
             const quiz = await prisma.quiz.create({
                 data: {
                     hostId: user_id,
-                    title: "",
+                    title: data.title,
                     prizePool: 0,
                     questions: {
-                        create: {
-                            question: 
-                        }
-                    }
+                        create: questions,
+                    },
                 },
             });
 

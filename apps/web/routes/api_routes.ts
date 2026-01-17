@@ -3,6 +3,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export const API_URL = BACKEND_URL + '/api/v1';
 export const SIGNIN_URL = API_URL + '/sign-in';
 export const QUIZ_URL = API_URL + '/quiz';
+export const AI_URL = API_URL + '/ai';
 export const CREATE_QUIZ_URL = QUIZ_URL + '/create-quiz';
 export const UPLOAD_IMAGE_URL = API_URL + '/get-presigned-url';
 export const GET_OWNER_QUIZ_URL = QUIZ_URL + '/get-quiz';
@@ -17,6 +18,7 @@ export const GET_REVIEW_URL = API_URL + '/user/get-review';
 export const DELETE_QUIZ_URL = API_URL + '/quiz/delete-quiz';
 export const GET_SELECTED_QUESTION_DATA = API_URL + '/quiz/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
+export const CREATE_QUIZ_USING_AI = API_URL + '/create-new-quiz';
 
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';
