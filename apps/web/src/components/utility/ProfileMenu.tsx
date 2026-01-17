@@ -89,7 +89,7 @@ export default function ProfileMenu() {
                         alt="user-logo"
                         className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
                     />
-                    <span className="font-normal">{session?.user.name}</span>
+                    <span className="font-normal text-nowrap">{session?.user.name}</span>
                     <IoChevronDownSharp />
                 </div>
             )}

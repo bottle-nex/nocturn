@@ -25,8 +25,9 @@ model User {
   reviews     Review[]
   quizViews   QuizViews[]
 
-  hostedSessions CollabSession[] @relation("HostSessions")
-  collaborators  Collaborator[]
+  hostedSessions          CollabSession[]          @relation("HostSessions")
+  collaborators           Collaborator[]
+  collaboratorInvitations CollaboratorInvitation[]
 
   @@map("hosts")
 }
@@ -80,14 +81,15 @@ model Quiz {
   spectatorMode     Boolean @default(false)
   allowNewSpectator Boolean @default(true)
 
-  participants Participant[]
-  spectators   Spectator[]
-  questions    Question[]
-  GameSession  GameSession?
-  chatMessage  ChatMessage[]
-  cdoBets      CDOBets[]
-  quizViews    QuizViews[]
-  CollabSession CollabSession?
+  participants            Participant[]
+  spectators              Spectator[]
+  questions               Question[]
+  GameSession             GameSession?
+  chatMessage             ChatMessage[]
+  cdoBets                 CDOBets[]
+  quizViews               QuizViews[]
+  CollabSession           CollabSession?
+  collaboratorInvitations CollaboratorInvitation[]
 
   @@map("quizzes")
 }
@@ -201,8 +203,7 @@ model Collaborator {
 
   sessionId String
   userId    String
-
-  role CollabRole @default(VIEWER)
+  role      CollabRole @default(VIEWER)
 
   isBlocked Boolean   @default(false)
   joinedAt  DateTime?
@@ -213,17 +214,36 @@ model Collaborator {
   @@unique([sessionId, userId])
 }
 
+model CollaboratorInvitation {
+  id    String @id @default(cuid())
+  email String
+
+  sessionId String
+  quizId    String
+  role      CollabRole                    @default(VIEWER)
+  status    CollaborationInvitationStatus @default(PENDING)
+  invitedBy String
+
+  invitedAt  DateTime  @default(now())
+  acceptedAt DateTime?
+
+  quiz    Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  inviter User @relation(fields: [invitedBy], references: [id])
+
+  @@unique([sessionId, email])
+}
+
 model CollabSession {
-  id            String         @id @default(cuid())
-  hostId        String
-  quizId        String         @unique
+  id     String @id @default(cuid())
+  hostId String
+  quizId String @unique
 
   host          User           @relation("HostSessions", fields: [hostId], references: [id])
   quiz          Quiz           @relation(fields: [quizId], references: [id])
   collaborators Collaborator[]
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("collab_sessions")
 }
@@ -438,3 +458,9 @@ enum CollabRole {
   VIEWER
 }
 
+enum CollaborationInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}

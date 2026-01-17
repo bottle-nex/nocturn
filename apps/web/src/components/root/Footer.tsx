@@ -80,7 +80,7 @@ export default function Footer() {
                                 <a
                                     href="https://github.com/bottle-nex/nocturn"
                                     target="_blank"
-                                    rel="noreferrer"
+                                    rel="noopener noreferrer"
                                 >
                                     <FaGithub className="size-20" />
                                 </a>
@@ -90,7 +90,7 @@ export default function Footer() {
                         <div className="w-[87%] h-full p-2 flex justify-between">
                             <div className="bg-nprimary h-full w-full flex justify-between rounded-xl p-7 py-8 noise-bg shadow-sm">
                                 <div className="w-[30%] h-full flex flex-col justify-between">
-                                    <div className="text-7xl font-bold text-ndarkest tracking-tight">
+                                    <div className="text-7xl font-bold text-black tracking-tight">
                                         <div>NOCTURN</div>
                                         <div className="text-xl tracking-normal font-semibold uppercase">
                                             Smart people love this app
