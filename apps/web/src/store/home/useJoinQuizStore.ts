@@ -2,10 +2,10 @@ import { create } from 'zustand';
 
 interface JoinQuizButtonStore {
     showJoinInput: boolean;
-    setShowJoinInput: (value: boolean) => void;
+    toggleJoinInput: () => void;
 }
 
 export const useJoinQuizStore = create<JoinQuizButtonStore>((set) => ({
     showJoinInput: false,
-    setShowJoinInput: (value: boolean) => set({ showJoinInput: value }),
+    toggleJoinInput: () => set((state) => ({ showJoinInput: !state.showJoinInput })),
 }));

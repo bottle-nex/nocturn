@@ -68,7 +68,7 @@ export default function SigninModal() {
                             stiffness: 300,
                             damping: 18,
                         }}
-                        className="w-full h-12 rounded-lg shadow-custom border-2 border-ndarkest bg-nprimary text-ndarkest py-6 font-semibold text-base mb-3 flex items-center justify-center cursor-pointer"
+                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-nprimary text-ndarkest py-6 font-semibold text-base mb-3 flex items-center justify-center cursor-pointer"
                         onClick={() => singinHandler('github')}
                     >
                         <Image
@@ -89,7 +89,7 @@ export default function SigninModal() {
                             stiffness: 300,
                             damping: 18,
                         }}
-                        className="w-full h-12 rounded-lg shadow-custom border-2 border-ndarkest bg-nprimary text-ndarkest py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
+                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-nprimary text-ndarkest py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
                         onClick={() => singinHandler('google')}
                     >
                         <Image

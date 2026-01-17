@@ -1,8 +1,24 @@
 'use client';
 import { FaGithub, FaRegCopyright, FaXTwitter } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import SigninModal from '../utility/SigninModal';
 
 export default function Footer() {
+    const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+    const { session } = useUserSessionStore();
+    const router = useRouter();
+
+    function handleCreateQuizClick() {
+        if (!session || !session.user.token) {
+            setShowLoginModal(true);
+            return;
+        }
+        router.push('/home');
+    }
+
     return (
         <>
             {/* <div className="w-full -mt-16 z-30 relative">
@@ -15,7 +31,7 @@ export default function Footer() {
                     className="w-full h-auto"
                 />
             </div> */}
-            <div className="h-auto w-full bg-black flex flex-col justify-between items-between relative z-40">
+            <div className="h-auto w-full bg-nlighter flex flex-col justify-between items-between relative z-40">
                 {/* <div className="h-auto w-full relative z-50 flex overflow-x-auto pt-20">
                     <div className='flex gap-x-3'>
                         <div className="h-40 w-40 rounded-full relative overflow-hidden">
@@ -35,7 +51,7 @@ export default function Footer() {
                     </div>
 
                 </div> */}
-                <footer className="relative w-screen h-[50vh] flex items-center">
+                <footer className="relative w-screen h-[50vh] flex items-center bg-black">
                     <div className="w-full h-full flex p-4">
                         <div className="w-[13%] h-full p-2 flex flex-col gap-y-2">
                             <motion.div
@@ -47,7 +63,9 @@ export default function Footer() {
                                     damping: 20,
                                 }}
                             >
-                                <FaXTwitter className="size-20" />
+                                <a href="">
+                                    <FaXTwitter className="size-20" />
+                                </a>
                             </motion.div>
 
                             <motion.div
@@ -59,7 +77,13 @@ export default function Footer() {
                                 }}
                                 className="h-full w-full rounded-xl bg-white flex justify-center items-center text-black hover:scale-95 cursor-pointer shadow-sm"
                             >
-                                <FaGithub className="size-20" />
+                                <a
+                                    href="https://github.com/bottle-nex/nocturn"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <FaGithub className="size-20" />
+                                </a>
                             </motion.div>
                         </div>
 
@@ -81,7 +105,12 @@ export default function Footer() {
 
                                 <div className="w-[15%] h-full flex flex-col justify-between text-ndarkest">
                                     <div className="flex flex-col items-start gap-y-1 text-xl font-semibold">
-                                        <span className="hover:underline cursor-pointer">HOME</span>
+                                        <span
+                                            onClick={handleCreateQuizClick}
+                                            className="hover:underline cursor-pointer"
+                                        >
+                                            HOME
+                                        </span>
                                         <span className="hover:underline cursor-pointer">
                                             GET STARTED
                                         </span>
@@ -109,6 +138,7 @@ export default function Footer() {
                             </div>
                         </div>
                     </div>
+                    {showLoginModal && <SigninModal />}
                 </footer>
             </div>
         </>
