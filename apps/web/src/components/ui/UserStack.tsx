@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { GoPlus } from 'react-icons/go';
 import AddCollaborators from '../utility/AddCollaborators';
+import Image from 'next/image';
 
 const people = [
     {
@@ -37,7 +38,7 @@ const people = [
 ];
 
 export default function UserStack() {
-    const [openAddCollaborators, setOpenAddCollaborators] = useState<boolean>(true);
+    const [openAddCollaborators, setOpenAddCollaborators] = useState<boolean>(false);
     return (
         <div className="flex flex-row items-center justify-center w-full z-20">
             {people.map((item, idx) => (
@@ -46,7 +47,7 @@ export default function UserStack() {
                     style={{ zIndex: people.length - idx }}
                     key={item.id}
                 >
-                    <img
+                    <Image
                         height={80}
                         width={80}
                         src={item.image}

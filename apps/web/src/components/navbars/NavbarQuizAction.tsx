@@ -13,7 +13,6 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { QuizStatusEnum } from '@nocturn/types';
 import { toast } from 'sonner';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
-import AutoSaveComponent from '../utility/AutoSave';
 import { useRouter } from 'next/navigation';
 
 interface Option {
@@ -140,7 +139,7 @@ export default function NavbarQuizAction() {
 
     return (
         <div
-            className="relative select-none flex flex-shrink-0 items-center gap-x-3"
+            className="relative select-none flex shrink-0 items-center gap-x-3"
             onClick={() => setActionsPanel((prev) => !prev)}
         >
             {Boolean(quiz.status !== QuizStatusEnum.NULL)}
