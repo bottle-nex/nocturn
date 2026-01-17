@@ -86,7 +86,7 @@ export default function BigAnimatedText() {
     }, [cycleIndex, colorOrder]);
 
     return (
-        <div className="w-full flex justify-center items-center h-140 mx-auto bg-nprime-primary relative z-30 shadow-3xl">
+        <div className="w-full flex justify-center items-center h-140 mx-auto bg-black text-nlighter relative z-30 shadow-3xl">
             <div className="flex flex-col items-center">
                 <div className="relative max-w-3xl">
                     <h1 className="text-center text-7xl font-bold text-nprime-darker">
@@ -103,7 +103,7 @@ export default function BigAnimatedText() {
                                 ref={(el) => {
                                     boxesRef.current[idx] = el;
                                 }}
-                                className={`absolute shadow-custom ${positions[idx]} px-4 py-2.5 border dark:border-neutral-900 border-neutral-200 text-neutral-800 font-bold overflow-hidden`}
+                                className={`absolute ${positions[idx]} px-4 py-2.5 border dark:border-neutral-900 border-neutral-200 text-neutral-800 font-bold overflow-hidden`}
                                 style={{
                                     backgroundColor: bgColor,
                                 }}

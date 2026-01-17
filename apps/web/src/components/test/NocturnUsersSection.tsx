@@ -39,19 +39,19 @@ export default function NocturnUsersSection() {
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: 'top top',
-                    end: '+=500%',
+                    end: '+=1500%',
                     pin: pinRef.current,
                     pinSpacing: true,
-                    scrub: 1.2,
+                    scrub: 4,
                 },
             });
 
-            const enterDuration = 1.6;
-            const holdAfterEnter = 1.8;
-            const stackDuration = 0.8;
-            const perCardGap = 2.6;
-            const longHoldAfterAll = 10;
-            const exitDuration = 1.2;
+            const enterDuration = 8;
+            const holdAfterEnter = 10;
+            const stackDuration = 4;
+            const perCardGap = 15;
+            const longHoldAfterAll = 1;
+            const exitDuration = 1;
             const stackOffsetX = -50;
 
             cardsRef.current.forEach((card, index) => {
@@ -118,17 +118,17 @@ export default function NocturnUsersSection() {
         <section
             ref={sectionRef}
             className="relative w-screen bg-black"
-            style={{ height: '300vh' }}
+            style={{ height: '1500vh' }}
         >
             <div ref={pinRef} className="h-screen w-full overflow-hidden">
-                <div className="absolute inset-0 bg-black" />
+                <div className="absolute inset-0 bg-nlighter" />
 
                 <div className="relative z-10 h-full w-full flex">
-                    <div className="w-[57%] h-full flex items-center justify-center">
-                        <div className="text-white text-6xl font-bold">Choose your role</div>
+                    <div className="w-[50%] h-full flex items-center justify-center">
+                        <div className="text-black text-6xl font-bold">Choose your role</div>
                     </div>
 
-                    <div className="relative w-[43%] h-full">
+                    <div className="relative w-[50%] h-full">
                         <div
                             ref={(el) => {
                                 if (el) {
