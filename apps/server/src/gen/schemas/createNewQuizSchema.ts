@@ -1,10 +1,14 @@
-import z from "zod";
+import z from 'zod';
 
 const question_schema = z.object({
     question: z.string().min(5).describe('a one liner question'),
     options: z.array(z.string()).length(4),
     correctAnswer: z.int().min(1).max(4),
-    explanation: z.string().min(1).max(100).describe('a short explanation about why the correct option is correct'),
+    explanation: z
+        .string()
+        .min(1)
+        .max(100)
+        .describe('a short explanation about why the correct option is correct'),
     hint: z.string().min(1).max(100).describe('a little hint to get near to correct option'),
     difficulty: z.int().min(1).max(5).describe('how tuff the question is'),
 });

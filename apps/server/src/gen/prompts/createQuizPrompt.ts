@@ -1,4 +1,4 @@
-import { PromptTemplate } from "@langchain/core/prompts";
+import { PromptTemplate } from '@langchain/core/prompts';
 
 export const create_quiz_prompt = new PromptTemplate({
     template: `
