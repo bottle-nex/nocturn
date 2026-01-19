@@ -18,7 +18,7 @@ export default function LogoutModal() {
 
     return (
         <OpacityBackground onBackgroundClick={() => setOpenLogoutModal(false)}>
-            <section className="relative bg-nlighter border-2 border-black max-w-85 w-full rounded-md overflow-hidden shadow-sm">
+            <section className="relative bg-nlighter border-2 border-black max-w-90 w-full rounded-md overflow-hidden shadow-sm">
                 <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
                     <div className="relative h-30 w-full bg-red-600">
                         <Image

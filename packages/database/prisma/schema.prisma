@@ -68,6 +68,11 @@ model Quiz {
   status                QuizStatus     @default(CREATED)
   interactions          Interactions[]
 
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  // deletedBy User <- if a collaborator/ moderator would be able to delete the quzi
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   scheduledAt DateTime?

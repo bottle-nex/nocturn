@@ -12,7 +12,6 @@ import reviewAppController from '../controllers/appReview-controller/reviewAppCo
 import participantJoinController from '../controllers/live-quiz-controller/participantJoinController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import spectatorJoinController from '../controllers/live-quiz-controller/spectatorJoinController';
-import deleteQuizController from '../controllers/quiz-controller/deleteQuizController';
 import getReviewController from '../controllers/appReview-controller/getReviewController';
 import { getLiveQuizSummarizedData } from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
 import getSelectedQuestionDetails from '../controllers/live-quiz-controller/getSelectedQuestionDetails';
@@ -21,18 +20,39 @@ import getParticipantsOnCall from '../controllers/live-quiz-controller/getPartic
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import getQuestionResults from '../controllers/live-quiz-controller/getQuestionResults';
 import spectatorJoinQuizViaURLController from '../controllers/live-quiz-controller/spectatorJoinQuizViaURLController';
+import permanently_delete_quiz_controller from '../controllers/quiz-controller/permanently_delete_quiz_controller';
+import deleteQuizController from '../controllers/quiz-controller/deleteQuizController';
+import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_trashed_quizzes_controller';
+import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
+import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
 
 const router: Router = Router();
 
+// <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
+
+// <---------------------- REVIEW-ROUTES ---------------------->
 router.post('/user/create-review', authMiddleware, reviewAppController);
 router.get('/user/get-review', authMiddleware, getReviewController);
 
-//quiz-routes
+// <---------------------- QUIZ-ROUTES ---------------------->
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
-router.delete('/quiz/delete-quiz/:quizId', authMiddleware, deleteQuizController);
+
+// restore trashed quiz
+router.put('/quiz/restore-quiz/:quizId', authMiddleware, restore_trashed_quiz_controller);
+// temporary delete one quiz (move to trash)
+router.put('/quiz/move-to-trash/:quizId', authMiddleware, deleteQuizController);
+
+// get all trashed quizzes
+router.get('/quiz/get-user-trashed-quiz', authMiddleware, get_trashed_quizzes_controller);
+
+// clean trash
+router.delete('/quiz/clear-trash', authMiddleware, delete_trashed_quizzes_controller);
+// permanently delete single quiz
+router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_quiz_controller);
+
 router.post('/get-presigned-url', getPreSignedUrlController);
 router.post(
     '/quiz/publish-quiz/:quizId',

@@ -39,6 +39,7 @@ export const createQuizSchema = z.object({
     theme: z.enum(Object.values(TemplateEnum)),
     prizePool: z.coerce.number().nonnegative(),
     currency: z.string().default('SOL'),
+    isDeleted: z.boolean(),
     basePointsPerQuestion: z.coerce.number().optional(),
     pointsMultiplier: z.coerce.number().optional(),
     timeBonus: z.coerce.boolean().optional(),

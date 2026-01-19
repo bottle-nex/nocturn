@@ -46,12 +46,12 @@ export default function NocturnUsersSection() {
                 },
             });
 
-            const enterDuration = 8;
-            const holdAfterEnter = 10;
+            const enterDuration = 5;
+            const holdAfterEnter = 8;
             const stackDuration = 4;
-            const perCardGap = 15;
-            const longHoldAfterAll = 1;
-            const exitDuration = 1;
+            const perCardGap = 10;
+            const longHoldAfterAll = 0.1;
+            const exitDuration = 0.1;
             const stackOffsetX = -50;
 
             cardsRef.current.forEach((card, index) => {
@@ -124,11 +124,11 @@ export default function NocturnUsersSection() {
                 <div className="absolute inset-0 bg-nlighter" />
 
                 <div className="relative z-10 h-full w-full flex">
-                    <div className="w-[50%] h-full flex items-center justify-center">
+                    <div className="w-[55%] h-full flex items-center justify-center">
                         <div className="text-black text-6xl font-bold">Choose your role</div>
                     </div>
 
-                    <div className="relative w-[50%] h-full">
+                    <div className="relative w-[45%] h-full">
                         <div
                             ref={(el) => {
                                 if (el) {

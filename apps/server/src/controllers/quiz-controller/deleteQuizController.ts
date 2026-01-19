@@ -1,7 +1,7 @@
-import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
-import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
+import { prisma, QuizStatus } from '@nocturn/database';
+import QuizAction from '../../class/quizAction';
 
 export default async function deleteQuizController(req: Request, res: Response) {
     const quizId = req.params.quizId;
@@ -11,29 +11,31 @@ export default async function deleteQuizController(req: Request, res: Response) 
         ResponseWriter.not_authorized(res);
         return;
     }
+
     if (!quizId) {
-        ResponseWriter.invalid_data(res, 'quiz id is required');
+        ResponseWriter.not_found(res, 'quiz id not found');
         return;
     }
 
     try {
-        const quiz = await prisma.quiz.findUnique({
+        const quiz = await prisma.quiz.findFirst({
             where: {
                 id: quizId,
-            },
-            select: {
-                status: true,
-                title: true,
-                description: true,
+                hostId: String(userId),
             },
         });
 
         if (!quiz) {
-            ResponseWriter.not_found(res, "quiz doesn't exist or already deleted");
+            ResponseWriter.not_found(res, 'Quiz does not exist');
             return;
         }
 
-        if (quiz?.status === 'LIVE') {
+        if (quiz.isDeleted) {
+            ResponseWriter.invalid_data(res, 'Cant delete an already deleted quiz');
+            return;
+        }
+
+        if (quiz.status === QuizStatus.LIVE) {
             ResponseWriter.error(
                 res,
                 'CANNOT_DELETE_ONGOING_QUIZ',
@@ -44,10 +46,11 @@ export default async function deleteQuizController(req: Request, res: Response) 
             return;
         }
 
-        QuizAction.deleteQuiz(quizId);
-        ResponseWriter.success(res, undefined, 'Quiz deleted successfully');
+        await QuizAction.moveToTrash(quizId, String(userId));
+        ResponseWriter.success(res, undefined, 'Quiz moved to trash successfully');
         return;
-    } catch {
+    } catch (error) {
+        console.error('error in deleting quiz: ', error);
         ResponseWriter.system_error(res);
         return;
     }

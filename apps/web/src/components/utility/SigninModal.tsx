@@ -43,7 +43,7 @@ export default function SigninModal() {
                         type="button"
                         aria-label="Close modal"
                         onClick={() => setOpenSigninModal(false)}
-                        className="text-ndarkest transition-colors cursor-pointer absolute right-3 top-3 bg-nlighter rounded-full p-1 hover:bg-ndarkest hover:text-nlighter shadow-xs"
+                        className="text-ndarkest transition-colors cursor-pointer absolute right-3 top-3 bg-nlighter rounded-full p-1 hover:bg-ndarkest hover:text-nlighter shadow-xs transition-colors duration-250"
                     >
                         <RxCross2 size={15} strokeWidth={0.8} className="" />
                     </motion.button>

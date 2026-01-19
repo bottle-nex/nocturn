@@ -31,12 +31,43 @@ export default class QuizAction {
         }
     }
 
-    static async deleteQuiz(quizId: string) {
+    static async restoreQuiz(quizId: string) {
+        await prisma.quiz.updateMany({
+            where: {
+                id: quizId,
+                isDeleted: true,
+            },
+            data: {
+                isDeleted: false,
+                deletedAt: null,
+            },
+        });
+    }
+
+    static async permanentDeleteQuiz(quizId: string) {
         await prisma.quiz.delete({
             where: {
                 id: quizId,
             },
         });
+    }
+
+    static async moveToTrash(quizId: string, userId: string) {
+        const result = await prisma.quiz.updateMany({
+            where: {
+                id: quizId,
+                isDeleted: false,
+                hostId: userId,
+            },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        });
+
+        if (result.count === 0) {
+            throw new Error('UNAUTHORIZED_OR_ALREADY_DELETED');
+        }
     }
 
     static async validOwner(hostId: number, quizId: string): Promise<boolean> {

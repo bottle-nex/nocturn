@@ -72,6 +72,7 @@ export default class QuizController {
         try {
             let quiz = await this.find_quiz(quizId);
             if (!quiz) {
+                console.log('inside handle save new quiz');
                 quiz = await prisma.quiz.create({
                     data: {
                         ...quiz_data,
@@ -85,11 +86,14 @@ export default class QuizController {
                     },
                 });
 
+                console.log('after handle save quiz');
+
                 const response: quiz_controller = {
                     type: QUIZ_STATUS.SAVE_NEW_QUIZ,
                     success: true,
                     quiz: quiz,
                 };
+                console.log('succeded');
 
                 return response;
             } else {

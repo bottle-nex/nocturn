@@ -15,7 +15,13 @@ export const SPECTATOR_JOIN_QUIZ_URL = QUIZ_URL + '/spectator-join-quiz';
 export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';
 export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
-export const DELETE_QUIZ_URL = API_URL + '/quiz/delete-quiz';
+
+export const RESTORE_TRASHED_QUIZ_URL = API_URL + '/quiz/restore-quiz';
+export const DELETE_QUIZ_URL = API_URL + '/quiz/move-to-trash';
+export const GET_TRASHED_QUIZZES_URL = API_URL + '/quiz/get-user-trashed-quiz';
+export const CLEAR_TRASH_URL = API_URL + '/quiz/clear-trash';
+export const PERMANENTLY_DELETE_QUIZ_URL = API_URL + '/quiz/delete-quiz';
+
 export const GET_SELECTED_QUESTION_DATA = API_URL + '/quiz/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
 export const CREATE_QUIZ_USING_AI = API_URL + '/create-new-quiz';
