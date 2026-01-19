@@ -28,7 +28,7 @@ router.post('/sign-in', signInController);
 router.post('/user/create-review', authMiddleware, reviewAppController);
 router.get('/user/get-review', authMiddleware, getReviewController);
 
-// //quiz-routes
+//quiz-routes
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
