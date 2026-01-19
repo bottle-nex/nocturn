@@ -1,13 +1,8 @@
-import axios from "axios";
-import { CREATE_QUIZ_USING_AI } from "routes/api_routes";
-
+import axios from 'axios';
+import { CREATE_QUIZ_USING_AI } from 'routes/api_routes';
 
 export default class StartWithAIAction {
-
-    static async create_quiz(
-        instruction: string,
-        token: string,
-    ) {
+    static async create_quiz(instruction: string, token: string) {
         const res = await axios.post(
             CREATE_QUIZ_USING_AI,
             { instruction },
@@ -17,15 +12,13 @@ export default class StartWithAIAction {
                 },
             },
         );
-        
+
         const data = res.data;
 
-        if(data.success) {
+        if (data.success) {
             return {
                 quiz: data.quiz,
-            }
+            };
         }
-
     }
-
 }

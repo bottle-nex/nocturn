@@ -5,12 +5,11 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import { GET_ALL_OWNER_QUIZ_URL } from 'routes/api_routes';
-import { Input } from '@/components/ui/input';
-import { PiMagnifyingGlass } from 'react-icons/pi';
-import { Button } from '@/components/ui/button';
-import { FiPlus } from 'react-icons/fi';
-import { v4 as uuid } from 'uuid';
-import { useRouter } from 'next/navigation';
+// import { Input } from '@/components/ui/input';
+// import { PiMagnifyingGlass } from 'react-icons/pi';
+// import { Button } from '@/components/ui/button';
+// import { FiPlus } from 'react-icons/fi';
+// import { v4 as uuid } from 'uuid';
 import { CustomResponse, UserQuizResponse } from '@nocturn/types';
 import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
 import CanvasSkeleton from '@/components/skeletons/CanvasSkeleton';
@@ -18,7 +17,6 @@ import HomeStartWithAi from '@/components/home/HomeStartWithAi';
 import HomeRightUpperSection from '@/components/home/HomeRightUpperSection';
 
 export default function Page() {
-    const router = useRouter();
     const [recentlyViewed, setRecentlyViewed] = useState<UserQuizResponse['recentlyViewed']>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const { session } = useUserSessionStore();
@@ -51,10 +49,6 @@ export default function Page() {
         getUserAllQuizs();
     }, [session?.user.token, setAllQuizs]);
 
-    function handleCreateNewQuiz() {
-        const newQuizId = uuid();
-        router.push(`/new/${newQuizId}`);
-    }
     return (
         <div className="bg-white dark:bg-zinc-900 w-full h-full rounded-sm px-12 py-10">
             <HomeRightUpperSection />
