@@ -38,7 +38,7 @@ export default function NocturnPerksSection() {
             ScrollTrigger.create({
                 trigger: sectionRef.current,
                 start: 'top top',
-                end: '+=200%',
+                end: '+=300%',
                 pin: pinRef.current,
                 scrub: true,
                 onUpdate: (self) => {
@@ -71,7 +71,7 @@ export default function NocturnPerksSection() {
             {
                 y: 0,
                 opacity: 1,
-                duration: 0.4,
+                duration: 0.6,
                 ease: 'power3.out',
             },
         ).fromTo(

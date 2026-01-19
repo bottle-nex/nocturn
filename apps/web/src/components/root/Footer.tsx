@@ -3,17 +3,15 @@ import { FaGithub, FaRegCopyright, FaXTwitter } from 'react-icons/fa6';
 import { motion } from 'framer-motion';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import SigninModal from '../utility/SigninModal';
 
 export default function Footer() {
-    const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
-    const { session } = useUserSessionStore();
+    const { session, openSigninModal, setOpenSigninModal } = useUserSessionStore();
     const router = useRouter();
 
     function handleCreateQuizClick() {
         if (!session || !session.user.token) {
-            setShowLoginModal(true);
+            setOpenSigninModal(true);
             return;
         }
         router.push('/home');
@@ -21,36 +19,7 @@ export default function Footer() {
 
     return (
         <>
-            {/* <div className="w-full -mt-16 z-30 relative">
-                <Image
-                    src="/images/footer-img.svg"
-                    alt="Nocturn Logo"
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="w-full h-auto"
-                />
-            </div> */}
             <div className="h-auto w-full bg-nlighter flex flex-col justify-between items-between relative z-40">
-                {/* <div className="h-auto w-full relative z-50 flex overflow-x-auto pt-20">
-                    <div className='flex gap-x-3'>
-                        <div className="h-40 w-40 rounded-full relative overflow-hidden">
-                            <Image
-                                src={'/images/landing/solCoin.png'}
-                                alt=""
-                                className="object-contain"
-                                fill
-                                unoptimized
-                            />
-                        </div>
-
-                        <div className='h-auto w-auto min-w-fit bg-[#FB4914] flex justify-center items-center px-9 font-bold text-black text-8xl rounded-xl'>
-                            SOLANA STAKES
-                        </div>
-
-                    </div>
-
-                </div> */}
                 <footer className="relative w-screen h-[50vh] flex items-center bg-black">
                     <div className="w-full h-full flex p-4">
                         <div className="w-[13%] h-full p-2 flex flex-col gap-y-2">
@@ -138,8 +107,8 @@ export default function Footer() {
                             </div>
                         </div>
                     </div>
-                    {showLoginModal && <SigninModal />}
                 </footer>
+                {openSigninModal && <SigninModal />}
             </div>
         </>
     );

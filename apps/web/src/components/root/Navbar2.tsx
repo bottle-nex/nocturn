@@ -4,17 +4,18 @@ import { cn } from '@/lib/utils';
 import NavItems from './NavItems';
 import Image from 'next/image';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { Input } from '../ui/input';
 import SigninModal from '../utility/SigninModal';
 import LogoutModal from '../utility/LogoutModal';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useJoinQuizStore } from '@/store/home/useJoinQuizStore';
+import NavInputBox from './NavInputBox';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
     label: string;
     link: string;
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 export default function Navbar() {
@@ -23,6 +24,15 @@ export default function Navbar() {
     const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(true);
     const [lastScrollY, setLastScrollY] = useState<number>(0);
     const { showJoinInput, toggleJoinInput } = useJoinQuizStore();
+    const router = useRouter();
+
+    function handleOnClick() {
+        if (!session || !session.user.token) {
+            setOpenSigninModal(true);
+            return;
+        }
+        router.push('/home');
+    }
 
     useEffect(() => {
         function handleScroll() {
@@ -50,10 +60,16 @@ export default function Navbar() {
     }
 
     const navItems: NavItem[] = [
-        { label: 'Home', link: '/home', onClick: () => {} },
-        { label: 'Features', link: '/features', onClick: () => {} },
-        { label: 'Invoicing', link: '/invoicing', onClick: () => {} },
-        { label: 'Docs', link: '/docs', onClick: () => {} },
+        {
+            label: 'Home',
+            link: '/home',
+            onClick: () => {
+                handleOnClick();
+            },
+        },
+        { label: 'Roles', link: '/roles' },
+        { label: 'Features', link: '/features' },
+        { label: 'About', link: '/about' },
     ];
 
     return (
@@ -120,22 +136,7 @@ export default function Navbar() {
                         </motion.div>
                     </motion.button>
 
-                    <AnimatePresence>
-                        {showJoinInput && (
-                            <motion.div
-                                className="absolute top-full mt-2.5 right-0"
-                                initial={{ y: -20, opacity: 0, scale: 0.8 }}
-                                animate={{ y: 0, opacity: 1, scale: 1 }}
-                                exit={{ y: -20, opacity: 0, scale: 0.8 }}
-                                transition={{ duration: 0.2, ease: 'easeInOut' }}
-                            >
-                                <Input
-                                    placeholder="secret code"
-                                    className="h-12 !bg-nlighter text-black border border-black w-40 px-4 rounded-[8px] z-50 relative tracking-wider"
-                                />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    <AnimatePresence>{showJoinInput && <NavInputBox />}</AnimatePresence>
                 </div>
 
                 {session?.user ? (

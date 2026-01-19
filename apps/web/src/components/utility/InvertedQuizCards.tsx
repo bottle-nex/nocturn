@@ -31,7 +31,6 @@ export default function InvertedQuizCards() {
     const { quiz, updateQuiz } = useNewQuizStore();
 
     const router = useRouter();
-    // console.log(quizs);
     const displayQuizs = quizs.slice(0, 3);
 
     useHandleClickOutside([dropdownRef, optionRef], () => setOpenQuizOptionId(null));
@@ -47,11 +46,15 @@ export default function InvertedQuizCards() {
             return;
         }
         try {
-            await axios.delete(`${DELETE_QUIZ_URL}/${quizId}`, {
-                headers: {
-                    Authorization: `Bearer ${session?.user.token}`,
+            await axios.put(
+                `${DELETE_QUIZ_URL}/${quizId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.token}`,
+                    },
                 },
-            });
+            );
             toast.success('Quiz deleted successfully');
             useAllQuizsStore.getState().deleteQuiz(quizId);
             setOpenQuizOptionId(null);

@@ -35,6 +35,9 @@ export interface QuizType {
   spectatorCode?: string;
   spectatorLink?: string;
 
+  isDeleted: boolean;
+  deletedAt?: Date;
+
   createdAt: Date;
   updatedAt: Date;
   scheduledAt?: Date | null;
