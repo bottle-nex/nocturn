@@ -13,12 +13,10 @@ export default class StartWithAIAction {
             },
         );
 
-        const data = res.data;
+        const data = res.data.data;
 
-        if (data.success) {
-            return {
-                quiz: data.quiz,
-            };
+        if (res.data.success) {
+            return data.quiz;
         }
     }
 }

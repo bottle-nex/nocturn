@@ -6,6 +6,7 @@ import { create_new_quiz_schema } from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
 import { QuestionType } from '../../schemas/createQuizSchema';
 import { env } from '../../configs/env';
+import ResponseWriter from '../../class/response_writer';
 
 export default class Agent {
     private model: ChatGoogleGenerativeAI;
@@ -24,9 +25,13 @@ export default class Agent {
             const chain = this.get_chain();
             if (!chain) return;
 
+            console.log('got the chain');
+
             const data = await chain.invoke({
                 instruction,
             });
+
+            console.log('invoked and got the data: ', data);
 
             // we'll take time-limit and reading-time by default
             const defaults = {
@@ -55,8 +60,13 @@ export default class Agent {
                         create: questions,
                     },
                 },
+                include: {
+                    questions: true,
+                },
             });
-            console.error('use it: ', quiz);
+
+            ResponseWriter.success(res, { quiz }, 'quiz created successfully', 201);
+            return;
         } catch (error) {
             console.error('Error: ', error);
         }

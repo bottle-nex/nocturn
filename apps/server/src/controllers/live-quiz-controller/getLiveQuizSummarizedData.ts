@@ -2,7 +2,7 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 
-export async function getLiveQuizSummarizedData(req: Request, res: Response) {
+export default async function getLiveQuizSummarizedData(req: Request, res: Response) {
     try {
         const user = req.user;
         if (!user) {
