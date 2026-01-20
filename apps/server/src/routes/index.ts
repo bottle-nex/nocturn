@@ -1,23 +1,23 @@
 import { Router } from 'express';
+const router: Router = Router();
+
+// <---------------------- controllers ----------------------> //
 import signInController from '../controllers/user-controller/signInController';
-import authMiddleware from '../middlewares/authMiddleware';
 import getPreSignedUrlController from '../controllers/s3-controller/getPreSignedUrlController';
 import upsertQuizController from '../controllers/quiz-controller/upsertQuizController';
 import getQuizController from '../controllers/quiz-controller/getQuizController';
 import getAllQuizController from '../controllers/quiz-controller/getAllQuizController';
 import publishQuizController from '../controllers/quiz-controller/publishQuizController';
-// import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import launchQuizController from '../controllers/quiz-controller/launchQuizController';
 import reviewAppController from '../controllers/appReview-controller/reviewAppController';
 import participantJoinController from '../controllers/live-quiz-controller/participantJoinController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import spectatorJoinController from '../controllers/live-quiz-controller/spectatorJoinController';
 import getReviewController from '../controllers/appReview-controller/getReviewController';
-import { getLiveQuizSummarizedData } from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
+import getLiveQuizSummarizedData from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
 import getSelectedQuestionDetails from '../controllers/live-quiz-controller/getSelectedQuestionDetails';
 import getSpectatorOnCall from '../controllers/live-quiz-controller/getSpectatorOnCall';
 import getParticipantsOnCall from '../controllers/live-quiz-controller/getParticipantsOnCall';
-import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import getQuestionResults from '../controllers/live-quiz-controller/getQuestionResults';
 import spectatorJoinQuizViaURLController from '../controllers/live-quiz-controller/spectatorJoinQuizViaURLController';
 import permanently_delete_quiz_controller from '../controllers/quiz-controller/permanently_delete_quiz_controller';
@@ -25,8 +25,12 @@ import deleteQuizController from '../controllers/quiz-controller/deleteQuizContr
 import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_trashed_quizzes_controller';
 import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
 import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
+import createQuizUsingAIController from '../controllers/ai-controller/createQuizUsingAIController';
 
-const router: Router = Router();
+// <---------------------- middlewares ----------------------> //
+import authMiddleware from '../middlewares/authMiddleware';
+import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
+
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -81,5 +85,8 @@ router.get(
 router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);
 router.get('/quiz/get-question-results', getQuestionResults);
+
+// ai routes
+router.post('/ai/create-new-quiz', authMiddleware, createQuizUsingAIController);
 
 export default router;

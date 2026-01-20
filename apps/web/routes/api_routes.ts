@@ -24,7 +24,7 @@ export const PERMANENTLY_DELETE_QUIZ_URL = API_URL + '/quiz/delete-quiz';
 
 export const GET_SELECTED_QUESTION_DATA = API_URL + '/quiz/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
-export const CREATE_QUIZ_USING_AI = API_URL + '/create-new-quiz';
+export const CREATE_QUIZ_USING_AI = AI_URL + '/create-new-quiz';
 
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';

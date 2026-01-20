@@ -1,18 +1,20 @@
+
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Button } from '../ui/button';
-import { v4 as uuid } from 'uuid';
 import { useRouter } from 'next/navigation';
 import { FiPlus } from 'react-icons/fi';
 import { Input } from '../ui/input';
 import { PiMagnifyingGlass } from 'react-icons/pi';
+import { v4 as uuid } from "uuid";
+import { useRef } from 'react';
 
 export default function HomeRightUpperSection() {
     const router = useRouter();
     const { session } = useUserSessionStore();
+    const inputRef = useRef<HTMLInputElement>(null);
 
     function handleCreateNewQuiz() {
-        const newQuizId = uuid();
-        router.push(`/new/${newQuizId}`);
+        router.push(`/new/${uuid()}`);
     }
 
     return (
@@ -34,6 +36,7 @@ export default function HomeRightUpperSection() {
                     <Input
                         placeholder="Serch your quizzes.."
                         className="border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white rounded h-full w-full pl-10 focus:outline-none focus:border-neutral-800 dark:focus:border-neutral-600 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gamma/40 dark:placeholder:text-neutral-500"
+                        ref={inputRef}
                     />
                     <PiMagnifyingGlass
                         size={20}

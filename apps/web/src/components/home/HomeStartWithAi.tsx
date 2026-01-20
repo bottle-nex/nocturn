@@ -6,19 +6,42 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import StartWithAIAction from '@/lib/backend/home/start-with-ai-action';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { useRouter } from 'next/navigation';
 
 export default function HomeStartWithAi() {
     const [input, setInput] = useState<string>('');
     const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
+    const { session } = useUserSessionStore();
+    const { updateQuiz } = useNewQuizStore();
+    const router = useRouter();
 
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         setInput(e.target.value);
     }
 
-    function handleAiFormSubmit(e: React.FormEvent) {
+    async function handleAiFormSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (input.trim().length === 0) return;
-        setOpenAiComponent(true);
+        // setOpenAiComponent(true);
+
+        if(!session || !session.user) return;
+
+        console.log("sending the instruction for quiz creation");
+
+        const quiz = await StartWithAIAction.create_quiz(input, session.user.token);
+
+        if(!quiz) return;
+
+        console.log('got the quiz: ', quiz);
+        
+        // setting the data
+        updateQuiz(quiz);
+
+        // changing the route
+        router.push(`/new/${quiz.id}`);
     }
 
     return (
