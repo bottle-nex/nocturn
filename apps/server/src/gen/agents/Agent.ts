@@ -31,7 +31,7 @@ export default class Agent {
                 instruction,
             });
 
-            console.log("invoked and got the data: ", data);
+            console.log('invoked and got the data: ', data);
 
             // we'll take time-limit and reading-time by default
             const defaults = {
@@ -65,14 +65,8 @@ export default class Agent {
                 },
             });
 
-            ResponseWriter.success(
-                res,
-                { quiz },
-                "quiz created successfully",
-                201,
-            );
+            ResponseWriter.success(res, { quiz }, 'quiz created successfully', 201);
             return;
-
         } catch (error) {
             console.error('Error: ', error);
         }

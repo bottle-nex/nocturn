@@ -27,16 +27,12 @@ export default function HomeStartWithAi() {
         if (input.trim().length === 0) return;
         // setOpenAiComponent(true);
 
-        if(!session || !session.user) return;
-
-        console.log("sending the instruction for quiz creation");
+        if (!session || !session.user) return;
 
         const quiz = await StartWithAIAction.create_quiz(input, session.user.token);
 
-        if(!quiz) return;
+        if (!quiz) return;
 
-        console.log('got the quiz: ', quiz);
-        
         // setting the data
         updateQuiz(quiz);
 

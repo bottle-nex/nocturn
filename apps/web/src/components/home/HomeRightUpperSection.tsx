@@ -1,11 +1,10 @@
-
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { FiPlus } from 'react-icons/fi';
 import { Input } from '../ui/input';
 import { PiMagnifyingGlass } from 'react-icons/pi';
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 import { useRef } from 'react';
 
 export default function HomeRightUpperSection() {

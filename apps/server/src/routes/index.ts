@@ -31,7 +31,6 @@ import createQuizUsingAIController from '../controllers/ai-controller/createQuiz
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 
-
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
 

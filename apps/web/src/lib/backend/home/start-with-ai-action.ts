@@ -3,7 +3,6 @@ import { CREATE_QUIZ_USING_AI } from 'routes/api_routes';
 
 export default class StartWithAIAction {
     static async create_quiz(instruction: string, token: string) {
-        console.log(CREATE_QUIZ_USING_AI);
         const res = await axios.post(
             CREATE_QUIZ_USING_AI,
             { instruction },
