@@ -133,4 +133,19 @@ export default class ResponseWriter {
     static send_response<T>(res: Response, response: CustomResponse<T>, status_code: number) {
         res.status(status_code).json(response);
     }
+
+    static stream = class Stream {
+        static write<T>(res: Response, data: T) {
+
+            const str = JSON.stringify({
+                data: data,
+            });
+
+            res.write(str);
+        }
+
+        static end(res: Response) {
+            res.end();
+        }
+    };
 }

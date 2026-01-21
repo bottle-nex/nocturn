@@ -1,6 +1,17 @@
 import { PromptTemplate } from '@langchain/core/prompts';
 
-export const create_quiz_prompt = new PromptTemplate({
+export const create_quiz_planner_prompt = new PromptTemplate({
+    template: `
+        you're a expert planning teacher, who can give a brief description about the topic which user is asking for
+
+        this is the topic user is asking for
+        {instruction}
+
+    `,
+    inputVariables: ['instruction']
+});
+
+export const create_quiz_executor_prompt = new PromptTemplate({
     template: `
         you're a expert teacher, who can ask really good questions out of any topic
 

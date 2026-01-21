@@ -3,7 +3,7 @@ import z from 'zod';
 const question_schema = z.object({
     question: z.string().min(5).describe('a one liner question'),
     options: z.array(z.string()).length(4),
-    correctAnswer: z.int().min(1).max(4),
+    correctAnswer: z.int().min(0).max(3),
     explanation: z
         .string()
         .min(1)
@@ -14,7 +14,12 @@ const question_schema = z.object({
 });
 
 export const create_new_quiz_schema = z.object({
-    title: z.string().min(5).describe('5-6 words of title about the quiz'),
     description: z.string().min(10).max(200).describe('description what this quiz is about'),
     questions: z.array(question_schema).min(8).max(15),
 });
+
+export const planner_schema = z.object({
+    userResponse: z.string().min(5).max(200).describe('give a user response like you are doing the job'),
+    title: z.string().min(5).describe('5-6 words of title about the quiz'),
+    description: z.string().min(100).describe('a detailed description about the user instruction to send to another llm to create quiz '),
+})
