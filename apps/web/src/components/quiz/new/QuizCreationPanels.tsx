@@ -1,6 +1,6 @@
 'use client';
-import QuizLeft from '@/components/quiz/new/QuizLeft';
-import QuizRight from '@/components/quiz/new/QuizRight';
+import QuizDashboardLeft from '@/components/quiz/new/QuizLeft';
+import QuizDashboardRight from '@/components/quiz/new/QuizRight';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useEffect } from 'react';
 interface QuizCreationPanelsProps {
@@ -16,8 +16,8 @@ export default function QuizCreationPanels({ quizId }: QuizCreationPanelsProps) 
 
     return (
         <div className="w-full h-full flex flex-row flex-1 dark:bg-dark-alpha bg-neutral-200 overflow-hidden">
-            <QuizLeft />
-            <QuizRight />
+            <QuizDashboardLeft />
+            <QuizDashboardRight />
         </div>
     );
 }
