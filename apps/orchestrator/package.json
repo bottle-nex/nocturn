@@ -21,6 +21,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@nocturn/typescript-config": "workspace:*"
+    "@nocturn/typescript-config": "workspace:*",
+    "@nocturn/types": "workspace:*"
   }
 }

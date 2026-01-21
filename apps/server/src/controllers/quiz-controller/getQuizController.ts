@@ -1,6 +1,7 @@
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
+import ResponseWriter from '../../class/response_writer';
 
 enum QuizResponseType {
     QUIZ_FOUND = 'QUIZ_FOUND',
@@ -34,56 +35,58 @@ export default async function getQuizController(req: Request, res: Response): Pr
     }
 
     try {
-        const quiz = await prisma.quiz.findFirst({
+        const quiz = await prisma.quiz.findUnique({
             where: {
                 id: quizId,
             },
             include: {
                 questions: true,
+                CollabSession: {
+                    include: {
+                        collaborators: {
+                            include: {
+                                user: {
+                                    select: {
+                                        name: true,
+                                        email: true,
+                                        id: true,
+                                        image: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
         });
 
         if (!quiz) {
-            res.status(201).json({
-                success: true,
-                message: 'Quiz not found',
-                type: QuizResponseType.QUIZ_NOT_EXIST,
-            });
+            ResponseWriter.not_found(res, 'Quiz not found');
+            return;
+        }
+        const is_owner = quiz.hostId === userId;
+        const is_collaborator = quiz.CollabSession?.collaborators.some(
+            (collab) => collab.userId === userId,
+        );
+
+        if (!is_owner && !is_collaborator) {
+            ResponseWriter.not_authorized(res, 'Access to this quiz is denied');
             return;
         }
 
-        if (quiz) {
-            await QuizAction.record_quiz_view(quizId, String(userId));
-            const existedQuiz = await prisma.quiz.findUnique({
-                where: {
-                    id: quizId,
-                    hostId: String(userId),
-                },
-            });
-            if (!existedQuiz) {
-                res.status(201).json({
-                    success: true,
-                    message: 'Access denied',
-                    type: QuizResponseType.ACCESS_DENIED,
-                });
-                return;
-            }
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Quiz retrieved successfully',
-            type: QuizResponseType.QUIZ_FOUND,
-            quiz,
-        });
+        await QuizAction.record_quiz_view(quizId, String(userId));
+        ResponseWriter.success(
+            res,
+            {
+                type: QuizResponseType.QUIZ_FOUND,
+                quiz: quiz,
+            },
+            'Quiz retrieved successfully',
+        );
         return;
     } catch (error) {
         console.error('GET_QUIZ_ERROR:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-            type: QuizResponseType.INTERNAL_ERROR,
-        });
+        ResponseWriter.system_error(res);
         return;
     }
 }

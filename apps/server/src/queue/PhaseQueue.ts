@@ -1,6 +1,6 @@
 import Bull from 'bull';
 import RedisCache from '../cache/redis.cache';
-import { redisCacheInstance } from '../services/init-services';
+import { redisCacheInstance } from '../services/init.services';
 import QuizManager from '../sockets/QuizManager';
 import { PhaseTransitionJob } from '../types/web-socket-types';
 import { env } from '../configs/env';
