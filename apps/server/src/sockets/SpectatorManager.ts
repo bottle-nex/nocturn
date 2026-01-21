@@ -14,7 +14,7 @@ import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/redis.cache';
 import QuizSettings from '../class/quizSettings';
-import { quizSettingInstance } from '../services/init-services';
+import { quizSettingInstance } from '../services/init.services';
 import { WebSocket } from 'ws';
 import { socket_codes } from '@nocturn/types';
 

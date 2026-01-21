@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
-import { quizControllerInstance } from '../../services/init-services';
+import { quizControllerInstance } from '../../services/init.services';
 import { QUIZ_STATUS } from './quizController';
 import ResponseWriter from '../../class/response_writer';
 

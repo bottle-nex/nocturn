@@ -42,7 +42,7 @@ export default class QuizController {
         quizId: string,
         quiz_data: CreateQuizType,
         questions: QuestionType[],
-        hostId: number,
+        hostId: string,
     ): Promise<quiz_controller | null> {
         switch (status) {
             case QUIZ_STATUS.SAVE_NEW_QUIZ:
@@ -66,18 +66,20 @@ export default class QuizController {
         quizId: string,
         quiz_data: CreateQuizType,
         questions: QuestionType[],
-        hostId: number,
+        hostId: string,
     ): Promise<quiz_controller> {
         try {
+            console.log('[DEBUG] handle_save_new_quiz - hostId:', hostId, 'type:', typeof hostId);
             let quiz = await this.find_quiz(quizId);
             if (!quiz) {
+                console.log('[DEBUG] Creating quiz with hostId:', hostId);
                 quiz = await prisma.quiz.create({
                     data: {
                         ...quiz_data,
                         scheduledAt: quiz_data.scheduledAt
                             ? new Date(quiz_data.scheduledAt)
                             : undefined,
-                        hostId: String(hostId),
+                        hostId: hostId,
                         questions: {
                             create: questions,
                         },
@@ -166,7 +168,7 @@ export default class QuizController {
         quizId: string,
         quiz_data: CreateQuizType,
         questions: QuestionType[],
-        hostId: number,
+        hostId: string,
     ): Promise<quiz_controller> {
         try {
             const quiz = await this.find_quiz(quizId);
@@ -251,7 +253,7 @@ export default class QuizController {
         quizId: string,
         quiz_data: CreateQuizType,
         questions: QuestionType[],
-        hostId: number,
+        hostId: string,
     ): Promise<quiz_controller> {
         try {
             const quiz = await this.find_quiz(quizId);

@@ -71,11 +71,11 @@ export default class QuizAction {
         }
     }
 
-    static async validOwner(hostId: number, quizId: string): Promise<boolean> {
+    static async validOwner(hostId: string, quizId: string): Promise<boolean> {
         const quiz = await prisma.quiz.findUnique({
             where: {
                 id: quizId,
-                hostId: String(hostId),
+                hostId: hostId,
             },
         });
         if (!quiz) {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import { USER_TYPE } from '@nocturn/types';
-import { quizControllerInstance } from '../../services/init-services';
+import { quizControllerInstance } from '../../services/init.services';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { env } from '../../configs/env';

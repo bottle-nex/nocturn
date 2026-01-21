@@ -25,7 +25,7 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/redis.cache';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
-import { quizSettingInstance } from '../services/init-services';
+import { quizSettingInstance } from '../services/init.services';
 import { socket_codes } from '@nocturn/types';
 export interface HostManagerDependencies {
     publisher: Redis;

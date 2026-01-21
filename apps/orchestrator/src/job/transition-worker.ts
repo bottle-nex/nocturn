@@ -1,7 +1,7 @@
 import RedisCache from "../cache/redis-cache";
 import PhaseQueueProcessor from "../client/phase-queue-processor";
 import Publisher from "../client/publisher";
-import DatabaseQueue from "../queue/DatabaseQueue";
+import DatabaseQueue from "../queue/database.queue";
 import {
   databaseQueueInstance,
   phaseQueueProcessorInstance,

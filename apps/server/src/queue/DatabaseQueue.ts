@@ -13,7 +13,7 @@ import {
     Response,
 } from '@nocturn/database';
 import RedisCache from '../cache/redis.cache';
-import { redisCacheInstance } from '../services/init-services';
+import { redisCacheInstance } from '../services/init.services';
 import { ReactorType } from '@nocturn/types';
 import { env } from '../configs/env';
 import { v4 as uuid } from 'uuid';

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import ResponseWriter from '../../class/response_writer';
 import { CollabRole, prisma } from '@nocturn/database';
+import { email_service_instance } from '../../services/init.services';
 
 interface QuizWithCollabSession {
     id: string;
@@ -12,6 +13,9 @@ interface QuizWithCollabSession {
 interface CollabSessionWithDetails {
     id: string;
     quizId: string;
+    quiz: {
+        title: string;
+    };
     hostId: string;
     collaborators: { userId: string }[];
 }
@@ -54,6 +58,7 @@ export default class JoinCollaboratorController {
                 res,
                 parsed_body.data.email,
                 String(user.id),
+                String(user.name),
                 collab_session,
             );
         } catch (err) {
@@ -75,7 +80,8 @@ export default class JoinCollaboratorController {
     static async invite_user_by_email(
         res: Response,
         email: string,
-        host_id: string,
+        inviter_id: string,
+        inviter_name: string,
         collab_session: CollabSessionWithDetails,
     ) {
         try {
@@ -107,17 +113,22 @@ export default class JoinCollaboratorController {
                     data: {
                         sessionId: collab_session.id,
                         email: email,
-                        invitedBy: host_id,
+                        invitedBy: inviter_id,
                         quizId: collab_session.quizId,
                     },
                 });
 
-                await this.send_invitation_email(email, invitation.id);
+                await this.send_invitation_email(
+                    email,
+                    invitation.id,
+                    inviter_name,
+                    collab_session.quiz.title,
+                );
                 ResponseWriter.success(res, { invitation }, `Invitation sent to ${email}`, 201);
                 return;
             }
 
-            if (target_user.id === host_id) {
+            if (target_user.id === inviter_id) {
                 ResponseWriter.error(
                     res,
                     'INVALID_OPERATION',
@@ -164,7 +175,10 @@ export default class JoinCollaboratorController {
 
             await this.send_collaborator_added_notification(
                 target_user.email,
+                target_user.name,
+                collab_session.quiz.title,
                 collab_session.quizId,
+                inviter_name,
             );
             ResponseWriter.success(
                 res,
@@ -196,6 +210,11 @@ export default class JoinCollaboratorController {
                     select: {
                         id: true,
                         quizId: true,
+                        quiz: {
+                            select: {
+                                title: true,
+                            },
+                        },
                         hostId: true,
                         collaborators: {
                             select: {
@@ -214,6 +233,11 @@ export default class JoinCollaboratorController {
                 select: {
                     id: true,
                     quizId: true,
+                    quiz: {
+                        select: {
+                            title: true,
+                        },
+                    },
                     hostId: true,
                     collaborators: {
                         select: {
@@ -267,8 +291,19 @@ export default class JoinCollaboratorController {
      * @param email - The recipient's email address
      * @param invitationId - The unique identifier of the invitation for tracking
      */
-    static async send_invitation_email(email: string, invitationId: string) {
+    static async send_invitation_email(
+        email: string,
+        invitationId: string,
+        inviterName: string,
+        quizTitle: string,
+    ) {
         console.log(`Sending invitation email to ${email} for invitation ${invitationId}`);
+        await email_service_instance.email_to_invite_collaborators({
+            email,
+            invitationId,
+            inviterName,
+            quizTitle,
+        });
     }
 
     /**
@@ -277,8 +312,21 @@ export default class JoinCollaboratorController {
      * @param email - The recipient's email address
      * @param quizId - The ID of the quiz they were added to
      */
-    static async send_collaborator_added_notification(email: string, quizId: string) {
+    static async send_collaborator_added_notification(
+        email: string,
+        name: string,
+        quiz_title: string,
+        quizId: string,
+        inviter_name: string,
+    ) {
         console.log(`Sending notification email to ${email} for quiz ${quizId}`);
+        await email_service_instance.email_to_add_collaborators({
+            email,
+            name,
+            quizTitle: quiz_title,
+            quizId,
+            inviterName: inviter_name,
+        });
     }
 }
 

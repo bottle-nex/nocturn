@@ -4,7 +4,7 @@ import RedisCache from "../cache/redis-cache";
 import PhaseQueueProcessor from "../client/phase-queue-processor";
 import TransitionWorker from "../job/transition-worker";
 import Publisher from "../client/publisher";
-import DatabaseQueue from "../queue/DatabaseQueue";
+import DatabaseQueue from "../queue/database.queue";
 import { Env } from "../configs/env";
 
 dotenv.config();

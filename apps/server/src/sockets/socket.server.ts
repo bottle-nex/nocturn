@@ -19,7 +19,7 @@ import {
     quizSettingInstance,
     redisCacheInstance,
     subscriberInstance,
-} from '../services/init-services';
+} from '../services/init.services';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';

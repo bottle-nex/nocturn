@@ -47,10 +47,10 @@ export default function New({ params }: NewProps) {
                 });
 
                 if (data.success) {
-                    switch (data.type as QuizResponseType) {
+                    switch (data.data.type as QuizResponseType) {
                         case QuizResponseType.QUIZ_FOUND:
                             setAllowance(AllowanceEnum.ALLOWED);
-                            updateQuiz(data.quiz);
+                            updateQuiz(data.data.quiz);
                             break;
                         case QuizResponseType.ACCESS_DENIED:
                             setAllowance(AllowanceEnum.NOT_ALLOWED);

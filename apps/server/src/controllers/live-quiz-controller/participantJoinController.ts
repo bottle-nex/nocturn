@@ -4,7 +4,7 @@ import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
 import { participantJoinSchema } from '../../schemas/participantJoinSchema';
 import { USER_TYPE } from '@nocturn/types';
-import { redisCacheInstance } from '../../services/init-services';
+import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 
