@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IoPeopleSharp, IoSettingsSharp } from 'react-icons/io5';
 import { HiChartBar, HiDocumentText } from 'react-icons/hi';
 import { MdHomeFilled } from 'react-icons/md';
@@ -10,22 +10,19 @@ import AppLogo from '../app/AppLogo';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
 import DarkModeToggle from '../base/DarkModeToggle';
-
-export enum SidebarTab {
-    HOME = 'home',
-    TEAM = 'team',
-    ANALYTICS = 'analytics',
-    DOCUMENTS = 'documents',
-    SETTINGS = 'settings',
-    TRASH = 'trash',
-    CHATS = 'chats',
-}
+import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
+import { SidebarTab, SidebarTabBottom } from '@/constants/SidebarTabConstants';
 
 interface SidebarItem {
     tab: SidebarTab;
     label: string;
     icon?: React.ReactNode;
     className?: string;
+}
+
+interface SidebarBottomItem {
+    tab: SidebarTabBottom;
+    label: string;
 }
 
 const sidebarItems: SidebarItem[] = [
@@ -61,13 +58,13 @@ const sidebarItems: SidebarItem[] = [
     },
 ];
 
-const bottomItems: SidebarItem[] = [
-    { tab: SidebarTab.CHATS, label: 'Chats' },
-    { tab: SidebarTab.TRASH, label: 'Trash' },
+const bottomItems = [
+    { tab: SidebarTabBottom.CHATS, label: 'Chats' },
+    { tab: SidebarTabBottom.TRASH, label: 'Trash' },
 ];
 
 export default function HomeSidebar() {
-    const [activeTab, setActiveTab] = useState<SidebarTab>(SidebarTab.HOME);
+    const { activeTab, setActiveTab, bottomActiveTab, setBottomActiveTab } = useHomeSidebarStore();
     const searchParams = useSearchParams();
     const { session } = useUserSessionStore();
 
@@ -76,13 +73,15 @@ export default function HomeSidebar() {
         if (tab && Object.values(SidebarTab).includes(tab as SidebarTab)) {
             setActiveTab(tab as SidebarTab);
         }
-    }, [searchParams]);
+    }, [searchParams, setActiveTab]);
 
     function handleTabChange(tab: SidebarTab) {
         const params = new URLSearchParams(window.location.search);
         params.set('tab', tab);
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.replaceState({}, '', newUrl);
+
+        setBottomActiveTab(null);
         setActiveTab(tab);
     }
 
@@ -114,16 +113,16 @@ export default function HomeSidebar() {
             </section>
             <section className="">
                 <section className="flex flex-col mt-2 px-4">
-                    {bottomItems.map((item: SidebarItem) => (
+                    {bottomItems.map((item: SidebarBottomItem) => (
                         <div
-                            onClick={() => handleTabChange(item.tab)}
+                            onClick={() => setBottomActiveTab(item.tab)}
                             className={cn(
                                 'relative flex items-center gap-x-1 py-1.75 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
                                 'hover:bg-black/10 dark:hover:bg-white/10',
                             )}
                             key={item.tab}
                         >
-                            {activeTab === item.tab && (
+                            {bottomActiveTab === item.tab && (
                                 <div className="absolute -left-1 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
                             )}
                             <span className="text-[12px] text-black dark:text-white">

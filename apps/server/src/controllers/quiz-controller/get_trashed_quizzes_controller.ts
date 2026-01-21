@@ -11,7 +11,7 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
     try {
         const trashedQuizzes = await prisma.quiz.findMany({
             where: {
-                id: String(req.user.id),
+                hostId: String(req.user.id),
                 isDeleted: true,
             },
             orderBy: {
@@ -27,13 +27,9 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
                 status: true,
                 scheduledAt: true,
                 createdAt: true,
+                deletedAt: true,
             },
         });
-
-        if (!trashedQuizzes || trashedQuizzes.length === 0) {
-            ResponseWriter.not_found(res, 'No quizzes foudn');
-            return;
-        }
 
         ResponseWriter.success(res, trashedQuizzes, 'Fetched trashed quizzes successfully');
         return;
@@ -43,9 +39,3 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
         return;
     }
 }
-
-// delete one trashed quiz
-// delete all trashed quizzes
-
-// move to trash
-// directly delete
