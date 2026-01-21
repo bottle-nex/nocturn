@@ -59,8 +59,8 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 const bottomItems = [
-    { tab: SidebarTabBottom.CHATS, label: 'CHATS' },
-    { tab: SidebarTabBottom.TRASH, label: 'TRASH' },
+    { tab: SidebarTabBottom.CHATS, label: 'Chats' },
+    { tab: SidebarTabBottom.TRASH, label: 'Trash' },
 ];
 
 export default function HomeSidebar() {
