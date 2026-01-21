@@ -43,17 +43,10 @@ router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
 
-// restore trashed quiz
 router.put('/quiz/restore-quiz/:quizId', authMiddleware, restore_trashed_quiz_controller);
-// temporary delete one quiz (move to trash)
 router.put('/quiz/move-to-trash/:quizId', authMiddleware, deleteQuizController);
-
-// get all trashed quizzes
 router.get('/quiz/get-user-trashed-quiz', authMiddleware, get_trashed_quizzes_controller);
-
-// clean trash
 router.delete('/quiz/clear-trash', authMiddleware, delete_trashed_quizzes_controller);
-// permanently delete single quiz
 router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_quiz_controller);
 
 router.post('/get-presigned-url', getPreSignedUrlController);

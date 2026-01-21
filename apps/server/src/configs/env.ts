@@ -18,7 +18,7 @@ const envSchema = z.object({
     SERVER_REDIS_URL: z.url('Invalid Redis URL'),
     SERVER_WEB_URL: z.string().min(1),
     DATABASE_URL: z.string(),
-    SERVER_GEMINI_API_KEY: z.string().min(1, 'Gemini API Key is required'),
+    // SERVER_GEMINI_API_KEY: z.string().min(1, 'Gemini API Key is required'),
 });
 
 function parseEnv() {

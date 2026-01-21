@@ -44,7 +44,6 @@ export default class QuizController {
         questions: QuestionType[],
         hostId: number,
     ): Promise<quiz_controller | null> {
-        console.log('inside update quiz status');
         switch (status) {
             case QUIZ_STATUS.SAVE_NEW_QUIZ:
                 return await this.handle_save_new_quiz(quizId, quiz_data, questions, hostId);
@@ -72,7 +71,6 @@ export default class QuizController {
         try {
             let quiz = await this.find_quiz(quizId);
             if (!quiz) {
-                console.log('inside handle save new quiz');
                 quiz = await prisma.quiz.create({
                     data: {
                         ...quiz_data,
@@ -86,15 +84,11 @@ export default class QuizController {
                     },
                 });
 
-                console.log('after handle save quiz');
-
                 const response: quiz_controller = {
                     type: QUIZ_STATUS.SAVE_NEW_QUIZ,
                     success: true,
                     quiz: quiz,
                 };
-                console.log('succeded');
-
                 return response;
             } else {
                 const isValidOwner = await QuizAction.validOwner(hostId, quizId);

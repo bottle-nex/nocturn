@@ -23,6 +23,7 @@ export default async function permanently_delete_quiz_controller(req: Request, r
                 isDeleted: true,
             },
             select: {
+                id: true,
                 status: true,
                 title: true,
                 description: true,
@@ -45,8 +46,8 @@ export default async function permanently_delete_quiz_controller(req: Request, r
             return;
         }
 
-        QuizAction.permanentDeleteQuiz(quizId);
-        ResponseWriter.success(res, undefined, 'Quiz deleted successfully');
+        QuizAction.permanentDeleteQuiz(quizId, String(userId));
+        ResponseWriter.success(res, quiz, 'Quiz deleted successfully');
         return;
     } catch {
         ResponseWriter.system_error(res);

@@ -44,10 +44,11 @@ export default class QuizAction {
         });
     }
 
-    static async permanentDeleteQuiz(quizId: string) {
+    static async permanentDeleteQuiz(quizId: string, userId: string) {
         await prisma.quiz.delete({
             where: {
                 id: quizId,
+                hostId: userId,
             },
         });
     }

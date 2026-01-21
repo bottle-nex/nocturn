@@ -164,7 +164,7 @@ export default function InvertedQuizCards() {
                                                 className={cn(
                                                     'absolute left-full top-full mt-1',
                                                     'bg-zinc-900 dark:bg-white border border-neutral-700 dark:border-neutral-200',
-                                                    'w-32 rounded overflow-hidden shadow-lg z-1000',
+                                                    'w-34 rounded overflow-hidden shadow-lg z-1000',
                                                 )}
                                                 onClick={(e) => e.stopPropagation()}
                                             >
@@ -220,7 +220,7 @@ export default function InvertedQuizCards() {
                                                         'rounded-md rounded-t-none',
                                                     )}
                                                 >
-                                                    <span className="text-xs">delete</span>
+                                                    <span className="text-xs">move to trash</span>
                                                     <BiTrash size={12} />
                                                 </Button>
                                             </div>

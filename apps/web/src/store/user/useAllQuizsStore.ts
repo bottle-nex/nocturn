@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 interface AllQuizsStoreType {
     quizs: QuizType[];
+    addQuiz: (quiz: QuizType) => void;
     setAllQuizs: (quizs: QuizType[]) => void;
     updateQuiz: (quizId: string, quiz: Partial<QuizType>) => void;
     deleteQuiz: (quizId: string) => void;
@@ -10,6 +11,7 @@ interface AllQuizsStoreType {
 
 export const useAllQuizsStore = create<AllQuizsStoreType>((set) => ({
     quizs: [],
+    addQuiz: (quiz) => set((state) => ({ quizs: [...state.quizs, quiz] })),
     setAllQuizs: (quizs) => set({ quizs }),
     updateQuiz: (quizId, quiz: Partial<QuizType>) => {
         set((state) => ({
