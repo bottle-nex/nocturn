@@ -6,6 +6,7 @@ import WebsocketServer from './sockets/socket.server.ts';
 import http from 'http';
 import initServices from './services/init.services.ts';
 import { env } from './configs/env.ts';
+import './services/cron.ts';
 
 const PORT = env.SERVER_PORT;
 const WEB_URL = env.SERVER_WEB_URL;

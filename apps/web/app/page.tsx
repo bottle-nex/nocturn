@@ -8,9 +8,8 @@ import BigAnimatedText from '@/components/ui/BigAnimatedText';
 
 export default function Page() {
     return (
-        <div className="min-h-screen overflow-x-hidden w-full bg-ndarkest relative flex flex-col items-center">
+        <div className="min-h-screen overflow-x-hidden w-full bg-white relative flex flex-col items-center">
             <Navbar />
-
             <NocturnLandingSection />
             <NocturnPerksSection />
             <NocturnUsersSection />

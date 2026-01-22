@@ -36,14 +36,14 @@ export default function NavItems({ items, className }: NavItemsProps) {
             }}
             onMouseLeave={() => setHovered(null)}
             className={cn(
-                'flex items-center justify-between gap-x-4 h-14 w-200',
+                'flex items-center justify-between gap-x-4 h-12',
                 'px-2 rounded-full',
-                'bg-nlighter text-nprime-darkest',
-                'shadow-sm shadow-ndarker/10 ring-1 ring-ndarker/10',
+                'bg-[#EBEEEB] text-nprime-darkest',
+                'shadow-sm shadow-ndarker/10 ring-1 ring-nprimary/10',
                 className,
             )}
         >
-            <div className={cn('px-4 text-base text-ndarkest tracking-wide')}>Nocturn</div>
+            {/* <div className={cn('px-4 text-base text-ndarkest tracking-wide')}>Nocturn</div> */}
 
             <div>
                 {items.map((item, idx) => {
@@ -57,15 +57,18 @@ export default function NavItems({ items, className }: NavItemsProps) {
                             onMouseEnter={() => setHovered(idx)}
                             onClick={() => handleClick(idx, item.onClick)}
                             className={cn(
-                                'relative px-6 py-3.5 cursor-pointer select-none',
-                                'text-[#3C315B] transition-colors text-base',
+                                'relative px-6 py-2.5 cursor-pointer select-none',
+                                'text-[#1B1B1B] transition-colors text-base tracking-wide',
                             )}
                         >
                             {(isHovered || isActive) && (
                                 <motion.div
                                     layoutId="nav-pill"
                                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                                    className={cn('absolute inset-0 rounded-full', 'bg-nlight')}
+                                    className={cn(
+                                        'absolute inset-0 rounded-full',
+                                        'bg-[#D0D5D1] divide-x',
+                                    )}
                                 />
                             )}
 
