@@ -12,7 +12,7 @@ export default function Home() {
 
     return (
         <div className="tracking-wider bg-delta h-screen w-screen overflow-hidden relative">
-            <div className="flex gap-x-2 px-4 pb-4 py-2 h-full">
+            <div className="flex h-full">
                 <HomeSidebar />
                 <SidebarPanelRenderer />
             </div>

@@ -3,6 +3,7 @@ import CreateQuizNavBar from '@/components/navbars/CreateQuizNavbar';
 import QuizCreationPanels from '@/components/quiz/new/QuizCreationPanels';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { QuizResponseType } from '@nocturn/types';
 import axios from 'axios';
 import { Loader } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
@@ -14,16 +15,6 @@ enum AllowanceEnum {
     LOADING = 'LOADING',
     NONE = 'NONE',
 }
-
-enum QuizResponseType {
-    QUIZ_FOUND = 'QUIZ_FOUND',
-    QUIZ_NOT_EXIST = 'QUIZ_NOT_EXIST',
-    ACCESS_DENIED = 'ACCESS_DENIED',
-    INVALID_QUIZ_ID = 'INVALID_QUIZ_ID',
-    INVALID_USER = 'INVALID_USER',
-    INTERNAL_ERROR = 'INTERNAL_ERROR',
-}
-
 export interface NewProps {
     params: Promise<{
         quizId: string;
@@ -33,7 +24,7 @@ export interface NewProps {
 export default function New({ params }: NewProps) {
     const { quizId } = use(params);
     const { session } = useUserSessionStore();
-    const { updateQuiz, resetStore } = useNewQuizStore();
+    const { quiz, updateQuiz, resetStore } = useNewQuizStore();
     const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
 
     useEffect(() => {
@@ -77,6 +68,8 @@ export default function New({ params }: NewProps) {
             resetStore();
         };
     }, [resetStore]);
+
+    console.log('Quiz in store:', quiz);
 
     return (
         <>

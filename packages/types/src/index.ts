@@ -9,3 +9,4 @@ export * from "./response/home/get_reviews_type.response";
 export * from "./response/home/user_quiz_types.response";
 
 export * from "./email/email.types";
+export * from "../src/quiz/new_quiz.response";

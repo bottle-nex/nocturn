@@ -38,7 +38,7 @@ export default function HomePanel() {
     }, [session?.user.token, setAllQuizs, setAllTrashedQuizzes]);
 
     return (
-        <div className="bg-white dark:bg-zinc-900 w-full h-full rounded-sm px-12 py-10">
+        <div className="bg-white dark:bg-zinc-900 w-full h-full px-12 py-10">
             <HomeRightUpperSection />
             <HomeStartWithAi />
             <section className="w-[24rem] flex flex-col relative h-fit -ml-8 mt-6">
