@@ -118,7 +118,7 @@ export default class JoinCollaboratorController {
                     },
                 });
 
-                await this.send_invitation_email(
+                await this.send_collaborator_invited_notification(
                     email,
                     invitation.id,
                     inviter_name,
@@ -291,7 +291,7 @@ export default class JoinCollaboratorController {
      * @param email - The recipient's email address
      * @param invitationId - The unique identifier of the invitation for tracking
      */
-    static async send_invitation_email(
+    static async send_collaborator_invited_notification(
         email: string,
         invitationId: string,
         inviterName: string,

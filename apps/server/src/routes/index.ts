@@ -30,6 +30,7 @@ import createQuizUsingAIController from '../controllers/ai-controller/createQuiz
 // <---------------------- middlewares ----------------------> //
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
+import JoinCollaboratorController from '../controllers/collaborator-controller/join_collaborator_controller';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
