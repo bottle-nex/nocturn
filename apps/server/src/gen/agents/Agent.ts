@@ -91,6 +91,10 @@ export default class Agent {
         }
     }
 
+    public async ask_difficulty(res: Response) {
+
+    }
+
     private get_chain() {
         try {
 
