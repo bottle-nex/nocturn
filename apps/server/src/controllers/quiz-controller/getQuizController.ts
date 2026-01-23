@@ -2,15 +2,7 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
-
-enum QuizResponseType {
-    QUIZ_FOUND = 'QUIZ_FOUND',
-    QUIZ_NOT_EXIST = 'QUIZ_NOT_EXIST',
-    ACCESS_DENIED = 'ACCESS_DENIED',
-    INVALID_QUIZ_ID = 'INVALID_QUIZ_ID',
-    INVALID_USER = 'INVALID_USER',
-    INTERNAL_ERROR = 'INTERNAL_ERROR',
-}
+import { QuizResponseType } from '@nocturn/types';
 
 // check these, as these contain type
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
@@ -61,7 +53,9 @@ export default async function getQuizController(req: Request, res: Response): Pr
         });
 
         if (!quiz) {
-            ResponseWriter.not_found(res, 'Quiz not found');
+            ResponseWriter.custom(res, true, '', 'Quiz does not exist', 203, {
+                type: QuizResponseType.QUIZ_NOT_EXIST,
+            });
             return;
         }
         const is_owner = quiz.hostId === userId;

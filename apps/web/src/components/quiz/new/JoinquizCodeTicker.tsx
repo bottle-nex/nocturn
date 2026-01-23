@@ -99,7 +99,7 @@ export default function JoinQuizCodeTicker({
     return (
         <div
             className={cn(
-                'bg-neutral-200 px-3 py-1.5 rounded-md font-light z-50 w-fit',
+                'bg-neutral-200 px-3 py-1.5 rounded-md font-light z-30 w-fit',
                 'flex items-center justify-center gap-x-2 cursor-pointer',
                 'whitespace-nowrap text-center',
                 'absolute',

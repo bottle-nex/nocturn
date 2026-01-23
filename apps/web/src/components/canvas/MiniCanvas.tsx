@@ -32,7 +32,7 @@ export default function MiniCanvas({
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const selectedStyles = 'border-2 border-[#5e59b3]';
+    const selectedStyles = 'border-2 border-indigo-800/60';
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
@@ -91,7 +91,7 @@ export default function MiniCanvas({
                     }}
                     className="w-full h-full rounded-sm flex justify-center items-center relative group"
                 >
-                    <div className="text-[5px] text-center text-light-base bg-dark-base rounded-full absolute top-2 left-2 px-2 py-1 hidden group-hover:block">
+                    <div className="text-[10px] text-center text-light-base bg-dark-base rounded-full absolute top-2 left-2 px-2 py-1 hidden group-hover:block">
                         Question {questionIndex + 1}
                     </div>
                     <div

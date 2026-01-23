@@ -1,12 +1,12 @@
 'use client';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import { SmallQuizRight } from './QuizRight';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import Canvas from '@/components/canvas/Canvas';
 import UtilityCard from '@/components/utility/UtilityCard';
 import QuestionPallete from './QuestionPallete';
-import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { SmallQuizRight } from './QuizRight';
 
 export default function QuizLeft() {
     const [error, setError] = useState<boolean>(false);
@@ -52,7 +52,7 @@ export default function QuizLeft() {
                     </div>
                 </UtilityCard>
                 <div className="flex-1 flex flex-col items-start justify-center w-full min-w-0">
-                    <div className="aspect-16/9 w-full min-w-0">
+                    <div className="aspect-video w-full min-w-0">
                         <Canvas />
                     </div>
                     <div className="w-full flex ">

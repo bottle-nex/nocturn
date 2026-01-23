@@ -29,31 +29,31 @@ const sidebarItems: SidebarItem[] = [
     {
         tab: SidebarTab.HOME,
         label: 'Home',
-        icon: <MdHomeFilled size={20} />,
+        icon: <MdHomeFilled size={18} />,
         className: 'text-black bg-[#93BD57]',
     },
     {
         tab: SidebarTab.TEAM,
         label: 'Team',
-        icon: <IoPeopleSharp size={20} />,
+        icon: <IoPeopleSharp size={18} />,
         className: 'text-black bg-[#5C6BC0]',
     },
     {
         tab: SidebarTab.ANALYTICS,
         label: 'Analytics',
-        icon: <HiChartBar size={20} />,
+        icon: <HiChartBar size={18} />,
         className: 'text-black bg-[#F6C90E]',
     },
     {
         tab: SidebarTab.DOCUMENTS,
         label: 'Documents',
-        icon: <HiDocumentText size={20} />,
+        icon: <HiDocumentText size={18} />,
         className: 'text-black bg-[#FF7043]',
     },
     {
         tab: SidebarTab.SETTINGS,
         label: 'Settings',
-        icon: <IoSettingsSharp size={20} />,
+        icon: <IoSettingsSharp size={18} />,
         className: 'text-black bg-[#9E9E9E]',
     },
 ];
@@ -86,13 +86,13 @@ export default function HomeSidebar() {
     }
 
     return (
-        <aside className="w-72 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto rounded-sm pt-4 flex flex-col justify-between">
-            <section>
-                <AppLogo withText className="px-4" />
+        <aside className="w-88 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto pt-4 flex flex-col justify-between">
+            <section className="ml-4 mt-8">
+                <AppLogo className="px-4" />
                 <span className="block px-4 text-xs font-bold mt-4 text-neutral-500 dark:text-neutral-400">
                     MENU
                 </span>
-                <section className="flex flex-col gap-y-1 mt-2 px-4">
+                <section className="flex flex-col gap-y-2 mt-2 px-4">
                     {sidebarItems.map((item: SidebarItem) => (
                         <div
                             onClick={() => handleTabChange(item.tab)}
@@ -111,7 +111,7 @@ export default function HomeSidebar() {
                     ))}
                 </section>
             </section>
-            <section className="">
+            <section className="ml-6 mt-8">
                 <section className="flex flex-col mt-2 px-4">
                     {bottomItems.map((item: SidebarBottomItem) => (
                         <div

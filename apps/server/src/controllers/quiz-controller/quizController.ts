@@ -69,10 +69,8 @@ export default class QuizController {
         hostId: string,
     ): Promise<quiz_controller> {
         try {
-            console.log('[DEBUG] handle_save_new_quiz - hostId:', hostId, 'type:', typeof hostId);
             let quiz = await this.find_quiz(quizId);
             if (!quiz) {
-                console.log('[DEBUG] Creating quiz with hostId:', hostId);
                 quiz = await prisma.quiz.create({
                     data: {
                         ...quiz_data,

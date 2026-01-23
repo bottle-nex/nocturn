@@ -19,7 +19,7 @@ export enum SELECTION_MODE {
 
 export default function Canvas(): JSX.Element {
     const [selectionMode, setSelectionMode] = useState<SELECTION_MODE>(SELECTION_MODE.CANVAS);
-    const selectedStyles = 'border-2 border-[#5e59b3]';
+    const selectedStyles = 'border-2 border-indigo-800/60';
     const [copied, setCopied] = useState<boolean>(false);
     const canvasRef = useRef<HTMLDivElement>(null);
     const { currentQuestionIndex, quiz } = useNewQuizStore();
@@ -45,7 +45,7 @@ export default function Canvas(): JSX.Element {
             style={{ color: template?.text_color, boxSizing: 'border-box' }}
             onClick={canvasTapHandler}
             className={cn(
-                'w-full h-full p-0.5 rounded-[12px] relative overflow-hidden',
+                'w-full h-full rounded-[12px] relative overflow-hidden',
                 selectionMode === SELECTION_MODE.CANVAS && selectedStyles,
             )}
         >
@@ -62,7 +62,7 @@ export default function Canvas(): JSX.Element {
                     setSelectionMode={setSelectionMode}
                 />
 
-                <div className="flex-1 flex items-end justify-center mb-6 z-10">
+                <div className="flex-1 flex items-end justify-center mb-6">
                     <CanvasOptions
                         selectionMode={selectionMode}
                         setSelectionMode={setSelectionMode}

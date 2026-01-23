@@ -10,19 +10,19 @@ import { create } from 'zustand';
 
 interface NewQuizStoreTypes {
     quiz: QuizType;
-    updateQuiz: (quiz: Partial<QuizType>) => void;
-    addQuestion: () => void;
-    editQuestion: (questionIndex: number, question: Partial<QuestionType>) => void;
     currentQuestionIndex: number;
-    setCurrentQuestionIndex: (index: number) => void;
-    removeQuestion: (index: number) => void;
-    updateQuestionPoints: (points: number[]) => void;
-    changeQuestionPoint: (questionIndex: number, point: number) => void;
-    getQuestion: (questionIndex: number) => QuestionType | null;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    toggleInteraction: (interaction: InteractionEnum) => void;
+    updateQuiz: (quiz: Partial<QuizType>) => void;
+    addQuestion: () => void;
+    getQuestion: (questionIndex: number) => QuestionType | null;
+    editQuestion: (questionIndex: number, question: Partial<QuestionType>) => void;
+    removeQuestion: (index: number) => void;
     setInteractions: (Interactions: InteractionEnum[]) => void;
+    toggleInteraction: (interaction: InteractionEnum) => void;
+    changeQuestionPoint: (questionIndex: number, point: number) => void;
+    updateQuestionPoints: (points: number[]) => void;
+    setCurrentQuestionIndex: (index: number) => void;
     resetStore: () => void;
 }
 

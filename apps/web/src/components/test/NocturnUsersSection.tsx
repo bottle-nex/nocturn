@@ -115,13 +115,9 @@ export default function NocturnUsersSection() {
     }, []);
 
     return (
-        <section
-            ref={sectionRef}
-            className="relative w-screen bg-black"
-            style={{ height: '1500vh' }}
-        >
+        <section ref={sectionRef} className="relative w-screen" style={{ height: '1500vh' }}>
             <div ref={pinRef} className="h-screen w-full overflow-hidden">
-                <div className="absolute inset-0 bg-nlighter" />
+                <div className="absolute inset-0" />
 
                 <div className="relative z-10 h-full w-full flex">
                     <div className="w-[55%] h-full flex items-center justify-center">

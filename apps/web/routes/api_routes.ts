@@ -29,6 +29,7 @@ export const CREATE_QUIZ_USING_AI = AI_URL + '/create-new-quiz';
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';
 export const GET_CHATS_URL = '/quiz/get-messages';
+export const INVITE_COLLABORATOR_URL = QUIZ_URL + '/invite-collaborator';
 
 export const ALL_CONTRIBUTORS_DETAILS_URL =
     'https://api.github.com/repos/bottle-nex/nocturn/contributors';

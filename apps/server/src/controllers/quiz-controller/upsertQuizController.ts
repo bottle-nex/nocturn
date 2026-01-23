@@ -11,8 +11,6 @@ export default async function upsertQuizController(req: Request, res: Response) 
         ResponseWriter.invalid_data(res, 'Invalid quizId');
         return;
     }
-    console.log('controller hit ----------------------> ');
-    // console.log(req.body);
 
     const parsed = createQuizSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -24,9 +22,6 @@ export default async function upsertQuizController(req: Request, res: Response) 
     const input = parsed.data;
     const hostId = req.user?.id;
     const questions = input.questions;
-
-    console.log('[DEBUG] req.user:', req.user);
-    console.log('[DEBUG] hostId:', hostId, 'type:', typeof hostId);
 
     if (!hostId) {
         ResponseWriter.not_authorized(res, 'Unauthorized');

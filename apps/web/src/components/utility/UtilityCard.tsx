@@ -6,9 +6,10 @@ interface UtilityCardProps {
     children: React.ReactNode;
     className?: string;
     ref?: ForwardedRef<HTMLDivElement>;
+    style?: React.CSSProperties;
 }
 
-export default function UtilityCard({ children, className, ref }: UtilityCardProps) {
+export default function UtilityCard({ children, className, ref, style }: UtilityCardProps) {
     return (
         <motion.div
             ref={ref}
@@ -20,6 +21,7 @@ export default function UtilityCard({ children, className, ref }: UtilityCardPro
                 'border border-neutral-300 dark:border-neutral-700 shadow-lg px-4 py-2.5 rounded-xs',
                 className,
             )}
+            style={style}
         >
             {children}
         </motion.div>
