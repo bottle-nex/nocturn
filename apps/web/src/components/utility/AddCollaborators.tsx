@@ -89,7 +89,7 @@ export default function AddCollaborators({
     const modalContent = (
         <UtilityCard
             ref={addCollaboratorsRef}
-            className="w-100 py-5 fixed dark:bg-dark-base bg-neutral-100 rounded-sm dark:border-neutral-800/40! border-neutral-300/40 overflow-visible z-[9999]"
+            className="w-100 py-5 fixed dark:bg-dark-base bg-neutral-100 rounded-sm dark:border-neutral-800/40! border-neutral-300/40 overflow-visible z-9999"
             style={{
                 top: `${position.top}px`,
                 left: `${position.left}px`,
@@ -160,7 +160,11 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
 
     async function addCollaborators() {
         if (!quiz.id || !session?.user.token || emails.length === 0) return;
-        const data = await EmailAction.add_collaborator(session?.user.token, emails.map(e => e.email), quiz?.id);
+        await EmailAction.add_collaborator(
+            session?.user.token,
+            emails.map((e) => e.email),
+            quiz?.id,
+        );
     }
 
     return (

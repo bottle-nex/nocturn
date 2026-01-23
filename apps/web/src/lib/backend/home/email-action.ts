@@ -9,7 +9,7 @@ export default class EmailAction {
             return;
         }
         try {
-            const { data } = await axios.post(
+            await axios.post(
                 `${INVITE_COLLABORATOR_URL}/${quizId}`,
                 {
                     emails,
@@ -21,7 +21,6 @@ export default class EmailAction {
                     },
                 },
             );
-            console.log(data);
         } catch {
             toast.error('Failed to invite collaborator. Please try again.');
         }

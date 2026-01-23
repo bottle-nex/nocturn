@@ -43,13 +43,13 @@ export default function LandingHeroSection() {
         <div className="flex flex-col justify-center my-auto pt-55 gap-y-10 items-center h-full min-h-screen w-full relative">
             <div className="flex flex-col max-w-5xl text-center select-none">
                 <div className="text-[#1b1b1b] text-8xl font-bold whitespace-nowrap">
-                    <span className='block'>
-                        <span className='text-indigo-600'>Out-think </span>
+                    <span className="block">
+                        <span className="text-indigo-600">Out-think </span>
                         the room
                     </span>
                     <span>
                         And take
-                        <span className='text-[#f7698f]'> the Prize</span>
+                        <span className="text-[#f7698f]"> the Prize</span>
                     </span>
                 </div>
 

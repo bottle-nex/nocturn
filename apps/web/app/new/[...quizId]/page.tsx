@@ -24,7 +24,7 @@ export interface NewProps {
 export default function New({ params }: NewProps) {
     const { quizId } = use(params);
     const { session } = useUserSessionStore();
-    const { quiz, updateQuiz, resetStore } = useNewQuizStore();
+    const { updateQuiz, resetStore } = useNewQuizStore();
     const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
 
     useEffect(() => {

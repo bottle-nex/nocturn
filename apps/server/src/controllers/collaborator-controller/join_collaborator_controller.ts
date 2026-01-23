@@ -42,19 +42,25 @@ export default class Collaborator {
         }
 
         try {
-            const quiz = await Collaborator.find_quiz_by_host_id(req.params.quizId, String(user.id));
-            console.log("quiz found is : ", quiz);
+            const quiz = await Collaborator.find_quiz_by_host_id(
+                req.params.quizId,
+                String(user.id),
+            );
+            console.log('quiz found is : ', quiz);
             if (!quiz) {
                 ResponseWriter.not_found(res, 'Quiz not found or you are not the host');
                 return;
             }
 
-            const collab_session = await Collaborator.get_or_create_collab_session(quiz, String(user.id));
+            const collab_session = await Collaborator.get_or_create_collab_session(
+                quiz,
+                String(user.id),
+            );
             if (!collab_session) {
                 ResponseWriter.system_error(res);
                 return;
             }
-            console.log("parsed data is : ", parsed_body.data);
+            console.log('parsed data is : ', parsed_body.data);
             await Collaborator.invite_users_by_emails(
                 res,
                 parsed_body.data,
@@ -336,7 +342,7 @@ export default class Collaborator {
         quiz_id: string,
         host_id: string,
     ): Promise<QuizWithCollabSession | null> {
-        console.log("quiz id is : ", quiz_id, " host id is : ", host_id);
+        console.log('quiz id is : ', quiz_id, ' host id is : ', host_id);
         try {
             return await prisma.quiz.findUnique({
                 where: {
@@ -407,4 +413,4 @@ export default class Collaborator {
 const inviteCollaboratorSchema = z
     .array(z.email('Invalid email format'))
     .min(1, 'At least one email is required')
-    .max(5, 'Maximum 5 emails allowed')
+    .max(5, 'Maximum 5 emails allowed');

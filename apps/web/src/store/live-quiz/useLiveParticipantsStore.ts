@@ -8,14 +8,14 @@ interface LiveParticipantsStoreProps {
     removeParticipant: (participantId: string) => void;
     getParticipant: (participantId: string) => ParticipantType | undefined;
     updateParticipants: (participants: Partial<ParticipantType>[]) => void;
-    
+
     responses: Partial<ResponseType>[];
     setResponses: (responses: Partial<ResponseType>[]) => void;
     getResponse: (participantId: string) => Partial<ResponseType> | undefined;
     upsertResponse: (response: Partial<ResponseType>) => void;
     updateResponses: (responses: Partial<ResponseType>[]) => void;
     removeResponse: (participantId: string) => void;
-    
+
     response: Partial<ResponseType> | null;
     setResponse: (response: Partial<ResponseType>) => void;
     updateResponse: (response: Partial<ResponseType>) => void;
