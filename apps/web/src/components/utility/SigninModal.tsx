@@ -27,7 +27,7 @@ export default function SigninModal() {
                     duration: 0.3,
                     ease: 'easeInOut',
                 }}
-                className="relative bg-nlighter border-2 border-black w-100 max-w-[90vw] rounded-3xl overflow-hidden shadow-sm"
+                className="relative bg-white border-2 border-black w-100 max-w-[90vw] rounded-3xl overflow-hidden shadow-sm"
             >
                 <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
                     <div className="relative h-30 w-full bg-red-600">
@@ -60,7 +60,7 @@ export default function SigninModal() {
                         Choose your preferred sign in method
                     </p>
 
-                    <motion.button
+                    {/* <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         transition={{
@@ -79,7 +79,7 @@ export default function SigninModal() {
                             className="mr-3 mb-px"
                         />
                         Continue with GitHub
-                    </motion.button>
+                    </motion.button> */}
 
                     <motion.button
                         whileHover={{ scale: 1.02 }}
@@ -89,7 +89,7 @@ export default function SigninModal() {
                             stiffness: 300,
                             damping: 18,
                         }}
-                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-nprimary text-ndarkest py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
+                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-nlight text-ndarkest py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
                         onClick={() => singinHandler('google')}
                     >
                         <Image

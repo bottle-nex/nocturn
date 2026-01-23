@@ -6,7 +6,7 @@ import { container, fadeUp } from '../animation/framer_motion';
 
 export default function NocturnFeaturesSection() {
     return (
-        <div className="w-full min-h-screen flex flex-col items-center bg-nlighter overflow-hidden py-20 gap-y-20 relative shadow-sm">
+        <div className="w-full min-h-screen flex flex-col items-center bg-white overflow-hidden py-20 gap-y-20 relative shadow-sm">
             <motion.div
                 variants={container}
                 initial="hidden"

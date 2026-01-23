@@ -18,7 +18,7 @@ export default function LogoutModal() {
 
     return (
         <OpacityBackground onBackgroundClick={() => setOpenLogoutModal(false)}>
-            <section className="relative bg-nlighter border-2 border-black max-w-90 w-full rounded-md overflow-hidden shadow-sm">
+            <section className="relative bg-white border-2 border-black max-w-90 w-full rounded-md overflow-hidden shadow-sm">
                 <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
                     <div className="relative h-30 w-full bg-red-600">
                         <Image
@@ -71,7 +71,7 @@ export default function LogoutModal() {
 
                     <div className="flex gap-3">
                         <motion.button
-                            className="flex justify-center items-center w-full h-12 rounded-[8px] border-2 border-ndarkest bg-nlighter hover:bg-[#eae8f3] transition-colors transform duration-300 text-ndarkest py-6 font-medium cursor-pointer shadow-xs"
+                            className="flex justify-center items-center w-full h-12 rounded-[8px] border-2 border-ndarkest bg-neutral-100 hover:bg-[#EBEEEB] transition-colors transform duration-300 text-ndarkest py-6 font-medium cursor-pointer shadow-xs"
                             onClick={() => setOpenLogoutModal(false)}
                         >
                             Cancel
