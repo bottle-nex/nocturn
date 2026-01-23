@@ -30,6 +30,7 @@ import createQuizUsingAIController from '../controllers/ai-controller/createQuiz
 // <---------------------- middlewares ----------------------> //
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
+import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -77,6 +78,9 @@ router.get(
 router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);
 router.get('/quiz/get-question-results', getQuestionResults);
+
+// collaborator routes
+router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.process);
 
 // ai routes
 router.post('/ai/create-new-quiz', authMiddleware, createQuizUsingAIController);

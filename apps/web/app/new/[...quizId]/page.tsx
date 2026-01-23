@@ -69,8 +69,6 @@ export default function New({ params }: NewProps) {
         };
     }, [resetStore]);
 
-    console.log('Quiz in store:', quiz);
-
     return (
         <>
             {allowance === AllowanceEnum.ALLOWED && (

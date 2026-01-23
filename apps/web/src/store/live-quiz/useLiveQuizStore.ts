@@ -16,43 +16,38 @@ interface LiveResponseData {
 
 interface LiveQuizStore {
     quiz: QuizType;
-    updateQuiz: (updatedFields: Partial<QuizType>) => void;
     gameSession: GameSessionType | null;
-    updateGameSession: (updatedFields: Partial<GameSessionType>) => void;
     currentQuestion: QuestionType | null;
-    updateCurrentQuestion: (updatedFields: Partial<QuestionType>) => void;
     nextQuestion: QuestionType | null;
-    updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
     alreadyResponded: boolean;
-    setAlreadyResponded: (value: boolean) => void;
     isNextQuestionAvailable: boolean;
-    setIsNextQuestonAvailable: (value: boolean) => void;
-
     liveResponses: LiveResponseData;
-    updateLiveResponse: (selectedOption: number) => void;
-    resetLiveResponses: () => void;
-    getLiveResponsePercentages: () => number[];
-
     hasUsedLifeline: boolean;
-    setHasUsedLifeline: (used: boolean) => void;
-
     lifelineRequested: boolean;
     lifelineExpiresAt: number | null;
-    setLifelineRequested: (requested: boolean, expiresAt?: number) => void;
-
     lifelineResult: LifelineResult | null;
-    setLifelineResult: (result: LifelineResult) => void;
-
-    // NEW: Live vote counts (updated in real-time)
     lifelineLiveVotes: number[];
-    updateLifelineLiveVotes: (voteCounts: number[]) => void;
-
+    spectatorOwnVote: number | null;
+    lifelineVotesBySpectator: Record<string, number>;
     activeLifelineSession: {
         questionId: string;
         expiresAt: number;
         participantCount?: number;
         isActive: boolean;
     } | null;
+    updateQuiz: (updatedFields: Partial<QuizType>) => void;
+    updateGameSession: (updatedFields: Partial<GameSessionType>) => void;
+    updateCurrentQuestion: (updatedFields: Partial<QuestionType>) => void;
+    updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
+    setAlreadyResponded: (value: boolean) => void;
+    setIsNextQuestonAvailable: (value: boolean) => void;
+    updateLiveResponse: (selectedOption: number) => void;
+    resetLiveResponses: () => void;
+    getLiveResponsePercentages: () => number[];
+    setHasUsedLifeline: (used: boolean) => void;
+    setLifelineRequested: (requested: boolean, expiresAt?: number) => void;
+    setLifelineResult: (result: LifelineResult) => void;
+    updateLifelineLiveVotes: (voteCounts: number[]) => void;
     setActiveLifelineSession: (
         session: {
             questionId: string;
@@ -61,14 +56,9 @@ interface LiveQuizStore {
             isActive: boolean;
         } | null,
     ) => void;
-
-    spectatorOwnVote: number | null;
     setSpectatorVote: (selectedOption: number) => void;
-
-    lifelineVotesBySpectator: Record<string, number>;
     addLifelineVote: (spectatorId: string, option: number) => void;
     getLifelineVoteCounts: () => number[];
-
     resetQuestionLifelineState: () => void;
     clearLifelineData: () => void;
 }

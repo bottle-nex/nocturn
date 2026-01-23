@@ -87,7 +87,7 @@ export default function HomeSidebar() {
 
     return (
         <aside className="w-88 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto pt-4 flex flex-col justify-between">
-            <section className='ml-4 mt-8'>
+            <section className="ml-4 mt-8">
                 <AppLogo className="px-4" />
                 <span className="block px-4 text-xs font-bold mt-4 text-neutral-500 dark:text-neutral-400">
                     MENU
@@ -111,7 +111,7 @@ export default function HomeSidebar() {
                     ))}
                 </section>
             </section>
-            <section className='ml-6 mt-8'>
+            <section className="ml-6 mt-8">
                 <section className="flex flex-col mt-2 px-4">
                     {bottomItems.map((item: SidebarBottomItem) => (
                         <div

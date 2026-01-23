@@ -81,7 +81,7 @@ export default function Options() {
                     <Checkbox
                         checked={currentQ.correctAnswer === idx}
                         onCheckedChange={() => handleCorrectAnswerChange(idx)}
-                        className="scale-150 p-[1px] border border-neutral-300 dark:border-neutral-800"
+                        className="scale-150 p-px border border-neutral-300 dark:border-neutral-800 cursor-pointer"
                     />
                     <ColoredInput
                         color={currentQTemplate?.bars?.[idx]}

@@ -1,14 +1,14 @@
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { JSX } from 'react';
-import { BiSolidMessageEdit } from 'react-icons/bi';
-import { MdAddReaction } from 'react-icons/md';
-import Drafts from './Drafts';
-import { FaDartLang } from 'react-icons/fa6';
+import { Button } from '@/components/ui/button';
 import { SiSolana } from 'react-icons/si';
-import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { FaDartLang } from 'react-icons/fa6';
+import { MdAddReaction } from 'react-icons/md';
 import { MdSettingsSuggest } from 'react-icons/md';
+import { BiSolidMessageEdit } from 'react-icons/bi';
+import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
+import Drafts from './Drafts';
+import ToolTipComponent from '@/components/utility/TooltipComponent';
 
 interface option {
     name: string;
@@ -21,19 +21,19 @@ const option_one: option[] = [
     {
         name: 'QUESTION',
         type: DraftRenderer.QUESTION,
-        icon: <BiSolidMessageEdit className="w-6 h-6 text-neutral-900 dark:text-neutral-100" />,
+        icon: <BiSolidMessageEdit className="size-6 text-neutral-900 dark:text-neutral-100" />,
         message: 'Add a question to your quiz',
     },
     {
         name: 'THEME',
         type: DraftRenderer.THEME,
-        icon: <FaDartLang className="w-6 h-6 text-neutral-900 dark:text-neutral-100" />,
+        icon: <FaDartLang className="size-5 text-neutral-900 dark:text-neutral-100" />,
         message: 'Choose a theme for your quiz',
     },
     {
         name: 'INTERACTION',
         type: DraftRenderer.INTERACTION,
-        icon: <MdAddReaction className="w-6 h-6 text-neutral-900 dark:text-neutral-100" />,
+        icon: <MdAddReaction className="size-6 text-neutral-900 dark:text-neutral-100" />,
         message: 'Add an interaction to your quiz',
     },
 ];
@@ -42,13 +42,13 @@ const option_two: option[] = [
     {
         name: 'ADVANCED',
         type: DraftRenderer.ADVANCED,
-        icon: <MdSettingsSuggest className="w-7 h-7 text-neutral-900 dark:text-neutral-100" />,
+        icon: <MdSettingsSuggest className="size-7 text-neutral-900 dark:text-neutral-100" />,
         message: 'Add advanced features to your quiz',
     },
     {
         name: 'STAKE',
         type: DraftRenderer.STAKE,
-        icon: <SiSolana className="w-6 h-6 text-neutral-900 dark:text-neutral-100" />,
+        icon: <SiSolana className="size-5 text-neutral-900 dark:text-neutral-100" />,
         message: 'Add a stake to your quiz',
     },
 ];
@@ -78,16 +78,16 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
                 )}
             >
                 <div className="flex flex-col gap-y-3 ">
-                    <div className="w-[6rem] shrink-0">
-                        <div className="bg-light-base dark:bg-dark-alpha/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                    <div className="w-24 shrink-0">
+                        <div className="bg-light-base dark:bg-dark-alpha/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-px border-neutral-300 dark:border-neutral-700">
                             {option_one.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10 cursor-pointer',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-alpha/10 border border-purple-800'}`,
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-indigo-700/10 dark:hover:bg-indigo-700/10 cursor-pointer',
+                                            `${state === option.type && 'border border-indigo-600 bg-indigo-700/10 dark:bg-indigo-700/10'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">
@@ -101,16 +101,16 @@ function BigQuizRight({ state, setState }: QuizRight): JSX.Element {
                             ))}
                         </div>
                     </div>
-                    <div className="w-[6rem] flex-shrink-0">
-                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                    <div className="w-24 shrink-0">
+                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex flex-col gap-y-2 border-px border-neutral-300 dark:border-neutral-700">
                             {option_two.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10 cursor-pointer',
-                                            `${state === option.type && 'hover:bg-purple-700/10 bg-alpha/10 border border-purple-800'}`,
+                                            'w-full shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-indigo-700/20 dark:hover:bg-indigo-700/20 cursor-pointer',
+                                            `${state === option.type && 'border border-indigo-600 bg-indigo-700/10 dark:bg-indigo-700/10'}`,
                                         )}
                                     >
                                         <div className="flex flex-col items-center justify-center gap-y-1">
@@ -143,15 +143,15 @@ export function SmallQuizRight(): JSX.Element {
                 )}
             >
                 <div className="md2:hidden flex gap-x-3 ">
-                    <div className=" flex-shrink-0 ">
-                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex gap-x-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                    <div className="shrink-0 ">
+                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex gap-x-2 border-px border-neutral-300 dark:border-neutral-700">
                             {option_one.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10',
+                                            'w-24 shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10',
                                             `${state === option.type && 'hover:bg-purple-700/10 bg-alpha/10 border border-purple-800'}`,
                                         )}
                                     >
@@ -166,15 +166,15 @@ export function SmallQuizRight(): JSX.Element {
                             ))}
                         </div>
                     </div>
-                    <div className="flex-shrink-0">
-                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex gap-x-2 border-[1px] border-neutral-300 dark:border-neutral-700">
+                    <div className="shrink-0">
+                        <div className="bg-light-base dark:bg-dark-base/30 rounded-xl overflow-hidden p-1 flex gap-x-2 border-px border-neutral-300 dark:border-neutral-700">
                             {option_two.map((option, index) => (
                                 <ToolTipComponent side="left" key={index} content={option.message}>
                                     <Button
                                         type="button"
                                         onClick={() => setState(option.type)}
                                         className={cn(
-                                            'w-[6rem] shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10',
+                                            'w-24 shadow-none h-20 flex items-center justify-center rounded-xl bg-light-base dark:bg-dark-base hover:bg-alpha/10',
                                             `${state === option.type && 'hover:bg-purple-700/10 bg-alpha/10 border border-purple-800'}`,
                                         )}
                                     >

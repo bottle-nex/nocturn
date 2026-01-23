@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { GoPlus } from 'react-icons/go';
 import AddCollaborators from '../utility/AddCollaborators';
 import Image from 'next/image';
@@ -39,6 +39,8 @@ const people = [
 
 export default function UserStack() {
     const [openAddCollaborators, setOpenAddCollaborators] = useState<boolean>(false);
+    const triggerRef = useRef<HTMLDivElement>(null);
+
     return (
         <div className="flex flex-row items-center justify-center w-full z-20">
             {people.map((item, idx) => (
@@ -57,6 +59,7 @@ export default function UserStack() {
                 </div>
             ))}
             <div
+                ref={triggerRef}
                 className="relative z-0 cursor-pointer"
                 onClick={() => setOpenAddCollaborators(true)}
             >
@@ -66,7 +69,11 @@ export default function UserStack() {
                         'dark:bg-neutral-600 bg-neutral-300 hover:dark:bg-neutral-700 hover:bg-neutral-400/70 dark:text-neutral-100 transition-colors duration-150',
                     )}
                 />
-                <AddCollaborators open={openAddCollaborators} setOpen={setOpenAddCollaborators} />
+                <AddCollaborators
+                    open={openAddCollaborators}
+                    setOpen={setOpenAddCollaborators}
+                    triggerRef={triggerRef}
+                />
             </div>
         </div>
     );

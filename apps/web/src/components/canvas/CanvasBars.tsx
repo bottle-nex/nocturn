@@ -39,7 +39,7 @@ export default function CanvasBars({
             </div>
 
             <div
-                className="w-full rounded-tr-md sm:rounded-tr-2xl transition-all duration-1000 ease-in-out border border-white/20 z-50"
+                className="w-full rounded-tr-md sm:rounded-tr-2xl transition-all duration-1000 ease-in-out border border-white/20 z-20"
                 style={{
                     height: getBarHeight(votes[idx]!),
                     backgroundColor: `${currentQTemplate?.bars[idx]}` || '#4F46E5',

@@ -181,7 +181,7 @@ export default function QuestionsDraft() {
                         value={explanation}
                         onChange={(e) => handleExplanationChange(e.target.value)}
                         className={cn(
-                            '!text-xs font-light dark:text-neutral-400 text-neutral-700 italic',
+                            'text-xs! font-light dark:text-neutral-400 text-neutral-700 italic',
                         )}
                     />
                 </div>
@@ -262,7 +262,7 @@ export default function QuestionsDraft() {
                         value={hint}
                         onChange={(e) => handleHintChange(e.target.value)}
                         className={cn(
-                            '!text-xs font-light dark:text-neutral-400 text-neutral-700 italic',
+                            'text-xs! font-light dark:text-neutral-400 text-neutral-700 italic',
                         )}
                     />
                 </div>

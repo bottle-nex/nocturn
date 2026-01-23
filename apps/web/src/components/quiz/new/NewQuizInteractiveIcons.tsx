@@ -46,7 +46,7 @@ export default function NewQuizInteractiveIcons({
     const { setState } = useDraftRendererStore();
     const { quiz } = useNewQuizStore();
 
-    const selectedStyles = 'border-2 border-[#5e59b3]';
+    const selectedStyles = 'border-2 border-indigo-600/60';
 
     function createAnimation(Icon: React.ElementType, containerIndex: number) {
         const newIcon = {
@@ -71,14 +71,14 @@ export default function NewQuizInteractiveIcons({
         <div
             onClick={interactionDivTapHandler}
             className={cn(
-                'flex items-center justify-end gap-x-4 z-50 rounded-[12px] px-4 py-2',
+                'flex items-center justify-end gap-x-4 z-40 rounded-[12px] px-4 py-2',
                 selectionMode === SELECTION_MODE.INTERACTION && selectedStyles,
             )}
         >
             {icons
                 .filter(({ id }) => quiz.interactions.includes(id))
                 .map(({ id, Component, iconColor }, index) => (
-                    <div key={id} className="relative w-fit h-fit overflow-visible z-[99]">
+                    <div key={id} className="relative w-fit h-fit overflow-visible z-41">
                         <Component
                             onClick={() => createAnimation(Component, index)}
                             style={{

@@ -46,7 +46,7 @@ export default function ThemesDraft() {
                             className={`flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px]`}
                         >
                             <div
-                                className={`w-full relative overflow-hidden rounded-[10px] flex items-center justify-center border dark:border-neutral-400 border-neutral-700 ${quiz.theme === template.id && 'border-2 border-purple-800 bg-neutral-200'}`}
+                                className={`w-full relative overflow-hidden rounded-[10px] flex items-center justify-center border-2 hover:dark:border-indigo-800 hover:border-indigo-800 ${quiz.theme === template.id && 'border-2 border-indigo-800 bg-neutral-200'}`}
                             >
                                 <Image
                                     src={`/templates/${template.src}.png`}
