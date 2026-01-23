@@ -6,6 +6,7 @@ import Footer from '@/components/root/Footer';
 // import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import NavbarTest from '@/components/root/NavbarTest';
 import LandingHeroSection from '@/components/revamp/LandingHeroSection';
+import NocturnUsersSection from '@/components/test/NocturnUsersSection';
 
 export default function Page() {
     return (
@@ -13,13 +14,12 @@ export default function Page() {
             {/* <Navbar />
             <NocturnLandingSection />
             <NocturnPerksSection />
-            <NocturnUsersSection />
             <NocturnFeaturesSection />
             <BigAnimatedText />
             <Footer /> */}
             <NavbarTest />
-
             <LandingHeroSection />
+            <NocturnUsersSection />
             <Footer />
             {/* <NocturnFeaturesSection /> */}
         </div>

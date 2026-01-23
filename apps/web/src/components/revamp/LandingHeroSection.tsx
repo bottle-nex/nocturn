@@ -40,10 +40,17 @@ export default function LandingHeroSection() {
     });
 
     return (
-        <div className="flex flex-col justify-center my-auto pt-15 gap-y-10 items-center h-full min-h-screen w-full relative">
-            <div className="flex flex-col max-w-160 text-center select-none">
-                <div className="text-[#1b1b1b] text-[75px] font-semibold flex flex-col">
-                    Outthink the room
+        <div className="flex flex-col justify-center my-auto pt-55 gap-y-10 items-center h-full min-h-screen w-full relative">
+            <div className="flex flex-col max-w-5xl text-center select-none">
+                <div className="text-[#1b1b1b] text-8xl font-bold whitespace-nowrap">
+                    <span className='block'>
+                        <span className='text-indigo-600'>Out-think </span>
+                        the room
+                    </span>
+                    <span>
+                        And take
+                        <span className='text-[#f7698f]'> the Prize</span>
+                    </span>
                 </div>
 
                 <div className="text-[#1b1b1b]/95 text-[22px] tracking-wide leading-7">
@@ -76,7 +83,7 @@ export default function LandingHeroSection() {
                 </svg>
             </div>
 
-            <div className="bg-[#EAEDEB] h-80 w-142 rounded-3xl relative p-8 border-2 border-black noise-bg">
+            <div className="bg-[#EAEDEB] h-120 w-180 rounded-3xl relative p-8 border-2 border-neutral-400 noise-bg">
                 {/* absolute divs */}
                 <div className="absolute top-15 -right-0 -rotate-90 z-10">
                     <FaLocationArrow className="size-7 text-[#0FA655]" />
