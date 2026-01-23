@@ -12,7 +12,7 @@ export default function NavInputBox() {
         >
             <Input
                 placeholder="secret code"
-                className="h-12 !bg-nlighter text-black border border-black w-40 px-4 rounded-[8px] z-50 relative tracking-wider focus:text-base"
+                className="h-12 !bg-white text-black border border-black w-40 px-4 rounded-[8px] z-50 relative tracking-wider focus:text-base"
             />
         </motion.div>
     );

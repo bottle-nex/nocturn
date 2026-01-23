@@ -19,12 +19,12 @@ export default function Footer() {
 
     return (
         <>
-            <div className="h-auto w-full bg-nlighter flex flex-col justify-between items-between relative z-40">
-                <footer className="relative w-screen h-[50vh] flex items-center bg-black">
+            <div className="h-auto w-full flex flex-col justify-between items-between relative z-40">
+                <footer className="relative w-screen h-[50vh] flex items-center bg-white">
                     <div className="w-full h-full flex p-4">
                         <div className="w-[13%] h-full p-2 flex flex-col gap-y-2">
                             <motion.div
-                                className="h-full w-full rounded-xl bg-white flex justify-center items-center text-black cursor-pointer shadow-sm"
+                                className="h-full w-full rounded-xl bg-[#1b1b1b] flex justify-center items-center text-white cursor-pointer shadow-sm"
                                 whileHover={{ scale: 0.95 }}
                                 transition={{
                                     type: 'spring',
@@ -44,7 +44,7 @@ export default function Footer() {
                                     stiffness: 300,
                                     damping: 20,
                                 }}
-                                className="h-full w-full rounded-xl bg-white flex justify-center items-center text-black hover:scale-95 cursor-pointer shadow-sm"
+                                className="h-full w-full rounded-xl bg-[#1b1b1b] flex justify-center items-center text-white hover:scale-95 cursor-pointer shadow-sm"
                             >
                                 <a
                                     href="https://github.com/bottle-nex/nocturn"
