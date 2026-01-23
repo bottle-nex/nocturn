@@ -2,69 +2,57 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { IoPeopleSharp, IoSettingsSharp } from 'react-icons/io5';
-import { HiChartBar, HiDocumentText } from 'react-icons/hi';
-import { MdHomeFilled } from 'react-icons/md';
+import { MdOutlineFolderShared, MdOutlineHomeMax } from 'react-icons/md';
 import { cn } from '@/lib/utils';
-import AppLogo from '../app/AppLogo';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
 import DarkModeToggle from '../base/DarkModeToggle';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
-import { SidebarTab, SidebarTabBottom } from '@/constants/SidebarTabConstants';
+import { SidebarTab } from '@/constants/SidebarTabConstants';
+import { GoPeople } from 'react-icons/go';
+import { PiChats, PiTrashSimple } from 'react-icons/pi';
+import { RiSettings6Line } from 'react-icons/ri';
+import { FaRegHeart } from 'react-icons/fa6';
 
-interface SidebarItem {
+export interface SidebarItem {
     tab: SidebarTab;
     label: string;
     icon?: React.ReactNode;
     className?: string;
 }
 
-interface SidebarBottomItem {
-    tab: SidebarTabBottom;
-    label: string;
-}
-
 const sidebarItems: SidebarItem[] = [
     {
         tab: SidebarTab.HOME,
         label: 'Home',
-        icon: <MdHomeFilled size={18} />,
-        className: 'text-black bg-[#93BD57]',
+        icon: <MdOutlineHomeMax size={18} />,
     },
     {
-        tab: SidebarTab.TEAM,
-        label: 'Team',
-        icon: <IoPeopleSharp size={18} />,
-        className: 'text-black bg-[#5C6BC0]',
+        tab: SidebarTab.MY_PRESENTATIONS,
+        label: 'My Presentations',
+        icon: <GoPeople size={18} />,
     },
     {
-        tab: SidebarTab.ANALYTICS,
-        label: 'Analytics',
-        icon: <HiChartBar size={18} />,
-        className: 'text-black bg-[#F6C90E]',
+        tab: SidebarTab.SHARED_WITH_ME,
+        label: 'Shared with me',
+        icon: <MdOutlineFolderShared size={18} />,
     },
     {
-        tab: SidebarTab.DOCUMENTS,
-        label: 'Documents',
-        icon: <HiDocumentText size={18} />,
-        className: 'text-black bg-[#FF7043]',
+        tab: SidebarTab.FAVORITES,
+        label: 'Favorites',
+        icon: <FaRegHeart size={17} />,
     },
     {
         tab: SidebarTab.SETTINGS,
         label: 'Settings',
-        icon: <IoSettingsSharp size={18} />,
-        className: 'text-black bg-[#9E9E9E]',
+        icon: <RiSettings6Line size={18} />,
     },
-];
-
-const bottomItems = [
-    { tab: SidebarTabBottom.CHATS, label: 'Chats' },
-    { tab: SidebarTabBottom.TRASH, label: 'Trash' },
+    { tab: SidebarTab.CHATS, label: 'Chats', icon: <PiChats size={18} /> },
+    { tab: SidebarTab.TRASH, label: 'Trash', icon: <PiTrashSimple size={18} /> },
 ];
 
 export default function HomeSidebar() {
-    const { activeTab, setActiveTab, bottomActiveTab, setBottomActiveTab } = useHomeSidebarStore();
+    const { activeTab, setActiveTab } = useHomeSidebarStore();
     const searchParams = useSearchParams();
     const { session } = useUserSessionStore();
 
@@ -81,51 +69,81 @@ export default function HomeSidebar() {
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.replaceState({}, '', newUrl);
 
-        setBottomActiveTab(null);
         setActiveTab(tab);
     }
 
     return (
-        <aside className="w-88 h-full bg-white dark:bg-zinc-900 text-neutral-500 dark:text-neutral-400 overflow-y-auto pt-4 flex flex-col justify-between">
+        <aside className="w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto pt-4 flex flex-col justify-between">
+            <div>
+                <section className="ml-4 mt-8">
+                    <span className="block px-4 text-xs font-bold mt-4">MENU</span>
+                    <section className="flex flex-col gap-y-2 mt-2 px-4">
+                        {sidebarItems.slice(0, 3).map((item: SidebarItem) => (
+                            <div
+                                onClick={() => handleTabChange(item.tab)}
+                                className={cn(
+                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer',
+                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
+                                )}
+                                key={item.tab}
+                            >
+                                {activeTab === item.tab && (
+                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
+                                )}
+                                <span className={cn('p-1 rounded', item.className)}>
+                                    {item.icon}
+                                </span>
+                                <span className="text-sm dark:text-white/80 text-black/90 text-nowrap">
+                                    {item.label}
+                                </span>
+                            </div>
+                        ))}
+                    </section>
+                </section>
+
+                <section className="ml-4 mt-8">
+                    <span className="block text-xs font-normal mt-2 px-8.25">utility</span>
+                    <section className="flex flex-col gap-y-2 mt-2 px-4">
+                        {sidebarItems.slice(3, 5).map((item: SidebarItem) => (
+                            <div
+                                onClick={() => handleTabChange(item.tab)}
+                                className={cn(
+                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer',
+                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
+                                )}
+                                key={item.tab}
+                            >
+                                {activeTab === item.tab && (
+                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
+                                )}
+                                <span className={cn('p-1 rounded', item.className)}>
+                                    {item.icon}
+                                </span>
+                                <span className="text-sm dark:text-white/80 text-black/90 text-nowrap">
+                                    {item.label}
+                                </span>
+                            </div>
+                        ))}
+                    </section>
+                </section>
+            </div>
+
             <section className="ml-4 mt-8">
-                <AppLogo className="px-4" />
-                <span className="block px-4 text-xs font-bold mt-4 text-neutral-500 dark:text-neutral-400">
-                    MENU
-                </span>
                 <section className="flex flex-col gap-y-2 mt-2 px-4">
-                    {sidebarItems.map((item: SidebarItem) => (
+                    {sidebarItems.slice(5, 7).map((item: SidebarItem) => (
                         <div
-                            onClick={() => handleTabChange(item.tab)}
+                            onClick={() => setActiveTab(item.tab)}
                             className={cn(
-                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
-                                'hover:bg-black/10 dark:hover:bg-white/10',
+                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5',
+                                'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                             )}
                             key={item.tab}
                         >
                             {activeTab === item.tab && (
-                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-black dark:bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
+                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
                             )}
-                            <span className={cn('p-1 rounded', item.className)}>{item.icon}</span>
-                            <span className="text-sm text-black dark:text-white">{item.label}</span>
-                        </div>
-                    ))}
-                </section>
-            </section>
-            <section className="ml-6 mt-8">
-                <section className="flex flex-col mt-2 px-4">
-                    {bottomItems.map((item: SidebarBottomItem) => (
-                        <div
-                            onClick={() => setBottomActiveTab(item.tab)}
-                            className={cn(
-                                'relative flex items-center gap-x-1 py-1.75 px-3 rounded cursor-pointer hover:text-black dark:hover:text-white',
-                                'hover:bg-black/10 dark:hover:bg-white/10',
-                            )}
-                            key={item.tab}
-                        >
-                            {bottomActiveTab === item.tab && (
-                                <div className="absolute -left-1 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-white shadow-[0_0_10px_2px_rgba(242, 235, 235, 0.843)] transition-all duration-500 ease-out" />
-                            )}
-                            <span className="text-[12px] text-black dark:text-white">
+                            <span className={cn('p-1 rounded')}>{item.icon}</span>
+                            <span className="text-sm dark:text-white/80 text-black/90">
                                 {item.label}
                             </span>
                         </div>

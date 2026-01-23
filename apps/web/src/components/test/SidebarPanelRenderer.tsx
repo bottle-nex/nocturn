@@ -9,13 +9,7 @@ export default function SidebarPanelRenderer() {
     switch (activeTab) {
         case SidebarTab.HOME:
             return <HomePanel />;
-        case SidebarTab.ANALYTICS:
-            return;
-        case SidebarTab.DOCUMENTS:
-            return;
         case SidebarTab.SETTINGS:
-            return;
-        case SidebarTab.TEAM:
             return;
         default:
             return;

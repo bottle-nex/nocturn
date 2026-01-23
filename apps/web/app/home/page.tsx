@@ -2,16 +2,16 @@
 import HomeSidebar from '@/components/test/HomeSidebar';
 import HomeTrashPanel from '@/components/test/HomeTrashPanel';
 import SidebarPanelRenderer from '@/components/test/SidebarPanelRenderer';
-import { SidebarTabBottom } from '@/constants/SidebarTabConstants';
+import { SidebarTab } from '@/constants/SidebarTabConstants';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 
 export default function Home() {
-    const { bottomActiveTab } = useHomeSidebarStore();
+    const { activeTab } = useHomeSidebarStore();
 
-    const isTrashOpen = bottomActiveTab === SidebarTabBottom.TRASH;
+    const isTrashOpen = activeTab === SidebarTab.TRASH;
 
     return (
-        <div className="tracking-wider bg-delta h-screen w-screen overflow-hidden relative">
+        <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden relative">
             <div className="flex h-full">
                 <HomeSidebar />
                 <SidebarPanelRenderer />

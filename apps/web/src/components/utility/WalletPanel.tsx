@@ -88,7 +88,7 @@ export const WalletPanel = ({ close }: WalletPanelProps) => {
         >
             <div
                 ref={walletPanelRef}
-                className="w-[700px] h-[500px] bg-[#0f0f0f] rounded-3xl overflow-hidden shadow-2xl flex border border-[#565449] opacity-0 "
+                className="w-[700px] h-[500px] bg-[#0f0f0f] rounded-xl overflow-hidden shadow-2xl flex border border-[#565449] opacity-0 "
             >
                 <div className="w-[240px] h-full border-r border-[#3d3932] p-5 flex flex-col gap-4">
                     <div className="w-full text-left px-3 flex justify-start items-start text-lg font-semibold ">

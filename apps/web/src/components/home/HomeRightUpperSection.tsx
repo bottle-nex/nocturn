@@ -26,7 +26,7 @@ export default function HomeRightUpperSection() {
             <div className="flex items-center justify-end gap-4">
                 <Button
                     onClick={handleCreateNewQuiz}
-                    className="rounded-full w-32 bg-delta hover:bg-delta text-white active:scale-98"
+                    className="rounded-full w-32 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white active:scale-98"
                 >
                     <FiPlus />
                     <span>New Quiz</span>
