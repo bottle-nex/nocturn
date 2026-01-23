@@ -10,6 +10,14 @@ import ToolTipComponent from '../utility/TooltipComponent';
 import RecentAICreatedCard from '../ui/RecentAICreationCard';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import AnimatedFolderIcon from '../ui/animated-icons/AnimatedFolderIcon';
+import UploadPDFButton from '../ui/UploadPDFButton';
+import { QuizType } from '@nocturn/types';
+import PdfPreview from '../ui/PdfPreview';
+
+enum COMMON_PANEL_DATA {
+    RECENTS = 'RECENTS',
+    PDF = 'PDF',
+}
 
 export default function HomeRightUpperSection() {
     const router = useRouter();
@@ -17,10 +25,37 @@ export default function HomeRightUpperSection() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const { quizs } = useAllQuizsStore();
-    const [recentAIBuildsPanel, setRecentAIBuildsPanel] = useState(false);
+    const [commonPanel, setCommonPanel] = useState<boolean>(false);
+    const [commonPanelData, setCommonPanelData] = useState<COMMON_PANEL_DATA>(COMMON_PANEL_DATA.RECENTS);
+    const [pdf, setPdf] = useState<File | null>(null);
 
     function handleCreateNewQuiz() {
         router.push(`/new/${uuid()}`);
+    }
+
+    function onPdfSelect(file: File) {
+        setPdf(file);
+        setCommonPanel(true);
+        setCommonPanelData(COMMON_PANEL_DATA.PDF);
+    }
+
+    function handleCommonPanelDataAppearance() {
+        switch (commonPanelData) {
+            case COMMON_PANEL_DATA.RECENTS:
+                return <AIBuiltQuizs quizs={quizs} />;
+            case COMMON_PANEL_DATA.PDF:
+                return (
+                    <PdfPreview
+                        file={pdf}
+                        onRemove={() => {
+                            setPdf(null);
+                            setCommonPanelData(COMMON_PANEL_DATA.RECENTS);
+                        }}
+                    />
+                );
+            default:
+                return null;
+        }
     }
 
     useEffect(() => {
@@ -29,7 +64,7 @@ export default function HomeRightUpperSection() {
                 containerRef.current &&
                 !containerRef.current.contains(event.target as Node)
             ) {
-                setRecentAIBuildsPanel(false);
+                setCommonPanel(false);
             }
         }
 
@@ -53,7 +88,7 @@ export default function HomeRightUpperSection() {
                 <Input
                     ref={inputRef}
                     placeholder="Start creating quiz with AI..."
-                    onFocus={() => setRecentAIBuildsPanel(true)}
+                    onFocus={() => setCommonPanel(true)}
                     className={cn(
                         "h-full w-full pl-10 rounded-[6px]",
                         "placeholder:text-gamma/40 dark:placeholder:text-neutral-500"
@@ -66,16 +101,22 @@ export default function HomeRightUpperSection() {
                 />
 
                 <ToolTipComponent content="upload pdf" className="cursor-pointer">
-                    <div className="absolute top-1/2 right-0 -translate-y-1/2 p-1">
-                        <AnimatedFolderIcon
-                            strokeWidth={1.5}
-                            stroke="#737373"
-                            className="size-5 text-neutral-500 dark:text-neutral-400 "
-                        />
-                    </div>
+                    <UploadPDFButton
+                        onPdfSelect={onPdfSelect}
+                    >
+                        <div
+                            className="absolute top-1/2 right-0 -translate-y-1/2 p-1"
+                        >
+                            <AnimatedFolderIcon
+                                strokeWidth={1.5}
+                                stroke="#737373"
+                                className="size-5 text-neutral-500 dark:text-neutral-400 "
+                            />
+                        </div>
+                    </UploadPDFButton>
                 </ToolTipComponent>
 
-                {recentAIBuildsPanel && (
+                {commonPanel && (
                     <div
                         className={cn(
                             "absolute z-50 top-12 w-full rounded-[6px]",
@@ -84,20 +125,7 @@ export default function HomeRightUpperSection() {
                             "flex flex-col gap-y-2"
                         )}
                     >
-                        <div className="text-xs px-2">
-                            Recent AI creations
-                        </div>
-
-                        <div className="flex flex-col">
-                            {quizs.map((q) => (
-                                <RecentAICreatedCard
-                                    key={q.id}
-                                    theme={q.theme}
-                                    title={q.title}
-                                    difficulty={5}
-                                />
-                            ))}
-                        </div>
+                        {handleCommonPanelDataAppearance()}
                     </div>
                 )}
             </div>
@@ -115,3 +143,23 @@ export default function HomeRightUpperSection() {
     );
 }
 
+function AIBuiltQuizs({ quizs }: { quizs: QuizType[] }) {
+    return (
+        <>
+            <div className="text-xs px-2">
+                Recent AI creations
+            </div>
+
+            <div className="flex flex-col">
+                {quizs.map((q) => (
+                    <RecentAICreatedCard
+                        key={q.id}
+                        theme={q.theme}
+                        title={q.title}
+                        difficulty={5}
+                    />
+                ))}
+            </div>
+        </>
+    );
+}
