@@ -28,10 +28,38 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
                 scheduledAt: true,
                 createdAt: true,
                 deletedAt: true,
+                host: {
+                    select: {
+                        image: true,
+                        name: true,
+                    },
+                },
             },
         });
 
-        ResponseWriter.success(res, trashedQuizzes, 'Fetched trashed quizzes successfully');
+        const now = new Date();
+        const MAX_TRASH_DAYS = 30;
+
+        const quizzesWithDaysLeft = trashedQuizzes.map((quiz) => {
+            let daysLeft: number | null = null;
+
+            if (quiz.deletedAt) {
+                const deletedAt = new Date(quiz.deletedAt);
+                const diffMs = now.getTime() - deletedAt.getTime();
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+                const remaining = MAX_TRASH_DAYS - diffDays;
+
+                daysLeft = Math.max(0, Math.ceil(remaining));
+            }
+
+            return {
+                ...quiz,
+                daysLeftUntilPermanentDeletion: daysLeft,
+            };
+        });
+
+        ResponseWriter.success(res, quizzesWithDaysLeft, 'Fetched trashed quizzes successfully');
         return;
     } catch (err) {
         console.error('Error fetching trashed quizzes ', err);

@@ -38,7 +38,7 @@ export default function NavItems({ items, className }: NavItemsProps) {
             className={cn(
                 'flex items-center justify-between gap-x-4 h-12',
                 'px-2 rounded-full',
-                'bg-[#EBEEEB] text-nprime-darkest',
+                'bg-[#ECECEC] text-nprime-darkest',
                 'shadow-sm shadow-ndarker/10 ring-1 ring-nprimary/10',
                 className,
             )}

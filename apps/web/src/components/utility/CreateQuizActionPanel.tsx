@@ -40,7 +40,7 @@ export default function CreateQuizActionPanel({
     return (
         <UtilityCard
             ref={ref}
-            className="absolute right-0 top-full mt-2 w-[20rem] bg-light-base border-[1px] border-neutral-300 rounded-md shadow-xl z-40 overflow-hidden p-0"
+            className="absolute right-0 top-full mt-2 w-[20rem] bg-light-base dark:bg-dark-alpha border-[1px] border-neutral-300 rounded-md shadow-xl z-40 overflow-hidden p-0"
         >
             <div className="flex flex-col w-full gap-y-1">
                 {actions.map((action, index) => (

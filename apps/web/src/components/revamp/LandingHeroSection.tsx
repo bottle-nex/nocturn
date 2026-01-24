@@ -40,27 +40,76 @@ export default function LandingHeroSection() {
     });
 
     return (
-        <div className="flex flex-col justify-center my-auto pt-55 gap-y-10 items-center h-full min-h-screen w-full relative">
-            <div className="flex flex-col max-w-5xl text-center select-none">
+        <div className="flex flex-col justify-center my-auto pt-40 pb-10 gap-y-10 items-center h-full min-h-screen w-full relative">
+            <div className="flex flex-col max-w-5xl items-center text-center gap-y-1 relative z-30">
                 <div className="text-[#1b1b1b] text-8xl font-bold whitespace-nowrap">
                     <span className="block">
-                        <span className="text-indigo-600">Out-think </span>
+                        <span className="text-[#14B8A6]">Out-think </span>
                         the room
                     </span>
                     <span>
                         And take
-                        <span className="text-[#f7698f]"> the Prize</span>
+                        <span className="text-[#F59E0B]"> the Prize</span>
                     </span>
                 </div>
 
-                <div className="text-[#1b1b1b]/95 text-[22px] tracking-wide leading-7">
-                    A real-time quiz platform powered by Solana. Stake SOL, answer live questions,
-                    and earn rewards instantly.
+                <div className="text-[#1b1b1b]/95 text-[22px] max-w-180 tracking-wide leading-7">
+                    A Solana-powered live quiz arena where you battle players in real time, use
+                    lifelines to stay ahead, and earn instant crypto payouts.
                 </div>
             </div>
 
+            {/* grid */}
+            <div
+                className="absolute inset-0 z-0"
+                style={{
+                    backgroundImage: `
+        linear-gradient(to right, #e7e5e4 1px, transparent 1px),
+        linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
+      `,
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0, 0 0',
+                    maskImage: `
+         repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)
+      `,
+                    WebkitMaskImage: `
+  repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)
+      `,
+                    maskComposite: 'intersect',
+                    WebkitMaskComposite: 'source-in',
+                }}
+            />
+
             {/* bg wave */}
-            <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 pointer-events-none mt-40">
                 <svg
                     viewBox="0 0 1600 400"
                     className="w-full h-full"
@@ -69,13 +118,13 @@ export default function LandingHeroSection() {
                 >
                     <path
                         d="M-200 260 C 200 60, 600 460, 1000 240 C 1200 120, 1500 360, 1800 260"
-                        stroke="#D4E85C"
+                        stroke="#14B8A6"
                         strokeWidth="3"
                         fill="none"
                     />
                     <path
                         d="M-200 300 C 300 120, 700 480, 1100 260 C 1300 140, 1600 420, 2000 300"
-                        stroke="#D4E85C"
+                        stroke="#F59E0B"
                         strokeWidth="2"
                         fill="none"
                         opacity="0.7"
@@ -83,9 +132,9 @@ export default function LandingHeroSection() {
                 </svg>
             </div>
 
-            <div className="bg-[#EAEDEB] h-120 w-180 rounded-3xl relative p-8 border-2 border-neutral-400 noise-bg">
+            <div className="bg-[#ECECEC] h-100 w-180 rounded-3xl relative p-8 border-2 border-neutral-400">
                 {/* absolute divs */}
-                <div className="absolute top-15 -right-0 -rotate-90 z-10">
+                <div className="absolute top-15 right-0 -rotate-90 z-10">
                     <FaLocationArrow className="size-7 text-[#0FA655]" />
                 </div>
 
@@ -112,7 +161,7 @@ export default function LandingHeroSection() {
                 {/* bars */}
                 <div className="h-50 w-full absolute bottom-0 left-0 rounded-b-2xl flex items-end px-10 ">
                     <motion.div
-                        {...slowBar(80, 140, 10, 0)}
+                        {...slowBar(80, 170, 10, 0)}
                         className="h-30 w-full flex flex-col rounded-t-sm overflow-hidden bg-[#4a8afe70] shadow-xs"
                     >
                         <div className="h-8 w-full" />
@@ -120,7 +169,7 @@ export default function LandingHeroSection() {
                     </motion.div>
 
                     <motion.div
-                        {...slowBar(120, 200, 12, 1.5)}
+                        {...slowBar(120, 300, 12, 1.5)}
                         className="h-50 w-full flex flex-col rounded-t-sm overflow-hidden bg-[#0fa65570] shadow-xs"
                     >
                         <div className="h-8 w-full" />
@@ -128,7 +177,7 @@ export default function LandingHeroSection() {
                     </motion.div>
 
                     <motion.div
-                        {...slowBar(100, 170, 11, 0.8)}
+                        {...slowBar(100, 220, 11, 0.8)}
                         className="h-40 w-full flex flex-col rounded-t-sm overflow-hidden bg-[#ffc22170] shadow-xs"
                     >
                         <div className="h-8 w-full" />
