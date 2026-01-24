@@ -7,7 +7,7 @@ import {
 import Bull from 'bull';
 import { env } from '../../configs/env';
 
-export default class EmailService {
+export default class EmailServiceQueue {
     private email_queue: Bull.Queue;
     private readonly job_options: Bull.JobOptions = {
         attempts: 3,

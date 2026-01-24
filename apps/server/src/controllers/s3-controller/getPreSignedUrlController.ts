@@ -31,10 +31,8 @@ export default async function getPreSignedUrlController(req: Request, res: Respo
             },
             'Pre-signed URL generated successfully',
         );
-        return;
     } catch (error) {
         console.error('Error generating pre-signed URL:', error);
         ResponseWriter.system_error(res);
-        return;
     }
 }

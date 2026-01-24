@@ -7,7 +7,7 @@ import Redis from 'ioredis';
 import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
 import Agent from '../gen/agents/Agent';
-import EmailService from './email/email.services';
+import EmailServiceQueue from './email/email.services';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -15,7 +15,7 @@ export let quizControllerInstance: QuizController;
 export let phaseQueueInstance: PhaseQueue;
 export let quizManagerInstance: QuizManager;
 export let quizSettingInstance: QuizSettings;
-export let email_service_instance: EmailService;
+export let email_service_queue_instance: EmailServiceQueue;
 export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 
@@ -25,7 +25,7 @@ export default function initServices() {
     publisherInstance = new Redis(env.SERVER_REDIS_URL);
     subscriberInstance = new Redis(env.SERVER_REDIS_URL);
     redisCacheInstance = new RedisCache();
-    email_service_instance = new EmailService('email-service-queue');
+    email_service_queue_instance = new EmailServiceQueue('email-service-queue');
     databaseQueueInstance = new DatabaseQueue();
     quizControllerInstance = new QuizController();
 
