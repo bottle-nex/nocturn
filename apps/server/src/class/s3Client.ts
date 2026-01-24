@@ -22,7 +22,7 @@ export default class S3ClientActions {
     ): Promise<{ signedUrl: string; publicUrl: string; key: string }> {
         const fileExt = this.getFileExtension(fileType);
         const fileName = `${uuid()}.${fileExt}`;
-        const key = `quiz-images/${fileName}`;
+        const key = fileType === 'application/pdf' ? 'ai-chat-pdfs' : `quiz-images/${fileName}`;
 
         const command = new PutObjectCommand({
             Bucket: env.SERVER_AWS_BUCKET_NAME,

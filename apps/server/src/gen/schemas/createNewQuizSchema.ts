@@ -22,4 +22,8 @@ export const planner_schema = z.object({
     userResponse: z.string().min(5).max(200).describe('give a user response like you are doing the job'),
     title: z.string().min(5).describe('5-6 words of title about the quiz'),
     description: z.string().min(100).describe('a detailed description about the user instruction to send to another llm to create quiz '),
+});
+
+export const difficulty_asker_schema = z.object({
+    userResponse: z.string().min(5).describe('give a good response to the user, and ask for difficulty of the quiz'),
 })

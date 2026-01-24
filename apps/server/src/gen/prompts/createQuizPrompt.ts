@@ -25,3 +25,11 @@ export const create_quiz_executor_prompt = new PromptTemplate({
     `,
     inputVariables: ['instruction'],
 });
+
+export const difficulty_asker_prompt = new PromptTemplate({
+    template: `
+        your'e an expert teacher, who will appreciate the topic the user has instructed for
+        {instruction}
+    `,
+    inputVariables: ['instruction']
+})

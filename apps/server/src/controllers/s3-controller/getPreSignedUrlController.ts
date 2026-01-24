@@ -2,15 +2,33 @@ import { Request, Response } from 'express';
 import S3ClientActions from '../../class/s3Client';
 import ResponseWriter from '../../class/response_writer';
 
+const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10MB
+
 export default async function getPreSignedUrlController(req: Request, res: Response) {
     try {
-        const { fileType } = req.body;
+        const { fileType, fileSize } = req.body;
 
         if (!fileType) {
             ResponseWriter.invalid_data(res, 'File type is required');
             return;
         }
 
+        if(!fileSize) {
+            ResponseWriter.invalid_data(res, 'file size is required');
+            return;
+        }
+
+        if(fileSize >= MAX_PDF_SIZE) {
+            ResponseWriter.error(
+                res,
+                'FILE_SIZE_EXCEEDED',
+                `File size exceeds ${MAX_PDF_SIZE / (1024 * 1024)} MB`,
+                undefined,
+                413,
+            );
+            return;
+        }
+        
         if (!fileType.includes('/')) {
             ResponseWriter.invalid_data(
                 res,

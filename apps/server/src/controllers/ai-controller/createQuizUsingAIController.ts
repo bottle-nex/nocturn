@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { createQuizUsingAISchema } from '../../schemas/createQuizUsingAISchema';
-import { agent } from '../../services/init.services';
+import { chain } from '../../services/init.services';
 
 export default async function createQuizUsingAIController(req: Request, res: Response) {
     try {
@@ -20,7 +20,7 @@ export default async function createQuizUsingAIController(req: Request, res: Res
         const { instruction } = parsed_data.data;
 
         // send the instruction to the AI
-        await agent.create_new_quiz(res, instruction, user.id.toString());
+        await chain.create_new_quiz(res, instruction, user.id.toString());
         return;
     } catch (error) {
         console.error('error in start with AI controller: ', error);
