@@ -96,6 +96,11 @@ export enum AgentStep {
 }
 
 export enum AiQuizChatRole {
+  SYSTEM = 'SYSTEM',
   AGENT = 'AGENT',
   USER = 'USER',
+}
+
+export enum AiMessageElement {
+  DIFFICULTY = 'DIFFICULTY',
 }

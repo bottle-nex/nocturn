@@ -1,11 +1,12 @@
 import { prisma } from '@nocturn/database';
 import { chain } from '../../services/init.services';
-import { QUIZ_STEP, QuizAgentState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
+import { QuizAgentStateAnnotation } from '../state/quiz-agent.state';
 import { QuestionType } from '../../schemas/createQuizSchema';
 import { StateGraph } from '@langchain/langgraph';
+import { AgentStep, AiMessageElement, AiQuizChatRole, AiQuizChatSession } from '@nocturn/types';
 
 export default class Agent {
-    static async ask_difficulty_node(state: QuizAgentState): Promise<QuizAgentState> {
+    static async ask_difficulty_node(state: AiQuizChatSession): Promise<AiQuizChatSession> {
         const { difficulty_asker } = chain.get_chain();
 
         console.log('ask difficulty node');
@@ -14,9 +15,39 @@ export default class Agent {
             instruction: state.instruction,
         });
 
+        // needed
+        // ai-chat-session-id, res
+
+        const { agent, system } = await prisma.$transaction(async (tx) => {
+            const agent = await prisma.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: '',
+                    role: AiQuizChatRole.AGENT,
+                    content: response.userResponse,
+                },
+            });
+
+            const system = await prisma.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: '',
+                    role: AiQuizChatRole.SYSTEM,
+                    content: '',
+                    element: AiMessageElement.DIFFICULTY,
+                },
+            });
+
+            return {
+                agent,
+                system,
+            };
+        });
+
+
+
+
         return {
             ...state,
-            step: QUIZ_STEP.WAIT_DIFFICULTY,
+            step: AgentStep.WAIT_DIFFICULTY,
             streamingMessage: response.userResponse,
         };
     }

@@ -1,4 +1,7 @@
 import {
+  AgentStep,
+  AiMessageElement,
+  AiQuizChatRole,
   HostScreenEnum,
   InteractionEnum,
   ParticipantScreenEnum,
@@ -206,4 +209,24 @@ export interface ReviewType {
   comment: string;
   createdAt: Date;
   updateAt: Date;
+}
+export interface AiQuizChatSession {
+  id: string;
+  userId: string;
+  user: UserType;
+  step: AgentStep;
+  instruction?: string;
+  difficulty?: string;
+  quizId?: string;
+  quiz?: QuizType;
+  revisionFeedback?: string;
+  messages: AiQuizMessage[];
+}
+export interface AiQuizMessage {
+  id: string;
+  aiQuizChatSessionId: string;
+  aiQuizChatSession: AiQuizChatSession;
+  role: AiQuizChatRole;
+  content: string;
+  element: AiMessageElement;
 }
