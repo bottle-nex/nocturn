@@ -2,8 +2,8 @@ import { PromptTemplate } from '@langchain/core/prompts';
 
 export const create_quiz_difficulty_prompt = new PromptTemplate({
     template: ``,
-    inputVariables: ['']
-})
+    inputVariables: [''],
+});
 
 export const create_quiz_planner_prompt = new PromptTemplate({
     template: `
@@ -13,7 +13,7 @@ export const create_quiz_planner_prompt = new PromptTemplate({
         {instruction}
 
     `,
-    inputVariables: ['instruction']
+    inputVariables: ['instruction'],
 });
 
 export const create_quiz_executor_prompt = new PromptTemplate({
@@ -31,7 +31,7 @@ export const difficulty_asker_prompt = new PromptTemplate({
         your'e an expert teacher, who will appreciate the topic the user has instructed for
         {instruction}
     `,
-    inputVariables: ['instruction']
+    inputVariables: ['instruction'],
 });
 
 export const reviser_prompt = new PromptTemplate({

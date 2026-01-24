@@ -136,7 +136,6 @@ export default class ResponseWriter {
 
     static stream = class Stream {
         static write<T>(res: Response, data: T) {
-
             const str = JSON.stringify({
                 data: data,
             });

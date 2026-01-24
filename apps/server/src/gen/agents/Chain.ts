@@ -1,8 +1,18 @@
 import { RunnableSequence } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Response } from 'express';
-import { create_quiz_planner_prompt, create_quiz_executor_prompt, difficulty_asker_prompt, reviser_prompt } from '../prompts/createQuizPrompt';
-import { create_new_quiz_schema, difficulty_asker_schema, planner_schema, reviser_schema } from '../schemas/createNewQuizSchema';
+import {
+    create_quiz_planner_prompt,
+    create_quiz_executor_prompt,
+    difficulty_asker_prompt,
+    reviser_prompt,
+} from '../prompts/createQuizPrompt';
+import {
+    create_new_quiz_schema,
+    difficulty_asker_schema,
+    planner_schema,
+    reviser_schema,
+} from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
 import { QuestionType } from '../../schemas/createQuizSchema';
 import { env } from '../../configs/env';
@@ -21,10 +31,9 @@ export default class Chain {
 
     public async create_new_quiz(res: Response, instruction: string, user_id: string) {
         try {
-
             // get the chains
             const chains = this.get_chain();
-            if(!chains) return;
+            if (!chains) return;
 
             const { planner, executor } = chains;
 
@@ -83,7 +92,6 @@ export default class Chain {
             });
 
             ResponseWriter.stream.write(res, quiz);
-
         } catch (error) {
             console.error('Error: ', error);
         } finally {
@@ -91,47 +99,41 @@ export default class Chain {
         }
     }
 
-    public async ask_difficulty(
-        res: Response,
-    ) {
+    public async ask_difficulty(res: Response) {
         try {
-            
-
-
         } catch (error) {
-            console.error('Error while asking difficulty: ', error); 
+            console.error('Error while asking difficulty: ', error);
             return;
         }
     }
 
     public get_chain() {
+        const difficulty_asker = RunnableSequence.from([
+            difficulty_asker_prompt,
+            this.model.withStructuredOutput(difficulty_asker_schema),
+        ]);
 
-            const difficulty_asker = RunnableSequence.from([
-                difficulty_asker_prompt,
-                this.model.withStructuredOutput(difficulty_asker_schema),
-            ]);
+        const planner = RunnableSequence.from([
+            create_quiz_executor_prompt,
+            this.model.withStructuredOutput(planner_schema),
+        ]);
 
-            const planner = RunnableSequence.from([
-                create_quiz_executor_prompt,
-                this.model.withStructuredOutput(planner_schema),
-            ])
+        const executor = RunnableSequence.from([
+            create_quiz_planner_prompt,
+            this.model.withStructuredOutput(create_new_quiz_schema),
+        ]);
 
-            const executor = RunnableSequence.from([
-                create_quiz_planner_prompt,
-                this.model.withStructuredOutput(create_new_quiz_schema),
-            ]);
+        const reviser = RunnableSequence.from([
+            reviser_prompt,
+            this.model.withStructuredOutput(reviser_schema),
+        ]);
 
-            const reviser = RunnableSequence.from([
-                reviser_prompt,
-                this.model.withStructuredOutput(reviser_schema),
-            ]);
-
-            return {
-                difficulty_asker,
-                planner,
-                executor,
-                reviser,
-            };
+        return {
+            difficulty_asker,
+            planner,
+            executor,
+            reviser,
+        };
     }
 
     public create_stream(res: Response): void {

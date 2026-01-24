@@ -1,15 +1,11 @@
-import { prisma } from "@nocturn/database";
-import { chain } from "../../services/init.services";
-import { QUIZ_STEP, QuizAgentState } from "../state/quiz-agent.state";
-import { QuestionType } from "../../schemas/createQuizSchema";
-import { TemplateEnum } from "@nocturn/types";
-
+import { prisma } from '@nocturn/database';
+import { chain } from '../../services/init.services';
+import { quiz_agent_state_for_graph, QUIZ_STEP, QuizAgentState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
+import { QuestionType } from '../../schemas/createQuizSchema';
+import { StateGraph } from '@langchain/langgraph';
 
 export default class Agent {
-
-    static async ask_difficulty_node(
-        state: QuizAgentState,
-    ): Promise<QuizAgentState> {
+    static async ask_difficulty_node(state: QuizAgentState): Promise<QuizAgentState> {
         const { difficulty_asker } = chain.get_chain();
 
         const response = await difficulty_asker.invoke({
@@ -23,12 +19,9 @@ export default class Agent {
         };
     }
 
-    static async planning_quiz_node(
-        state: QuizAgentState,
-    ): Promise<QuizAgentState> {
-
+    static async planning_quiz_node(state: QuizAgentState): Promise<QuizAgentState> {
         const { planner } = chain.get_chain();
-        
+
         const response = await planner.invoke({
             instruction: state.streamingMessage,
         });
@@ -39,7 +32,7 @@ export default class Agent {
                 hostId: state.userId,
                 title: response.title,
                 prizePool: 0,
-            }
+            },
         });
 
         // stream the response
@@ -50,21 +43,16 @@ export default class Agent {
             quizId: quiz.id,
             step: QUIZ_STEP.PLANNING,
             streamingMessage: response.description,
-        }
-
+        };
     }
 
-    static async generate_quiz_node(
-        state: QuizAgentState,
-    ): Promise<QuizAgentState> {
-
+    static async generate_quiz_node(state: QuizAgentState): Promise<QuizAgentState> {
         const { executor } = chain.get_chain();
 
         const response = await executor.invoke({
             instruction: state.streamingMessage,
         });
 
-        
         const defaults = {
             timeLimit: 30,
             readingTime: 7,
@@ -101,13 +89,9 @@ export default class Agent {
             ...state,
             quizData: quiz,
         };
-
     }
 
-    static async revise_quiz_node(
-        state: QuizAgentState,
-    ): Promise<QuizAgentState> {
-
+    static async revise_quiz_node(state: QuizAgentState): Promise<QuizAgentState> {
         const { reviser } = chain.get_chain();
 
         const quiz = await prisma.quiz.findUnique({
@@ -128,7 +112,7 @@ export default class Agent {
             },
         });
 
-        if(!quiz) {
+        if (!quiz) {
             // return an error response that can't revise a quiz which is not available
             return {
                 ...state,
@@ -164,7 +148,7 @@ export default class Agent {
 
             return update_questions;
         });
-        
+
         return {
             ...state,
             quizData: data,
@@ -172,4 +156,26 @@ export default class Agent {
         };
     }
 
+    static async create_graph() {
+        const graph = new StateGraph(QuizAgentStateAnnotation);
+
+        graph.addNode(QUIZ_STEP.ASK_DIFFICULTY, Agent.ask_difficulty_node);
+        graph.addNode(QUIZ_STEP.PLANNING, Agent.planning_quiz_node);
+        graph.addNode(QUIZ_STEP.GENERATE, Agent.generate_quiz_node);
+        graph.addNode(QUIZ_STEP.REVISE, Agent.revise_quiz_node);
+
+        graph.setEntryPoint(QUIZ_STEP.ASK_DIFFICULTY);
+
+        graph.addEdge(QUIZ_STEP.ASK_DIFFICULTY, QUIZ_STEP.PLANNING);
+        graph.addEdge(QUIZ_STEP.PLANNING, QUIZ_STEP.GENERATE);
+
+        graph.addConditionalEdges(
+            QUIZ_STEP.GENERATE,
+            (state: QuizAgentState) => state.revisionFeedback ? QUIZ_STEP.REVISE : "__end__",
+        );
+
+        graph.addEdge(QUIZ_STEP.REVISE, '__end__');
+
+        return graph.compile();
+    }
 }

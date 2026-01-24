@@ -13,12 +13,12 @@ export default async function getPreSignedUrlController(req: Request, res: Respo
             return;
         }
 
-        if(!fileSize) {
+        if (!fileSize) {
             ResponseWriter.invalid_data(res, 'file size is required');
             return;
         }
 
-        if(fileSize >= MAX_PDF_SIZE) {
+        if (fileSize >= MAX_PDF_SIZE) {
             ResponseWriter.error(
                 res,
                 'FILE_SIZE_EXCEEDED',
@@ -28,7 +28,7 @@ export default async function getPreSignedUrlController(req: Request, res: Respo
             );
             return;
         }
-        
+
         if (!fileType.includes('/')) {
             ResponseWriter.invalid_data(
                 res,
