@@ -27,7 +27,7 @@ export default function SigninModal() {
                     duration: 0.3,
                     ease: 'easeInOut',
                 }}
-                className="relative bg-white border-2 border-black w-100 max-w-[90vw] rounded-3xl overflow-hidden shadow-sm"
+                className="relative bg-white border-2 border-black w-100 max-w-[90vw] rounded-md overflow-hidden shadow-sm"
             >
                 <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
                     <div className="relative h-30 w-full bg-red-600">

@@ -148,7 +148,7 @@ export default function NavbarQuizAction() {
             )}
             {/* <AutoSaveComponent /> */}
             <ToolTipComponent content={'this will be saved every 30sec'}>
-                <div className="w-full flex justify-around items-center gap-x-2 bg-alpha/50 transition-colors rounded-full cursor-pointer px-4 py-2">
+                <div className="w-full flex justify-around items-center gap-x-2 bg-indigo-600 text-white dark:text-white transition-colors rounded-full cursor-pointer px-4 py-2">
                     <div className="rounded-l-full text-[13px] font-normal flex justify-center items-center ">
                         {isLoading ? 'Saving...' : (currentAction ?? options[1]?.name)}
                     </div>

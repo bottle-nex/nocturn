@@ -1,12 +1,10 @@
 export enum SidebarTab {
     HOME = 'HOME',
-    TEAM = 'TEAM',
-    ANALYTICS = 'ANALYTICS',
-    DOCUMENTS = 'DOCUMENTS',
-    SETTINGS = 'SETTINGS',
-}
+    SHARED_WITH_ME = 'SHARED_WITH_ME',
+    MY_PRESENTATIONS = 'MY_PRESENTATIONS',
 
-export enum SidebarTabBottom {
+    FAVORITES = 'FAVORITES',
+    SETTINGS = 'SETTINGS',
     TRASH = 'TRASH',
     CHATS = 'CHATS',
 }

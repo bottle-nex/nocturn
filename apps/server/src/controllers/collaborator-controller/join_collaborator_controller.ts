@@ -90,6 +90,7 @@ export default class Collaborator {
         inviter_id: string,
         inviter_name: string,
         collab_session: CollabSessionWithDetails,
+        note?: string,
     ) {
         try {
             interface SuccessResult {
@@ -116,6 +117,7 @@ export default class Collaborator {
                         inviter_id,
                         inviter_name,
                         collab_session,
+                        note,
                     );
                     results.success.push(result);
                 } catch (err) {
@@ -168,6 +170,7 @@ export default class Collaborator {
         inviter_id: string,
         inviter_name: string,
         collab_session: CollabSessionWithDetails,
+        note?: string,
     ) {
         const target_user = await prisma.user.findUnique({
             where: { email },
@@ -207,6 +210,7 @@ export default class Collaborator {
 
             await Collaborator.send_collaborator_invited_notification(
                 email,
+                note,
                 invitation.id,
                 inviter_name,
                 collab_session.quiz.title,
@@ -258,6 +262,7 @@ export default class Collaborator {
         await Collaborator.send_collaborator_added_notification(
             target_user.email,
             target_user.name,
+            note,
             collab_session.quiz.title,
             collab_session.quizId,
             inviter_name,
@@ -373,6 +378,7 @@ export default class Collaborator {
      */
     static async send_collaborator_invited_notification(
         email: string,
+        note: string | undefined,
         invitationId: string,
         inviterName: string,
         quizTitle: string,
@@ -380,6 +386,7 @@ export default class Collaborator {
         console.log(`Sending invitation email to ${email} for invitation ${invitationId}`);
         await email_service_instance.email_to_invite_collaborators({
             email,
+            note,
             invitationId,
             inviterName,
             quizTitle,
@@ -395,6 +402,7 @@ export default class Collaborator {
     static async send_collaborator_added_notification(
         email: string,
         name: string,
+        note: string | undefined,
         quiz_title: string,
         quizId: string,
         inviter_name: string,
@@ -402,6 +410,7 @@ export default class Collaborator {
         console.log(`Sending notification email to ${email} for quiz ${quizId}`);
         await email_service_instance.email_to_add_collaborators({
             email,
+            note,
             name,
             quizTitle: quiz_title,
             quizId,

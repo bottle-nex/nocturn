@@ -1,0 +1,46 @@
+{
+  // Use Prettier as the default formatter
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Enable format on save
+  "editor.formatOnSave": true,
+
+  // Ensure Prettier uses the .prettierrc files in each app
+  "prettier.requireConfig": true,
+
+  // Disable indent detection to enforce Prettier config
+  "editor.detectIndentation": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+
+  // Enable ESLint
+  "eslint.enable": true,
+
+  // Auto-fix ESLint issues on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Language-specific settings
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
+
+  // ESLint working directories (for monorepo)
+  "eslint.workingDirectories": [
+    "./apps/server",
+    "./apps/orchestrator"
+  ]
+}

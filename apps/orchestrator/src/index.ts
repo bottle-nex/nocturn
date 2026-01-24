@@ -1,2 +1,2 @@
-import initServices from "./services/init-services";
+import initServices from './services/init-services';
 initServices();

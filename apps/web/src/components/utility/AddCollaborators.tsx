@@ -26,9 +26,13 @@ interface AddCollaboratorsProps {
 
 interface ScreenSettings {
     setScreen: Dispatch<SetStateAction<CollaboratorScreens>>;
+    setLoading: Dispatch<SetStateAction<boolean>>;
+    loading: boolean;
 }
 
 interface AddCollaboratorsScreenProps {
+    setLoading: Dispatch<SetStateAction<boolean>>;
+    loading: boolean;
     setScreen: Dispatch<SetStateAction<CollaboratorScreens>>;
 }
 
@@ -43,8 +47,9 @@ export default function AddCollaborators({
     setOpen,
     triggerRef,
 }: AddCollaboratorsProps): JSX.Element {
-    const [screen, setScreen] = useState<CollaboratorScreens>(CollaboratorScreens.MAIN);
     const addCollaboratorsRef = useRef<HTMLDivElement>(null);
+    const [screen, setScreen] = useState<CollaboratorScreens>(CollaboratorScreens.MAIN);
+    const [loading, setLoading] = useState<boolean>(false);
     const [position, setPosition] = useState({ top: 0, left: 0 });
 
     useHandleClickOutside([addCollaboratorsRef], setOpen);
@@ -76,11 +81,29 @@ export default function AddCollaborators({
     function renderScreens(): JSX.Element {
         switch (screen) {
             case CollaboratorScreens.ADD_COLLABORATORS:
-                return <AddCollaboratorsScreen setScreen={setScreen} />;
+                return (
+                    <AddCollaboratorsScreen
+                        setLoading={setLoading}
+                        loading={loading}
+                        setScreen={setScreen}
+                    />
+                );
             case CollaboratorScreens.COLLABORATORS_SETTINGS:
-                return <CollaboratorsSettingsScreen setScreen={setScreen} />;
+                return (
+                    <CollaboratorsSettingsScreen
+                        setLoading={setLoading}
+                        loading={loading}
+                        setScreen={setScreen}
+                    />
+                );
             case CollaboratorScreens.MAIN:
-                return <MainCollaboratorsScreen setScreen={setScreen} />;
+                return (
+                    <MainCollaboratorsScreen
+                        setLoading={setLoading}
+                        loading={loading}
+                        setScreen={setScreen}
+                    />
+                );
             default:
                 return <div>Main Collaborators Screen</div>;
         }
@@ -136,8 +159,9 @@ function MainCollaboratorsScreen({ setScreen }: ScreenSettings) {
     );
 }
 
-function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
+function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollaboratorsScreenProps) {
     const [email, setEmail] = useState<string>('');
+    const [note, setNote] = useState<string>('');
     const [emails, setEmails] = useState<{ email: string; valid: boolean }[]>([]);
     const [permission, setPermission] = useState<string>('edit');
     const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -160,11 +184,14 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
 
     async function addCollaborators() {
         if (!quiz.id || !session?.user.token || emails.length === 0) return;
+        setLoading(true);
         await EmailAction.add_collaborator(
             session?.user.token,
             emails.map((e) => e.email),
             quiz?.id,
+            note,
         );
+        setLoading(false);
     }
 
     return (
@@ -212,6 +239,7 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                     <PiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-white size-6" />
                     <Input
                         value={email}
+                        disabled={loading}
                         onChange={(e) => setEmail(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -238,6 +266,7 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                                 <button
                                     type="button"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    disabled={loading}
                                     className="flex items-center gap-x-2 px-3 py-2 text-sm capitalize text-white"
                                 >
                                     {permission}
@@ -247,6 +276,7 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                                     <div className="absolute top-full right-0 mt-1 dark:bg-dark-base bg-white rounded-sm border dark:border-neutral-700 border-neutral-300 shadow-xl z-101 min-w-30 overflow-hidden">
                                         <button
                                             type="button"
+                                            disabled={loading}
                                             onClick={() => {
                                                 setPermission('view');
                                                 setDropdownOpen(false);
@@ -258,6 +288,7 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                                         </button>
                                         <button
                                             type="button"
+                                            disabled={loading}
                                             onClick={() => {
                                                 setPermission('edit');
                                                 setDropdownOpen(false);
@@ -275,6 +306,9 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                 </section>
                 <section className="mt-2">
                     <Textarea
+                        disabled={loading}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
                         placeholder="Add a note (optional)"
                         className="rounded-lg dark:bg-black/20! bg-white/80 border border-neutral-800 focus-visible:ring-0 focus-visible:border-indigo-600 placeholder:tracking-wider transition-colors"
                     />
@@ -283,10 +317,10 @@ function AddCollaboratorsScreen({ setScreen }: AddCollaboratorsScreenProps) {
                 <section className="w-full">
                     <Button
                         onClick={addCollaborators}
-                        disabled={!emails.some((email) => email.valid === true)}
+                        disabled={!emails.some((email) => email.valid === true) || loading}
                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white tracking-wide text-base"
                     >
-                        Invite People
+                        {loading ? 'Adding...' : 'Add Collaborators'}
                     </Button>
                 </section>
             </div>

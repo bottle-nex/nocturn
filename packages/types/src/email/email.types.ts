@@ -5,6 +5,7 @@ export enum EmailJobType {
 
 export interface CollaboratorInviteEmailData {
   email: string;
+  note?: string;
   invitationId: string;
   inviterName: string;
   quizTitle: string;
@@ -12,6 +13,7 @@ export interface CollaboratorInviteEmailData {
 
 export interface CollaboratorAddedEmailData {
   email: string;
+  note?: string;
   name: string;
   quizTitle: string;
   quizId: string;

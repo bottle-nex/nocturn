@@ -22,7 +22,7 @@ export default function HomeTrashPanel() {
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
         useAllTrashedQuizzesStore();
     const { addQuiz } = useAllQuizsStore();
-    const { setBottomActiveTab } = useHomeSidebarStore();
+    const { setActiveTab } = useHomeSidebarStore();
     const { session } = useUserSessionStore();
 
     async function handleDeleteAllTrashedQuizzes() {
@@ -93,7 +93,7 @@ export default function HomeTrashPanel() {
         <AnimatePresence>
             <OpacityBackground
                 className="bg-black/10 dark:bg-white/10"
-                onBackgroundClick={() => setBottomActiveTab(null)}
+                onBackgroundClick={() => setActiveTab(null)}
             >
                 <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-base border-none p-6 overflow-hidden">
                     <div className="flex flex-col w-full h-full gap-y-5 relative">

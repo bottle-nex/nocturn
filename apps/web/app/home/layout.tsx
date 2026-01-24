@@ -10,7 +10,7 @@ interface LayoutProps {
 export default async function Layout({ children }: LayoutProps) {
     const session = await getServerSession(authOption);
     return (
-        <div className="tracking-wider bg-delta h-screen w-screen overflow-hidden">
+        <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden">
             <main className="flex-1 h-full overflow-hidden">{children}</main>
             <SessionSetter session={session} />
         </div>
