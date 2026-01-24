@@ -1,25 +1,26 @@
-
-// export const QUIZ_STEP = {
-//     START : 'START',
-//     ASK_DIFFICULTY : 'ASK_DIFFICULTY',
-//     WAIT_DIFFICULTY : 'WAIT_DIFFICULTY',
-//     PLANNING : 'PLANNING',
-//     GENERATE : 'GENERATE',
-//     REVISE : 'REVISE',
-//     DONE : 'DONE',
-// } as const;
-
 import { Annotation } from "@langchain/langgraph";
 
-export enum QUIZ_STEP {
-    START = 'START',
-    ASK_DIFFICULTY = 'ASK_DIFFICULTY',
-    WAIT_DIFFICULTY = 'WAIT_DIFFICULTY',
-    PLANNING = 'PLANNING',
-    GENERATE = 'GENERATE',
-    REVISE = 'REVISE',
-    DONE = 'DONE',
-} 
+export const QUIZ_STEP = {
+    START : 'START',
+    ASK_DIFFICULTY : 'ASK_DIFFICULTY',
+    WAIT_DIFFICULTY : 'WAIT_DIFFICULTY',
+    PLANNING : 'PLANNING',
+    GENERATE : 'GENERATE',
+    REVISE : 'REVISE',
+    DONE : 'DONE',
+} as const;
+
+export type QUIZ_STEP = typeof QUIZ_STEP[keyof typeof QUIZ_STEP];
+
+// export enum QUIZ_STEP {
+//     START = 'START',
+//     ASK_DIFFICULTY = 'ASK_DIFFICULTY',
+//     WAIT_DIFFICULTY = 'WAIT_DIFFICULTY',
+//     PLANNING = 'PLANNING',
+//     GENERATE = 'GENERATE',
+//     REVISE = 'REVISE',
+//     DONE = 'DONE',
+// } 
 
 // export interface QuizAgentState {
 //     step: QUIZ_STEP;
