@@ -108,30 +108,18 @@ export default function HomeTrashPanel() {
                                     Items in trash are permanently deleted after 30 days
                                 </div>
                             </div>
-                            <div className="flex gap-x-2">
-                                {/* <Button
-                                    onClick={handleDeleteAllTrashedQuizzes}
-                                    className={cn(
-                                        "rounded-[4px] h-9 tracking-wide text-dark-base flex items-center text-[13px] dark:bg-light-base dark:hover:bg-light-base/90 exec-button-dark dark:exec-button-light",
-                                    )}
-                                >
-                                    <GoArrowSwitch className="size-4" />
-                                    Newest First
-                                </Button> */}
-
-                                <Button
-                                    onClick={handleDeleteAllTrashedQuizzes}
-                                    className={cn(
-                                        'rounded-[4px] h-9 exec-button-dark tracking-wide text-light-base flex items-center text-[13px]',
-                                    )}
-                                >
-                                    <IoTrashBinOutline className="mb-px size-4" />
-                                    Empty Trash
-                                </Button>
-                            </div>
+                            <Button
+                                onClick={handleDeleteAllTrashedQuizzes}
+                                className={cn(
+                                    'rounded-[4px] h-9 exec-button-dark tracking-wide text-light-base flex items-center text-[13px]',
+                                )}
+                            >
+                                <IoTrashBinOutline className="mb-px size-4" />
+                                Empty Trash
+                            </Button>
                         </div>
 
-                        <div className="flex flex-col w-full gap-y-2.5">
+                        <div className="flex flex-col w-full gap-y-2.5 overflow-y-auto">
                             {trashedQuizzes.map((quiz) => {
                                 const template = templates.find((t) => t.id === quiz?.theme);
                                 const formattedTime = quiz.deletedAt
