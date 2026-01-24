@@ -1,4 +1,5 @@
-export * from "./prisma/prisma-types";
+export * from "./prisma/schemas.prisma";
+export * from "./prisma/enums.prisma";
 
 export * from "./socket/socket.codes";
 export * from "./socket/socket.types";

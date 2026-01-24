@@ -15,7 +15,7 @@ const question_schema = z.object({
 
 export const create_new_quiz_schema = z.object({
     description: z.string().min(10).max(200).describe('description what this quiz is about'),
-    questions: z.array(question_schema).min(8).max(15),
+    questions: z.array(question_schema).min(8).max(25),
 });
 
 export const planner_schema = z.object({
@@ -26,4 +26,9 @@ export const planner_schema = z.object({
 
 export const difficulty_asker_schema = z.object({
     userResponse: z.string().min(5).describe('give a good response to the user, and ask for difficulty of the quiz'),
-})
+});
+
+export const reviser_schema = z.object({
+    userResponse: z.string().min(5).max(200).describe('give a user response like you are doing the job'),
+    questions: z.array(question_schema).min(8).max(25),
+});

@@ -6,7 +6,7 @@ import {
   SpectatorType,
   USER_TYPE,
   UserType,
-} from "../../prisma/prisma-types";
+} from "../../prisma/schemas.prisma";
 
 import { ChatMessageType } from "../../socket/socket.types";
 

@@ -1,8 +1,8 @@
 import { RunnableSequence } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Response } from 'express';
-import { create_quiz_planner_prompt, create_quiz_executor_prompt, difficulty_asker_prompt } from '../prompts/createQuizPrompt';
-import { create_new_quiz_schema, difficulty_asker_schema, planner_schema } from '../schemas/createNewQuizSchema';
+import { create_quiz_planner_prompt, create_quiz_executor_prompt, difficulty_asker_prompt, reviser_prompt } from '../prompts/createQuizPrompt';
+import { create_new_quiz_schema, difficulty_asker_schema, planner_schema, reviser_schema } from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
 import { QuestionType } from '../../schemas/createQuizSchema';
 import { env } from '../../configs/env';
@@ -38,7 +38,7 @@ export default class Chain {
                     hostId: user_id,
                     title: plan.title,
                     prizePool: 0,
-                }
+                },
             });
 
             ResponseWriter.stream.write(res, quiz);
@@ -121,10 +121,16 @@ export default class Chain {
                 this.model.withStructuredOutput(create_new_quiz_schema),
             ]);
 
+            const reviser = RunnableSequence.from([
+                reviser_prompt,
+                this.model.withStructuredOutput(reviser_schema),
+            ]);
+
             return {
                 difficulty_asker,
                 planner,
                 executor,
+                reviser,
             };
     }
 

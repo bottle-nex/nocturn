@@ -32,4 +32,14 @@ export const difficulty_asker_prompt = new PromptTemplate({
         {instruction}
     `,
     inputVariables: ['instruction']
-})
+});
+
+export const reviser_prompt = new PromptTemplate({
+    template: `
+        You're an expert teacher, who will revamp the questions provided below
+        {questions}
+        based on user's instruction
+        {instruction}
+    `,
+    inputVariables: ['questions', 'instruction'],
+});
