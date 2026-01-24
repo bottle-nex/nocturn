@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import ResponseWriter from '../../class/response_writer';
 import { CollabRole, prisma } from '@nocturn/database';
-import { email_service_instance } from '../../services/init.services';
+import { email_service_queue_instance } from '../../services/init.services';
 
 interface QuizWithCollabSession {
     id: string;
@@ -180,6 +180,7 @@ export default class Collaborator {
                 email: true,
             },
         });
+        console.log('target user found is : ', target_user);
 
         if (!target_user) {
             const existing_invitation = await prisma.collaboratorInvitation.findUnique({
@@ -384,7 +385,7 @@ export default class Collaborator {
         quizTitle: string,
     ) {
         console.log(`Sending invitation email to ${email} for invitation ${invitationId}`);
-        await email_service_instance.email_to_invite_collaborators({
+        await email_service_queue_instance.email_to_invite_collaborators({
             email,
             note,
             invitationId,
@@ -408,7 +409,7 @@ export default class Collaborator {
         inviter_name: string,
     ) {
         console.log(`Sending notification email to ${email} for quiz ${quizId}`);
-        await email_service_instance.email_to_add_collaborators({
+        await email_service_queue_instance.email_to_add_collaborators({
             email,
             note,
             name,

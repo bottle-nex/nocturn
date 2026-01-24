@@ -1,3 +1,4 @@
+import { Env } from '../configs/env';
 import Bull, { Job } from 'bull';
 import {
     CollaboratorAddedEmailData,
@@ -5,7 +6,7 @@ import {
     EmailJob,
     EmailJobType,
 } from '@nocturn/types';
-import { Env } from '../configs/env';
+import ResendService from '../services/email/resend.services';
 export default class EmailServiceProcessor {
     private email_queue: Bull.Queue;
 
@@ -31,10 +32,10 @@ export default class EmailServiceProcessor {
     }
 
     private async handle_collaborator_added_email(data: CollaboratorAddedEmailData) {
-        console.log('Handling collaborator added email', data);
+        await ResendService.send_collaborator_added_email(data);
     }
 
     private async handle_collaborator_invite_email(data: CollaboratorInviteEmailData) {
-        console.log('Handling collaborator invite email', data);
+        await ResendService.send_collaborator_invited_email(data);
     }
 }
