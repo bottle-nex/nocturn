@@ -54,10 +54,10 @@ export default function LandingHeroSection() {
                 </div>
 
                 <div className="text-[#1b1b1b]/95 text-[22px] max-w-180 tracking-wide leading-7">
-                    A Solana-powered live quiz arena where you battle players in real time, use lifelines to stay ahead, and earn instant crypto payouts.
+                    A Solana-powered live quiz arena where you battle players in real time, use
+                    lifelines to stay ahead, and earn instant crypto payouts.
                 </div>
             </div>
-
 
             {/* grid */}
             <div
@@ -67,8 +67,8 @@ export default function LandingHeroSection() {
         linear-gradient(to right, #e7e5e4 1px, transparent 1px),
         linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
       `,
-                    backgroundSize: "20px 20px",
-                    backgroundPosition: "0 0, 0 0",
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0, 0 0',
                     maskImage: `
          repeating-linear-gradient(
               to right,
@@ -103,8 +103,8 @@ export default function LandingHeroSection() {
             ),
             radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)
       `,
-                    maskComposite: "intersect",
-                    WebkitMaskComposite: "source-in",
+                    maskComposite: 'intersect',
+                    WebkitMaskComposite: 'source-in',
                 }}
             />
 

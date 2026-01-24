@@ -13,6 +13,7 @@ interface RecentlyViewedCardProps {
 export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): JSX.Element {
     const template = templates.find((t) => t.id === quiz.quiz?.theme);
     const formattedTime = moment(quiz.viewedAt).format('MMM D, YYYY');
+
     const router = useRouter();
 
     function handleCardClick() {

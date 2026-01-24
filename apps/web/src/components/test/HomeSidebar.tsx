@@ -150,7 +150,7 @@ export default function HomeSidebar() {
                     ))}
                 </section>
                 {session?.user.email && (
-                    <div className="border-t border-black/10 dark:border-white/10 mt-6 flex justify-between items-center">
+                    <div className="border-t border-black/10 dark:border-white/10 mt-6 flex justify-between items-center pr-2">
                         <section className="flex items-center justify-start gap-x-2 text-black dark:text-white px-4 py-2">
                             <Image
                                 src={session?.user.image}

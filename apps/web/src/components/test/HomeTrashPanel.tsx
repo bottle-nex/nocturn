@@ -3,20 +3,22 @@ import { AnimatePresence } from 'framer-motion';
 import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
 import { Button } from '../ui/button';
-import { MdDelete, MdOutlineRestore } from 'react-icons/md';
-import Image from 'next/image';
+import Lottie from 'lottie-react';
+import { MdDelete } from 'react-icons/md';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import moment from 'moment';
 import { templates } from '@/lib/templates';
+import emptyTrashAnimation from '../../assets/lottie/empty-trash.json';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from 'sonner';
 import { useAllTrashedQuizzesStore } from '@/store/user/useAllTrashedQuizzesStore';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { useEffect } from 'react';
-import { TbInfoTriangleFilled } from 'react-icons/tb';
 import { cn } from '@/lib/utils';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { IoMdRefresh } from 'react-icons/io';
 
 export default function HomeTrashPanel() {
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
@@ -95,28 +97,41 @@ export default function HomeTrashPanel() {
                 className="bg-black/10 dark:bg-white/10"
                 onBackgroundClick={() => setActiveTab(null)}
             >
-                <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-base border-none p-6 overflow-hidden">
-                    <div className="flex flex-col w-full h-full gap-y-5 relative">
+                <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-alpha/70 border-none p-7 overflow-hidden">
+                    <div className="flex flex-col w-full h-full gap-y-8 relative px-2">
                         <div className="flex w-full justify-between items-center">
-                            <div className="text-xl dark:text-nlighter text-ndarkest tracking-wide">
-                                Trashed Quizzes
-                            </div>
-                            <div className="flex gap-x-3">
-                                <div className="flex items-center gap-x-2 text-[13px] border border-neutral-400 bg-neutral-800/40 text-neutral-300 tracking-wider px-3 py-1 rounded-[4px]">
-                                    <TbInfoTriangleFilled />
-                                    Trashed quizzes are cleared up every 30 days.
+                            <div className="flex flex-col justify-center -space-y-0.5">
+                                <div className="text-xl dark:text-nlighter text-ndarkest tracking-wide">
+                                    Trashed Quizzes
                                 </div>
+                                <div className="text-sm text-light-base/50 tracking-wide">
+                                    Items in trash are permanently deleted after 30 days
+                                </div>
+                            </div>
+                            <div className="flex gap-x-2">
+                                {/* <Button
+                                    onClick={handleDeleteAllTrashedQuizzes}
+                                    className={cn(
+                                        "rounded-[4px] h-9 tracking-wide text-dark-base flex items-center text-[13px] dark:bg-light-base dark:hover:bg-light-base/90 exec-button-dark dark:exec-button-light",
+                                    )}
+                                >
+                                    <GoArrowSwitch className="size-4" />
+                                    Newest First
+                                </Button> */}
+
                                 <Button
                                     onClick={handleDeleteAllTrashedQuizzes}
-                                    className="rounded-[6px] h-9 border border-[#CD0E0F80] bg-[#CD0E0F40] hover:bg-[#cd0e0f90] tracking-wide text-nlighter flex items-center text-[13px]"
+                                    className={cn(
+                                        'rounded-[4px] h-9 exec-button-dark tracking-wide text-light-base flex items-center text-[13px]',
+                                    )}
                                 >
-                                    <MdDelete className="mb-px size-4" />
-                                    Clean up
+                                    <IoTrashBinOutline className="mb-px size-4" />
+                                    Empty Trash
                                 </Button>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto pr-2">
+                        <div className="flex flex-col w-full gap-y-2.5">
                             {trashedQuizzes.map((quiz) => {
                                 const template = templates.find((t) => t.id === quiz?.theme);
                                 const formattedTime = quiz.deletedAt
@@ -126,71 +141,91 @@ export default function HomeTrashPanel() {
                                 return (
                                     <div
                                         key={quiz.id}
-                                        className="w-full rounded-sm p-3 hover:shadow-md transition-shadow relative"
+                                        className="dark:bg-neutral-800/40 bg-light-base rounded-[8px] relative flex items-center gap-x-3 p-2 border dark:border-neutral-800/40 border-neutral-300 group"
                                     >
-                                        {template && (
-                                            <div className="relative group">
-                                                <EmptyCanvas
-                                                    className="w-full aspect-video outline-2 outline-black/40 dark:outline-white/40"
-                                                    template={template}
-                                                />
-
-                                                <div
-                                                    className={cn(
-                                                        'absolute inset-0',
-                                                        'bg-black/40 dark:bg-black/20',
-                                                        'opacity-0 group-hover:opacity-100',
-                                                        'transition-opacity duration-200',
-                                                        'flex items-center justify-center',
-                                                        'rounded-sm',
-                                                        'z-20',
-                                                    )}
-                                                >
-                                                    <div className="flex gap-x-2">
-                                                        <Button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleRestoreQuiz(quiz.id);
-                                                            }}
-                                                            className="h-8 text-xs bg-white text-ndarkest hover:bg-neutral-100 rounded-[4px]"
-                                                        >
-                                                            <MdOutlineRestore className="mb-px size-4" />
-                                                        </Button>
-
-                                                        <Button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handlePermanentlyDeleteQuiz(
-                                                                    quiz.id,
-                                                                );
-                                                            }}
-                                                            className="h-8 text-xs bg-[#CD0E0F] text-white hover:bg-[#b30c0c] rounded-[4px]"
-                                                        >
-                                                            <MdDelete className="mb-px size-4" />
-                                                        </Button>
-                                                    </div>
+                                        <div className="flex items-center gap-x-3 w-[75%] h-full">
+                                            {/* theme */}
+                                            {template && (
+                                                <div className="relative group flex items-center gap-x-2">
+                                                    <EmptyCanvas
+                                                        className="w-20 h-14 !rounded-[11px] border border-neutral-400/50 dark:border-none cursor-auto"
+                                                        template={template}
+                                                    />
                                                 </div>
-                                            </div>
-                                        )}
-
-                                        <div className="flex items-center justify-start gap-x-2.5 px-1 mt-2">
-                                            {quiz.host?.image && (
-                                                <Image
-                                                    src={quiz.host.image}
-                                                    width={32}
-                                                    height={32}
-                                                    alt="user-logo"
-                                                    className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
-                                                />
                                             )}
 
-                                            <div className="min-w-0">
-                                                <span className="block text-normal mt-1 truncate">
-                                                    {quiz.title}
-                                                </span>
-                                                <span className="block dark:text-white/60 text-black/60 text-[13px]">
-                                                    deleted at {formattedTime}
-                                                </span>
+                                            {/* quiz title and dates */}
+                                            <div className="flex items-between justify-start gap-x-2.5 px-1 h-full">
+                                                <div className="min-w-0 flex flex-col items-around justify-between h-full py-1">
+                                                    <span className="block text-normal truncate">
+                                                        {quiz.title}
+                                                    </span>
+
+                                                    <span className="block dark:text-light-base/60 text-black/60 text-[13px] flex items-center gap-x-3 tracking-wide">
+                                                        <span>Deleted at {formattedTime}</span>
+                                                        {quiz.daysLeftUntilPermanentDeletion !=
+                                                            null && (
+                                                            <>
+                                                                <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
+                                                                <span
+                                                                    className={cn(
+                                                                        'text-[13px]',
+                                                                        quiz.daysLeftUntilPermanentDeletion <=
+                                                                            3
+                                                                            ? 'text-red-500 dark:text-red-400'
+                                                                            : 'dark:text-light-base/60 text-dark-base/80',
+                                                                    )}
+                                                                >
+                                                                    {
+                                                                        quiz.daysLeftUntilPermanentDeletion
+                                                                    }{' '}
+                                                                    day
+                                                                    {quiz.daysLeftUntilPermanentDeletion !==
+                                                                    1
+                                                                        ? 's'
+                                                                        : ''}{' '}
+                                                                    left
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* delete and restore buttons */}
+                                        <div className="flex-1 h-full flex items-center justify-end gap-x-5 pr-5">
+                                            <div
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleRestoreQuiz(quiz.id);
+                                                }}
+                                                className="flex items-center gap-x-0.5 dark:hover:bg-dark-alpha/70 hover:bg-neutral-300 px-1 pr-2.5 py-1 rounded-[4px] cursor-pointer text-light-base/80 opacity-0 group-hover:opacity-100 transition-all transform duration-200"
+                                            >
+                                                <Button className="h-7 w-7 text-xs bg-transparent dark:text-light-base/80 text-dark-base/80 hover:bg-transparent rounded-[4px] flex items-center shadow-none">
+                                                    <IoMdRefresh
+                                                        style={{ transform: 'scaleX(-1)' }}
+                                                        className="mb-px size-5"
+                                                    />
+                                                </Button>
+                                                <div className="text-[14px] tracking-wide dark:text-light-base/80 text-dark-base/80">
+                                                    Restore
+                                                </div>
+                                            </div>
+
+                                            <div
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePermanentlyDeleteQuiz(quiz.id);
+                                                }}
+                                                className="flex items-center gap-x-0.5 dark:hover:bg-dark-alpha/70 hover:bg-neutral-300 px-1 pr-2.5 py-1 rounded-[4px] cursor-pointer text-light-base/80 opacity-0 group-hover:opacity-100 transition-all transform duration-200"
+                                            >
+                                                <Button className="h-7 w-7 text-xs bg-transparent dark:text-light-base/80 text-dark-base/80 hover:bg-transparent rounded-[4px] flex items-center shadow-none">
+                                                    <MdDelete className="mb-0.5 size-4.5 stroke-1.2" />
+                                                </Button>
+                                                <div className="text-[14px] tracking-wide dark:text-light-base/80 text-dark-base/80">
+                                                    Delete
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -198,8 +233,16 @@ export default function HomeTrashPanel() {
                             })}
 
                             {trashedQuizzes.length === 0 && (
-                                <div className="col-span-full w-full h-full min-h-[60vh] flex items-center justify-center text-black/60 dark:text-nlighter/70 text-xl">
-                                    No trashed quizzes
+                                <div className="col-span-full w-full h-full min-h-[50vh] flex flex-col items-center justify-center">
+                                    <Lottie
+                                        animationData={emptyTrashAnimation}
+                                        loop
+                                        className="w-50 h-50"
+                                    />
+
+                                    <div className="text-black/60 dark:text-light-base/60 text-lg tracking-wide">
+                                        Trash is empty
+                                    </div>
                                 </div>
                             )}
                         </div>
