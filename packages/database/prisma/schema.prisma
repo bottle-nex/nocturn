@@ -371,7 +371,7 @@ model CDOBets {
 model AiQuizChatSession {
   id               String          @id @default(cuid())
   userId           String
-  user             User            @relation(references: [id], fields: [userId])
+  user             User            @relation(references: [id], fields: [userId], onDelete: Cascade)
   instruction      String?
   difficulty       Int?
   quizId           String          @unique
@@ -383,9 +383,10 @@ model AiQuizChatSession {
 model AiQuizMessage {
   id                  String            @id @default(cuid())
   aiQuizChatSessionId String
-  aiQuizChatSession   AiQuizChatSession @relation(references: [id], fields: [aiQuizChatSessionId])
-  role  AiQuizChatRole
-  content String
+  aiQuizChatSession   AiQuizChatSession @relation(references: [id], fields: [aiQuizChatSessionId], onDelete: Cascade)
+  role                AiQuizChatRole
+  content             String
+  element             AiMessageElement
 }
 
 enum QuizStatus {
@@ -501,6 +502,11 @@ enum AgentStep {
 }
 
 enum AiQuizChatRole {
+  SYSTEM
   AGENT
   USER
+}
+
+enum AiMessageElement {
+  DIFFICULTY
 }

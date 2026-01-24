@@ -14,8 +14,6 @@ export default class Agent {
             instruction: state.instruction,
         });
 
-        console.log('difficulty response: ', response);
-
         return {
             ...state,
             step: QUIZ_STEP.WAIT_DIFFICULTY,
@@ -31,8 +29,6 @@ export default class Agent {
         const response = await planner.invoke({
             instruction: state.streamingMessage,
         });
-
-        console.log('planning response: ', response);
 
         // create the quiz
         const quiz = await prisma.quiz.create({
@@ -62,8 +58,6 @@ export default class Agent {
         const response = await executor.invoke({
             instruction: state.streamingMessage,
         });
-
-        console.log('executor response: ', response);
 
         const defaults = {
             timeLimit: 30,
@@ -179,7 +173,23 @@ export default class Agent {
         graph.addNode(QUIZ_STEP.REVISE, Agent.revise_quiz_node);
 
         // ask user for the difficulty and wait until user responds
-        graph.addEdge("__start__", QUIZ_STEP.ASK_DIFFICULTY);
+
+        graph.addConditionalEdges(
+            "__start__",
+            (state: QuizAgentState) => {
+                switch (state.step) {
+                    case QUIZ_STEP.PLANNING:
+                        return QUIZ_STEP.PLANNING;
+                    case QUIZ_STEP.GENERATE:
+                        return QUIZ_STEP.GENERATE;
+                    case QUIZ_STEP.REVISE:
+                        return QUIZ_STEP.REVISE;
+                    default:
+                        return QUIZ_STEP.ASK_DIFFICULTY;
+                }
+            }
+        );
+
         graph.addEdge(QUIZ_STEP.ASK_DIFFICULTY, "__end__");
 
         graph.addEdge(QUIZ_STEP.PLANNING, QUIZ_STEP.GENERATE);
