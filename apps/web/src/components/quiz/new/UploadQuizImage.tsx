@@ -7,8 +7,8 @@ import { FaMountainSun, FaSquare } from 'react-icons/fa6';
 import { TfiLayoutListPost } from 'react-icons/tfi';
 import DragImageBackground from '@/components/utility/DragImageBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { handleUpload } from '@/lib/s3-uploads';
 import { Loader } from 'lucide-react';
+import S3 from '@/lib/s3-uploads';
 
 export default function UploadQuizImage() {
     const [enableLeftView, setEnableLeftView] = useState(false);
@@ -18,7 +18,7 @@ export default function UploadQuizImage() {
     const handleImageSelect = async (file: File) => {
         setLoading(true);
         try {
-            const imageUrl = await handleUpload(file);
+            const imageUrl = await S3.handleUploadImage(file);
             editQuestion(currentQuestionIndex, { imageUrl: imageUrl });
         } catch (err) {
             console.error('Error in uploading image', err);

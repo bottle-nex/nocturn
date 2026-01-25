@@ -6,8 +6,8 @@ import QuizManager from '../sockets/QuizManager';
 import Redis from 'ioredis';
 import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
-import Agent from '../gen/agents/Agent';
 import EmailServiceQueue from './email/email.services';
+import Chain from '../gen/agents/Chain';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -19,7 +19,7 @@ export let email_service_queue_instance: EmailServiceQueue;
 export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 
-export let agent: Agent;
+export let chain: Chain;
 
 export default function initServices() {
     publisherInstance = new Redis(env.SERVER_REDIS_URL);
@@ -42,5 +42,5 @@ export default function initServices() {
     phaseQueueInstance.set_quiz_manager(quizManagerInstance);
     quizManagerInstance.set_phase_queue(phaseQueueInstance);
 
-    agent = new Agent();
+    chain = new Chain();
 }

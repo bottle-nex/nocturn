@@ -25,12 +25,12 @@ import deleteQuizController from '../controllers/quiz-controller/deleteQuizContr
 import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_trashed_quizzes_controller';
 import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
 import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
-import createQuizUsingAIController from '../controllers/ai-controller/createQuizUsingAIController';
 
 // <---------------------- middlewares ----------------------> //
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
+import chatWithAiController from '../controllers/ai-controller/chatWithAiController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -83,6 +83,6 @@ router.get('/quiz/get-question-results', getQuestionResults);
 router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.process);
 
 // ai routes
-router.post('/ai/create-new-quiz', authMiddleware, createQuizUsingAIController);
+router.post('/ai/create-new-quiz', authMiddleware, chatWithAiController);
 
 export default router;

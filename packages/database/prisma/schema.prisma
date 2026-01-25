@@ -28,6 +28,7 @@ model User {
   hostedSessions          CollabSession[]          @relation("HostSessions")
   collaborators           Collaborator[]
   collaboratorInvitations CollaboratorInvitation[]
+  aiChats                 AiQuizChatSession[]
 
   @@map("hosts")
 }
@@ -95,6 +96,7 @@ model Quiz {
   quizViews               QuizViews[]
   CollabSession           CollabSession?
   collaboratorInvitations CollaboratorInvitation[]
+  aiChat                  AiQuizChatSession?
 
   @@map("quizzes")
 }
@@ -366,6 +368,32 @@ model CDOBets {
   @@map("cdo_bets")
 }
 
+model AiQuizChatSession {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(references: [id], fields: [userId], onDelete: Cascade)
+  step             AgentStep
+  instruction      String?
+  difficulty       Int?
+  quizId           String?         @unique
+  quiz             Quiz?           @relation(references: [id], fields: [quizId], onDelete: Cascade)
+  revisionFeedback String?
+  messages         AiQuizMessage[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model AiQuizMessage {
+  id                  String            @id @default(cuid())
+  aiQuizChatSessionId String
+  aiQuizChatSession   AiQuizChatSession @relation(references: [id], fields: [aiQuizChatSessionId], onDelete: Cascade)
+  role                AiQuizChatRole
+  content             String
+  element             AiMessageElement?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+}
+
 enum QuizStatus {
   CREATED
   SCHEDULED
@@ -467,4 +495,25 @@ enum CollaborationInvitationStatus {
   ACCEPTED
   DECLINED
   EXPIRED
+}
+
+enum AgentStep {
+  START
+  ASK_DIFFICULTY
+  WAIT_DIFFICULTY
+  PLANNING
+  GENERATE
+  REVISE
+  DONE
+}
+
+enum AiQuizChatRole {
+  SYSTEM
+  AGENT
+  USER
+}
+
+enum AiMessageElement {
+  DIFFICULTY
+  TITLE
 }

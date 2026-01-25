@@ -4,10 +4,9 @@ import {
   QuestionType,
   QuizType,
   SpectatorType,
-  USER_TYPE,
   UserType,
-} from "../../prisma/prisma-types";
-
+} from "../../prisma/schemas.prisma";
+import { USER_TYPE } from "../../prisma/enums.prisma";
 import { ChatMessageType } from "../../socket/socket.types";
 
 export interface LiveQuizDataResponse {

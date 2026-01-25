@@ -1,96 +1,250 @@
-import { RunnableSequence } from '@langchain/core/runnables';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { Response } from 'express';
-import { create_quiz_prompt } from '../prompts/createQuizPrompt';
-import { create_new_quiz_schema } from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
-import { QuestionType } from '../../schemas/createQuizSchema';
-import { env } from '../../configs/env';
+import { chain } from '../../services/init.services';
+import { QuizAgentGraphState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
+import { StateGraph } from '@langchain/langgraph';
+import { AgentStep, AiMessageElement, AiQuizChatRole } from '@nocturn/types';
 import ResponseWriter from '../../class/response_writer';
 
 export default class Agent {
-    private model: ChatGoogleGenerativeAI;
+    static async ask_difficulty_node(state: QuizAgentGraphState): Promise<QuizAgentGraphState> {
+        const { difficulty_asker } = chain.get_chain();
 
-    constructor() {
-        this.model = new ChatGoogleGenerativeAI({
-            model: 'gemini-2.5-flash',
-            temperature: 0.2,
-            apiKey: env.SERVER_GEMINI_API_KEY,
+        console.log('ask difficulty node');
+
+        const response = await difficulty_asker.invoke({
+            instruction: state.instruction,
         });
+
+        // update the session step and add agent and system message
+        const data = await prisma.$transaction(async (tx) => {
+            await tx.aiQuizChatSession.update({
+                where: {
+                    id: state.sessionId,
+                },
+                data: {
+                    step: AgentStep.WAIT_DIFFICULTY,
+                },
+            });
+
+            const agentic_message = await tx.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: state.sessionId,
+                    role: AiQuizChatRole.AGENT,
+                    content: response.userResponse,
+                },
+            });
+
+            const system_message = await tx.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: state.sessionId,
+                    role: AiQuizChatRole.SYSTEM,
+                    content: '',
+                    element: AiMessageElement.DIFFICULTY,
+                },
+            });
+
+            return {
+                agentic_message,
+                system_message,
+            };
+        });
+
+        ResponseWriter.success(
+            state.res,
+            {
+                agenticMessage: data.agentic_message,
+                systemMessage: data.system_message,
+            },
+            'asking for difficulty',
+        );
+
+        return {
+            ...state,
+            step: AgentStep.WAIT_DIFFICULTY,
+        };
     }
 
-    public async create_new_quiz(res: Response, instruction: string, user_id: string) {
-        try {
-            // get the chain
-            const chain = this.get_chain();
-            if (!chain) return;
+    static async generate_quiz_node(state: QuizAgentGraphState): Promise<QuizAgentGraphState> {
+        const { text_to_number_difficulty, planner, executor } = chain.get_chain();
 
-            console.log('got the chain');
+        // for the time being the instruction is current one sent from the user as "make it very difficult"
+        const conversion = await text_to_number_difficulty.invoke({
+            instruction: state.instruction,
+        });
 
-            const data = await chain.invoke({
-                instruction,
-            });
+        // update the session
+        await prisma.aiQuizChatSession.update({
+            where: {
+                id: state.sessionId,
+            },
+            data: {
+                difficulty: conversion.difficulty,
+            },
+        });
 
-            console.log('invoked and got the data: ', data);
+        const plan = await planner.invoke({
+            instruction: state.instruction,
+            difficulty: conversion.difficulty,
+        });
 
-            // we'll take time-limit and reading-time by default
-            const defaults = {
-                timeLimit: 30,
-                readingTime: 7,
-                basePoints: 20,
-            };
+        // create the quiz
+        const quiz = await prisma.quiz.create({
+            data: {
+                hostId: state.userId,
+                title: plan.title,
+                prizePool: 0,
+            },
+        });
 
-            const questions: QuestionType[] = data.questions.map((q, index) => {
-                return {
+        const data = await executor.invoke({
+            instruction: plan.description,
+        });
+
+        await prisma.$transaction(async (tx) => {
+            await tx.question.createMany({
+                data: data.questions.map((q, i) => ({
                     ...q,
-                    timeLimit: defaults.timeLimit,
-                    readingTime: defaults.readingTime,
-                    basePoints: defaults.basePoints,
-                    orderIndex: index,
-                };
+                    quizId: quiz.id,
+                    orderIndex: i,
+                    timeLimit: 30,
+                    readingTime: 7,
+                    basePoints: 20,
+                })),
             });
 
-            // create the quiz
-            const quiz = await prisma.quiz.create({
+            // add quiz-id in ai chat session
+            await tx.aiQuizChatSession.update({
+                where: { id: state.sessionId },
                 data: {
-                    hostId: user_id,
-                    title: data.title,
-                    prizePool: 0,
-                    questions: {
-                        create: questions,
+                    quizId: quiz.id,
+                    step: AgentStep.DONE,
+                },
+            });
+        });
+
+        return {
+            ...state,
+            quizId: quiz.id,
+            step: AgentStep.DONE,
+        };
+    }
+
+    static async revise_quiz_node(state: QuizAgentGraphState): Promise<QuizAgentGraphState> {
+        const { reviser } = chain.get_chain();
+
+        const quiz = await prisma.quiz.findUnique({
+            where: {
+                id: state.quizId,
+            },
+            include: {
+                questions: {
+                    select: {
+                        question: true,
+                        options: true,
+                        correctAnswer: true,
+                        explanation: true,
+                        hint: true,
+                        difficulty: true,
                     },
                 },
-                include: {
-                    questions: true,
+            },
+        });
+
+        if (!quiz) {
+            // return an error response that can't revise a quiz which is not available
+            return {
+                ...state,
+            };
+        }
+
+        const response = await reviser.invoke({
+            questions: `${JSON.stringify(quiz.questions)}`,
+            instruction: '',
+        });
+
+        // delete all the questions from the quiz and create new ones
+
+        await prisma.$transaction(async (tx) => {
+            await tx.question.deleteMany({
+                where: {
+                    quizId: quiz.id,
                 },
             });
 
-            ResponseWriter.success(res, { quiz }, 'quiz created successfully', 201);
-            return;
-        } catch (error) {
-            console.error('Error: ', error);
-        }
+            const update_questions = await tx.question.createMany({
+                data: response.questions.map((q, i) => {
+                    return {
+                        ...q,
+                        quizId: quiz.id,
+                        orderIndex: i,
+                        timeLimit: 30,
+                        readingTime: 7,
+                        basePoints: 20,
+                    };
+                }),
+            });
+
+            return update_questions;
+        });
+
+        return {
+            ...state,
+            step: AgentStep.DONE,
+        };
     }
 
-    private get_chain() {
-        try {
-            const chain = RunnableSequence.from([
-                create_quiz_prompt,
-                this.model.withStructuredOutput(create_new_quiz_schema),
-            ]);
+    static create_graph() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const graph: any = new StateGraph(QuizAgentStateAnnotation);
 
-            return chain;
-        } catch (error) {
-            console.error('error in creating chain: ', error);
-            return;
-        }
-    }
+        graph.addNode(AgentStep.ASK_DIFFICULTY, Agent.ask_difficulty_node);
+        graph.addNode(AgentStep.GENERATE, Agent.generate_quiz_node);
 
-    public create_stream(res: Response): void {
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('X-Accel-Buffering', 'no');
-        res.flushHeaders();
+        graph.setEntryPoint(AgentStep.ASK_DIFFICULTY);
+
+        graph.addConditionalEdges(AgentStep.ASK_DIFFICULTY, () => AgentStep.WAIT_DIFFICULTY);
+
+        graph.addConditionalEdges(AgentStep.GENERATE, () => '__end__');
+
+        return graph.compile();
     }
 }
+
+// static create_graph() {
+//     // removing this any will affect in custom types
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     const graph: any = new StateGraph(QuizAgentStateAnnotation);
+
+//     graph.addNode(AgentStep.ASK_DIFFICULTY, Agent.ask_difficulty_node);
+//     graph.addNode(AgentStep.PLANNING, Agent.planning_quiz_node);
+//     graph.addNode(AgentStep.GENERATE, Agent.generate_quiz_node);
+//     graph.addNode(AgentStep.REVISE, Agent.revise_quiz_node);
+
+//     // ask user for the difficulty and wait until user responds
+
+//     graph.addConditionalEdges('__start__', (state: QuizAgentGraphState) => {
+//         switch (state.step) {
+//             case AgentStep.PLANNING:
+//                 return AgentStep.PLANNING;
+//             case AgentStep.GENERATE:
+//                 return AgentStep.GENERATE;
+//             case AgentStep.REVISE:
+//                 return AgentStep.REVISE;
+//             default:
+//                 return AgentStep.ASK_DIFFICULTY;
+//         }
+//     });
+
+//     graph.addEdge(AgentStep.ASK_DIFFICULTY, '__end__');
+
+//     graph.addEdge(AgentStep.PLANNING, AgentStep.GENERATE);
+//     graph.addEdge(AgentStep.GENERATE, '__end__');
+
+//     graph.addConditionalEdges(AgentStep.GENERATE, (state: QuizAgentGraphState) => {
+//         return state.revisionFeedback ? AgentStep.REVISE : '__end__';
+//     });
+
+//     graph.addEdge(AgentStep.REVISE, '__end__');
+
+//     return graph.compile();
+// }

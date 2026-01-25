@@ -1,3 +1,17 @@
+import {
+  AgentStep,
+  AiMessageElement,
+  AiQuizChatRole,
+  HostScreenEnum,
+  InteractionEnum,
+  ParticipantScreenEnum,
+  QuizPhaseEnum,
+  QuizStatusEnum,
+  SessionStatusEnum,
+  SpectatorScreenEnum,
+  TemplateEnum,
+} from "./enums.prisma";
+
 export interface UserType {
   id: string;
   name: string;
@@ -55,6 +69,7 @@ export interface QuizType {
   questions: QuestionType[];
   participants?: ParticipantType[];
   spectators?: SpectatorType[];
+  aiChat?: AiQuizChatSession;
 }
 
 export interface QuestionType {
@@ -196,90 +211,23 @@ export interface ReviewType {
   createdAt: Date;
   updateAt: Date;
 }
-
-export enum TemplateEnum {
-  CLASSIC = "CLASSIC",
-  MODERN = "MODERN",
-  PASTEL = "PASTEL",
-  NEON = "NEON",
-  YELLOW = "YELLOW",
-  GREEN = "GREEN",
-  BLUE = "BLUE",
+export interface AiQuizChatSession {
+  id: string;
+  userId: string;
+  user: UserType;
+  step: AgentStep;
+  instruction?: string;
+  difficulty?: string;
+  quizId?: string;
+  quiz?: QuizType;
+  revisionFeedback?: string;
+  messages: AiQuizMessage[];
 }
-
-export enum QuizStatusEnum {
-  CREATED = "CREATED",
-  PUBLISHED = "PUBLISHED",
-  SCHEDULED = "SCHEDULED",
-  LIVE = "LIVE",
-  COMPLETED = "COMPLETED",
-  CANCELLED = "CANCELLED",
-  PAYOUT_PENDING = "PAYOUT_PENDING",
-  PAYOUT_COMPLETED = "PAYOUT_COMPLETED",
-  NULL = "NULL",
-}
-
-export enum InteractionEnum {
-  THUMBS_UP = "THUMBS_UP",
-  DOLLAR = "DOLLAR",
-  BULB = "BULB",
-  HEART = "HEART",
-  SMILE = "SMILE",
-}
-
-export enum SessionStatusEnum {
-  WAITING = "WAITING",
-  STARTING = "STARTING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  QUESTION_ENDED = "QUESTION_ENDED",
-  ELIMINATING = "ELIMINATING",
-  COMPLETED = "COMPLETED",
-  PAUSED = "PAUSED",
-}
-
-export enum ParticipantScreenEnum {
-  LOBBY = "LOBBY",
-  COUNTDOWN = "COUNTDOWN",
-  QUESTION_MOTIVATION = "QUESTION_MOTIVATION",
-  QUESTION_READING = "QUESTION_READING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  QUESTION_RESULTS = "QUESTION_RESULTS",
-}
-
-export enum SpectatorScreenEnum {
-  LOBBY = "LOBBY",
-  COUNTDOWN = "COUNTDOWN",
-  QUESTION_MOTIVATION = "QUESTION_MOTIVATION",
-  QUESTION_READING = "QUESTION_READING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  QUESTION_RESULTS = "QUESTION_RESULTS",
-}
-
-export enum HostScreenEnum {
-  LOBBY = "LOBBY",
-  QUESTION_PREVIEW = "QUESTION_PREVIEW",
-  QUESTION_READING = "QUESTION_READING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  QUESTION_RESULTS = "QUESTION_RESULTS",
-  LEADERBOARD = "LEADERBOARD",
-  FINAL_RESULTS = "FINAL_RESULTS",
-}
-
-export enum USER_TYPE {
-  HOST = "HOST",
-  PARTICIPANT = "PARTICIPANT",
-  SPECTATOR = "SPECTATOR",
-}
-
-export enum QuizPhaseEnum {
-  QUESTION_READING = "QUESTION_READING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  SHOW_RESULTS = "SHOW_RESULTS",
-  WAITING_NEXT = "WAITING_NEXT",
-}
-
-export enum CollabRole {
-  HOST = "HOST",
-  EDITOR = "EDITOR",
-  VIEWER = "VIEWER",
+export interface AiQuizMessage {
+  id: string;
+  aiQuizChatSessionId: string;
+  aiQuizChatSession?: AiQuizChatSession;
+  role: AiQuizChatRole;
+  content: string;
+  element?: AiMessageElement;
 }
