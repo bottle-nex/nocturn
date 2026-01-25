@@ -42,10 +42,11 @@ export default function MessagesRenderer({
     const groupReactionsByType = (messageReactions: ChatReactionType[]) => {
         const grouped: Partial<Record<InteractionEnum, { reactors: string[] }>> = {};
         messageReactions.forEach((reaction) => {
-            if (!grouped[reaction.reaction]) {
-                grouped[reaction.reaction] = { reactors: [] };
+            const reactionType = reaction.reaction as InteractionEnum;
+            if (!grouped[reactionType]) {
+                grouped[reactionType] = { reactors: [] };
             }
-            grouped[reaction.reaction]!.reactors.push(reaction.reactorName);
+            grouped[reactionType]!.reactors.push(reaction.reactorName);
         });
         return grouped;
     };
