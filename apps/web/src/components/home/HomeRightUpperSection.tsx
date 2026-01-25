@@ -11,8 +11,12 @@ import RecentAICreatedCard from '../ui/RecentAICreationCard';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import AnimatedFolderIcon from '../ui/animated-icons/AnimatedFolderIcon';
 import UploadPDFButton from '../ui/UploadPDFButton';
-import { QuizType } from '@nocturn/types';
+import { AiQuizChatRole, AiQuizMessage, QuizType } from '@nocturn/types';
 import PdfPreview from '../ui/PdfPreview';
+import StartWithAi from './StartWithAi';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
+import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 enum COMMON_PANEL_DATA {
     RECENTS = 'RECENTS',
@@ -22,9 +26,14 @@ enum COMMON_PANEL_DATA {
 export default function HomeRightUpperSection() {
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
+    const [prompt, setPrompt] = useState<string>('');
     const containerRef = useRef<HTMLDivElement>(null);
 
     const { quizs } = useAllQuizsStore();
+    const { appendMessage } = useAiChatStore();
+    const { session } = useUserSessionStore();
+
+    const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
     const [commonPanel, setCommonPanel] = useState<boolean>(false);
     const [commonPanelData, setCommonPanelData] = useState<COMMON_PANEL_DATA>(COMMON_PANEL_DATA.RECENTS);
     const [pdf, setPdf] = useState<File | null>(null);
@@ -58,6 +67,45 @@ export default function HomeRightUpperSection() {
         }
     }
 
+    function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    }
+
+    function handleSubmit() {
+
+        if (!prompt.trim()) return;
+
+        // open the chatting panel
+        setOpenAiComponent(true);
+
+        // temporary session-id
+        const sessionId = uuid();
+
+        // create the user message
+        const message: AiQuizMessage = {
+            id: uuid(),
+            aiQuizChatSessionId: sessionId,
+            role: AiQuizChatRole.USER,
+            content: prompt,
+        }
+
+        // append the message in client side
+        appendMessage(message);
+
+        // send the prompt
+        AiBackendAction.create_quiz(
+            session?.user.token,
+            sessionId,
+            prompt,
+        );
+
+        setPrompt('');
+        setCommonPanel(false);
+    }
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (
@@ -87,12 +135,15 @@ export default function HomeRightUpperSection() {
             >
                 <Input
                     ref={inputRef}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Start creating quiz with AI..."
                     onFocus={() => setCommonPanel(true)}
                     className={cn(
                         "h-full w-full pl-10 rounded-[6px]",
                         "placeholder:text-gamma/40 dark:placeholder:text-neutral-500"
                     )}
+                    onKeyDown={handleInputKeyDown}
                 />
 
                 <PiMagnifyingGlass
@@ -139,11 +190,16 @@ export default function HomeRightUpperSection() {
                     <span>New Quiz</span>
                 </Button>
             </div>
+            <StartWithAi setOpen={setOpenAiComponent} open={openAiComponent} />
         </section>
     );
 }
 
 function AIBuiltQuizs({ quizs }: { quizs: QuizType[] }) {
+
+    // quizes created using AI
+    const ai_quizs = quizs.filter((q) => q.aiChat);
+
     return (
         <>
             <div className="text-xs px-2">
@@ -151,14 +207,23 @@ function AIBuiltQuizs({ quizs }: { quizs: QuizType[] }) {
             </div>
 
             <div className="flex flex-col">
-                {quizs.map((q) => (
+                {ai_quizs.length !== 0 ? ai_quizs.map((q) => (
                     <RecentAICreatedCard
                         key={q.id}
                         theme={q.theme}
                         title={q.title}
                         difficulty={5}
                     />
-                ))}
+                )) : (
+                    <div
+                        className={cn(
+                            'w-full flex justify-center items-center text-xs text-neutral-500',
+                            'p-4'
+                        )}
+                    >
+                        You haven't started creating quiz using AI
+                    </div>
+                )}
             </div>
         </>
     );

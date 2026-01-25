@@ -1,22 +1,27 @@
 import axios from 'axios';
 import { CREATE_QUIZ_USING_AI } from 'routes/api_routes';
 
-export default class StartWithAIAction {
-    static async create_quiz(instruction: string, token: string) {
-        const res = await axios.post(
-            CREATE_QUIZ_USING_AI,
-            { instruction },
-            {
+export default class AiBackendAction {
+    static async create_quiz(
+        token: string,
+        sessionId: string,
+        instruction: string,
+    ) {
+        try {
+            
+            const res = await axios.post(CREATE_QUIZ_USING_AI, {
+                instruction: instruction,
+                sessionId: sessionId,
+            },{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-            },
-        );
+            });
 
-        const data = res.data.data;
+            // there are 2 cases either data or stream
 
-        if (res.data.success) {
-            return data.quiz;
+        } catch (error) {
+            console.error('error in creating quiz via AI');
         }
     }
 }

@@ -12,7 +12,7 @@ export default async function chatWithAiController(req: Request, res: Response) 
             return;
         }
 
-        const { instruction, session_id } = req.body;
+        const { instruction, sessionId } = req.body;
 
         // add zos validation
 
@@ -20,7 +20,7 @@ export default async function chatWithAiController(req: Request, res: Response) 
         let session;
         session = await prisma.aiQuizChatSession.findUnique({
             where: {
-                id: session_id,
+                id: sessionId,
             },
         });
 

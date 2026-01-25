@@ -69,6 +69,7 @@ export interface QuizType {
   questions: QuestionType[];
   participants?: ParticipantType[];
   spectators?: SpectatorType[];
+  aiChat?: AiQuizChatSession;
 }
 
 export interface QuestionType {
@@ -225,8 +226,8 @@ export interface AiQuizChatSession {
 export interface AiQuizMessage {
   id: string;
   aiQuizChatSessionId: string;
-  aiQuizChatSession: AiQuizChatSession;
+  aiQuizChatSession?: AiQuizChatSession;
   role: AiQuizChatRole;
   content: string;
-  element: AiMessageElement;
+  element?: AiMessageElement;
 }
