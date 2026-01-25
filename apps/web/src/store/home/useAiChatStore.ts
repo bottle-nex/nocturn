@@ -1,5 +1,5 @@
-import { AiQuizMessage, QuizType } from "@nocturn/types";
-import { create } from "zustand";
+import { AiQuizMessage, QuizType } from '@nocturn/types';
+import { create } from 'zustand';
 
 interface AiChatStore {
     messages: AiQuizMessage[];

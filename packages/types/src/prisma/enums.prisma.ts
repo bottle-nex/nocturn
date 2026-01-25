@@ -1,4 +1,3 @@
-
 export enum TemplateEnum {
   CLASSIC = "CLASSIC",
   MODERN = "MODERN",
@@ -104,5 +103,5 @@ export enum AiQuizChatRole {
 
 export enum AiMessageElement {
   DIFFICULTY = "DIFFICULTY",
-  TITLE = "TITLE"
+  TITLE = "TITLE",
 }

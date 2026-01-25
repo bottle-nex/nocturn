@@ -3,7 +3,6 @@ import { GET_PRESIGNED_URL } from 'routes/api_routes';
 import { toast } from 'sonner';
 
 export default class S3 {
-
     static async handleUploadImage(file: File) {
         if (!file) {
             toast('Please select an image');
@@ -33,6 +32,4 @@ export default class S3 {
             console.error('Error while uploading image');
         }
     }
-
 }
-

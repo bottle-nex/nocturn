@@ -25,7 +25,6 @@ import deleteQuizController from '../controllers/quiz-controller/deleteQuizContr
 import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_trashed_quizzes_controller';
 import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
 import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
-import createQuizUsingAIController from '../controllers/ai-controller/createQuizUsingAIController';
 
 // <---------------------- middlewares ----------------------> //
 import authMiddleware from '../middlewares/authMiddleware';

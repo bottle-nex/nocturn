@@ -21,14 +21,14 @@ export default function UploadPDFButton({ children, onPdfSelect }: UploadPDFButt
         if (!file) {
             toast('PDF not found!');
             return;
-        };
+        }
 
         if (file.type !== 'application/pdf') {
             toast('Only PDF files are allowed');
             return;
         }
 
-        if(file.size > MAX_PDF_SIZE) {
+        if (file.size > MAX_PDF_SIZE) {
             toast(`PDF size is greater than ${MAX_PDF_SIZE / (1024 * 1024)} MB`);
             return;
         }
@@ -46,9 +46,7 @@ export default function UploadPDFButton({ children, onPdfSelect }: UploadPDFButt
                 onChange={handleFileChange}
             />
 
-            <div onClick={handleClick} >
-                {children}
-            </div>
+            <div onClick={handleClick}>{children}</div>
         </>
     );
 }

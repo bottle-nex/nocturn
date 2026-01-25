@@ -6,10 +6,8 @@ import QuizManager from '../sockets/QuizManager';
 import Redis from 'ioredis';
 import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
-import Agent from '../gen/agents/Agent';
 import EmailServiceQueue from './email/email.services';
 import Chain from '../gen/agents/Chain';
-import EmailService from './email/email.services';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;

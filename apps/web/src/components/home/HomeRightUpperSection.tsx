@@ -35,7 +35,9 @@ export default function HomeRightUpperSection() {
 
     const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
     const [commonPanel, setCommonPanel] = useState<boolean>(false);
-    const [commonPanelData, setCommonPanelData] = useState<COMMON_PANEL_DATA>(COMMON_PANEL_DATA.RECENTS);
+    const [commonPanelData, setCommonPanelData] = useState<COMMON_PANEL_DATA>(
+        COMMON_PANEL_DATA.RECENTS,
+    );
     const [pdf, setPdf] = useState<File | null>(null);
 
     function handleCreateNewQuiz() {
@@ -75,7 +77,6 @@ export default function HomeRightUpperSection() {
     }
 
     function handleSubmit() {
-
         if (!prompt.trim()) return;
 
         // open the chatting panel
@@ -90,17 +91,13 @@ export default function HomeRightUpperSection() {
             aiQuizChatSessionId: sessionId,
             role: AiQuizChatRole.USER,
             content: prompt,
-        }
+        };
 
         // append the message in client side
         appendMessage(message);
 
         // send the prompt
-        AiBackendAction.create_quiz(
-            session?.user.token,
-            sessionId,
-            prompt,
-        );
+        AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
 
         setPrompt('');
         setCommonPanel(false);
@@ -108,10 +105,7 @@ export default function HomeRightUpperSection() {
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (
-                containerRef.current &&
-                !containerRef.current.contains(event.target as Node)
-            ) {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setCommonPanel(false);
             }
         }
@@ -129,8 +123,8 @@ export default function HomeRightUpperSection() {
             <div
                 ref={containerRef}
                 className={cn(
-                    "relative max-w-sm w-full h-11 rounded-[6px]",
-                    "border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white"
+                    'relative max-w-sm w-full h-11 rounded-[6px]',
+                    'border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                 )}
             >
                 <Input
@@ -140,8 +134,8 @@ export default function HomeRightUpperSection() {
                     placeholder="Start creating quiz with AI..."
                     onFocus={() => setCommonPanel(true)}
                     className={cn(
-                        "h-full w-full pl-10 rounded-[6px]",
-                        "placeholder:text-gamma/40 dark:placeholder:text-neutral-500"
+                        'h-full w-full pl-10 rounded-[6px]',
+                        'placeholder:text-gamma/40 dark:placeholder:text-neutral-500',
                     )}
                     onKeyDown={handleInputKeyDown}
                 />
@@ -152,12 +146,8 @@ export default function HomeRightUpperSection() {
                 />
 
                 <ToolTipComponent content="upload pdf" className="cursor-pointer">
-                    <UploadPDFButton
-                        onPdfSelect={onPdfSelect}
-                    >
-                        <div
-                            className="absolute top-1/2 right-0 -translate-y-1/2 p-1"
-                        >
+                    <UploadPDFButton onPdfSelect={onPdfSelect}>
+                        <div className="absolute top-1/2 right-0 -translate-y-1/2 p-1">
                             <AnimatedFolderIcon
                                 strokeWidth={1.5}
                                 stroke="#737373"
@@ -170,10 +160,10 @@ export default function HomeRightUpperSection() {
                 {commonPanel && (
                     <div
                         className={cn(
-                            "absolute z-50 top-12 w-full rounded-[6px]",
-                            "shadow-md px-2 py-3",
-                            "dark:bg-zinc-800 dark:text-white",
-                            "flex flex-col gap-y-2"
+                            'absolute z-50 top-12 w-full rounded-[6px]',
+                            'shadow-md px-2 py-3',
+                            'dark:bg-zinc-800 dark:text-white',
+                            'flex flex-col gap-y-2',
                         )}
                     >
                         {handleCommonPanelDataAppearance()}
@@ -196,32 +186,31 @@ export default function HomeRightUpperSection() {
 }
 
 function AIBuiltQuizs({ quizs }: { quizs: QuizType[] }) {
-
     // quizes created using AI
     const ai_quizs = quizs.filter((q) => q.aiChat);
 
     return (
         <>
-            <div className="text-xs px-2">
-                Recent AI creations
-            </div>
+            <div className="text-xs px-2">Recent AI creations</div>
 
             <div className="flex flex-col">
-                {ai_quizs.length !== 0 ? ai_quizs.map((q) => (
-                    <RecentAICreatedCard
-                        key={q.id}
-                        theme={q.theme}
-                        title={q.title}
-                        difficulty={5}
-                    />
-                )) : (
+                {ai_quizs.length !== 0 ? (
+                    ai_quizs.map((q) => (
+                        <RecentAICreatedCard
+                            key={q.id}
+                            theme={q.theme}
+                            title={q.title}
+                            difficulty={5}
+                        />
+                    ))
+                ) : (
                     <div
                         className={cn(
                             'w-full flex justify-center items-center text-xs text-neutral-500',
-                            'p-4'
+                            'p-4',
                         )}
                     >
-                        You haven't started creating quiz using AI
+                        {"You haven't started creating quiz using AI"}
                     </div>
                 )}
             </div>

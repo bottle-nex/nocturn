@@ -2,17 +2,17 @@ import { Annotation } from '@langchain/langgraph';
 import { AgentStep } from '@nocturn/types';
 import { Response } from 'express';
 
-export const QUIZ_STEP = {
-    START: 'START',
-    ASK_DIFFICULTY: 'ASK_DIFFICULTY',
-    WAIT_DIFFICULTY: 'WAIT_DIFFICULTY',
-    PLANNING: 'PLANNING',
-    GENERATE: 'GENERATE',
-    REVISE: 'REVISE',
-    DONE: 'DONE',
-} as const;
+// export const QUIZ_STEP = {
+//     START: 'START',
+//     ASK_DIFFICULTY: 'ASK_DIFFICULTY',
+//     WAIT_DIFFICULTY: 'WAIT_DIFFICULTY',
+//     PLANNING: 'PLANNING',
+//     GENERATE: 'GENERATE',
+//     REVISE: 'REVISE',
+//     DONE: 'DONE',
+// } as const;
 
-export type QUIZ_STEP = (typeof QUIZ_STEP)[keyof typeof QUIZ_STEP];
+// export type QUIZ_STEP = (typeof QUIZ_STEP)[keyof typeof QUIZ_STEP];
 export interface QuizAgentGraphState {
     res: Response;
     sessionId: string;
@@ -37,7 +37,7 @@ export const QuizAgentGraphAnnotation = Annotation.Root({
 });
 
 export const QuizAgentStateAnnotation = Annotation.Root({
-    step: Annotation<QUIZ_STEP>,
+    step: Annotation<AgentStep>,
     userId: Annotation<string>,
     instruction: Annotation<string | undefined>,
     difficulty: Annotation<number | undefined>,

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { Variants } from "motion/react";
-import { motion, useAnimation } from "motion/react";
+import type { Variants } from 'motion/react';
+import { motion, useAnimation } from 'motion/react';
 
 interface FoldersProps extends React.SVGAttributes<SVGSVGElement> {
     width?: number;
@@ -15,7 +15,7 @@ const folderVariants: Variants = {
         x: 0,
         y: 0,
         transition: {
-            type: "spring",
+            type: 'spring',
             stiffness: 300,
             damping: 25,
         },
@@ -24,7 +24,7 @@ const folderVariants: Variants = {
         x: -4,
         y: 2,
         transition: {
-            type: "spring",
+            type: 'spring',
             stiffness: 300,
             damping: 25,
         },
@@ -37,7 +37,7 @@ const bottomLineVariants: Variants = {
         x: 0,
         y: 0,
         transition: {
-            type: "spring",
+            type: 'spring',
             stiffness: 300,
             damping: 25,
         },
@@ -47,7 +47,7 @@ const bottomLineVariants: Variants = {
         x: 4,
         y: -2,
         transition: {
-            type: "spring",
+            type: 'spring',
             stiffness: 300,
             damping: 25,
             opacity: { duration: 0.1 },
@@ -59,7 +59,7 @@ export default function AnimatedFolderIcon({
     width = 28,
     height = 28,
     strokeWidth = 2,
-    stroke = "#ffffff",
+    stroke = '#ffffff',
     ...props
 }: FoldersProps) {
     const controls = useAnimation();
@@ -67,15 +67,15 @@ export default function AnimatedFolderIcon({
     return (
         <div
             style={{
-                cursor: "pointer",
-                userSelect: "none",
-                padding: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                cursor: 'pointer',
+                userSelect: 'none',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
             }}
-            onMouseEnter={() => controls.start("animate")}
-            onMouseLeave={() => controls.start("normal")}
+            onMouseEnter={() => controls.start('animate')}
+            onMouseLeave={() => controls.start('normal')}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -104,4 +104,4 @@ export default function AnimatedFolderIcon({
             </svg>
         </div>
     );
-};
+}
