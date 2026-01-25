@@ -5,6 +5,14 @@ export const create_quiz_difficulty_prompt = new PromptTemplate({
     inputVariables: [''],
 });
 
+export const text_to_number_difficulty_prompt = new PromptTemplate({
+    template: `
+        You have to convert this user sent difficulty response into the scale of 1 to 5
+        {instruction}
+    `,
+    inputVariables: ['instruction'],
+})
+
 export const create_quiz_planner_prompt = new PromptTemplate({
     template: `
         you're a expert planning teacher, who can give a brief description about the topic which user is asking for
@@ -22,8 +30,10 @@ export const create_quiz_executor_prompt = new PromptTemplate({
 
         this is the topic user is asking to make questions about
         {instruction}
+
+        and the difficulty rating is: {difficulty}/5
     `,
-    inputVariables: ['instruction'],
+    inputVariables: ['instruction', 'difficulty'],
 });
 
 export const difficulty_asker_prompt = new PromptTemplate({

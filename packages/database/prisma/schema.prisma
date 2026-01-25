@@ -375,8 +375,8 @@ model AiQuizChatSession {
   step             AgentStep
   instruction      String?
   difficulty       Int?
-  quizId           String          @unique
-  quiz             Quiz            @relation(references: [id], fields: [quizId], onDelete: Cascade)
+  quizId           String?          @unique
+  quiz             Quiz?            @relation(references: [id], fields: [quizId], onDelete: Cascade)
   revisionFeedback String?
   messages         AiQuizMessage[]
   createdAt        DateTime        @default(now())
@@ -501,6 +501,7 @@ enum AgentStep {
   START
   ASK_DIFFICULTY
   WAIT_DIFFICULTY
+  PLANNING
   GENERATE
   REVISE
   DONE

@@ -6,12 +6,14 @@ import {
     create_quiz_executor_prompt,
     difficulty_asker_prompt,
     reviser_prompt,
+    text_to_number_difficulty_prompt,
 } from '../prompts/createQuizPrompt';
 import {
     create_new_quiz_schema,
     difficulty_asker_schema,
     planner_schema,
     reviser_schema,
+    text_to_number_difficulty_schema,
 } from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
 import { QuestionType } from '../../schemas/createQuizSchema';
@@ -29,74 +31,8 @@ export default class Chain {
         });
     }
 
-    public async create_new_quiz(res: Response, instruction: string, user_id: string) {
-        try {
-            // get the chains
-            const chains = this.get_chain();
-            if (!chains) return;
-
-            const { planner, executor } = chains;
-
-            const plan = await planner.invoke({
-                instruction,
-            });
-
-            // create the quiz with the title
-            let quiz = await prisma.quiz.create({
-                data: {
-                    hostId: user_id,
-                    title: plan.title,
-                    prizePool: 0,
-                },
-            });
-
-            ResponseWriter.stream.write(res, quiz);
-
-            const data = await executor.invoke({
-                instruction: plan.description,
-            });
-
-            console.log('invoked and got the data: ', data);
-
-            // we'll take time-limit and reading-time by default
-            const defaults = {
-                timeLimit: 30,
-                readingTime: 7,
-                basePoints: 20,
-            };
-
-            const questions: QuestionType[] = data.questions.map((q, index) => {
-                return {
-                    ...q,
-                    timeLimit: defaults.timeLimit,
-                    readingTime: defaults.readingTime,
-                    basePoints: defaults.basePoints,
-                    orderIndex: index,
-                };
-            });
-
-            // update the quiz with questions
-            quiz = await prisma.quiz.update({
-                where: {
-                    id: quiz.id,
-                },
-                data: {
-                    description: data.description,
-                    questions: {
-                        create: questions,
-                    },
-                },
-                include: {
-                    questions: true,
-                },
-            });
-
-            ResponseWriter.stream.write(res, quiz);
-        } catch (error) {
-            console.error('Error: ', error);
-        } finally {
-            ResponseWriter.stream.end(res);
-        }
+    public async invoke_difficulty_asker() {
+        
     }
 
     public async ask_difficulty(res: Response) {
@@ -111,6 +47,11 @@ export default class Chain {
         const difficulty_asker = RunnableSequence.from([
             difficulty_asker_prompt,
             this.model.withStructuredOutput(difficulty_asker_schema),
+        ]);
+
+        const text_to_number_difficulty = RunnableSequence.from([
+            text_to_number_difficulty_prompt,
+            this.model.withStructuredOutput(text_to_number_difficulty_schema),
         ]);
 
         const planner = RunnableSequence.from([
@@ -130,6 +71,7 @@ export default class Chain {
 
         return {
             difficulty_asker,
+            text_to_number_difficulty,
             planner,
             executor,
             reviser,

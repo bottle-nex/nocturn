@@ -1,4 +1,5 @@
 import { Annotation } from "@langchain/langgraph";
+import { AgentStep } from "@nocturn/types";
 
 export const QUIZ_STEP = {
     START : 'START',
@@ -11,33 +12,26 @@ export const QUIZ_STEP = {
 } as const;
 
 export type QUIZ_STEP = typeof QUIZ_STEP[keyof typeof QUIZ_STEP];
+export interface QuizAgentGraphState {
+  sessionId: string;
+  userId: string;
 
-// export enum QUIZ_STEP {
-//     START = 'START',
-//     ASK_DIFFICULTY = 'ASK_DIFFICULTY',
-//     WAIT_DIFFICULTY = 'WAIT_DIFFICULTY',
-//     PLANNING = 'PLANNING',
-//     GENERATE = 'GENERATE',
-//     REVISE = 'REVISE',
-//     DONE = 'DONE',
-// } 
+  step: AgentStep;
 
-// export interface QuizAgentState {
-//     step: QUIZ_STEP;
+  instruction: string;
+  difficulty?: number;
 
-//     userId: string;
-//     instruction?: string;
+  quizId?: string;
+}
 
-//     difficulty?: number;
-
-//     quizId?: string;
-//     // hey take this
-//     quizData?: any;
-
-//     revisionFeedback?: string;
-
-//     streamingMessage?: string;
-// }
+export const QuizAgentGraphAnnotation = Annotation.Root({
+    sessionId: Annotation<string>,
+    userId: Annotation<string>,
+    step: Annotation<AgentStep>,
+    instruction: Annotation<string>,
+    difficulty: Annotation<number | undefined>,
+    quizId: Annotation<string | undefined>,
+});
 
 export const QuizAgentStateAnnotation = Annotation.Root({
     step: Annotation<QUIZ_STEP>,
