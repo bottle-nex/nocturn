@@ -1,7 +1,13 @@
 import { RunnableSequence } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Response } from 'express';
-import { difficulty_asker_prompt, executor_prompt, planner_prompt, reviser_prompt, text_to_number_difficulty_prompt } from '../prompts/createQuizPrompt';
+import {
+    difficulty_asker_prompt,
+    executor_prompt,
+    planner_prompt,
+    reviser_prompt,
+    text_to_number_difficulty_prompt,
+} from '../prompts/createQuizPrompt';
 import {
     executor_schema,
     difficulty_asker_schema,
@@ -34,10 +40,9 @@ export default class Chain {
         user_instruction: string,
         difficulty_instruction: string,
     ) {
-
         // create the stream
         this.create_stream(res);
-        
+
         switch (step) {
             case AgentStep.START: {
                 // ask for difficulty
@@ -156,7 +161,7 @@ export default class Chain {
         session_id: string,
         instruction: string,
         difficulty: number,
-    ): Promise<{ plan: string, quiz_id: string }> {
+    ): Promise<{ plan: string; quiz_id: string }> {
         const { planner } = this.get_chain();
 
         const response = await planner.invoke({
@@ -237,8 +242,8 @@ export default class Chain {
                 readingTime: 7,
                 orderIndex: i,
                 isAsked: false,
-            }
-        })
+            };
+        });
 
         const quiz = await prisma.quiz.update({
             where: {
@@ -267,7 +272,6 @@ export default class Chain {
             type: STREAM.QUIZ,
             data: quiz,
         });
-
     }
 
     public get_chain() {

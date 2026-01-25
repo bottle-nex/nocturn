@@ -6,7 +6,7 @@ export const text_to_number_difficulty_prompt = new PromptTemplate({
         {instruction}
     `,
     inputVariables: ['instruction'],
-})
+});
 
 export const planner_prompt = new PromptTemplate({
     template: `

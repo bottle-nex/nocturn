@@ -1,8 +1,6 @@
-
-
 export interface stream {
-    type: STREAM,
-    data: unknown,
+    type: STREAM;
+    data: unknown;
 }
 
 export enum STREAM {

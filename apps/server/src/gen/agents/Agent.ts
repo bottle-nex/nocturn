@@ -17,7 +17,6 @@ export default class Agent {
 
         // update the session step and add agent and system message
         const data = await prisma.$transaction(async (tx) => {
-
             await tx.aiQuizChatSession.update({
                 where: {
                     id: state.sessionId,
@@ -43,7 +42,7 @@ export default class Agent {
                     element: AiMessageElement.DIFFICULTY,
                 },
             });
-            
+
             return {
                 agentic_message,
                 system_message,
@@ -203,56 +202,49 @@ export default class Agent {
 
         graph.setEntryPoint(AgentStep.ASK_DIFFICULTY);
 
-        graph.addConditionalEdges(
-            AgentStep.ASK_DIFFICULTY,
-            () => AgentStep.WAIT_DIFFICULTY
-        );
+        graph.addConditionalEdges(AgentStep.ASK_DIFFICULTY, () => AgentStep.WAIT_DIFFICULTY);
 
-        graph.addConditionalEdges(
-            AgentStep.GENERATE,
-            () => '__end__'
-        );
+        graph.addConditionalEdges(AgentStep.GENERATE, () => '__end__');
 
         return graph.compile();
     }
-
 }
 
-    // static create_graph() {
-    //     // removing this any will affect in custom types
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const graph: any = new StateGraph(QuizAgentStateAnnotation);
+// static create_graph() {
+//     // removing this any will affect in custom types
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     const graph: any = new StateGraph(QuizAgentStateAnnotation);
 
-    //     graph.addNode(AgentStep.ASK_DIFFICULTY, Agent.ask_difficulty_node);
-    //     graph.addNode(AgentStep.PLANNING, Agent.planning_quiz_node);
-    //     graph.addNode(AgentStep.GENERATE, Agent.generate_quiz_node);
-    //     graph.addNode(AgentStep.REVISE, Agent.revise_quiz_node);
+//     graph.addNode(AgentStep.ASK_DIFFICULTY, Agent.ask_difficulty_node);
+//     graph.addNode(AgentStep.PLANNING, Agent.planning_quiz_node);
+//     graph.addNode(AgentStep.GENERATE, Agent.generate_quiz_node);
+//     graph.addNode(AgentStep.REVISE, Agent.revise_quiz_node);
 
-    //     // ask user for the difficulty and wait until user responds
+//     // ask user for the difficulty and wait until user responds
 
-    //     graph.addConditionalEdges('__start__', (state: QuizAgentGraphState) => {
-    //         switch (state.step) {
-    //             case AgentStep.PLANNING:
-    //                 return AgentStep.PLANNING;
-    //             case AgentStep.GENERATE:
-    //                 return AgentStep.GENERATE;
-    //             case AgentStep.REVISE:
-    //                 return AgentStep.REVISE;
-    //             default:
-    //                 return AgentStep.ASK_DIFFICULTY;
-    //         }
-    //     });
+//     graph.addConditionalEdges('__start__', (state: QuizAgentGraphState) => {
+//         switch (state.step) {
+//             case AgentStep.PLANNING:
+//                 return AgentStep.PLANNING;
+//             case AgentStep.GENERATE:
+//                 return AgentStep.GENERATE;
+//             case AgentStep.REVISE:
+//                 return AgentStep.REVISE;
+//             default:
+//                 return AgentStep.ASK_DIFFICULTY;
+//         }
+//     });
 
-    //     graph.addEdge(AgentStep.ASK_DIFFICULTY, '__end__');
+//     graph.addEdge(AgentStep.ASK_DIFFICULTY, '__end__');
 
-    //     graph.addEdge(AgentStep.PLANNING, AgentStep.GENERATE);
-    //     graph.addEdge(AgentStep.GENERATE, '__end__');
+//     graph.addEdge(AgentStep.PLANNING, AgentStep.GENERATE);
+//     graph.addEdge(AgentStep.GENERATE, '__end__');
 
-    //     graph.addConditionalEdges(AgentStep.GENERATE, (state: QuizAgentGraphState) => {
-    //         return state.revisionFeedback ? AgentStep.REVISE : '__end__';
-    //     });
+//     graph.addConditionalEdges(AgentStep.GENERATE, (state: QuizAgentGraphState) => {
+//         return state.revisionFeedback ? AgentStep.REVISE : '__end__';
+//     });
 
-    //     graph.addEdge(AgentStep.REVISE, '__end__');
+//     graph.addEdge(AgentStep.REVISE, '__end__');
 
-    //     return graph.compile();
-    // }
+//     return graph.compile();
+// }

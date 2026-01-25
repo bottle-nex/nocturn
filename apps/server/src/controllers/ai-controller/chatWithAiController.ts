@@ -1,18 +1,13 @@
-import { Request, Response } from "express";
-import ResponseWriter from "../../class/response_writer";
-import { AgentStep, AiQuizChatRole, prisma } from "@nocturn/database";
-import Agent from "../../gen/agents/Agent";
-
+import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
+import { AgentStep, AiQuizChatRole, prisma } from '@nocturn/database';
+import Agent from '../../gen/agents/Agent';
 
 export default async function chatWithAiController(req: Request, res: Response) {
     try {
-        
         const user = req.user;
-        if(!user) {
-            ResponseWriter.not_authorized(
-                res,
-                'not authorized',
-            );
+        if (!user) {
+            ResponseWriter.not_authorized(res, 'not authorized');
             return;
         }
 
@@ -25,8 +20,8 @@ export default async function chatWithAiController(req: Request, res: Response) 
                 id: session_id,
             },
         });
-        
-        if(!session) {
+
+        if (!session) {
             session = await prisma.aiQuizChatSession.create({
                 data: {
                     userId: user.id.toString(),
@@ -48,7 +43,7 @@ export default async function chatWithAiController(req: Request, res: Response) 
         const agent = Agent.create_graph();
 
         // continue the agent
-        switch(session.step) {
+        switch (session.step) {
             case AgentStep.START: {
                 // ask for difficulty
                 await agent.invoke({
@@ -59,17 +54,16 @@ export default async function chatWithAiController(req: Request, res: Response) 
                     step: AgentStep.ASK_DIFFICULTY,
                 });
                 return;
-            };
+            }
             case AgentStep.WAIT_DIFFICULTY: {
                 await agent.invoke({
                     res: res,
                     sessionId: session_id,
                     userId: user.id.toString(),
                     instruction: instruction,
-                })
-            };
+                });
+            }
         }
-
     } catch (error) {
         console.error('error in chat with ai controller: ', error);
         ResponseWriter.system_error(res);
