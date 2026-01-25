@@ -87,22 +87,22 @@ export enum CollabRole {
 }
 
 export enum AgentStep {
-  START = 'START',
-  ASK_DIFFICULTY = 'ASK_DIFFICULTY',
-  WAIT_DIFFICULTY = 'WAIT_DIFFICULTY',
-  PLANNING = 'PLANNING',
-  GENERATE = 'GENERATE',
-  REVISE = 'REVISE',
-  DONE = 'DONE',
+  START = "START",
+  ASK_DIFFICULTY = "ASK_DIFFICULTY",
+  WAIT_DIFFICULTY = "WAIT_DIFFICULTY",
+  PLANNING = "PLANNING",
+  GENERATE = "GENERATE",
+  REVISE = "REVISE",
+  DONE = "DONE",
 }
 
 export enum AiQuizChatRole {
-  SYSTEM = 'SYSTEM',
-  AGENT = 'AGENT',
-  USER = 'USER',
+  SYSTEM = "SYSTEM",
+  AGENT = "AGENT",
+  USER = "USER",
 }
 
 export enum AiMessageElement {
-  DIFFICULTY = 'DIFFICULTY',
-  TITLE = 'TITLE'
+  DIFFICULTY = "DIFFICULTY",
+  TITLE = "TITLE"
 }

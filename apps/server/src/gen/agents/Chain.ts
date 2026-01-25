@@ -40,8 +40,7 @@ export default class Chain {
         user_instruction: string,
         difficulty_instruction: string,
     ) {
-        // create the stream
-        this.create_stream(res);
+        console.log('step to continue: ', step);
 
         switch (step) {
             case AgentStep.START: {
@@ -50,11 +49,16 @@ export default class Chain {
                 return;
             }
             case AgentStep.WAIT_DIFFICULTY: {
+                // create the stream
+                this.create_stream(res);
+
                 // difficulty found change it from text to number
                 const difficulty = await this.compute_text_difficulty(
                     session_id,
                     difficulty_instruction,
                 );
+
+                console.log('difficulty: ', difficulty);
 
                 // plan the quiz creation
                 const { plan, quiz_id } = await this.plan(
@@ -65,6 +69,8 @@ export default class Chain {
                     difficulty,
                 );
 
+                console.log('plan: ', plan);
+
                 // execute the plan
                 await this.executor(res, user_id, session_id, quiz_id, plan);
             }
@@ -74,6 +80,8 @@ export default class Chain {
     private async ask_difficulty(res: Response, instruction: string, session_id: string) {
         try {
             const { difficulty_asker } = this.get_chain();
+
+            console.log('difficulty chain hit');
 
             const response = await difficulty_asker.invoke({
                 instruction: instruction,
@@ -112,6 +120,8 @@ export default class Chain {
                 };
             });
 
+            console.log('difficulty asker response: ', response);
+
             ResponseWriter.success(
                 res,
                 {
@@ -134,13 +144,11 @@ export default class Chain {
     ): Promise<number> {
         const { text_to_number_difficulty } = this.get_chain();
 
+        console.log('compute text difficulty chain hit');
+
         const conversion = await text_to_number_difficulty.invoke({
             instruction: text_difficulty,
         });
-
-        var l = ['fas', 'fas'];
-        l.length = 0;
-        console.log(l);
 
         // update the session with difficulty
         await prisma.aiQuizChatSession.update({
@@ -163,6 +171,8 @@ export default class Chain {
         difficulty: number,
     ): Promise<{ plan: string; quiz_id: string }> {
         const { planner } = this.get_chain();
+
+        console.log('plan chain hit');
 
         const response = await planner.invoke({
             instruction,
@@ -230,9 +240,13 @@ export default class Chain {
     ) {
         const { executor } = this.get_chain();
 
+        console.log('executor chain hit');
+
         const response = await executor.invoke({
             instruction: plan,
         });
+
+        console.log('executor response: ', response);
 
         const parsed_questions = response.questions.map((q, i) => {
             return {

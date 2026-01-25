@@ -20,8 +20,9 @@ export default async function createQuizUsingAIController(req: Request, res: Res
         const { instruction } = parsed_data.data;
 
         // send the instruction to the AI
-        await chain.create_new_quiz(res, instruction, user.id.toString());
-        return;
+        // await chain.start(
+        //     res,
+        // )
     } catch (error) {
         console.error('error in start with AI controller: ', error);
         ResponseWriter.system_error(res);

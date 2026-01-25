@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { AgentStep, AiQuizChatRole, prisma } from '@nocturn/database';
-import Agent from '../../gen/agents/Agent';
+import { AiQuizChatRole, prisma } from '@nocturn/database';
+import { chain } from '../../services/init.services';
+import { AgentStep } from '@nocturn/types';
 
 export default async function chatWithAiController(req: Request, res: Response) {
     try {
@@ -12,6 +13,8 @@ export default async function chatWithAiController(req: Request, res: Response) 
         }
 
         const { instruction, session_id } = req.body;
+
+        // add zos validation
 
         // try to fetch the ai-chat-session
         let session;
@@ -31,6 +34,8 @@ export default async function chatWithAiController(req: Request, res: Response) 
             });
         }
 
+        console.log({ session });
+
         // create the user message
         await prisma.aiQuizMessage.create({
             data: {
@@ -40,30 +45,14 @@ export default async function chatWithAiController(req: Request, res: Response) 
             },
         });
 
-        const agent = Agent.create_graph();
-
-        // continue the agent
-        switch (session.step) {
-            case AgentStep.START: {
-                // ask for difficulty
-                await agent.invoke({
-                    res: res,
-                    sessionId: session_id,
-                    userId: user.id.toString(),
-                    instruction: instruction,
-                    step: AgentStep.ASK_DIFFICULTY,
-                });
-                return;
-            }
-            case AgentStep.WAIT_DIFFICULTY: {
-                await agent.invoke({
-                    res: res,
-                    sessionId: session_id,
-                    userId: user.id.toString(),
-                    instruction: instruction,
-                });
-            }
-        }
+        await chain.start(
+            res,
+            user.id.toString(),
+            session.id,
+            session.step as unknown as AgentStep,
+            session.instruction || '',
+            instruction,
+        );
     } catch (error) {
         console.error('error in chat with ai controller: ', error);
         ResponseWriter.system_error(res);

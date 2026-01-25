@@ -7,7 +7,6 @@ import http from 'http';
 import initServices from './services/init.services.ts';
 import { env } from './configs/env.ts';
 import './services/cron.ts';
-import { run } from './scripts/test-quiz-agent.ts';
 
 const PORT = env.SERVER_PORT;
 const WEB_URL = env.SERVER_WEB_URL;
@@ -29,8 +28,6 @@ app.use('/api/v1', router);
 
 new WebsocketServer(server);
 
-run().catch(console.error);
-
-// server.listen(PORT, () => {
-//     console.warn('Application started at port @ ', PORT);
-// });
+server.listen(PORT, () => {
+    console.warn('Application started at port @ ', PORT);
+});
