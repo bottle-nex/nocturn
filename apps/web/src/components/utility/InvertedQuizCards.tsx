@@ -93,9 +93,9 @@ export default function InvertedQuizCards() {
         <div className="relative max-h-96 h-full flex flex-row items-start justify-center">
             {quiz.length > 0 ? (
                 <div className="mt-12 relative w-[20rem] h-fit">
-                    <div className="absolute bottom-4 left-4 w-[90%] h-full rounded-sm bg-zinc-800/70 dark:bg-zinc-100/70 scale-99 z-0" />
+                    <div className="absolute bottom-4 left-4 w-[90%] h-full rounded-xl bg-zinc-800/70 dark:bg-zinc-100/70 scale-99 z-0" />
 
-                    <UtilityCard className="relative bg-zinc-800 dark:bg-zinc-100 max-w-[20rem] w-[20rem] rounded-sm z-10 shadow-lg border-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0 cursor-pointer">
+                    <UtilityCard className="relative bg-zinc-800 dark:bg-zinc-100 max-w-[20rem] w-[20rem] rounded-xl z-10 shadow-lg border-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl p-0 cursor-pointer">
                         <div className="flex flex-col items-start justify-between h-fit select-none">
                             {displayQuizs.map((quiz, idx) => (
                                 <div
@@ -103,8 +103,8 @@ export default function InvertedQuizCards() {
                                     onClick={() => router.push(`/new/${quiz.id}`)}
                                     className={cn(
                                         'flex items-start justify-between w-full hover:bg-neutral-700 dark:hover:bg-neutral-200 px-8 py-2 min-h-15 relative',
-                                        idx === displayQuizs.length - 1 && 'pb-7',
-                                        idx === 0 && 'pt-7',
+                                        idx === displayQuizs.length - 1 && 'pb-6 rounded-b-xl',
+                                        idx === 0 && 'pt-6 rounded-t-xl',
                                     )}
                                 >
                                     <div className="flex-1 min-w-0">

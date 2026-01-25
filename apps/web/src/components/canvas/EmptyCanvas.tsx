@@ -22,7 +22,7 @@ export default function EmptyCanvas({
     return (
         <div
             onClick={onClick}
-            className={cn('w-full rounded-md p-0.5 cursor-pointer relative', className)}
+            className={cn('w-full rounded-lg p-0.5 cursor-pointer relative ', className)}
             style={{ boxSizing: 'border-box' }}
         >
             {question && options.length > 0 && (
@@ -69,7 +69,7 @@ export default function EmptyCanvas({
                     backgroundColor: template.background_color,
                     color: template.text_color,
                 }}
-                className="w-full h-full rounded-[8px] flex justify-center items-center relative group"
+                className="w-full h-full rounded-md flex justify-center items-center relative group"
             >
                 <CanvasAccents design={template.accent_type} accentColor={template.accent_color} />
             </div>
