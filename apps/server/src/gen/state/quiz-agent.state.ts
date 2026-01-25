@@ -1,30 +1,33 @@
-import { Annotation } from "@langchain/langgraph";
-import { AgentStep } from "@nocturn/types";
+import { Annotation } from '@langchain/langgraph';
+import { AgentStep } from '@nocturn/types';
+import { Response } from 'express';
 
 export const QUIZ_STEP = {
-    START : 'START',
-    ASK_DIFFICULTY : 'ASK_DIFFICULTY',
-    WAIT_DIFFICULTY : 'WAIT_DIFFICULTY',
-    PLANNING : 'PLANNING',
-    GENERATE : 'GENERATE',
-    REVISE : 'REVISE',
-    DONE : 'DONE',
+    START: 'START',
+    ASK_DIFFICULTY: 'ASK_DIFFICULTY',
+    WAIT_DIFFICULTY: 'WAIT_DIFFICULTY',
+    PLANNING: 'PLANNING',
+    GENERATE: 'GENERATE',
+    REVISE: 'REVISE',
+    DONE: 'DONE',
 } as const;
 
-export type QUIZ_STEP = typeof QUIZ_STEP[keyof typeof QUIZ_STEP];
+export type QUIZ_STEP = (typeof QUIZ_STEP)[keyof typeof QUIZ_STEP];
 export interface QuizAgentGraphState {
-  sessionId: string;
-  userId: string;
+    res: Response;
+    sessionId: string;
+    userId: string;
 
-  step: AgentStep;
+    step: AgentStep;
 
-  instruction: string;
-  difficulty?: number;
+    instruction: string;
+    difficulty?: number;
 
-  quizId?: string;
+    quizId?: string;
 }
 
 export const QuizAgentGraphAnnotation = Annotation.Root({
+    res: Annotation<Response>,
     sessionId: Annotation<string>,
     userId: Annotation<string>,
     step: Annotation<AgentStep>,
@@ -47,11 +50,11 @@ export const QuizAgentStateAnnotation = Annotation.Root({
 export type QuizAgentState = typeof QuizAgentStateAnnotation.State;
 
 export const quiz_agent_state_for_graph = {
-  step: null,
-  userId: null,
-  instruction: null,
-  streamingMessage: null,
-  quizId: null,
-  quizData: null,
-  revisionFeedback: null,
+    step: null,
+    userId: null,
+    instruction: null,
+    streamingMessage: null,
+    quizId: null,
+    quizData: null,
+    revisionFeedback: null,
 };

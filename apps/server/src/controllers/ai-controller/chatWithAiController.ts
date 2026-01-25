@@ -52,6 +52,7 @@ export default async function chatWithAiController(req: Request, res: Response) 
             case AgentStep.START: {
                 // ask for difficulty
                 await agent.invoke({
+                    res: res,
                     sessionId: session_id,
                     userId: user.id.toString(),
                     instruction: instruction,
@@ -60,7 +61,12 @@ export default async function chatWithAiController(req: Request, res: Response) 
                 return;
             };
             case AgentStep.WAIT_DIFFICULTY: {
-                
+                await agent.invoke({
+                    res: res,
+                    sessionId: session_id,
+                    userId: user.id.toString(),
+                    instruction: instruction,
+                })
             };
         }
 

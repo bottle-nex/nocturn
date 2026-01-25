@@ -3,6 +3,7 @@ import { chain } from '../../services/init.services';
 import { QuizAgentGraphState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
 import { StateGraph } from '@langchain/langgraph';
 import { AgentStep, AiMessageElement, AiQuizChatRole } from '@nocturn/types';
+import ResponseWriter from '../../class/response_writer';
 
 export default class Agent {
     static async ask_difficulty_node(state: QuizAgentGraphState): Promise<QuizAgentGraphState> {
@@ -15,7 +16,7 @@ export default class Agent {
         });
 
         // update the session step and add agent and system message
-        await prisma.$transaction(async (tx) => {
+        const data = await prisma.$transaction(async (tx) => {
 
             await tx.aiQuizChatSession.update({
                 where: {
@@ -26,22 +27,37 @@ export default class Agent {
                 },
             });
 
-            await tx.aiQuizMessage.createMany({
-                data: [
-                    {
-                        aiQuizChatSessionId: state.sessionId,
-                        role: AiQuizChatRole.AGENT,
-                        content: response.userResponse,
-                    },
-                    {
-                        aiQuizChatSessionId: state.sessionId,
-                        role: AiQuizChatRole.SYSTEM,
-                        content: '',
-                        element: AiMessageElement.DIFFICULTY,
-                    },
-                ],
+            const agentic_message = await tx.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: state.sessionId,
+                    role: AiQuizChatRole.AGENT,
+                    content: response.userResponse,
+                },
             });
-        })
+
+            const system_message = await tx.aiQuizMessage.create({
+                data: {
+                    aiQuizChatSessionId: state.sessionId,
+                    role: AiQuizChatRole.SYSTEM,
+                    content: '',
+                    element: AiMessageElement.DIFFICULTY,
+                },
+            });
+            
+            return {
+                agentic_message,
+                system_message,
+            };
+        });
+
+        ResponseWriter.success(
+            state.res,
+            {
+                agenticMessage: data.agentic_message,
+                systemMessage: data.system_message,
+            },
+            'asking for difficulty',
+        );
 
         return {
             ...state,
