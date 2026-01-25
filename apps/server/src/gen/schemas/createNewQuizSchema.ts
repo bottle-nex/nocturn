@@ -13,9 +13,10 @@ const question_schema = z.object({
     difficulty: z.int().min(1).max(5).describe('how tough the question is'),
 });
 
-export const create_new_quiz_schema = z.object({
+export const executor_schema = z.object({
     description: z.string().min(10).max(200).describe('description what this quiz is about'),
     questions: z.array(question_schema).min(8).max(25),
+    userResponse: z.string().min(5).max(100).describe('write about what you have done'),
 });
 
 export const text_to_number_difficulty_schema = z.object({

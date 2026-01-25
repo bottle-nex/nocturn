@@ -8,4 +8,5 @@ export interface stream {
 export enum STREAM {
     MESSAGE,
     TITLE,
+    QUIZ,
 }

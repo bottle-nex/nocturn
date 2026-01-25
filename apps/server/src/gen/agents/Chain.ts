@@ -1,15 +1,9 @@
 import { RunnableSequence } from '@langchain/core/runnables';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Response } from 'express';
+import { difficulty_asker_prompt, executor_prompt, planner_prompt, reviser_prompt, text_to_number_difficulty_prompt } from '../prompts/createQuizPrompt';
 import {
-    create_quiz_planner_prompt,
-    create_quiz_executor_prompt,
-    difficulty_asker_prompt,
-    reviser_prompt,
-    text_to_number_difficulty_prompt,
-} from '../prompts/createQuizPrompt';
-import {
-    create_new_quiz_schema,
+    executor_schema,
     difficulty_asker_schema,
     planner_schema,
     reviser_schema,
@@ -20,7 +14,6 @@ import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole } from '@nocturn/types';
 import { STREAM } from '../types/stream.type';
-import { QuestionType } from '../../schemas/createQuizSchema';
 
 export default class Chain {
     private model: ChatGoogleGenerativeAI;
@@ -208,13 +201,13 @@ export default class Chain {
         // send the user response
         ResponseWriter.stream.write(res, {
             type: STREAM.MESSAGE,
-            message: agentic_message,
+            data: agentic_message,
         });
 
         // send the title of the quiz
         ResponseWriter.stream.write(res, {
             type: STREAM.MESSAGE,
-            message: system_message,
+            data: system_message,
         });
 
         return {
@@ -257,6 +250,22 @@ export default class Chain {
                 },
                 description: response.description,
             },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                theme: true,
+                basePointsPerQuestion: true,
+                pointsMultiplier: true,
+                timeBonus: true,
+                eliminationThreshold: true,
+                questions: true,
+            },
+        });
+
+        ResponseWriter.stream.write(res, {
+            type: STREAM.QUIZ,
+            data: quiz,
         });
 
     }
@@ -273,13 +282,13 @@ export default class Chain {
         ]);
 
         const planner = RunnableSequence.from([
-            create_quiz_executor_prompt,
+            planner_prompt,
             this.model.withStructuredOutput(planner_schema),
         ]);
 
         const executor = RunnableSequence.from([
-            create_quiz_planner_prompt,
-            this.model.withStructuredOutput(create_new_quiz_schema),
+            executor_prompt,
+            this.model.withStructuredOutput(executor_schema),
         ]);
 
         const reviser = RunnableSequence.from([
