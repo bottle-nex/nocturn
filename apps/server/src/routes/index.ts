@@ -31,6 +31,12 @@ import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 import chatWithAiController from '../controllers/ai-controller/chatWithAiController';
+import createQuizController from '../controllers/quiz-controller/createQuizController';
+import createQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/createQuizFolderController';
+import updateQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/updateQuizFolderController';
+import deleteQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/deleteQuizFolderController';
+import getFolderQuizController from '../controllers/quiz-controller/quiz-folder-controllers/getFolderQuizController';
+import getQuizFoldersController from '../controllers/quiz-controller/quiz-folder-controllers/getQuizFoldersController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -39,7 +45,15 @@ router.post('/sign-in', signInController);
 router.post('/user/create-review', authMiddleware, reviewAppController);
 router.get('/user/get-review', authMiddleware, getReviewController);
 
+// <---------------------- QUIZ-FOLDER-ROUTES ---------------------->
+router.post('/folder/create-folder', authMiddleware, createQuizFolderController);
+router.put('/folder/update-folder', authMiddleware, updateQuizFolderController);
+router.delete('/folder/delete-folder', authMiddleware, deleteQuizFolderController);
+router.get('/folder/get-quiz/:folderId', authMiddleware, getFolderQuizController);
+router.get('/folder/get-folders', authMiddleware, getQuizFoldersController);
+
 // <---------------------- QUIZ-ROUTES ---------------------->
+router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);

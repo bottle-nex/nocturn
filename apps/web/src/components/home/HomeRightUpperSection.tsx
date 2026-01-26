@@ -41,7 +41,7 @@ export default function HomeRightUpperSection() {
     const [pdf, setPdf] = useState<File | null>(null);
 
     function handleCreateNewQuiz() {
-        router.push(`/new/${uuid()}`);
+        router.push(`/new`);
     }
 
     function onPdfSelect(file: File) {

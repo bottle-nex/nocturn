@@ -3,7 +3,9 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export const API_URL = BACKEND_URL + '/api/v1';
 export const SIGNIN_URL = API_URL + '/sign-in';
 export const QUIZ_URL = API_URL + '/quiz';
+export const FOLDER_URL = API_URL + '/folder';
 export const AI_URL = API_URL + '/ai';
+
 export const CREATE_QUIZ_URL = QUIZ_URL + '/create-quiz';
 export const GET_PRESIGNED_URL = API_URL + '/get-presigned-url';
 export const GET_OWNER_QUIZ_URL = QUIZ_URL + '/get-quiz';
@@ -15,6 +17,13 @@ export const SPECTATOR_JOIN_QUIZ_URL = QUIZ_URL + '/spectator-join-quiz';
 export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';
 export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
+
+// folder routes
+export const CREATE_FOLDER_URL = FOLDER_URL + '/create-folder';
+export const UPDATE_FOLDER_URL = FOLDER_URL + '/update-folder';
+export const DELETE_FOLDER_URL = FOLDER_URL + '/delete-folder';
+export const GET_FOLDER_QUIZ_URL = FOLDER_URL + '/get-quiz';
+export const GET_QUIZ_FOLDERS_URL = FOLDER_URL + '/get-folders';
 
 export const RESTORE_TRASHED_QUIZ_URL = API_URL + '/quiz/restore-quiz';
 export const DELETE_QUIZ_URL = API_URL + '/quiz/move-to-trash';

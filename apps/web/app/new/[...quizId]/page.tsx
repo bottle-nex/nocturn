@@ -46,9 +46,6 @@ export default function New({ params }: NewProps) {
                         case QuizResponseType.ACCESS_DENIED:
                             setAllowance(AllowanceEnum.NOT_ALLOWED);
                             break;
-                        case QuizResponseType.QUIZ_NOT_EXIST:
-                            setAllowance(AllowanceEnum.ALLOWED);
-                            break;
                         default:
                             setAllowance(AllowanceEnum.NOT_ALLOWED);
                     }

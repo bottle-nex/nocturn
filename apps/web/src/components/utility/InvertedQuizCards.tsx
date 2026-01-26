@@ -19,6 +19,7 @@ import { QuizStatusEnum } from '@nocturn/types';
 import Image from 'next/image';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
+import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 
 export default function InvertedQuizCards() {
     const { session } = useUserSessionStore();
@@ -27,8 +28,9 @@ export default function InvertedQuizCards() {
     const optionRef = useRef<HTMLElement>(null);
     const { quiz, deleteQuiz } = useRecentlyViewedQuizStore();
     const { quiz: activeQuiz, updateQuiz } = useNewQuizStore();
+    const { quizs } = useAllQuizsStore();
     const router = useRouter();
-    const displayQuizs = quiz.slice(0, 3);
+    const displayQuizs = quizs.slice(0, 3);
 
     useHandleClickOutside([dropdownRef, optionRef], () => setOpenQuizOptionId(null));
 
@@ -113,7 +115,7 @@ export default function InvertedQuizCards() {
                                         <div className="flex items-center justify-between mt-1">
                                             <p className="text-neutral-500 dark:text-neutral-400 text-[11px] font-light tracking-wide">
                                                 {DateActions.formatFullDateTime(
-                                                    new Date(quiz?.scheduledAt ?? Date.now()),
+                                                    new Date(quiz?.createdAt ?? Date.now()),
                                                 )}
                                             </p>
                                             <QuizStatusTicker

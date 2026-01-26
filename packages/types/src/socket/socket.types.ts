@@ -1,8 +1,4 @@
-import {
-  CollabRole,
-  InteractionEnum,
-  USER_TYPE,
-} from "../prisma/enums.prisma";
+import { CollabRole, InteractionEnum, USER_TYPE } from "../prisma/enums.prisma";
 
 export enum MESSAGE_TYPES {
   HOST_JOIN_GAME_SESSION = "JOIN_GAME_SESSION",
