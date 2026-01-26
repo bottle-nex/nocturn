@@ -57,6 +57,14 @@ export interface QuizType {
     spectators?: SpectatorType[];
 }
 
+export interface QuizFolderType {
+    id: string;
+    name: string;
+    user: UserType;
+    userId: string;
+    quizzes: QuizType[];
+}
+
 export interface QuestionType {
     id: string;
     question: string;

@@ -2,6 +2,7 @@
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import HomePanel from './HomePanel';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
+import MyQuizzesPanel from './MyQuizzesPanel';
 
 export default function SidebarPanelRenderer() {
     const { activeTab } = useHomeSidebarStore();
@@ -9,6 +10,8 @@ export default function SidebarPanelRenderer() {
     switch (activeTab) {
         case SidebarTab.HOME:
             return <HomePanel />;
+        case SidebarTab.MY_QUIZZES:
+            return <MyQuizzesPanel />;
         case SidebarTab.SETTINGS:
             return;
         default:

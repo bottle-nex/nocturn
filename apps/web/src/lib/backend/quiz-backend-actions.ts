@@ -3,6 +3,24 @@ import axios from 'axios';
 import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
 
 export default class BackendActions {
+    static async createQuiz(token: string, quiz: QuizType) {
+        if (!token || !quiz) return;
+
+        try {
+            const { data } = await axios.post(CREATE_QUIZ_URL, quiz, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (data.success) {
+                return data.data;
+            }
+        } catch (error) {
+            console.error('failed to create quiz', error);
+            return;
+        }
+    }
+
     static async upsertQuizAction(quiz: QuizType, token: string): Promise<boolean> {
         if (!token || !quiz.id) {
             return false;

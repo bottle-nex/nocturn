@@ -133,6 +133,7 @@ export default class QuizController {
                         basePointsPerQuestion: quiz_data.basePointsPerQuestion,
                         pointsMultiplier: quiz_data.pointsMultiplier,
                         timeBonus: quiz_data.timeBonus,
+                        theme: quiz_data.theme,
                         eliminationThreshold: quiz_data.eliminationThreshold,
                         questionTimeLimit: quiz_data.questionTimeLimit,
                         breakBetweenQuestions: quiz_data.breakBetweenQuestions,
