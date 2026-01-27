@@ -1,5 +1,4 @@
 'use client';
-
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import moment from 'moment';
 import { QuizViewsType } from '@nocturn/types';
@@ -7,12 +6,14 @@ import { JSX, useRef, useState, useEffect } from 'react';
 import { templates } from '@/lib/templates';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { RiDraggable } from 'react-icons/ri';
 import { useDragQuizStore } from '@/store/home/useDragQuizStore';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { GoGrabber } from 'react-icons/go';
+import { RxOpenInNewWindow } from 'react-icons/rx';
 
 interface RecentlyViewedCardProps {
     quiz: Partial<QuizViewsType>;
@@ -81,7 +82,6 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
         setOriginRect(rect);
         setOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
 
-        // Initial scale down
         cardRef.current.style.transform = 'scale(0.80)';
         cardRef.current.style.opacity = '0.75';
         cardRef.current.style.transition = 'transform 120ms ease, opacity 120ms ease';
@@ -230,7 +230,7 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
 
             <div
                 ref={cardRef}
-                onClick={handleCardClick}
+                // onClick={handleCardClick}
                 onPointerMove={handlePointerMove}
                 onPointerDown={(e) => {
                     if (isDraggingLocal) {
@@ -246,13 +246,34 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
                             className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
                             template={template}
                         />
-                        <div
-                            className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-grab active:cursor-grabbing touch-none bg-light-base rounded-[4px] p-1"
-                            onPointerDown={handleHandlePointerDown}
-                            onPointerUp={handlePointerUp}
-                            onPointerLeave={handlePointerUp}
-                        >
-                            <RiDraggable className="size-7 text-dark-base stroke-1.5" />
+                        <div className={cn('absolute w-full h-full top-0 p-0.5 rounded-lg flex')}>
+                            <div
+                                className={cn(
+                                    'w-full h-full',
+                                    'opacity-0 group-hover:opacity-100 transition-all duration-200',
+                                    'cursor-grab active:cursor-grabbing touch-none',
+                                    'bg-dark-base/30 hover:bg-dark-base/50 rounded-[4px] rounded-r-none',
+                                    'flex justify-center items-center',
+                                )}
+                                onPointerDown={handleHandlePointerDown}
+                                onPointerUp={handlePointerUp}
+                                onPointerLeave={handlePointerUp}
+                            >
+                                <GoGrabber className="size-10 text-light-base stroke-1.5" />
+                            </div>
+
+                            <div
+                                className={cn(
+                                    'w-full h-full',
+                                    'opacity-0 group-hover:opacity-100 transition-all duration-200',
+                                    'cursor-pointer',
+                                    'bg-dark-base/30 hover:bg-dark-base/50 rounded-[4px] rounded-l-none',
+                                    'flex justify-center items-center',
+                                )}
+                                onClick={handleCardClick}
+                            >
+                                <RxOpenInNewWindow className="size-7 text-light-base stroke-1.5" />
+                            </div>
                         </div>
                     </div>
                 )}

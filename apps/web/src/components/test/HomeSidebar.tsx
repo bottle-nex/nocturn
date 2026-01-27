@@ -148,7 +148,7 @@ export default function HomeSidebar() {
                                 key={item.tab}
                             >
                                 {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242,235,235,0.843)] transition-all duration-500 ease-out" />
+                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242,235,235,0.3)] transition-all duration-500 ease-out" />
                                 )}
 
                                 <span className="p-1 rounded">{item.icon}</span>

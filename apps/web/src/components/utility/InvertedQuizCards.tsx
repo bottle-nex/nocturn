@@ -181,7 +181,9 @@ export default function InvertedQuizCards() {
                                                 <hr className="border-0 h-px bg-neutral-800 dark:bg-neutral-300" />
 
                                                 <Button
-                                                    onClick={() => handleDeleteQuiz(quiz.id)}
+                                                    onClick={() => {
+                                                        handleDeleteQuiz(quiz.id);
+                                                    }}
                                                     className={cn(
                                                         'px-3 py-2 text-red-500 dark:text-red-600 w-full bg-transparent hover:bg-neutral-800 dark:hover:bg-neutral-100 cursor-pointer',
                                                         'flex items-center justify-between',

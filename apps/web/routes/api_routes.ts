@@ -18,12 +18,10 @@ export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';
 export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
 
-// folder routes
-export const CREATE_FOLDER_URL = FOLDER_URL + '/create-folder';
-export const UPDATE_FOLDER_URL = FOLDER_URL + '/update-folder';
-export const DELETE_FOLDER_URL = FOLDER_URL + '/delete-folder';
-export const GET_FOLDER_QUIZ_URL = FOLDER_URL + '/get-quiz';
-export const GET_QUIZ_FOLDERS_URL = FOLDER_URL + '/get-folders';
+// favourite quiz routes
+export const ADD_QUIZ_TO_FAVOURITES_URL = QUIZ_URL + '/add-to-favourite';
+export const REMOVE_QUIZ_FROM_FAVOURITE_URL = QUIZ_URL + '/remove-from-favourite';
+export const GET_FAVOURITE_QUIZZES_URL = QUIZ_URL + '/get-favourite-quizzes';
 
 export const RESTORE_TRASHED_QUIZ_URL = API_URL + '/quiz/restore-quiz';
 export const DELETE_QUIZ_URL = API_URL + '/quiz/move-to-trash';

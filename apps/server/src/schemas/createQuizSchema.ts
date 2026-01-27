@@ -34,7 +34,6 @@ const questionSchema = z.object({
 
 export const createQuizSchema = z.object({
     id: z.string().optional(),
-    folderId: z.string().optional(),
     title: z.string().min(1).max(50),
     description: z.string().optional(),
     theme: z.enum(Object.values(TemplateEnum)),

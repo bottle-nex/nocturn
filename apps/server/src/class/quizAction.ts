@@ -45,29 +45,48 @@ export default class QuizAction {
     }
 
     static async permanentDeleteQuiz(quizId: string, userId: string) {
-        await prisma.quiz.delete({
-            where: {
-                id: quizId,
-                hostId: userId,
-            },
-        });
+        if (!quizId || !userId) {
+            console.error('Insufficient creds');
+            return;
+        }
+        try {
+            await prisma.quiz.delete({
+                where: {
+                    id: quizId,
+                    hostId: userId,
+                },
+            });
+        } catch (error) {
+            console.error('Error in permanently deleting quiz: ', error);
+            return;
+        }
     }
 
     static async moveToTrash(quizId: string, userId: string) {
-        const result = await prisma.quiz.updateMany({
-            where: {
-                id: quizId,
-                isDeleted: false,
-                hostId: userId,
-            },
-            data: {
-                isDeleted: true,
-                deletedAt: new Date(),
-            },
-        });
+        if (!quizId || !userId) {
+            console.error('Insufficient credentials');
+            return;
+        }
 
-        if (result.count === 0) {
-            throw new Error('UNAUTHORIZED_OR_ALREADY_DELETED');
+        try {
+            const result = await prisma.quiz.updateMany({
+                where: {
+                    id: quizId,
+                    isDeleted: false,
+                    hostId: userId,
+                },
+                data: {
+                    isDeleted: true,
+                    deletedAt: new Date(),
+                },
+            });
+
+            if (result.count === 0) {
+                throw new Error('UNAUTHORIZED_OR_ALREADY_DELETED');
+            }
+        } catch (error) {
+            console.error('Error in deleting quiz', error);
+            return;
         }
     }
 

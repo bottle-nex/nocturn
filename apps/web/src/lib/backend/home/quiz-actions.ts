@@ -1,11 +1,14 @@
 import { CustomResponse, QuizType, UserQuizResponse } from '@nocturn/types';
 import axios from 'axios';
 import {
+    ADD_QUIZ_TO_FAVOURITES_URL,
     CLEAR_TRASH_URL,
     DELETE_QUIZ_URL,
     GET_ALL_OWNER_QUIZ_URL,
+    GET_FAVOURITE_QUIZZES_URL,
     GET_TRASHED_QUIZZES_URL,
     PERMANENTLY_DELETE_QUIZ_URL,
+    REMOVE_QUIZ_FROM_FAVOURITE_URL,
     RESTORE_TRASHED_QUIZ_URL,
 } from 'routes/api_routes';
 
@@ -115,6 +118,72 @@ export default class QuizActions {
             return data.data;
         } catch (error) {
             console.error('Error in permanently deleting quiz: ', error);
+            return;
+        }
+    }
+
+    static async add_to_favourite(token: string, quizId: string) {
+        if (!quizId || !token) {
+            console.error('quizId or token not found');
+            return;
+        }
+
+        try {
+            const { data } = await axios.put(`${ADD_QUIZ_TO_FAVOURITES_URL}/${quizId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (err) {
+            console.error('Failed to add quiz to favourites: ', err);
+            return;
+        }
+    }
+
+    static async remove_from_favourite(token: string, quizId: string) {
+        if (!quizId || !token) {
+            console.error('quizId or token not found');
+            return;
+        }
+
+        try {
+            const { data } = await axios.put(`${REMOVE_QUIZ_FROM_FAVOURITE_URL}/${quizId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (err) {
+            console.error('Failed to remove quiz from favourites: ', err);
+            return;
+        }
+    }
+
+    static async get_favourite_quizzes(token: string): Promise<QuizType | undefined> {
+        if (!token) {
+            console.error('token not found');
+            return;
+        }
+
+        try {
+            const { data } = await axios.get(GET_FAVOURITE_QUIZZES_URL, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (err) {
+            console.error('Failed to add quiz to favourites: ', err);
             return;
         }
     }
