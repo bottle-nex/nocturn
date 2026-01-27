@@ -1,7 +1,7 @@
-import { MESSAGE_TYPES } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
 
 export interface MessagePayload {
-    type: MESSAGE_TYPES;
+    type: MESSAGE_TYPES | COLLABORATORS_MESSAGE_TYPE;
     payload: unknown;
 }
 

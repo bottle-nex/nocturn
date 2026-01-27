@@ -58,7 +58,7 @@ function MediumDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     useEffect(() => {
-        gsap.from('utility', {
+        gsap.from('.utility', {
             x: 300,
             duration: 0.2,
             ease: 'power2.inOut',
@@ -78,7 +78,7 @@ function SmallDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     useEffect(() => {
-        gsap.from('utility', {
+        gsap.from('.utility', {
             x: 300,
             duration: 0.2,
             ease: 'power2.inOut',

@@ -14,7 +14,7 @@ interface MiniCanvasProps {
     question: QuestionType;
     currentQuestionIndex: number;
     questionIndex: number;
-    setCurrentQuestionIndex: (index: number) => void;
+    handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
     onClick?: () => void;
 }
@@ -24,7 +24,7 @@ export default function MiniCanvas({
     question,
     currentQuestionIndex,
     questionIndex,
-    setCurrentQuestionIndex,
+    handleQuestionChange,
     removeQuestion,
     onClick,
 }: MiniCanvasProps) {
@@ -36,7 +36,7 @@ export default function MiniCanvas({
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
-        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        handleQuestionChange(currentQuestionIndex - 1);
         setOpenMiniCanvasOptions(false);
     }
 
@@ -75,7 +75,7 @@ export default function MiniCanvas({
         <>
             <div
                 onClick={() => {
-                    setCurrentQuestionIndex(question.orderIndex);
+                    handleQuestionChange(question.orderIndex);
                     onClick?.();
                 }}
                 className={cn(

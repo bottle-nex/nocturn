@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useWebSocket } from './useWebSocket';
-import { MESSAGE_TYPES } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
 import { SubscribeEventHandlers } from '@/lib/subscribe-event-handlers';
 
 export function useSubscribeEventHandlers() {
@@ -64,6 +64,8 @@ export function useSubscribeEventHandlers() {
             [MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE_CONFIRMATION]:
                 SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
             [MESSAGE_TYPES.LIFELINE_LIVE_UPDATE]: SubscribeEventHandlers.handleLifelineLiveUpdate,
+
+            // [COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE]
         };
 
         // susbcribe

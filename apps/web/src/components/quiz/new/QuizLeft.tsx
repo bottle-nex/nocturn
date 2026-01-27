@@ -7,13 +7,15 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import Canvas from '@/components/canvas/Canvas';
 import UtilityCard from '@/components/utility/UtilityCard';
 import QuestionPallete from './QuestionPallete';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function QuizLeft() {
-    const [error, setError] = useState<boolean>(false);
-    const maxCharacters = 50;
-    const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const { quiz, updateQuiz } = useNewQuizStore();
+    const { handleCollaboratorsQuestionChange } = useWebSocket();
+    const [error, setError] = useState<boolean>(false);
+    const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const [quizTitle, setQuizTitle] = useState(quiz.title);
+    const maxCharacters = 50;
 
     function handleQuizTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.value.length > maxCharacters) {
@@ -24,6 +26,8 @@ export default function QuizLeft() {
         setQuizTitle(e.target.value);
         updateQuiz({ title: e.target.value });
     }
+
+    
 
     return (
         <div className="flex-1 h-full flex justify-center p-4 gap-x-4 min-w-0">

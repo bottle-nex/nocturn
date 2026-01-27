@@ -3,9 +3,15 @@ import { CustomWebSocket } from '../types/web-socket-types';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import RedisCache from '../cache/redis.cache';
 import { prisma } from '@nocturn/database';
-import { CookiePayload, socket_codes } from '@nocturn/types';
+import {
+    COLLABORATORS_MESSAGE_TYPE,
+    CookiePayload,
+    PubSubMessageTypes,
+    socket_codes,
+} from '@nocturn/types';
 import WebSocket from 'ws';
 import { v4 as uuid } from 'uuid';
+import QuizManager from './QuizManager';
 
 export interface CollaborationManagerDependencies {
     publisher: Redis;
@@ -13,6 +19,7 @@ export interface CollaborationManagerDependencies {
     socket_mapping: Map<string, CustomWebSocket>;
     quiz_collaborators_mapping: Map<string, Set<string>>;
     databaseQueue: DatabaseQueue;
+    quizManager: QuizManager;
     redis_cache: RedisCache;
 }
 
@@ -22,6 +29,7 @@ export default class CollaborationManager {
 
     private databaseQueue: DatabaseQueue;
     private redis_cache: RedisCache;
+    private quizManager: QuizManager;
 
     private socket_mapping: Map<string, CustomWebSocket>;
     private collaborator_sockets_mapping: Map<string, Set<string>>;
@@ -33,6 +41,7 @@ export default class CollaborationManager {
         this.socket_mapping = dependencies.socket_mapping;
         this.databaseQueue = dependencies.databaseQueue;
         this.redis_cache = dependencies.redis_cache;
+        this.quizManager = dependencies.quizManager;
         this.collaborator_sockets_mapping = dependencies.quiz_collaborators_mapping;
     }
 
@@ -76,15 +85,6 @@ export default class CollaborationManager {
             ?.add(new_collaborator_socket_id);
     }
 
-    // private on_collaborator_connect(decoded_cookie_payload: CookiePayload) {
-    //     try {
-    //         const collaborator_id = decoded_cookie_payload.userId;
-    //     } catch (error) {
-    //         console.error('error on collaborator connect: ', error);
-    //         return;
-    //     }
-    // }
-
     private cleanup_existing_collaborator_socket(
         collaborator_id: string,
         collab_session_id: string,
@@ -115,6 +115,24 @@ export default class CollaborationManager {
         } catch (error) {
             console.error('error while cleaning up collaborator socket: ', error);
             return;
+        }
+    }
+
+    private async handle_question_tap(ws: CustomWebSocket, questionId: string) {
+        try {
+            if (!ws.user.collabSessionId) {
+                ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
+                return;
+            }
+            const data: PubSubMessageTypes = {
+                type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
+                payload: {
+                    questionId: questionId,
+                },
+            };
+            await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
+        } catch (err) {
+            console.error('Error while handling question tap: ', err);
         }
     }
 

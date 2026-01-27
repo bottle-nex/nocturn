@@ -1,4 +1,5 @@
 import { CollabRole, InteractionEnum, USER_TYPE } from "../prisma/enums.prisma";
+import { COLLABORATORS_MESSAGE_TYPE } from "./collaborators/collaborators.types";
 
 export enum MESSAGE_TYPES {
   HOST_JOIN_GAME_SESSION = "JOIN_GAME_SESSION",
@@ -105,6 +106,12 @@ export type PubSubMessageTypes =
       exclude_socket_id?: never;
       only_socket_id?: string;
       requested_participant_id?: string;
+    }
+    | {
+        type: COLLABORATORS_MESSAGE_TYPE;
+      payload: any;
+      exclude_socket_id?: string;
+      only_socket_id?: never;
     };
 
 export interface IncomingChatMessage {

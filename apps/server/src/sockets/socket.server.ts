@@ -385,6 +385,7 @@ export default class WebsocketServer {
             quiz_collaborators_mapping: this.quiz_collaborators_mapping,
             databaseQueue: this.database_queue,
             redis_cache: this.redis_cache,
+            quizManager: this.quizManager,
         });
     }
 

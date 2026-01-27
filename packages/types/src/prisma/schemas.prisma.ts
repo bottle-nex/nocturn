@@ -215,7 +215,6 @@ export interface ReviewType {
   createdAt: Date;
   updateAt: Date;
 }
-
 export interface AiQuizChatSession {
   id: string;
   userId: string;
@@ -230,6 +229,28 @@ export interface AiQuizChatSession {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface Collaborator {
+    id: string,
+    sessionId: string,
+    userId: string,
+    role: CollabRole,
+    isBlocked: boolean,
+    joinedAt?: Date | null,
+    session: CollabSession,
+    user: UserType,
+}
+
+export interface CollabSession {
+    id: string,
+    hostId: string,
+    quizId: string,
+    host: UserType,
+    quiz: QuizType,
+    collaborators: Collaborator[],
+    createdAt: Date,
+    updatedAt: Date,
+}
+
 
 export interface AiQuizMessage {
   id: string;

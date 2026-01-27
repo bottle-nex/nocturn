@@ -13,18 +13,26 @@ import { useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function QuestionPallete() {
     const { quiz, currentQuestionIndex, setCurrentQuestionIndex, addQuestion, removeQuestion } =
         useNewQuizStore();
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
+    const { handleCollaboratorsQuestionChange } = useWebSocket();
+    console.log("quesiton is : ", quiz.questions);
+    function handleQuestionChange(questionID: number) {
+        console.log('Changing question to index:', questionID);
+        setCurrentQuestionIndex(questionID);
+        handleCollaboratorsQuestionChange({ questionIndex: questionID });
+    }
 
     return (
         <>
             <BigQuestionPallete
                 quiz={quiz}
                 currentQuestionIndex={currentQuestionIndex}
-                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
                 currentQTemplate={currentQTemplate}
@@ -32,7 +40,7 @@ export default function QuestionPallete() {
             <SmallQuestionPallete
                 quiz={quiz}
                 currentQuestionIndex={currentQuestionIndex}
-                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
                 currentQTemplate={currentQTemplate}
@@ -44,7 +52,7 @@ export default function QuestionPallete() {
 interface QuestionPallete {
     quiz: QuizType;
     currentQuestionIndex: number;
-    setCurrentQuestionIndex: (index: number) => void;
+    handleQuestionChange: (index: number) => void;
     addQuestion: () => void;
     removeQuestion: (index: number) => void;
     currentQTemplate: Template | undefined;
@@ -53,7 +61,7 @@ interface QuestionPallete {
 function BigQuestionPallete({
     quiz,
     currentQuestionIndex,
-    setCurrentQuestionIndex,
+    handleQuestionChange,
     addQuestion,
     removeQuestion,
     currentQTemplate,
@@ -79,7 +87,7 @@ function BigQuestionPallete({
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
-                                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                                handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}
@@ -95,7 +103,7 @@ function BigQuestionPallete({
 function SmallQuestionPallete({
     quiz,
     currentQuestionIndex,
-    setCurrentQuestionIndex,
+    handleQuestionChange,
     addQuestion,
     removeQuestion,
     currentQTemplate,
@@ -138,7 +146,7 @@ function SmallQuestionPallete({
         <UtilityCard
             ref={sidebarRef}
             className={cn(
-                'absolute left-0 top-0 z-40 flex max-w-[11rem] w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
+                'absolute left-0 top-0 z-40 flex max-w-44 w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
                 `${appearing ? '' : 'hidden'}`,
             )}
         >
@@ -164,7 +172,7 @@ function SmallQuestionPallete({
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
-                                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                                handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}

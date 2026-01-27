@@ -19,7 +19,10 @@ export default function New() {
             hasCreatedQuizRef.current = true;
             setLoading(true);
 
-            if (!session?.user.token || !quiz) return;
+            if (!session?.user.token || !quiz) {
+                console.log("session and quiz aren't available", session, quiz);
+                return
+            };
 
             const res = await BackendActions.createQuiz(session.user.token, quiz);
             if (res) {
