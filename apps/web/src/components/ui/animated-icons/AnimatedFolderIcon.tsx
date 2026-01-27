@@ -69,7 +69,6 @@ export default function AnimatedFolderIcon({
             style={{
                 cursor: 'pointer',
                 userSelect: 'none',
-                padding: '8px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
