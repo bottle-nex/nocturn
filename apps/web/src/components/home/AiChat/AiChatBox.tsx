@@ -13,6 +13,7 @@ import { GoPlus } from "react-icons/go";
 import { IoMdArrowRoundUp } from "react-icons/io";
 import { v4 as uuid } from "uuid";
 import MessagesRenderer from "./MessagesRenderer";
+import { FaSquare } from "react-icons/fa6";
 
 
 export default function AiChatBox() {
@@ -20,11 +21,11 @@ export default function AiChatBox() {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
-    const { appendMessage } = useAiChatStore();
+    const { appendMessage, loading } = useAiChatStore();
     const { session } = useUserSessionStore();
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             e.preventDefault();
             handleSubmit();
         }
@@ -49,7 +50,7 @@ export default function AiChatBox() {
         appendMessage(message);
 
         // send the prompt
-        // AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
+        AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
 
         setPrompt('');
     }
@@ -87,21 +88,34 @@ export default function AiChatBox() {
                 onKeyDown={handleOnKeyDown}
             />
 
-            <ToolTipComponent content={prompt ? "" : "Dictate"} className="cursor-pointer">
-                <div className={cn(
-                    'flex justify-center items-center rounded-full p-1.5 bg-light-alpha cursor-pointer ',
-                )}>
-                    {prompt ? (
+            <ToolTipComponent
+                content={prompt ? "" : "Dictate"}
+                className="cursor-pointer"
+                side="top"
+            >
+                <div
+                    className={cn(
+                        'flex items-center justify-center rounded-full cursor-pointer',
+                        'w-7 h-7 aspect-square leading-none',
+                        loading ? 'bg-neutral-800' : 'bg-light-alpha'
+                    )}
+                >
+
+                    {loading ? (
+                        <FaSquare
+                            size={13}
+                            className="text-neutral-300"
+                        />
+                    ) : prompt ? (
                         <IoMdArrowRoundUp
                             size={16}
-                            className="text-neutral-700"
+                            className="text-neutral-800"
                         />
                     ) : (
-                        <MicIcon
-                            size={16}
-                        />
+                        <MicIcon size={16} />
                     )}
                 </div>
+
             </ToolTipComponent>
 
             <MessagesRenderer

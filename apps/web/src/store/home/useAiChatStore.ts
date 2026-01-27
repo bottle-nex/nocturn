@@ -8,13 +8,19 @@ interface AiChatStore {
 
     quiz: QuizType | null;
     setQuiz: (quiz: QuizType) => void;
+
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
 }
 
 export const useAiChatStore = create<AiChatStore>((set, get) => ({
     messages: [],
-    setMessages: (messages: AiQuizMessage[]) => set({ messages: messages }),
+    setMessages: (messages: AiQuizMessage[]) => set({ messages }),
     appendMessage: (message: AiQuizMessage) => set({ messages: [...get().messages, message] }),
 
     quiz: null,
-    setQuiz: (quiz: QuizType) => set({ quiz: quiz }),
+    setQuiz: (quiz: QuizType) => set({ quiz }),
+
+    loading: false,
+    setLoading: (loading: boolean) => set({ loading }),
 }));
