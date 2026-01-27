@@ -1,67 +1,44 @@
 'use client';
-import QuizFolderBackendActions from '@/lib/backend/home/quiz-folder-backend-actions';
-import { useQuizFolderStore } from '@/store/quiz-folder/useQuizFolderStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { FiPlus } from 'react-icons/fi';
-import { BsFolderPlus } from 'react-icons/bs';
-import { cn } from '@/lib/utils';
-import ToolTipComponent from '../utility/TooltipComponent';
-import { AiOutlineQuestionCircle } from 'react-icons/ai';
-import { Input } from '../ui/input';
-import { GoArrowRight } from 'react-icons/go';
-import { FcFolder } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
+import QuizActions from '@/lib/backend/home/quiz-actions';
+import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import { templates } from '@/lib/templates';
+import EmptyCanvas from '../canvas/EmptyCanvas';
+import Image from 'next/image';
+import moment from 'moment';
+import HeartButton from '../ui/HeartButton';
 
 export default function MyQuizzesPanel() {
-    const { folders, addFolder, setFolders } = useQuizFolderStore();
     const { session } = useUserSessionStore();
-    const [folderName, setFolderName] = useState<string>('');
-    const [createFolderPanel, setCreateFolderPanel] = useState<boolean>(false);
     const router = useRouter();
+    const [_loading, setLoading] = useState<boolean>(false);
+    const { setAllQuizs, quizs } = useAllQuizsStore();
 
     useEffect(() => {
-        async function getFolders() {
-            if (!session?.user.token) return;
-
+        async function get_quiz_data() {
             try {
-                const fetchedFolders = await QuizFolderBackendActions.get_all_quiz_folders(
-                    session.user.token,
-                );
+                setLoading(true);
+                if (!session?.user.token) return;
 
-                if (fetchedFolders) {
-                    setFolders(fetchedFolders);
-                }
+                const quiz_response = await QuizActions.get_quizzes(session.user.token);
+
+                setAllQuizs(quiz_response?.quizzes || []);
             } catch (error) {
-                console.error('Error in fetching folders', error);
+                console.error('Error in getting quiz', error);
+            } finally {
+                setLoading(false);
             }
         }
 
-        getFolders();
-    }, [session?.user.token, setFolders]);
+        get_quiz_data();
+    }, [session?.user.token, setAllQuizs]);
 
     function handleCreateNewQuiz() {
         router.push('/new');
-    }
-
-    async function handleCreateFolder() {
-        if (!session?.user.token || !folderName.trim()) return;
-
-        try {
-            const folder = await QuizFolderBackendActions.create_folder(
-                session.user.token,
-                folderName.trim(),
-            );
-
-            if (folder) {
-                addFolder(folder);
-                setFolderName('');
-                setCreateFolderPanel(false);
-            }
-        } catch (error) {
-            console.error('Error in creating folder:', error);
-        }
     }
 
     return (
@@ -77,68 +54,59 @@ export default function MyQuizzesPanel() {
                         <FiPlus />
                         <span>New Quiz</span>
                     </Button>
-
-                    <Button
-                        onClick={() => setCreateFolderPanel((prev) => !prev)}
-                        className="rounded-sm h-11 w-34 bg-light-base hover:bg-light-base/80 transition-colors text-indigo-800 active:scale-98"
-                    >
-                        <BsFolderPlus />
-                        <span>New Folder</span>
-                    </Button>
-
-                    {createFolderPanel && (
-                        <div
-                            className={cn(
-                                'absolute top-14 right-0',
-                                'flex flex-col gap-y-5 p-4',
-                                'dark:bg-dark-base bg-light-base dark:text-light-base text-dark-base border border-neutral-800',
-                                'rounded-sm w-80',
-                            )}
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>Create new folder</div>
-
-                                <ToolTipComponent content="You can manage quizzes in folders">
-                                    <AiOutlineQuestionCircle size={15} />
-                                </ToolTipComponent>
-                            </div>
-
-                            <div className="flex items-center gap-x-2">
-                                <Input
-                                    value={folderName}
-                                    placeholder="enter folder name"
-                                    className="rounded-sm"
-                                    onChange={(e) => setFolderName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            e.preventDefault();
-                                            handleCreateFolder();
-                                        }
-                                    }}
-                                />
-
-                                <Button
-                                    onClick={handleCreateFolder}
-                                    className="h-9 w-9 bg-light-base hover:bg-light-base/90 text-dark-base rounded-sm"
-                                >
-                                    <GoArrowRight />
-                                </Button>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-                {folders.map((folder) => (
-                    <div
-                        key={folder.id}
-                        className="w-fit max-w-35 h-auto p-2.5 px-4 rounded-sm bg-light-base flex justify-between items-center text-dark-base gap-x-2.5"
-                    >
-                        <FcFolder className="size-6" />
-                        <span className="truncate">{folder.name}</span>
-                    </div>
-                ))}
+            <div className="w-full mt-10 overflow-y-auto text-light-base">
+                <div className="w-full mt-10 overflow-y-auto text-light-base grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {quizs.length > 0 ? (
+                        quizs.map((quiz) => {
+                            const currTemplate = templates.find((t) => t.id === quiz.theme);
+                            if (!currTemplate) return null;
+                            const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
+
+                            return (
+                                <div
+                                    key={quiz.id}
+                                    className="max-w-[400px] w-full p-1 flex flex-col"
+                                >
+                                    <EmptyCanvas
+                                        question={quiz.questions[0].question}
+                                        options={quiz.questions[0].options}
+                                        className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
+                                        template={currTemplate}
+                                    />
+
+                                    <div className="flex items-center justify-start gap-x-2.5 pt-2">
+                                        {quiz.host?.image && (
+                                            <Image
+                                                src={quiz.host.image}
+                                                width={32}
+                                                height={32}
+                                                alt="user-logo"
+                                                className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
+                                            />
+                                        )}
+
+                                        <div className="flex items-center justify-between w-full">
+                                            <div>
+                                                <span className="block text-normal mt-1">
+                                                    {quiz.title?.slice(0, 28)}...
+                                                </span>
+                                                <span className="block dark:text-white/60 text-black/60 text-[13px]">
+                                                    last viewed {formattedTime}
+                                                </span>
+                                            </div>
+                                            <HeartButton />
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div>no quizzes found</div>
+                    )}
+                </div>
             </div>
         </div>
     );

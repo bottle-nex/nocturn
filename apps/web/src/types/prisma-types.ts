@@ -31,6 +31,8 @@ export interface QuizType {
     status: QuizStatusEnum;
     interactions: InteractionEnum[];
 
+    isFavourite?: boolean;
+
     participantCode?: string;
     spectatorCode?: string;
     spectatorLink?: string;
@@ -55,14 +57,6 @@ export interface QuizType {
     questions: QuestionType[];
     participants?: ParticipantType[];
     spectators?: SpectatorType[];
-}
-
-export interface QuizFolderType {
-    id: string;
-    name: string;
-    user: UserType;
-    userId: string;
-    quizzes: QuizType[];
 }
 
 export interface QuestionType {

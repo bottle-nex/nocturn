@@ -16,7 +16,6 @@ export default function New() {
     useEffect(() => {
         async function createQuiz() {
             if (hasCreatedQuizRef.current) return;
-
             hasCreatedQuizRef.current = true;
             setLoading(true);
 

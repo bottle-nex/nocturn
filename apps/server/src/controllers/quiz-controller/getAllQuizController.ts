@@ -24,6 +24,22 @@ export default async function getAllQuizController(req: Request, res: Response) 
                 status: true,
                 scheduledAt: true,
                 createdAt: true,
+                theme: true,
+                host: {
+                    select: {
+                        image: true,
+                    },
+                },
+                questions: {
+                    take: 1,
+                    orderBy: {
+                        orderIndex: 'asc',
+                    },
+                    select: {
+                        question: true,
+                        options: true,
+                    },
+                },
             },
         });
 

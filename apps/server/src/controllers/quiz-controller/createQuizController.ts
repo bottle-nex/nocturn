@@ -10,45 +10,26 @@ export default async function createQuizController(req: Request, res: Response) 
         return;
     }
 
-    const parsed = createQuizSchema.safeParse(req.body);
-    if (!parsed.success) {
+    const { data, success } = createQuizSchema.safeParse(req.body);
+    if (!success) {
         ResponseWriter.invalid_data(res, 'Invalid quiz data');
         return;
     }
 
-    const { folderId, questions, ...quizData } = parsed.data;
+    const { id: _ignored, questions, ...quizData } = data;
 
     try {
         const quiz_id = uuid();
-
-        let folderConnect: { connect: { id: string } } | undefined;
-
-        if (folderId) {
-            const folder = await prisma.quizFolder.findUnique({
-                where: { id: folderId },
-                select: { userId: true },
-            });
-
-            if (!folder || folder.userId !== req.user.id) {
-                ResponseWriter.invalid_data(res, 'Invalid folder');
-                return;
-            }
-
-            folderConnect = { connect: { id: folderId } };
-        }
 
         const quiz = await prisma.quiz.create({
             data: {
                 id: quiz_id,
                 ...quizData,
-                ...(folderConnect && { folder: folderConnect }),
-
                 host: {
                     connect: {
                         id: req.user.id,
                     },
                 },
-
                 questions: {
                     create: questions.map((q) => ({
                         question: q.question,

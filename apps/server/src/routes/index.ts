@@ -32,11 +32,9 @@ import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMid
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 import chatWithAiController from '../controllers/ai-controller/chatWithAiController';
 import createQuizController from '../controllers/quiz-controller/createQuizController';
-import createQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/createQuizFolderController';
-import updateQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/updateQuizFolderController';
-import deleteQuizFolderController from '../controllers/quiz-controller/quiz-folder-controllers/deleteQuizFolderController';
-import getFolderQuizController from '../controllers/quiz-controller/quiz-folder-controllers/getFolderQuizController';
-import getQuizFoldersController from '../controllers/quiz-controller/quiz-folder-controllers/getQuizFoldersController';
+import add_quiz_to_favourite_controller from '../controllers/quiz-controller/add_quiz_to_favourite_controller';
+import remove_quiz_from_favourites_controller from '../controllers/quiz-controller/remove_quiz_from_favourites_controller';
+import get_favourite_quizzes_controller from '../controllers/quiz-controller/get_favourite_quizzes_controller';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -45,12 +43,14 @@ router.post('/sign-in', signInController);
 router.post('/user/create-review', authMiddleware, reviewAppController);
 router.get('/user/get-review', authMiddleware, getReviewController);
 
-// <---------------------- QUIZ-FOLDER-ROUTES ---------------------->
-router.post('/folder/create-folder', authMiddleware, createQuizFolderController);
-router.put('/folder/update-folder', authMiddleware, updateQuizFolderController);
-router.delete('/folder/delete-folder', authMiddleware, deleteQuizFolderController);
-router.get('/folder/get-quiz/:folderId', authMiddleware, getFolderQuizController);
-router.get('/folder/get-folders', authMiddleware, getQuizFoldersController);
+// <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
+router.put('/quiz/add-to-favourite/:quizId', authMiddleware, add_quiz_to_favourite_controller);
+router.put(
+    '/quiz/remove-from-favourite/:quizId',
+    authMiddleware,
+    remove_quiz_from_favourites_controller,
+);
+router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_controller);
 
 // <---------------------- QUIZ-ROUTES ---------------------->
 router.post('/quiz/create-quiz', authMiddleware, createQuizController);
