@@ -18,8 +18,7 @@ import {
 import { prisma } from '@nocturn/database';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
-import { AgentStep, AiMessageElement, AiQuizChatRole } from '@nocturn/types';
-import { STREAM } from '../types/stream.type';
+import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 
 export default class Chain {
     private model: ChatGoogleGenerativeAI;

@@ -1,6 +1,5 @@
-import { CustomResponse } from '@nocturn/types';
+import { CustomResponse, stream } from '@nocturn/types';
 import { Response } from 'express';
-import { stream } from '../gen/types/stream.type';
 
 export default class ResponseWriter {
     static success<T>(

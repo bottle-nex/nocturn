@@ -21,12 +21,14 @@ export default function AiChatBox() {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
+    const [messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
     const { appendMessage, loading } = useAiChatStore();
     const { session } = useUserSessionStore();
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') {
             e.preventDefault();
+            setMessageRendererPanel(true);
             handleSubmit();
         }
     }
@@ -118,9 +120,11 @@ export default function AiChatBox() {
 
             </ToolTipComponent>
 
-            <MessagesRenderer
-                className="absolute bottom-12 "
-            />
+            {messageRendererPanel && (
+                <MessagesRenderer
+                    className="absolute bottom-12 "
+                />
+            )}
 
         </div>
 
