@@ -10,5 +10,7 @@ export * from "./response/home/get_reviews_type.response";
 export * from "./response/home/user_quiz_types.response";
 
 export * from "./email/email.types";
-export * from "../src/quiz/new_quiz.response";
 export * from "./stream/stream.types";
+export * from "../src/response/new/get_new_quiz.response";
+
+export * from "../src/const/nocturn.const";

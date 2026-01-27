@@ -32,7 +32,7 @@ export default function MiniCanvas({
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const selectedStyles = 'border-2 border-indigo-800/60';
+    const selectedStyles = 'border-2 border-red-800';
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
@@ -84,6 +84,7 @@ export default function MiniCanvas({
                 )}
                 style={{ boxSizing: 'border-box' }}
             >
+                {currentQuestionIndex === question.orderIndex && (<span className='bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20'>Harkirat</span>)}
                 <div
                     style={{
                         backgroundColor: template?.background_color,
@@ -105,6 +106,7 @@ export default function MiniCanvas({
                         />
                     </div>
                     <CanvasAccents
+                        className='rounded'
                         design={template?.accent_type}
                         accentColor={template?.accent_color}
                     />

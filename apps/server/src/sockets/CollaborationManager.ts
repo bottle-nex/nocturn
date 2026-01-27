@@ -11,7 +11,7 @@ export interface CollaborationManagerDependencies {
     publisher: Redis;
     subscriber: Redis;
     socket_mapping: Map<string, CustomWebSocket>;
-    session_collaborators_mapping: Map<string, Set<string>>;
+    quiz_collaborators_mapping: Map<string, Set<string>>;
     databaseQueue: DatabaseQueue;
     redis_cache: RedisCache;
 }
@@ -19,27 +19,24 @@ export interface CollaborationManagerDependencies {
 export default class CollaborationManager {
     private publisher: Redis;
     private subscriber: Redis;
-    private socket_mapping: Map<string, CustomWebSocket>;
-    private session_collaborators_mapping: Map<string, Set<string>>;
+
     private databaseQueue: DatabaseQueue;
     private redis_cache: RedisCache;
 
-    private collaborator_socket_mapping: Map<string, string>; // Map<collaboratorId, socketId>
+    private socket_mapping: Map<string, CustomWebSocket>;
+    private collaborator_sockets_mapping: Map<string, Set<string>>;
+    private collaborator_socket_mapping: Map<string, string> = new Map(); // Map<collaborator_id, socket_id>
 
     constructor(dependencies: CollaborationManagerDependencies) {
         this.publisher = dependencies.publisher;
         this.subscriber = dependencies.subscriber;
         this.socket_mapping = dependencies.socket_mapping;
-        this.session_collaborators_mapping = dependencies.session_collaborators_mapping;
         this.databaseQueue = dependencies.databaseQueue;
         this.redis_cache = dependencies.redis_cache;
-
-        this.collaborator_socket_mapping = new Map<string, string>();
+        this.collaborator_sockets_mapping = dependencies.quiz_collaborators_mapping;
     }
 
     public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
-        // if the host is trying to join as a collaborator then return
-
         const is_valid_user = await this.validate_collaborator_in_db(decoded_cookie_payload.userId);
 
         if (!is_valid_user) {
@@ -54,11 +51,9 @@ export default class CollaborationManager {
         );
 
         const new_collaborator_socket_id = this.generateSocketId();
-
         ws.id = new_collaborator_socket_id;
         ws.user = decoded_cookie_payload;
 
-        // setting up the data into the mappings
         this.socket_mapping.set(new_collaborator_socket_id, ws);
         this.collaborator_socket_mapping.set(
             decoded_cookie_payload.userId,
@@ -66,17 +61,17 @@ export default class CollaborationManager {
         );
 
         // check if the session-collaborator mapping exists
-        const session_collaborators_socket_ids = this.session_collaborators_mapping.get(
+        const session_collaborators_socket_ids = this.collaborator_sockets_mapping.get(
             decoded_cookie_payload.gameSessionId,
         );
         if (!session_collaborators_socket_ids) {
-            this.session_collaborators_mapping.set(
+            this.collaborator_sockets_mapping.set(
                 decoded_cookie_payload.gameSessionId,
                 new Set<string>(),
             );
         }
 
-        this.session_collaborators_mapping
+        this.collaborator_sockets_mapping
             .get(decoded_cookie_payload.gameSessionId)
             ?.add(new_collaborator_socket_id);
     }
@@ -95,24 +90,27 @@ export default class CollaborationManager {
         collab_session_id: string,
     ): void {
         try {
-            const existing_collaborator_socket_id =
+            const exisiting_collaborator_socket_id =
                 this.collaborator_socket_mapping.get(collaborator_id);
-            if (existing_collaborator_socket_id) {
-                const existing_socket = this.socket_mapping.get(existing_collaborator_socket_id);
-                if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
-                    existing_socket.close(
-                        socket_codes.DUPLICATE_CONNECTION,
-                        'Another collaborator has connected',
-                    );
-                }
-                this.socket_mapping.delete(existing_collaborator_socket_id);
-                this.collaborator_socket_mapping.delete(collaborator_id);
 
-                const session_collaborators_socket_ids =
-                    this.session_collaborators_mapping.get(collab_session_id);
-                if (session_collaborators_socket_ids) {
-                    session_collaborators_socket_ids.delete(existing_collaborator_socket_id);
-                }
+            if (!exisiting_collaborator_socket_id) {
+                return;
+            }
+
+            const existing_socket = this.socket_mapping.get(exisiting_collaborator_socket_id);
+            if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
+                existing_socket.close(
+                    socket_codes.DUPLICATE_CONNECTION,
+                    'Another collaborator has connected',
+                );
+            }
+            this.socket_mapping.delete(exisiting_collaborator_socket_id);
+            this.collaborator_socket_mapping.delete(collaborator_id);
+
+            const session_collaborators_socket_ids =
+                this.collaborator_sockets_mapping.get(collab_session_id);
+            if (session_collaborators_socket_ids) {
+                session_collaborators_socket_ids.delete(exisiting_collaborator_socket_id);
             }
         } catch (error) {
             console.error('error while cleaning up collaborator socket: ', error);

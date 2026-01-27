@@ -47,6 +47,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
         const recentlyViewed = await prisma.quizViews.findMany({
             where: {
                 userId: String(req.user.id),
+                quiz: { isDeleted: false },
             },
             include: {
                 quiz: {

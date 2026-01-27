@@ -51,10 +51,8 @@ export default function QuizLeft() {
                         )}
                     </div>
                 </UtilityCard>
-                <div className="flex-1 flex flex-col items-start justify-center w-full min-w-0">
-                    <div className="aspect-video w-full min-w-0">
-                        <Canvas />
-                    </div>
+                <div className="flex-1 flex flex-col items-center justify-start w-full min-w-0">
+                    <Canvas className='mt-2' />
                     <div className="w-full flex ">
                         <SmallQuizRight />
                     </div>

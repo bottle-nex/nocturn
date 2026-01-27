@@ -2,9 +2,14 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
-import { QuizResponseType } from '@nocturn/types';
+import {
+    CollabRole,
+    GetNewQuizResponse,
+    NOCTURN_COOKIE_NAME,
+    QuizResponseType,
+} from '@nocturn/types';
+import { env } from '../../configs/env';
 
-// check these, as these contain type
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
     const userId = req.user?.id;
     const quizId = req.params.quizId;
@@ -36,7 +41,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 CollabSession: {
                     include: {
                         collaborators: {
-                            include: {
+                            select: {
                                 user: {
                                     select: {
                                         name: true,
@@ -45,6 +50,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
                                         image: true,
                                     },
                                 },
+                                role: true,
                             },
                         },
                     },
@@ -58,10 +64,15 @@ export default async function getQuizController(req: Request, res: Response): Pr
             });
             return;
         }
+
         const is_owner = quiz.hostId === userId;
-        const is_collaborator = quiz.CollabSession?.collaborators.some(
-            (collab) => collab.userId === userId,
-        );
+        const hasCollabSession = !!quiz.CollabSession;
+
+        const collaborator = hasCollabSession
+            ? quiz.CollabSession?.collaborators.find((collab) => collab.user.id === userId)
+            : null;
+
+        const is_collaborator = !!collaborator;
 
         if (!is_owner && !is_collaborator) {
             ResponseWriter.not_authorized(res, 'Access to this quiz is denied');
@@ -69,6 +80,31 @@ export default async function getQuizController(req: Request, res: Response): Pr
         }
 
         await QuizAction.record_quiz_view(quizId, String(userId));
+
+        const userCollabRole: CollabRole = is_owner
+            ? CollabRole.HOST
+            : (collaborator?.role as CollabRole);
+
+        const collabSessionId =
+            hasCollabSession && quiz.CollabSession ? quiz.CollabSession.id : undefined;
+
+        const secureTokenData = QuizAction.generateUserToken(
+            userId,
+            quiz.id,
+            '',
+            undefined,
+            userCollabRole,
+            collabSessionId,
+        );
+
+        res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
+            httpOnly: true,
+            secure: env.SERVER_NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+        console.log("cookie returning is : ", secureTokenData);
+
         ResponseWriter.success(
             res,
             {

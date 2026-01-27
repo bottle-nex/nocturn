@@ -58,6 +58,7 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
+                console.log('Live quiz data response:', response);
                 if (response.success && response.data) {
                     const data = response.data;
                     updateQuiz(data.quiz);
@@ -84,10 +85,10 @@ export default function New({ params }: NewProps) {
                             break;
                     }
                 } else {
-                    router.back();
+                    // router.back();
                 }
             } catch (error) {
-                router.back();
+                // router.back();
                 console.error('Error fetching live data:', error);
             }
         }

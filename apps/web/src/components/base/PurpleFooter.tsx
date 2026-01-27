@@ -137,7 +137,7 @@ export default function PurpleFooter() {
                                     className={cn(
                                         'h-10 w-10 rounded-full border p-2 flex justify-center items-center',
                                         'dark:bg-neutral-900/70 bg-white/80 dark:hover:bg-neutral-800/80 hover:bg-gray-50/90',
-                                        'dark:border-neutral-700 border-gray-200',
+                                        'dark:border-neutral-800 border-neutral-300',
                                         'transition-all duration-700 ease-out hover:scale-110',
                                         'dark:text-white text-gray-700',
                                         'shadow-sm dark:shadow-none',

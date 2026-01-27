@@ -68,14 +68,18 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
 
     if (!config) {
         return (
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500 text-white ${className}`}>
+            <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500 text-white ${className}`}
+            >
                 Unknown
             </span>
         );
     }
 
     return (
-        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${config.stripColor} text-white ${className}`}>
+        <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${config.stripColor} text-white ${className}`}
+        >
             {config.label}
         </span>
     );

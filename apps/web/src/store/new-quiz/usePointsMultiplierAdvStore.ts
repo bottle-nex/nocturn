@@ -1,23 +1,21 @@
 import { create } from 'zustand';
 
+export type MultiplierType = 'Linear' | 'Stepped' | 'Manual' | null;
+
 interface PointMultiplierAdvanced {
     enablePointMultiplier: boolean;
-    setEnablePointMultiplier: (val: boolean) => void;
-    enableLinearPointMultiplier: boolean;
-    setEnableLinearPointMultiplier: (val: boolean) => void;
-    enableSteppedPointMultiplier: boolean;
-    setEnableSteppedPointMultiplier: (val: boolean) => void;
+    multiplierType: MultiplierType;
     inputPointMultiplier: string;
+    setEnablePointMultiplier: (val: boolean) => void;
+    setMultiplierType: (type: MultiplierType) => void;
     setInputPointMultiplier: (val: string) => void;
 }
 
 export const usePointsMultiplierAdvStore = create<PointMultiplierAdvanced>((set) => ({
     enablePointMultiplier: false,
-    setEnablePointMultiplier: (val) => set({ enablePointMultiplier: val }),
-    enableLinearPointMultiplier: false,
-    setEnableLinearPointMultiplier: (val) => set({ enableLinearPointMultiplier: val }),
-    enableSteppedPointMultiplier: false,
-    setEnableSteppedPointMultiplier: (val) => set({ enableSteppedPointMultiplier: val }),
+    multiplierType: null,
     inputPointMultiplier: '1.2',
+    setEnablePointMultiplier: (val) => set({ enablePointMultiplier: val }),
+    setMultiplierType: (type) => set({ multiplierType: type }),
     setInputPointMultiplier: (val) => set({ inputPointMultiplier: val }),
 }));

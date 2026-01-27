@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
-import { USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { quizControllerInstance } from '../../services/init.services';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
@@ -74,7 +74,7 @@ export default async function launchQuizController(req: Request, res: Response) 
         );
         console.log('secure token data is : ', secureTokenData);
 
-        res.cookie('token', secureTokenData, {
+        res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
             httpOnly: true,
             secure: env.SERVER_NODE_ENV === 'production',
             sameSite: 'lax',

@@ -1,7 +1,7 @@
 import { prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
-import { CookiePayload, USER_TYPE } from '@nocturn/types';
+import { CollabRole, CookiePayload, USER_TYPE } from '@nocturn/types';
 import { env } from '../configs/env';
 
 export default class QuizAction {
@@ -111,7 +111,9 @@ export default class QuizAction {
         userId: string,
         quizId: string,
         gameSessionId: string,
-        role: USER_TYPE,
+        role: USER_TYPE | undefined,
+        collabRole?: CollabRole,
+        collabSessionId?: string,
     ): string {
         const tokenId = QuizAction.generateTokenId();
         const payload: CookiePayload = {
@@ -119,10 +121,13 @@ export default class QuizAction {
             quizId,
             gameSessionId,
             role,
+            collabRole,
+            collabSessionId,
             tokenId,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
         };
+        console.log('Generated token payload:', payload);
 
         return jwt.sign(payload, env.SERVER_JWT_SECRET);
     }

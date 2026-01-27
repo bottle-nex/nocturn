@@ -130,7 +130,7 @@ export default function QuestionsDraft() {
     }, [currentQ?.basePoints, currentQ?.explanation, currentQ?.hint]);
 
     return (
-        <div className="text-neutral-900 dark:text-neutral-100 flex flex-col justify-start items-start gap-y-4 overflow-y-auto custom-scrollbar">
+        <div className="text-neutral-900 dark:text-neutral-100 flex flex-col justify-start items-start gap-y-4 overflow-y-auto custom-scrollbar" data-lenis-prevent>
             {/* Header */}
             <div className="w-full flex items-center justify-between border-b border-neutral-300 dark:border-neutral-700 pb-2">
                 <div className="text-lg font-medium">Questions</div>
@@ -203,21 +203,19 @@ export default function QuestionsDraft() {
                 <div className="w-full grid grid-cols-2 gap-x-1.5 mt-4">
                     <div
                         onClick={() => setTimerEdit('ACTIVE_TIME')}
-                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${
-                            timerEdit === 'ACTIVE_TIME'
+                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${timerEdit === 'ACTIVE_TIME'
                                 ? 'border-2 border-neutral-600 dark:border-neutral-500'
                                 : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                            }`}
                     >
                         Question active
                     </div>
                     <div
                         onClick={() => setTimerEdit('READING_TIME')}
-                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${
-                            timerEdit === 'READING_TIME'
+                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${timerEdit === 'READING_TIME'
                                 ? 'border-2 border-neutral-600 dark:border-neutral-500'
                                 : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                            }`}
                     >
                         Question reading
                     </div>

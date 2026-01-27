@@ -13,12 +13,12 @@ export default function Page() {
             {/* <Navbar />
             <NocturnLandingSection />
             <NocturnPerksSection />
-            <BigAnimatedText />
             <NocturnFeaturesSection />
+            <NocturnUsersSection />
+            <BigAnimatedText />
             <Footer /> */}
             <NavbarTest />
             <LandingHeroSection />
-            {/* <NocturnUsersSection /> */}
             <Footer />
             {/* <NocturnFeaturesSection /> */}
         </div>

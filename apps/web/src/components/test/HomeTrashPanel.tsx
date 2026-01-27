@@ -119,7 +119,7 @@ export default function HomeTrashPanel() {
                             </Button>
                         </div>
 
-                        <div className="flex flex-col w-full gap-y-2.5 overflow-y-auto">
+                        <div className="flex flex-col w-full gap-y-2.5 overflow-y-auto custom-scrollbar" data-lenis-prevent>
                             {trashedQuizzes.map((quiz) => {
                                 const template = templates.find((t) => t.id === quiz?.theme);
                                 const formattedTime = quiz.deletedAt

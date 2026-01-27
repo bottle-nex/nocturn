@@ -9,7 +9,7 @@ import RedisCache from '../cache/redis.cache';
 import { URL } from 'url';
 import ParticipantManager from './ParticipantManager';
 import SpectatorManager from './SpectatorManager';
-import { CookiePayload, MESSAGE_TYPES, USER_TYPE } from '@nocturn/types';
+import { CookiePayload, MESSAGE_TYPES, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import {
     databaseQueueInstance,
@@ -24,6 +24,7 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
 import { env } from '../configs/env';
+import CollaborationManager from './CollaborationManager';
 
 export default class WebsocketServer {
     private wss: WebSocketServer;
@@ -31,6 +32,7 @@ export default class WebsocketServer {
     private session_participants_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_spectators_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_host_mapping: Map<string, string> = new Map(); // Map<live_session_id, ws.id>
+    private quiz_collaborators_mapping: Map<string, Set<string>> = new Map(); // Map<quiz_id, Set<ws.id>>
     private publisher: Redis;
     private subscriber: Redis;
     private redis_cache: RedisCache;
@@ -41,6 +43,7 @@ export default class WebsocketServer {
     private quizManager!: QuizManager;
     private participant_manager!: ParticipantManager;
     private spectator_manager!: SpectatorManager;
+    private collaboration_manager!: CollaborationManager;
 
     private quiz_settings: QuizSettings;
 
@@ -375,8 +378,16 @@ export default class WebsocketServer {
             database_queue: this.database_queue,
             redis_cache: this.redis_cache,
         });
+        this.collaboration_manager = new CollaborationManager({
+            publisher: this.publisher,
+            subscriber: this.subscriber,
+            socket_mapping: this.socket_mapping,
+            quiz_collaborators_mapping: this.quiz_collaborators_mapping,
+            databaseQueue: this.database_queue,
+            redis_cache: this.redis_cache,
+        });
     }
-    // ws://localhost:8080?quizId=37r19273r69236r931r6
+
     private initialize() {
         this.wss.on('connection', (ws: CustomWebSocket, req) => {
             console.log('new connection came');
@@ -397,7 +408,7 @@ export default class WebsocketServer {
             return;
         }
         const parsedCookies = parse(cookies);
-        const token = parsedCookies['token'];
+        const token = parsedCookies[NOCTURN_COOKIE_NAME];
         if (!token) {
             ws.close();
             return;
@@ -414,6 +425,7 @@ export default class WebsocketServer {
                     return;
                 }
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
+                console.log('Decoded cookie payload:', decoded_cookie_payload);
                 const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId}`;
                 this.subscriber.subscribe(redis_key);
                 if (decoded_cookie_payload.quizId !== quizId) {
@@ -422,27 +434,30 @@ export default class WebsocketServer {
                     return;
                 }
 
-                switch (decoded_cookie_payload.role) {
-                    case USER_TYPE.HOST:
-                        await this.hostManager.handle_connection(ws, decoded_cookie_payload);
-                        break;
+                if (decoded_cookie_payload.role) {
+                    switch (decoded_cookie_payload.role) {
+                        case USER_TYPE.HOST:
+                            await this.hostManager.handle_connection(ws, decoded_cookie_payload);
+                            break;
 
-                    case USER_TYPE.PARTICIPANT:
-                        await this.participant_manager.handle_connection(
-                            ws,
-                            decoded_cookie_payload as CookiePayload,
-                        );
-                        break;
+                        case USER_TYPE.PARTICIPANT:
+                            await this.participant_manager.handle_connection(
+                                ws,
+                                decoded_cookie_payload as CookiePayload,
+                            );
+                            break;
 
-                    case USER_TYPE.SPECTATOR:
-                        await this.spectator_manager.handle_connection(
-                            ws,
-                            decoded_cookie_payload as CookiePayload,
-                        );
-                        break;
+                        case USER_TYPE.SPECTATOR:
+                            await this.spectator_manager.handle_connection(
+                                ws,
+                                decoded_cookie_payload as CookiePayload,
+                            );
+                            break;
 
-                    default:
-                        ws.close();
+                        default:
+                    }
+                } else if (decoded_cookie_payload.collabRole) {
+                    await this.collaboration_manager.handle_connection(ws, decoded_cookie_payload);
                 }
             });
         } catch (err) {

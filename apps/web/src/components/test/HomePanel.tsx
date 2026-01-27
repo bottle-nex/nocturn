@@ -38,7 +38,7 @@ export default function HomePanel() {
     }, [session?.user.token, setQuizs, setRecentlyViewed, setAllQuizs]);
 
     return (
-        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-10">
+        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-10 overflow-y-auto custom-scrollbar" data-lenis-prevent>
             <HomeRightUpperSection />
             <HomeStartWithAi />
 

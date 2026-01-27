@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import GenerateUser from '../../class/generateUser';
 import { redisCacheInstance } from '../../services/init.services';
 import QuizAction from '../../class/quizAction';
-import { USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 
@@ -113,7 +113,7 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
         );
 
         try {
-            res.cookie('token', secureTokenData, {
+            res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
                 httpOnly: true,
                 secure: env.SERVER_NODE_ENV === 'production',
                 sameSite: 'lax',

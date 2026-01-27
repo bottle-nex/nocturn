@@ -104,7 +104,7 @@ export default function HomeSidebar() {
     }
 
     return (
-        <aside className="w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto pt-4 flex flex-col justify-between">
+        <aside className="min-w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between" data-lenis-prevent>
             <div>
                 {/* ================= MENU ================= */}
                 <section className="ml-4 mt-8">
@@ -115,13 +115,13 @@ export default function HomeSidebar() {
                             <div
                                 onClick={() => handleTabChange(item.tab)}
                                 className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer',
+                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
                                     'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                                 )}
                                 key={item.tab}
                             >
                                 {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242,235,235,0.3)] transition-all duration-500 ease-out" />
+                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
                                 )}
 
                                 <span className="p-1 rounded">{item.icon}</span>
@@ -142,13 +142,13 @@ export default function HomeSidebar() {
                             <div
                                 onClick={() => handleTabChange(item.tab)}
                                 className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer',
+                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
                                     'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                                 )}
                                 key={item.tab}
                             >
                                 {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242,235,235,0.3)] transition-all duration-500 ease-out" />
+                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
                                 )}
 
                                 <span className="p-1 rounded">{item.icon}</span>
@@ -168,12 +168,12 @@ export default function HomeSidebar() {
                     <div
                         onClick={() => handleTabChange(SidebarTab.CHATS)}
                         className={cn(
-                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5',
+                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
                             'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                         )}
                     >
                         {activeTab === SidebarTab.CHATS && (
-                            <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 shadow-[0_0_10px_2px_rgba(242,235,235,0.843)] transition-all duration-500 ease-out" />
+                            <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
                         )}
 
                         <span className="p-1 rounded">
@@ -191,10 +191,10 @@ export default function HomeSidebar() {
                             'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5 transition-all duration-200',
                             'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                             isDragging &&
-                                'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
+                            'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
                             isOverTrash &&
-                                isDragging &&
-                                'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
+                            isDragging &&
+                            'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
                         )}
                     >
                         {activeTab === SidebarTab.TRASH && !isDragging && (
@@ -214,8 +214,8 @@ export default function HomeSidebar() {
                             className={cn(
                                 'text-sm dark:text-white/80 text-black/90 transition-colors',
                                 isOverTrash &&
-                                    isDragging &&
-                                    'text-red-600 dark:text-red-400 font-semibold',
+                                isDragging &&
+                                'text-red-600 dark:text-red-400 font-semibold',
                             )}
                         >
                             {isOverTrash && isDragging ? 'Drop here' : 'Trash'}

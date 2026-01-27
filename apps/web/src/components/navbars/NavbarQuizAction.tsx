@@ -14,6 +14,7 @@ import { QuizStatusEnum } from '@nocturn/types';
 import { toast } from 'sonner';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
+import AutoSaveComponent from '../utility/AutoSave';
 
 interface Option {
     name: string;
@@ -89,6 +90,7 @@ export default function NavbarQuizAction() {
         setIsLoading(true);
         try {
             const isPublished = await BackendActions.launchQuiz(quiz, session.user.token);
+            console.log('Launch quiz response:', isPublished);
             if (isPublished) {
                 updateAllQuiz(quiz.id, {
                     status: QuizStatusEnum.LIVE,
@@ -142,11 +144,10 @@ export default function NavbarQuizAction() {
             className="relative select-none flex shrink-0 items-center gap-x-3"
             onClick={() => setActionsPanel((prev) => !prev)}
         >
-            {Boolean(quiz.status !== QuizStatusEnum.NULL)}
+            <AutoSaveComponent />
             {quiz.status !== QuizStatusEnum.NULL && (
                 <QuizStatusTicker className="" status={quiz?.status} />
             )}
-            {/* <AutoSaveComponent /> */}
             <ToolTipComponent content={'this will be saved every 30sec'}>
                 <div className="w-full flex justify-around items-center gap-x-2 bg-indigo-600 text-white dark:text-white transition-colors rounded-full cursor-pointer px-4 py-2">
                     <div className="rounded-l-full text-[13px] font-normal flex justify-center items-center ">

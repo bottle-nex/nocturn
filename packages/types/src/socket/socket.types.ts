@@ -84,17 +84,9 @@ export interface CookiePayload {
   userId: string;
   quizId: string;
   gameSessionId: string;
-  role: USER_TYPE;
-  tokenId: string;
-  iat: number;
-  exp: number;
-}
-
-export interface CollabCookiePayload {
-  userId: string;
-  quizId: string;
-  collabSessionId: string;
-  role: CollabRole;
+  role: USER_TYPE | undefined;
+  collabRole?: CollabRole;
+  collabSessionId?: string;   
   tokenId: string;
   iat: number;
   exp: number;
