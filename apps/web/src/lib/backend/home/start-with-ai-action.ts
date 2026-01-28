@@ -112,7 +112,7 @@ export default class AiBackendAction {
 
                     try {
 
-                        const jsonString = trimmed.startsWith('date: ') ? trimmed.slice(6) : trimmed;
+                        const jsonString = trimmed.startsWith('data: ') ? trimmed.slice(6) : trimmed;
                         const event: stream = JSON.parse(jsonString);
 
                         this.handle_stream(event);

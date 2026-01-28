@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 
 interface MicIconPromps {
     size: number;
@@ -6,9 +7,10 @@ interface MicIconPromps {
         bottom: string,
         holes: string,
     };
+    className?: string;
 }
 
-export default function MicIcon({ size = 24, color = { mic: '#000000', bottom: '#000000', holes: '#000000' } }: MicIconPromps) {
+export default function MicIcon({ size = 24, color = { mic: '#000000', bottom: '#000000', holes: '#000000' }, className}: MicIconPromps) {
     return (
         <svg
             width={size}
@@ -16,6 +18,7 @@ export default function MicIcon({ size = 24, color = { mic: '#000000', bottom: '
             viewBox="0 0 24 24"
             fill={color?.mic}
             xmlns="http://www.w3.org/2000/svg"
+            className={cn(className)}
         >
             <g clipPath="url(#clip0_4418_4382)">
                 <path

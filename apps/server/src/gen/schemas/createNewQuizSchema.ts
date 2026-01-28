@@ -28,7 +28,7 @@ export const planner_schema = z.object({
         .string()
         .min(5)
         .max(200)
-        .describe('give a user response like you are doing the job'),
+        .describe('give a user response like you are doing the job act normal, no need of much appraisal'),
     title: z.string().min(5).describe('5-6 words of title about the quiz'),
     description: z
         .string()

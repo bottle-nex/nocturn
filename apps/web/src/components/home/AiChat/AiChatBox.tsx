@@ -1,7 +1,7 @@
-import AnimatedFolderIcon from "@/components/ui/animated-icons/AnimatedFolderIcon";
+'use client';
+
 import { Input } from "@/components/ui/input";
 import MicIcon from "@/components/ui/svg/MicIcon";
-import UploadPDFButton from "@/components/ui/UploadPDFButton";
 import ToolTipComponent from "@/components/utility/TooltipComponent";
 import AiBackendAction from "@/lib/backend/home/start-with-ai-action";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,13 @@ import { IoMdArrowRoundUp } from "react-icons/io";
 import { v4 as uuid } from "uuid";
 import MessagesRenderer from "./MessagesRenderer";
 import { FaSquare } from "react-icons/fa6";
+import VoiceIcon from "@/components/ui/svg/VoiceIcon";
 
+const placeholders = [
+    "Have an idea?",
+    "Don't know where to start?",
+    "Use me!",
+]
 
 export default function AiChatBox() {
 
@@ -24,6 +30,78 @@ export default function AiChatBox() {
     const [messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
     const { appendMessage, loading, sessionId } = useAiChatStore();
     const { session } = useUserSessionStore();
+
+    const recognitionRef = useRef<SpeechRecognition | null>(null);
+    const [listening, setListening] = useState<boolean>(false);
+    const [interimTranscript, setInterimTranscript] = useState<string>('');
+
+    function initRecognition() {
+        if (recognitionRef.current) return;
+
+        const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+
+        if (!Recognition) {
+            console.warn('Speech recognition not supported');
+            return;
+        }
+
+        const recognition: SpeechRecognition = new Recognition();
+
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+            let interim = '';
+            let final = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+
+                if (event.results[i].isFinal) {
+                    final += transcript;
+                } else {
+                    interim += transcript;
+                }
+            }
+
+            if (final) {
+                setPrompt(prev => (prev ? prev + ' ' : '') + final);
+                setInterimTranscript('');
+            } else {
+                setInterimTranscript(interim);
+            }
+        };
+
+
+        recognition.onend = () => {
+            setListening(false);
+            setInterimTranscript('');
+            inputRef.current?.focus();
+        };
+
+        recognition.onerror = () => setListening(false);
+
+        recognitionRef.current = recognition;
+
+    }
+
+    function handleToggleDictation() {
+        initRecognition();
+
+        const recognition = recognitionRef.current;
+        if (!recognition) return;
+
+        if (listening) {
+            recognition.stop();
+            setListening(false);
+        } else {
+            recognition.start();
+            setListening(true);
+        }
+    }
+
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') {
@@ -35,6 +113,11 @@ export default function AiChatBox() {
 
     function handleSubmit() {
         if (!prompt.trim()) return;
+
+        // stop the recognition
+        recognitionRef.current?.stop();
+        setListening(false);
+        setInterimTranscript('');
 
         // temporary session-id
         const id = sessionId || uuid();
@@ -79,7 +162,7 @@ export default function AiChatBox() {
 
             <Input
                 ref={inputRef}
-                value={prompt}
+                value={prompt + (interimTranscript ? ' ' + interimTranscript : '')}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Start creating quiz with AI..."
                 className={cn(
@@ -98,23 +181,19 @@ export default function AiChatBox() {
                 <div
                     className={cn(
                         'flex items-center justify-center rounded-full cursor-pointer',
-                        'w-7 h-7 aspect-square leading-none',
+                        'w-7 h-7 aspect-square',
                         loading ? 'bg-neutral-800' : 'bg-light-alpha'
                     )}
+                    onClick={!loading && !prompt ? handleToggleDictation : undefined}
                 >
-
                     {loading ? (
-                        <FaSquare
-                            size={13}
-                            className="text-neutral-300"
-                        />
+                        <FaSquare size={13} className="text-neutral-300" />
                     ) : prompt ? (
-                        <IoMdArrowRoundUp
-                            size={16}
-                            className="text-neutral-800"
-                        />
+                        <IoMdArrowRoundUp size={16} className="text-neutral-800" />
+                    ) : listening ? (
+                        <MicIcon size={16} className="animate-pulse text-red-500" />
                     ) : (
-                        <MicIcon size={16} />
+                        <VoiceIcon size={16} className="text-neutral-800" />
                     )}
                 </div>
 
