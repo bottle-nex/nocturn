@@ -22,7 +22,7 @@ export default function AiChatBox() {
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
     const [messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
-    const { appendMessage, loading } = useAiChatStore();
+    const { appendMessage, loading, sessionId } = useAiChatStore();
     const { session } = useUserSessionStore();
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -37,12 +37,12 @@ export default function AiChatBox() {
         if (!prompt.trim()) return;
 
         // temporary session-id
-        const sessionId = uuid();
+        const id = sessionId || uuid();
 
         // create the user message
         const message: AiQuizMessage = {
             id: uuid(),
-            aiQuizChatSessionId: sessionId,
+            aiQuizChatSessionId: id,
             role: AiQuizChatRole.USER,
             content: prompt,
             createdAt: new Date(),
@@ -52,7 +52,7 @@ export default function AiChatBox() {
         appendMessage(message);
 
         // send the prompt
-        AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
+        AiBackendAction.create_new_quiz(session?.user.token, id, prompt);
 
         setPrompt('');
     }
@@ -91,7 +91,7 @@ export default function AiChatBox() {
             />
 
             <ToolTipComponent
-                content={prompt ? "" : "Dictate"}
+                content={loading ? 'stop' : prompt ? '' : 'Dictate'}
                 className="cursor-pointer"
                 side="top"
             >

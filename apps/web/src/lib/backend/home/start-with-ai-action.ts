@@ -10,6 +10,8 @@ export default class AiBackendAction {
         try {
             setLoading(true);
 
+            console.log('fdasflasdfjlsafjasfjs');
+
             const res = await axios.post(
                 CREATE_QUIZ_USING_AI,
                 {
@@ -24,11 +26,14 @@ export default class AiBackendAction {
                 },
             );
 
+            console.log('response: ', res.data);
+
             const contentType = res.headers['content-type'] ?? '';
 
             // handle stream
             if (contentType.includes('text/event-stream')) {
                 // handle here
+                console.log('event stream: ', res.data);
                 this.handle_stream(res.data.data);
                 return;
             }
@@ -43,15 +48,87 @@ export default class AiBackendAction {
     }
 
     static handle_stream(stream: stream) {
+        const { appendMessage, setSessionId, appendMultipleMessages } = useAiChatStore.getState();
 
-        const { appendMessage } = useAiChatStore.getState();
-        
-        switch(stream.type) {
-            case(STREAM.MESSAGE): {
+        switch (stream.type) {
+            case STREAM.MESSAGE: {
                 appendMessage(stream.data as AiQuizMessage);
+                return;
             }
+            case STREAM.ID: {
+                setSessionId(stream.data as string);
+                return;
+            }
+            case STREAM.MESSAGES: {
+                appendMultipleMessages(stream.data as AiQuizMessage[]);
+                return;
+            }
+        }
+    }
+
+    static async create_new_quiz(token: string, sessionId: string, instruction: string) {
+
+        const { setLoading } = useAiChatStore.getState();
+
+        try {
+            setLoading(false);
+
+            const response = await fetch(CREATE_QUIZ_USING_AI, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    sessionId,
+                    instruction,
+                }),
+            });
+
+            if(!response.ok) {
+                throw new Error('Failed to start chat');
+            }
+
+            const reader = response.body?.getReader();
+
+            if(!reader) {
+                throw new Error('No response body');
+            }
+
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while(true) {
+                const { done, value } = await reader.read();
+                if(done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() ?? '';
+
+                for (const line of lines) {
+                    const trimmed = line.trim()
+                    if(!trimmed) continue;
+
+                    try {
+
+                        const jsonString = trimmed.startsWith('date: ') ? trimmed.slice(6) : trimmed;
+                        const event: stream = JSON.parse(jsonString);
+
+                        this.handle_stream(event);
+                        
+                    } catch {
+                        console.error('Skipping incomplete streaming message');
+                    }
+                }
+
+            }
+
+        } catch (error) {
+            
+        } finally {
+            setLoading(false);
         }
 
     }
-
 }

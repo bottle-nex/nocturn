@@ -3,8 +3,15 @@ export interface stream {
     data: unknown;
 }
 
+// export type streamType = 
+// | { 
+//     type
+// }
+
 export enum STREAM {
     MESSAGE,
+    MESSAGES,
     TITLE,
     QUIZ,
+    ID,
 }
