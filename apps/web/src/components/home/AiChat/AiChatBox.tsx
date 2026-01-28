@@ -1,7 +1,6 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import MicIcon from '@/components/ui/svg/MicIcon';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import { cn } from '@/lib/utils';
@@ -16,6 +15,7 @@ import MessagesRenderer from './MessagesRenderer';
 import { FaSquare } from 'react-icons/fa6';
 import VoiceIcon from '@/components/ui/svg/VoiceIcon';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
+import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 
 const placeholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 
@@ -28,76 +28,9 @@ export default function AiChatBox() {
     const { session } = useUserSessionStore();
 
     const animatedPlaceholders = useTypewriterPlaceholder(placeholders);
-
-    // voice recognition
-    const recognitionRef = useRef<SpeechRecognition | null>(null);
-    const [listening, setListening] = useState<boolean>(false);
-    const [interimTranscript, setInterimTranscript] = useState<string>('');
-
-    function initRecognition() {
-        if (recognitionRef.current) return;
-
-        const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
-
-        if (!Recognition) {
-            console.warn('Speech recognition not supported');
-            return;
-        }
-
-        const recognition: SpeechRecognition = new Recognition();
-
-        recognition.lang = 'en-US';
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event) => {
-            let interim = '';
-            let final = '';
-
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-
-                if (event.results[i].isFinal) {
-                    final += transcript;
-                } else {
-                    interim += transcript;
-                }
-            }
-
-            if (final) {
-                setPrompt((prev) => (prev ? prev + ' ' : '') + final);
-                setInterimTranscript('');
-            } else {
-                setInterimTranscript(interim);
-            }
-        };
-
-        recognition.onend = () => {
-            setListening(false);
-            setInterimTranscript('');
-            inputRef.current?.focus();
-        };
-
-        recognition.onerror = () => setListening(false);
-
-        recognitionRef.current = recognition;
-    }
-
-    function handleToggleDictation() {
-        initRecognition();
-
-        const recognition = recognitionRef.current;
-        if (!recognition) return;
-
-        if (listening) {
-            recognition.stop();
-            setListening(false);
-        } else {
-            recognition.start();
-            setListening(true);
-        }
-    }
+    const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
+        onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
+    });
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') {
@@ -110,10 +43,8 @@ export default function AiChatBox() {
     function handleSubmit() {
         if (!prompt.trim()) return;
 
-        // stop the recognition
-        recognitionRef.current?.stop();
-        setListening(false);
-        setInterimTranscript('');
+        // stop voice recognition
+        stop();
 
         // temporary session-id
         const id = sessionId || uuid();
@@ -168,7 +99,7 @@ export default function AiChatBox() {
             />
 
             <ToolTipComponent
-                content={loading ? 'stop' : prompt ? '' : 'Dictate'}
+                content={loading ? 'stop' : prompt ? '' : listening ? 'stop' : 'Dictate'}
                 className="cursor-pointer"
                 side="top"
             >
@@ -178,14 +109,14 @@ export default function AiChatBox() {
                         'w-7 h-7 aspect-square',
                         loading ? 'bg-neutral-800' : 'bg-light-alpha',
                     )}
-                    onClick={!loading && !prompt ? handleToggleDictation : undefined}
+                    onClick={!loading && !prompt ? toggle : undefined}
                 >
                     {loading ? (
                         <FaSquare size={13} className="text-neutral-300" />
                     ) : prompt ? (
                         <IoMdArrowRoundUp size={16} className="text-neutral-800" />
                     ) : listening ? (
-                        <MicIcon size={16} className="animate-pulse text-red-500" />
+                        <VoiceIcon size={16} className="animate-pulse text-red-500" animate />
                     ) : (
                         <VoiceIcon size={16} className="text-neutral-800" />
                     )}
