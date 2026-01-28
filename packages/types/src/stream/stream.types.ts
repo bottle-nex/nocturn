@@ -1,17 +1,17 @@
 export interface stream {
-    type: STREAM;
-    data: unknown;
+  type: STREAM;
+  data: unknown;
 }
 
-// export type streamType = 
-// | { 
+// export type streamType =
+// | {
 //     type
 // }
 
 export enum STREAM {
-    MESSAGE,
-    MESSAGES,
-    TITLE,
-    QUIZ,
-    ID,
+  MESSAGE,
+  MESSAGES,
+  TITLE,
+  QUIZ,
+  ID,
 }

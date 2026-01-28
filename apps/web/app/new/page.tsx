@@ -4,28 +4,27 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Loader } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function New() {
     const { quiz } = useNewQuizStore();
     const { session } = useUserSessionStore();
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
-    const hasCreatedQuizRef = useRef<boolean>(false);
 
     useEffect(() => {
         async function createQuiz() {
-            if (hasCreatedQuizRef.current) return;
-            hasCreatedQuizRef.current = true;
             setLoading(true);
 
-            if (!session?.user.token || !quiz) return;
+            if (!session?.user.token || !quiz) {
+                return;
+            }
 
             const res = await BackendActions.createQuiz(session.user.token, quiz);
-            if (res) {
+            if (res?.id) {
                 router.replace(`/new/${res.id}`);
-                setLoading(false);
             }
+            setLoading(false);
         }
 
         createQuiz();

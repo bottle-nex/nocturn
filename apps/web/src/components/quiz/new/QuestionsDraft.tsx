@@ -130,7 +130,10 @@ export default function QuestionsDraft() {
     }, [currentQ?.basePoints, currentQ?.explanation, currentQ?.hint]);
 
     return (
-        <div className="text-neutral-900 dark:text-neutral-100 flex flex-col justify-start items-start gap-y-4 overflow-y-auto custom-scrollbar">
+        <div
+            className="text-neutral-900 dark:text-neutral-100 flex flex-col justify-start items-start gap-y-4 overflow-y-auto custom-scrollbar"
+            data-lenis-prevent
+        >
             {/* Header */}
             <div className="w-full flex items-center justify-between border-b border-neutral-300 dark:border-neutral-700 pb-2">
                 <div className="text-lg font-medium">Questions</div>

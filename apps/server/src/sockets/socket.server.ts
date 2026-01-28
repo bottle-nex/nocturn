@@ -9,7 +9,13 @@ import RedisCache from '../cache/redis.cache';
 import { URL } from 'url';
 import ParticipantManager from './ParticipantManager';
 import SpectatorManager from './SpectatorManager';
-import { CookiePayload, MESSAGE_TYPES, USER_TYPE } from '@nocturn/types';
+import {
+    COLLABORATORS_MESSAGE_TYPE,
+    CookiePayload,
+    MESSAGE_TYPES,
+    NOCTURN_COOKIE_NAME,
+    USER_TYPE,
+} from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import {
     databaseQueueInstance,
@@ -24,6 +30,7 @@ import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
 import { env } from '../configs/env';
+import CollaborationManager from './CollaborationManager';
 
 export default class WebsocketServer {
     private wss: WebSocketServer;
@@ -31,6 +38,7 @@ export default class WebsocketServer {
     private session_participants_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_spectators_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_host_mapping: Map<string, string> = new Map(); // Map<live_session_id, ws.id>
+    private collaborator_sockets_mapping: Map<string, Set<string>> = new Map(); // Map<quiz_id, Set<ws.id>>
     private publisher: Redis;
     private subscriber: Redis;
     private redis_cache: RedisCache;
@@ -41,6 +49,7 @@ export default class WebsocketServer {
     private quizManager!: QuizManager;
     private participant_manager!: ParticipantManager;
     private spectator_manager!: SpectatorManager;
+    private collaboration_manager!: CollaborationManager;
 
     private quiz_settings: QuizSettings;
 
@@ -69,15 +78,15 @@ export default class WebsocketServer {
     }
 
     private handle_incoming_message_from_subscriber(channel: string, message: any) {
-        const game_session_id = this.extract_session_id_from_channel(channel);
-        if (!game_session_id) {
+        const session_id = this.extract_session_id_from_channel(channel);
+        if (!session_id) {
             console.error('Invalid game session id in channel', channel);
             return;
         }
 
         switch (message.type) {
             case MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.PARTICIPANT,
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
@@ -85,10 +94,9 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.SETTINGS_CHANGE:
-                this.quiz_settings.update_memory_settings_state(game_session_id, message.payload);
-                console.log('new settings received are: ', message);
+                this.quiz_settings.update_memory_settings_state(session_id, message.payload);
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.PARTICIPANT, USER_TYPE.HOST, USER_TYPE.SPECTATOR],
                     message.exclude_socket_id,
@@ -97,7 +105,7 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.INTERACTION_EVENT:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.PARTICIPANT, USER_TYPE.HOST, USER_TYPE.SPECTATOR],
                     message.exclude_socket_id,
@@ -105,7 +113,7 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.PARTICIPANT,
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
@@ -113,21 +121,21 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.SPECTATOR_JOIN_GAME_SESSION:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                 ]);
                 break;
 
             case MESSAGE_TYPES.SPECTATOR_NAME_CHANGE:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                 ]);
                 break;
 
             case MESSAGE_TYPES.HOST_CHANGE_QUESTION_PREVIEW:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.PARTICIPANT,
                     USER_TYPE.SPECTATOR,
                 ]);
@@ -135,7 +143,7 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.CHAT_MESSAGE:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.HOST, USER_TYPE.SPECTATOR],
                     message.exclude_socket_id,
@@ -144,7 +152,7 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.CHAT_REACTION_EVENT:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.HOST, USER_TYPE.SPECTATOR],
                     message.exclude_socket_id,
@@ -152,7 +160,7 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.HOST_LAUNCH_QUESTION:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.PARTICIPANT,
@@ -160,48 +168,48 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.QUESTION_READING_PHASE_TO_HOST:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.HOST]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_READING_PHASE_TO_SPECTATOR:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_READING_PHASE_TO_PARTICIPANT:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.PARTICIPANT]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.PARTICIPANT]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_HOST:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.HOST]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_SPECTATOR:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_PARTICIPANT:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.PARTICIPANT]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.PARTICIPANT]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_HOST:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.HOST]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_SPECTATOR:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
 
             case MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_PARTICIPANT:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.PARTICIPANT]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.PARTICIPANT]);
                 break;
 
             case MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.HOST]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.HOST]);
                 break;
 
             case MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.PARTICIPANT],
                     message.exclude_socket_id,
@@ -211,7 +219,7 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.QUESTION_ALREADY_ASKED:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.HOST],
                     message.exclude_socket_id,
@@ -220,14 +228,14 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.HOST_EMITS_HINT:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.PARTICIPANT,
                     USER_TYPE.SPECTATOR,
                 ]);
                 break;
 
             case MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.PARTICIPANT, // No expiry - session ends when phase changes
@@ -235,7 +243,7 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.HOST,
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.PARTICIPANT,
@@ -243,12 +251,12 @@ export default class WebsocketServer {
                 break;
 
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION:
-                this.broadcast_to_session(game_session_id, message, [USER_TYPE.SPECTATOR]);
+                this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
 
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
                 this.broadcast_to_session(
-                    game_session_id,
+                    session_id,
                     message,
                     [USER_TYPE.PARTICIPANT],
                     undefined,
@@ -258,13 +266,30 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.LIFELINE_LIVE_UPDATE:
             case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
-                this.broadcast_to_session(game_session_id, message, [
+                this.broadcast_to_session(session_id, message, [
                     USER_TYPE.PARTICIPANT,
                     USER_TYPE.SPECTATOR,
                     USER_TYPE.HOST,
                 ]);
                 break;
+            case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
+                this.broadcast_to_collaborators(session_id, message);
+                break;
         }
+    }
+
+    private broadcast_to_collaborators(collab_session_id: string, message: any) {
+        const collaborator_socket_ids = this.collaborator_sockets_mapping.get(collab_session_id);
+        if (!collaborator_socket_ids) {
+            return;
+        }
+
+        collaborator_socket_ids.forEach((socket_id) => {
+            const collaborator_socket = this.socket_mapping.get(socket_id);
+            if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
+                collaborator_socket.send(JSON.stringify(message));
+            }
+        });
     }
 
     private broadcast_to_session(
@@ -375,11 +400,19 @@ export default class WebsocketServer {
             database_queue: this.database_queue,
             redis_cache: this.redis_cache,
         });
+        this.collaboration_manager = new CollaborationManager({
+            publisher: this.publisher,
+            subscriber: this.subscriber,
+            socket_mapping: this.socket_mapping,
+            collaborator_sockets_mapping: this.collaborator_sockets_mapping,
+            databaseQueue: this.database_queue,
+            redis_cache: this.redis_cache,
+            quizManager: this.quizManager,
+        });
     }
-    // ws://localhost:8080?quizId=37r19273r69236r931r6
+
     private initialize() {
         this.wss.on('connection', (ws: CustomWebSocket, req) => {
-            console.log('new connection came');
             const url = new URL(req.url || '', `http://${req.headers.host}`);
             const quizId = url.searchParams.get('quizId');
             if (!quizId) {
@@ -397,7 +430,7 @@ export default class WebsocketServer {
             return;
         }
         const parsedCookies = parse(cookies);
-        const token = parsedCookies['token'];
+        const token = parsedCookies[NOCTURN_COOKIE_NAME];
         if (!token) {
             ws.close();
             return;
@@ -414,35 +447,39 @@ export default class WebsocketServer {
                     return;
                 }
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
-                const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId}`;
+                const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId || decoded_cookie_payload.collabSessionId}`;
                 this.subscriber.subscribe(redis_key);
+
                 if (decoded_cookie_payload.quizId !== quizId) {
                     console.error('Token validation failed');
                     ws.close();
                     return;
                 }
 
-                switch (decoded_cookie_payload.role) {
-                    case USER_TYPE.HOST:
-                        await this.hostManager.handle_connection(ws, decoded_cookie_payload);
-                        break;
+                if (decoded_cookie_payload.role) {
+                    switch (decoded_cookie_payload.role) {
+                        case USER_TYPE.HOST:
+                            await this.hostManager.handle_connection(ws, decoded_cookie_payload);
+                            break;
 
-                    case USER_TYPE.PARTICIPANT:
-                        await this.participant_manager.handle_connection(
-                            ws,
-                            decoded_cookie_payload as CookiePayload,
-                        );
-                        break;
+                        case USER_TYPE.PARTICIPANT:
+                            await this.participant_manager.handle_connection(
+                                ws,
+                                decoded_cookie_payload as CookiePayload,
+                            );
+                            break;
 
-                    case USER_TYPE.SPECTATOR:
-                        await this.spectator_manager.handle_connection(
-                            ws,
-                            decoded_cookie_payload as CookiePayload,
-                        );
-                        break;
+                        case USER_TYPE.SPECTATOR:
+                            await this.spectator_manager.handle_connection(
+                                ws,
+                                decoded_cookie_payload as CookiePayload,
+                            );
+                            break;
 
-                    default:
-                        ws.close();
+                        default:
+                    }
+                } else if (decoded_cookie_payload.collabRole) {
+                    await this.collaboration_manager.handle_connection(ws, decoded_cookie_payload);
                 }
             });
         } catch (err) {

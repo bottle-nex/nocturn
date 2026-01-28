@@ -54,7 +54,7 @@ function Body(props: ExpandablePanel) {
                 user={props.data}
                 onToggleExpand={props.onToggleExpand}
             /> */}
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar" data-lenis-prevent>
                     <div className="min-h-full flex flex-col justify-end">
                         {(props.messages[props.selectedUser.id] || []).map((message) => (
                             <SpectatorMessageItem
@@ -92,7 +92,10 @@ function Body(props: ExpandablePanel) {
                         </div>
                     </ToolTipComponent>
                 </div>
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar"></div>
+                <div
+                    className="flex-1 overflow-y-auto p-6 custom-scrollbar"
+                    data-lenis-prevent
+                ></div>
             </div>
         );
     }

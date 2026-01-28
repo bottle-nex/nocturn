@@ -9,11 +9,11 @@ import UtilityCard from '@/components/utility/UtilityCard';
 import QuestionPallete from './QuestionPallete';
 
 export default function QuizLeft() {
-    const [error, setError] = useState<boolean>(false);
-    const maxCharacters = 50;
-    const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const { quiz, updateQuiz } = useNewQuizStore();
+    const [error, setError] = useState<boolean>(false);
+    const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const [quizTitle, setQuizTitle] = useState(quiz.title);
+    const maxCharacters = 50;
 
     function handleQuizTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.value.length > maxCharacters) {
@@ -51,10 +51,8 @@ export default function QuizLeft() {
                         )}
                     </div>
                 </UtilityCard>
-                <div className="flex-1 flex flex-col items-start justify-center w-full min-w-0">
-                    <div className="aspect-video w-full min-w-0">
-                        <Canvas />
-                    </div>
+                <div className="flex-1 flex flex-col items-center justify-start w-full min-w-0">
+                    <Canvas className="mt-2" />
                     <div className="w-full flex ">
                         <SmallQuizRight />
                     </div>

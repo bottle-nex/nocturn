@@ -1,5 +1,4 @@
 'use client';
-import InvertedQuizCards from '@/components/utility/InvertedQuizCards';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
@@ -38,13 +37,12 @@ export default function HomePanel() {
     }, [session?.user.token, setQuizs, setRecentlyViewed, setAllQuizs]);
 
     return (
-        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-10">
+        <div
+            className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-10 overflow-y-auto custom-scrollbar"
+            data-lenis-prevent
+        >
             <HomeRightUpperSection />
             <HomeStartWithAi />
-
-            <section className="w-[24rem] flex flex-col relative h-fit -ml-8 mt-6">
-                <InvertedQuizCards />
-            </section>
 
             {loading && (
                 <section className="flex items-center gap-4 flex-wrap mt-8">
@@ -59,9 +57,9 @@ export default function HomePanel() {
                     <h2 className="text-lg font-normal text-black dark:text-white mb-4">
                         Recently Viewed
                     </h2>
-                    <div className="flex items-center gap-4 flex-wrap">
+                    <div className="gap-4 lg:grid-cols-3 grid">
                         {recentlyViewed.map((quiz) => (
-                            <RecentlyViewedCard key={quiz.id} quiz={quiz} />
+                            <RecentlyViewedCard className="w-full" key={quiz.id} quiz={quiz} />
                         ))}
                     </div>
                 </section>

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { parse } from 'cookie';
 import { prisma, QuizPhase } from '@nocturn/database';
-import { CookiePayload, USER_TYPE } from '@nocturn/types';
+import { CookiePayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
 import ResponseWriter from '../../class/response_writer';
@@ -9,10 +9,11 @@ import ResponseWriter from '../../class/response_writer';
 export default async function getLiveQuizDataController(req: Request, res: Response) {
     const cookieHeader = req.headers.cookie;
     const cookies = cookieHeader ? parse(cookieHeader) : {};
-    const token = cookies['token'];
+    const token = cookies[NOCTURN_COOKIE_NAME];
     const { quizId: quizIdParams } = req.params;
 
     if (!token) {
+        console.log('No token found in cookies');
         ResponseWriter.not_authorized(res);
         return;
     }

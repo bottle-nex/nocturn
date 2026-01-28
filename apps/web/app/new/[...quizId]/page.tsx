@@ -1,9 +1,10 @@
 'use client';
 import CreateQuizNavBar from '@/components/navbars/CreateQuizNavbar';
 import QuizCreationPanels from '@/components/quiz/new/QuizCreationPanels';
+import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { QuizResponseType } from '@nocturn/types';
+import { CustomResponse, GetNewQuizResponse, QuizResponseType } from '@nocturn/types';
 import axios from 'axios';
 import { Loader } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
@@ -22,26 +23,33 @@ export interface NewProps {
 }
 
 export default function New({ params }: NewProps) {
+    const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
     const { quizId } = use(params);
     const { session } = useUserSessionStore();
     const { updateQuiz, resetStore } = useNewQuizStore();
-    const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
+    const { setCollaborators } = useCollaboratorStore();
 
     useEffect(() => {
         const fetchQuiz = async () => {
-            setAllowance(AllowanceEnum.LOADING);
             try {
-                const { data } = await axios.get(`${GET_OWNER_QUIZ_URL}/${quizId}`, {
-                    headers: {
-                        Authorization: `Bearer ${session?.user.token}`,
+                setAllowance(AllowanceEnum.LOADING);
+                const { data } = await axios.get<CustomResponse<GetNewQuizResponse>>(
+                    `${GET_OWNER_QUIZ_URL}/${quizId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`,
+                        },
+                        withCredentials: true,
                     },
-                });
-
-                if (data.success) {
-                    switch (data.data.type as QuizResponseType) {
+                );
+                if (data.success && data.data) {
+                    switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
-                            setAllowance(AllowanceEnum.ALLOWED);
-                            updateQuiz(data.data.quiz);
+                            if (data.data.quiz) {
+                                updateQuiz(data.data.quiz);
+                                setCollaborators(data.data.quiz.CollabSession?.collaborators || []);
+                                setAllowance(AllowanceEnum.ALLOWED);
+                            }
                             break;
                         case QuizResponseType.ACCESS_DENIED:
                             setAllowance(AllowanceEnum.NOT_ALLOWED);
@@ -58,6 +66,7 @@ export default function New({ params }: NewProps) {
         if (session?.user.token) {
             fetchQuiz();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quizId, session?.user.token, updateQuiz]);
 
     useEffect(() => {
@@ -65,12 +74,11 @@ export default function New({ params }: NewProps) {
             resetStore();
         };
     }, [resetStore]);
-
     return (
         <>
             {allowance === AllowanceEnum.ALLOWED && (
                 <div className="h-screen max-h-screen w-full max-w-screen flex flex-col">
-                    <div className="h-20 ">
+                    <div className="h-20">
                         <CreateQuizNavBar />
                     </div>
                     <QuizCreationPanels quizId={quizId} />

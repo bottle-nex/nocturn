@@ -47,8 +47,8 @@ router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_
 router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_controller);
 
 // <---------------------- QUIZ-ROUTES ---------------------->
-router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
+router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
 

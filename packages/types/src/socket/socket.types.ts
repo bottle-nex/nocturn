@@ -1,4 +1,5 @@
 import { CollabRole, InteractionEnum, USER_TYPE } from "../prisma/enums.prisma";
+import { COLLABORATORS_MESSAGE_TYPE } from "./collaborators/collaborators.types";
 
 export enum MESSAGE_TYPES {
   HOST_JOIN_GAME_SESSION = "JOIN_GAME_SESSION",
@@ -84,17 +85,10 @@ export interface CookiePayload {
   userId: string;
   quizId: string;
   gameSessionId: string;
-  role: USER_TYPE;
-  tokenId: string;
-  iat: number;
-  exp: number;
-}
-
-export interface CollabCookiePayload {
-  userId: string;
-  quizId: string;
-  collabSessionId: string;
-  role: CollabRole;
+  role: USER_TYPE | undefined;
+  name: string;
+  collabRole?: CollabRole;
+  collabSessionId?: string;
   tokenId: string;
   iat: number;
   exp: number;
@@ -113,6 +107,12 @@ export type PubSubMessageTypes =
       exclude_socket_id?: never;
       only_socket_id?: string;
       requested_participant_id?: string;
+    }
+  | {
+      type: COLLABORATORS_MESSAGE_TYPE;
+      payload: any;
+      exclude_socket_id?: string;
+      only_socket_id?: never;
     };
 
 export interface IncomingChatMessage {

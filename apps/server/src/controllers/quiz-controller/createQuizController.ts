@@ -48,7 +48,7 @@ export default async function createQuizController(req: Request, res: Response) 
             },
         });
 
-        ResponseWriter.success(res, quiz, 'Quiz created successfully');
+        ResponseWriter.success(res, { id: quiz.id });
         return;
     } catch (error) {
         console.error('Failed to create quiz:', error);

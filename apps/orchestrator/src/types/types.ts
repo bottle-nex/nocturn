@@ -1,4 +1,5 @@
 import { CollabRole, QuizPhase } from '@nocturn/database';
+import WebSocket from 'ws';
 
 export interface CustomWebSocket extends WebSocket {
     id: string;

@@ -84,10 +84,10 @@ export default function New({ params }: NewProps) {
                             break;
                     }
                 } else {
-                    router.back();
+                    // router.back();
                 }
             } catch (error) {
-                router.back();
+                // router.back();
                 console.error('Error fetching live data:', error);
             }
         }

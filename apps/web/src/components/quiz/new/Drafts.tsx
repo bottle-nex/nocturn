@@ -46,7 +46,10 @@ function BigDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     return (
-        <UtilityCard className="hidden xl:flex flex-col bg-light-base dark:bg-dark-base/30 rounded-sm overflow-hidden py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]">
+        <UtilityCard
+            className="hidden xl:flex flex-col bg-light-base dark:bg-dark-base/30 rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]"
+            data-lenis-prevent
+        >
             {handleDraftRenderer()}
         </UtilityCard>
     );
@@ -58,7 +61,7 @@ function MediumDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     useEffect(() => {
-        gsap.from('utility', {
+        gsap.from('.utility', {
             x: 300,
             duration: 0.2,
             ease: 'power2.inOut',
@@ -66,7 +69,10 @@ function MediumDrafts({
     }, [handleDraftRenderer]);
 
     return (
-        <UtilityCard className="utility h-full hidden md2:flex flex-col absolute z-40 xl:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-sm overflow-hidden py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]">
+        <UtilityCard
+            className="utility h-full hidden md2:flex flex-col absolute z-40 xl:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]"
+            data-lenis-prevent
+        >
             {handleDraftRenderer()}
         </UtilityCard>
     );
@@ -78,7 +84,7 @@ function SmallDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     useEffect(() => {
-        gsap.from('utility', {
+        gsap.from('.utility', {
             x: 300,
             duration: 0.2,
             ease: 'power2.inOut',
@@ -89,9 +95,10 @@ function SmallDrafts({
         <UtilityCard
             className={cn(
                 'bg-red-600',
-                'utility absolute top-0 right-0 z-40 md2:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-l-sm overflow-hidden py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 ',
+                'utility absolute top-0 right-0 z-40 md2:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-l-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 ',
                 'h-screen xs:w-[326px] w-full',
             )}
+            data-lenis-prevent
         >
             {handleDraftRenderer()}
         </UtilityCard>

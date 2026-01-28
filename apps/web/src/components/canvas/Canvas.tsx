@@ -17,7 +17,11 @@ export enum SELECTION_MODE {
     INTERACTION = 'INTERACTION',
 }
 
-export default function Canvas(): JSX.Element {
+interface CanvasProps {
+    className?: string;
+}
+
+export default function Canvas({ className }: CanvasProps): JSX.Element {
     const [selectionMode, setSelectionMode] = useState<SELECTION_MODE>(SELECTION_MODE.CANVAS);
     const selectedStyles = 'border-2 border-indigo-800/60';
     const [copied, setCopied] = useState<boolean>(false);
@@ -45,8 +49,9 @@ export default function Canvas(): JSX.Element {
             style={{ color: template?.text_color, boxSizing: 'border-box' }}
             onClick={canvasTapHandler}
             className={cn(
-                'w-full h-full rounded-[12px] relative overflow-hidden',
+                'w-full md:max-w-5xl aspect-video rounded-lg relative overflow-hidden',
                 selectionMode === SELECTION_MODE.CANVAS && selectedStyles,
+                className,
             )}
         >
             <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />

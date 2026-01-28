@@ -1,6 +1,6 @@
 import { cleanWebSocketClient, getWebSocketClient } from '@/lib/singleton-socket';
 import WebSocketClient, { MessagePayload } from '@/socket/socket.client';
-import { MESSAGE_TYPES } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -203,6 +203,16 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleCollaboratorsQuestionChange(payload: unknown) {
+        const message: MessagePayload = {
+            type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
         subscribeToHandler,
         unsubscribeToHandler,
@@ -223,5 +233,7 @@ export const useWebSocket = () => {
         handleParticipantRequestLifeline,
         handleSpectatorLifelineResponse,
         handleHostQuizResults,
+
+        handleCollaboratorsQuestionChange,
     };
 };

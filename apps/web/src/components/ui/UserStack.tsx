@@ -1,78 +1,84 @@
 import { cn } from '@/lib/utils';
-import { useState, useRef } from 'react';
 import { GoPlus } from 'react-icons/go';
-import AddCollaborators from '../utility/AddCollaborators';
+import { useState, useRef } from 'react';
+import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import Image from 'next/image';
+import AddCollaborators from '../utility/AddCollaborators';
+import ToolTipComponent from '../utility/TooltipComponent';
 
-const people = [
-    {
-        id: 1,
-        name: 'John Doe',
-        image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80',
-    },
-    {
-        id: 2,
-        name: 'Robert Johnson',
-        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60',
-    },
-    {
-        id: 3,
-        name: 'Jane Smith',
-        image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60',
-    },
-    {
-        id: 4,
-        name: 'Emily Davis',
-        image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60',
-    },
-    {
-        id: 5,
-        name: 'Tyler Durden',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80',
-    },
-    {
-        id: 6,
-        name: 'Dora',
-        image: 'https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3534&q=80',
-    },
-];
+export enum CollaboratorScreens {
+    COLLABORATORS_SETTINGS = 'COLLABORATORS_SETTINGS',
+    ADD_COLLABORATORS = 'ADD_COLLABORATORS',
+    MAIN = 'MAIN',
+}
 
-export default function UserStack() {
+interface UserStackProps {
+    showAddButton?: boolean;
+    allowOnTap?: boolean;
+    imageSize?: number;
+    className?: string;
+}
+
+export default function UserStack({
+    className,
+    showAddButton = true,
+    imageSize = 40,
+    allowOnTap = true,
+}: UserStackProps) {
     const [openAddCollaborators, setOpenAddCollaborators] = useState<boolean>(false);
+    const [screen, setScreen] = useState<CollaboratorScreens>(CollaboratorScreens.MAIN);
+    const { collaborators } = useCollaboratorStore();
     const triggerRef = useRef<HTMLDivElement>(null);
 
+    function handleUserTap() {
+        if (!allowOnTap) return;
+        setOpenAddCollaborators(true);
+        setScreen(CollaboratorScreens.COLLABORATORS_SETTINGS);
+    }
+
     return (
-        <div className="flex flex-row items-center justify-center w-full z-20">
-            {people.map((item, idx) => (
-                <div
-                    className="relative -mr-4"
-                    style={{ zIndex: people.length - idx }}
-                    key={item.id}
-                >
-                    <Image
-                        height={80}
-                        width={80}
-                        src={item.image}
-                        alt={item.name}
-                        className="relative m-0! h-10 w-10 rounded-full object-cover object-top p-0! border border-neutral-400 dark:border-neutral-700"
-                    />
-                </div>
+        <div className={cn('flex flex-row items-center justify-center z-20', className)}>
+            {collaborators.map((item, idx) => (
+                <ToolTipComponent content={item.user.name} key={item.id}>
+                    <div
+                        className="relative -mr-4"
+                        style={{ zIndex: collaborators.length - idx }}
+                        onClick={handleUserTap}
+                    >
+                        <Image
+                            height={imageSize}
+                            width={imageSize}
+                            src={item.user.image!}
+                            alt={item.user.name}
+                            className="relative m-0! rounded-full object-cover object-top p-0! border border-neutral-400 dark:border-neutral-700 cursor-pointer"
+                        />
+                    </div>
+                </ToolTipComponent>
             ))}
             <div
                 ref={triggerRef}
                 className="relative z-0 cursor-pointer"
-                onClick={() => setOpenAddCollaborators(true)}
+                onClick={() => {
+                    setOpenAddCollaborators(true);
+                    setScreen(CollaboratorScreens.MAIN);
+                }}
             >
-                <GoPlus
-                    className={cn(
-                        'h-10 w-10 p-2 rounded-full',
-                        'dark:bg-neutral-600 bg-neutral-300 hover:dark:bg-neutral-700 hover:bg-neutral-400/70 dark:text-neutral-100 transition-colors duration-150',
+                <ToolTipComponent content="add collaborators to build your quiz together">
+                    {showAddButton && (
+                        <GoPlus
+                            className={cn(
+                                'h-10 w-10 p-2 rounded-full',
+                                'bg-neutral-200 dark:bg-dark-base hover:dark:bg-neutral-800 hover:bg-neutral-300/70 dark:text-neutral-100 transition-colors duration-150',
+                            )}
+                        />
                     )}
-                />
+                </ToolTipComponent>
                 <AddCollaborators
                     open={openAddCollaborators}
                     setOpen={setOpenAddCollaborators}
                     triggerRef={triggerRef}
+                    screen={screen}
+                    setScreen={setScreen}
                 />
             </div>
         </div>

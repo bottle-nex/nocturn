@@ -1,7 +1,7 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { Switch } from '@/components/ui/switch';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,41 @@ import { RiLineChartLine } from 'react-icons/ri';
 import { HiChartBar } from 'react-icons/hi';
 import { getSingletonPointsCalculator } from '@/lib/singleton-points-calculator';
 import { Button } from '@/components/ui/button';
-import { usePointsMultiplierAdvStore } from '@/store/new-quiz/usePointsMultiplierAdvStore';
+import {
+    usePointsMultiplierAdvStore,
+    MultiplierType,
+} from '@/store/new-quiz/usePointsMultiplierAdvStore';
+import { BsKeyboardFill } from 'react-icons/bs';
+import { cn } from '@/lib/utils';
+import { IconType } from 'react-icons';
+
+interface MultiplierOption {
+    type: MultiplierType;
+    icon: IconType;
+    label: string;
+    tooltip: string;
+}
+
+const MULTIPLIER_OPTIONS: MultiplierOption[] = [
+    {
+        type: 'Linear',
+        icon: RiLineChartLine,
+        label: 'Linear',
+        tooltip: 'Select Linear Multiplier (x1.25)',
+    },
+    {
+        type: 'Stepped',
+        icon: HiChartBar,
+        label: 'Stepped',
+        tooltip: 'Customize your points multiplier',
+    },
+    {
+        type: 'Manual',
+        icon: BsKeyboardFill,
+        label: 'Manual',
+        tooltip: 'Manually set your points multiplier',
+    },
+];
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
@@ -21,35 +55,32 @@ export default function AdvancedDraft() {
     );
     const {
         enablePointMultiplier,
-        setEnablePointMultiplier,
-        enableLinearPointMultiplier,
-        setEnableLinearPointMultiplier,
-        enableSteppedPointMultiplier,
-        setEnableSteppedPointMultiplier,
+        multiplierType,
         inputPointMultiplier,
+        setEnablePointMultiplier,
+        setMultiplierType,
         setInputPointMultiplier,
     } = usePointsMultiplierAdvStore();
-    const [selectedMultiplier, setSelectedMultiplier] = useState<'Linear' | 'Stepped'>('Linear');
 
     useEffect(() => {
-        if (!enableLinearPointMultiplier && !enableSteppedPointMultiplier) {
+        if (!multiplierType) {
             setEnablePointMultiplier(false);
         }
-    }, [enableLinearPointMultiplier, enableSteppedPointMultiplier, setEnablePointMultiplier]);
+    }, [multiplierType, setEnablePointMultiplier]);
 
     function handleOnCheckedChange(checked: boolean) {
-        if (enablePointMultiplier || checked) {
-            if (selectedMultiplier === 'Linear') {
-                setEnableLinearPointMultiplier(true);
-            } else {
-                setEnableSteppedPointMultiplier(true);
-            }
+        setEnablePointMultiplier(checked);
+        if (checked && !multiplierType) {
+            setMultiplierType('Linear');
         }
-        setEnablePointMultiplier(!enablePointMultiplier);
     }
 
     function handleAutoSaveChangeHandler(checked: boolean) {
         updateQuiz({ autoSave: checked });
+    }
+
+    function handleMultiplierTypeClick(type: MultiplierType) {
+        setMultiplierType(multiplierType === type ? null : type);
     }
 
     function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -133,56 +164,45 @@ export default function AdvancedDraft() {
                             </div>
 
                             <div className="flex flex-row items-center gap-x-3 dark:text-neutral-300 text-neutral-700">
-                                {/* Linear */}
-                                <div className="flex flex-col items-center space-y-2">
-                                    <Button
-                                        onClick={() => {
-                                            setEnableLinearPointMultiplier(
-                                                !enableLinearPointMultiplier,
-                                            );
-                                            setEnableSteppedPointMultiplier(false);
-                                            setSelectedMultiplier('Linear');
-                                        }}
-                                        className={`flex items-center justify-center w-16 h-12 rounded-lg hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 ease-in-out bg-light-base hover:bg-light-base dark:bg-dark-base/30 dark:text-neutral-300 text-neutral-700 ${enableLinearPointMultiplier ? 'border-3 border-neutral-600 dark:border-neutral-500' : 'border border-neutral-300 dark:border-neutral-600'}`}
-                                    >
-                                        <RiLineChartLine size={20} />
-                                    </Button>
-                                    <div className="flex items-center justify-start gap-x-1">
-                                        <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                            Linear
-                                        </span>
-                                        <ToolTipComponent content="Select Linear Multiplier (x1.25)">
-                                            <AiOutlineQuestionCircle size={12} />
-                                        </ToolTipComponent>
-                                    </div>
-                                </div>
+                                {MULTIPLIER_OPTIONS.map((option) => {
+                                    const Icon = option.icon;
+                                    const isSelected = multiplierType === option.type;
 
-                                {/* Stepped */}
-                                <div className="flex flex-col items-center space-y-2">
-                                    <Button
-                                        onClick={() => {
-                                            setEnableSteppedPointMultiplier(
-                                                !enableSteppedPointMultiplier,
-                                            );
-                                            setEnableLinearPointMultiplier(false);
-                                            setSelectedMultiplier('Stepped');
-                                        }}
-                                        className={`flex items-center justify-center w-16 h-12 rounded-lg hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 ease-in-out bg-light-base hover:bg-light-base dark:bg-dark-base/30 dark:text-neutral-300 text-neutral-700 ${enableSteppedPointMultiplier ? 'border-3 border-neutral-600 dark:border-neutral-500' : 'border border-neutral-300 dark:border-neutral-600'}`}
-                                    >
-                                        <HiChartBar size={20} />
-                                    </Button>
-                                    <div className="flex items-center justify-start gap-x-1">
-                                        <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                                            Stepped
-                                        </span>
-                                        <ToolTipComponent content="Cusotmize your points multiplier">
-                                            <AiOutlineQuestionCircle size={12} />
-                                        </ToolTipComponent>
-                                    </div>
-                                </div>
+                                    return (
+                                        <div
+                                            key={option.type}
+                                            className="flex flex-col items-center space-y-2"
+                                        >
+                                            <Button
+                                                onClick={() =>
+                                                    handleMultiplierTypeClick(option.type)
+                                                }
+                                                className={cn(
+                                                    'flex items-center justify-center w-16 h-12 rounded-lg transition-all duration-200 ease-in-out',
+                                                    'bg-light-base hover:bg-light-base dark:bg-dark-base/30',
+                                                    'dark:text-neutral-300 text-neutral-700',
+                                                    'hover:-translate-y-0.5 hover:shadow-sm border',
+                                                    isSelected
+                                                        ? 'border-indigo-600/80 dark:border-indigo-600/60'
+                                                        : 'border-neutral-300 dark:border-neutral-800',
+                                                )}
+                                            >
+                                                <Icon size={20} />
+                                            </Button>
+                                            <div className="flex items-center justify-start gap-x-1">
+                                                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                                                    {option.label}
+                                                </span>
+                                                <ToolTipComponent content={option.tooltip}>
+                                                    <AiOutlineQuestionCircle size={12} />
+                                                </ToolTipComponent>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
-                            {(enableSteppedPointMultiplier || enableLinearPointMultiplier) && (
+                            {multiplierType && (
                                 <div className="flex flex-col space-y-2 mt-2">
                                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                         Customize

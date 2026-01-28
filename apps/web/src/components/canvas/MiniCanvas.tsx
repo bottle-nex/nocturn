@@ -8,15 +8,19 @@ import { createPortal } from 'react-dom';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
 import { BiTrash } from 'react-icons/bi';
 import { Button } from '../ui/button';
+import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface MiniCanvasProps {
     template: Template | undefined;
     question: QuestionType;
     currentQuestionIndex: number;
+    orderIndex: number;
     questionIndex: number;
-    setCurrentQuestionIndex: (index: number) => void;
+    collaboratorHighlight?: string;
+    handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
-    onClick?: () => void;
+    onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 }
 
 export default function MiniCanvas({
@@ -24,7 +28,9 @@ export default function MiniCanvas({
     question,
     currentQuestionIndex,
     questionIndex,
-    setCurrentQuestionIndex,
+    orderIndex,
+    collaboratorHighlight,
+    handleQuestionChange,
     removeQuestion,
     onClick,
 }: MiniCanvasProps) {
@@ -32,11 +38,28 @@ export default function MiniCanvas({
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const selectedStyles = 'border-2 border-indigo-800/60';
+    const { collaboratorAtIndex } = useCollaboratorStore();
+    const { session } = useUserSessionStore();
+
+    const currentUserId = session?.user?.id;
+    const collaboratorsAtThisIndex = Array.from(collaboratorAtIndex.entries()).filter(
+        ([_id, data]) => data.orderIndex === orderIndex,
+    );
+
+    const otherCollaboratorsHere = collaboratorsAtThisIndex.filter(
+        ([collaboratorId, _data]) => collaboratorId !== currentUserId,
+    );
+    const hasOtherCollaborators = otherCollaboratorsHere.length > 0;
+    const isCurrentUserHere = currentQuestionIndex === question.orderIndex;
+    const borderStyles = isCurrentUserHere
+        ? 'border-2 border-indigo-600'
+        : hasOtherCollaborators
+          ? 'border-2 border-red-800'
+          : '';
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
-        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        handleQuestionChange(currentQuestionIndex - 1);
         setOpenMiniCanvasOptions(false);
     }
 
@@ -74,16 +97,25 @@ export default function MiniCanvas({
     return (
         <>
             <div
-                onClick={() => {
-                    setCurrentQuestionIndex(question.orderIndex);
-                    onClick?.();
+                onClick={(e) => {
+                    handleQuestionChange(question.orderIndex);
+                    onClick?.(e);
                 }}
                 className={cn(
                     'w-full rounded-md h-18 p-0.5 cursor-pointer relative ',
-                    currentQuestionIndex === question.orderIndex && selectedStyles,
+                    borderStyles,
+                    collaboratorHighlight,
                 )}
                 style={{ boxSizing: 'border-box' }}
             >
+                {hasOtherCollaborators && !isCurrentUserHere && (
+                    <span className="bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20">
+                        {
+                            otherCollaboratorsHere[otherCollaboratorsHere.length - 1][1]
+                                .collaboratorName
+                        }
+                    </span>
+                )}
                 <div
                     style={{
                         backgroundColor: template?.background_color,
@@ -105,6 +137,7 @@ export default function MiniCanvas({
                         />
                     </div>
                     <CanvasAccents
+                        className="rounded"
                         design={template?.accent_type}
                         accentColor={template?.accent_color}
                     />

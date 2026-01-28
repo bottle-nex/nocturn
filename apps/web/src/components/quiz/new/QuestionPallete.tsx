@@ -13,18 +13,25 @@ import { useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function QuestionPallete() {
     const { quiz, currentQuestionIndex, setCurrentQuestionIndex, addQuestion, removeQuestion } =
         useNewQuizStore();
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
+    const { handleCollaboratorsQuestionChange } = useWebSocket();
+
+    function handleQuestionChange(questionID: number) {
+        setCurrentQuestionIndex(questionID);
+        handleCollaboratorsQuestionChange({ orderIndex: questionID });
+    }
 
     return (
         <>
             <BigQuestionPallete
                 quiz={quiz}
                 currentQuestionIndex={currentQuestionIndex}
-                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
                 currentQTemplate={currentQTemplate}
@@ -32,7 +39,7 @@ export default function QuestionPallete() {
             <SmallQuestionPallete
                 quiz={quiz}
                 currentQuestionIndex={currentQuestionIndex}
-                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
                 currentQTemplate={currentQTemplate}
@@ -44,7 +51,7 @@ export default function QuestionPallete() {
 interface QuestionPallete {
     quiz: QuizType;
     currentQuestionIndex: number;
-    setCurrentQuestionIndex: (index: number) => void;
+    handleQuestionChange: (index: number) => void;
     addQuestion: () => void;
     removeQuestion: (index: number) => void;
     currentQTemplate: Template | undefined;
@@ -53,13 +60,13 @@ interface QuestionPallete {
 function BigQuestionPallete({
     quiz,
     currentQuestionIndex,
-    setCurrentQuestionIndex,
+    handleQuestionChange,
     addQuestion,
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
     return (
-        <UtilityCard className="hidden lg:flex max-w-[10rem] w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
+        <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
                 onClick={addQuestion}
                 className={cn(
@@ -71,15 +78,19 @@ function BigQuestionPallete({
                 <span>Add Question</span>
             </Button>
 
-            <div className="flex flex-col gap-y-1.5 mt-6 w-full flex-1 overflow-y-auto pr-1 hide-scrollbar relative">
+            <div
+                className="flex flex-col gap-y-1.5 mt-4 pt-4 w-full flex-1 overflow-y-auto custom-scrollbar pr-1 relative"
+                data-lenis-prevent
+            >
                 {quiz.questions.map((question, idx) => (
-                    <div key={idx} className="flex items-end gap-x-2 flex-shrink-0">
-                        <div className="text-xs">{idx + 1}.</div>
+                    <div key={idx} className="gap-x-2 shrink-0 grid grid-cols-[8%_auto] items-end">
+                        <div className="text-xs pb-2">{idx + 1}.</div>
                         <ToolTipComponent side="right" content={idx + 1}>
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
-                                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                                orderIndex={question.orderIndex}
+                                handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}
@@ -95,14 +106,13 @@ function BigQuestionPallete({
 function SmallQuestionPallete({
     quiz,
     currentQuestionIndex,
-    setCurrentQuestionIndex,
+    handleQuestionChange,
     addQuestion,
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
     const { appearing, setAppearing } = useSideBarStore();
     const sidebarRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         if (appearing) {
             gsap.fromTo(
@@ -138,7 +148,7 @@ function SmallQuestionPallete({
         <UtilityCard
             ref={sidebarRef}
             className={cn(
-                'absolute left-0 top-0 z-40 flex max-w-[11rem] w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
+                'absolute left-0 top-0 z-40 flex max-w-44 w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
                 `${appearing ? '' : 'hidden'}`,
             )}
         >
@@ -156,15 +166,19 @@ function SmallQuestionPallete({
                 <FiX size={20} onClick={handleClose} className="cursor-pointer" />
             </div>
 
-            <div className="flex flex-col gap-y-1.5 mt-6 w-[90%] flex-1 overflow-y-auto pr-1 hide-scrollbar relative">
+            <div
+                className="flex flex-col gap-y-1.5 mt-6 w-[90%] flex-1 overflow-y-auto custom-scrollbar pr-1 relative"
+                data-lenis-prevent
+            >
                 {quiz.questions.map((question, idx) => (
-                    <div key={idx} className="flex items-end gap-x-2 flex-shrink-0">
+                    <div key={idx} className="flex items-end gap-x-2 shrink-0">
                         <div className="text-xs">{idx + 1}.</div>
                         <ToolTipComponent side="right" content={idx + 1}>
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
-                                setCurrentQuestionIndex={setCurrentQuestionIndex}
+                                orderIndex={question.orderIndex}
+                                handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}

@@ -12,7 +12,6 @@ export function getWebSocketClient(quizId: string) {
         client.close();
         client = null;
     }
-
     client = new WebSocketClient(`ws://localhost:8080/ws?quizId=${quizId}`);
     currentQuizId = quizId;
 

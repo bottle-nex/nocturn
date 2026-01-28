@@ -9,57 +9,57 @@ interface QuizStatusTickerProps {
 const statusConfig = {
     [QuizStatusEnum.NULL]: {
         label: 'Unknown',
-        bgColor: 'bg-gray-100',
-        textColor: 'text-gray-800',
-        dotColor: 'bg-gray-500',
+        stripColor: 'bg-gray-500',
+        bgColor: 'bg-gray-900/90 dark:bg-gray-100/90',
+        textColor: 'text-gray-100 dark:text-gray-900',
     },
     [QuizStatusEnum.CREATED]: {
         label: 'Created',
-        bgColor: 'bg-orange-100',
-        textColor: 'text-orange-800',
-        dotColor: 'bg-orange-500',
+        stripColor: 'bg-orange-500',
+        bgColor: 'bg-orange-900/90 dark:bg-orange-100/90',
+        textColor: 'text-orange-100 dark:text-orange-900',
     },
     [QuizStatusEnum.SCHEDULED]: {
         label: 'Scheduled',
-        bgColor: 'bg-blue-100',
-        textColor: 'text-blue-800',
-        dotColor: 'bg-blue-500',
+        stripColor: 'bg-blue-500',
+        bgColor: 'bg-blue-900/90 dark:bg-blue-100/90',
+        textColor: 'text-blue-100 dark:text-blue-900',
     },
     [QuizStatusEnum.LIVE]: {
         label: 'Live',
-        bgColor: 'bg-green-100',
-        textColor: 'text-green-800',
-        dotColor: 'bg-green-500',
+        stripColor: 'bg-green-500',
+        bgColor: 'bg-green-900/90 dark:bg-green-100/90',
+        textColor: 'text-green-100 dark:text-green-900',
     },
     [QuizStatusEnum.COMPLETED]: {
         label: 'Completed',
-        bgColor: 'bg-purple-100',
-        textColor: 'text-purple-800',
-        dotColor: 'bg-purple-500',
+        stripColor: 'bg-purple-500',
+        bgColor: 'bg-purple-900/90 dark:bg-purple-100/90',
+        textColor: 'text-purple-100 dark:text-purple-900',
     },
     [QuizStatusEnum.CANCELLED]: {
         label: 'Cancelled',
-        bgColor: 'bg-red-100',
-        textColor: 'text-red-800',
-        dotColor: 'bg-red-500',
+        stripColor: 'bg-red-500',
+        bgColor: 'bg-red-900/90 dark:bg-red-100/90',
+        textColor: 'text-red-100 dark:text-red-900',
     },
     [QuizStatusEnum.PAYOUT_PENDING]: {
         label: 'Payout Pending',
-        bgColor: 'bg-yellow-100',
-        textColor: 'text-yellow-800',
-        dotColor: 'bg-yellow-500',
+        stripColor: 'bg-yellow-500',
+        bgColor: 'bg-yellow-900/90 dark:bg-yellow-100/90',
+        textColor: 'text-yellow-100 dark:text-yellow-900',
     },
     [QuizStatusEnum.PAYOUT_COMPLETED]: {
         label: 'Payout Completed',
-        bgColor: 'bg-emerald-100',
-        textColor: 'text-emerald-800',
-        dotColor: 'bg-emerald-500',
+        stripColor: 'bg-emerald-500',
+        bgColor: 'bg-emerald-900/90 dark:bg-emerald-100/90',
+        textColor: 'text-emerald-100 dark:text-emerald-900',
     },
     [QuizStatusEnum.PUBLISHED]: {
         label: 'Published',
-        bgColor: 'bg-cyan-100',
-        textColor: 'text-cyan-800',
-        dotColor: 'bg-cyan-500',
+        stripColor: 'bg-cyan-500',
+        bgColor: 'bg-cyan-900/90 dark:bg-cyan-100/90',
+        textColor: 'text-cyan-100 dark:text-cyan-900',
     },
 };
 
@@ -69,9 +69,8 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
     if (!config) {
         return (
             <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 ${className}`}
+                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500 text-white ${className}`}
             >
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
                 Unknown
             </span>
         );
@@ -79,9 +78,8 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
 
     return (
         <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.bgColor} ${config.textColor} ${className}`}
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${config.stripColor} text-white ${className}`}
         >
-            <span className={`w-1.5 h-1.5 rounded-full ${config.dotColor}`}></span>
             {config.label}
         </span>
     );

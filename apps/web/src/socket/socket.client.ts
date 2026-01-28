@@ -1,7 +1,7 @@
-import { MESSAGE_TYPES } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
 
 export interface MessagePayload {
-    type: MESSAGE_TYPES;
+    type: MESSAGE_TYPES | COLLABORATORS_MESSAGE_TYPE;
     payload: unknown;
 }
 
@@ -61,7 +61,9 @@ export default class WebSocketClient {
                 this.reconnect_timeout = null;
             }
 
-            if (!this.is_manually_closed && event.code !== 1000) {
+            const shouldReconnect = !this.is_manually_closed && !isIntentionalClosure(event.code);
+
+            if (shouldReconnect) {
                 this.attempt_reconnect();
             }
         };
@@ -126,7 +128,6 @@ export default class WebSocketClient {
             delay = this.persistent_reconnect_delay;
             this.reconnect_delay = 1000;
         }
-
         this.reconnect_timeout = setTimeout(() => {
             if (!this.is_manually_closed) {
                 this.initialize_connection();

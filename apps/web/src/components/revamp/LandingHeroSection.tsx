@@ -44,7 +44,7 @@ export default function LandingHeroSection() {
             <div className="flex flex-col max-w-5xl items-center text-center gap-y-1 relative z-30">
                 <div className="text-[#1b1b1b] text-8xl font-bold whitespace-nowrap">
                     <span className="block">
-                        <span className="text-[#14B8A6]">Out-think </span>
+                        <span className="text-indigo-600">Out-think </span>
                         the room
                     </span>
                     <span>

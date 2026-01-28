@@ -1,17 +1,19 @@
+import { cn } from '@/lib/utils';
 import React from 'react';
 
 interface CanvasAccentsProps {
     design: string | undefined;
     accentColor: string | undefined;
+    className?: string;
 }
 
-export default function CanvasAccents({ design, accentColor }: CanvasAccentsProps) {
+export default function CanvasAccents({ design, accentColor, className }: CanvasAccentsProps) {
     function getDesignElement() {
         switch (design) {
             case 'circle':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden rounded-xl z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -27,7 +29,7 @@ export default function CanvasAccents({ design, accentColor }: CanvasAccentsProp
             case 'slash':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden rounded-xl z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -47,7 +49,7 @@ export default function CanvasAccents({ design, accentColor }: CanvasAccentsProp
             case 'staircase':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden rounded-xl z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         {/* SVG Staircase */}
@@ -67,7 +69,7 @@ export default function CanvasAccents({ design, accentColor }: CanvasAccentsProp
             case 'donut':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden rounded-xl z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -95,7 +97,7 @@ export default function CanvasAccents({ design, accentColor }: CanvasAccentsProp
             case 'wave':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden rounded-xl z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -183,7 +185,7 @@ export default function CanvasAccents({ design, accentColor }: CanvasAccentsProp
             case 'mountains':
                 return (
                     <div
-                        className="absolute inset-0 overflow-hidden z-0"
+                        className={cn('absolute inset-0 overflow-hidden z-0 rounded-xl', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg

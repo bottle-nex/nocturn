@@ -9,7 +9,6 @@ interface BuilderMessageProps {
 }
 
 export default function Message({ message }: BuilderMessageProps): JSX.Element {
-
     function TimeDisplay({ date }: { date: Date }) {
         return (
             <div className="flex items-center gap-1 text-[10px] text-neutral-100 ">

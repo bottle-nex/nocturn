@@ -3,7 +3,7 @@ import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
 import { participantJoinSchema } from '../../schemas/participantJoinSchema';
-import { USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
@@ -111,10 +111,11 @@ export default async function participantJoinController(req: Request, res: Respo
             quiz.id,
             gameSession.id,
             USER_TYPE.PARTICIPANT,
+            result.participant.nickname,
         );
 
         try {
-            res.cookie('token', secureTokenData, {
+            res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
                 httpOnly: true,
                 secure: env.SERVER_NODE_ENV === 'production',
                 sameSite: 'lax',

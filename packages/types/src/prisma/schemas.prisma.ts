@@ -2,6 +2,7 @@ import {
   AgentStep,
   AiMessageElement,
   AiQuizChatRole,
+  CollabRole,
   HostScreenEnum,
   InteractionEnum,
   ParticipantScreenEnum,
@@ -72,6 +73,7 @@ export interface QuizType {
   participants?: ParticipantType[];
   spectators?: SpectatorType[];
   aiChat?: AiQuizChatSession;
+  CollabSession?: CollabSession;
 }
 
 export interface QuestionType {
@@ -227,6 +229,28 @@ export interface AiQuizChatSession {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface Collaborator {
+  id: string;
+  sessionId: string;
+  userId: string;
+  role: CollabRole;
+  isBlocked: boolean;
+  joinedAt?: Date | null;
+  session: CollabSession;
+  user: UserType;
+}
+
+export interface CollabSession {
+  id: string;
+  hostId: string;
+  quizId: string;
+  host: UserType;
+  quiz: QuizType;
+  collaborators: Collaborator[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface AiQuizMessage {
   id: string;
   aiQuizChatSessionId: string;
@@ -236,4 +260,26 @@ export interface AiQuizMessage {
   element?: AiMessageElement;
   createdAt: Date;
   updatedAt?: Date;
+}
+
+export interface Collaborator {
+  id: string;
+  sessionId: string;
+  userId: string;
+  role: CollabRole;
+  isBlocked: boolean;
+  joinedAt?: Date | null;
+  session: CollabSession;
+  user: UserType;
+}
+
+export interface CollabSession {
+  id: string;
+  hostId: string;
+  quizId: string;
+  host: UserType;
+  quiz: QuizType;
+  collaborators: Collaborator[];
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -12,7 +12,7 @@ export default function Home() {
     const isTrashOpen = activeTab === SidebarTab.TRASH;
 
     return (
-        <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden relative">
+        <div className="tracking-wider dark:bg-neutral-950 h-full w-screen overflow-x-hidden relative">
             <div className="flex h-full">
                 <HomeSidebar />
                 <SidebarPanelRenderer />

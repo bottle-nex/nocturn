@@ -4,19 +4,6 @@ import { v4 as uuid } from 'uuid';
 export function generateDefaultQuestions(): QuestionType[] {
     const questions: Omit<QuestionType, 'id' | 'quizId' | 'imageUrl'>[] = [
         {
-            question: 'Which technology powers Web3 applications?',
-            options: ['Cloud Servers', 'Blockchain', 'Virtual Machines', 'Traditional Databases'],
-            correctAnswer: 1,
-            explanation: 'Web3 applications run on decentralized blockchain networks.',
-            hint: 'It’s the same tech behind Bitcoin and Ethereum.',
-            difficulty: 1,
-            basePoints: 100,
-            timeLimit: 25,
-            readingTime: 3,
-            orderIndex: 1,
-            isAsked: false,
-        },
-        {
             question: 'What is the main difference between Web2 and Web3?',
             options: [
                 'Web2 is decentralized, Web3 is centralized',
@@ -33,6 +20,19 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 35,
             readingTime: 5,
             orderIndex: 0,
+            isAsked: false,
+        },
+        {
+            question: 'Which technology powers Web3 applications?',
+            options: ['Cloud Servers', 'Blockchain', 'Virtual Machines', 'Traditional Databases'],
+            correctAnswer: 1,
+            explanation: 'Web3 applications run on decentralized blockchain networks.',
+            hint: 'It’s the same tech behind Bitcoin and Ethereum.',
+            difficulty: 1,
+            basePoints: 100,
+            timeLimit: 25,
+            readingTime: 3,
+            orderIndex: 1,
             isAsked: false,
         },
         {

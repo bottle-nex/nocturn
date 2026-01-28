@@ -27,7 +27,7 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
     };
 
     return (
-        <div className="h-8 w-8 flex justify-center items-center hover:bg-pink-500/20 rounded-full group cursor-pointer">
+        <div className="h-8 w-8 flex justify-center items-center rounded-full group cursor-pointer hover:bg-pink-500/40">
             <AnimatePresence>
                 {bursts.map((id) =>
                     Array.from({ length: PARTICLE_COUNT }).map((_, i) => {
@@ -35,6 +35,16 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
                         const distance = 18 + Math.random() * 10;
                         const x = Math.cos(angle) * distance;
                         const y = Math.sin(angle) * distance;
+
+                        const colors = [
+                            'bg-cyan-400',
+                            'bg-pink-400',
+                            'bg-yellow-300',
+                            'bg-lime-400',
+                            'bg-orange-400',
+                        ];
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        const randomSize = Math.random() < 0.5 ? 'h-1.5 w-1.5' : 'h-1 w-1';
 
                         return (
                             <motion.span
@@ -51,7 +61,7 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
                                     duration: 0.7,
                                     ease: 'easeOut',
                                 }}
-                                className="absolute h-1.5 w-1.5 rounded-full bg-pink-400"
+                                className={`absolute ${randomSize} rounded-full z-100 ${randomColor}`}
                             />
                         );
                     }),
