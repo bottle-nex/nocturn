@@ -71,7 +71,6 @@ export default function New({ params }: NewProps) {
             resetStore();
         };
     }, [resetStore]);
-
     return (
         <>
             {allowance === AllowanceEnum.ALLOWED && (

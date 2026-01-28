@@ -20,7 +20,7 @@ interface MiniCanvasProps {
     collaboratorHighlight?: string;
     handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
-    onClick?: () => void;
+    onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 }
 
 export default function MiniCanvas({
@@ -93,9 +93,9 @@ export default function MiniCanvas({
     return (
         <>
             <div
-                onClick={() => {
+                onClick={(e) => {
                     handleQuestionChange(question.orderIndex);
-                    onClick?.();
+                    onClick?.(e);
                 }}
                 className={cn(
                     'w-full rounded-md h-18 p-0.5 cursor-pointer relative ',

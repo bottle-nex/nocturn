@@ -88,6 +88,7 @@ export default class CollaborationManager {
             .get(decoded_cookie_payload.collabSessionId)
             ?.add(new_collaborator_socket_id);
         this.setup_message_handlers(ws);
+        console.log('setup done : ', ws.user.name);
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -141,6 +142,7 @@ export default class CollaborationManager {
 
             const existing_socket = this.socket_mapping.get(exisiting_collaborator_socket_id);
             if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
+                console.log('closing the connection here ', existing_socket.user.name);
                 existing_socket.close(
                     socket_codes.DUPLICATE_CONNECTION,
                     'Another collaborator has connected',
@@ -164,9 +166,11 @@ export default class CollaborationManager {
         try {
             const { orderIndex } = payload;
             if (!ws.user.collabSessionId) {
+                console.log('closing because collab session does not exist');
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
                 return;
             }
+            console.log('payload is : ', payload);
             const data: PubSubMessageTypes = {
                 type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
                 payload: {

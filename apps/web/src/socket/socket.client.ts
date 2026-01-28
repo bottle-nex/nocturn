@@ -1,4 +1,4 @@
-import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
 import { handler } from 'next/dist/build/templates/app-page';
 
 export interface MessagePayload {
@@ -27,12 +27,14 @@ export default class WebSocketClient {
     private is_manually_closed: boolean = false;
 
     constructor(url: string) {
+        console.log('initialising connection from the constructor');
         this.url = url;
         this.is_manually_closed = false;
         this.initialize_connection();
     }
 
     private initialize_connection() {
+        console.log('connection initialized');
         if (this.is_manually_closed) {
             return;
         }
@@ -62,8 +64,11 @@ export default class WebSocketClient {
                 clearTimeout(this.reconnect_timeout);
                 this.reconnect_timeout = null;
             }
+            console.log('event is : ', event);
 
-            if (!this.is_manually_closed && event.code !== 1000) {
+            const shouldReconnect = !this.is_manually_closed && !isIntentionalClosure(event.code);
+
+            if (shouldReconnect) {
                 this.attempt_reconnect();
             }
         };
@@ -120,16 +125,18 @@ export default class WebSocketClient {
         let delay: number;
 
         if (this.reconnect_attempts <= this.max_reconnect_attempts) {
+            console.log('I ma inside if statement ----------');
             delay = this.reconnect_delay;
             this.reconnect_delay = Math.min(this.reconnect_delay * 2, this.max_reconnect_delay);
         } else {
+            console.log('I ma inside if statement ::::::::::::::::::::');
             console.warn(
                 `Max reconnection attempts (${this.max_reconnect_attempts}) reached. Switching to persistent reconnection mode.`,
             );
             delay = this.persistent_reconnect_delay;
             this.reconnect_delay = 1000;
         }
-
+        console.log('manually closed is : ', this.is_manually_closed);
         this.reconnect_timeout = setTimeout(() => {
             if (!this.is_manually_closed) {
                 this.initialize_connection();

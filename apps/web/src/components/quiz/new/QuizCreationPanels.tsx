@@ -11,6 +11,7 @@ interface QuizCreationPanelsProps {
 
 export default function QuizCreationPanels({ quizId }: QuizCreationPanelsProps) {
     const { updateQuiz } = useNewQuizStore();
+    console.log("rendereed");
     useWebSocket();
     useSubscribeEventHandlers();
     useEffect(() => {

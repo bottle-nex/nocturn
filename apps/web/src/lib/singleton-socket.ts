@@ -4,6 +4,7 @@ let client: WebSocketClient | null = null;
 let currentQuizId: string | null = null;
 
 export function getWebSocketClient(quizId: string) {
+    console.log('quiz id here is : ', quizId);
     if (client && currentQuizId === quizId) {
         return client;
     }
@@ -12,7 +13,7 @@ export function getWebSocketClient(quizId: string) {
         client.close();
         client = null;
     }
-
+    console.log('new client created');
     client = new WebSocketClient(`ws://localhost:8080/ws?quizId=${quizId}`);
     currentQuizId = quizId;
 
