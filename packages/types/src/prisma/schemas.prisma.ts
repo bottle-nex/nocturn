@@ -52,6 +52,8 @@ export interface QuizType {
   isDeleted: boolean;
   deletedAt?: Date;
 
+  isFavourite: boolean;
+
   createdAt: Date;
   updatedAt: Date;
   scheduledAt?: Date | null;

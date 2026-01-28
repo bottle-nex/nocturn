@@ -19,6 +19,7 @@ export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
 
 // favourite quiz routes
+export const TOGGLE_FAVOURITE_QUIZ_URL = QUIZ_URL + '/toggle-favourite-quiz';
 export const ADD_QUIZ_TO_FAVOURITES_URL = QUIZ_URL + '/add-to-favourite';
 export const REMOVE_QUIZ_FROM_FAVOURITE_URL = QUIZ_URL + '/remove-from-favourite';
 export const GET_FAVOURITE_QUIZZES_URL = QUIZ_URL + '/get-favourite-quizzes';

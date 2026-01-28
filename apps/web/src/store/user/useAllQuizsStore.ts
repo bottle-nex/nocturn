@@ -7,6 +7,7 @@ interface AllQuizsStoreType {
     setAllQuizs: (quizs: QuizType[]) => void;
     updateQuiz: (quizId: string, quiz: Partial<QuizType>) => void;
     deleteQuiz: (quizId: string) => void;
+    updateQuizFavourite: (quizId: string, isFavourite: boolean) => void;
 }
 
 export const useAllQuizsStore = create<AllQuizsStoreType>((set) => ({
@@ -23,4 +24,8 @@ export const useAllQuizsStore = create<AllQuizsStoreType>((set) => ({
             quizs: state.quizs.filter((q) => q.id != quizId),
         }));
     },
+    updateQuizFavourite: (quizId, isFavourite) =>
+        set((state) => ({
+            quizs: state.quizs.map((q) => (q.id === quizId ? { ...q, isFavourite } : q)),
+        })),
 }));
