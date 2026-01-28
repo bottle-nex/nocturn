@@ -27,7 +27,9 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
     };
 
     return (
-        <div className="h-8 w-8 flex justify-center items-center rounded-full group cursor-pointer hover:bg-pink-500/40">
+        <div
+            onClick={handleClick}
+            className="h-8 w-8 flex justify-center items-center hover:bg-pink-500/20 rounded-full group cursor-pointer">
             <AnimatePresence>
                 {bursts.map((id) =>
                     Array.from({ length: PARTICLE_COUNT }).map((_, i) => {
@@ -69,7 +71,6 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
             </AnimatePresence>
 
             <motion.div
-                onClick={handleClick}
                 whileTap={{ scale: 0.8 }}
                 animate={{
                     scale: liked ? [0.2, 1.25, 1] : 1,

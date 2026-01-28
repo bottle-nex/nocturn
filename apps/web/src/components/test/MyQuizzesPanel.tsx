@@ -11,6 +11,13 @@ import EmptyCanvas from '../canvas/EmptyCanvas';
 import Image from 'next/image';
 import moment from 'moment';
 import HeartButton from '../ui/HeartButton';
+import { Input } from '../ui/input';
+import { cn } from '@/lib/utils';
+import { PiMagnifyingGlass } from 'react-icons/pi';
+import ToolTipComponent from '../utility/TooltipComponent';
+import UploadPDFButton from '../ui/UploadPDFButton';
+import AnimatedFolderIcon from '../ui/animated-icons/AnimatedFolderIcon';
+import QuizzesUpperSection from './QuizzesUpperSection';
 
 export default function MyQuizzesPanel() {
     const { session } = useUserSessionStore();
@@ -54,23 +61,16 @@ export default function MyQuizzesPanel() {
     }
 
     return (
-        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-12 flex flex-col">
-            <div className="w-full flex justify-between">
+        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-20 flex flex-col">
+            <div className="w-full flex justify-start flex-col">
                 <div className="text-4xl text-light-base/90">My Quizzes</div>
 
-                <div className="flex gap-x-3 relative">
-                    <Button
-                        onClick={handleCreateNewQuiz}
-                        className="rounded-sm h-11 w-32 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white active:scale-98"
-                    >
-                        <FiPlus />
-                        <span>New Quiz</span>
-                    </Button>
-                </div>
+                <QuizzesUpperSection/>
+
             </div>
 
-            <div className="w-full mt-10 overflow-y-auto text-light-base">
-                <div className="w-full mt-10 overflow-y-auto text-light-base grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="w-full mt-16 overflow-y-auto text-light-base">
+                <div className="w-full overflow-y-auto text-light-base grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {quizs.length > 0 ? (
                         quizs.map((quiz) => {
                             const currTemplate = templates.find((t) => t.id === quiz.theme);
