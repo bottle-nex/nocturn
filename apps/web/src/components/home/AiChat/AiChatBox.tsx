@@ -15,6 +15,7 @@ import { v4 as uuid } from "uuid";
 import MessagesRenderer from "./MessagesRenderer";
 import { FaSquare } from "react-icons/fa6";
 import VoiceIcon from "@/components/ui/svg/VoiceIcon";
+import { useTypewriterPlaceholder } from "@/hooks/useTypewriterPlaceholder";
 
 const placeholders = [
     "Have an idea?",
@@ -31,6 +32,9 @@ export default function AiChatBox() {
     const { appendMessage, loading, sessionId } = useAiChatStore();
     const { session } = useUserSessionStore();
 
+    const animatedPlaceholders = useTypewriterPlaceholder(placeholders);
+
+    // voice recognition
     const recognitionRef = useRef<SpeechRecognition | null>(null);
     const [listening, setListening] = useState<boolean>(false);
     const [interimTranscript, setInterimTranscript] = useState<string>('');
@@ -164,7 +168,7 @@ export default function AiChatBox() {
                 ref={inputRef}
                 value={prompt + (interimTranscript ? ' ' + interimTranscript : '')}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Start creating quiz with AI..."
+                placeholder={prompt ? '' : animatedPlaceholders}
                 className={cn(
                     'h-full w-full text-xs',
                     'placeholder:text-gamma/40 dark:placeholder:text-neutral-500',
