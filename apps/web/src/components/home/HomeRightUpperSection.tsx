@@ -91,6 +91,7 @@ export default function HomeRightUpperSection() {
             aiQuizChatSessionId: sessionId,
             role: AiQuizChatRole.USER,
             content: prompt,
+            createdAt: new Date(),
         };
 
         // append the message in client side

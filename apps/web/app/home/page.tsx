@@ -1,4 +1,5 @@
 'use client';
+import AiChatBox from '@/components/home/AiChat/AiChatBox';
 import HomeSidebar from '@/components/test/HomeSidebar';
 import HomeTrashPanel from '@/components/test/HomeTrashPanel';
 import SidebarPanelRenderer from '@/components/test/SidebarPanelRenderer';
@@ -16,6 +17,8 @@ export default function Home() {
                 <HomeSidebar />
                 <SidebarPanelRenderer />
             </div>
+
+            <AiChatBox />
 
             {isTrashOpen && (
                 <div className="absolute inset-0 z-50 bg-black/30 backdrop-blur-sm">

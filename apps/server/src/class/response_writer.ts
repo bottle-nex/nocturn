@@ -1,6 +1,5 @@
-import { CustomResponse } from '@nocturn/types';
+import { CustomResponse, stream } from '@nocturn/types';
 import { Response } from 'express';
-import { stream } from '../gen/types/stream.type';
 
 export default class ResponseWriter {
     static success<T>(
@@ -137,13 +136,8 @@ export default class ResponseWriter {
 
     static stream = class Stream {
         static write(res: Response, data: stream) {
-            const str = JSON.stringify({
-                data: data,
-            });
-
-            res.write(str);
+            res.write(`data: ${JSON.stringify(data)}\n\n`);
         }
-
         static end(res: Response) {
             res.end();
         }

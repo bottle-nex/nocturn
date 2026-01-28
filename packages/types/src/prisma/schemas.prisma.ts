@@ -224,6 +224,8 @@ export interface AiQuizChatSession {
   quiz?: QuizType;
   revisionFeedback?: string;
   messages: AiQuizMessage[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 export interface AiQuizMessage {
   id: string;
@@ -232,4 +234,6 @@ export interface AiQuizMessage {
   role: AiQuizChatRole;
   content: string;
   element?: AiMessageElement;
+  createdAt: Date;
+  updatedAt?: Date;
 }
