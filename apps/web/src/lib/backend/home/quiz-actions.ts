@@ -10,6 +10,7 @@ import {
     PERMANENTLY_DELETE_QUIZ_URL,
     REMOVE_QUIZ_FROM_FAVOURITE_URL,
     RESTORE_TRASHED_QUIZ_URL,
+    TOGGLE_FAVOURITE_QUIZ_URL,
 } from 'routes/api_routes';
 
 export type TrashedQuizWithDaysLedt = QuizType & {
@@ -166,24 +167,49 @@ export default class QuizActions {
         }
     }
 
-    static async get_favourite_quizzes(token: string): Promise<QuizType | undefined> {
+    static async get_favourite_quizzes(token: string): Promise<QuizType[] | undefined> {
         if (!token) {
             console.error('token not found');
             return;
         }
 
         try {
-            const { data } = await axios.get(GET_FAVOURITE_QUIZZES_URL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+            const { data } = await axios.get<CustomResponse<QuizType[]>>(
+                GET_FAVOURITE_QUIZZES_URL,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            });
+            );
 
             if (data.success) {
                 return data.data;
             }
         } catch (err) {
             console.error('Failed to add quiz to favourites: ', err);
+            return;
+        }
+    }
+
+    static async toggle_favourite_quiz(token: string, quizId: string, isFavourite: boolean) {
+        if (!token || !quizId) {
+            console.error('quizId or token not found');
+            return;
+        }
+
+        try {
+            await axios.put(
+                TOGGLE_FAVOURITE_QUIZ_URL,
+                { quizId, isFavourite },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+        } catch (error) {
+            console.error('Error in toggling favourite quiz: ', error);
             return;
         }
     }

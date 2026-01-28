@@ -16,7 +16,7 @@ export default function MyQuizzesPanel() {
     const { session } = useUserSessionStore();
     const router = useRouter();
     const [_loading, setLoading] = useState<boolean>(false);
-    const { setAllQuizs, quizs } = useAllQuizsStore();
+    const { setAllQuizs, quizs, updateQuizFavourite } = useAllQuizsStore();
 
     useEffect(() => {
         async function get_quiz_data() {
@@ -36,6 +36,18 @@ export default function MyQuizzesPanel() {
 
         get_quiz_data();
     }, [session?.user.token, setAllQuizs]);
+
+    async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
+        if (!session?.user.token) return;
+
+        try {
+            await QuizActions.toggle_favourite_quiz(session.user.token, quizId, isFavourite);
+            updateQuizFavourite(quizId, isFavourite);
+        } catch (error) {
+            console.error('Error in adding uiz to favourites: ', error);
+            return;
+        }
+    }
 
     function handleCreateNewQuiz() {
         router.push('/new');
@@ -97,7 +109,12 @@ export default function MyQuizzesPanel() {
                                                     last viewed {formattedTime}
                                                 </span>
                                             </div>
-                                            <HeartButton />
+                                            <HeartButton
+                                                liked={quiz.isFavourite}
+                                                onToggle={(toggle) =>
+                                                    handleFavouriteToggle(quiz.id, toggle)
+                                                }
+                                            />
                                         </div>
                                     </div>
                                 </div>

@@ -5,18 +5,25 @@ import { useState } from 'react';
 
 const PARTICLE_COUNT = 14;
 
-export default function HeartButton() {
-    const [liked, setLiked] = useState<boolean>(false);
+interface HeartButtonData {
+    liked: boolean;
+    onToggle: (toggle: boolean) => void;
+}
+
+export default function HeartButton({ onToggle, liked }: HeartButtonData) {
     const [bursts, setBursts] = useState<number[]>([]);
 
     const handleClick = () => {
-        setLiked((prev) => !prev);
+        const toggle = !liked;
+        onToggle(toggle);
 
-        const id = Date.now();
-        setBursts((prev) => [...prev, id]);
-        setTimeout(() => {
-            setBursts((prev) => prev.filter((b) => b !== id));
-        }, 800);
+        if (toggle) {
+            const id = Date.now();
+            setBursts((prev) => [...prev, id]);
+            setTimeout(() => {
+                setBursts((prev) => prev.filter((b) => b !== id));
+            }, 800);
+        }
     };
 
     return (

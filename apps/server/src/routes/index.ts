@@ -26,15 +26,14 @@ import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_t
 import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
 import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
 
-// <---------------------- middlewares ----------------------> //
+// <---------------------- MIDDLEWARES ---------------------->
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 import chatWithAiController from '../controllers/ai-controller/chatWithAiController';
 import createQuizController from '../controllers/quiz-controller/createQuizController';
-import add_quiz_to_favourite_controller from '../controllers/quiz-controller/add_quiz_to_favourite_controller';
-import remove_quiz_from_favourites_controller from '../controllers/quiz-controller/remove_quiz_from_favourites_controller';
 import get_favourite_quizzes_controller from '../controllers/quiz-controller/get_favourite_quizzes_controller';
+import toggle_favourite_quiz_controller from '../controllers/quiz-controller/toggle_favourite_quiz_controller';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -44,12 +43,7 @@ router.post('/user/create-review', authMiddleware, reviewAppController);
 router.get('/user/get-review', authMiddleware, getReviewController);
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
-router.put('/quiz/add-to-favourite/:quizId', authMiddleware, add_quiz_to_favourite_controller);
-router.put(
-    '/quiz/remove-from-favourite/:quizId',
-    authMiddleware,
-    remove_quiz_from_favourites_controller,
-);
+router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
 router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_controller);
 
 // <---------------------- QUIZ-ROUTES ---------------------->

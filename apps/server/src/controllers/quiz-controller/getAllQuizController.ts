@@ -25,6 +25,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
                 scheduledAt: true,
                 createdAt: true,
                 theme: true,
+                isFavourite: true,
                 host: {
                     select: {
                         image: true,
