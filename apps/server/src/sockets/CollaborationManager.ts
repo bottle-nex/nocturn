@@ -161,7 +161,6 @@ export default class CollaborationManager {
     }
 
     private async handle_question_tap(ws: CustomWebSocket, payload: any) {
-        console.log('Handling question tap from collaborator: ', payload);
         try {
             const { orderIndex } = payload;
             if (!ws.user.collabSessionId) {
@@ -173,6 +172,7 @@ export default class CollaborationManager {
                 payload: {
                     orderIndex,
                     collaboratorId: ws.user.userId,
+                    collaboratorName: ws.user.name,
                 },
             };
             await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);

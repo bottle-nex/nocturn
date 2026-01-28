@@ -111,6 +111,7 @@ export default async function participantJoinController(req: Request, res: Respo
             quiz.id,
             gameSession.id,
             USER_TYPE.PARTICIPANT,
+            result.participant.nickname,
         );
 
         try {

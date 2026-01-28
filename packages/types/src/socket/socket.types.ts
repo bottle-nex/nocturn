@@ -86,6 +86,7 @@ export interface CookiePayload {
   quizId: string;
   gameSessionId: string;
   role: USER_TYPE | undefined;
+  name: string;
   collabRole?: CollabRole;
   collabSessionId?: string;   
   tokenId: string;

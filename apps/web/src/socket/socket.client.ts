@@ -1,4 +1,5 @@
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
+import { handler } from 'next/dist/build/templates/app-page';
 
 export interface MessagePayload {
     type: MESSAGE_TYPES | COLLABORATORS_MESSAGE_TYPE;
@@ -47,6 +48,7 @@ export default class WebSocketClient {
         this.ws.onmessage = (event: MessageEvent<string>) => {
             try {
                 const parsed_data: ParsedMessage = JSON.parse(event.data);
+                console.log('parsed data is : ', parsed_data);
                 this.handle_incoming_message(parsed_data);
             } catch (error) {
                 console.error('Failed to parse incoming WebSocket message:', event.data, error);
@@ -74,6 +76,7 @@ export default class WebSocketClient {
     private handle_incoming_message(parsed_data: ParsedMessage) {
         const { type, payload } = parsed_data;
         const handlers = this.handlers.get(type);
+        console.log('handlers for this is : ', this.handlers);
         if (handlers) {
             handlers.forEach((handler) => handler(payload));
         }

@@ -8,14 +8,16 @@ import { createPortal } from 'react-dom';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
 import { BiTrash } from 'react-icons/bi';
 import { Button } from '../ui/button';
+import { PositionState, useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface MiniCanvasProps {
     template: Template | undefined;
     question: QuestionType;
     currentQuestionIndex: number;
+    orderIndex: number;
     questionIndex: number;
     collaboratorHighlight?: string;
-    collaborator?: Collaborator;
     handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
     onClick?: () => void;
@@ -26,6 +28,7 @@ export default function MiniCanvas({
     question,
     currentQuestionIndex,
     questionIndex,
+    orderIndex,
     collaboratorHighlight,
     handleQuestionChange,
     removeQuestion,
@@ -35,7 +38,20 @@ export default function MiniCanvas({
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const selectedStyles = 'border-2 border-red-800';
+    const { collaboratorAtIndex } = useCollaboratorStore();
+    const { session } = useUserSessionStore();
+
+    const currentUserId = session?.user?.id;
+    const collaboratorsAtThisIndex = Array.from(collaboratorAtIndex.entries()).filter(([_id, data]) => (
+        data.orderIndex === orderIndex
+    ))
+
+    const otherCollaboratorsHere = collaboratorsAtThisIndex.filter(([collaboratorId, _data]) =>
+        collaboratorId !== currentUserId
+    );
+    const hasOtherCollaborators = otherCollaboratorsHere.length > 0;
+    const isCurrentUserHere = currentQuestionIndex === question.orderIndex;
+    const borderStyles = isCurrentUserHere ? "border-2 border-indigo-600" : hasOtherCollaborators ? "border-2 border-red-800" : ""
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
@@ -83,12 +99,12 @@ export default function MiniCanvas({
                 }}
                 className={cn(
                     'w-full rounded-md h-18 p-0.5 cursor-pointer relative ',
-                    currentQuestionIndex === question.orderIndex && selectedStyles,
+                    borderStyles,
                     collaboratorHighlight
                 )}
                 style={{ boxSizing: 'border-box' }}
             >
-                {currentQuestionIndex === question.orderIndex && (<span className='bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20'>Harkirat</span>)}
+                {hasOtherCollaborators && !isCurrentUserHere && (<span className='bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20'>{otherCollaboratorsHere[otherCollaboratorsHere.length - 1][1].collaboratorName}</span>)}
                 <div
                     style={{
                         backgroundColor: template?.background_color,

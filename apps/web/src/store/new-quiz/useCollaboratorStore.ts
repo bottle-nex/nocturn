@@ -1,15 +1,19 @@
 import { Collaborator } from '@nocturn/types';
 import { create } from 'zustand';
 
-interface CollaboratorAtIndex {
+export interface PositionState {
     orderIndex: number;
-    collaborator: Collaborator;
+    collaboratorName: string;
 }
 
 interface CollaboratorStore {
     collaborators: Collaborator[];
-    collaboratorAtIndex: CollaboratorAtIndex | null;
-    updateCollaboratorAtIndex: (orderIndex: number, collaboratorId: Collaborator['id']) => void;
+    collaboratorAtIndex: Map<string, PositionState>;
+    updateCollaboratorAtIndex: (
+        orderIndex: number,
+        collaboratorId: Collaborator['id'],
+        collaboratorName: string,
+    ) => void;
     hasCollaborators: () => boolean;
     setCollaborators: (collaborators: Collaborator[]) => void;
     addCollaborator: (collaborator: Collaborator) => void;
@@ -18,13 +22,18 @@ interface CollaboratorStore {
 
 export const useCollaboratorStore = create<CollaboratorStore>((set, get) => ({
     collaborators: [],
-    collaboratorAtIndex: null,
-    updateCollaboratorAtIndex: (orderIndex: number, collaboratorId: Collaborator['id']) => {
-        const collaborator = get().collaborators.find((c) => c.id === collaboratorId) || null;
-        if (collaborator) {
-            set({ collaboratorAtIndex: { orderIndex, collaborator } });
-        }
+    collaboratorAtIndex: new Map(),
+
+    updateCollaboratorAtIndex: (orderIndex, collaboratorId, collaboratorName) => {
+        const currentMap = get().collaboratorAtIndex;
+        const newMap = new Map(currentMap);
+        newMap.set(collaboratorId, { collaboratorName, orderIndex });
+
+        set({
+            collaboratorAtIndex: newMap,
+        });
     },
+
     hasCollaborators: () => get().collaborators.length > 0,
     setCollaborators: (collaborators: Collaborator[]) => set({ collaborators }),
     addCollaborator: (collaborator: Collaborator) =>

@@ -92,6 +92,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
             quiz.id,
             '',
             undefined,
+            req.user.name,
             userCollabRole,
             collabSessionId,
         );
@@ -102,7 +103,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
             sameSite: 'lax',
             maxAge: 24 * 60 * 60 * 1000,
         });
-        console.log("cookie returning is : ", secureTokenData);
+        console.log('cookie returning is : ', secureTokenData);
 
         ResponseWriter.success(
             res,

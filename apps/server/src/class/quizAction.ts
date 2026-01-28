@@ -112,6 +112,7 @@ export default class QuizAction {
         quizId: string,
         gameSessionId: string,
         role: USER_TYPE | undefined,
+        name: string,
         collabRole?: CollabRole,
         collabSessionId?: string,
     ): string {
@@ -121,6 +122,7 @@ export default class QuizAction {
             quizId,
             gameSessionId,
             role,
+            name,
             collabRole,
             collabSessionId,
             tokenId,

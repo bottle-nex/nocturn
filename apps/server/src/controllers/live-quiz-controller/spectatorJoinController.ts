@@ -108,6 +108,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
             quiz.id,
             gameSession.id,
             USER_TYPE.SPECTATOR,
+            result.spectator.nickname,
         );
 
         try {

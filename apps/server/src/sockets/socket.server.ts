@@ -78,7 +78,6 @@ export default class WebsocketServer {
     }
 
     private handle_incoming_message_from_subscriber(channel: string, message: any) {
-        console.log('Received message from redis subscriber:', message, channel);
         const session_id = this.extract_session_id_from_channel(channel);
         if (!session_id) {
             console.error('Invalid game session id in channel', channel);
@@ -96,7 +95,6 @@ export default class WebsocketServer {
 
             case MESSAGE_TYPES.SETTINGS_CHANGE:
                 this.quiz_settings.update_memory_settings_state(session_id, message.payload);
-                console.log('new settings received are: ', message);
                 this.broadcast_to_session(
                     session_id,
                     message,
@@ -281,18 +279,14 @@ export default class WebsocketServer {
     }
 
     private broadcast_to_collaborators(collab_session_id: string, message: any) {
-        console.log('Broadcasting to collaborators for session id:', collab_session_id);
         const collaborator_socket_ids = this.collaborator_sockets_mapping.get(collab_session_id);
-        console.log('Collaborator socket ids are:', collaborator_socket_ids);
         if (!collaborator_socket_ids) {
             return;
         }
 
         collaborator_socket_ids.forEach((socket_id) => {
             const collaborator_socket = this.socket_mapping.get(socket_id);
-            console.log('Sending to collaborator socket id:', socket_id);
             if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
-                console.log('Sending message to collaborator socket:', message);
                 collaborator_socket.send(JSON.stringify(message));
             }
         });
@@ -419,7 +413,6 @@ export default class WebsocketServer {
 
     private initialize() {
         this.wss.on('connection', (ws: CustomWebSocket, req) => {
-            console.log('new connection came');
             const url = new URL(req.url || '', `http://${req.headers.host}`);
             const quizId = url.searchParams.get('quizId');
             if (!quizId) {
@@ -454,9 +447,7 @@ export default class WebsocketServer {
                     return;
                 }
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
-                console.log('Decoded cookie payload is: ', decoded_cookie_payload);
                 const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId || decoded_cookie_payload.collabSessionId}`;
-                console.log('Subscribing to redis key: ', redis_key);
                 this.subscriber.subscribe(redis_key);
 
                 if (decoded_cookie_payload.quizId !== quizId) {

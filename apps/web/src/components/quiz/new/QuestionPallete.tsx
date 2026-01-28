@@ -69,7 +69,6 @@ function BigQuestionPallete({
     currentQTemplate,
 }: QuestionPallete) {
     const { collaboratorAtIndex } = useCollaboratorStore();
-
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
@@ -91,14 +90,11 @@ function BigQuestionPallete({
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
+                                orderIndex={question.orderIndex}
                                 handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}
-                                collaboratorHighlight={
-                                    (1 === idx) ? "border-2 border-red-800" : undefined
-                                }
-                                collaborator={collaboratorAtIndex?.collaborator}
                             />
                         </ToolTipComponent>
                     </div>
@@ -180,11 +176,8 @@ function SmallQuestionPallete({
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
+                                orderIndex={question.orderIndex}
                                 handleQuestionChange={handleQuestionChange}
-                                collaboratorHighlight={
-                                    (1 === idx) ? "border-2 border-red-800" : undefined
-                                }
-                                collaborator={collaboratorAtIndex?.collaborator}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}
