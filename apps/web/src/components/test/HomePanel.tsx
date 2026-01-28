@@ -1,5 +1,4 @@
 'use client';
-import InvertedQuizCards from '@/components/utility/InvertedQuizCards';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
