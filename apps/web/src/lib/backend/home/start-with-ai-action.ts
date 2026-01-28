@@ -10,8 +10,6 @@ export default class AiBackendAction {
         try {
             setLoading(true);
 
-            console.log('fdasflasdfjlsafjasfjs');
-
             const res = await axios.post(
                 CREATE_QUIZ_USING_AI,
                 {
@@ -26,14 +24,11 @@ export default class AiBackendAction {
                 },
             );
 
-            console.log('response: ', res.data);
-
             const contentType = res.headers['content-type'] ?? '';
 
             // handle stream
             if (contentType.includes('text/event-stream')) {
                 // handle here
-                console.log('event stream: ', res.data);
                 this.handle_stream(res.data.data);
                 return;
             }
@@ -67,7 +62,6 @@ export default class AiBackendAction {
     }
 
     static async create_new_quiz(token: string, sessionId: string, instruction: string) {
-
         const { setLoading } = useAiChatStore.getState();
 
         try {
@@ -85,50 +79,47 @@ export default class AiBackendAction {
                 }),
             });
 
-            if(!response.ok) {
+            if (!response.ok) {
                 throw new Error('Failed to start chat');
             }
 
             const reader = response.body?.getReader();
 
-            if(!reader) {
+            if (!reader) {
                 throw new Error('No response body');
             }
 
             const decoder = new TextDecoder();
             let buffer = '';
 
-            while(true) {
+            while (true) {
                 const { done, value } = await reader.read();
-                if(done) break;
+                if (done) break;
 
                 buffer += decoder.decode(value, { stream: true });
                 const lines = buffer.split('\n');
                 buffer = lines.pop() ?? '';
 
                 for (const line of lines) {
-                    const trimmed = line.trim()
-                    if(!trimmed) continue;
+                    const trimmed = line.trim();
+                    if (!trimmed) continue;
 
                     try {
-
-                        const jsonString = trimmed.startsWith('data: ') ? trimmed.slice(6) : trimmed;
+                        const jsonString = trimmed.startsWith('data: ')
+                            ? trimmed.slice(6)
+                            : trimmed;
                         const event: stream = JSON.parse(jsonString);
 
                         this.handle_stream(event);
-                        
                     } catch {
                         console.error('Skipping incomplete streaming message');
                     }
                 }
-
             }
-
         } catch (error) {
-            
+            console.error('error in streaming data: ', error);
         } finally {
             setLoading(false);
         }
-
     }
 }

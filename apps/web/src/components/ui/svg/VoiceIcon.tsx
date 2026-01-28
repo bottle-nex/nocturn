@@ -5,10 +5,7 @@ interface VoiceIconProps {
     className?: string;
 }
 
-export default function VoiceIcon({
-    size = 24,
-    className = '',
-}: VoiceIconProps) {
+export default function VoiceIcon({ size = 24, className = '' }: VoiceIconProps) {
     return (
         <svg
             width={size}
@@ -25,4 +22,3 @@ export default function VoiceIcon({
         </svg>
     );
 }
-

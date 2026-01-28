@@ -1,16 +1,20 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface MicIconPromps {
     size: number;
     color?: {
-        mic: string,
-        bottom: string,
-        holes: string,
+        mic: string;
+        bottom: string;
+        holes: string;
     };
     className?: string;
 }
 
-export default function MicIcon({ size = 24, color = { mic: '#000000', bottom: '#000000', holes: '#000000' }, className}: MicIconPromps) {
+export default function MicIcon({
+    size = 24,
+    color = { mic: '#000000', bottom: '#000000', holes: '#000000' },
+    className,
+}: MicIconPromps) {
     return (
         <svg
             width={size}
@@ -38,4 +42,4 @@ export default function MicIcon({ size = 24, color = { mic: '#000000', bottom: '
             </defs>
         </svg>
     );
-};
+}

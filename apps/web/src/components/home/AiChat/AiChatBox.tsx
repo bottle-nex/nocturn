@@ -1,30 +1,25 @@
 'use client';
 
-import { Input } from "@/components/ui/input";
-import MicIcon from "@/components/ui/svg/MicIcon";
-import ToolTipComponent from "@/components/utility/TooltipComponent";
-import AiBackendAction from "@/lib/backend/home/start-with-ai-action";
-import { cn } from "@/lib/utils";
-import { useAiChatStore } from "@/store/home/useAiChatStore";
-import { useUserSessionStore } from "@/store/user/useUserSessionStore";
-import { AiQuizChatRole, AiQuizMessage } from "@nocturn/types";
-import { useRef, useState } from "react";
-import { GoPlus } from "react-icons/go";
-import { IoMdArrowRoundUp } from "react-icons/io";
-import { v4 as uuid } from "uuid";
-import MessagesRenderer from "./MessagesRenderer";
-import { FaSquare } from "react-icons/fa6";
-import VoiceIcon from "@/components/ui/svg/VoiceIcon";
-import { useTypewriterPlaceholder } from "@/hooks/useTypewriterPlaceholder";
+import { Input } from '@/components/ui/input';
+import MicIcon from '@/components/ui/svg/MicIcon';
+import ToolTipComponent from '@/components/utility/TooltipComponent';
+import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
+import { cn } from '@/lib/utils';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
+import { useRef, useState } from 'react';
+import { GoPlus } from 'react-icons/go';
+import { IoMdArrowRoundUp } from 'react-icons/io';
+import { v4 as uuid } from 'uuid';
+import MessagesRenderer from './MessagesRenderer';
+import { FaSquare } from 'react-icons/fa6';
+import VoiceIcon from '@/components/ui/svg/VoiceIcon';
+import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 
-const placeholders = [
-    "Have an idea?",
-    "Don't know where to start?",
-    "Use me!",
-]
+const placeholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 
 export default function AiChatBox() {
-
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
@@ -71,13 +66,12 @@ export default function AiChatBox() {
             }
 
             if (final) {
-                setPrompt(prev => (prev ? prev + ' ' : '') + final);
+                setPrompt((prev) => (prev ? prev + ' ' : '') + final);
                 setInterimTranscript('');
             } else {
                 setInterimTranscript(interim);
             }
         };
-
 
         recognition.onend = () => {
             setListening(false);
@@ -88,7 +82,6 @@ export default function AiChatBox() {
         recognition.onerror = () => setListening(false);
 
         recognitionRef.current = recognition;
-
     }
 
     function handleToggleDictation() {
@@ -105,7 +98,6 @@ export default function AiChatBox() {
             setListening(true);
         }
     }
-
 
     function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') {
@@ -153,15 +145,13 @@ export default function AiChatBox() {
                 'flex justify-center items-center',
             )}
         >
-
-            <div className={cn(
-                'flex justify-center items-center rounded-full p-1.5 cursor-pointer ',
-                'hover:bg-neutral-800 transition'
-            )}>
-                <GoPlus
-                    size={16}
-                    className="text-neutral-700 dark:text-neutral-400"
-                />
+            <div
+                className={cn(
+                    'flex justify-center items-center rounded-full p-1.5 cursor-pointer ',
+                    'hover:bg-neutral-800 transition',
+                )}
+            >
+                <GoPlus size={16} className="text-neutral-700 dark:text-neutral-400" />
             </div>
 
             <Input
@@ -172,7 +162,7 @@ export default function AiChatBox() {
                 className={cn(
                     'h-full w-full text-xs',
                     'placeholder:text-gamma/40 dark:placeholder:text-neutral-500',
-                    'bg-transparent! border-none'
+                    'bg-transparent! border-none',
                 )}
                 onKeyDown={handleOnKeyDown}
             />
@@ -186,7 +176,7 @@ export default function AiChatBox() {
                     className={cn(
                         'flex items-center justify-center rounded-full cursor-pointer',
                         'w-7 h-7 aspect-square',
-                        loading ? 'bg-neutral-800' : 'bg-light-alpha'
+                        loading ? 'bg-neutral-800' : 'bg-light-alpha',
                     )}
                     onClick={!loading && !prompt ? handleToggleDictation : undefined}
                 >
@@ -200,16 +190,9 @@ export default function AiChatBox() {
                         <VoiceIcon size={16} className="text-neutral-800" />
                     )}
                 </div>
-
             </ToolTipComponent>
 
-            {messageRendererPanel && (
-                <MessagesRenderer
-                    className="absolute bottom-12 "
-                />
-            )}
-
+            {messageRendererPanel && <MessagesRenderer className="absolute bottom-12 " />}
         </div>
-
     );
 }

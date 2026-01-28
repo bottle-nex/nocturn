@@ -9,9 +9,7 @@ interface MessagesRendererProps {
     className?: string;
 }
 
-export default function MessagesRenderer({
-    className = '',
-}: MessagesRendererProps) {
+export default function MessagesRenderer({ className = '' }: MessagesRendererProps) {
     const { messages } = useAiChatStore();
     const messageEndRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +26,7 @@ export default function MessagesRenderer({
                 'max-w-87.5 w-full h-130',
                 'border border-neutral-800 rounded-xl bg-dark-alpha',
                 'flex flex-col min-h-0 overflow-hidden',
-                className
+                className,
             )}
         >
             <div className="flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
@@ -38,6 +36,5 @@ export default function MessagesRenderer({
                 <div ref={messageEndRef} />
             </div>
         </div>
-
     );
 }

@@ -1,4 +1,3 @@
-
 declare global {
     interface Window {
         SpeechRecognition?: typeof SpeechRecognition;
@@ -6,7 +5,7 @@ declare global {
     }
 
     interface SpeechRecognitionConstructor {
-        new(): SpeechRecognition;
+        new (): SpeechRecognition;
     }
 
     interface SpeechRecognition extends EventTarget {

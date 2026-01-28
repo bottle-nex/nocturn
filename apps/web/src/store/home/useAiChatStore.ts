@@ -25,7 +25,7 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
     setMessages: (messages: AiQuizMessage[]) => set({ messages }),
     appendMessage: (message: AiQuizMessage) => set({ messages: [...get().messages, message] }),
     appendMultipleMessages: (messages: AiQuizMessage[]) => {
-        for(const m of messages) {
+        for (const m of messages) {
             get().appendMessage(m);
         }
     },
