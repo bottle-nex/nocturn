@@ -17,9 +17,10 @@ import { RxOpenInNewWindow } from 'react-icons/rx';
 
 interface RecentlyViewedCardProps {
     quiz: Partial<QuizViewsType>;
+    className?: string;
 }
 
-export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): JSX.Element {
+export default function RecentlyViewedCard({ quiz, className }: RecentlyViewedCardProps): JSX.Element {
     const template = templates.find((t) => t.id === quiz.quiz?.theme);
     const formattedTime = moment(quiz.viewedAt).format('MMM D, YYYY');
     const router = useRouter();
@@ -238,12 +239,14 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
                         e.stopPropagation();
                     }
                 }}
-                className="w-88 aspect-video rounded-sm cursor-pointer transition-shadow"
+                className={cn("w-88 aspect-video rounded-sm cursor-pointer transition-shadow",
+                    className
+                )}
             >
                 {template && (
                     <div className="relative group">
                         <EmptyCanvas
-                            className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
+                            className="w-full aspect-video rounded-[8px] outline-2 outline-black/40 dark:outline-white/40"
                             template={template}
                         />
                         <div className={cn('absolute w-full h-full top-0 p-0.5 rounded-lg flex')}>
@@ -259,7 +262,7 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
                                 onPointerUp={handlePointerUp}
                                 onPointerLeave={handlePointerUp}
                             >
-                                <GoGrabber className="size-10 text-light-base stroke-1.5" />
+                                <GoGrabber className="size-7 text-light-base stroke-1.5" />
                             </div>
 
                             <div
@@ -272,7 +275,7 @@ export default function RecentlyViewedCard({ quiz }: RecentlyViewedCardProps): J
                                 )}
                                 onClick={handleCardClick}
                             >
-                                <RxOpenInNewWindow className="size-7 text-light-base stroke-1.5" />
+                                <RxOpenInNewWindow className="size-4 text-light-base stroke-1.5" />
                             </div>
                         </div>
                     </div>

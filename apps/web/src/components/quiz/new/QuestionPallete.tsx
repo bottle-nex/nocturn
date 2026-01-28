@@ -14,18 +14,20 @@ import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
+import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 
 export default function QuestionPallete() {
     const { quiz, currentQuestionIndex, setCurrentQuestionIndex, addQuestion, removeQuestion } =
         useNewQuizStore();
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
     const { handleCollaboratorsQuestionChange } = useWebSocket();
-    console.log("quesiton is : ", quiz.questions);
+
     function handleQuestionChange(questionID: number) {
-        console.log('Changing question to index:', questionID);
         setCurrentQuestionIndex(questionID);
-        handleCollaboratorsQuestionChange({ questionIndex: questionID });
+        handleCollaboratorsQuestionChange({ orderIndex: questionID });
     }
+
+
 
     return (
         <>
@@ -66,6 +68,8 @@ function BigQuestionPallete({
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
+    const { collaboratorAtIndex } = useCollaboratorStore();
+
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
@@ -91,6 +95,10 @@ function BigQuestionPallete({
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}
+                                collaboratorHighlight={
+                                    (1 === idx) ? "border-2 border-red-800" : undefined
+                                }
+                                collaborator={collaboratorAtIndex?.collaborator}
                             />
                         </ToolTipComponent>
                     </div>
@@ -110,7 +118,7 @@ function SmallQuestionPallete({
 }: QuestionPallete) {
     const { appearing, setAppearing } = useSideBarStore();
     const sidebarRef = useRef<HTMLDivElement>(null);
-
+    const { collaboratorAtIndex } = useCollaboratorStore();
     useEffect(() => {
         if (appearing) {
             gsap.fromTo(
@@ -166,13 +174,17 @@ function SmallQuestionPallete({
 
             <div className="flex flex-col gap-y-1.5 mt-6 w-[90%] flex-1 overflow-y-auto custom-scrollbar pr-1 relative" data-lenis-prevent>
                 {quiz.questions.map((question, idx) => (
-                    <div key={idx} className="flex items-end gap-x-2 flex-shrink-0">
+                    <div key={idx} className="flex items-end gap-x-2 shrink-0">
                         <div className="text-xs">{idx + 1}.</div>
                         <ToolTipComponent side="right" content={idx + 1}>
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
                                 handleQuestionChange={handleQuestionChange}
+                                collaboratorHighlight={
+                                    (1 === idx) ? "border-2 border-red-800" : undefined
+                                }
+                                collaborator={collaboratorAtIndex?.collaborator}
                                 template={currentQTemplate}
                                 question={question}
                                 questionIndex={idx}

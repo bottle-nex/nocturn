@@ -1,6 +1,6 @@
 import { Template } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-import { QuestionType } from '@nocturn/types';
+import { Collaborator, QuestionType } from '@nocturn/types';
 import CanvasAccents from '../utility/CanvasAccents';
 import { BsThreeDots } from 'react-icons/bs';
 import { MouseEvent, useState, useRef } from 'react';
@@ -14,6 +14,8 @@ interface MiniCanvasProps {
     question: QuestionType;
     currentQuestionIndex: number;
     questionIndex: number;
+    collaboratorHighlight?: string;
+    collaborator?: Collaborator;
     handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
     onClick?: () => void;
@@ -24,6 +26,7 @@ export default function MiniCanvas({
     question,
     currentQuestionIndex,
     questionIndex,
+    collaboratorHighlight,
     handleQuestionChange,
     removeQuestion,
     onClick,
@@ -81,6 +84,7 @@ export default function MiniCanvas({
                 className={cn(
                     'w-full rounded-md h-18 p-0.5 cursor-pointer relative ',
                     currentQuestionIndex === question.orderIndex && selectedStyles,
+                    collaboratorHighlight
                 )}
                 style={{ boxSizing: 'border-box' }}
             >

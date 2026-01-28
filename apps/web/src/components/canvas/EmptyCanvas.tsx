@@ -22,7 +22,7 @@ export default function EmptyCanvas({
     return (
         <div
             onClick={onClick}
-            className={cn('w-full rounded-lg p-0.5 cursor-pointer relative ', className)}
+            className={cn('w-full p-0.5 cursor-pointer relative ', className)}
             style={{ boxSizing: 'border-box' }}
         >
             {question && options.length > 0 && (

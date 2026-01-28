@@ -72,7 +72,6 @@ export default async function getAllQuizController(req: Request, res: Response) 
             orderBy: {
                 viewedAt: 'desc',
             },
-            take: 4,
         });
 
         if (!quizzes || quizzes.length === 0) {

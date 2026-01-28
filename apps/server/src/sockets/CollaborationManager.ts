@@ -17,7 +17,7 @@ export interface CollaborationManagerDependencies {
     publisher: Redis;
     subscriber: Redis;
     socket_mapping: Map<string, CustomWebSocket>;
-    quiz_collaborators_mapping: Map<string, Set<string>>;
+    collaborator_sockets_mapping: Map<string, Set<string>>;
     databaseQueue: DatabaseQueue;
     quizManager: QuizManager;
     redis_cache: RedisCache;
@@ -42,21 +42,26 @@ export default class CollaborationManager {
         this.databaseQueue = dependencies.databaseQueue;
         this.redis_cache = dependencies.redis_cache;
         this.quizManager = dependencies.quizManager;
-        this.collaborator_sockets_mapping = dependencies.quiz_collaborators_mapping;
+        this.collaborator_sockets_mapping = dependencies.collaborator_sockets_mapping;
     }
 
     public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
+        if (!decoded_cookie_payload.userId || !decoded_cookie_payload.collabSessionId) {
+            console.log('invalid collaborator payload, closing socket');
+            ws.close(socket_codes.UNAUTHENTICATED, 'Invalid collaborator payload');
+            return;
+        }
         const is_valid_user = await this.validate_collaborator_in_db(decoded_cookie_payload.userId);
 
         if (!is_valid_user) {
             console.log('user validation failed, closing socket');
-            ws.close();
+            ws.close(socket_codes.UNAUTHENTICATED, 'User validation failed');
             return;
         }
 
         this.cleanup_existing_collaborator_socket(
             decoded_cookie_payload.userId,
-            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.collabSessionId,
         );
 
         const new_collaborator_socket_id = this.generateSocketId();
@@ -69,20 +74,57 @@ export default class CollaborationManager {
             new_collaborator_socket_id,
         );
 
-        // check if the session-collaborator mapping exists
         const session_collaborators_socket_ids = this.collaborator_sockets_mapping.get(
-            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.collabSessionId,
         );
         if (!session_collaborators_socket_ids) {
             this.collaborator_sockets_mapping.set(
-                decoded_cookie_payload.gameSessionId,
+                decoded_cookie_payload.collabSessionId,
                 new Set<string>(),
             );
         }
 
         this.collaborator_sockets_mapping
-            .get(decoded_cookie_payload.gameSessionId)
+            .get(decoded_cookie_payload.collabSessionId)
             ?.add(new_collaborator_socket_id);
+        this.setup_message_handlers(ws);
+    }
+
+    private setup_message_handlers(ws: CustomWebSocket) {
+        ws.on('message', (data) => {
+            try {
+                const message = JSON.parse(data.toString());
+                this.handle_collaborator_message(ws, message);
+            } catch (err) {
+                console.error('Error parsing message', err);
+            }
+        });
+
+        ws.on('close', () => {
+            // this.handle_participant_leave_gamesession(ws);
+            if (!ws.user.collabSessionId) {
+                return;
+            }
+            this.cleanup_existing_collaborator_socket(ws.user.userId, ws.user.collabSessionId);
+        });
+
+        ws.on('error', () => {
+            if (!ws.user.collabSessionId) {
+                return;
+            }
+            this.cleanup_existing_collaborator_socket(ws.user.userId, ws.user.collabSessionId);
+        });
+    }
+
+    private handle_collaborator_message(ws: CustomWebSocket, message: any) {
+        console.log('Received message from collaborator: ', message);
+        switch (message.type) {
+            case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
+                this.handle_question_tap(ws, message.payload);
+                break;
+            default:
+                console.warn('Unknown message type received from collaborator:', message.type);
+        }
     }
 
     private cleanup_existing_collaborator_socket(
@@ -118,8 +160,10 @@ export default class CollaborationManager {
         }
     }
 
-    private async handle_question_tap(ws: CustomWebSocket, questionId: string) {
+    private async handle_question_tap(ws: CustomWebSocket, payload: any) {
+        console.log('Handling question tap from collaborator: ', payload);
         try {
+            const { orderIndex } = payload;
             if (!ws.user.collabSessionId) {
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
                 return;
@@ -127,7 +171,8 @@ export default class CollaborationManager {
             const data: PubSubMessageTypes = {
                 type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
                 payload: {
-                    questionId: questionId,
+                    orderIndex,
+                    collaboratorId: ws.user.userId,
                 },
             };
             await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);

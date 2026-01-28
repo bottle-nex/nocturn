@@ -176,6 +176,7 @@ function MainCollaboratorsScreen({ setScreen }: ScreenSettings) {
 }
 
 function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollaboratorsScreenProps) {
+    const addCollabInputRef = useRef<HTMLInputElement>(null);
     const [email, setEmail] = useState<string>('');
     const [note, setNote] = useState<string>('');
     const [emails, setEmails] = useState<{ email: string; valid: boolean }[]>([]);
@@ -183,6 +184,12 @@ function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollabora
     const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
     const { quiz } = useNewQuizStore();
     const { session } = useUserSessionStore();
+
+    useEffect(() => {
+        if (addCollabInputRef.current) {
+            addCollabInputRef.current.focus();
+        }
+    }, []);
 
     function onEnter() {
         if (email.trim() === '') return;
@@ -261,6 +268,7 @@ function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollabora
                 <section className="relative flex items-center mt-2 border border-neutral-300 dark:border-neutral-800 has-focus:border-indigo-600 overflow-visible rounded-lg dark:bg-black/20! transition-colors">
                     <PiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 dark:text-white text-neutral-600 size-6" />
                     <Input
+                        ref={addCollabInputRef}
                         value={email}
                         disabled={loading}
                         onChange={(e) => setEmail(e.target.value)}

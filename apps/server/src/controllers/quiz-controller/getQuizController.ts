@@ -57,7 +57,6 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 },
             },
         });
-
         if (!quiz) {
             ResponseWriter.custom(res, true, '', 'Quiz does not exist', 203, {
                 type: QuizResponseType.QUIZ_NOT_EXIST,

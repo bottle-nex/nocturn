@@ -42,10 +42,6 @@ export default function HomePanel() {
             <HomeRightUpperSection />
             <HomeStartWithAi />
 
-            <section className="w-[24rem] flex flex-col relative h-fit -ml-8 mt-6">
-                <InvertedQuizCards />
-            </section>
-
             {loading && (
                 <section className="flex items-center gap-4 flex-wrap mt-8">
                     {Array.from({ length: 3 }).map((_, idx) => (
@@ -59,9 +55,9 @@ export default function HomePanel() {
                     <h2 className="text-lg font-normal text-black dark:text-white mb-4">
                         Recently Viewed
                     </h2>
-                    <div className="flex items-center gap-4 flex-wrap">
+                    <div className="gap-4 lg:grid-cols-3 grid">
                         {recentlyViewed.map((quiz) => (
-                            <RecentlyViewedCard key={quiz.id} quiz={quiz} />
+                            <RecentlyViewedCard className='w-full' key={quiz.id} quiz={quiz} />
                         ))}
                     </div>
                 </section>

@@ -310,27 +310,41 @@ export default class Collaborator {
                 });
             }
 
-            return await prisma.collabSession.create({
-                data: {
-                    quizId: quiz.id,
-                    hostId: host_id,
-                },
-                select: {
-                    id: true,
-                    quizId: true,
-                    quiz: {
-                        select: {
-                            title: true,
+            const collab_session = await prisma.$transaction(async (tx) => {
+                const new_session = await tx.collabSession.create({
+                    data: {
+                        quizId: quiz.id,
+                        hostId: host_id,
+                    },
+                    select: {
+                        id: true,
+                        quizId: true,
+                        quiz: {
+                            select: {
+                                title: true,
+                            },
+                        },
+                        hostId: true,
+                        collaborators: {
+                            select: {
+                                userId: true,
+                            },
                         },
                     },
-                    hostId: true,
-                    collaborators: {
-                        select: {
-                            userId: true,
-                        },
+                });
+
+                await tx.collaborator.create({
+                    data: {
+                        sessionId: new_session.id,
+                        userId: host_id,
+                        role: CollabRole.HOST,
+                        joinedAt: new Date(),
                     },
-                },
+                });
+                return new_session;
             });
+
+            return collab_session;
         } catch (err) {
             console.error('Error in get_or_create_collab_session:', err);
             return null;
