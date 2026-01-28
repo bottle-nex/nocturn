@@ -1,5 +1,4 @@
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
-import { handler } from 'next/dist/build/templates/app-page';
 
 export interface MessagePayload {
     type: MESSAGE_TYPES | COLLABORATORS_MESSAGE_TYPE;
@@ -27,14 +26,12 @@ export default class WebSocketClient {
     private is_manually_closed: boolean = false;
 
     constructor(url: string) {
-        console.log('initialising connection from the constructor');
         this.url = url;
         this.is_manually_closed = false;
         this.initialize_connection();
     }
 
     private initialize_connection() {
-        console.log('connection initialized');
         if (this.is_manually_closed) {
             return;
         }
@@ -50,7 +47,6 @@ export default class WebSocketClient {
         this.ws.onmessage = (event: MessageEvent<string>) => {
             try {
                 const parsed_data: ParsedMessage = JSON.parse(event.data);
-                console.log('parsed data is : ', parsed_data);
                 this.handle_incoming_message(parsed_data);
             } catch (error) {
                 console.error('Failed to parse incoming WebSocket message:', event.data, error);
@@ -64,7 +60,6 @@ export default class WebSocketClient {
                 clearTimeout(this.reconnect_timeout);
                 this.reconnect_timeout = null;
             }
-            console.log('event is : ', event);
 
             const shouldReconnect = !this.is_manually_closed && !isIntentionalClosure(event.code);
 
@@ -81,7 +76,6 @@ export default class WebSocketClient {
     private handle_incoming_message(parsed_data: ParsedMessage) {
         const { type, payload } = parsed_data;
         const handlers = this.handlers.get(type);
-        console.log('handlers for this is : ', this.handlers);
         if (handlers) {
             handlers.forEach((handler) => handler(payload));
         }
@@ -125,18 +119,15 @@ export default class WebSocketClient {
         let delay: number;
 
         if (this.reconnect_attempts <= this.max_reconnect_attempts) {
-            console.log('I ma inside if statement ----------');
             delay = this.reconnect_delay;
             this.reconnect_delay = Math.min(this.reconnect_delay * 2, this.max_reconnect_delay);
         } else {
-            console.log('I ma inside if statement ::::::::::::::::::::');
             console.warn(
                 `Max reconnection attempts (${this.max_reconnect_attempts}) reached. Switching to persistent reconnection mode.`,
             );
             delay = this.persistent_reconnect_delay;
             this.reconnect_delay = 1000;
         }
-        console.log('manually closed is : ', this.is_manually_closed);
         this.reconnect_timeout = setTimeout(() => {
             if (!this.is_manually_closed) {
                 this.initialize_connection();

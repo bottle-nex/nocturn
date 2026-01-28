@@ -122,7 +122,10 @@ export default function HostChatsPanel() {
                 </ToolTipComponent>
             </div>
 
-            <div className="relative h-fit w-full flex flex-col justify-end items-start p-2 overflow-y-auto custom-scrollbar" data-lenis-prevent>
+            <div
+                className="relative h-fit w-full flex flex-col justify-end items-start p-2 overflow-y-auto custom-scrollbar"
+                data-lenis-prevent
+            >
                 <div className="h-full w-full overflow-y-auto custom-scrollbar" data-lenis-prevent>
                     <MessagesRenderer
                         messages={uniqueMessages}

@@ -90,7 +90,6 @@ export default function NavbarQuizAction() {
         setIsLoading(true);
         try {
             const isPublished = await BackendActions.launchQuiz(quiz, session.user.token);
-            console.log('Launch quiz response:', isPublished);
             if (isPublished) {
                 updateAllQuiz(quiz.id, {
                     status: QuizStatusEnum.LIVE,

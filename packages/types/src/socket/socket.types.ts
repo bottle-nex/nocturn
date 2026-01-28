@@ -88,7 +88,7 @@ export interface CookiePayload {
   role: USER_TYPE | undefined;
   name: string;
   collabRole?: CollabRole;
-  collabSessionId?: string;   
+  collabSessionId?: string;
   tokenId: string;
   iat: number;
   exp: number;
@@ -108,8 +108,8 @@ export type PubSubMessageTypes =
       only_socket_id?: string;
       requested_participant_id?: string;
     }
-    | {
-        type: COLLABORATORS_MESSAGE_TYPE;
+  | {
+      type: COLLABORATORS_MESSAGE_TYPE;
       payload: any;
       exclude_socket_id?: string;
       only_socket_id?: never;

@@ -92,7 +92,10 @@ function Body(props: ExpandablePanel) {
                         </div>
                     </ToolTipComponent>
                 </div>
-                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar" data-lenis-prevent></div>
+                <div
+                    className="flex-1 overflow-y-auto p-6 custom-scrollbar"
+                    data-lenis-prevent
+                ></div>
             </div>
         );
     }

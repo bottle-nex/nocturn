@@ -1,6 +1,6 @@
 import { Template } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-import { Collaborator, QuestionType } from '@nocturn/types';
+import { QuestionType } from '@nocturn/types';
 import CanvasAccents from '../utility/CanvasAccents';
 import { BsThreeDots } from 'react-icons/bs';
 import { MouseEvent, useState, useRef } from 'react';
@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
 import { BiTrash } from 'react-icons/bi';
 import { Button } from '../ui/button';
-import { PositionState, useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
+import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface MiniCanvasProps {
@@ -42,16 +42,20 @@ export default function MiniCanvas({
     const { session } = useUserSessionStore();
 
     const currentUserId = session?.user?.id;
-    const collaboratorsAtThisIndex = Array.from(collaboratorAtIndex.entries()).filter(([_id, data]) => (
-        data.orderIndex === orderIndex
-    ))
+    const collaboratorsAtThisIndex = Array.from(collaboratorAtIndex.entries()).filter(
+        ([_id, data]) => data.orderIndex === orderIndex,
+    );
 
-    const otherCollaboratorsHere = collaboratorsAtThisIndex.filter(([collaboratorId, _data]) =>
-        collaboratorId !== currentUserId
+    const otherCollaboratorsHere = collaboratorsAtThisIndex.filter(
+        ([collaboratorId, _data]) => collaboratorId !== currentUserId,
     );
     const hasOtherCollaborators = otherCollaboratorsHere.length > 0;
     const isCurrentUserHere = currentQuestionIndex === question.orderIndex;
-    const borderStyles = isCurrentUserHere ? "border-2 border-indigo-600" : hasOtherCollaborators ? "border-2 border-red-800" : ""
+    const borderStyles = isCurrentUserHere
+        ? 'border-2 border-indigo-600'
+        : hasOtherCollaborators
+          ? 'border-2 border-red-800'
+          : '';
 
     function handleRemoveQuestion() {
         removeQuestion(questionIndex);
@@ -100,11 +104,18 @@ export default function MiniCanvas({
                 className={cn(
                     'w-full rounded-md h-18 p-0.5 cursor-pointer relative ',
                     borderStyles,
-                    collaboratorHighlight
+                    collaboratorHighlight,
                 )}
                 style={{ boxSizing: 'border-box' }}
             >
-                {hasOtherCollaborators && !isCurrentUserHere && (<span className='bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20'>{otherCollaboratorsHere[otherCollaboratorsHere.length - 1][1].collaboratorName}</span>)}
+                {hasOtherCollaborators && !isCurrentUserHere && (
+                    <span className="bottom-full right-2 absolute bg-red-800 text-[9px] px-2 text-white rounded-t-sm tracking-wide z-20">
+                        {
+                            otherCollaboratorsHere[otherCollaboratorsHere.length - 1][1]
+                                .collaboratorName
+                        }
+                    </span>
+                )}
                 <div
                     style={{
                         backgroundColor: template?.background_color,
@@ -126,7 +137,7 @@ export default function MiniCanvas({
                         />
                     </div>
                     <CanvasAccents
-                        className='rounded'
+                        className="rounded"
                         design={template?.accent_type}
                         accentColor={template?.accent_color}
                     />

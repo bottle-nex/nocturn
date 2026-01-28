@@ -2,12 +2,7 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
-import {
-    CollabRole,
-    GetNewQuizResponse,
-    NOCTURN_COOKIE_NAME,
-    QuizResponseType,
-} from '@nocturn/types';
+import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType } from '@nocturn/types';
 import { env } from '../../configs/env';
 
 export default async function getQuizController(req: Request, res: Response): Promise<void> {

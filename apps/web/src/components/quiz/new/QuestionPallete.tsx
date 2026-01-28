@@ -14,7 +14,6 @@ import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 
 export default function QuestionPallete() {
     const { quiz, currentQuestionIndex, setCurrentQuestionIndex, addQuestion, removeQuestion } =
@@ -26,8 +25,6 @@ export default function QuestionPallete() {
         setCurrentQuestionIndex(questionID);
         handleCollaboratorsQuestionChange({ orderIndex: questionID });
     }
-
-
 
     return (
         <>
@@ -68,7 +65,6 @@ function BigQuestionPallete({
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
-    const { collaboratorAtIndex } = useCollaboratorStore();
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
@@ -82,7 +78,10 @@ function BigQuestionPallete({
                 <span>Add Question</span>
             </Button>
 
-            <div className="flex flex-col gap-y-1.5 mt-4 pt-4 w-full flex-1 overflow-y-auto custom-scrollbar pr-1 relative" data-lenis-prevent>
+            <div
+                className="flex flex-col gap-y-1.5 mt-4 pt-4 w-full flex-1 overflow-y-auto custom-scrollbar pr-1 relative"
+                data-lenis-prevent
+            >
                 {quiz.questions.map((question, idx) => (
                     <div key={idx} className="gap-x-2 shrink-0 grid grid-cols-[8%_auto] items-end">
                         <div className="text-xs pb-2">{idx + 1}.</div>
@@ -114,7 +113,6 @@ function SmallQuestionPallete({
 }: QuestionPallete) {
     const { appearing, setAppearing } = useSideBarStore();
     const sidebarRef = useRef<HTMLDivElement>(null);
-    const { collaboratorAtIndex } = useCollaboratorStore();
     useEffect(() => {
         if (appearing) {
             gsap.fromTo(
@@ -168,7 +166,10 @@ function SmallQuestionPallete({
                 <FiX size={20} onClick={handleClose} className="cursor-pointer" />
             </div>
 
-            <div className="flex flex-col gap-y-1.5 mt-6 w-[90%] flex-1 overflow-y-auto custom-scrollbar pr-1 relative" data-lenis-prevent>
+            <div
+                className="flex flex-col gap-y-1.5 mt-6 w-[90%] flex-1 overflow-y-auto custom-scrollbar pr-1 relative"
+                data-lenis-prevent
+            >
                 {quiz.questions.map((question, idx) => (
                     <div key={idx} className="flex items-end gap-x-2 shrink-0">
                         <div className="text-xs">{idx + 1}.</div>

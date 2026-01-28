@@ -17,8 +17,8 @@ export default function New() {
             setLoading(true);
 
             if (!session?.user.token || !quiz) {
-                return
-            };
+                return;
+            }
 
             const res = await BackendActions.createQuiz(session.user.token, quiz);
             if (res?.id) {

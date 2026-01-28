@@ -58,7 +58,6 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
-                console.log('Live quiz data response:', response);
                 if (response.success && response.data) {
                     const data = response.data;
                     updateQuiz(data.quiz);

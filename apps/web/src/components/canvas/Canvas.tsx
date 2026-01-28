@@ -51,7 +51,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
             className={cn(
                 'w-full md:max-w-5xl aspect-video rounded-lg relative overflow-hidden',
                 selectionMode === SELECTION_MODE.CANVAS && selectedStyles,
-                className
+                className,
             )}
         >
             <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />

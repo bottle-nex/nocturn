@@ -20,7 +20,10 @@ interface RecentlyViewedCardProps {
     className?: string;
 }
 
-export default function RecentlyViewedCard({ quiz, className }: RecentlyViewedCardProps): JSX.Element {
+export default function RecentlyViewedCard({
+    quiz,
+    className,
+}: RecentlyViewedCardProps): JSX.Element {
     const template = templates.find((t) => t.id === quiz.quiz?.theme);
     const formattedTime = moment(quiz.viewedAt).format('MMM D, YYYY');
     const router = useRouter();
@@ -239,8 +242,9 @@ export default function RecentlyViewedCard({ quiz, className }: RecentlyViewedCa
                         e.stopPropagation();
                     }
                 }}
-                className={cn("w-88 aspect-video rounded-sm cursor-pointer transition-shadow",
-                    className
+                className={cn(
+                    'w-88 aspect-video rounded-sm cursor-pointer transition-shadow',
+                    className,
                 )}
             >
                 {template && (

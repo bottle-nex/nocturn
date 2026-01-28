@@ -11,16 +11,13 @@ interface QuizCreationPanelsProps {
 
 export default function QuizCreationPanels({ quizId }: QuizCreationPanelsProps) {
     const { updateQuiz } = useNewQuizStore();
-    console.log("rendereed");
     useWebSocket();
     useSubscribeEventHandlers();
     useEffect(() => {
         updateQuiz({ id: quizId[0] });
     }, [quizId, updateQuiz]);
 
-    useEffect(() => {
-
-    }, []);
+    useEffect(() => {}, []);
 
     return (
         <div className="w-full h-full flex flex-row flex-1 dark:bg-dark-alpha bg-neutral-200 overflow-hidden">

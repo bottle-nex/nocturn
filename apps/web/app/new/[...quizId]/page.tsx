@@ -33,12 +33,15 @@ export default function New({ params }: NewProps) {
         const fetchQuiz = async () => {
             try {
                 setAllowance(AllowanceEnum.LOADING);
-                const { data } = await axios.get<CustomResponse<GetNewQuizResponse>>(`${GET_OWNER_QUIZ_URL}/${quizId}`, {
-                    headers: {
-                        Authorization: `Bearer ${session?.user.token}`,
+                const { data } = await axios.get<CustomResponse<GetNewQuizResponse>>(
+                    `${GET_OWNER_QUIZ_URL}/${quizId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`,
+                        },
+                        withCredentials: true,
                     },
-                    withCredentials: true,
-                });
+                );
                 if (data.success && data.data) {
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:

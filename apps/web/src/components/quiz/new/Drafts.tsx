@@ -46,7 +46,10 @@ function BigDrafts({
     handleDraftRenderer: () => JSX.Element | null | undefined;
 }) {
     return (
-        <UtilityCard className="hidden xl:flex flex-col bg-light-base dark:bg-dark-base/30 rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]" data-lenis-prevent>
+        <UtilityCard
+            className="hidden xl:flex flex-col bg-light-base dark:bg-dark-base/30 rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]"
+            data-lenis-prevent
+        >
             {handleDraftRenderer()}
         </UtilityCard>
     );
@@ -66,7 +69,10 @@ function MediumDrafts({
     }, [handleDraftRenderer]);
 
     return (
-        <UtilityCard className="utility h-full hidden md2:flex flex-col absolute z-40 xl:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]" data-lenis-prevent>
+        <UtilityCard
+            className="utility h-full hidden md2:flex flex-col absolute z-40 xl:hidden bg-light-base/80 dark:bg-dark-base/80 backdrop-blur-md shadow-lg rounded-sm overflow-y-auto custom-scrollbar py-4 px-6 border-[1px] border-neutral-300 dark:border-neutral-800 w-[326px]"
+            data-lenis-prevent
+        >
             {handleDraftRenderer()}
         </UtilityCard>
     );

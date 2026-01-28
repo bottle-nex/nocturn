@@ -21,7 +21,7 @@ export const useWebSocket = () => {
             return;
         }
         lastQuizIdRef.current = quizId;
-        
+
         socket.current = getWebSocketClient(quizId);
         return () => {
             if (lastQuizIdRef.current !== quizId) {

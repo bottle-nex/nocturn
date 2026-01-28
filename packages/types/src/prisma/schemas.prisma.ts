@@ -230,27 +230,26 @@ export interface AiQuizChatSession {
   updatedAt: Date;
 }
 export interface Collaborator {
-    id: string,
-    sessionId: string,
-    userId: string,
-    role: CollabRole,
-    isBlocked: boolean,
-    joinedAt?: Date | null,
-    session: CollabSession,
-    user: UserType,
+  id: string;
+  sessionId: string;
+  userId: string;
+  role: CollabRole;
+  isBlocked: boolean;
+  joinedAt?: Date | null;
+  session: CollabSession;
+  user: UserType;
 }
 
 export interface CollabSession {
-    id: string,
-    hostId: string,
-    quizId: string,
-    host: UserType,
-    quiz: QuizType,
-    collaborators: Collaborator[],
-    createdAt: Date,
-    updatedAt: Date,
+  id: string;
+  hostId: string;
+  quizId: string;
+  host: UserType;
+  quiz: QuizType;
+  collaborators: Collaborator[];
+  createdAt: Date;
+  updatedAt: Date;
 }
-
 
 export interface AiQuizMessage {
   id: string;

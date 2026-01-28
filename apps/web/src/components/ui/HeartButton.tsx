@@ -36,7 +36,13 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
                         const x = Math.cos(angle) * distance;
                         const y = Math.sin(angle) * distance;
 
-                        const colors = ['bg-cyan-400', 'bg-pink-400', 'bg-yellow-300', 'bg-lime-400', 'bg-orange-400'];
+                        const colors = [
+                            'bg-cyan-400',
+                            'bg-pink-400',
+                            'bg-yellow-300',
+                            'bg-lime-400',
+                            'bg-orange-400',
+                        ];
                         const randomColor = colors[Math.floor(Math.random() * colors.length)];
                         const randomSize = Math.random() < 0.5 ? 'h-1.5 w-1.5' : 'h-1 w-1';
 

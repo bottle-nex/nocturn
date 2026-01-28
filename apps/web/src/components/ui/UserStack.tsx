@@ -19,8 +19,12 @@ interface UserStackProps {
     className?: string;
 }
 
-
-export default function UserStack({ className, showAddButton = true, imageSize = 40, allowOnTap = true }: UserStackProps) {
+export default function UserStack({
+    className,
+    showAddButton = true,
+    imageSize = 40,
+    allowOnTap = true,
+}: UserStackProps) {
     const [openAddCollaborators, setOpenAddCollaborators] = useState<boolean>(false);
     const [screen, setScreen] = useState<CollaboratorScreens>(CollaboratorScreens.MAIN);
     const { collaborators } = useCollaboratorStore();
@@ -33,7 +37,7 @@ export default function UserStack({ className, showAddButton = true, imageSize =
     }
 
     return (
-        <div className={cn("flex flex-row items-center justify-center z-20", className)}>
+        <div className={cn('flex flex-row items-center justify-center z-20', className)}>
             {collaborators.map((item, idx) => (
                 <ToolTipComponent content={item.user.name} key={item.id}>
                     <div

@@ -104,7 +104,10 @@ export default function HomeSidebar() {
     }
 
     return (
-        <aside className="min-w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between" data-lenis-prevent>
+        <aside
+            className="min-w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between"
+            data-lenis-prevent
+        >
             <div>
                 {/* ================= MENU ================= */}
                 <section className="ml-4 mt-8">
@@ -191,10 +194,10 @@ export default function HomeSidebar() {
                             'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5 transition-all duration-200',
                             'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                             isDragging &&
-                            'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
+                                'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
                             isOverTrash &&
-                            isDragging &&
-                            'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
+                                isDragging &&
+                                'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
                         )}
                     >
                         {activeTab === SidebarTab.TRASH && !isDragging && (
@@ -214,8 +217,8 @@ export default function HomeSidebar() {
                             className={cn(
                                 'text-sm dark:text-white/80 text-black/90 transition-colors',
                                 isOverTrash &&
-                                isDragging &&
-                                'text-red-600 dark:text-red-400 font-semibold',
+                                    isDragging &&
+                                    'text-red-600 dark:text-red-400 font-semibold',
                             )}
                         >
                             {isOverTrash && isDragging ? 'Drop here' : 'Trash'}

@@ -10,7 +10,10 @@ import { RiLineChartLine } from 'react-icons/ri';
 import { HiChartBar } from 'react-icons/hi';
 import { getSingletonPointsCalculator } from '@/lib/singleton-points-calculator';
 import { Button } from '@/components/ui/button';
-import { usePointsMultiplierAdvStore, MultiplierType } from '@/store/new-quiz/usePointsMultiplierAdvStore';
+import {
+    usePointsMultiplierAdvStore,
+    MultiplierType,
+} from '@/store/new-quiz/usePointsMultiplierAdvStore';
 import { BsKeyboardFill } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import { IconType } from 'react-icons';
@@ -166,9 +169,14 @@ export default function AdvancedDraft() {
                                     const isSelected = multiplierType === option.type;
 
                                     return (
-                                        <div key={option.type} className="flex flex-col items-center space-y-2">
+                                        <div
+                                            key={option.type}
+                                            className="flex flex-col items-center space-y-2"
+                                        >
                                             <Button
-                                                onClick={() => handleMultiplierTypeClick(option.type)}
+                                                onClick={() =>
+                                                    handleMultiplierTypeClick(option.type)
+                                                }
                                                 className={cn(
                                                     'flex items-center justify-center w-16 h-12 rounded-lg transition-all duration-200 ease-in-out',
                                                     'bg-light-base hover:bg-light-base dark:bg-dark-base/30',
@@ -176,7 +184,7 @@ export default function AdvancedDraft() {
                                                     'hover:-translate-y-0.5 hover:shadow-sm border',
                                                     isSelected
                                                         ? 'border-indigo-600/80 dark:border-indigo-600/60'
-                                                        : 'border-neutral-300 dark:border-neutral-800'
+                                                        : 'border-neutral-300 dark:border-neutral-800',
                                                 )}
                                             >
                                                 <Icon size={20} />

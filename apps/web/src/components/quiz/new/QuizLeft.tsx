@@ -7,11 +7,9 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import Canvas from '@/components/canvas/Canvas';
 import UtilityCard from '@/components/utility/UtilityCard';
 import QuestionPallete from './QuestionPallete';
-import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function QuizLeft() {
     const { quiz, updateQuiz } = useNewQuizStore();
-    const { handleCollaboratorsQuestionChange } = useWebSocket();
     const [error, setError] = useState<boolean>(false);
     const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const [quizTitle, setQuizTitle] = useState(quiz.title);
@@ -26,8 +24,6 @@ export default function QuizLeft() {
         setQuizTitle(e.target.value);
         updateQuiz({ title: e.target.value });
     }
-
-    
 
     return (
         <div className="flex-1 h-full flex justify-center p-4 gap-x-4 min-w-0">
@@ -56,7 +52,7 @@ export default function QuizLeft() {
                     </div>
                 </UtilityCard>
                 <div className="flex-1 flex flex-col items-center justify-start w-full min-w-0">
-                    <Canvas className='mt-2' />
+                    <Canvas className="mt-2" />
                     <div className="w-full flex ">
                         <SmallQuizRight />
                     </div>

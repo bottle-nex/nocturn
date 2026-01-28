@@ -2,7 +2,7 @@ import UtilityCard from './UtilityCard';
 import { Dispatch, JSX, SetStateAction, useRef, useState, useEffect, RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
-import { GoArrowLeft, GoBlocked } from 'react-icons/go';
+import { GoArrowLeft } from 'react-icons/go';
 import { PiMagnifyingGlass } from 'react-icons/pi';
 import { IoIosSettings } from 'react-icons/io';
 import { Input } from '../ui/input';
@@ -19,7 +19,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import UserStack, { CollaboratorScreens } from '../ui/UserStack';
 import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
-import { TiUserAdd } from "react-icons/ti";
+import { TiUserAdd } from 'react-icons/ti';
 import Image from 'next/image';
 import { MdOutlineBlock } from 'react-icons/md';
 
@@ -44,13 +44,12 @@ interface AddCollaboratorsScreenProps {
     setScreen: Dispatch<SetStateAction<CollaboratorScreens>>;
 }
 
-
 export default function AddCollaborators({
     open,
     setOpen,
     triggerRef,
     screen,
-    setScreen
+    setScreen,
 }: AddCollaboratorsProps): JSX.Element {
     const addCollaboratorsRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +85,7 @@ export default function AddCollaborators({
             setLoading(false);
             setScreen(CollaboratorScreens.MAIN);
         }
-    }, [open, setScreen])
+    }, [open, setScreen]);
 
     if (!open) return <></>;
 
@@ -158,7 +157,10 @@ function MainCollaboratorsScreen({ setScreen }: ScreenSettings) {
                 />
             </div>
             <div className="mt-4">
-                <Label className="pl-1 dark:text-white/70 text-neutral-600" htmlFor="add-collaborators-input">
+                <Label
+                    className="pl-1 dark:text-white/70 text-neutral-600"
+                    htmlFor="add-collaborators-input"
+                >
                     People with access to
                 </Label>
                 <section className="relative flex items-center mt-2 border border-neutral-300 dark:border-neutral-800 has-focus:border-indigo-600 overflow-visible rounded-lg dark:bg-black/20! transition-colors">
@@ -229,7 +231,7 @@ function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollabora
                 e.stopPropagation();
             }}
         >
-            <section className='flex items-center justify-between px-0'>
+            <section className="flex items-center justify-between px-0">
                 <div className="flex justify-start items-center gap-x-4 dark:text-white text-neutral-700">
                     <GoArrowLeft
                         onClick={() => setScreen(CollaboratorScreens.MAIN)}
@@ -237,10 +239,18 @@ function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollabora
                     />
                     <h1 className="text-base font-semibold mt-0.5 text-nowrap">Share design</h1>
                 </div>
-                <UserStack allowOnTap={false} className='mr-4' showAddButton={false} imageSize={30} />
+                <UserStack
+                    allowOnTap={false}
+                    className="mr-4"
+                    showAddButton={false}
+                    imageSize={30}
+                />
             </section>
             <div className="mt-4">
-                <Label className="pl-1 dark:text-white/70 text-neutral-600" htmlFor="add-collaborators-input">
+                <Label
+                    className="pl-1 dark:text-white/70 text-neutral-600"
+                    htmlFor="add-collaborators-input"
+                >
                     People with access to
                 </Label>
                 <section className="flex flex-wrap items-center gap-x-2 gap-y-2 mt-1 pl-1">
@@ -392,7 +402,7 @@ function CollaboratorsSettingsScreen({ setScreen }: ScreenSettings) {
             exit={{ opacity: 0, filter: 'blur(4px)' }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
         >
-            <section className='flex items-center justify-between'>
+            <section className="flex items-center justify-between">
                 <div className="flex justify-start items-center gap-x-4 dark:text-white text-neutral-700 cursor-pointer">
                     <GoArrowLeft
                         onClick={() => setScreen(CollaboratorScreens.MAIN)}
@@ -407,49 +417,81 @@ function CollaboratorsSettingsScreen({ setScreen }: ScreenSettings) {
                     />
                 </div>
             </section>
-            <section className='flex flex-col gap-y-1 items-start mt-4 w-full'>
-                {collaborators.length > 0 && collaborators.map((collaborator, idx) => (
-                    <section className='flex items-center justify-between w-full py-2' key={idx} >
-                        <div className="flex items-center gap-x-3">
-                            {collaborator.user.image && (<Image src={collaborator.user.image} alt={collaborator.user.email} width={32} height={32} className='rounded-full' />)}
-                            <div className='flex flex-col'>
-                                <span className='dark:text-white/90 text-neutral-900 text-sm'>{collaborator.user.name}</span>
-                                <span className='dark:text-white/70 text-neutral-500 text-xs'>{collaborator.user.email}</span>
-                            </div>
-                        </div>
-                        <div className='relative flex items-center'>
-                            <Button
-                                type="button"
-                                onClick={() => setOpenDropdownIndex(openDropdownIndex === idx ? null : idx)}
-                                className="flex items-center gap-x-2 px-3 py-2 text-sm capitalize dark:text-white text-neutral-700 bg-transparent hover:dark:bg-neutral-800 hover:bg-neutral-100 rounded transition-colors shadow-none"
-                            >
-                                {permissions[collaborator.user.email] || 'edit'}
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                            </Button>
-                            <MdOutlineBlock className="size-7 p-1 hover:dark:bg-neutral-800 hover:bg-neutral-200 rounded transition-colors cursor-pointer text-neutral-800 dark:text-neutral-400" />
-                            {openDropdownIndex === idx && (
-                                <div className="absolute top-full right-0 mt-1 dark:bg-dark-base bg-white rounded-sm border dark:border-neutral-700 border-neutral-300 shadow-xl z-101 min-w-30 overflow-hidden">
-                                    <button
-                                        type="button"
-                                        onClick={() => handlePermissionChange(collaborator.user.email, 'view')}
-                                        className="w-full flex items-center justify-between px-4 py-2.5 text-sm dark:hover:bg-neutral-800 hover:bg-neutral-100 dark:text-white text-dark-alpha transition-colors"
-                                    >
-                                        View
-                                        {permissions[collaborator.user.email] === 'view' && <Check className="h-4 w-4" />}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => handlePermissionChange(collaborator.user.email, 'edit')}
-                                        className="w-full flex items-center justify-between px-4 py-2.5 text-sm dark:hover:bg-neutral-800 hover:bg-neutral-100 dark:text-white text-dark-alpha transition-colors"
-                                    >
-                                        Edit
-                                        {permissions[collaborator.user.email] === 'edit' && <Check className="h-4 w-4" />}
-                                    </button>
+            <section className="flex flex-col gap-y-1 items-start mt-4 w-full">
+                {collaborators.length > 0 &&
+                    collaborators.map((collaborator, idx) => (
+                        <section
+                            className="flex items-center justify-between w-full py-2"
+                            key={idx}
+                        >
+                            <div className="flex items-center gap-x-3">
+                                {collaborator.user.image && (
+                                    <Image
+                                        src={collaborator.user.image}
+                                        alt={collaborator.user.email}
+                                        width={32}
+                                        height={32}
+                                        className="rounded-full"
+                                    />
+                                )}
+                                <div className="flex flex-col">
+                                    <span className="dark:text-white/90 text-neutral-900 text-sm">
+                                        {collaborator.user.name}
+                                    </span>
+                                    <span className="dark:text-white/70 text-neutral-500 text-xs">
+                                        {collaborator.user.email}
+                                    </span>
                                 </div>
-                            )}
-                        </div>
-                    </section>
-                ))}
+                            </div>
+                            <div className="relative flex items-center">
+                                <Button
+                                    type="button"
+                                    onClick={() =>
+                                        setOpenDropdownIndex(openDropdownIndex === idx ? null : idx)
+                                    }
+                                    className="flex items-center gap-x-2 px-3 py-2 text-sm capitalize dark:text-white text-neutral-700 bg-transparent hover:dark:bg-neutral-800 hover:bg-neutral-100 rounded transition-colors shadow-none"
+                                >
+                                    {permissions[collaborator.user.email] || 'edit'}
+                                    <ChevronDown className="h-4 w-4 opacity-50" />
+                                </Button>
+                                <MdOutlineBlock className="size-7 p-1 hover:dark:bg-neutral-800 hover:bg-neutral-200 rounded transition-colors cursor-pointer text-neutral-800 dark:text-neutral-400" />
+                                {openDropdownIndex === idx && (
+                                    <div className="absolute top-full right-0 mt-1 dark:bg-dark-base bg-white rounded-sm border dark:border-neutral-700 border-neutral-300 shadow-xl z-101 min-w-30 overflow-hidden">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handlePermissionChange(
+                                                    collaborator.user.email,
+                                                    'view',
+                                                )
+                                            }
+                                            className="w-full flex items-center justify-between px-4 py-2.5 text-sm dark:hover:bg-neutral-800 hover:bg-neutral-100 dark:text-white text-dark-alpha transition-colors"
+                                        >
+                                            View
+                                            {permissions[collaborator.user.email] === 'view' && (
+                                                <Check className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handlePermissionChange(
+                                                    collaborator.user.email,
+                                                    'edit',
+                                                )
+                                            }
+                                            className="w-full flex items-center justify-between px-4 py-2.5 text-sm dark:hover:bg-neutral-800 hover:bg-neutral-100 dark:text-white text-dark-alpha transition-colors"
+                                        >
+                                            Edit
+                                            {permissions[collaborator.user.email] === 'edit' && (
+                                                <Check className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    ))}
             </section>
         </motion.div>
     );

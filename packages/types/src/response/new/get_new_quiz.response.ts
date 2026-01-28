@@ -12,8 +12,7 @@ export enum QuizResponseType {
   INTERNAL_ERROR = "INTERNAL_ERROR",
 }
 
-
 export interface GetNewQuizResponse {
-    type: QuizResponseType;
-    quiz: Partial<QuizType> | null;
+  type: QuizResponseType;
+  quiz: Partial<QuizType> | null;
 }
