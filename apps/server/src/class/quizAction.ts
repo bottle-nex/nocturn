@@ -129,7 +129,6 @@ export default class QuizAction {
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
         };
-        console.log('Generated token payload:', payload);
 
         return jwt.sign(payload, env.SERVER_JWT_SECRET);
     }

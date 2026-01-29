@@ -16,6 +16,7 @@ enum AllowanceEnum {
     LOADING = 'LOADING',
     NONE = 'NONE',
 }
+
 export interface NewProps {
     params: Promise<{
         quizId: string;

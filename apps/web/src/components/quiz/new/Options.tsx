@@ -7,23 +7,25 @@ import { cn } from '@/lib/utils';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { MdOutlineDragIndicator } from 'react-icons/md';
 import ColoredInput from '@/components/utility/ColoredInput';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function Options() {
-    const { quiz, currentQuestionIndex, editQuestion } = useNewQuizStore();
+    const { quiz, currentQuestionIndex } = useNewQuizStore();
+    const { editQuestionAndBroadcast } = useCollaborativeEdit();
     const currentQ = quiz.questions[currentQuestionIndex];
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
     const handleCorrectAnswerChange = (idx: number) => {
-        editQuestion(currentQuestionIndex, { correctAnswer: idx });
+        editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx });
     };
 
     const handleInputChange = (value: string, index: number) => {
         if (!currentQ) return;
         const newOptions = [...currentQ.options];
         newOptions[index] = value;
-        editQuestion(currentQuestionIndex, { options: newOptions });
+        editQuestionAndBroadcast(currentQuestionIndex, { options: newOptions }, { debounce: true });
     };
 
     const handleDragStart = (index: number) => {
@@ -50,7 +52,7 @@ export default function Options() {
             newCorrectAnswer += 1;
         }
 
-        editQuestion(currentQuestionIndex, {
+        editQuestionAndBroadcast(currentQuestionIndex, {
             options: newOptions,
             correctAnswer: newCorrectAnswer,
         });

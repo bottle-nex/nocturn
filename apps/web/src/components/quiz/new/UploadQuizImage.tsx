@@ -9,17 +9,19 @@ import DragImageBackground from '@/components/utility/DragImageBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { Loader } from 'lucide-react';
 import S3 from '@/lib/s3-uploads';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function UploadQuizImage() {
     const [enableLeftView, setEnableLeftView] = useState(false);
     const [enableRightView, setEnableRightView] = useState(false);
-    const { editQuestion, currentQuestionIndex, setLoading, loading } = useNewQuizStore();
+    const { currentQuestionIndex, setLoading, loading } = useNewQuizStore();
+    const { editQuestionAndBroadcast } = useCollaborativeEdit();
 
     const handleImageSelect = async (file: File) => {
         setLoading(true);
         try {
             const imageUrl = await S3.handleUploadImage(file);
-            editQuestion(currentQuestionIndex, { imageUrl: imageUrl });
+            editQuestionAndBroadcast(currentQuestionIndex, { imageUrl: imageUrl });
         } catch (err) {
             console.error('Error in uploading image', err);
         } finally {

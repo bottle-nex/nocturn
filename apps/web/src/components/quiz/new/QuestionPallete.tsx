@@ -21,9 +21,9 @@ export default function QuestionPallete() {
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
     const { handleCollaboratorsQuestionChange } = useWebSocket();
 
-    function handleQuestionChange(questionID: number) {
-        setCurrentQuestionIndex(questionID);
-        handleCollaboratorsQuestionChange({ orderIndex: questionID });
+    function handleQuestionChange(orderIndex: number) {
+        setCurrentQuestionIndex(orderIndex);
+        handleCollaboratorsQuestionChange({ orderIndex });
     }
 
     return (
@@ -93,7 +93,6 @@ function BigQuestionPallete({
                                 handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
-                                questionIndex={idx}
                             />
                         </ToolTipComponent>
                     </div>
@@ -181,7 +180,6 @@ function SmallQuestionPallete({
                                 handleQuestionChange={handleQuestionChange}
                                 template={currentQTemplate}
                                 question={question}
-                                questionIndex={idx}
                                 onClick={handleClose}
                             />
                         </ToolTipComponent>

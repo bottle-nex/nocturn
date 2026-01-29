@@ -13,14 +13,15 @@ import { IoIosInfinite } from 'react-icons/io';
 import UploadQuizImage from './UploadQuizImage';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/text-area';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 const min = 1;
 const max = 600;
 
 export default function QuestionsDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, currentQuestionIndex, changeQuestionPoint, getQuestion, editQuestion } =
-        useNewQuizStore();
+    const { quiz, currentQuestionIndex, changeQuestionPoint, getQuestion } = useNewQuizStore();
+    const { editQuestionAndBroadcast } = useCollaborativeEdit();
 
     const currentQ = quiz.questions[currentQuestionIndex];
 
@@ -49,9 +50,9 @@ export default function QuestionsDraft() {
             if (!currentQ?.orderIndex && currentQ?.orderIndex !== 0) return;
 
             if (timerEdit === 'ACTIVE_TIME') {
-                editQuestion(currentQ.orderIndex, { timeLimit: timer });
+                editQuestionAndBroadcast(currentQ.orderIndex, { timeLimit: timer });
             } else {
-                editQuestion(currentQ.orderIndex, { readingTime: timer });
+                editQuestionAndBroadcast(currentQ.orderIndex, { readingTime: timer });
             }
         }
     }
@@ -63,6 +64,7 @@ export default function QuestionsDraft() {
         setBasePoints(value.toString());
         changeQuestionPoint(currentQuestionIndex, value);
         handleUpdateQuestionPoints(currentQuestionIndex, value);
+        editQuestionAndBroadcast(currentQuestionIndex, { basePoints: value });
 
         if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -102,7 +104,11 @@ export default function QuestionsDraft() {
     function handleExplanationChange(value: string) {
         setExplanation(value);
         if (currentQ?.orderIndex !== undefined) {
-            editQuestion(currentQ.orderIndex, { explanation: value });
+            editQuestionAndBroadcast(
+                currentQ.orderIndex,
+                { explanation: value },
+                { debounce: true },
+            );
         }
     }
 
@@ -110,7 +116,7 @@ export default function QuestionsDraft() {
     function handleHintChange(value: string) {
         setHint(value);
         if (currentQ?.orderIndex !== undefined) {
-            editQuestion(currentQ.orderIndex, { hint: value });
+            editQuestionAndBroadcast(currentQ.orderIndex, { hint: value }, { debounce: true });
         }
     }
 
