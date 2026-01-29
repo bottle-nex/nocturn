@@ -8,12 +8,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "db:generate": "cd packages/db && npx prisma generate && cd ../..",
-    "remove-logs": "turbo run remove-logs"
+    "remove-logs": "turbo run remove-logs",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.4",
     "prisma": "7.1.0",
+    "turbo": "^2.5.4",
     "typescript": "5.8.3"
   },
   "dependencies": {
