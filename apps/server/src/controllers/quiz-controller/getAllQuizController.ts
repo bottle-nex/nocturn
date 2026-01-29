@@ -29,6 +29,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
                 host: {
                     select: {
                         image: true,
+                        name: true,
                     },
                 },
                 questions: {
