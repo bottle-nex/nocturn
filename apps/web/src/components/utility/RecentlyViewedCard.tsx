@@ -45,7 +45,7 @@ export default function RecentlyViewedCard({
             <div
                 ref={cardRef}
                 onPointerMove={handlers.onPointerMove}
-                className="w-88 aspect-video rounded-sm cursor-pointer"
+                className={cn('w-88 aspect-video rounded-sm cursor-pointer', className)}
             >
                 {template && (
                     <div className="relative group">
