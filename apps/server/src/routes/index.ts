@@ -34,6 +34,8 @@ import chatWithAiController from '../controllers/ai-controller/chatWithAiControl
 import createQuizController from '../controllers/quiz-controller/createQuizController';
 import get_favourite_quizzes_controller from '../controllers/quiz-controller/get_favourite_quizzes_controller';
 import toggle_favourite_quiz_controller from '../controllers/quiz-controller/toggle_favourite_quiz_controller';
+import delete_selected_quizzes_controller from '../controllers/quiz-controller/delete_selected_quizzes_controller';
+import renameQuizController from '../controllers/quiz-controller/renameQuizController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -52,8 +54,11 @@ router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
 
+router.put('/quiz/update-title', authMiddleware, renameQuizController);
 router.put('/quiz/restore-quiz/:quizId', authMiddleware, restore_trashed_quiz_controller);
 router.put('/quiz/move-to-trash/:quizId', authMiddleware, deleteQuizController);
+router.put('/quiz/move-quizzes-to-trash', authMiddleware, delete_selected_quizzes_controller);
+
 router.get('/quiz/get-user-trashed-quiz', authMiddleware, get_trashed_quizzes_controller);
 router.delete('/quiz/clear-trash', authMiddleware, delete_trashed_quizzes_controller);
 router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_quiz_controller);

@@ -8,13 +8,12 @@ import moment from 'moment';
 import HeartButton from '../ui/HeartButton';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function FavouriteQuizzesPanel() {
     const { session } = useUserSessionStore();
-
     const quizs = useAllQuizsStore((state) => state.quizs);
     const updateQuizFavourite = useAllQuizsStore((state) => state.updateQuizFavourite);
-
     const favouriteQuizzes = useMemo(() => quizs.filter((q) => q.isFavourite), [quizs]);
 
     async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
@@ -41,7 +40,15 @@ export default function FavouriteQuizzesPanel() {
                         const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
 
                         return (
-                            <div key={quiz.id} className="p-1">
+                            <motion.div
+                                exit={{ scale: 0.5, opacity: 0, filter: 'blur[10px]' }}
+                                transition={{
+                                    duration: 0.2,
+                                    ease: 'easeInOut',
+                                }}
+                                key={quiz.id}
+                                className="p-1"
+                            >
                                 <EmptyCanvas
                                     className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
                                     question={quiz.questions[0].question}
@@ -77,11 +84,11 @@ export default function FavouriteQuizzesPanel() {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })
                 ) : (
-                    <div className="opacity-60">No favourite quizzes yet ❤️</div>
+                    <div className="opacity-60">No favourite quizzes yet</div>
                 )}
             </div>
         </div>

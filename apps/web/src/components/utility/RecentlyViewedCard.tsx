@@ -24,13 +24,8 @@ export default function RecentlyViewedCard({
     const formattedTime = moment(quiz.viewedAt).format('MMM D, YYYY');
     const router = useRouter();
     const quizId = quiz.quiz?.id;
-    const {
-        cardRef,
-        originRect,
-        isThisCardDragging,
-        suppressClickRef,
-        handlers,
-    } = useDraggableQuizCard({ quizId });
+    const { cardRef, originRect, isThisCardDragging, suppressClickRef, handlers } =
+        useDraggableQuizCard({ quizId });
 
     function handleCardClick(e: React.MouseEvent) {
         if (suppressClickRef.current) {
@@ -55,11 +50,11 @@ export default function RecentlyViewedCard({
                 {template && (
                     <div className="relative group">
                         <EmptyCanvas
-                            className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40" 
+                            className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
                             template={template}
                         />
 
-                        <div className="absolute inset-0 flex">
+                        <div className="absolute inset-0 flex p-[2px] rounded-[12px] overflow-hidden">
                             <div
                                 className={cn(
                                     'w-full h-full opacity-0 group-hover:opacity-100',

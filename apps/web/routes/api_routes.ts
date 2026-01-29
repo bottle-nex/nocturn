@@ -20,17 +20,18 @@ export const GET_REVIEW_URL = API_URL + '/user/get-review';
 
 // favourite quiz routes
 export const TOGGLE_FAVOURITE_QUIZ_URL = QUIZ_URL + '/toggle-favourite-quiz';
-export const ADD_QUIZ_TO_FAVOURITES_URL = QUIZ_URL + '/add-to-favourite';
-export const REMOVE_QUIZ_FROM_FAVOURITE_URL = QUIZ_URL + '/remove-from-favourite';
 export const GET_FAVOURITE_QUIZZES_URL = QUIZ_URL + '/get-favourite-quizzes';
 
-export const RESTORE_TRASHED_QUIZ_URL = API_URL + '/quiz/restore-quiz';
-export const DELETE_QUIZ_URL = API_URL + '/quiz/move-to-trash';
-export const GET_TRASHED_QUIZZES_URL = API_URL + '/quiz/get-user-trashed-quiz';
-export const CLEAR_TRASH_URL = API_URL + '/quiz/clear-trash';
-export const PERMANENTLY_DELETE_QUIZ_URL = API_URL + '/quiz/delete-quiz';
+export const RESTORE_TRASHED_QUIZ_URL = QUIZ_URL + '/restore-quiz';
+export const DELETE_QUIZ_URL = QUIZ_URL + '/move-to-trash';
 
-export const GET_SELECTED_QUESTION_DATA = API_URL + '/quiz/get-selected-question-data';
+export const RENAME_QUIZ_URL = QUIZ_URL + '/update-title';
+export const DELETE_SELECTED_QUIZZES_URL = QUIZ_URL + '/move-quizzes-to-trash';
+export const GET_TRASHED_QUIZZES_URL = QUIZ_URL + '/get-user-trashed-quiz';
+export const CLEAR_TRASH_URL = QUIZ_URL + '/clear-trash';
+export const PERMANENTLY_DELETE_QUIZ_URL = QUIZ_URL + '/delete-quiz';
+
+export const GET_SELECTED_QUESTION_DATA = QUIZ_URL + '/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
 
 export const CREATE_QUIZ_USING_AI = AI_URL + '/create-new-quiz';

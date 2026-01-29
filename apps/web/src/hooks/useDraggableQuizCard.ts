@@ -29,8 +29,7 @@ export function useDraggableQuizCard({ quizId }: UseDraggableQuizCardProps) {
 
     const { session } = useUserSessionStore();
     const { deleteQuiz } = useRecentlyViewedQuizStore();
-    const { draggingQuizId, startDrag, endDrag, isOverTrash } =
-        useDragQuizStore();
+    const { draggingQuizId, startDrag, endDrag, isOverTrash } = useDragQuizStore();
 
     const isThisCardDragging = isDraggingLocal && draggingQuizId === quizId;
 
