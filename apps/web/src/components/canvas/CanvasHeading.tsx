@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { QuestionType } from '@nocturn/types';
 import { SELECTION_MODE } from './Canvas';
-import { Dispatch, MouseEvent, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, MouseEvent, SetStateAction, useState, useEffect, useRef } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -9,6 +9,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Strike from '@tiptap/extension-strike';
 import FormattingToolbar from '../utility/RichTextEditor';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 interface CanvasHeadingProps {
     currentQ: QuestionType | undefined;
@@ -22,11 +23,13 @@ export default function CanvasHeading({
     selectionMode,
     setSelectionMode,
 }: CanvasHeadingProps) {
-    const { editQuestion, currentQuestionIndex } = useNewQuizStore();
+    const { currentQuestionIndex } = useNewQuizStore();
+    const { editQuestionAndBroadcast } = useCollaborativeEdit();
     const { setState } = useDraftRendererStore();
     const selectedStyles = 'border-2 border-[#5e59b3]';
     const [question, setQuestion] = useState<string | undefined>(currentQ?.question);
-
+    const isExternalUpdate = useRef(false);
+    const currentQuestionIndexRef = useRef(currentQuestionIndex);
     function getFontSizeClass(text: string): string {
         const length = text.length;
         if (length === 0) return 'text-2xl';
@@ -54,9 +57,19 @@ export default function CanvasHeading({
         content: question || '',
         immediatelyRender: false,
         onUpdate: ({ editor }) => {
+            // Skip broadcasting if this update came from external source (websocket)
+            if (isExternalUpdate.current) {
+                isExternalUpdate.current = false;
+                return;
+            }
+
             const content = editor.getHTML();
             setQuestion(content);
-            editQuestion(currentQuestionIndex, { question: content });
+            editQuestionAndBroadcast(
+                currentQuestionIndexRef.current,
+                { question: content },
+                { debounce: true },
+            );
         },
         editorProps: {
             attributes: {
@@ -67,11 +80,17 @@ export default function CanvasHeading({
     });
 
     useEffect(() => {
-        if (editor && currentQ?.question !== editor.getHTML()) {
-            editor.commands.setContent(currentQ?.question || '');
-            setQuestion(currentQ?.question);
+        currentQuestionIndexRef.current = currentQuestionIndex;
+    }, [currentQuestionIndex]);
+
+    useEffect(() => {
+        if (editor && currentQ) {
+            // Mark this as an external update to prevent broadcasting back
+            isExternalUpdate.current = true;
+            editor.commands.setContent(currentQ.question || '');
+            setQuestion(currentQ.question || '');
         }
-    }, [currentQ?.question, editor]);
+    }, [currentQuestionIndex, currentQ, editor]);
 
     function questionTapHandler(e: MouseEvent<HTMLDivElement>) {
         e.stopPropagation();

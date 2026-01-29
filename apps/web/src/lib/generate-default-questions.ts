@@ -2,7 +2,7 @@ import { QuestionType } from '@nocturn/types';
 import { v4 as uuid } from 'uuid';
 
 export function generateDefaultQuestions(): QuestionType[] {
-    const questions: Omit<QuestionType, 'id' | 'quizId' | 'imageUrl'>[] = [
+    const questions: Omit<QuestionType, 'id' | 'quizId' | 'imageUrl' | 'orderIndex'>[] = [
         {
             question: 'What is the main difference between Web2 and Web3?',
             options: [
@@ -19,7 +19,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 35,
             readingTime: 5,
-            orderIndex: 0,
             isAsked: false,
         },
         {
@@ -27,12 +26,11 @@ export function generateDefaultQuestions(): QuestionType[] {
             options: ['Cloud Servers', 'Blockchain', 'Virtual Machines', 'Traditional Databases'],
             correctAnswer: 1,
             explanation: 'Web3 applications run on decentralized blockchain networks.',
-            hint: 'It’s the same tech behind Bitcoin and Ethereum.',
+            hint: 'Its the same tech behind Bitcoin and Ethereum.',
             difficulty: 1,
             basePoints: 100,
             timeLimit: 25,
             readingTime: 3,
-            orderIndex: 1,
             isAsked: false,
         },
         {
@@ -51,7 +49,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 100,
             timeLimit: 20,
             readingTime: 3,
-            orderIndex: 2,
             isAsked: false,
         },
         {
@@ -64,7 +61,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 100,
             timeLimit: 20,
             readingTime: 3,
-            orderIndex: 3,
             isAsked: false,
         },
         {
@@ -83,7 +79,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 40,
             readingTime: 4,
-            orderIndex: 4,
             isAsked: false,
         },
         {
@@ -97,7 +92,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 100,
             timeLimit: 25,
             readingTime: 3,
-            orderIndex: 5,
             isAsked: false,
         },
         {
@@ -111,7 +105,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 30,
             readingTime: 4,
-            orderIndex: 6,
             isAsked: false,
         },
         {
@@ -130,7 +123,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 35,
             readingTime: 5,
-            orderIndex: 7,
             isAsked: false,
         },
         {
@@ -149,7 +141,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 30,
             readingTime: 4,
-            orderIndex: 8,
             isAsked: false,
         },
         {
@@ -168,7 +159,6 @@ export function generateDefaultQuestions(): QuestionType[] {
             basePoints: 150,
             timeLimit: 40,
             readingTime: 5,
-            orderIndex: 9,
             isAsked: false,
         },
     ];

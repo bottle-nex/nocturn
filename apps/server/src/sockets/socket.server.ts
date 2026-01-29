@@ -273,18 +273,27 @@ export default class WebsocketServer {
                 ]);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
-                this.broadcast_to_collaborators(session_id, message);
+                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
+                break;
+
+            case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
+                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
                 break;
         }
     }
 
-    private broadcast_to_collaborators(collab_session_id: string, message: any) {
+    private broadcast_to_collaborators(
+        collab_session_id: string,
+        message: any,
+        exclude_socket_id?: string,
+    ) {
         const collaborator_socket_ids = this.collaborator_sockets_mapping.get(collab_session_id);
         if (!collaborator_socket_ids) {
             return;
         }
 
         collaborator_socket_ids.forEach((socket_id) => {
+            if (exclude_socket_id === socket_id) return;
             const collaborator_socket = this.socket_mapping.get(socket_id);
             if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
                 collaborator_socket.send(JSON.stringify(message));

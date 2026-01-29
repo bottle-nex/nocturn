@@ -16,7 +16,6 @@ interface MiniCanvasProps {
     question: QuestionType;
     currentQuestionIndex: number;
     orderIndex: number;
-    questionIndex: number;
     collaboratorHighlight?: string;
     handleQuestionChange: (index: number) => void;
     removeQuestion: (index: number) => void;
@@ -27,7 +26,6 @@ export default function MiniCanvas({
     template,
     question,
     currentQuestionIndex,
-    questionIndex,
     orderIndex,
     collaboratorHighlight,
     handleQuestionChange,
@@ -40,7 +38,6 @@ export default function MiniCanvas({
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { collaboratorAtIndex } = useCollaboratorStore();
     const { session } = useUserSessionStore();
-
     const currentUserId = session?.user?.id;
     const collaboratorsAtThisIndex = Array.from(collaboratorAtIndex.entries()).filter(
         ([_id, data]) => data.orderIndex === orderIndex,
@@ -58,8 +55,8 @@ export default function MiniCanvas({
           : '';
 
     function handleRemoveQuestion() {
-        removeQuestion(questionIndex);
-        handleQuestionChange(currentQuestionIndex - 1);
+        removeQuestion(orderIndex);
+        handleQuestionChange(orderIndex);
         setOpenMiniCanvasOptions(false);
     }
 
@@ -98,7 +95,7 @@ export default function MiniCanvas({
         <>
             <div
                 onClick={(e) => {
-                    handleQuestionChange(question.orderIndex);
+                    handleQuestionChange(orderIndex);
                     onClick?.(e);
                 }}
                 className={cn(
@@ -124,7 +121,7 @@ export default function MiniCanvas({
                     className="w-full h-full rounded-sm flex justify-center items-center relative group"
                 >
                     <div className="text-[10px] text-center text-light-base bg-dark-base rounded-full absolute top-2 left-2 px-2 py-1 hidden group-hover:block">
-                        Question {questionIndex + 1}
+                        Question {orderIndex + 1}
                     </div>
                     <div
                         ref={buttonRef}

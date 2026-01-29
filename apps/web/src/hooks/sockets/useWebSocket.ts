@@ -213,6 +213,16 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleCollaboratorQuestionUpdate(payload: unknown) {
+        const message: MessagePayload = {
+            type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
         subscribeToHandler,
         unsubscribeToHandler,
@@ -235,5 +245,6 @@ export const useWebSocket = () => {
         handleHostQuizResults,
 
         handleCollaboratorsQuestionChange,
+        handleCollaboratorQuestionUpdate,
     };
 };

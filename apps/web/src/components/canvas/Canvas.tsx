@@ -30,7 +30,6 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
     const currentQ = quiz.questions[currentQuestionIndex];
     const template = templates.find((t) => t.id === quiz.theme);
     const canvasWidth = useWidth(canvasRef);
-
     useEffect(() => {
         if (copied) {
             setTimeout(() => {

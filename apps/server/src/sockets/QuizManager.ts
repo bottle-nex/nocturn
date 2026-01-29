@@ -103,7 +103,6 @@ export default class QuizManager {
     public async publish_event_to_redis(session_id: string, event: PubSubMessageTypes) {
         try {
             const key = this.get_redis_key(session_id);
-            console.log('Publishing event to redis key:', key);
             await this.publisher.publish(key, JSON.stringify(event));
         } catch (err) {
             console.error('Error while publishing event to redis', err);

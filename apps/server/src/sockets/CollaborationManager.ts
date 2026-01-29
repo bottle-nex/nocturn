@@ -7,6 +7,7 @@ import {
     COLLABORATORS_MESSAGE_TYPE,
     CookiePayload,
     PubSubMessageTypes,
+    QuestionType,
     socket_codes,
 } from '@nocturn/types';
 import WebSocket from 'ws';
@@ -88,7 +89,6 @@ export default class CollaborationManager {
             .get(decoded_cookie_payload.collabSessionId)
             ?.add(new_collaborator_socket_id);
         this.setup_message_handlers(ws);
-        console.log('setup done : ', ws.user.name);
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -118,10 +118,12 @@ export default class CollaborationManager {
     }
 
     private handle_collaborator_message(ws: CustomWebSocket, message: any) {
-        console.log('Received message from collaborator: ', message);
         switch (message.type) {
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
                 this.handle_question_tap(ws, message.payload);
+                break;
+            case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
+                this.handle_question_update(ws, message.payload);
                 break;
             default:
                 console.warn('Unknown message type received from collaborator:', message.type);
@@ -170,7 +172,9 @@ export default class CollaborationManager {
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
                 return;
             }
-            console.log('payload is : ', payload);
+
+            console.log('order index tapped is : ', orderIndex);
+
             const data: PubSubMessageTypes = {
                 type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
                 payload: {
@@ -178,11 +182,37 @@ export default class CollaborationManager {
                     collaboratorId: ws.user.userId,
                     collaboratorName: ws.user.name,
                 },
+                exclude_socket_id: ws.id,
             };
             await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
         } catch (err) {
             console.error('Error while handling question tap: ', err);
         }
+    }
+
+    private async handle_question_update(ws: CustomWebSocket, payload: any) {
+        const {
+            questionIndex,
+            question,
+        }: { questionIndex: number; question: Partial<QuestionType> } = payload;
+        console.log('question index change is : ', questionIndex, question);
+        if (!ws.user.collabSessionId) {
+            console.log('closing because collab session does not exist');
+            ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
+            return;
+        }
+
+        const data: PubSubMessageTypes = {
+            type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
+            payload: {
+                questionIndex,
+                question,
+                collaboratorId: ws.user.userId,
+                collaboratorName: ws.user.name,
+            },
+            exclude_socket_id: ws.id,
+        };
+        await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
     }
 
     private async validate_collaborator_in_db(user_id: string): Promise<boolean> {
