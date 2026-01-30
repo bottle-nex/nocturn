@@ -2,7 +2,7 @@ import { JSX } from 'react';
 import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
 import UserMessage from './UserMessage';
 import AgentMessage from './AgentMessage';
-import SystemMessage from './SystemMessage';
+// import SystemMessage from './SystemMessage';
 
 interface BuilderMessageProps {
     message: AiQuizMessage;
