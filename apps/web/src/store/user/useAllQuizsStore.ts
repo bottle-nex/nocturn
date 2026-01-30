@@ -12,7 +12,7 @@ interface AllQuizsStoreType {
 
 export const useAllQuizsStore = create<AllQuizsStoreType>((set) => ({
     quizs: [],
-    addQuiz: (quiz) => set((state) => ({ quizs: [...state.quizs, quiz] })),
+    addQuiz: (quiz) => set((state) => ({ quizs: [quiz, ...state.quizs] })),
     setAllQuizs: (quizs) => set({ quizs }),
     updateQuiz: (quizId, quiz: Partial<QuizType>) => {
         set((state) => ({

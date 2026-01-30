@@ -9,9 +9,14 @@ import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { QuizType } from '@nocturn/types';
+import { QuizStatusEnum, QuizType } from '@nocturn/types';
 import HeartButton from '../ui/HeartButton';
 import { Template } from '@/lib/templates';
+import QuizStatusTicker from '../tickers/QuizstatusTicker';
+import { FaRegClone } from 'react-icons/fa6';
+import { BiPencil } from 'react-icons/bi';
+import { useState } from 'react';
+import QuizTitleChangePanel from './QuizTitleChangePanel';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
@@ -30,16 +35,30 @@ export default function MyQuizzesGridView({
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
     const { session } = useUserSessionStore();
-    const { updateQuizFavourite, deleteQuiz } = useAllQuizsStore();
+    const { updateQuizFavourite, deleteQuiz, addQuiz } = useAllQuizsStore();
+    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
 
-    async function handleDeleteQuiz(id: string) {
+    async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token) return;
         try {
-            await QuizActions.delete_quiz(session.user.token, id);
-            deleteQuiz(id);
+            await QuizActions.delete_quiz(session.user.token, quizId);
+            deleteQuiz(quizId);
             toast.success('Quiz deleted successfully');
         } catch {
-            toast.error('Failed to delete the quiz');
+            console.error('Failed to delete the quiz');
+        }
+    }
+
+    async function handleDuplicateQuiz(quizId: string) {
+        if (!session?.user.token) return;
+        try {
+            const duplicatedQuiz = await QuizActions.duplicate_quiz(session.user.token, quizId);
+            if (duplicatedQuiz) {
+                addQuiz(duplicatedQuiz);
+            }
+        } catch (error) {
+            console.error('Error in duplicating quiz: ', error);
+            return;
         }
     }
 
@@ -55,10 +74,14 @@ export default function MyQuizzesGridView({
     }
 
     return (
-        <div key={quiz.id} className="max-w-[400px] w-full p-1 flex flex-col relative group">
+        <div
+            key={quiz.id}
+            className="max-w-[400px] w-full p-1 flex flex-col relative group "
+            data-lenis-prevent
+        >
             <div
                 className={cn(
-                    'absolute top-5 z-50 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-300',
+                    'absolute top-5 z-50 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
                     isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                 )}
             >
@@ -73,25 +96,49 @@ export default function MyQuizzesGridView({
                     )}
                 </div>
 
-                <div className="flex gap-x-2.5">
+                <div className="flex gap-x-2.5 items-center">
+                    {quiz.status === QuizStatusEnum.LIVE && (
+                        <QuizStatusTicker className="!rounded-[px]" status={quiz.status} />
+                    )}
+
+                    {quiz.status === QuizStatusEnum.COMPLETED && (
+                        <ToolTipComponent content="results">
+                            <div
+                                onClick={() => router.push(`/new/${quiz.id}`)}
+                                className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            >
+                                <PiPresentationChart className="size-5" />
+                            </div>
+                        </ToolTipComponent>
+                    )}
+
+                    <ToolTipComponent content="rename">
+                        <div
+                            onClick={() => setShowQuizTitleChangePanel((prev) => !prev)}
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        >
+                            <BiPencil className="size-5" />
+                        </div>
+                    </ToolTipComponent>
+
+                    <ToolTipComponent content="duplicate">
+                        <div
+                            onClick={() => handleDuplicateQuiz(quiz.id)}
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        >
+                            <FaRegClone className="size-4" />
+                        </div>
+                    </ToolTipComponent>
+
                     <ToolTipComponent content="delete">
                         <div
                             onClick={() => {
                                 toggleQuizSelection(quiz.id);
                                 handleDeleteQuiz(quiz.id);
                             }}
-                            className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
-                            <PiTrashSimple className="size-5" />
-                        </div>
-                    </ToolTipComponent>
-
-                    <ToolTipComponent content="launch">
-                        <div
-                            onClick={() => router.push(`/new/${quiz.id}`)}
-                            className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
-                        >
-                            <PiPresentationChart className="size-5" />
+                            <PiTrashSimple className="size-5 stroke-3" />
                         </div>
                     </ToolTipComponent>
                 </div>
@@ -102,7 +149,7 @@ export default function MyQuizzesGridView({
                 question={quiz.questions[0].question}
                 options={quiz.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[10px] outline-2 select-none',
+                    'w-full aspect-video rounded-[8px] outline-2 select-none',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
                 template={currTemplate}
@@ -128,13 +175,19 @@ export default function MyQuizzesGridView({
                             last viewed {formattedTime}
                         </span>
                     </div>
-
                     <HeartButton
                         liked={quiz.isFavourite}
                         onToggle={(toggle) => handleFavouriteToggle(quiz.id, toggle)}
                     />
                 </div>
             </div>
+
+            {showQuizTitleChangePanel && (
+                <QuizTitleChangePanel
+                    quizId={quiz.id}
+                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                />
+            )}
         </div>
     );
 }

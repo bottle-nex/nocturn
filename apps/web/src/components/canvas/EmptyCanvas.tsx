@@ -20,7 +20,7 @@ export default function EmptyCanvas({
     options = [],
 }: EmptyCanvasProps) {
     const barColors = template.bars || [];
-    const [isHovered, setIsHovered] = useState(false);
+    const [isHovered, setIsHovered] = useState<boolean>(false);
     const [barHeights, setBarHeights] = useState<number[]>([]);
 
     useEffect(() => {
@@ -33,10 +33,11 @@ export default function EmptyCanvas({
 
         const interval = setInterval(() => {
             setBarHeights(options.map(() => Math.random() * 60 + 20));
-        }, 1500);
+        }, 1600);
 
         return () => clearInterval(interval);
-    }, [isHovered, options.length, options]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isHovered, options.length]);
 
     const getOptionLetter = (index: number) => {
         return String.fromCharCode(65 + index);
@@ -47,24 +48,27 @@ export default function EmptyCanvas({
             onClick={onClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={cn('w-full rounded-md p-0.5 cursor-pointer relative', className)}
+            className={cn(
+                'w-full rounded-md p-0.5 cursor-pointer relative overflow-hidden',
+                className,
+            )}
             style={{ boxSizing: 'border-box' }}
         >
             {question && options.length > 0 && (
-                <div className="absolute h-full w-full z-2 p-8 py-6 flex flex-col justify-between">
+                <div className="absolute h-full w-full z-2 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
                         style={{ color: template.text_color }}
-                        className="truncate max-w-full text-sm font-medium p-1"
+                        className="truncate max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1"
                     >
                         Q. {question}
                     </div>
-                    <div className="flex items-end justify-around mt-5 h-full w-full gap-x-8 px-1 pr-2">
+                    <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-4 md:gap-x-8 px-0.5 sm:px-1 pr-1 sm:pr-2">
                         {options.map((opt, idx) => {
                             const color = barColors[idx % barColors.length];
                             return (
                                 <div
                                     key={idx}
-                                    className="flex flex-col items-center justify-end flex-1 h-full"
+                                    className="flex flex-col items-center justify-end flex-1 h-full min-w-0"
                                 >
                                     <motion.div
                                         className="w-full rounded-xs"
@@ -81,12 +85,13 @@ export default function EmptyCanvas({
                                     />
                                     <span
                                         style={{ color: template.text_color }}
-                                        className="mt-2 text-[11px] truncate text-center w-12"
+                                        className="mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] truncate text-center w-8 sm:w-10 md:w-12"
                                     >
                                         <span className="font-semibold">
                                             {getOptionLetter(idx)}.
                                         </span>{' '}
-                                        {opt}
+                                        <span className="hidden xs:inline">{opt}</span>
+                                        <span className="inline xs:hidden">{opt.slice(0, 3)}</span>
                                     </span>
                                 </div>
                             );

@@ -86,8 +86,6 @@ model Quiz {
   hostId      String
   host        User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
 
-  folderId  String?
-
   autoSave          Boolean @default(true)
   liveChat          Boolean @default(false)
   spectatorMode     Boolean @default(false)

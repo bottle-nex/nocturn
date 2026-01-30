@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { QuizStatusEnum } from '@nocturn/types';
 import React from 'react';
 
@@ -78,7 +79,9 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
 
     return (
         <span
-            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${config.stripColor} text-white ${className}`}
+            className={cn(
+                `inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-medium ${config.stripColor} text-white', ${className}`,
+            )}
         >
             {config.label}
         </span>

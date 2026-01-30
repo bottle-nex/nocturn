@@ -127,7 +127,7 @@ export default function MyQuizzesPanel() {
                 />
             </div>
 
-            <div className="w-full mt-6 overflow-y-auto text-light-base">
+            <div className="w-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
                 {filteredQuizzes.length === 0 ? (
                     <div>no quizzes found</div>
                 ) : activeLayoutTab === Layouts.GRID ? (

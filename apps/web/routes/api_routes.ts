@@ -24,8 +24,8 @@ export const GET_FAVOURITE_QUIZZES_URL = QUIZ_URL + '/get-favourite-quizzes';
 
 export const RESTORE_TRASHED_QUIZ_URL = QUIZ_URL + '/restore-quiz';
 export const DELETE_QUIZ_URL = QUIZ_URL + '/move-to-trash';
-
-export const RENAME_QUIZ_URL = QUIZ_URL + '/update-title';
+export const DUPLICATE_QUIZ_URL = QUIZ_URL + '/duplicate-quiz';
+export const CHANGE_QUIZ_TITLE_URL = QUIZ_URL + '/update-title';
 export const DELETE_SELECTED_QUIZZES_URL = QUIZ_URL + '/move-quizzes-to-trash';
 export const GET_TRASHED_QUIZZES_URL = QUIZ_URL + '/get-user-trashed-quiz';
 export const CLEAR_TRASH_URL = QUIZ_URL + '/clear-trash';

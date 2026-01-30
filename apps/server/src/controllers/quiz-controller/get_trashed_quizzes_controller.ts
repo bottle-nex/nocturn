@@ -34,6 +34,9 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
                         name: true,
                     },
                 },
+                questions: {
+                    take: 1,
+                },
             },
         });
 
