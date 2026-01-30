@@ -29,7 +29,8 @@ export default function MessagesRenderer({ className = '' }: MessagesRendererPro
                 className,
             )}
         >
-            <div className="flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
+            <div
+            className="flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
                 {messages.map((m, i) => (
                     <Message key={m.id ?? i} message={m} loading={false} />
                 ))}
