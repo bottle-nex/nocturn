@@ -15,7 +15,7 @@ const question_schema = z.object({
 
 export const executor_schema = z.object({
     description: z.string().min(10).max(200).describe('description what this quiz is about'),
-    questions: z.array(question_schema).min(8).max(25),
+    questions: z.array(question_schema).min(1).max(1),
     userResponse: z.string().min(5).max(100).describe('write about what you have done'),
 });
 

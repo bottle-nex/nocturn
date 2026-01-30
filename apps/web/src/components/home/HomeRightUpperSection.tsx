@@ -98,7 +98,7 @@ export default function HomeRightUpperSection() {
         appendMessage(message);
 
         // send the prompt
-        AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
+        // AiBackendAction.create_new_quiz(session?.user.token, sessionId, prompt);
 
         setPrompt('');
         setCommonPanel(false);

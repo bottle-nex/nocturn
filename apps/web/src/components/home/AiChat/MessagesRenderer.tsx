@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
-import Message from './Message';
+import Message from './Message/Message';
 import { useEffect, useRef } from 'react';
 
 interface MessagesRendererProps {

@@ -184,6 +184,8 @@ export default class Chain {
             difficulty,
         });
 
+        console.log('plan response: ', response.userResponse);
+
         // create the quiz
         const { quiz, agentic_message, system_message } = await prisma.$transaction(async (tx) => {
             const quiz = await tx.quiz.create({
@@ -265,33 +267,65 @@ export default class Chain {
                 };
             });
 
-            const quiz = await prisma.quiz.update({
-                where: {
-                    id: quiz_id,
-                },
-                data: {
-                    questions: {
-                        create: parsed_questions,
+            const { messages, quiz } = await prisma.$transaction(async (tx) => {
+                const agentic_message = await tx.aiQuizMessage.create({
+                    data: {
+                        aiQuizChatSessionId: session_id,
+                        role: AiQuizChatRole.AGENT,
+                        content: response.userResponse,
                     },
-                    description: response.description,
-                },
-                select: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    theme: true,
-                    basePointsPerQuestion: true,
-                    pointsMultiplier: true,
-                    timeBonus: true,
-                    eliminationThreshold: true,
-                    questions: true,
-                },
+                });
+
+                const quiz = await tx.quiz.update({
+                    where: {
+                        id: quiz_id,
+                    },
+                    data: {
+                        questions: {
+                            create: parsed_questions,
+                        },
+                        description: response.description,
+                    },
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        theme: true,
+                        basePointsPerQuestion: true,
+                        pointsMultiplier: true,
+                        timeBonus: true,
+                        eliminationThreshold: true,
+                        questions: true,
+                    },
+                });
+
+                const system_message = await tx.aiQuizMessage.create({
+                    data: {
+                        aiQuizChatSessionId: session_id,
+                        role: AiQuizChatRole.SYSTEM,
+                        content: quiz.id,
+                        element: AiMessageElement.QUIZ,
+                    },
+                });
+
+                const messages: AiQuizMessage[] = [agentic_message, system_message];
+
+                return {
+                    messages,
+                    quiz,
+                };
+            });
+
+            ResponseWriter.stream.write(res, {
+                type: STREAM.MESSAGES,
+                data: messages,
             });
 
             ResponseWriter.stream.write(res, {
                 type: STREAM.QUIZ,
                 data: quiz,
             });
+
         } catch (error) {
             console.error('error in executor: ', error);
         } finally {
