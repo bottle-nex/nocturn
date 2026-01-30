@@ -520,4 +520,5 @@ enum AiQuizChatRole {
 enum AiMessageElement {
   DIFFICULTY
   TITLE
+  QUIZ
 }

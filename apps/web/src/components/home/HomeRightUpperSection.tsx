@@ -15,8 +15,6 @@ import { AiQuizChatRole, AiQuizMessage, QuizType } from '@nocturn/types';
 import PdfPreview from '../ui/PdfPreview';
 import StartWithAi from './StartWithAi';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
-import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 enum COMMON_PANEL_DATA {
     RECENTS = 'RECENTS',
@@ -31,7 +29,6 @@ export default function HomeRightUpperSection() {
 
     const { quizs } = useAllQuizsStore();
     const { appendMessage } = useAiChatStore();
-    const { session } = useUserSessionStore();
 
     const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
     const [commonPanel, setCommonPanel] = useState<boolean>(false);
@@ -98,7 +95,7 @@ export default function HomeRightUpperSection() {
         appendMessage(message);
 
         // send the prompt
-        AiBackendAction.create_quiz(session?.user.token, sessionId, prompt);
+        // AiBackendAction.create_new_quiz(session?.user.token, sessionId, prompt);
 
         setPrompt('');
         setCommonPanel(false);
@@ -124,7 +121,7 @@ export default function HomeRightUpperSection() {
             <div
                 ref={containerRef}
                 className={cn(
-                    'relative max-w-sm w-full h-11 rounded-[6px]',
+                    'relative max-w-sm w-full h-11 rounded-beta',
                     'border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                 )}
             >
@@ -135,7 +132,7 @@ export default function HomeRightUpperSection() {
                     placeholder="Start creating quiz with AI..."
                     onFocus={() => setCommonPanel(true)}
                     className={cn(
-                        'h-full w-full pl-10 rounded-[6px]',
+                        'h-full w-full pl-10 rounded-beta',
                         'placeholder:text-gamma/40 dark:placeholder:text-neutral-500',
                     )}
                     onKeyDown={handleInputKeyDown}
@@ -161,7 +158,7 @@ export default function HomeRightUpperSection() {
                 {commonPanel && (
                     <div
                         className={cn(
-                            'absolute z-50 top-12 w-full rounded-[6px]',
+                            'absolute z-50 top-12 w-full rounded-beta',
                             'shadow-md px-2 py-3',
                             'dark:bg-zinc-800 dark:text-white',
                             'flex flex-col gap-y-2',

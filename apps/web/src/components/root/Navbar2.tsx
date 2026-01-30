@@ -87,7 +87,7 @@ export default function Navbar() {
             </div>
 
             {/* right buttons */}
-            <div className="flex items-center gap-x-3 h-15 w-fit rounded-[4px] mr-3 top-3.5 absolute right-7">
+            <div className="flex items-center gap-x-3 h-15 w-fit rounded-alpha mr-3 top-3.5 absolute right-7">
                 <div className="relative flex items-center">
                     <motion.button
                         initial={{ opacity: 0, filter: 'blur(10px)' }}

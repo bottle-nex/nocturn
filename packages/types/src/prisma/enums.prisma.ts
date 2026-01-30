@@ -104,4 +104,5 @@ export enum AiQuizChatRole {
 export enum AiMessageElement {
   DIFFICULTY = "DIFFICULTY",
   TITLE = "TITLE",
+  QUIZ = "QUIZ",
 }

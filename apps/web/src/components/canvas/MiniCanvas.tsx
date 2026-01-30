@@ -17,8 +17,8 @@ interface MiniCanvasProps {
     currentQuestionIndex: number;
     orderIndex: number;
     collaboratorHighlight?: string;
-    handleQuestionChange: (index: number) => void;
-    removeQuestion: (index: number) => void;
+    handleQuestionChange?: (index: number) => void;
+    removeQuestion?: (index: number) => void;
     onClick?: (e?: MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -55,8 +55,8 @@ export default function MiniCanvas({
           : '';
 
     function handleRemoveQuestion() {
-        removeQuestion(orderIndex);
-        handleQuestionChange(orderIndex);
+        removeQuestion?.(orderIndex);
+        handleQuestionChange?.(orderIndex);
         setOpenMiniCanvasOptions(false);
     }
 
@@ -95,7 +95,7 @@ export default function MiniCanvas({
         <>
             <div
                 onClick={(e) => {
-                    handleQuestionChange(orderIndex);
+                    handleQuestionChange?.(orderIndex);
                     onClick?.(e);
                 }}
                 className={cn(

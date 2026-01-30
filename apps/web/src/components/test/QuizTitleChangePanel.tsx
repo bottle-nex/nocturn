@@ -57,7 +57,7 @@ export default function QuizTitleChangePanel({
                     <Input
                         value={quizTitle}
                         onChange={(e) => setQuizTitle(e.target.value)}
-                        className="h-10 placeholder:tracking-wide rounded-[4px] focus:text-dark-base dark:focus:text-light-base border dark:border-neutral-700/50 border-dark-base/40"
+                        className="h-10 placeholder:tracking-wide rounded-alpha focus:text-dark-base dark:focus:text-light-base border dark:border-neutral-700/50 border-dark-base/40"
                         placeholder="enter title here"
                         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                             if (e.key === 'Enter') {
@@ -68,7 +68,7 @@ export default function QuizTitleChangePanel({
                     />
                     <Button
                         onClick={handleChangeQUizTitle}
-                        className="h-10 w-10 flex justify-center items-center bg-indigo-700 text-light-base hover:bg-indigo-800 rounded-[4px]"
+                        className="h-10 w-10 flex justify-center items-center bg-indigo-700 text-light-base hover:bg-indigo-800 rounded-alpha"
                     >
                         <GoArrowRight />
                     </Button>

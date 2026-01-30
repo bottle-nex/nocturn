@@ -87,7 +87,7 @@ export default function MyQuizzesListView({
                                 e.stopPropagation();
                                 toggleQuizSelection(quiz.id);
                             }}
-                            className={`text-dark-base flex justify-center items-center rounded-[4px] cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${
+                            className={`text-dark-base flex justify-center items-center rounded-alpha cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${
                                 isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                             }`}
                         >
@@ -124,7 +124,7 @@ export default function MyQuizzesListView({
                     <ToolTipComponent content="results">
                         <div
                             onClick={() => router.push(`/new/${quiz.id}`)}
-                            className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <PiPresentationChart className="size-5" />
                         </div>
@@ -134,7 +134,7 @@ export default function MyQuizzesListView({
                 <ToolTipComponent content="rename">
                     <div
                         onClick={() => setShowQuizTitleChangePanel((prev) => !prev)}
-                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
                         <BiPencil className="size-5" />
                     </div>
@@ -143,7 +143,7 @@ export default function MyQuizzesListView({
                 <ToolTipComponent content="duplicate">
                     <div
                         onClick={() => handleDuplicateQuiz(quiz.id)}
-                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
                         <FaRegClone className="size-4.5" />
                     </div>
@@ -155,7 +155,7 @@ export default function MyQuizzesListView({
                             toggleQuizSelection(quiz.id);
                             handleDeleteQuiz(quiz.id);
                         }}
-                        className="bg-light-base text-pink-600 h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
                         <PiTrashSimple className="size-5 stroke-3" />
                     </div>

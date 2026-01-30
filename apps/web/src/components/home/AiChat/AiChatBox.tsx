@@ -17,17 +17,25 @@ import VoiceIcon from '@/components/ui/svg/VoiceIcon';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 
-const placeholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
+const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
+const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
+const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
 
 export default function AiChatBox() {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
     const [messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
-    const { appendMessage, loading, sessionId } = useAiChatStore();
+    const { messages, appendMessage, loading, sessionId, quiz } = useAiChatStore();
     const { session } = useUserSessionStore();
 
-    const animatedPlaceholders = useTypewriterPlaceholder(placeholders);
+    const animatedPlaceholders = useTypewriterPlaceholder(
+        quiz
+            ? revampPlaceholders
+            : messages.length > 0
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
+    );
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
     });
@@ -38,6 +46,10 @@ export default function AiChatBox() {
             setMessageRendererPanel(true);
             handleSubmit();
         }
+    }
+
+    function handleInputOnClick() {
+        setMessageRendererPanel(true);
     }
 
     function handleSubmit() {
@@ -96,6 +108,7 @@ export default function AiChatBox() {
                     'bg-transparent! border-none',
                 )}
                 onKeyDown={handleOnKeyDown}
+                onClick={handleInputOnClick}
             />
 
             <ToolTipComponent
