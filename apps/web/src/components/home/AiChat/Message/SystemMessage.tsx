@@ -11,11 +11,10 @@ interface SystemMessageProps {
 
 export default function SystemMessage({ type, content }: SystemMessageProps) {
 
-    const { quiz } = useAiChatStore();
 
     switch (type) {
         case AiMessageElement.QUIZ:
-            return <QuizMessage quiz={quiz!} />;
+            return <QuizMessage />;
         case AiMessageElement.TITLE:
             return <TitleMessage title={content!} />;
     }
@@ -42,18 +41,19 @@ function TitleMessage({ title }: { title: string }) {
     );
 }
 
-function QuizMessage({ quiz }: { quiz: QuizType }) {
+function QuizMessage() {
 
+    const { quiz, preview, setPreview } = useAiChatStore();
     const template = templates.find((t) => t.id == quiz?.theme);
 
     return (
         <div className="max-w-[400px] w-full ">
             <EmptyCanvas
-                onClick={() => {}}
+                onClick={() => setPreview(!preview)}
                 question={quiz?.questions[0].question}
                 options={quiz?.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[10px] outline-2 select-none',
+                    'max-w-[300px] w-full aspect-video rounded-[10px] outline-2 select-none',
                     'outline-black/40 dark:outline-white/40',
                 )}
                 template={template!}

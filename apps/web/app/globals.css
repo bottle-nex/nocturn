@@ -46,13 +46,17 @@
 
     --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
 
+    --radius-alpha: 6px;
+
     @keyframes cell-ripple {
         0% {
             opacity: 0.4;
         }
+
         50% {
             opacity: 0.8;
         }
+
         100% {
             opacity: 0.4;
         }
@@ -159,9 +163,11 @@
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
         @apply bg-background text-foreground;
     }
+
     html {
         scroll-behavior: smooth;
     }
@@ -248,6 +254,7 @@ body {
 
 @layer utilities {
     @keyframes float {
+
         0%,
         100% {
             transform: translateY(0);
@@ -257,6 +264,10 @@ body {
             transform: translateY(-10px);
             /* Adjust the float height here */
         }
+    }
+
+    .rounded-alpha {
+        border-radius: var(--radius-alpha);
     }
 
     .animate-float {

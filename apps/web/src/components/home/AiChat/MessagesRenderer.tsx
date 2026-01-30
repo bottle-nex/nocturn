@@ -11,35 +11,31 @@ interface MessagesRendererProps {
 
 export default function MessagesRenderer({ className = '' }: MessagesRendererProps) {
     const { messages } = useAiChatStore();
-    const messageEndRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to bottom when messages change
     useEffect(() => {
-        if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (!scrollRef.current) return;
+
+        // Lenis-safe auto scroll
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, [messages]);
 
     return (
         <div
+            ref={scrollRef}
             data-lenis-prevent
             className={cn(
                 'max-w-87.5 w-full h-130',
                 'border border-neutral-800 rounded-xl bg-dark-alpha',
-                'flex flex-col min-h-0 bg-red-600',
-                'overlfow-y-auto overflow-x-hidden',
+                'flex flex-col',
+                'overflow-y-auto overflow-x-hidden custom-scrollbar',
                 className,
             )}
         >
-            <div
-                data-lenis-prevent
-                className={cn(
-                    "flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 ",
-                )}>
+            <div className="flex flex-col gap-y-1 p-2">
                 {messages.map((m, i) => (
                     <Message key={m.id ?? i} message={m} loading={false} />
                 ))}
-                <div ref={messageEndRef} />
             </div>
         </div>
     );

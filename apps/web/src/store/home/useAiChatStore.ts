@@ -15,6 +15,9 @@ interface AiChatStore {
 
     loading: boolean;
     setLoading: (loading: boolean) => void;
+
+    preview: boolean;
+    setPreview: (preview: boolean) => void;
 }
 
 export const useAiChatStore = create<AiChatStore>((set, get) => ({
@@ -35,4 +38,7 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
 
     loading: false,
     setLoading: (loading: boolean) => set({ loading }),
+
+    preview: false,
+    setPreview: (preview: boolean) => set({ preview }),
 }));

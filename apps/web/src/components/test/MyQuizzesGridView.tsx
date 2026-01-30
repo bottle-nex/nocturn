@@ -17,6 +17,8 @@ import { FaRegClone } from 'react-icons/fa6';
 import { BiPencil } from 'react-icons/bi';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
+import { VscPreview } from "react-icons/vsc";
+import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
@@ -37,6 +39,7 @@ export default function MyQuizzesGridView({
     const { session } = useUserSessionStore();
     const { updateQuizFavourite, deleteQuiz, addQuiz } = useAllQuizsStore();
     const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
+    const [showPreview, setShowPreview] = useState<boolean>(false);
 
     async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token) return;
@@ -121,6 +124,15 @@ export default function MyQuizzesGridView({
                         </div>
                     </ToolTipComponent>
 
+                    <ToolTipComponent content="preview">
+                        <div
+                            onClick={() => setShowPreview(true)}
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        >
+                            <VscPreview className="size-5" />
+                        </div>
+                    </ToolTipComponent>
+
                     <ToolTipComponent content="duplicate">
                         <div
                             onClick={() => handleDuplicateQuiz(quiz.id)}
@@ -188,6 +200,14 @@ export default function MyQuizzesGridView({
                     setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
                 />
             )}
+
+            {showPreview && (
+                <PreviewQuiz
+                    quiz={quiz} 
+                    onPreviewClose={() => setShowPreview(false)}
+                />
+            )}
+
         </div>
     );
 }
