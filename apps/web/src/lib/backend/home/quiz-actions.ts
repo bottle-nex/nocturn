@@ -1,9 +1,11 @@
 import { CustomResponse, QuizType, UserQuizResponse } from '@nocturn/types';
 import axios from 'axios';
 import {
+    CHANGE_QUIZ_TITLE_URL,
     CLEAR_TRASH_URL,
     DELETE_QUIZ_URL,
     DELETE_SELECTED_QUIZZES_URL,
+    DUPLICATE_QUIZ_URL,
     GET_ALL_OWNER_QUIZ_URL,
     GET_FAVOURITE_QUIZZES_URL,
     GET_TRASHED_QUIZZES_URL,
@@ -189,6 +191,54 @@ export default class QuizActions {
             );
         } catch (error) {
             console.error('Error in toggling favourite quiz: ', error);
+            return;
+        }
+    }
+
+    static async change_quiz_title(token: string, quizId: string, name: string) {
+        if (!token || !quizId || !name) {
+            console.error('Insufficient credentials');
+            return;
+        }
+
+        try {
+            await axios.put(
+                CHANGE_QUIZ_TITLE_URL,
+                { quizId, name },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+        } catch (error) {
+            console.error('Failed to change quiz title: ', error);
+            return;
+        }
+    }
+
+    static async duplicate_quiz(token: string, quizId: string): Promise<QuizType | undefined> {
+        if (!token || !quizId) {
+            console.error('quizId or token not foudn');
+            return;
+        }
+
+        try {
+            const { data } = await axios.post(
+                `${DUPLICATE_QUIZ_URL}/${quizId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (error) {
+            console.error('Error in duplicating quiz: ', error);
             return;
         }
     }

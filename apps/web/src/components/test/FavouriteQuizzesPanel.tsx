@@ -1,94 +1,193 @@
 'use client';
-import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { useMemo } from 'react';
-import { templates } from '@/lib/templates';
-import EmptyCanvas from '../canvas/EmptyCanvas';
-import moment from 'moment';
-import HeartButton from '../ui/HeartButton';
+import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import QuizActions from '@/lib/backend/home/quiz-actions';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { templates } from '@/lib/templates';
+import moment from 'moment';
+import QuizzesUpperSection from './QuizzesUpperSection';
+import MyQuizzesGridView from './MyQuizzesGridView';
+import MyQuizzesListView from './MyQuizzesListView';
+
+export enum Layouts {
+    GRID = 'GRID',
+    LIST = 'LIST',
+}
 
 export default function FavouriteQuizzesPanel() {
     const { session } = useUserSessionStore();
-    const quizs = useAllQuizsStore((state) => state.quizs);
-    const updateQuizFavourite = useAllQuizsStore((state) => state.updateQuizFavourite);
+    const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
+    const { deleteQuiz: deleteRecentlyViewed } = useRecentlyViewedQuizStore();
+
+    const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
+
+    const searchListenerAttached = useRef(false);
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+        async function fetchQuizzes() {
+            try {
+                const token = session?.user?.token;
+                if (!token) return;
+                if (quizs.length > 0) return;
+                if (hasFetched.current) return;
+
+                hasFetched.current = true;
+
+                const response = await QuizActions.get_quizzes(token);
+                setAllQuizs(response?.quizzes || []);
+            } catch (err) {
+                console.error('Error fetching quizzes:', err);
+            }
+        }
+
+        fetchQuizzes();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session?.user?.token]);
+
     const favouriteQuizzes = useMemo(() => quizs.filter((q) => q.isFavourite), [quizs]);
 
-    async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
-        if (!session?.user.token) return;
+    const filteredQuizzes = useMemo(() => {
+        return favouriteQuizzes.filter((q) =>
+            q.title?.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+    }, [favouriteQuizzes, searchQuery]);
 
-        updateQuizFavourite(quizId, isFavourite);
+    useEffect(() => {
+        if (searchListenerAttached.current) return;
+
+        const input = document.querySelector(
+            'input[placeholder="search quizzes"]',
+        ) as HTMLInputElement | null;
+
+        if (!input) return;
+
+        const handler = (e: Event) => {
+            const value = (e.target as HTMLInputElement).value;
+            setSearchQuery(value);
+        };
+
+        input.addEventListener('input', handler);
+        searchListenerAttached.current = true;
+
+        return () => {
+            input.removeEventListener('input', handler);
+            searchListenerAttached.current = false;
+        };
+    }, []);
+
+    function toggleQuizSelection(quizId: string) {
+        setSelectedQuizIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(quizId)) {
+                next.delete(quizId);
+            } else {
+                next.add(quizId);
+            }
+            return next;
+        });
+    }
+
+    async function handleDeleteSelectedQuizzes() {
+        if (!session?.user?.token || selectedQuizIds.size === 0) return;
+
+        const quizIds = Array.from(selectedQuizIds);
 
         try {
-            await QuizActions.toggle_favourite_quiz(session.user.token, quizId, isFavourite);
-        } catch {
-            updateQuizFavourite(quizId, !isFavourite);
+            await QuizActions.move_selected_quizzes_to_trash(session.user.token, quizIds);
+
+            quizIds.forEach((id) => {
+                deleteQuiz(id);
+                deleteRecentlyViewed(id);
+            });
+
+            setSelectedQuizIds(new Set());
+        } catch (error) {
+            console.error('Client error deleting favourite quizzes:', error);
         }
     }
 
+    const isAllSelected =
+        favouriteQuizzes.length > 0 && selectedQuizIds.size === favouriteQuizzes.length;
+
+    function handleToggleSelectAll() {
+        setSelectedQuizIds((prev) => {
+            if (favouriteQuizzes.length === 0) return prev;
+
+            if (prev.size === favouriteQuizzes.length) {
+                return new Set();
+            }
+
+            return new Set(favouriteQuizzes.map((q) => q.id));
+        });
+    }
+
     return (
-        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-20">
-            <div className="text-4xl text-light-base/90">Favourite Quizzes</div>
+        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">
+            <div className="w-full flex justify-start flex-col">
+                <div className="flex justify-between">
+                    <div className="text-4xl text-dark-base dark:text-transparent dark:bg-clip-text dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10">
+                        Favourites
+                    </div>
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-13">
-                {favouriteQuizzes.length > 0 ? (
-                    favouriteQuizzes.map((quiz) => {
-                        const currTemplate = templates.find((t) => t.id === quiz.theme);
-                        if (!currTemplate) return null;
-                        const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
+                <QuizzesUpperSection
+                    selectedQuizes={selectedQuizIds.size}
+                    onDeleteSelected={handleDeleteSelectedQuizzes}
+                    onToggleSelectAll={handleToggleSelectAll}
+                    isAllSelected={isAllSelected}
+                    activeLayoutTab={activeLayoutTab}
+                    onLayoutChange={setActiveLayoutTab}
+                />
+            </div>
 
-                        return (
-                            <motion.div
-                                exit={{ scale: 0.5, opacity: 0, filter: 'blur[10px]' }}
-                                transition={{
-                                    duration: 0.2,
-                                    ease: 'easeInOut',
-                                }}
-                                key={quiz.id}
-                                className="p-1"
-                            >
-                                <EmptyCanvas
-                                    className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
-                                    question={quiz.questions[0].question}
-                                    options={quiz.questions[0].options}
-                                    template={currTemplate}
+            <div className="w-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
+                {filteredQuizzes.length === 0 ? (
+                    <div>No favourite quizzes yet</div>
+                ) : activeLayoutTab === Layouts.GRID ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredQuizzes.map((quiz) => {
+                            const currTemplate = templates.find((t) => t.id === quiz.theme);
+                            if (!currTemplate) return null;
+
+                            const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
+
+                            return (
+                                <MyQuizzesGridView
+                                    key={quiz.id}
+                                    quiz={quiz}
+                                    isSelected={selectedQuizIds.has(quiz.id)}
+                                    toggleQuizSelection={toggleQuizSelection}
+                                    currTemplate={currTemplate}
+                                    formattedTime={formattedTime}
                                 />
-
-                                <div className="flex items-center justify-start gap-x-2.5 pt-2">
-                                    {quiz.host?.image && (
-                                        <Image
-                                            src={quiz.host.image}
-                                            width={32}
-                                            height={32}
-                                            alt="user-logo"
-                                            className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
-                                        />
-                                    )}
-
-                                    <div className="flex items-center justify-between w-full">
-                                        <div>
-                                            <span className="block text-normal mt-1">
-                                                {quiz.title?.slice(0, 28)}...
-                                            </span>
-                                            <span className="block dark:text-white/60 text-black/60 text-[13px]">
-                                                last viewed {formattedTime}
-                                            </span>
-                                        </div>
-                                        <HeartButton
-                                            liked={quiz.isFavourite}
-                                            onToggle={(toggle) =>
-                                                handleFavouriteToggle(quiz.id, toggle)
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })
+                            );
+                        })}
+                    </div>
                 ) : (
-                    <div className="opacity-60">No favourite quizzes yet</div>
+                    <div className="flex flex-col gap-4">
+                        {filteredQuizzes.map((quiz) => {
+                            const currTemplate = templates.find((t) => t.id === quiz.theme);
+                            if (!currTemplate) return null;
+
+                            const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
+
+                            return (
+                                <MyQuizzesListView
+                                    key={quiz.id}
+                                    quiz={quiz}
+                                    isSelected={selectedQuizIds.has(quiz.id)}
+                                    toggleQuizSelection={toggleQuizSelection}
+                                    currTemplate={currTemplate}
+                                    formattedTime={formattedTime}
+                                />
+                            );
+                        })}
+                    </div>
                 )}
             </div>
         </div>

@@ -36,6 +36,7 @@ import get_favourite_quizzes_controller from '../controllers/quiz-controller/get
 import toggle_favourite_quiz_controller from '../controllers/quiz-controller/toggle_favourite_quiz_controller';
 import delete_selected_quizzes_controller from '../controllers/quiz-controller/delete_selected_quizzes_controller';
 import renameQuizController from '../controllers/quiz-controller/renameQuizController';
+import duplicateQuizController from '../controllers/quiz-controller/duplicateQuizController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -51,6 +52,8 @@ router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_
 // <---------------------- QUIZ-ROUTES ---------------------->
 router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
 router.post('/quiz/create-quiz', authMiddleware, createQuizController);
+router.post('/quiz/duplicate-quiz/:quizId', authMiddleware, duplicateQuizController);
+
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
 

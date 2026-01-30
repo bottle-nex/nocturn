@@ -1,5 +1,5 @@
 import { Template } from '@/lib/templates';
-import { QuizType } from '@nocturn/types';
+import { QuizStatusEnum, QuizType } from '@nocturn/types';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
@@ -9,6 +9,13 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { PiPresentationChart, PiTrashSimple } from 'react-icons/pi';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { FaRegClone } from 'react-icons/fa6';
+import { BsDot } from 'react-icons/bs';
+import { useState } from 'react';
+import QuizStatusTicker from '../tickers/QuizstatusTicker';
+import { BiPencil } from 'react-icons/bi';
+import QuizTitleChangePanel from './QuizTitleChangePanel';
 
 interface MyQuizzesListViewProps {
     formattedTime: string;
@@ -27,7 +34,8 @@ export default function MyQuizzesListView({
 }: MyQuizzesListViewProps) {
     const { session } = useUserSessionStore();
     const router = useRouter();
-    const { deleteQuiz } = useAllQuizsStore();
+    const { deleteQuiz, addQuiz } = useAllQuizsStore();
+    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
 
     async function handleDeleteQuiz(id: string) {
         if (!session?.user.token) return;
@@ -40,21 +48,48 @@ export default function MyQuizzesListView({
         }
     }
 
+    async function handleDuplicateQuiz(quizId: string) {
+        if (!session?.user.token) return;
+        try {
+            const duplicatedQuiz = await QuizActions.duplicate_quiz(session.user.token, quizId);
+            if (duplicatedQuiz) {
+                addQuiz(duplicatedQuiz);
+            }
+        } catch (error) {
+            console.error('Error in duplicating quiz: ', error);
+            return;
+        }
+    }
+
     return (
         <div
             key={quiz.id}
-            className="dark:bg-neutral-800/40 bg-light-base rounded-[8px] relative flex items-center gap-x-3 p-2 border dark:border-neutral-800/40 border-neutral-300 group"
+            onClick={() => router.push(`/new/${quiz.id}`)}
+            data-lenis-prevent
+            className={cn(
+                'dark:bg-neutral-800/40 bg-light-base rounded-[8px]',
+                'relative flex items-center gap-x-3 p-2',
+                'border group cursor-pointer overflow-y-auto',
+                isSelected
+                    ? 'border border-indigo-800'
+                    : 'dark:border-neutral-800/40 border-neutral-300 ',
+            )}
         >
-            <div className="flex items-center gap-x-3 w-[85%] h-full">
+            <div className="flex items-center gap-x-3 max-w-[85%] w-full h-full">
                 {currTemplate && (
                     <div className="relative group flex items-center gap-x-2">
                         <EmptyCanvas
-                            className="w-20 h-14 !rounded-[11px] border border-neutral-400/50 dark:border-none cursor-auto"
+                            className={cn('w-20 h-14 !rounded-[8px] cursor-auto')}
                             template={currTemplate}
                         />
                         <div
-                            onClick={() => toggleQuizSelection(quiz.id)}
-                            className="text-dark-base flex justify-center items-center rounded-[4px] cursor-pointer absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-all transform duration-200"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleQuizSelection(quiz.id);
+                            }}
+                            className={`text-dark-base flex justify-center items-center rounded-[4px] cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${
+                                isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            }`}
                         >
                             {isSelected ? (
                                 <MdCheckBox className="size-6 text-indigo-700" />
@@ -66,40 +101,72 @@ export default function MyQuizzesListView({
                 )}
 
                 <div className="flex items-between justify-start gap-x-2.5 px-1 h-full">
-                    <div className="min-w-0 flex flex-col items-around justify-between h-full py-1">
-                        <span className="block text-normal truncate">{quiz.title}</span>
+                    <div className="min-w-0 flex flex-col items-around justify-between h-12 max-w-180">
+                        <span className="block text-normal dark:text-light-base text-dark-base truncate">
+                            {quiz.title}
+                        </span>
 
-                        <span className="block dark:text-light-base/60 text-black/60 text-[13px] flex items-center gap-x-3 tracking-wide">
-                            <span>Deleted at {formattedTime}</span>
-
-                            <span>Created by {quiz.host?.name}</span>
+                        <span className="block dark:text-light-base/60 text-black/60 text-[13px] flex items-center gap-x-1 tracking-wide">
+                            <span>Created at {formattedTime}</span>
+                            <BsDot />
+                            <span>{quiz.host?.name}</span>
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div className="flex gap-x-2.5 opacity-0 group-hover:opacity-100 transition-all transform duration-200">
+            <div className="flex justify-between items-center w-[15%] px-5 opacity-0 group-hover:opacity-100 transition-all transform duration-200">
+                {quiz.status === QuizStatusEnum.LIVE && (
+                    <QuizStatusTicker className="!rounded-[px]" status={quiz.status} />
+                )}
+
+                {quiz.status === QuizStatusEnum.COMPLETED && (
+                    <ToolTipComponent content="results">
+                        <div
+                            onClick={() => router.push(`/new/${quiz.id}`)}
+                            className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        >
+                            <PiPresentationChart className="size-5" />
+                        </div>
+                    </ToolTipComponent>
+                )}
+
+                <ToolTipComponent content="rename">
+                    <div
+                        onClick={() => setShowQuizTitleChangePanel((prev) => !prev)}
+                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    >
+                        <BiPencil className="size-5" />
+                    </div>
+                </ToolTipComponent>
+
+                <ToolTipComponent content="duplicate">
+                    <div
+                        onClick={() => handleDuplicateQuiz(quiz.id)}
+                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    >
+                        <FaRegClone className="size-4.5" />
+                    </div>
+                </ToolTipComponent>
+
                 <ToolTipComponent content="delete">
                     <div
                         onClick={() => {
                             toggleQuizSelection(quiz.id);
                             handleDeleteQuiz(quiz.id);
                         }}
-                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-pink-600 h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
-                        <PiTrashSimple className="size-5" />
-                    </div>
-                </ToolTipComponent>
-
-                <ToolTipComponent content="launch">
-                    <div
-                        onClick={() => router.push(`/new/${quiz.id}`)}
-                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
-                    >
-                        <PiPresentationChart className="size-5" />
+                        <PiTrashSimple className="size-5 stroke-3" />
                     </div>
                 </ToolTipComponent>
             </div>
+            {showQuizTitleChangePanel && (
+                <QuizTitleChangePanel
+                    quizId={quiz.id}
+                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                />
+            )}
         </div>
     );
 }
