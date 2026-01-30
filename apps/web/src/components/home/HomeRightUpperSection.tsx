@@ -15,8 +15,6 @@ import { AiQuizChatRole, AiQuizMessage, QuizType } from '@nocturn/types';
 import PdfPreview from '../ui/PdfPreview';
 import StartWithAi from './StartWithAi';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
-import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 enum COMMON_PANEL_DATA {
     RECENTS = 'RECENTS',
@@ -31,7 +29,6 @@ export default function HomeRightUpperSection() {
 
     const { quizs } = useAllQuizsStore();
     const { appendMessage } = useAiChatStore();
-    const { session } = useUserSessionStore();
 
     const [openAiComponent, setOpenAiComponent] = useState<boolean>(false);
     const [commonPanel, setCommonPanel] = useState<boolean>(false);

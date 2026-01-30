@@ -2,7 +2,7 @@ import EmptyCanvas from '@/components/canvas/EmptyCanvas';
 import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
-import { AiMessageElement, QuizType } from '@nocturn/types';
+import { AiMessageElement } from '@nocturn/types';
 
 interface SystemMessageProps {
     type: AiMessageElement;

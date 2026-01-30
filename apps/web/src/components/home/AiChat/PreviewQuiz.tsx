@@ -6,7 +6,7 @@ import OpacityBackground from '@/components/utility/OpacityBackground';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-import { QuestionType, QuizType } from '@nocturn/types';
+import { QuestionType, QuizType, TemplateEnum } from '@nocturn/types';
 import { useState } from 'react';
 import { LiaPagerSolid } from 'react-icons/lia';
 import { RxCross2 } from 'react-icons/rx';
@@ -21,12 +21,10 @@ interface PreviewQuizProps {
 export default function PreviewQuiz({
     quiz,
     onPreviewClose,
-    fetchFromServer,
-    quizId,
 }: PreviewQuizProps) {
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(quiz?.questions[0]!);
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions[0] || null);
 
-    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme!);
+    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
     const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 
@@ -123,8 +121,8 @@ export default function PreviewQuiz({
                     <div className="w-150">
                         <EmptyCanvas
                             template={template!}
-                            question={currentQuestion.question}
-                            options={currentQuestion.options}
+                            question={currentQuestion?.question}
+                            options={currentQuestion?.options}
                             className={cn(
                                 'w-full aspect-video rounded-[10px] outline-2 select-none',
                                 'outline-black/40 dark:outline-white/40',

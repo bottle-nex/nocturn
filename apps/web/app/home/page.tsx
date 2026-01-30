@@ -7,7 +7,6 @@ import SidebarPanelRenderer from '@/components/test/SidebarPanelRenderer';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
-import { useEffect } from 'react';
 
 export default function Home() {
     const { activeTab } = useHomeSidebarStore();
