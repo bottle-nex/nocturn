@@ -25,7 +25,7 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
         <OpacityBackground onBackgroundClick={onPreviewClose}>
             <div
                 className={cn(
-                    'max-h-full w-fit flex flex-col gap-y-3 p-6 rounded-alpha bg-dark-base ',
+                    'max-h-full w-fit flex flex-col gap-y-3 p-6 rounded-beta bg-dark-base ',
                     'border border-neutral-700 text-light-alpha '
                 )}
             >
@@ -38,7 +38,7 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
                     <div
                         className={cn(
                             "relative flex justify-center items-center gap-x-1 ",
-                            'px-3 py-1.5 rounded-alpha hover:bg-dark-alpha transition cursor-pointer'
+                            'px-3 py-1.5 rounded-beta hover:bg-dark-alpha transition cursor-pointer'
                         )}
                     >
                         <LiaPagerSolid size={20} />
@@ -52,16 +52,18 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
                         />
                     </div>
                     <div className={cn('absolute left-1/2 -translate-x-1/2')}>
-                        Previewing Quiz
+                        <div className="text-4xl dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10 text-dark-base">
+                            Previewing {" " + quiz.questions.length + " "} {quiz.questions.length === 1 ? "slide" : "slides"}
+                        </div>
                     </div>
                     <div className="flex justify-between items-center gap-x-3 ">
                         <div
-                            className="px-3 py-1.5 rounded-alpha bg-light-alpha text-dark-alpha cursor-pointer "
+                            className="px-3 py-1.5 rounded-beta bg-light-alpha text-dark-alpha cursor-pointer "
                             onClick={onPreviewClose}
                         >
                             Cancel
                         </div>
-                        <div className="px-3 py-1.5 rounded-alpha bg-alpha text-light-alpha cursor-pointer ">
+                        <div className="px-3 py-1.5 rounded-beta bg-alpha text-light-alpha cursor-pointer ">
                             Continue
                         </div>
                     </div>
@@ -72,7 +74,7 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
                     className={cn(
                         'w-full bg-dark-base py-5 px-6 ',
                         'flex justify-center items-center ',
-                        'rounded-alpha border border-neutral-700'
+                        'rounded-beta border border-neutral-700'
                     )}
                 >
                     {quiz?.title}
@@ -131,38 +133,43 @@ interface ChangeThemPanelProps {
 function ChangeThemPanel({ currentTheme, onThemeChange, onThemeHover, className }: ChangeThemPanelProps) {
 
     return (
-        <div
-            className={cn(
-                'absolute top-10 left-0 w-90 p-4 z-10 bg-dark-base border border-neutral-700 rounded-alpha ',
-                'grid grid-cols-3 gap-3',
-                'overflow-y-auto',
-                className
-            )}
-        >
+        <div className={cn(
+            'absolute top-10 left-0 w-90 p-4 z-10 bg-dark-base border border-neutral-700 rounded-beta ',
+        )}>
 
-            {templates.map((template, idx) => (
-                <div
-                    onClick={() => onThemeChange(template.id)}
-                    key={idx}
-                    className="flex flex-col items-center gap-y-1 p-1 rounded-[9px] cursor-pointer"
-                    onMouseEnter={() => onThemeHover(template.id)}
-                >
-                    <div className="w-24">
-                        <EmptyCanvas
-                            options={Array(4)}
-                            template={template}
-                            className={cn(
-                                'w-full aspect-video rounded-[10px] outline-2 select-none',
-                                'outline-black/40 dark:outline-white/40',
-                                currentTheme === template.id && 'outline-alpha',
-                                'rounded-[8px] '
-                            )}
-                        />
+            <div>
+                Themes
+            </div>
+
+            <div
+                className={cn(
+                    'grid grid-cols-3 gap-3',
+                    'overflow-y-auto',
+                    className
+                )}
+            >
+                {templates.map((template, idx) => (
+                    <div
+                        onClick={() => onThemeChange(template.id)}
+                        key={idx}
+                        className="flex flex-col items-center gap-y-1 p-1 rounded-[9px] cursor-pointer"
+                        onMouseEnter={() => onThemeHover(template.id)}
+                    >
+                        <div className="w-24">
+                            <EmptyCanvas
+                                options={Array(4)}
+                                template={template}
+                                className={cn(
+                                    'w-full aspect-video rounded-[10px] outline-2 select-none',
+                                    'outline-black/40 dark:outline-white/40',
+                                    currentTheme === template.id && 'outline-alpha',
+                                    'rounded-[8px] '
+                                )}
+                            />
+                        </div>
                     </div>
-                </div>
-
-
-            ))}
+                ))}
+            </div>
         </div>
     );
 }
