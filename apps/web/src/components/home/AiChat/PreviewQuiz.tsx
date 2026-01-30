@@ -12,18 +12,23 @@ import { LiaPagerSolid } from "react-icons/lia";
 import { RxCross2 } from "react-icons/rx";
 
 interface PreviewQuizProps {
-    quiz: QuizType;
+    quiz?: QuizType;
     onPreviewClose: () => void;
+    fetchFromServer?: boolean;
+    quizId?: string;
 }
 
-export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) {
+export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, quizId }: PreviewQuizProps) {
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(
-        quiz.questions[0]!
+        quiz?.questions[0]!
     );
-    const [currentTheme, setCurrentTheme] = useState<string>(quiz.theme);
+
+    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme!);
+    const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 
-    const template = templates.find(t => t.id === currentTheme);
+    const activeTheme = previewTheme ?? currentTheme;
+    const template = templates.find(t => t.id === activeTheme);
 
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
@@ -53,22 +58,28 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
                         {themePanel && (
                             <ChangeThemePanel
                                 currentTheme={currentTheme}
-                                onThemeHover={setCurrentTheme}
+                                onThemeHover={setPreviewTheme}
                                 onThemeChange={(theme) => {
                                     setCurrentTheme(theme);
+                                    setPreviewTheme(null);
                                     setThemePanel(false);
                                 }}
                                 onClose={() => {
-                                    setCurrentTheme(quiz.theme);
+                                    setPreviewTheme(null);
                                     setThemePanel(false);
                                 }}
                             />
                         )}
                     </div>
 
-                    <div className="absolute left-1/2 -translate-x-1/2 text-4xl dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10">
-                        Previewing {quiz.questions.length}{" "}
-                        {quiz.questions.length === 1 ? "slide" : "slides"}
+                    <div
+                        className={cn(
+                            "absolute left-1/2 -translate-x-1/2 text-4xl ",
+                            "dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10",
+                        )}
+                    >
+                        Previewing {quiz?.questions.length}{" "}
+                        {quiz?.questions.length === 1 ? "slide" : "slides"}
                     </div>
 
                     <div className="flex gap-x-3">
@@ -86,13 +97,13 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
 
                 {/* TITLE */}
                 <div className="w-full py-5 px-6 rounded-beta border border-neutral-700 flex justify-center">
-                    {quiz.title}
+                    {quiz?.title}
                 </div>
 
-                <div className="flex items-start gap-x-3">
+                <div className="h-full flex items-start gap-x-3">
 
                     {/* QUESTIONS */}
-                    {quiz.questions.map((q, i) => (
+                    {quiz?.questions.map((q, i) => (
                         <div key={i} className="w-30 flex items-end gap-x-2 shrink-0">
                             <div className="text-xs">{i + 1}.</div>
                             <ToolTipComponent side="right" content={i + 1}>
@@ -128,7 +139,7 @@ export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) 
 interface ChangeThemePanelProps {
     currentTheme: string;
     onThemeChange: (theme: string) => void;
-    onThemeHover: (theme: string) => void;
+    onThemeHover: (theme: string | null) => void;
     onClose: () => void;
 }
 
@@ -158,7 +169,10 @@ function ChangeThemePanel({
             </div>
 
             {/* GRID */}
-            <div className="grid grid-cols-3 gap-3 overflow-y-auto max-h-72">
+            <div
+                className="grid grid-cols-3 gap-3 overflow-y-auto max-h-72"
+                onMouseLeave={() => onThemeHover(null)}
+            >
                 {templates.map((template) => (
                     <div
                         key={template.id}
@@ -186,3 +200,4 @@ function ChangeThemePanel({
         </div>
     );
 }
+
