@@ -68,7 +68,7 @@ export default function CanvasHeading({
             editQuestionAndBroadcast(
                 currentQuestionIndexRef.current,
                 { question: content },
-                { debounce: true },
+                { debounce: true, debounceMs: 2000 },
             );
         },
         editorProps: {

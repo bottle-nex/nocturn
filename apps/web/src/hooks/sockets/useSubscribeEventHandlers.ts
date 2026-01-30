@@ -70,6 +70,8 @@ export function useSubscribeEventHandlers() {
                 CollaboratorsHandlers.handleIncomingQuestionTap,
             [COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE]:
                 CollaboratorsHandlers.handleIncomingQuestionUpdate,
+            [COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE]:
+                CollaboratorsHandlers.handleIncomingQuizUpdate,
         };
 
         // susbcribe

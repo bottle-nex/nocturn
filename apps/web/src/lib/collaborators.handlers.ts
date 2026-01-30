@@ -1,6 +1,7 @@
 import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { QuestionType } from 'node_modules/@nocturn/types/src/prisma/schemas.prisma';
+
+import { QuestionType, QuizType } from '@nocturn/types';
 
 export default class CollaboratorsHandlers {
     static handleIncomingQuestionTap(payload: unknown) {
@@ -14,6 +15,7 @@ export default class CollaboratorsHandlers {
     }
 
     static handleIncomingQuestionUpdate(payload: unknown) {
+        console.log('Handling incoming question update from collaborator');
         const { editQuestion } = useNewQuizStore.getState();
         const data = payload as {
             questionIndex: number;
@@ -22,5 +24,16 @@ export default class CollaboratorsHandlers {
             collaboratorName: string;
         };
         editQuestion(data.questionIndex, data.question);
+    }
+
+    static handleIncomingQuizUpdate(payload: unknown) {
+
+        const { updateQuiz } = useNewQuizStore.getState();
+        const data = payload as {
+            quiz: Partial<QuizType>;
+            collaboratorId: string;
+            collaboratorName: string;
+        };
+        updateQuiz(data.quiz);
     }
 }

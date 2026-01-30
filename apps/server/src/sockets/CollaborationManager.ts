@@ -8,7 +8,9 @@ import {
     CookiePayload,
     PubSubMessageTypes,
     QuestionType,
+    QuizType,
     socket_codes,
+    TemplateEnum,
 } from '@nocturn/types';
 import WebSocket from 'ws';
 import { v4 as uuid } from 'uuid';
@@ -125,6 +127,9 @@ export default class CollaborationManager {
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
                 this.handle_question_update(ws, message.payload);
                 break;
+            case COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE:
+                this.handle_quiz_update(ws, message.payload);
+                break;
             default:
                 console.warn('Unknown message type received from collaborator:', message.type);
         }
@@ -173,8 +178,6 @@ export default class CollaborationManager {
                 return;
             }
 
-            console.log('order index tapped is : ', orderIndex);
-
             const data: PubSubMessageTypes = {
                 type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
                 payload: {
@@ -195,7 +198,6 @@ export default class CollaborationManager {
             questionIndex,
             question,
         }: { questionIndex: number; question: Partial<QuestionType> } = payload;
-        console.log('question index change is : ', questionIndex, question);
         if (!ws.user.collabSessionId) {
             console.log('closing because collab session does not exist');
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
@@ -213,6 +215,23 @@ export default class CollaborationManager {
             exclude_socket_id: ws.id,
         };
         await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
+    }
+
+    private handle_quiz_update(ws: CustomWebSocket, payload: any) {
+        if (!ws.user.collabSessionId) {
+            ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
+            return;
+        }
+        const data: PubSubMessageTypes = {
+            type: COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE,
+            payload: {
+                quiz: payload,
+                collaboratorId: ws.user.userId,
+                collaboratorName: ws.user.name,
+            },
+            exclude_socket_id: ws.id,
+        };
+        this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
     }
 
     private async validate_collaborator_in_db(user_id: string): Promise<boolean> {

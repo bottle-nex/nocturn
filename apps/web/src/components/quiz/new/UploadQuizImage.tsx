@@ -62,11 +62,10 @@ export default function UploadQuizImage() {
                             setEnableLeftView(!enableLeftView);
                             setEnableRightView(false);
                         }}
-                        className={`flex items-center justify-center w-16 h-12 rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer ${
-                            enableLeftView
-                                ? 'border-2 border-neutral-600 dark:border-neutral-500'
-                                : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                        className={`flex items-center justify-center w-16 h-12 rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer ${enableLeftView
+                            ? 'border-2 border-neutral-600 dark:border-neutral-500'
+                            : 'border border-neutral-300 dark:border-neutral-600'
+                            }`}
                     >
                         <ToolTipComponent content="Shift image to left side">
                             <div className="flex justify-center gap-x-1 items-center">
@@ -80,11 +79,10 @@ export default function UploadQuizImage() {
                             setEnableRightView(!enableRightView);
                             setEnableLeftView(false);
                         }}
-                        className={`flex items-center justify-center w-16 h-12 rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer ${
-                            enableRightView
-                                ? 'border-2 border-neutral-600 dark:border-neutral-500'
-                                : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                        className={`flex items-center justify-center w-16 h-12 rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer ${enableRightView
+                            ? 'border-2 border-neutral-600 dark:border-neutral-500'
+                            : 'border border-neutral-300 dark:border-neutral-600'
+                            }`}
                     >
                         <ToolTipComponent content="Shift image to right side">
                             <div className="flex justify-center gap-x-1 items-center">

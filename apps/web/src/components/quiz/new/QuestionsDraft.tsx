@@ -212,21 +212,19 @@ export default function QuestionsDraft() {
                 <div className="w-full grid grid-cols-2 gap-x-1.5 mt-4">
                     <div
                         onClick={() => setTimerEdit('ACTIVE_TIME')}
-                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${
-                            timerEdit === 'ACTIVE_TIME'
-                                ? 'border-2 border-neutral-600 dark:border-neutral-500'
-                                : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${timerEdit === 'ACTIVE_TIME'
+                            ? 'border-2 border-neutral-600 dark:border-neutral-500'
+                            : 'border border-neutral-300 dark:border-neutral-600'
+                            }`}
                     >
                         Question active
                     </div>
                     <div
                         onClick={() => setTimerEdit('READING_TIME')}
-                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${
-                            timerEdit === 'READING_TIME'
-                                ? 'border-2 border-neutral-600 dark:border-neutral-500'
-                                : 'border border-neutral-300 dark:border-neutral-600'
-                        }`}
+                        className={`col-span-1 text-[11px] rounded-md gap-x-1.5 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer px-3 py-2 ${timerEdit === 'READING_TIME'
+                            ? 'border-2 border-neutral-600 dark:border-neutral-500'
+                            : 'border border-neutral-300 dark:border-neutral-600'
+                            }`}
                     >
                         Question reading
                     </div>

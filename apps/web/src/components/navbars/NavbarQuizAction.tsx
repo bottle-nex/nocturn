@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 interface Option {
     name: string;
@@ -28,8 +29,9 @@ export default function NavbarQuizAction() {
     const [currentAction, setCurrentAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { session } = useUserSessionStore();
-    const { quiz, updateQuiz } = useNewQuizStore();
+    const { quiz } = useNewQuizStore();
     const { updateQuiz: updateAllQuiz } = useAllQuizsStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const router = useRouter();
 
     async function handleSaveDraft() {
@@ -44,7 +46,7 @@ export default function NavbarQuizAction() {
                 updateAllQuiz(quiz.id, {
                     status: QuizStatusEnum.CREATED,
                 });
-                updateQuiz({ status: QuizStatusEnum.CREATED });
+                updateQuizAndBroadcast({ status: QuizStatusEnum.CREATED });
                 toast.success('Draft saved');
                 return;
             }
@@ -69,7 +71,7 @@ export default function NavbarQuizAction() {
                 updateAllQuiz(quiz.id, {
                     status: QuizStatusEnum.PUBLISHED,
                 });
-                updateQuiz({ status: QuizStatusEnum.PUBLISHED });
+                updateQuizAndBroadcast({ status: QuizStatusEnum.PUBLISHED });
                 toast.success('Quiz published successfully');
                 return;
             }
@@ -94,7 +96,7 @@ export default function NavbarQuizAction() {
                 updateAllQuiz(quiz.id, {
                     status: QuizStatusEnum.LIVE,
                 });
-                updateQuiz({ status: QuizStatusEnum.LIVE });
+                updateQuizAndBroadcast({ status: QuizStatusEnum.LIVE });
                 toast.success('Quiz launched successfully');
                 router.push(`/live/${quiz.id}`);
                 return;
