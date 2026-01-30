@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import TimeDisplay from "./TimeDisplay";
+import { cn } from '@/lib/utils';
+import TimeDisplay from './TimeDisplay';
 
 interface AgentMessageProps {
     content: string;

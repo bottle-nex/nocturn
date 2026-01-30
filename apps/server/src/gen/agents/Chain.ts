@@ -325,7 +325,6 @@ export default class Chain {
                 type: STREAM.QUIZ,
                 data: quiz,
             });
-
         } catch (error) {
             console.error('error in executor: ', error);
         } finally {

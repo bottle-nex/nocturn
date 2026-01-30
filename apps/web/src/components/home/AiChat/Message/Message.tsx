@@ -11,28 +11,18 @@ interface BuilderMessageProps {
 }
 
 export default function Message({ message }: BuilderMessageProps): JSX.Element {
-
     return (
         <div className="w-full shrink-0">
             {message.role === AiQuizChatRole.USER && (
-                <UserMessage
-                    content={message.content}
-                    createdAt={message.createdAt}
-                />
+                <UserMessage content={message.content} createdAt={message.createdAt} />
             )}
 
             {message.role === AiQuizChatRole.AGENT && (
-                <AgentMessage
-                    content={message.content}
-                    createdAt={message.createdAt}
-                />
+                <AgentMessage content={message.content} createdAt={message.createdAt} />
             )}
 
             {message.role === AiQuizChatRole.SYSTEM && (
-                <SystemMessage
-                    type={message.element!} 
-                    content={message.content}
-                />
+                <SystemMessage type={message.element!} content={message.content} />
             )}
         </div>
     );

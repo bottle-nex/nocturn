@@ -87,8 +87,9 @@ export default function MyQuizzesListView({
                                 e.stopPropagation();
                                 toggleQuizSelection(quiz.id);
                             }}
-                            className={`text-dark-base flex justify-center items-center rounded-alpha cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                                }`}
+                            className={`text-dark-base flex justify-center items-center rounded-alpha cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${
+                                isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            }`}
                         >
                             {isSelected ? (
                                 <MdCheckBox className="size-6 text-indigo-700" />

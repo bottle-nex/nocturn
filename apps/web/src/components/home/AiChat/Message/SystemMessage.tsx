@@ -1,8 +1,8 @@
-import EmptyCanvas from "@/components/canvas/EmptyCanvas";
-import { templates } from "@/lib/templates";
-import { cn } from "@/lib/utils";
-import { useAiChatStore } from "@/store/home/useAiChatStore";
-import { AiMessageElement, QuizType } from "@nocturn/types";
+import EmptyCanvas from '@/components/canvas/EmptyCanvas';
+import { templates } from '@/lib/templates';
+import { cn } from '@/lib/utils';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
+import { AiMessageElement, QuizType } from '@nocturn/types';
 
 interface SystemMessageProps {
     type: AiMessageElement;
@@ -10,8 +10,6 @@ interface SystemMessageProps {
 }
 
 export default function SystemMessage({ type, content }: SystemMessageProps) {
-
-
     switch (type) {
         case AiMessageElement.QUIZ:
             return <QuizMessage />;
@@ -32,9 +30,7 @@ function TitleMessage({ title }: { title: string }) {
                         'max-w-full min-w-0',
                     )}
                 >
-                    <div className="w-full min-w-0 break-words whitespace-pre-wrap">
-                        {title}
-                    </div>
+                    <div className="w-full min-w-0 break-words whitespace-pre-wrap">{title}</div>
                 </div>
             </div>
         </div>
@@ -42,7 +38,6 @@ function TitleMessage({ title }: { title: string }) {
 }
 
 function QuizMessage() {
-
     const { quiz, preview, setPreview } = useAiChatStore();
     const template = templates.find((t) => t.id == quiz?.theme);
 

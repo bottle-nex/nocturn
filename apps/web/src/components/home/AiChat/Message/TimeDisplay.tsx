@@ -1,5 +1,4 @@
-import { formatChatTime } from "@/lib/format-chat-time";
-
+import { formatChatTime } from '@/lib/format-chat-time';
 
 export default function TimeDisplay({ date }: { date: Date }) {
     return (

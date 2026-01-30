@@ -1,15 +1,15 @@
 'use client';
 
-import EmptyCanvas from "@/components/canvas/EmptyCanvas";
-import MiniCanvas from "@/components/canvas/MiniCanvas";
-import OpacityBackground from "@/components/utility/OpacityBackground";
-import ToolTipComponent from "@/components/utility/TooltipComponent";
-import { templates } from "@/lib/templates";
-import { cn } from "@/lib/utils";
-import { QuestionType, QuizType } from "@nocturn/types";
-import { useState } from "react";
-import { LiaPagerSolid } from "react-icons/lia";
-import { RxCross2 } from "react-icons/rx";
+import EmptyCanvas from '@/components/canvas/EmptyCanvas';
+import MiniCanvas from '@/components/canvas/MiniCanvas';
+import OpacityBackground from '@/components/utility/OpacityBackground';
+import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { templates } from '@/lib/templates';
+import { cn } from '@/lib/utils';
+import { QuestionType, QuizType } from '@nocturn/types';
+import { useState } from 'react';
+import { LiaPagerSolid } from 'react-icons/lia';
+import { RxCross2 } from 'react-icons/rx';
 
 interface PreviewQuizProps {
     quiz?: QuizType;
@@ -18,17 +18,20 @@ interface PreviewQuizProps {
     quizId?: string;
 }
 
-export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, quizId }: PreviewQuizProps) {
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(
-        quiz?.questions[0]!
-    );
+export default function PreviewQuiz({
+    quiz,
+    onPreviewClose,
+    fetchFromServer,
+    quizId,
+}: PreviewQuizProps) {
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(quiz?.questions[0]!);
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme!);
     const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 
     const activeTheme = previewTheme ?? currentTheme;
-    const template = templates.find(t => t.id === activeTheme);
+    const template = templates.find((t) => t.id === activeTheme);
 
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
@@ -36,16 +39,15 @@ export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, qui
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
                     'max-h-full w-fit flex flex-col gap-y-3 p-6 rounded-beta bg-dark-base',
-                    'border border-neutral-700 text-light-alpha'
+                    'border border-neutral-700 text-light-alpha',
                 )}
             >
-
                 {/* HEADER */}
                 <div className="relative w-full flex justify-between items-center">
                     <div
                         className={cn(
                             'relative flex items-center gap-x-1 px-3 py-1.5',
-                            'rounded-beta hover:bg-dark-alpha transition cursor-pointer'
+                            'rounded-beta hover:bg-dark-alpha transition cursor-pointer',
                         )}
                         onClick={(e) => {
                             e.stopPropagation();
@@ -74,12 +76,12 @@ export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, qui
 
                     <div
                         className={cn(
-                            "absolute left-1/2 -translate-x-1/2 text-4xl ",
-                            "dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10",
+                            'absolute left-1/2 -translate-x-1/2 text-4xl ',
+                            'dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10',
                         )}
                     >
-                        Previewing {quiz?.questions.length}{" "}
-                        {quiz?.questions.length === 1 ? "slide" : "slides"}
+                        Previewing {quiz?.questions.length}{' '}
+                        {quiz?.questions.length === 1 ? 'slide' : 'slides'}
                     </div>
 
                     <div className="flex gap-x-3">
@@ -101,7 +103,6 @@ export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, qui
                 </div>
 
                 <div className="h-full flex items-start gap-x-3">
-
                     {/* QUESTIONS */}
                     {quiz?.questions.map((q, i) => (
                         <div key={i} className="w-30 flex items-end gap-x-2 shrink-0">
@@ -126,7 +127,7 @@ export default function PreviewQuiz({ quiz, onPreviewClose, fetchFromServer, qui
                             options={currentQuestion.options}
                             className={cn(
                                 'w-full aspect-video rounded-[10px] outline-2 select-none',
-                                'outline-black/40 dark:outline-white/40'
+                                'outline-black/40 dark:outline-white/40',
                             )}
                         />
                     </div>
@@ -155,10 +156,9 @@ function ChangeThemePanel({
             className={cn(
                 'absolute top-10 left-0 w-90 p-4 z-10',
                 'bg-dark-base border border-neutral-700 rounded-beta',
-                'flex flex-col gap-y-2'
+                'flex flex-col gap-y-2',
             )}
         >
-
             {/* HEADER */}
             <div className="flex justify-between items-center">
                 <span>Themes</span>
@@ -180,7 +180,7 @@ function ChangeThemePanel({
                         onMouseEnter={() => onThemeHover(template.id)}
                         className={cn(
                             'flex flex-col items-center p-1 rounded-[9px] cursor-pointer',
-                            currentTheme === template.id && 'bg-dark-alpha'
+                            currentTheme === template.id && 'bg-dark-alpha',
                         )}
                     >
                         <div className="w-24">
@@ -190,7 +190,7 @@ function ChangeThemePanel({
                                 className={cn(
                                     'w-full aspect-video rounded-[8px] outline-2 select-none',
                                     'outline-black/40 dark:outline-white/40',
-                                    currentTheme === template.id && 'outline-alpha'
+                                    currentTheme === template.id && 'outline-alpha',
                                 )}
                             />
                         </div>
@@ -200,4 +200,3 @@ function ChangeThemePanel({
         </div>
     );
 }
-

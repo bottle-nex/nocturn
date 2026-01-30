@@ -30,7 +30,11 @@ export default function AiChatBox() {
     const { session } = useUserSessionStore();
 
     const animatedPlaceholders = useTypewriterPlaceholder(
-        quiz ? revampPlaceholders : messages.length > 0 ? difficultyPlaceholders : newChatPlaceholders
+        quiz
+            ? revampPlaceholders
+            : messages.length > 0
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
@@ -132,12 +136,7 @@ export default function AiChatBox() {
                 </div>
             </ToolTipComponent>
 
-            {messageRendererPanel && (
-                <MessagesRenderer
-                    className="absolute bottom-12 "
-                />
-            )}
-
+            {messageRendererPanel && <MessagesRenderer className="absolute bottom-12 " />}
         </div>
     );
 }

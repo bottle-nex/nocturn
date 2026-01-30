@@ -17,7 +17,7 @@ import { FaRegClone } from 'react-icons/fa6';
 import { BiPencil } from 'react-icons/bi';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
-import { VscPreview } from "react-icons/vsc";
+import { VscPreview } from 'react-icons/vsc';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 
 interface MyQuizzesGridViewProps {
@@ -202,12 +202,8 @@ export default function MyQuizzesGridView({
             )}
 
             {showPreview && (
-                <PreviewQuiz
-                    quiz={quiz}
-                    onPreviewClose={() => setShowPreview(false)}
-                />
+                <PreviewQuiz quiz={quiz} onPreviewClose={() => setShowPreview(false)} />
             )}
-
         </div>
     );
 }

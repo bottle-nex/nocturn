@@ -3,7 +3,6 @@ import { AiQuizMessage, QuizType, STREAM, stream } from '@nocturn/types';
 import { CREATE_QUIZ_USING_AI } from 'routes/api_routes';
 
 export default class AiBackendAction {
-
     static async create_new_quiz(token: string, sessionId: string, instruction: string) {
         const { setLoading } = useAiChatStore.getState();
 
@@ -67,21 +66,22 @@ export default class AiBackendAction {
     }
 
     static handle_stream(stream: stream) {
-        const { appendMessage, setSessionId, appendMultipleMessages, setQuiz } = useAiChatStore.getState();
+        const { appendMessage, setSessionId, appendMultipleMessages, setQuiz } =
+            useAiChatStore.getState();
 
         switch (stream.type) {
             case STREAM.MESSAGE: {
                 appendMessage(stream.data as AiQuizMessage);
                 return;
-            };
+            }
             case STREAM.ID: {
                 setSessionId(stream.data as string);
                 return;
-            };
+            }
             case STREAM.MESSAGES: {
                 appendMultipleMessages(stream.data as AiQuizMessage[]);
                 return;
-            };
+            }
             case STREAM.QUIZ: {
                 setQuiz(stream.data as QuizType);
                 return;

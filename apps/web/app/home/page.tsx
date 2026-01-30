@@ -24,12 +24,7 @@ export default function Home() {
 
             <AiChatBox />
 
-            {preview && (
-                <PreviewQuiz
-                    quiz={quiz!} 
-                    onPreviewClose={() => setPreview(false)}
-                />
-            )}
+            {preview && <PreviewQuiz quiz={quiz!} onPreviewClose={() => setPreview(false)} />}
 
             {isTrashOpen && (
                 <div className="absolute inset-0 z-50 bg-black/30 backdrop-blur-sm">

@@ -1,11 +1,10 @@
-import { cn } from "@/lib/utils";
-import TimeDisplay from "./TimeDisplay";
+import { cn } from '@/lib/utils';
+import TimeDisplay from './TimeDisplay';
 
 interface UserMessageProps {
     content: string;
     createdAt: Date;
 }
-
 
 export default function UserMessage({ content, createdAt }: UserMessageProps) {
     return (
