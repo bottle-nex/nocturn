@@ -116,7 +116,7 @@ export default function HomeTrashPanel() {
                             <div className="flex gap-x-2 items-center">
                                 <div
                                     className={cn(
-                                        'relative w-md h-10 rounded-[6px]',
+                                        'relative w-md h-10 rounded-beta',
                                         'border-dark-base dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                                     )}
                                 >
@@ -125,7 +125,7 @@ export default function HomeTrashPanel() {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className={cn(
-                                            'h-full w-full pl-10 rounded-[6px]',
+                                            'h-full w-full pl-10 rounded-beta',
                                             'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
                                             'dark:!bg-dark-base !bg-light-base border-neutral-800',
                                         )}
@@ -139,7 +139,7 @@ export default function HomeTrashPanel() {
                                 <Button
                                     onClick={handleDeleteAllTrashedQuizzes}
                                     className={cn(
-                                        'rounded-[4px] h-10 bg-pink-700 hover:bg-pink-700/80 tracking-wide text-light-base flex items-center text-[13px] shadow-sm',
+                                        'rounded-alpha h-10 bg-pink-700 hover:bg-pink-700/80 tracking-wide text-light-base flex items-center text-[13px] shadow-sm',
                                     )}
                                 >
                                     <IoTrashBinOutline className="mb-px size-4" />
@@ -183,7 +183,7 @@ export default function HomeTrashPanel() {
                                                                     e.stopPropagation();
                                                                     handleRestoreQuiz(quiz.id);
                                                                 }}
-                                                                className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                                                className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                                                             >
                                                                 <IoMdRefresh
                                                                     style={{
@@ -201,7 +201,7 @@ export default function HomeTrashPanel() {
                                                                         quiz.id,
                                                                     );
                                                                 }}
-                                                                className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                                                className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                                                             >
                                                                 <PiTrashSimple className="size-5 stroke-2" />
                                                             </div>
@@ -239,29 +239,29 @@ export default function HomeTrashPanel() {
                                                             </span>
                                                             {quiz.daysLeftUntilPermanentDeletion !=
                                                                 null && (
-                                                                <>
-                                                                    <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
-                                                                    <span
-                                                                        className={cn(
-                                                                            'text-[13px] font-medium',
-                                                                            quiz.daysLeftUntilPermanentDeletion <=
-                                                                                3
-                                                                                ? 'text-red-500 dark:text-red-400'
-                                                                                : 'dark:text-light-base/60 text-dark-base/80',
-                                                                        )}
-                                                                    >
-                                                                        {
-                                                                            quiz.daysLeftUntilPermanentDeletion
-                                                                        }{' '}
-                                                                        day
-                                                                        {quiz.daysLeftUntilPermanentDeletion !==
-                                                                        1
-                                                                            ? 's'
-                                                                            : ''}{' '}
-                                                                        left
-                                                                    </span>
-                                                                </>
-                                                            )}
+                                                                    <>
+                                                                        <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
+                                                                        <span
+                                                                            className={cn(
+                                                                                'text-[13px] font-medium',
+                                                                                quiz.daysLeftUntilPermanentDeletion <=
+                                                                                    3
+                                                                                    ? 'text-red-500 dark:text-red-400'
+                                                                                    : 'dark:text-light-base/60 text-dark-base/80',
+                                                                            )}
+                                                                        >
+                                                                            {
+                                                                                quiz.daysLeftUntilPermanentDeletion
+                                                                            }{' '}
+                                                                            day
+                                                                            {quiz.daysLeftUntilPermanentDeletion !==
+                                                                                1
+                                                                                ? 's'
+                                                                                : ''}{' '}
+                                                                            left
+                                                                        </span>
+                                                                    </>
+                                                                )}
                                                         </div>
                                                     </div>
                                                 </div>

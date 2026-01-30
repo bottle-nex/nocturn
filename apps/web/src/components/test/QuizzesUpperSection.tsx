@@ -41,14 +41,14 @@ export default function QuizzesUpperSection({
             <div className="flex justify-between gap-x-4 w-full">
                 <div
                     className={cn(
-                        'relative w-md h-11 rounded-[6px]',
+                        'relative w-md h-11 rounded-beta',
                         'border-dark-base dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                     )}
                 >
                     <Input
                         placeholder="search quizzes"
                         className={cn(
-                            'h-full w-full pl-10 rounded-[6px]',
+                            'h-full w-full pl-10 rounded-beta',
                             'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
                             'dark:!bg-dark-base !bg-light-base border-neutral-800',
                         )}

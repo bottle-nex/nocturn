@@ -90,7 +90,7 @@ export default function MyQuizzesGridView({
             >
                 <div
                     onClick={() => toggleQuizSelection(quiz.id)}
-                    className="text-dark-base flex justify-center items-center rounded-[4px] cursor-pointer"
+                    className="text-dark-base flex justify-center items-center rounded-alpha cursor-pointer"
                 >
                     {isSelected ? (
                         <MdCheckBox className="size-6 text-indigo-700" />
@@ -108,7 +108,7 @@ export default function MyQuizzesGridView({
                         <ToolTipComponent content="results">
                             <div
                                 onClick={() => router.push(`/new/${quiz.id}`)}
-                                className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                             >
                                 <PiPresentationChart className="size-5" />
                             </div>
@@ -118,7 +118,7 @@ export default function MyQuizzesGridView({
                     <ToolTipComponent content="rename">
                         <div
                             onClick={() => setShowQuizTitleChangePanel((prev) => !prev)}
-                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <BiPencil className="size-5" />
                         </div>
@@ -127,7 +127,7 @@ export default function MyQuizzesGridView({
                     <ToolTipComponent content="preview">
                         <div
                             onClick={() => setShowPreview(true)}
-                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <VscPreview className="size-5" />
                         </div>
@@ -136,7 +136,7 @@ export default function MyQuizzesGridView({
                     <ToolTipComponent content="duplicate">
                         <div
                             onClick={() => handleDuplicateQuiz(quiz.id)}
-                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <FaRegClone className="size-4" />
                         </div>
@@ -148,7 +148,7 @@ export default function MyQuizzesGridView({
                                 toggleQuizSelection(quiz.id);
                                 handleDeleteQuiz(quiz.id);
                             }}
-                            className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-[4px] ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <PiTrashSimple className="size-5 stroke-3" />
                         </div>
@@ -203,7 +203,7 @@ export default function MyQuizzesGridView({
 
             {showPreview && (
                 <PreviewQuiz
-                    quiz={quiz} 
+                    quiz={quiz}
                     onPreviewClose={() => setShowPreview(false)}
                 />
             )}

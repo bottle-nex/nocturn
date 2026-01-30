@@ -80,7 +80,7 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
     return (
         <span
             className={cn(
-                `inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-medium ${config.stripColor} text-white', ${className}`,
+                `inline-flex items-center px-2.5 py-1 rounded-alpha text-xs font-medium ${config.stripColor} text-white', ${className}`,
             )}
         >
             {config.label}

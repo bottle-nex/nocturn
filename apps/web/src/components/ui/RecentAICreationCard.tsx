@@ -15,10 +15,10 @@ export default function RecentAICreatedCard({
     const template = templates.find((t) => t.id === theme);
 
     return (
-        <div className="w-full h-16 flex gap-x-2 px-2 py-2 hover:bg-neutral-900 transition cursor-pointer rounded-[4px]">
+        <div className="w-full h-16 flex gap-x-2 px-2 py-2 hover:bg-neutral-900 transition cursor-pointer rounded-alpha">
             {/* <div
                 className={cn(
-                        "h-full w-12 rounded-[4px] ",
+                        "h-full w-12 rounded-alpha ",
                     )}
                 style={{ backgroundColor: template?.background_color }}
             ></div> */}

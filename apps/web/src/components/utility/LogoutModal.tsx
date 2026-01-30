@@ -43,7 +43,7 @@ export default function LogoutModal() {
                 </div>
 
                 <div className="p-6 flex flex-col ">
-                    <div className="font-semibold text-ndarkest px-2 py-px text-sm rounded-[4px] mb-1 text-center">
+                    <div className="font-semibold text-ndarkest px-2 py-px text-sm rounded-alpha mb-1 text-center">
                         NOCTURN
                     </div>
                     <div className="text-ndarkest text-2xl font-bold mb-1 text-center">

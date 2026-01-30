@@ -124,7 +124,7 @@ export default function HomeRightUpperSection() {
             <div
                 ref={containerRef}
                 className={cn(
-                    'relative max-w-sm w-full h-11 rounded-[6px]',
+                    'relative max-w-sm w-full h-11 rounded-beta',
                     'border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                 )}
             >
@@ -135,7 +135,7 @@ export default function HomeRightUpperSection() {
                     placeholder="Start creating quiz with AI..."
                     onFocus={() => setCommonPanel(true)}
                     className={cn(
-                        'h-full w-full pl-10 rounded-[6px]',
+                        'h-full w-full pl-10 rounded-beta',
                         'placeholder:text-gamma/40 dark:placeholder:text-neutral-500',
                     )}
                     onKeyDown={handleInputKeyDown}
@@ -161,7 +161,7 @@ export default function HomeRightUpperSection() {
                 {commonPanel && (
                     <div
                         className={cn(
-                            'absolute z-50 top-12 w-full rounded-[6px]',
+                            'absolute z-50 top-12 w-full rounded-beta',
                             'shadow-md px-2 py-3',
                             'dark:bg-zinc-800 dark:text-white',
                             'flex flex-col gap-y-2',
