@@ -123,7 +123,11 @@ export default function AiChatBox() {
                 </div>
             </ToolTipComponent>
 
-            {messageRendererPanel && <MessagesRenderer className="absolute bottom-12 " />}
+            {messageRendererPanel && (
+                <MessagesRenderer
+                    className="absolute bottom-12 "
+                />
+            )}
         </div>
     );
 }

@@ -22,15 +22,20 @@ export default function MessagesRenderer({ className = '' }: MessagesRendererPro
 
     return (
         <div
+            data-lenis-prevent
             className={cn(
                 'max-w-87.5 w-full h-130',
                 'border border-neutral-800 rounded-xl bg-dark-alpha',
-                'flex flex-col min-h-0 overflow-hidden',
+                'flex flex-col min-h-0 bg-red-600',
+                'overlfow-y-auto overflow-x-hidden',
                 className,
             )}
         >
             <div
-            className="flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
+                data-lenis-prevent
+                className={cn(
+                    "flex-1 flex flex-col justify-end gap-y-1 p-2 overflow-y-auto overflow-x-hidden min-h-0 ",
+                )}>
                 {messages.map((m, i) => (
                     <Message key={m.id ?? i} message={m} loading={false} />
                 ))}
