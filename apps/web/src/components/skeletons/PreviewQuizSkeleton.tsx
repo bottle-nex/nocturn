@@ -2,6 +2,9 @@
 
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { cn } from '@/lib/utils';
+import { LiaPagerSolid } from 'react-icons/lia';
+import ChangeThemePanel from '../home/AiChat/ChangeThemePanel';
+import { useState } from 'react';
 
 interface PreviewQuizSkeletonProps {
     onPreviewClose?: () => void;
@@ -10,6 +13,9 @@ interface PreviewQuizSkeletonProps {
 export default function PreviewQuizSkeleton({
     onPreviewClose,
 }: PreviewQuizSkeletonProps) {
+
+    const [themePanel, setThemePanel] = useState<boolean>(false);
+
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
             <div
@@ -22,10 +28,37 @@ export default function PreviewQuizSkeleton({
                 {/* HEADER SKELETON */}
                 <div className="relative w-full flex justify-between items-center h-10">
                     {/* Theme Button Placeholder */}
-                    <div className="h-9 w-36 rounded-beta bg-neutral-800 animate-pulse" />
+                    <div
+                        className={cn(
+                            'relative flex items-center gap-x-1 px-3 py-1.5',
+                            'rounded-beta hover:bg-dark-alpha transition cursor-pointer',
+                        )}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setThemePanel(true);
+                        }}
+                    >
+                        <LiaPagerSolid size={20} />
+                        <span>Change theme</span>
+
+                        {themePanel && (
+                            <ChangeThemePanel
+                                onClose={() => {
+                                    setThemePanel(false);
+                                }}
+                            />
+                        )}
+                    </div>
 
                     {/* Center Text Placeholder */}
-                    <div className="absolute left-1/2 -translate-x-1/2 h-8 w-48 rounded-beta bg-neutral-800 animate-pulse" />
+                    <div
+                        className={cn(
+                            'absolute left-1/2 -translate-x-1/2 text-4xl ',
+                            'dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10',
+                        )}
+                    >
+                        Previewing slides
+                    </div>
 
                     {/* Action Buttons Placeholder */}
                     <div className="flex gap-x-3">
@@ -49,7 +82,7 @@ export default function PreviewQuizSkeleton({
                 {/* CONTENT SKELETON */}
                 <div className="h-full flex items-start gap-x-3">
                     {/* QUESTIONS SIDEBAR LIST (Simulating 4 slides) */}
-                    <div className="flex flex-col gap-y-3 shrink-0">
+                    <div className="h-85 flex flex-col gap-y-3 shrink-0">
                         {Array.from({ length: 4 }).map((_, i) => (
                             <div key={i} className="w-30 flex items-end gap-x-2">
                                 {/* Number */}

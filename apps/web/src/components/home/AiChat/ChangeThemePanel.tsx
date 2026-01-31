@@ -6,9 +6,9 @@ import { RxCross2 } from "react-icons/rx";
 
 
 interface ChangeThemePanelProps {
-    currentTheme: string;
-    onThemeChange: (theme: string) => void;
-    onThemeHover: (theme: string | null) => void;
+    currentTheme?: string;
+    onThemeChange?: (theme: string) => void;
+    onThemeHover?: (theme: string | null) => void;
     onClose: () => void;
 }
 
@@ -37,13 +37,13 @@ export default function ChangeThemePanel({
 
             <div
                 className="grid grid-cols-3 gap-3 overflow-y-auto max-h-72"
-                onMouseLeave={() => onThemeHover(null)}
+                onMouseLeave={() => onThemeHover?.(null)}
             >
                 {templates.map((template) => (
                     <div
                         key={template.id}
-                        onClick={() => onThemeChange(template.id)}
-                        onMouseEnter={() => onThemeHover(template.id)}
+                        onClick={() => onThemeChange?.(template.id)}
+                        onMouseEnter={() => onThemeHover?.(template.id)}
                         className={cn(
                             'flex flex-col items-center p-1 rounded-[9px] cursor-pointer',
                             currentTheme === template.id && 'bg-dark-alpha'

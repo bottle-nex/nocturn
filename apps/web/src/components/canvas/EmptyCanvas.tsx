@@ -10,6 +10,7 @@ interface EmptyCanvasProps {
     template: Template;
     className?: string;
     onClick?: () => void;
+    noTruncate?: boolean;
 }
 
 export default function EmptyCanvas({
@@ -18,6 +19,7 @@ export default function EmptyCanvas({
     onClick,
     question,
     options = [],
+    noTruncate = false,
 }: EmptyCanvasProps) {
     const barColors = template.bars || [];
     const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -58,7 +60,10 @@ export default function EmptyCanvas({
                 <div className="absolute h-full w-full z-2 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
                         style={{ color: template.text_color }}
-                        className="truncate max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1"
+                        className={cn(
+                            "max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1",
+                            !noTruncate && 'truncate',
+                        )}
                     >
                         Q. {question}
                     </div>
@@ -85,7 +90,10 @@ export default function EmptyCanvas({
                                     />
                                     <span
                                         style={{ color: template.text_color }}
-                                        className="mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] truncate text-center w-8 sm:w-10 md:w-12"
+                                        className={cn(
+                                            "mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] text-center w-8 sm:w-10 md:w-12",
+                                            !noTruncate && 'truncate',
+                                        )}
                                     >
                                         <span className="font-semibold">
                                             {getOptionLetter(idx)}.

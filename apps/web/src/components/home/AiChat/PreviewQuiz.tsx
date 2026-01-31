@@ -188,6 +188,7 @@ function PreviewQuizWithData({
                                 'w-full aspect-video rounded-[10px] outline-2 select-none',
                                 'outline-black/40 dark:outline-white/40'
                             )}
+                            noTruncate
                         />
                     </div>
                 </div>
