@@ -29,8 +29,15 @@ export default function PreviewQuizSkeleton({
 
                     {/* Action Buttons Placeholder */}
                     <div className="flex gap-x-3">
-                        <div className="h-9 w-20 rounded-beta bg-neutral-800 animate-pulse" />
-                        <div className="h-9 w-24 rounded-beta bg-neutral-800 animate-pulse" />
+                        <div
+                            className="px-3 py-1.5 rounded-beta bg-light-alpha text-dark-alpha cursor-pointer"
+                            onClick={onPreviewClose}
+                        >
+                            Cancel
+                        </div>
+                        <div className="px-3 py-1.5 rounded-beta bg-alpha text-light-alpha cursor-pointer">
+                            Continue
+                        </div>
                     </div>
                 </div>
 

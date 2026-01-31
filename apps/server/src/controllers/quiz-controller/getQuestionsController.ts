@@ -34,6 +34,8 @@ export default async function getQuestionController(req: Request, res: Response)
                 ],
             },
             select: {
+                title: true,
+                theme: true,
                 questions: {
                     select: {
                         question: true,
@@ -49,13 +51,18 @@ export default async function getQuestionController(req: Request, res: Response)
             return;
         }
 
-        ResponseWriter.success(
-            res,
-            {
-                quiz,
-            },
-            'successfull fetched quiz questions',
-        );
+        setTimeout(() => {
+            ResponseWriter.success(
+                res,
+                {
+                    title: quiz.title,
+                    questions: quiz.questions,
+                    theme: quiz.theme,
+                },
+                'successfull fetched quiz questions',
+            );
+        }, 3000);
+
         return;
     } catch (error) {
         console.error('error in get questions controller: ', error);

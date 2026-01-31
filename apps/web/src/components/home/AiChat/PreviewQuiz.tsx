@@ -1,18 +1,25 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import EmptyCanvas from '@/components/canvas/EmptyCanvas';
 import MiniCanvas from '@/components/canvas/MiniCanvas';
+import PreviewQuizSkeleton from '@/components/skeletons/PreviewQuizSkeleton';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
+
+import QuizActions from '@/lib/backend/home/quiz-actions';
 import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
+
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { QuestionType, QuizType, TemplateEnum } from '@nocturn/types';
-import { useState } from 'react';
+
 import { LiaPagerSolid } from 'react-icons/lia';
 import { RxCross2 } from 'react-icons/rx';
 
 interface PreviewQuizProps {
-    quiz?: QuizType;
+    quiz?: Partial<QuizType>;
     onPreviewClose: () => void;
     fetchFromServer?: boolean;
     quizId?: string;
@@ -21,8 +28,58 @@ interface PreviewQuizProps {
 export default function PreviewQuiz({
     quiz,
     onPreviewClose,
+    fetchFromServer = false,
+    quizId,
 }: PreviewQuizProps) {
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions[0] || null);
+    const { session } = useUserSessionStore();
+
+    const [loading, setLoading] = useState<boolean>(fetchFromServer);
+    const [quizData, setQuizData] = useState<Partial<QuizType> | undefined>(quiz);
+
+    async function fetchQuizData() {
+        if (!session?.user.token || !quizId) return;
+
+        try {
+            setLoading(true);
+
+            const data = await QuizActions.get_quiz_questions(
+                session.user.token,
+                quizId
+            );
+
+            setQuizData(data);
+        } catch (err) {
+            console.error('Failed to fetch quiz data', err);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (!fetchFromServer) return;
+        fetchQuizData();
+    }, [fetchFromServer, quizId]);
+
+
+    if (loading) {
+        return <PreviewQuizSkeleton onPreviewClose={onPreviewClose} />;
+    }
+
+    if (!quizData) return null;
+
+    return (
+        <PreviewQuizWithData
+            quiz={quizData}
+            onPreviewClose={onPreviewClose}
+        />
+    );
+}
+
+function PreviewQuizWithData({
+    quiz,
+    onPreviewClose,
+}: PreviewQuizProps) {
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions?.[0] || null);
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
     const [previewTheme, setPreviewTheme] = useState<string | null>(null);
@@ -40,7 +97,6 @@ export default function PreviewQuiz({
                     'border border-neutral-700 text-light-alpha',
                 )}
             >
-                {/* HEADER */}
                 <div className="relative w-full flex justify-between items-center">
                     <div
                         className={cn(
@@ -78,8 +134,7 @@ export default function PreviewQuiz({
                             'dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10',
                         )}
                     >
-                        Previewing {quiz?.questions.length}{' '}
-                        {quiz?.questions.length === 1 ? 'slide' : 'slides'}
+                        Previewing slides
                     </div>
 
                     <div className="flex gap-x-3">
@@ -95,46 +150,52 @@ export default function PreviewQuiz({
                     </div>
                 </div>
 
-                {/* TITLE */}
                 <div className="w-full py-5 px-6 rounded-beta border border-neutral-700 flex justify-center">
                     {quiz?.title}
                 </div>
 
-                <div className="h-full flex items-start gap-x-3">
-                    {/* QUESTIONS */}
-                    {quiz?.questions.map((q, i) => (
-                        <div key={i} className="w-30 flex items-end gap-x-2 shrink-0">
-                            <div className="text-xs">{i + 1}.</div>
-                            <ToolTipComponent side="right" content={i + 1}>
-                                <MiniCanvas
-                                    onClick={() => setCurrentQuestion(q)}
-                                    currentQuestionIndex={i}
-                                    orderIndex={q.orderIndex}
-                                    template={template}
-                                    question={q}
-                                />
-                            </ToolTipComponent>
-                        </div>
-                    ))}
+                <div className="flex items-stretch gap-x-3">
+                    <div
+                        data-lenis-prevent
+                        className="flex flex-col gap-y-3 shrink-0 w-30 max-h-85 overflow-y-auto"
+                    >
+                        {quiz?.questions?.map((q, i) => (
+                            <div
+                                key={i}
+                                className="flex items-end gap-x-2"
+                            >
+                                <div className="text-xs mb-1">{i + 1}.</div>
 
-                    {/* CANVAS */}
-                    <div className="w-150">
+                                <ToolTipComponent side="right" content={i + 1}>
+                                    <MiniCanvas
+                                        onClick={() => setCurrentQuestion(q)}
+                                        currentQuestionIndex={i}
+                                        orderIndex={q.orderIndex}
+                                        template={template}
+                                        question={q}
+                                    />
+                                </ToolTipComponent>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="w-[600px]">
                         <EmptyCanvas
                             template={template!}
                             question={currentQuestion?.question}
                             options={currentQuestion?.options}
                             className={cn(
                                 'w-full aspect-video rounded-[10px] outline-2 select-none',
-                                'outline-black/40 dark:outline-white/40',
+                                'outline-black/40 dark:outline-white/40'
                             )}
                         />
                     </div>
                 </div>
+
             </div>
         </OpacityBackground>
     );
 }
-
 interface ChangeThemePanelProps {
     currentTheme: string;
     onThemeChange: (theme: string) => void;
@@ -152,12 +213,11 @@ function ChangeThemePanel({
         <div
             onClick={(e) => e.stopPropagation()}
             className={cn(
-                'absolute top-10 left-0 w-90 p-4 z-10',
+                'absolute top-10 left-0 w-[360px] p-4 z-10',
                 'bg-dark-base border border-neutral-700 rounded-beta',
-                'flex flex-col gap-y-2',
+                'flex flex-col gap-y-2'
             )}
         >
-            {/* HEADER */}
             <div className="flex justify-between items-center">
                 <span>Themes</span>
                 <RxCross2
@@ -166,7 +226,6 @@ function ChangeThemePanel({
                 />
             </div>
 
-            {/* GRID */}
             <div
                 className="grid grid-cols-3 gap-3 overflow-y-auto max-h-72"
                 onMouseLeave={() => onThemeHover(null)}
@@ -178,7 +237,7 @@ function ChangeThemePanel({
                         onMouseEnter={() => onThemeHover(template.id)}
                         className={cn(
                             'flex flex-col items-center p-1 rounded-[9px] cursor-pointer',
-                            currentTheme === template.id && 'bg-dark-alpha',
+                            currentTheme === template.id && 'bg-dark-alpha'
                         )}
                     >
                         <div className="w-24">
@@ -188,7 +247,7 @@ function ChangeThemePanel({
                                 className={cn(
                                     'w-full aspect-video rounded-[8px] outline-2 select-none',
                                     'outline-black/40 dark:outline-white/40',
-                                    currentTheme === template.id && 'outline-alpha',
+                                    currentTheme === template.id && 'outline-alpha'
                                 )}
                             />
                         </div>
