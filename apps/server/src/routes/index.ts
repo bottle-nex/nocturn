@@ -101,4 +101,6 @@ router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.pr
 // ai routes
 router.post('/ai/create-new-quiz', authMiddleware, chatWithAiController);
 
+router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionResults);
+
 export default router;
