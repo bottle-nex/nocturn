@@ -19,6 +19,7 @@ import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
 import { VscPreview } from 'react-icons/vsc';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
+import PreviewQuizSkeleton from '../skeletons/PreviewQuizSkeleton';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
@@ -202,7 +203,7 @@ export default function MyQuizzesGridView({
             )}
 
             {showPreview && (
-                <PreviewQuiz quiz={quiz} onPreviewClose={() => setShowPreview(false)} />
+                <PreviewQuizSkeleton onPreviewClose={() => setShowPreview(false)} />
             )}
         </div>
     );

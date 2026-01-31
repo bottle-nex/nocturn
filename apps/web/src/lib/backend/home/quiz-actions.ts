@@ -8,6 +8,7 @@ import {
     DUPLICATE_QUIZ_URL,
     GET_ALL_OWNER_QUIZ_URL,
     GET_FAVOURITE_QUIZZES_URL,
+    GET_QUIZ_QUESTIONS,
     GET_TRASHED_QUIZZES_URL,
     PERMANENTLY_DELETE_QUIZ_URL,
     RESTORE_TRASHED_QUIZ_URL,
@@ -239,6 +240,26 @@ export default class QuizActions {
             }
         } catch (error) {
             console.error('Error in duplicating quiz: ', error);
+            return;
+        }
+    }
+
+    static async get_quiz_questions(token: string, quizId: string) {
+        try {
+            const { data } = await axios.get(`${GET_QUIZ_QUESTIONS}/${quizId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if(!data.success) {
+                return;
+            }
+
+            return data.data;
+
+        } catch (error) {
+            console.error('error in fetching quiz questions: ');
             return;
         }
     }
