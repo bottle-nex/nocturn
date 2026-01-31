@@ -1,4 +1,5 @@
 'use client';
+
 import { cn } from '@/lib/utils';
 import NavItems from './NavItems';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,21 +7,17 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
 import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
-import { useJoinQuizStore } from '@/store/home/useJoinQuizStore';
 import NavInputBox from './NavInputBox';
 import { useEffect, useState } from 'react';
+import userQuizAction from '@/lib/backend/user-quiz-action';
 
 interface NavItem {
     label: string;
     link: string;
-    onClick?: () => void;
 }
 
 const navItems: NavItem[] = [
-    {
-        label: 'Home',
-        link: '/home',
-    },
+    { label: 'Home', link: '/home' },
     { label: 'Roles', link: '/roles' },
     { label: 'Features', link: '/features' },
     { label: 'About', link: '/about' },
@@ -28,22 +25,20 @@ const navItems: NavItem[] = [
 
 export default function NavbarTest() {
     const { session, setOpenSigninModal, setOpenLogoutModal } = useUserSessionStore();
+
     const isLoggedIn = !!session?.user?.id;
-    const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(true);
-    const [lastScrollY, setLastScrollY] = useState<number>(0);
-    const { showJoinInput, toggleJoinInput } = useJoinQuizStore();
     const router = useRouter();
+
+    const [showJoinInput, setShowJoinInput] = useState(false);
+    const [quizCode, setQuizCode] = useState('');
+
+    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
 
     useEffect(() => {
         function handleScroll() {
             const currentScrollY = window.scrollY;
-
-            if (currentScrollY < lastScrollY) {
-                setIsNavbarVisible(true);
-            } else if (currentScrollY > lastScrollY) {
-                setIsNavbarVisible(false);
-            }
-
+            setIsNavbarVisible(currentScrollY < lastScrollY);
             setLastScrollY(currentScrollY);
         }
 
@@ -57,7 +52,24 @@ export default function NavbarTest() {
         } else {
             setOpenSigninModal(true);
         }
+        // isLoggedIn ? setOpenLogoutModal(true) : setOpenSigninModal(true);
     }
+
+    async function handleJoinQuiz() {
+        if (!quizCode.trim()) return;
+
+        try {
+            const quizId = await userQuizAction.joinQuiz(quizCode.trim());
+            setQuizCode('');
+            setShowJoinInput(false);
+
+            if (!quizId) return;
+            router.push(`/live/${quizId}`);
+        } catch (err) {
+            console.error('Failed to join quiz', err);
+        }
+    }
+
     return (
         <div
             className={cn(
@@ -67,113 +79,60 @@ export default function NavbarTest() {
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
-            <div className="text-black text-2xl tracking-wide font-semibold">Nocturn</div>
+            <div className="text-black text-2xl font-semibold">Nocturn</div>
 
-            <div className="flex">
-                <NavItems items={navItems} className="absolute left-1/2 top-4.5 -translate-x-1/2" />
-            </div>
+            <NavItems items={navItems} className="absolute left-1/2 top-4.5 -translate-x-1/2" />
 
-            <div className="flex gap-x-3 text-black text-2xl items-center">
+            <div className="flex gap-x-3 items-center">
                 <div className="relative flex items-center">
                     <motion.button
-                        initial={{ opacity: 0, filter: 'blur(10px)' }}
-                        animate={{ opacity: 1, filter: 'blur(0px)' }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 400,
-                            damping: 40,
-                        }}
-                        onClick={toggleJoinInput}
-                        className={cn('relative z-10 cursor-pointer focus:outline-none')}
+                        onClick={() => setShowJoinInput((v) => !v)}
+                        className="relative z-10"
                     >
                         <motion.div
-                            whileTap={{
-                                scale: 0.98,
-                                y: 0,
-                            }}
-                            initial={{ opacity: 0, scale: 0.7, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 320,
-                                damping: 18,
-                                mass: 0.7,
-                            }}
-                            className={cn(
-                                '!px-5.5 h-12',
-                                'rounded-full text-base',
-                                'bg-[#FFC221] hover:bg-[#FFC221] text-black tracking-wide',
-                                'flex items-center gap-x-2 cursor-pointer',
-                            )}
+                            onClick={handleJoinQuiz}
+                            className="px-5.5 h-12 rounded-full bg-[#FFC221] text-black flex items-center cursor-pointer"
                         >
-                            <span>Enter Quiz</span>
+                            Enter Quiz
                         </motion.div>
                     </motion.button>
 
-                    <AnimatePresence>{showJoinInput && <NavInputBox />}</AnimatePresence>
+                    <AnimatePresence>
+                        {showJoinInput && (
+                            <NavInputBox
+                                value={quizCode}
+                                onChange={setQuizCode}
+                                onEnter={handleJoinQuiz}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
-                {session?.user.token ? (
-                    <div className="flex gap-x-2.5">
-                        <motion.button
-                            whileTap={{
-                                scale: 0.98,
-                                y: 0,
-                            }}
-                            initial={{ opacity: 0, scale: 0.7, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 320,
-                                damping: 18,
-                                mass: 0.7,
-                            }}
-                            className={cn(
-                                'bg-[#1b1b1b] text-white',
-                                '!px-5.5 h-12',
-                                'rounded-full text-base',
-                                'hover:bg-[#1b1b1b] cursor-pointer',
-                            )}
+
+                {session?.user?.token ? (
+                    <div className="flex gap-x-2">
+                        <button
+                            className="bg-[#1b1b1b] text-white px-5.5 h-12 rounded-full"
                             onClick={() => router.push('/home')}
                         >
                             Get Started
-                        </motion.button>
+                        </button>
+
                         <div
-                            className="h-12 w-12 relative rounded-full border-2 border-[#1b1b1b] overflow-hidden flex justify-center items-center text-tprime cursor-pointer"
+                            className="h-12 w-12 relative rounded-full border overflow-hidden cursor-pointer"
                             onClick={handleAuthClick}
                         >
-                            <Image
-                                src={session.user.image}
-                                alt={session.user.name}
-                                fill
-                                className="cursor-pointer"
-                            />
+                            <Image src={session.user.image} alt={session.user.name} fill />
                         </div>
                     </div>
                 ) : (
-                    <motion.button
-                        whileTap={{
-                            scale: 0.98,
-                            y: 0,
-                        }}
-                        initial={{ opacity: 0, scale: 0.7, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 320,
-                            damping: 18,
-                            mass: 0.7,
-                        }}
-                        className={cn(
-                            'bg-[#1b1b1b] text-white tracking-wide',
-                            '!px-5.5 h-12',
-                            'rounded-full text-base',
-                            'hover:bg-[#1b1b1b] cursor-pointer',
-                        )}
+                    <button
+                        className="bg-[#1b1b1b] text-white px-5.5 h-12 rounded-full"
                         onClick={() => setOpenSigninModal(true)}
                     >
                         Sign In
-                    </motion.button>
+                    </button>
                 )}
+
                 <LogoutModal />
             </div>
         </div>
