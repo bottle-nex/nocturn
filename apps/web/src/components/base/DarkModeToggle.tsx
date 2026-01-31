@@ -6,7 +6,7 @@ export default function DarkModeToggle() {
     return (
         <AnimatedThemeToggler
             className="flex items-center py-2 rounded cursor-pointer text-xl"
-            duration={200}
+            duration={600}
         />
     );
 }

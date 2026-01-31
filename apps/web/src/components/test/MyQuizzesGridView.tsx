@@ -84,7 +84,7 @@ export default function MyQuizzesGridView({
         >
             <div
                 className={cn(
-                    'absolute top-5 z-50 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
+                    'absolute top-5 z-5 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
                     isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                 )}
             >
@@ -101,7 +101,7 @@ export default function MyQuizzesGridView({
 
                 <div className="flex gap-x-2.5 items-center">
                     {quiz.status === QuizStatusEnum.LIVE && (
-                        <QuizStatusTicker className="!rounded-[px]" status={quiz.status} />
+                        <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
                     )}
 
                     {quiz.status === QuizStatusEnum.COMPLETED && (
@@ -161,7 +161,7 @@ export default function MyQuizzesGridView({
                 question={quiz.questions[0].question}
                 options={quiz.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[8px] outline-2 select-none',
+                    'w-full aspect-video rounded-[8px] outline-2 select-none ',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
                 template={currTemplate}
