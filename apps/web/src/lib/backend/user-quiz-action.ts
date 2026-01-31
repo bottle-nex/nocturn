@@ -6,8 +6,12 @@ import {
 } from 'routes/api_routes';
 import { toast } from 'sonner';
 
+interface JoinQuizResponse {
+    quizId: string;
+}
+
 class UserQuizAction {
-    public async joinQuiz(code: string): Promise<unknown> {
+    public async joinQuiz(code: string): Promise<JoinQuizResponse | null> {
         switch (code.length) {
             case 6:
                 return await this.spectatorJoinQuiz(code);
@@ -15,19 +19,19 @@ class UserQuizAction {
                 return await this.participantJoinQuiz(code);
             default:
                 toast.error('Please enter a valid code');
-                return;
+                return null;
         }
     }
 
-    private async participantJoinQuiz(code: string): Promise<unknown> {
+    private async participantJoinQuiz(code: string): Promise<JoinQuizResponse | null> {
         try {
             if (!code) {
                 toast.error('Please enter a code');
-                return;
+                return null;
             }
             if (code.length !== 12) {
                 toast.error('Please enter a valid code');
-                return;
+                return null;
             }
 
             const { data } = await axios.post(
@@ -41,21 +45,22 @@ class UserQuizAction {
                 return data.data;
             }
             toast.error(data.message);
-            return;
+            return null;
         } catch (err) {
             console.error('Error while joining quiz', err);
+            return null;
         }
     }
 
-    private async spectatorJoinQuiz(code: string): Promise<unknown> {
+    private async spectatorJoinQuiz(code: string): Promise<JoinQuizResponse | null> {
         try {
             if (!code) {
                 toast.error('Please enter a code');
-                return;
+                return null;
             }
             if (code.length !== 6) {
                 toast.error('Please enter a valid code');
-                return;
+                return null;
             }
 
             const { data } = await axios.post(
@@ -69,9 +74,10 @@ class UserQuizAction {
                 return data.data;
             }
             toast.error(data.message);
-            return;
+            return null;
         } catch (err) {
             console.error('Error while joining quiz', err);
+            return null;
         }
     }
 

@@ -50,7 +50,7 @@ export default function RecentlyViewedCard({
                 {template && (
                     <div className="relative group">
                         <EmptyCanvas
-                            className="w-full aspect-video rounded-[10px] outline-2 outline-black/40 dark:outline-white/40"
+                            className="w-full aspect-video rounded-[6px] outline-2 outline-black/40 dark:outline-white/40"
                             template={template}
                         />
 
@@ -65,7 +65,7 @@ export default function RecentlyViewedCard({
                                 onPointerUp={handlers.onPointerUp}
                                 onPointerLeave={handlers.onPointerUp}
                             >
-                                <GoGrabber className="size-10 text-light-base" />
+                                <GoGrabber className="size-8 text-light-base" />
                             </div>
 
                             <div
@@ -76,7 +76,7 @@ export default function RecentlyViewedCard({
                                 )}
                                 onClick={handleCardClick}
                             >
-                                <RxOpenInNewWindow className="size-7 text-light-base" />
+                                <RxOpenInNewWindow className="size-5.5 text-light-base" />
                             </div>
                         </div>
                     </div>
