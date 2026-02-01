@@ -52,7 +52,6 @@ export default function NavbarTest() {
         } else {
             setOpenSigninModal(true);
         }
-        // isLoggedIn ? setOpenLogoutModal(true) : setOpenSigninModal(true);
     }
 
     async function handleJoinQuiz() {
@@ -91,7 +90,7 @@ export default function NavbarTest() {
                     >
                         <motion.div
                             onClick={handleJoinQuiz}
-                            className="px-5.5 h-12 rounded-full bg-[#FFC221] text-black flex items-center cursor-pointer"
+                            className="px-5.5 h-12 rounded-alpha bg-nradiant text-black flex items-center cursor-pointer"
                         >
                             Enter Quiz
                         </motion.div>
@@ -111,7 +110,7 @@ export default function NavbarTest() {
                 {session?.user?.token ? (
                     <div className="flex gap-x-2">
                         <button
-                            className="bg-[#1b1b1b] text-white px-5.5 h-12 rounded-full"
+                            className="bg-[#1b1b1b] text-white px-5.5 h-12 rounded-alpha"
                             onClick={() => router.push('/home')}
                         >
                             Get Started
