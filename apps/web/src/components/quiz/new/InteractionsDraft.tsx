@@ -12,6 +12,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { InteractionEnum } from '@nocturn/types';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 interface InteractionIconProps {
     icon: ReactElement;
@@ -21,7 +22,8 @@ interface InteractionIconProps {
 
 export default function InteractionsDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, toggleInteraction, updateQuiz } = useNewQuizStore();
+    const { quiz, toggleInteraction } = useNewQuizStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const [hoveredType, setHoveredType] = useState<InteractionEnum | null>(null);
 
     const interactionIcons: InteractionIconProps[] = [
@@ -103,7 +105,7 @@ export default function InteractionsDraft() {
                     <Switch
                         className="cursor-pointer"
                         checked={quiz.liveChat}
-                        onCheckedChange={(checked) => updateQuiz({ liveChat: checked })}
+                        onCheckedChange={(checked) => updateQuizAndBroadcast({ liveChat: checked })}
                     />
                 </div>
             </div>
@@ -124,7 +126,9 @@ export default function InteractionsDraft() {
                     <Switch
                         className="cursor-pointer"
                         checked={quiz.spectatorMode}
-                        onCheckedChange={(checked) => updateQuiz({ spectatorMode: checked })}
+                        onCheckedChange={(checked) =>
+                            updateQuizAndBroadcast({ spectatorMode: checked })
+                        }
                     />
                 </div>
             </div>

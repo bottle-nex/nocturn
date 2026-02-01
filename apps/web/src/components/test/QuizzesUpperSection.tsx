@@ -61,8 +61,9 @@ export default function QuizzesUpperSection({
                 </div>
 
                 <Button
+                    size={'sm'}
                     onClick={handleCreateQuiz}
-                    className="rounded-sm h-11 w-32 bg-indigo-600 hover:bg-indigo-700 text-white"
+                    className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
                 >
                     <FiPlus />
                     <span>New Quiz</span>
@@ -72,9 +73,10 @@ export default function QuizzesUpperSection({
             <div className="w-full flex justify-between items-center">
                 <div className="flex items-center gap-x-1 h-11">
                     <Button
+                        size={'icon'}
                         onClick={() => onLayoutChange(Layouts.GRID)}
                         className={cn(
-                            'h-9 w-9 flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20',
+                            'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
                             activeLayoutTab === Layouts.GRID
                                 ? 'bg-indigo-600/20 border-indigo-800/70'
                                 : 'border-transparent bg-indigo-600/5',
@@ -82,7 +84,7 @@ export default function QuizzesUpperSection({
                     >
                         <TbLayoutGridFilled
                             className={cn(
-                                'size-6',
+                                'size-4',
                                 activeLayoutTab === Layouts.GRID
                                     ? 'text-indigo-700 dark:text-light-base'
                                     : 'text-indigo-900',
@@ -91,9 +93,10 @@ export default function QuizzesUpperSection({
                     </Button>
 
                     <Button
+                        size={'icon'}
                         onClick={() => onLayoutChange(Layouts.LIST)}
                         className={cn(
-                            'h-9 w-9 flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20',
+                            'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
                             activeLayoutTab === Layouts.LIST
                                 ? 'bg-indigo-600/20 border-indigo-800/70'
                                 : 'border-transparent bg-indigo-600/5',
@@ -123,7 +126,7 @@ export default function QuizzesUpperSection({
                 {selectedQuizes > 0 && (
                     <Button
                         onClick={onDeleteSelected}
-                        className="rounded-sm h-11 w-32 bg-pink-700 hover:bg-pink-700/80 text-white"
+                        className="rounded-sm h-11 w-32 bg-red-700 hover:bg-red-700/80 text-white"
                     >
                         <span>Delete All ({selectedQuizes})</span>
                     </Button>

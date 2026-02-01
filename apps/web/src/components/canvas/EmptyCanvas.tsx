@@ -67,7 +67,7 @@ export default function EmptyCanvas({
                     >
                         Q. {question}
                     </div>
-                    <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-4 md:gap-x-8 px-0.5 sm:px-1 pr-1 sm:pr-2">
+                    <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-4 md:gap-x-4 px-0.5 sm:px-1 pr-1 sm:pr-2">
                         {options.map((opt, idx) => {
                             const color = barColors[idx % barColors.length];
                             return (
@@ -76,7 +76,7 @@ export default function EmptyCanvas({
                                     className="flex flex-col items-center justify-end flex-1 h-full min-w-0"
                                 >
                                     <motion.div
-                                        className="w-full rounded-xs"
+                                        className="w-full rounded-tr-md"
                                         style={{
                                             backgroundColor: color,
                                         }}
@@ -112,9 +112,13 @@ export default function EmptyCanvas({
                     backgroundColor: template.background_color,
                     color: template.text_color,
                 }}
-                className="w-full h-full rounded-md flex justify-center items-center relative group"
+                className="w-full h-full rounded-md flex justify-center items-center relative group overflow-hidden"
             >
-                <CanvasAccents design={template.accent_type} accentColor={template.accent_color} />
+                <CanvasAccents
+                    className=""
+                    design={template.accent_type}
+                    accentColor={template.accent_color}
+                />
             </div>
         </div>
     );

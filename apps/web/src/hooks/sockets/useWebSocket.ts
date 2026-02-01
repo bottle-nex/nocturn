@@ -223,11 +223,21 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleCollaboratorQuizUpdate(payload: unknown) {
+        const message: MessagePayload = {
+            type: COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
-        subscribeToHandler,
-        unsubscribeToHandler,
         socket: socket.current,
         isConnected: socket.current?.is_connected || false,
+        subscribeToHandler,
+        unsubscribeToHandler,
         handleParticipantNameChangeMessage,
         handleSpectatorNameChangeMessage,
         handleHostQuestionPreviewPageChange,
@@ -246,5 +256,6 @@ export const useWebSocket = () => {
 
         handleCollaboratorsQuestionChange,
         handleCollaboratorQuestionUpdate,
+        handleCollaboratorQuizUpdate,
     };
 };

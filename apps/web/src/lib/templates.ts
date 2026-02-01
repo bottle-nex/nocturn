@@ -31,7 +31,7 @@ export const templates: Template[] = [
         accent_type: 'wave',
         accent_color: '#EEEEEE',
         bars: ['#196cff', '#ffd439', '#FF2929', '#0e6b45', '#1A73E8'],
-        src: 'pink-template',
+        src: 'red-template',
     },
     {
         id: 'NEON',

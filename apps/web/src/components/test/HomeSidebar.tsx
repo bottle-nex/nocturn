@@ -129,7 +129,7 @@ export default function HomeSidebar() {
 
                                 <span className="p-1 rounded">{item.icon}</span>
 
-                                <span className="text-sm dark:text-white/80 text-black/90 text-nowrap">
+                                <span className="text-[13px] dark:text-white/80 text-black/90 text-nowrap">
                                     {item.label}
                                 </span>
                             </div>
@@ -156,7 +156,7 @@ export default function HomeSidebar() {
 
                                 <span className="p-1 rounded">{item.icon}</span>
 
-                                <span className="text-sm dark:text-white/80 text-black/90 text-nowrap">
+                                <span className="text-[13px] dark:text-white/80 text-black/90 text-nowrap">
                                     {item.label}
                                 </span>
                             </div>
@@ -227,8 +227,8 @@ export default function HomeSidebar() {
                 </section>
 
                 {session?.user.email && (
-                    <div className="border-t border-black/10 dark:border-white/10 mt-6 flex justify-between items-center pr-2">
-                        <section className="flex items-center justify-start gap-x-2 text-black dark:text-white px-4 py-2">
+                    <div className="flex justify-between items-center my-3 mr-4">
+                        <section className="flex items-center justify-start gap-x-3 text-black dark:text-white px-4 py-2">
                             <Image
                                 src={session.user.image}
                                 width={28}

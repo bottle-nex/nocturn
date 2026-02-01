@@ -4,6 +4,7 @@ import React from 'react';
 interface ToolTipComponentProps {
     children: React.ReactNode;
     content: React.ReactNode;
+    duration?: number;
     className?: string;
     side?: 'top' | 'bottom' | 'left' | 'right';
 }
@@ -11,11 +12,12 @@ interface ToolTipComponentProps {
 export default function ToolTipComponent({
     children,
     className,
+    duration = 300,
     content,
     side = 'bottom',
 }: ToolTipComponentProps) {
     return (
-        <TooltipProvider delayDuration={300}>
+        <TooltipProvider delayDuration={duration}>
             <Tooltip>
                 <TooltipTrigger asChild>{children}</TooltipTrigger>
                 <TooltipContent className={className} side={side} sideOffset={5}>

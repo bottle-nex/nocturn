@@ -286,6 +286,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.7
         version: 1.2.8(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@rive-app/react-canvas':
+        specifier: ^4.26.2
+        version: 4.26.2(react@19.2.3)
       '@solana/wallet-adapter-backpack':
         specifier: ^0.1.14
         version: 0.1.14(@solana/web3.js@1.98.4(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10))
@@ -2917,6 +2920,14 @@ packages:
 
   '@reown/appkit@1.7.2':
     resolution: {integrity: sha512-oo/evAyVxwc33i8ZNQ0+A/VE6vyTyzL3NBJmAe3I4vobgQeiobxMM0boKyLRMMbJggPn8DtoAAyG4GfpKaUPzQ==}
+
+  '@rive-app/canvas@2.34.2':
+    resolution: {integrity: sha512-s+Um9xHNDkZQTJ8oZZpJFLwQqJ2w7OA9Dsai+5vi1Y6fwUSHG8eRzgWVe6idT1rj1JkjXYZEWV1vlP0jkLQ4bw==}
+
+  '@rive-app/react-canvas@4.26.2':
+    resolution: {integrity: sha512-AAP0/jmU53io/qv26O8cT20FfgajS+8n0MSL6s52bCEX/zfKkbEZkJoqX5BS9BLbQkItiteiiZJR83KdgzHZ4w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0
 
   '@rollup/rollup-android-arm-eabi@4.54.0':
     resolution: {integrity: sha512-OywsdRHrFvCdvsewAInDKCNyR3laPA2mc9bRYJ6LBp5IyvF3fvXbbNR0bSzHlZVFtn6E0xw2oZlyjg4rKCVcng==}
@@ -11702,6 +11713,13 @@ snapshots:
       - utf-8-validate
       - zod
 
+  '@rive-app/canvas@2.34.2': {}
+
+  '@rive-app/react-canvas@4.26.2(react@19.2.3)':
+    dependencies:
+      '@rive-app/canvas': 2.34.2
+      react: 19.2.3
+
   '@rollup/rollup-android-arm-eabi@4.54.0':
     optional: true
 
@@ -16646,7 +16664,7 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)):
+  isomorphic-ws@4.0.1(ws@7.5.10):
     dependencies:
       ws: 7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10)
 
@@ -16701,7 +16719,7 @@ snapshots:
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+      isomorphic-ws: 4.0.1(ws@7.5.10)
       json-stringify-safe: 5.0.1
       stream-json: 1.9.1
       uuid: 8.3.2

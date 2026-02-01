@@ -73,7 +73,7 @@ export default class WebsocketServer {
             collaborator_sockets_mapping: this.collaborator_sockets_mapping,
             quiz_settings: this.quiz_settings,
         });
-        this.subscriber_manager.initialize_redis_subscribers();
+        this.subscriber_manager.listen_to_publishers();
     }
 
     private initialize_managers() {

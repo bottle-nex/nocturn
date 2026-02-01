@@ -6,12 +6,14 @@ import { TemplateEnum } from '@nocturn/types';
 import Image from 'next/image';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, updateQuiz } = useNewQuizStore();
+    const { quiz } = useNewQuizStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     function changeThemeHandler(theme: string) {
-        updateQuiz({
+        updateQuizAndBroadcast({
             theme: theme as TemplateEnum,
         });
     }

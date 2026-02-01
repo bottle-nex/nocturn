@@ -155,7 +155,7 @@ export default function MyQuizzesListView({
                             toggleQuizSelection(quiz.id);
                             handleDeleteQuiz(quiz.id);
                         }}
-                        className="bg-light-base text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-red-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
                         <PiTrashSimple className="size-5 stroke-3" />
                     </div>
