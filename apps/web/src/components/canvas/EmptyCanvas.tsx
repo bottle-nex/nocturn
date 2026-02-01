@@ -106,7 +106,11 @@ export default function EmptyCanvas({
                 }}
                 className="w-full h-full rounded-md flex justify-center items-center relative group overflow-hidden"
             >
-                <CanvasAccents className='' design={template.accent_type} accentColor={template.accent_color} />
+                <CanvasAccents
+                    className=""
+                    design={template.accent_type}
+                    accentColor={template.accent_color}
+                />
             </div>
         </div>
     );

@@ -33,7 +33,7 @@ export default class SubscriberManager {
         this.quiz_settings = config.quiz_settings;
     }
 
-    public initialize_redis_subscribers() {
+    public listen_to_publishers() {
         this.subscriber.on('message', (channel: string, message: string) => {
             try {
                 const parsed_subscriber_message = JSON.parse(message);
@@ -216,6 +216,9 @@ export default class SubscriberManager {
                 this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
+                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
+                break;
+            case COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE:
                 this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
                 break;
         }

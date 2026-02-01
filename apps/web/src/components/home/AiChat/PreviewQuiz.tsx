@@ -18,11 +18,10 @@ interface PreviewQuizProps {
     quizId?: string;
 }
 
-export default function PreviewQuiz({
-    quiz,
-    onPreviewClose,
-}: PreviewQuizProps) {
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions[0] || null);
+export default function PreviewQuiz({ quiz, onPreviewClose }: PreviewQuizProps) {
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(
+        quiz?.questions[0] || null,
+    );
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
     const [previewTheme, setPreviewTheme] = useState<string | null>(null);

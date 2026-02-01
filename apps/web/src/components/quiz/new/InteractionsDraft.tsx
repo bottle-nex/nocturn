@@ -126,7 +126,9 @@ export default function InteractionsDraft() {
                     <Switch
                         className="cursor-pointer"
                         checked={quiz.spectatorMode}
-                        onCheckedChange={(checked) => updateQuizAndBroadcast({ spectatorMode: checked })}
+                        onCheckedChange={(checked) =>
+                            updateQuizAndBroadcast({ spectatorMode: checked })
+                        }
                     />
                 </div>
             </div>

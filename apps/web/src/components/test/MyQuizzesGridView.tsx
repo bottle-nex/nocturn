@@ -13,11 +13,10 @@ import { QuizStatusEnum, QuizType } from '@nocturn/types';
 import HeartButton from '../ui/HeartButton';
 import { Template } from '@/lib/templates';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
-import { FaRegClone } from 'react-icons/fa6';
+import { FaPlay, FaRegClone } from 'react-icons/fa6';
 import { BiPencil } from 'react-icons/bi';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
-import { VscPreview } from 'react-icons/vsc';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 
 interface MyQuizzesGridViewProps {
@@ -129,7 +128,7 @@ export default function MyQuizzesGridView({
                             onClick={() => setShowPreview(true)}
                             className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
-                            <VscPreview className="size-5" />
+                            <FaPlay className="size-5" />
                         </div>
                     </ToolTipComponent>
 
@@ -148,7 +147,7 @@ export default function MyQuizzesGridView({
                                 toggleQuizSelection(quiz.id);
                                 handleDeleteQuiz(quiz.id);
                             }}
-                            className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                            className="bg-light-base/70 backdrop-blur-sm text-red-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                         >
                             <PiTrashSimple className="size-5 stroke-3" />
                         </div>
@@ -161,7 +160,7 @@ export default function MyQuizzesGridView({
                 question={quiz.questions[0].question}
                 options={quiz.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[8px] outline-2 select-none ',
+                    'w-full aspect-video rounded-[8px] outline select-none ',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
                 template={currTemplate}

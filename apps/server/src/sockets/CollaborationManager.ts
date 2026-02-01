@@ -8,9 +8,7 @@ import {
     CookiePayload,
     PubSubMessageTypes,
     QuestionType,
-    QuizType,
     socket_codes,
-    TemplateEnum,
 } from '@nocturn/types';
 import WebSocket from 'ws';
 import { v4 as uuid } from 'uuid';

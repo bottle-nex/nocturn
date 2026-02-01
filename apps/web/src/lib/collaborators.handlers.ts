@@ -15,7 +15,6 @@ export default class CollaboratorsHandlers {
     }
 
     static handleIncomingQuestionUpdate(payload: unknown) {
-        console.log('Handling incoming question update from collaborator');
         const { editQuestion } = useNewQuizStore.getState();
         const data = payload as {
             questionIndex: number;
