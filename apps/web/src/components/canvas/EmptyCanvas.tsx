@@ -11,6 +11,7 @@ interface EmptyCanvasProps {
     className?: string;
     onClick?: () => void;
     noTruncate?: boolean;
+    autoAnimateBars?: boolean;
 }
 
 export default function EmptyCanvas({
@@ -20,13 +21,16 @@ export default function EmptyCanvas({
     question,
     options = [],
     noTruncate = false,
+    autoAnimateBars = false,
 }: EmptyCanvasProps) {
     const barColors = template.bars || [];
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [barHeights, setBarHeights] = useState<number[]>([]);
 
+    const shouldAnimate = autoAnimateBars || isHovered;
+
     useEffect(() => {
-        if (!isHovered) {
+        if (!shouldAnimate) {
             setBarHeights(options.map(() => 5));
             return;
         }
@@ -38,8 +42,9 @@ export default function EmptyCanvas({
         }, 1600);
 
         return () => clearInterval(interval);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isHovered, options.length]);
+    }, [shouldAnimate, options.length]);
 
     const getOptionLetter = (index: number) => {
         return String.fromCharCode(65 + index);
@@ -48,16 +53,13 @@ export default function EmptyCanvas({
     return (
         <div
             onClick={onClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={cn(
-                'w-full rounded-md p-0.5 cursor-pointer relative overflow-hidden',
-                className,
-            )}
+            onMouseEnter={() => !autoAnimateBars && setIsHovered(true)}
+            onMouseLeave={() => !autoAnimateBars && setIsHovered(false)}
+            className={cn('w-full p-0.5 cursor-pointer relative overflow-hidden', className)}
             style={{ boxSizing: 'border-box' }}
         >
             {question && options.length > 0 && (
-                <div className="absolute h-full w-full z-2 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
+                <div className="absolute h-full w-full z-10 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
                         style={{ color: template.text_color }}
                         className={cn(

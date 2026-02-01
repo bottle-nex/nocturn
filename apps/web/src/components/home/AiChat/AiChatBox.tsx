@@ -16,6 +16,7 @@ import { FaSquare } from 'react-icons/fa6';
 import VoiceIcon from '@/components/ui/svg/VoiceIcon';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
+import Image from 'next/image';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -90,7 +91,7 @@ export default function AiChatBox() {
         >
             <div
                 className={cn(
-                    'flex justify-center items-center rounded-full p-1.5 cursor-pointer ',
+                    'flex justify-center items-center rounded-full p-1.5 cursor-pointer',
                     'hover:bg-neutral-800 transition',
                 )}
             >
@@ -120,7 +121,7 @@ export default function AiChatBox() {
                     className={cn(
                         'flex items-center justify-center rounded-full cursor-pointer',
                         'w-7 h-7 aspect-square',
-                        loading ? 'bg-neutral-800' : 'bg-light-alpha',
+                        // loading ? 'bg-neutral-800' : 'bg-dark-base',
                     )}
                     onClick={!loading && !prompt ? toggle : undefined}
                 >
@@ -131,7 +132,15 @@ export default function AiChatBox() {
                     ) : listening ? (
                         <VoiceIcon size={16} className="animate-pulse text-red-500" animate />
                     ) : (
-                        <VoiceIcon size={16} className="text-neutral-800" />
+                        // <VoiceIcon size={16} className="text-neutral-800" />
+                        <Image
+                            src={'/icons/ai.png'}
+                            alt="AI Icon"
+                            width={24}
+                            height={20}
+                            unoptimized
+                            className="text-neutral-500 dark:text-light-base dark:invert"
+                        />
                     )}
                 </div>
             </ToolTipComponent>

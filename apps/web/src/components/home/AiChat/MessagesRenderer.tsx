@@ -9,7 +9,7 @@ interface MessagesRendererProps {
     className?: string;
 }
 
-export default function MessagesRenderer({ className = '' }: MessagesRendererProps) {
+export default function MessagesRenderer({ className }: MessagesRendererProps) {
     const { messages } = useAiChatStore();
     const scrollRef = useRef<HTMLDivElement>(null);
 

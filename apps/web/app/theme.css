@@ -2,8 +2,10 @@
     /* --color-alpha: #fa5c5c; */
     --color-light-base: #f5f5f5;
     --color-light-alpha: #ffffff;
-    --color-dark-base: #161616;
+
     --color-dark-alpha: #0a0a0a;
+    --color-dark-base: #161616;
+    --color-dark-faded: #242a2a;
     /* Nocturn Design Language Colors */
     --color-alpha: #4f46e5;
     --color-beta: #903749;
@@ -15,7 +17,7 @@
     --color-tprime: #2c2e2a;
 
     /* nocturn primary colors */
-    --color-nprimary: #ab9ff2;
+    --color-nprimary: #4f46e5;
 
     --color-ndark: #61587c;
     --color-ndarker: #3c315b;
@@ -24,7 +26,7 @@
     --color-nlight: #e2dffe;
     --color-nlighter: #f5f2ff;
 
-    --color-nradiant: #f1ff52;
+    --color-nradiant: #ffea2c;
 }
 
 @theme {
@@ -176,4 +178,148 @@
     100% {
         transform: scaleY(0.5);
     }
+}
+
+.liquid-metal-btn {
+    position: relative;
+    border: none;
+    border-radius: 16px;
+    background: #0a0a0b;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 0;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.liquid-metal-btn:active {
+    transform: scale(0.96);
+}
+
+/* Animated metallic border */
+.liquid-metal-border {
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        #1a1a1c 0deg,
+        #3d3d42 45deg,
+        #88888f 90deg,
+        #e8e8ed 120deg,
+        #ffffff 150deg,
+        #e8e8ed 180deg,
+        #88888f 210deg,
+        #3d3d42 270deg,
+        #1a1a1c 315deg,
+        #1a1a1c 360deg
+    );
+    animation: liquid-metal-rotate 3.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    filter: blur(8px) contrast(1.4) saturate(1.1);
+}
+
+.liquid-metal-btn.hovered .liquid-metal-border {
+    animation-duration: 2.5s;
+    filter: blur(10px) contrast(1.5) saturate(1.15);
+}
+
+@keyframes liquid-metal-rotate {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.05);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+/* Inner content area */
+.liquid-metal-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0b;
+    border-radius: 14px;
+    z-index: 2;
+    margin: 2px;
+    box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+}
+
+/* Animated shine overlay */
+.liquid-metal-shine {
+    position: absolute;
+    inset: 2px;
+    border-radius: 14px;
+    background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.05) 30%,
+        transparent 60%
+    );
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0.7;
+    animation: shimmer 4s ease-in-out infinite;
+}
+
+.liquid-metal-btn.hovered .liquid-metal-shine {
+    opacity: 1;
+    animation-duration: 2.5s;
+}
+
+@keyframes shimmer {
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translate(0, 0);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(2px, 2px);
+    }
+}
+
+/* Outer glow */
+.liquid-metal-btn::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: inherit;
+    filter: blur(12px);
+    opacity: 0.4;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.liquid-metal-btn.hovered::after {
+    opacity: 0.7;
+}
+
+/* Additional depth with multiple shadows */
+.liquid-metal-btn {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        0 8px 24px rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.liquid-metal-btn.hovered {
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 2px 12px rgba(0, 0, 0, 0.5),
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.flip-horizontal-bottom {
+    -webkit-animation: flip-horizontal-bottom 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+    animation: flip-horizontal-bottom 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
 }

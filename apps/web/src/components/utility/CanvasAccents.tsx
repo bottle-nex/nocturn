@@ -13,7 +13,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'circle':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -29,7 +32,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'slash':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -49,7 +55,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'staircase':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         {/* SVG Staircase */}
@@ -69,7 +78,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'donut':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -97,7 +109,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'wave':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg
@@ -185,7 +200,10 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'mountains':
                 return (
                     <div
-                        className={cn('absolute inset-0 overflow-hidden z-0', className)}
+                        className={cn(
+                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
+                            className,
+                        )}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg

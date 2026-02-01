@@ -36,7 +36,6 @@ export default function QuestionsDraft() {
     );
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // ✅ New states for explanation and hint
     const [explanation, setExplanation] = useState<string>(currentQ?.explanation || '');
     const [hint, setHint] = useState<string>(currentQ?.hint || '');
 

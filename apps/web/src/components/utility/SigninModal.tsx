@@ -88,7 +88,7 @@ export default function SigninModal() {
                             stiffness: 300,
                             damping: 18,
                         }}
-                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-nlight text-ndarkest py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
+                        className="w-full h-12 rounded-lg border-2 border-ndarkest bg-alpha/20 text-dark-base py-6 font-semibold text-base mb-2 flex items-center justify-center cursor-pointer"
                         onClick={() => singinHandler('google')}
                     >
                         <Image

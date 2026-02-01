@@ -37,7 +37,7 @@ export default function NavItems({ items, className }: NavItemsProps) {
             onMouseLeave={() => setHovered(null)}
             className={cn(
                 'flex items-center justify-between gap-x-4 h-12',
-                'px-2 rounded-full',
+                'px-2 rounded-beta',
                 'bg-[#ECECEC] text-nprime-darkest',
                 'shadow-sm shadow-ndarker/10 ring-1 ring-nprimary/10',
                 className,
@@ -66,8 +66,8 @@ export default function NavItems({ items, className }: NavItemsProps) {
                                     layoutId="nav-pill"
                                     transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                                     className={cn(
-                                        'absolute inset-0 rounded-full',
-                                        'bg-[#D0D5D1] divide-x',
+                                        'absolute inset-0 rounded-beta',
+                                        'bg-[#4F46E530] divide-x',
                                     )}
                                 />
                             )}

@@ -1,5 +1,4 @@
 'use client';
-import AiChatBox from '@/components/home/AiChat/AiChatBox';
 import PreviewQuiz from '@/components/home/AiChat/PreviewQuiz';
 import HomeSidebar from '@/components/test/HomeSidebar';
 import HomeTrashPanel from '@/components/test/HomeTrashPanel';
@@ -21,7 +20,18 @@ export default function Home() {
                 <SidebarPanelRenderer />
             </div>
 
-            <AiChatBox />
+            <div className="absolute bottom-8 right-10 w-10 h-10 liquid-metal-btn flex justify-center items-center">
+                <button className="liquid-metal-btn h-10 w-10 bg-red-500">hi there</button>
+                {/* <Image
+                    src={'/icons/ai.png'}
+                    alt="AI Icon"
+                    width={28}
+                    height={28}
+                    unoptimized
+                    className=" text-neutral-500 dark:text-neutral-400 dark:invert"
+                /> */}
+            </div>
+            {/* <AiChatBox /> */}
 
             {preview && <PreviewQuiz quiz={quiz!} onPreviewClose={() => setPreview(false)} />}
 
