@@ -29,7 +29,7 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
     return (
         <div
             onClick={handleClick}
-            className="h-8 w-8 flex justify-center items-center hover:bg-pink-500/20 rounded-full group/heart cursor-pointer"
+            className="h-8 w-8 flex justify-center items-center hover:bg-red-500/20 rounded-full group/heart cursor-pointer"
         >
             <AnimatePresence>
                 {bursts.map((id) =>
@@ -41,7 +41,7 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
 
                         const colors = [
                             'bg-cyan-400',
-                            'bg-pink-400',
+                            'bg-red-400',
                             'bg-yellow-300',
                             'bg-lime-400',
                             'bg-orange-400',
@@ -83,9 +83,9 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
                 className="relative z-10"
             >
                 {liked ? (
-                    <GoHeartFill className="size-5 text-pink-500 pt-px" />
+                    <GoHeartFill className="size-5 text-red-500 pt-px" />
                 ) : (
-                    <GoHeart className="size-5 text-light-base group-hover/heart:text-pink-500 transition-colors pt-px" />
+                    <GoHeart className="size-5 text-light-base group-hover/heart:text-red-500 transition-colors pt-px" />
                 )}
             </motion.div>
         </div>

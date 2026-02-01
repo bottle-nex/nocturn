@@ -17,6 +17,7 @@ import {
 import { BsKeyboardFill } from 'react-icons/bs';
 import { cn } from '@/lib/utils';
 import { IconType } from 'react-icons';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 interface MultiplierOption {
     type: MultiplierType;
@@ -48,7 +49,8 @@ const MULTIPLIER_OPTIONS: MultiplierOption[] = [
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, updateQuestionPoints, updateQuiz } = useNewQuizStore();
+    const { quiz, updateQuestionPoints } = useNewQuizStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const singletonPointsCalculator = getSingletonPointsCalculator(
         quiz.questions.length,
         Number(quiz.basePointsPerQuestion),
@@ -76,7 +78,7 @@ export default function AdvancedDraft() {
     }
 
     function handleAutoSaveChangeHandler(checked: boolean) {
-        updateQuiz({ autoSave: checked });
+        updateQuizAndBroadcast({ autoSave: checked });
     }
 
     function handleMultiplierTypeClick(type: MultiplierType) {

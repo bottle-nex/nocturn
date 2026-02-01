@@ -49,7 +49,7 @@ export default function MyQuizzesGridView({
     return (
         <div
             key={quiz.id}
-            className="max-w-[400px] w-full p-1 flex flex-col relative group "
+            className="max-w-100 w-full p-1 flex flex-col relative group "
             data-lenis-prevent
         >
             <div
@@ -82,7 +82,7 @@ export default function MyQuizzesGridView({
                 question={quiz.questions[0].question}
                 options={quiz.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[8px] outline-2 select-none',
+                    'w-full aspect-video rounded-[8px] outline select-none ',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
                 template={currTemplate}

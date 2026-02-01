@@ -84,7 +84,7 @@ export default function AiChatBox() {
         <div
             ref={containerRef}
             className={cn(
-                'absolute bottom-10 right-10 max-w-90 w-full h-11 rounded-full px-2 z-20',
+                'absolute bottom-10 right-10 max-w-87.5 w-full h-11 rounded-full px-2 z-10',
                 'border border-neutral-800 dark:border-neutral-800 dark:bg-dark-alpha dark:text-white',
                 'flex justify-center items-center',
             )}

@@ -7,9 +7,11 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import Canvas from '@/components/canvas/Canvas';
 import UtilityCard from '@/components/utility/UtilityCard';
 import QuestionPallete from './QuestionPallete';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function QuizLeft() {
-    const { quiz, updateQuiz } = useNewQuizStore();
+    const { quiz } = useNewQuizStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const [error, setError] = useState<boolean>(false);
     const [maxCharacterVisible, setMaxCharacterVisible] = useState<boolean>(false);
     const [quizTitle, setQuizTitle] = useState(quiz.title);
@@ -22,7 +24,7 @@ export default function QuizLeft() {
         }
         setError(false);
         setQuizTitle(e.target.value);
-        updateQuiz({ title: e.target.value });
+        updateQuizAndBroadcast({ title: e.target.value }, { debounce: true, debounceMs: 1000 });
     }
 
     return (
@@ -38,7 +40,7 @@ export default function QuizLeft() {
                             onFocus={() => setMaxCharacterVisible(true)}
                             onBlur={() => setMaxCharacterVisible(false)}
                             type="text"
-                            value={quizTitle}
+                            value={quiz.title}
                             className={cn(
                                 'text-lg! font-medium tracking-wide flex-1 min-w-0 py-4! px-2 appearance-none border-none outline-none bg-transparent dark:bg-transparent shadow-none text-center z-0',
                                 error && 'focus:ring-2! focus:ring-red-500/70!',

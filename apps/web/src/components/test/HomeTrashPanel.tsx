@@ -15,13 +15,13 @@ import { useAllTrashedQuizzesStore } from '@/store/user/useAllTrashedQuizzesStor
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { IoTrashBinOutline } from 'react-icons/io5';
 import { IoMdRefresh } from 'react-icons/io';
 import { Input } from '../ui/input';
 import { PiMagnifyingGlass, PiTrashSimple } from 'react-icons/pi';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
+import { MdDeleteSweep } from 'react-icons/md';
 
 export default function HomeTrashPanel() {
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
@@ -127,7 +127,7 @@ export default function HomeTrashPanel() {
                                         className={cn(
                                             'h-full w-full pl-10 rounded-beta',
                                             'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
-                                            'dark:!bg-dark-base !bg-light-base border-neutral-800',
+                                            'dark:bg-dark-base! bg-light-base! border-neutral-800',
                                         )}
                                     />
 
@@ -136,15 +136,18 @@ export default function HomeTrashPanel() {
                                         className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
                                     />
                                 </div>
-                                <Button
-                                    onClick={handleDeleteAllTrashedQuizzes}
-                                    className={cn(
-                                        'rounded-alpha h-10 bg-pink-700 hover:bg-pink-700/80 tracking-wide text-light-base flex items-center text-[13px] shadow-sm',
-                                    )}
-                                >
-                                    <IoTrashBinOutline className="mb-px size-4" />
-                                    Empty Trash
-                                </Button>
+                                <ToolTipComponent content="Empty Trash">
+                                    <Button
+                                        variant={'outline'}
+                                        size={'icon'}
+                                        onClick={handleDeleteAllTrashedQuizzes}
+                                        className={cn(
+                                            'rounded-alpha bg-red-700/60! hover:bg-red-700/40! tracking-wide text-light-base flex items-center text-[13px] shadow-sm aspect-square',
+                                        )}
+                                    >
+                                        <MdDeleteSweep className="mb-px size-4" />
+                                    </Button>
+                                </ToolTipComponent>
                             </div>
                         </div>
 
@@ -167,7 +170,7 @@ export default function HomeTrashPanel() {
                                         return (
                                             <div
                                                 key={quiz.id}
-                                                className="max-w-[400px] w-full p-1 flex flex-col relative group"
+                                                className="max-w-100 w-full p-1 flex flex-col relative group"
                                                 data-lenis-prevent
                                             >
                                                 <div
@@ -201,7 +204,7 @@ export default function HomeTrashPanel() {
                                                                         quiz.id,
                                                                     );
                                                                 }}
-                                                                className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                                                className="bg-light-base/70 backdrop-blur-sm text-red-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                                                             >
                                                                 <PiTrashSimple className="size-5 stroke-2" />
                                                             </div>
