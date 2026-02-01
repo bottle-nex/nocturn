@@ -2,7 +2,7 @@ import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import { Request, Response } from 'express';
 
-export default async function getQuestionController(req: Request, res: Response) {
+export default async function getQuestionsController(req: Request, res: Response) {
     try {
         const user = req.user;
         if (!user) {
@@ -51,17 +51,15 @@ export default async function getQuestionController(req: Request, res: Response)
             return;
         }
 
-        setTimeout(() => {
-            ResponseWriter.success(
-                res,
-                {
-                    title: quiz.title,
-                    questions: quiz.questions,
-                    theme: quiz.theme,
-                },
-                'successfull fetched quiz questions',
-            );
-        }, 3000);
+        ResponseWriter.success(
+            res,
+            {
+                title: quiz.title,
+                questions: quiz.questions,
+                theme: quiz.theme,
+            },
+            'successfull fetched quiz questions',
+        );
 
         return;
     } catch (error) {
