@@ -37,6 +37,7 @@ import toggle_favourite_quiz_controller from '../controllers/quiz-controller/tog
 import delete_selected_quizzes_controller from '../controllers/quiz-controller/delete_selected_quizzes_controller';
 import renameQuizController from '../controllers/quiz-controller/renameQuizController';
 import duplicateQuizController from '../controllers/quiz-controller/duplicateQuizController';
+import getQuestionsController from '../controllers/quiz-controller/getQuestionsController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -100,5 +101,7 @@ router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.pr
 
 // ai routes
 router.post('/ai/create-new-quiz', authMiddleware, chatWithAiController);
+
+router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsController);
 
 export default router;

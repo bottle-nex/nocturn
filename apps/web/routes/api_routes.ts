@@ -1,6 +1,7 @@
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const API_URL = BACKEND_URL + '/api/v1';
+
 export const SIGNIN_URL = API_URL + '/sign-in';
 export const QUIZ_URL = API_URL + '/quiz';
 export const FOLDER_URL = API_URL + '/folder';
@@ -30,6 +31,7 @@ export const DELETE_SELECTED_QUIZZES_URL = QUIZ_URL + '/move-quizzes-to-trash';
 export const GET_TRASHED_QUIZZES_URL = QUIZ_URL + '/get-user-trashed-quiz';
 export const CLEAR_TRASH_URL = QUIZ_URL + '/clear-trash';
 export const PERMANENTLY_DELETE_QUIZ_URL = QUIZ_URL + '/delete-quiz';
+export const GET_QUIZ_QUESTIONS = QUIZ_URL + '/get-quiz-questions';
 
 export const GET_SELECTED_QUESTION_DATA = QUIZ_URL + '/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
