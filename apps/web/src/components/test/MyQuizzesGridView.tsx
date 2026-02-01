@@ -201,7 +201,11 @@ export default function MyQuizzesGridView({
             )}
 
             {showPreview && (
-                <PreviewQuiz quiz={quiz} onPreviewClose={() => setShowPreview(false)} />
+                <PreviewQuiz
+                    onPreviewClose={() => setShowPreview(false)}
+                    quizId={quiz.id}
+                    fetchFromServer
+                />
             )}
         </div>
     );
