@@ -2,9 +2,9 @@ import { motion } from 'framer-motion';
 import { Input } from '../ui/input';
 
 interface NavInputBoxProps {
-    value: string;
-    onChange: (value: string) => void;
-    onEnter: () => void;
+    value?: string;
+    onChange?: (value: string) => void;
+    onEnter?: () => void;
 }
 
 export default function NavInputBox({ value, onChange, onEnter }: NavInputBoxProps) {
@@ -18,9 +18,9 @@ export default function NavInputBox({ value, onChange, onEnter }: NavInputBoxPro
         >
             <Input
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => onChange?.(e.target.value)}
                 onKeyDown={(e) => {
-                    if (e.key === 'Enter') onEnter();
+                    if (e.key === 'Enter') onEnter?.();
                 }}
                 placeholder="secret code"
                 className="h-12 !bg-white text-black border border-black w-40 px-4 rounded-[8px] z-50 relative tracking-wider focus:text-base"
