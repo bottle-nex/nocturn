@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
+import SigninModal from '../utility/SigninModal';
 
 const springTransition = {
     type: 'spring' as const,
@@ -210,7 +211,7 @@ export default function LandingNavbar() {
                                 closed: { rotate: 0, scale: 1, opacity: 1 },
                                 open: { rotate: 180, scale: 0.6, opacity: 0 },
                             }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
                             className="absolute inset-0 flex items-center justify-center"
                         >
                             <HiOutlinePlusSmall className="size-6.5" />
@@ -222,7 +223,7 @@ export default function LandingNavbar() {
                                 closed: { scale: 0.6, opacity: 0 },
                                 open: { scale: 1, opacity: 1 },
                             }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            transition={{ duration: 0.3, ease: 'easeOut' }}
                             className="absolute inset-0 flex items-center justify-center"
                         >
                             <HiOutlineMinus className="size-6.5" />
@@ -285,6 +286,7 @@ export default function LandingNavbar() {
                 )}
             </div>
             <LogoutModal />
+            <SigninModal />
         </div>
     );
 }

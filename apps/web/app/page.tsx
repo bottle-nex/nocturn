@@ -29,7 +29,7 @@ export default function Page() {
             <LandingCardComponent />
             <HeroSection />
             {/* <LandingHeroSection /> */}
-            <Footer />
+            {/* <Footer /> */}
             {/* <NocturnFeaturesSection /> */}
         </div>
     );
