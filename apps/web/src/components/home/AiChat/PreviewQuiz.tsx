@@ -17,6 +17,7 @@ import { QuestionType, QuizType, TemplateEnum } from '@nocturn/types';
 
 import { LiaPagerSolid } from 'react-icons/lia';
 import ChangeThemePanel from './ChangeThemePanel';
+import { useRouter } from 'next/navigation';
 
 interface PreviewQuizProps {
     quiz?: Partial<QuizType>;
@@ -35,6 +36,7 @@ export default function PreviewQuiz({
 
     const [loading, setLoading] = useState<boolean>(fetchFromServer);
     const [quizData, setQuizData] = useState<Partial<QuizType> | undefined>(quiz);
+
 
     async function fetchQuizData() {
         if (!session?.user.token || !quizId) return;
@@ -79,6 +81,9 @@ function PreviewQuizWithData({
     quiz,
     onPreviewClose,
 }: PreviewQuizProps) {
+
+    console.log("quiz: ", quiz);
+    
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions?.[0] || null);
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
@@ -87,6 +92,12 @@ function PreviewQuizWithData({
 
     const activeTheme = previewTheme ?? currentTheme;
     const template = templates.find((t) => t.id === activeTheme);
+
+    const router = useRouter();
+
+    function handleOnContinue() {
+        router.push(`/new/${quiz?.id}`); 
+    }
 
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
@@ -144,7 +155,10 @@ function PreviewQuizWithData({
                         >
                             Cancel
                         </div>
-                        <div className="px-3 py-1.5 rounded-beta bg-alpha text-light-alpha cursor-pointer">
+                        <div
+                            className="px-3 py-1.5 rounded-beta bg-alpha text-light-alpha cursor-pointer"
+                            onClick={handleOnContinue}
+                        >
                             Continue
                         </div>
                     </div>
@@ -169,23 +183,26 @@ function PreviewQuizWithData({
                                 <ToolTipComponent side="right" content={i + 1}>
                                     <MiniCanvas
                                         onClick={() => setCurrentQuestion(q)}
-                                        currentQuestionIndex={i}
+                                        currentQuestionIndex={currentQuestion?.orderIndex!}
                                         orderIndex={q.orderIndex}
                                         template={template}
                                         question={q}
+                                        collaboratorHighlight={cn(
+                                            'rounded-beta '
+                                        )}
                                     />
                                 </ToolTipComponent>
                             </div>
                         ))}
                     </div>
 
-                    <div className="w-[600px]">
+                    <div className="w-150 ">
                         <EmptyCanvas
                             template={template!}
                             question={currentQuestion?.question}
                             options={currentQuestion?.options}
                             className={cn(
-                                'w-full aspect-video rounded-[10px] outline-2 select-none',
+                                'w-full aspect-video rounded-beta outline-2 select-none',
                                 'outline-black/40 dark:outline-white/40'
                             )}
                             noTruncate

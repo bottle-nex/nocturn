@@ -34,6 +34,7 @@ export default async function getQuestionsController(req: Request, res: Response
                 ],
             },
             select: {
+                id: true,
                 title: true,
                 theme: true,
                 questions: {
@@ -54,6 +55,7 @@ export default async function getQuestionsController(req: Request, res: Response
         ResponseWriter.success(
             res,
             {
+                id: quiz.id,
                 title: quiz.title,
                 questions: quiz.questions,
                 theme: quiz.theme,
