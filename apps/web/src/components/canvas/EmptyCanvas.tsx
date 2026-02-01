@@ -61,7 +61,7 @@ export default function EmptyCanvas({
                     <div
                         style={{ color: template.text_color }}
                         className={cn(
-                            "max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1",
+                            'max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1',
                             !noTruncate && 'truncate',
                         )}
                     >
@@ -91,7 +91,7 @@ export default function EmptyCanvas({
                                     <span
                                         style={{ color: template.text_color }}
                                         className={cn(
-                                            "mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] text-center w-8 sm:w-10 md:w-12",
+                                            'mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] text-center w-8 sm:w-10 md:w-12',
                                             !noTruncate && 'truncate',
                                         )}
                                     >

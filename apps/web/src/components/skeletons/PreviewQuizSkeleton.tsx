@@ -10,10 +10,7 @@ interface PreviewQuizSkeletonProps {
     onPreviewClose?: () => void;
 }
 
-export default function PreviewQuizSkeleton({
-    onPreviewClose,
-}: PreviewQuizSkeletonProps) {
-
+export default function PreviewQuizSkeleton({ onPreviewClose }: PreviewQuizSkeletonProps) {
     const [themePanel, setThemePanel] = useState<boolean>(false);
 
     return (
@@ -22,7 +19,7 @@ export default function PreviewQuizSkeleton({
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
                     'max-h-full w-fit flex flex-col gap-y-3 p-6 rounded-beta bg-dark-base',
-                    'border border-neutral-700'
+                    'border border-neutral-700',
                 )}
             >
                 {/* HEADER SKELETON */}
@@ -88,10 +85,12 @@ export default function PreviewQuizSkeleton({
                                 {/* Number */}
                                 <div className="h-4 w-3 bg-neutral-800 rounded animate-pulse mb-1" />
                                 {/* Thumbnail */}
-                                <div className={cn(
-                                    "w-full aspect-video rounded-[8px] bg-neutral-800 animate-pulse",
-                                    "border border-neutral-800"
-                                )} />
+                                <div
+                                    className={cn(
+                                        'w-full aspect-video rounded-[8px] bg-neutral-800 animate-pulse',
+                                        'border border-neutral-800',
+                                    )}
+                                />
                             </div>
                         ))}
                     </div>
@@ -101,7 +100,7 @@ export default function PreviewQuizSkeleton({
                         <div
                             className={cn(
                                 'w-full aspect-video rounded-[10px] bg-neutral-800 animate-pulse',
-                                'border border-neutral-700'
+                                'border border-neutral-700',
                             )}
                         />
                     </div>

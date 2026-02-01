@@ -1,9 +1,7 @@
-import EmptyCanvas from "@/components/canvas/EmptyCanvas";
-import { templates } from "@/lib/templates";
-import { cn } from "@/lib/utils";
-import { RxCross2 } from "react-icons/rx";
-
-
+import EmptyCanvas from '@/components/canvas/EmptyCanvas';
+import { templates } from '@/lib/templates';
+import { cn } from '@/lib/utils';
+import { RxCross2 } from 'react-icons/rx';
 
 interface ChangeThemePanelProps {
     currentTheme?: string;
@@ -24,7 +22,7 @@ export default function ChangeThemePanel({
             className={cn(
                 'absolute top-10 left-0 w-[360px] p-4 z-10',
                 'bg-dark-base border border-neutral-700 rounded-beta',
-                'flex flex-col gap-y-2'
+                'flex flex-col gap-y-2',
             )}
         >
             <div className="flex justify-between items-center">
@@ -46,7 +44,7 @@ export default function ChangeThemePanel({
                         onMouseEnter={() => onThemeHover?.(template.id)}
                         className={cn(
                             'flex flex-col items-center p-1 rounded-[9px] cursor-pointer',
-                            currentTheme === template.id && 'bg-dark-alpha'
+                            currentTheme === template.id && 'bg-dark-alpha',
                         )}
                     >
                         <div className="w-24">
@@ -56,7 +54,7 @@ export default function ChangeThemePanel({
                                 className={cn(
                                     'w-full aspect-video rounded-[8px] outline-2 select-none',
                                     'outline-black/40 dark:outline-white/40',
-                                    currentTheme === template.id && 'outline-alpha'
+                                    currentTheme === template.id && 'outline-alpha',
                                 )}
                             />
                         </div>
@@ -66,4 +64,3 @@ export default function ChangeThemePanel({
         </div>
     );
 }
-

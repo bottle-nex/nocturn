@@ -252,14 +252,13 @@ export default class QuizActions {
                 },
             });
 
-            if(!data.success) {
+            if (!data.success) {
                 return;
             }
 
             return data.data;
-
         } catch (error) {
-            console.error('error in fetching quiz questions: ');
+            console.error('error in fetching quiz questions: ', error);
             return;
         }
     }

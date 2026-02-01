@@ -37,17 +37,13 @@ export default function PreviewQuiz({
     const [loading, setLoading] = useState<boolean>(fetchFromServer);
     const [quizData, setQuizData] = useState<Partial<QuizType> | undefined>(quiz);
 
-
     async function fetchQuizData() {
         if (!session?.user.token || !quizId) return;
 
         try {
             setLoading(true);
 
-            const data = await QuizActions.get_quiz_questions(
-                session.user.token,
-                quizId
-            );
+            const data = await QuizActions.get_quiz_questions(session.user.token, quizId);
 
             setQuizData(data);
         } catch (err) {
@@ -60,8 +56,8 @@ export default function PreviewQuiz({
     useEffect(() => {
         if (!fetchFromServer) return;
         fetchQuizData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchFromServer, quizId]);
-
 
     if (loading) {
         return <PreviewQuizSkeleton onPreviewClose={onPreviewClose} />;
@@ -69,22 +65,13 @@ export default function PreviewQuiz({
 
     if (!quizData) return null;
 
-    return (
-        <PreviewQuizWithData
-            quiz={quizData}
-            onPreviewClose={onPreviewClose}
-        />
-    );
+    return <PreviewQuizWithData quiz={quizData} onPreviewClose={onPreviewClose} />;
 }
 
-function PreviewQuizWithData({
-    quiz,
-    onPreviewClose,
-}: PreviewQuizProps) {
-
-    console.log("quiz: ", quiz);
-    
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(quiz?.questions?.[0] || null);
+function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(
+        quiz?.questions?.[0] || null,
+    );
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
     const [previewTheme, setPreviewTheme] = useState<string | null>(null);
@@ -96,7 +83,7 @@ function PreviewQuizWithData({
     const router = useRouter();
 
     function handleOnContinue() {
-        router.push(`/new/${quiz?.id}`); 
+        router.push(`/new/${quiz?.id}`);
     }
 
     return (
@@ -174,22 +161,17 @@ function PreviewQuizWithData({
                         className="flex flex-col gap-y-3 shrink-0 w-30 max-h-85 overflow-y-auto"
                     >
                         {quiz?.questions?.map((q, i) => (
-                            <div
-                                key={i}
-                                className="flex items-end gap-x-2"
-                            >
+                            <div key={i} className="flex items-end gap-x-2">
                                 <div className="text-xs mb-1">{i + 1}.</div>
 
                                 <ToolTipComponent side="right" content={i + 1}>
                                     <MiniCanvas
                                         onClick={() => setCurrentQuestion(q)}
-                                        currentQuestionIndex={currentQuestion?.orderIndex!}
+                                        currentQuestionIndex={currentQuestion?.orderIndex || 1}
                                         orderIndex={q.orderIndex}
                                         template={template}
                                         question={q}
-                                        collaboratorHighlight={cn(
-                                            'rounded-beta '
-                                        )}
+                                        collaboratorHighlight={cn('rounded-beta ')}
                                     />
                                 </ToolTipComponent>
                             </div>
@@ -203,13 +185,12 @@ function PreviewQuizWithData({
                             options={currentQuestion?.options}
                             className={cn(
                                 'w-full aspect-video rounded-beta outline-2 select-none',
-                                'outline-black/40 dark:outline-white/40'
+                                'outline-black/40 dark:outline-white/40',
                             )}
                             noTruncate
                         />
                     </div>
                 </div>
-
             </div>
         </OpacityBackground>
     );
