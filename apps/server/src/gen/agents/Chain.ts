@@ -19,17 +19,9 @@ import { AiQuizMessage, prisma } from '@nocturn/database';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
+import { models } from '../../services/init.services';
 
 export default class Chain {
-    private model: ChatGoogleGenerativeAI;
-
-    constructor() {
-        this.model = new ChatGoogleGenerativeAI({
-            model: 'gemini-2.5-flash',
-            temperature: 0.2,
-            apiKey: env.SERVER_GEMINI_API_KEY,
-        });
-    }
 
     public async start(
         res: Response,
@@ -71,6 +63,10 @@ export default class Chain {
 
                 // execute the plan
                 await this.executor(res, user_id, session_id, quiz_id, plan);
+                return;
+            };
+            case AgentStep.REVISE: {
+
             }
         }
     }
@@ -84,11 +80,10 @@ export default class Chain {
                 data: session_id,
             });
 
-            const { difficulty_asker } = this.get_chain();
 
             console.log('difficulty chain hit');
 
-            const response = await difficulty_asker.invoke({
+            const response = await models.difficulty_asker.invoke({
                 instruction: instruction,
             });
 
@@ -147,11 +142,10 @@ export default class Chain {
         session_id: string,
         text_difficulty: string,
     ): Promise<number> {
-        const { text_to_number_difficulty } = this.get_chain();
 
         console.log('compute text difficulty chain hit');
 
-        const conversion = await text_to_number_difficulty.invoke({
+        const conversion = await models.text_to_number_difficulty.invoke({
             instruction: text_difficulty,
         });
 
@@ -175,11 +169,10 @@ export default class Chain {
         instruction: string,
         difficulty: number,
     ): Promise<{ plan: string; quiz_id: string }> {
-        const { planner } = this.get_chain();
 
         console.log('plan chain hit');
 
-        const response = await planner.invoke({
+        const response = await models.planner.invoke({
             instruction,
             difficulty,
         });
@@ -246,11 +239,10 @@ export default class Chain {
         plan: string,
     ) {
         try {
-            const { executor } = this.get_chain();
 
             console.log('executor chain hit');
 
-            const response = await executor.invoke({
+            const response = await models.executor.invoke({
                 instruction: plan,
             });
 
@@ -332,39 +324,14 @@ export default class Chain {
         }
     }
 
-    public get_chain() {
-        const difficulty_asker = RunnableSequence.from([
-            difficulty_asker_prompt,
-            this.model.withStructuredOutput(difficulty_asker_schema),
-        ]);
+    private async reviser() {
+        try {
 
-        const text_to_number_difficulty = RunnableSequence.from([
-            text_to_number_difficulty_prompt,
-            this.model.withStructuredOutput(text_to_number_difficulty_schema),
-        ]);
 
-        const planner = RunnableSequence.from([
-            planner_prompt,
-            this.model.withStructuredOutput(planner_schema),
-        ]);
-
-        const executor = RunnableSequence.from([
-            executor_prompt,
-            this.model.withStructuredOutput(executor_schema),
-        ]);
-
-        const reviser = RunnableSequence.from([
-            reviser_prompt,
-            this.model.withStructuredOutput(reviser_schema),
-        ]);
-
-        return {
-            difficulty_asker,
-            text_to_number_difficulty,
-            planner,
-            executor,
-            reviser,
-        };
+            
+        } catch (error) {
+            
+        }
     }
 
     private create_stream(res: Response): void {
