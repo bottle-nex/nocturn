@@ -21,7 +21,7 @@ export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 
 export let chain: Chain;
-export let models: Model;
+export let model: Model;
 
 export default function initServices() {
     publisherInstance = new Redis(env.SERVER_REDIS_URL);
@@ -45,5 +45,5 @@ export default function initServices() {
     quizManagerInstance.set_phase_queue(phaseQueueInstance);
 
     chain = new Chain();
-    models = new Model();
+    model = new Model();
 }

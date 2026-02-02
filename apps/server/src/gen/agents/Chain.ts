@@ -1,25 +1,9 @@
-import { RunnableSequence } from '@langchain/core/runnables';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { Response } from 'express';
-import {
-    difficulty_asker_prompt,
-    executor_prompt,
-    planner_prompt,
-    reviser_prompt,
-    text_to_number_difficulty_prompt,
-} from '../prompts/createQuizPrompt';
-import {
-    executor_schema,
-    difficulty_asker_schema,
-    planner_schema,
-    reviser_schema,
-    text_to_number_difficulty_schema,
-} from '../schemas/createNewQuizSchema';
 import { AiQuizMessage, prisma } from '@nocturn/database';
-import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
-import { models } from '../../services/init.services';
+import { model } from '../../services/init.services';
+import { generated_question_type } from '../types/createNewQuizType';
 
 export default class Chain {
 
@@ -62,7 +46,7 @@ export default class Chain {
                 console.log('plan: ', plan);
 
                 // execute the plan
-                await this.executor(res, user_id, session_id, quiz_id, plan);
+                await this.executor(res, session_id, quiz_id, plan);
                 return;
             };
             case AgentStep.REVISE: {
@@ -83,7 +67,7 @@ export default class Chain {
 
             console.log('difficulty chain hit');
 
-            const response = await models.difficulty_asker.invoke({
+            const response = await model.difficulty_asker.invoke({
                 instruction: instruction,
             });
 
@@ -145,7 +129,7 @@ export default class Chain {
 
         console.log('compute text difficulty chain hit');
 
-        const conversion = await models.text_to_number_difficulty.invoke({
+        const conversion = await model.text_to_number_difficulty.invoke({
             instruction: text_difficulty,
         });
 
@@ -172,7 +156,7 @@ export default class Chain {
 
         console.log('plan chain hit');
 
-        const response = await models.planner.invoke({
+        const response = await model.planner.invoke({
             instruction,
             difficulty,
         });
@@ -233,7 +217,6 @@ export default class Chain {
 
     private async executor(
         res: Response,
-        user_id: string,
         session_id: string,
         quiz_id: string,
         plan: string,
@@ -242,13 +225,13 @@ export default class Chain {
 
             console.log('executor chain hit');
 
-            const response = await models.executor.invoke({
+            const response = await model.executor.invoke({
                 instruction: plan,
             });
 
             console.log('executor response: ', response);
 
-            const parsed_questions = response.questions.map((q, i) => {
+            const parsed_questions = response.questions.map((q: generated_question_type, i: number) => {
                 return {
                     ...q,
                     basePoints: 20,
@@ -302,6 +285,15 @@ export default class Chain {
 
                 const messages: AiQuizMessage[] = [agentic_message, system_message];
 
+                await tx.aiQuizChatSession.update({
+                    where: {
+                        id: session_id,
+                    },
+                    data: {
+                        step: AgentStep.REVISE,
+                    },
+                });
+
                 return {
                     messages,
                     quiz,
@@ -324,13 +316,94 @@ export default class Chain {
         }
     }
 
-    private async reviser() {
+    private async reviser(
+        res: Response,
+        instruction: string,
+        session_id: string,
+        quiz_id: string,
+        questions: (generated_question_type & { id: string })[],
+    ) {
         try {
 
+            const response = await model.reviser.invoke({
+                instruction,
+                questions,
+            });
 
+            const updated_questions = response.questions.map((q: generated_question_type, i: number) => {
+                return {
+                    ...q,
+                    basePoints: 20,
+                    timeLimit: 30,
+                    readingTime: 7,
+                    orderIndex: i,
+                    isAsked: false,
+                };
+            });
+
+            const { quiz, messages } = await prisma.$transaction(async (tx) => {
+                const quiz = await tx.quiz.update({
+                    where: {
+                        id: quiz_id,
+                    },
+                    data: {
+                        questions: {
+                            deleteMany: {
+                                id: {
+                                    in: questions.map(q => q.id),
+                                }
+                            },
+                            createMany: {
+                                data: updated_questions,
+                            },
+                        },
+                    },
+                });
+
+                const agentic_message = await tx.aiQuizMessage.create({
+                    data: {
+                        aiQuizChatSessionId: session_id,
+                        role: AiQuizChatRole.AGENT,
+                        content: response.userResponse,
+                    },
+                });
+
+                const system_message = await tx.aiQuizMessage.create({
+                    data: {
+                        aiQuizChatSessionId: session_id,
+                        role: AiQuizChatRole.SYSTEM,
+                        content: quiz.id,
+                        element: AiMessageElement.QUIZ,
+                    },
+                });
+
+                const messages: AiQuizMessage[] = [agentic_message, system_message];
+
+                return {
+                    quiz,
+                    messages,
+                };
+            });
+
+            ResponseWriter.stream.write(
+                res,
+                {
+                    type: STREAM.MESSAGES,
+                    data: messages,
+                },
+            );
+
+            ResponseWriter.stream.write(
+                res,
+                {
+                    type: STREAM.QUIZ,
+                    data: quiz,
+                },
+            );
             
         } catch (error) {
-            
+            console.error('error in reviser: ', error);
+
         }
     }
 

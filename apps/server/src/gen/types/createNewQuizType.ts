@@ -1,8 +1,8 @@
-import { RunnableSequence } from '@langchain/core/runnables';
-
-export type create_new_quiz_type = RunnableSequence<
-    {
-        instruction: string;
-    },
-    {}
->;
+export type generated_question_type = {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation: string;
+    hint: string;
+    difficulty: number;
+};

@@ -15,6 +15,7 @@ import {
 } from '../schemas/createNewQuizSchema';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { env } from '../../configs/env';
+import { generated_question_type } from '../types/createNewQuizType';
 
 export default class Model {
 
@@ -34,8 +35,8 @@ export default class Model {
         { description: string; questions: any; userResponse: string }
     >;
     public reviser: RunnableSequence<
-        { instruction: string; questions: any },
-        { userResponse: string; questions: any }
+        { instruction: string; questions: generated_question_type[] },
+        { userResponse: string; questions: generated_question_type[] }
     >;
 
     constructor() {

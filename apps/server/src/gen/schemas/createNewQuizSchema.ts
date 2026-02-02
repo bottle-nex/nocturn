@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const question_schema = z.object({
+export const question_schema = z.object({
     question: z.string().min(5).max(150).describe('a one liner question'),
     options: z.array(z.string().min(1).max(60)).length(4),
     correctAnswer: z.int().min(0).max(3),
