@@ -6,6 +6,8 @@ import Footer from '@/components/root/Footer';
 // import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import LandingCardComponent from '@/components/revamp/LandingCardComponent';
 import LandingNavbar from '@/components/revamp/LandingNavbar';
+import HeroSection from '@/components/revamp/HeroSection';
+import RevampSection from '@/components/revamp/RevampSection';
 
 export default function Page() {
     return (
@@ -19,7 +21,9 @@ export default function Page() {
             <Footer /> */}
             {/* <NavbarTest /> */}
             <LandingNavbar />
+            <RevampSection />
             <LandingCardComponent />
+            <HeroSection />
             {/* <LandingHeroSection /> */}
             <Footer />
             {/* <NocturnFeaturesSection /> */}

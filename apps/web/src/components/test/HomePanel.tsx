@@ -3,8 +3,6 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
 import CanvasSkeleton from '@/components/skeletons/CanvasSkeleton';
-import HomeStartWithAi from '@/components/home/HomeStartWithAi';
-import HomeRightUpperSection from '@/components/home/HomeRightUpperSection';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
@@ -38,11 +36,14 @@ export default function HomePanel() {
 
     return (
         <div
-            className="bg-white dark:bg-neutral-950 w-full h-full px-12 py-10 overflow-y-auto custom-scrollbar"
+            className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 overflow-y-auto max-h-screen"
             data-lenis-prevent
         >
-            <HomeRightUpperSection />
-            <HomeStartWithAi />
+            <div className="flex justify-between">
+                <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
+            </div>
+            {/* <HomeRightUpperSection /> */}
+            {/* <HomeStartWithAi /> */}
 
             {loading && (
                 <section className="flex items-center gap-4 flex-wrap mt-8">
@@ -57,7 +58,7 @@ export default function HomePanel() {
                     <h2 className="text-lg font-normal text-black dark:text-white mb-4">
                         Recently Viewed
                     </h2>
-                    <div className="gap-4 lg:grid-cols-3 grid">
+                    <div className="gap-6 lg:grid-cols-3 grid">
                         {recentlyViewed.map((quiz) => (
                             <RecentlyViewedCard className="w-full" key={quiz.id} quiz={quiz} />
                         ))}

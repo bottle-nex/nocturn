@@ -41,7 +41,7 @@ export default function AnimatedIcons() {
                         .map(({ id, Icon, color }) => (
                             <motion.div
                                 key={id}
-                                className="absolute left-1/2 top-1/2 pointer-events-none z-10"
+                                className="absolute left-1/2 top-1/2 pointer-events-none z-50"
                                 initial={{
                                     opacity: 1,
                                     y: 0,

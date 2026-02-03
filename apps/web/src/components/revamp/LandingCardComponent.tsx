@@ -9,7 +9,7 @@ import EmptyCanvas from '../canvas/EmptyCanvas';
 import CloudBackground from './CloudBackground';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
-import { FaDartLang, FaLocationArrow } from 'react-icons/fa6';
+import { FaDartLang } from 'react-icons/fa6';
 import AnimatedIcons from './AnimatedIcons';
 import userQuizAction from '@/lib/backend/user-quiz-action';
 import { useRouter } from 'next/navigation';
@@ -70,30 +70,6 @@ export default function LandingCardComponent() {
                 <div className="border border-light-base/20 h-full w-full p-2 rounded-[30px]">
                     <div className="border border-light-base/25 h-full w-full p-2 rounded-[22px]">
                         <div className="w-full h-full bg-dark-faded rounded-xl flex flex-col p-4 gap-y-4 relative">
-                            <div className="absolute top-11 -right-3.5 rotate-185 z-10">
-                                <FaLocationArrow className="size-7 text-[#FFEF5F]" />
-                            </div>
-
-                            <div className="bg-[#FFEF5F] px-4.5 py-2 absolute top-4 -right-53 z-10 rounded-full text-base tracking-wide flex items-center gap-x-2 hover:-translate-y-0.5 hover:scale-103 transition-all transform duration-200 select-none text-dark-base">
-                                AI-powered generation
-                            </div>
-
-                            <div className="absolute top-14 -left-3 rotate-80 z-10">
-                                <FaLocationArrow className="size-8 text-[#6AECE1]" />
-                            </div>
-
-                            <div className="bg-[#6AECE1] px-4.5 py-2 absolute top-8 -left-25 z-10 rounded-full text-base flex items-center gap-x-2 hover:-translate-y-0.5 hover:scale-103 transition-all transform duration-200 select-none text-dark-base tracking-wide">
-                                Themes
-                            </div>
-
-                            <div className="absolute top-71 -left-4 rotate-15 z-10">
-                                <FaLocationArrow className="size-9 text-light-base" />
-                            </div>
-
-                            <div className="bg-light-base px-4.5 py-2 absolute top-75 -left-37 z-10 rounded-full text-base flex items-center gap-x-2 hover:-translate-y-0.5 hover:scale-103 transition-all transform duration-200 select-none text-dark-base tracking-wide">
-                                Collaborators
-                            </div>
-
                             <div className="w-full h-[10%] gap-x-4">
                                 <div className="h-full w-full text-light-base/90 tracking-wide font-semibold  rounded-alpha flex items-center">
                                     <div className="w-full flex justify-center gap-x-3">
@@ -125,7 +101,7 @@ export default function LandingCardComponent() {
                                 </div>
                             </div>
 
-                            <div className="w-full h-[90%] grid grid-cols-14 gap-x-4 items-start overflow-hidden">
+                            <div className="w-full h-[90%] grid grid-cols-14 gap-x-4 items-start">
                                 <div className="col-span-10 bg-dark-faded rounded-beta h-full w-full flex flex-col">
                                     <div className="h-[88%] w-full flex gap-x-3 mt-1">
                                         <div className="w-[15%] h-full flex flex-col gap-y-2">

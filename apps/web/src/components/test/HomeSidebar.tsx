@@ -105,11 +105,10 @@ export default function HomeSidebar() {
 
     return (
         <aside
-            className="min-w-88 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between"
+            className="w-90 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between"
             data-lenis-prevent
         >
             <div>
-                {/* ================= MENU ================= */}
                 <section className="ml-4 mt-8">
                     <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
@@ -167,7 +166,6 @@ export default function HomeSidebar() {
 
             <section className="ml-4 mt-8">
                 <section className="flex flex-col gap-y-2 mt-2 px-4">
-                    {/* Chats */}
                     <div
                         onClick={() => handleTabChange(SidebarTab.CHATS)}
                         className={cn(
@@ -186,7 +184,6 @@ export default function HomeSidebar() {
                         <span className="text-sm dark:text-white/80 text-black/90">Chats</span>
                     </div>
 
-                    {/* Trash (Drop Target) */}
                     <div
                         ref={trashRef}
                         onClick={() => handleTabChange(SidebarTab.TRASH)}
