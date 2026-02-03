@@ -45,14 +45,68 @@ export default async function chatWithAiController(req: Request, res: Response) 
             },
         });
 
-        await chain.start(
-            res,
-            user.id.toString(),
-            session.id,
-            session.step as unknown as AgentStep,
-            session.instruction || '',
-            instruction,
-        );
+        switch (session.step) {
+            case AgentStep.START:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {
+                        user_instruction: instruction,
+                    },
+                });
+                break;
+
+            case AgentStep.ASK_DIFFICULTY:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {},
+                });
+                break;
+
+            case AgentStep.WAIT_DIFFICULTY:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {
+                        root_instruction: session.instruction || '',
+                        difficulty_instruction: instruction,
+                        user_id: user.id,
+                    },
+                });
+                break;
+
+            case AgentStep.PLANNING:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {},
+                });
+                break;
+
+            case AgentStep.GENERATE:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {},
+                });
+                break;
+
+            case AgentStep.REVISE:
+                await chain.start(res, session.id, {
+                    step: session.step,
+                    data: {
+                        user_instruction: instruction,
+                        quiz_id: '',
+                        questions: [],
+                    },
+                });
+
+            default:
+                ResponseWriter.error(
+                    res,
+                    'INVALID_AGENT_STEP',
+                    'agent felt into unknown step',
+                    undefined,
+                    400,
+                );
+                break;
+        }
     } catch (error) {
         console.error('error in chat with ai controller: ', error);
         ResponseWriter.system_error(res);

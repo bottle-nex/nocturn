@@ -3,54 +3,41 @@ import { AiQuizMessage, prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 import { model } from '../../services/init.services';
-import { generated_question_type } from '../types/createNewQuizType';
+import { generated_question_type, StartEvent, StartGeneration } from '../types/createNewQuizType';
 
 export default class Chain {
-
-    public async start(
-        res: Response,
-        user_id: string,
-        session_id: string,
-        step: AgentStep,
-        user_instruction: string,
-        difficulty_instruction: string,
-    ) {
-        console.log('step to continue: ', step);
-        // create the stream
-        this.create_stream(res);
-
-        switch (step) {
+    public async start(res: Response, session_id: string, event: StartEvent) {
+        switch (event.step) {
             case AgentStep.START: {
-                // ask for difficulty
-                await this.ask_difficulty(res, user_instruction, session_id);
-                return;
+                await this.ask_difficulty(res, event.data.user_instruction, session_id);
+                break;
             }
             case AgentStep.WAIT_DIFFICULTY: {
-                // difficulty found change it from text to number
                 const difficulty = await this.compute_text_difficulty(
                     session_id,
-                    difficulty_instruction,
+                    event.data.difficulty_instruction,
                 );
 
-                console.log('difficulty: ', difficulty);
-
-                // plan the quiz creation
                 const { plan, quiz_id } = await this.plan(
                     res,
-                    user_id,
+                    event.data.user_id,
                     session_id,
-                    user_instruction,
+                    event.data.root_instruction,
                     difficulty,
                 );
 
-                console.log('plan: ', plan);
-
-                // execute the plan
                 await this.executor(res, session_id, quiz_id, plan);
                 return;
-            };
+            }
             case AgentStep.REVISE: {
-
+                await this.reviser(
+                    res,
+                    event.data.user_instruction,
+                    session_id,
+                    event.data.quiz_id,
+                    event.data.questions,
+                );
+                return;
             }
         }
     }
@@ -63,7 +50,6 @@ export default class Chain {
                 type: STREAM.ID,
                 data: session_id,
             });
-
 
             console.log('difficulty chain hit');
 
@@ -126,7 +112,6 @@ export default class Chain {
         session_id: string,
         text_difficulty: string,
     ): Promise<number> {
-
         console.log('compute text difficulty chain hit');
 
         const conversion = await model.text_to_number_difficulty.invoke({
@@ -153,7 +138,6 @@ export default class Chain {
         instruction: string,
         difficulty: number,
     ): Promise<{ plan: string; quiz_id: string }> {
-
         console.log('plan chain hit');
 
         const response = await model.planner.invoke({
@@ -215,14 +199,8 @@ export default class Chain {
         };
     }
 
-    private async executor(
-        res: Response,
-        session_id: string,
-        quiz_id: string,
-        plan: string,
-    ) {
+    private async executor(res: Response, session_id: string, quiz_id: string, plan: string) {
         try {
-
             console.log('executor chain hit');
 
             const response = await model.executor.invoke({
@@ -231,16 +209,18 @@ export default class Chain {
 
             console.log('executor response: ', response);
 
-            const parsed_questions = response.questions.map((q: generated_question_type, i: number) => {
-                return {
-                    ...q,
-                    basePoints: 20,
-                    timeLimit: 30,
-                    readingTime: 7,
-                    orderIndex: i,
-                    isAsked: false,
-                };
-            });
+            const parsed_questions = response.questions.map(
+                (q: generated_question_type, i: number) => {
+                    return {
+                        ...q,
+                        basePoints: 20,
+                        timeLimit: 30,
+                        readingTime: 7,
+                        orderIndex: i,
+                        isAsked: false,
+                    };
+                },
+            );
 
             const { messages, quiz } = await prisma.$transaction(async (tx) => {
                 const agentic_message = await tx.aiQuizMessage.create({
@@ -324,22 +304,23 @@ export default class Chain {
         questions: (generated_question_type & { id: string })[],
     ) {
         try {
-
             const response = await model.reviser.invoke({
                 instruction,
                 questions,
             });
 
-            const updated_questions = response.questions.map((q: generated_question_type, i: number) => {
-                return {
-                    ...q,
-                    basePoints: 20,
-                    timeLimit: 30,
-                    readingTime: 7,
-                    orderIndex: i,
-                    isAsked: false,
-                };
-            });
+            const updated_questions = response.questions.map(
+                (q: generated_question_type, i: number) => {
+                    return {
+                        ...q,
+                        basePoints: 20,
+                        timeLimit: 30,
+                        readingTime: 7,
+                        orderIndex: i,
+                        isAsked: false,
+                    };
+                },
+            );
 
             const { quiz, messages } = await prisma.$transaction(async (tx) => {
                 const quiz = await tx.quiz.update({
@@ -350,8 +331,8 @@ export default class Chain {
                         questions: {
                             deleteMany: {
                                 id: {
-                                    in: questions.map(q => q.id),
-                                }
+                                    in: questions.map((q) => q.id),
+                                },
                             },
                             createMany: {
                                 data: updated_questions,
@@ -385,25 +366,19 @@ export default class Chain {
                 };
             });
 
-            ResponseWriter.stream.write(
-                res,
-                {
-                    type: STREAM.MESSAGES,
-                    data: messages,
-                },
-            );
+            ResponseWriter.stream.write(res, {
+                type: STREAM.MESSAGES,
+                data: messages,
+            });
 
-            ResponseWriter.stream.write(
-                res,
-                {
-                    type: STREAM.QUIZ,
-                    data: quiz,
-                },
-            );
-            
+            ResponseWriter.stream.write(res, {
+                type: STREAM.QUIZ,
+                data: quiz,
+            });
         } catch (error) {
             console.error('error in reviser: ', error);
-
+        } finally {
+            ResponseWriter.stream.end(res);
         }
     }
 
