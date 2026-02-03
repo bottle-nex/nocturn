@@ -3,8 +3,9 @@ import ResponseWriter from '../../class/response_writer';
 import { AiQuizChatRole, prisma } from '@nocturn/database';
 import { chain } from '../../services/init.services';
 import { AgentStep } from '@nocturn/types';
+import { generateNewQuizSchema } from '../../schemas/generateNewQuizSchema';
 
-export default async function chatWithAiController(req: Request, res: Response) {
+export default async function generateNewQuizController(req: Request, res: Response) {
     try {
         const user = req.user;
         if (!user) {
@@ -12,9 +13,14 @@ export default async function chatWithAiController(req: Request, res: Response) 
             return;
         }
 
-        const { instruction, sessionId } = req.body;
+        const parsed_data = generateNewQuizSchema.safeParse(req.body);
 
-        // add zos validation
+        if (!parsed_data.success) {
+            ResponseWriter.invalid_data(res, 'invalid data provided');
+            return;
+        }
+
+        const { instruction, sessionId } = parsed_data.data;
 
         // try to fetch the ai-chat-session
         let session;
@@ -24,7 +30,7 @@ export default async function chatWithAiController(req: Request, res: Response) 
             },
         });
 
-        if (!session) {
+        if (!session || session?.userId !== user.id) {
             session = await prisma.aiQuizChatSession.create({
                 data: {
                     userId: user.id.toString(),
@@ -45,6 +51,8 @@ export default async function chatWithAiController(req: Request, res: Response) 
             },
         });
 
+        // the extra steps are for future
+        // these can be used to handle any unwanted errors, to regenerate
         switch (session.step) {
             case AgentStep.START:
                 await chain.start(res, session.id, {

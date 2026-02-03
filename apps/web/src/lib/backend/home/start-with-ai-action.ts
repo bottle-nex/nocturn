@@ -1,6 +1,6 @@
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { AiQuizMessage, QuizType, STREAM, stream } from '@nocturn/types';
-import { CREATE_QUIZ_USING_AI } from 'routes/api_routes';
+import { GENERATE_NEW_QUIZ } from 'routes/api_routes';
 
 export default class AiBackendAction {
     static async create_new_quiz(token: string, sessionId: string, instruction: string) {
@@ -9,7 +9,7 @@ export default class AiBackendAction {
         try {
             setLoading(false);
 
-            const response = await fetch(CREATE_QUIZ_USING_AI, {
+            const response = await fetch(GENERATE_NEW_QUIZ, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

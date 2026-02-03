@@ -1,7 +1,7 @@
 import { Router } from 'express';
 const router: Router = Router();
 
-// <---------------------- controllers ----------------------> //
+// <---------------------- CONTROLLERS ---------------------->
 import signInController from '../controllers/user-controller/signInController';
 import getPreSignedUrlController from '../controllers/s3-controller/getPreSignedUrlController';
 import upsertQuizController from '../controllers/quiz-controller/upsertQuizController';
@@ -25,12 +25,8 @@ import deleteQuizController from '../controllers/quiz-controller/deleteQuizContr
 import get_trashed_quizzes_controller from '../controllers/quiz-controller/get_trashed_quizzes_controller';
 import delete_trashed_quizzes_controller from '../controllers/quiz-controller/delete_trashed_quizzes_controller';
 import restore_trashed_quiz_controller from '../controllers/quiz-controller/restore_trashed_quiz_controller';
-
-// <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
-import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
-import chatWithAiController from '../controllers/ai-controller/chatWithAiController';
+import generateNewQuizController from '../controllers/ai-controller/generateNewQuizController';
 import createQuizController from '../controllers/quiz-controller/createQuizController';
 import get_favourite_quizzes_controller from '../controllers/quiz-controller/get_favourite_quizzes_controller';
 import toggle_favourite_quiz_controller from '../controllers/quiz-controller/toggle_favourite_quiz_controller';
@@ -38,6 +34,10 @@ import delete_selected_quizzes_controller from '../controllers/quiz-controller/d
 import renameQuizController from '../controllers/quiz-controller/renameQuizController';
 import duplicateQuizController from '../controllers/quiz-controller/duplicateQuizController';
 import getQuestionsController from '../controllers/quiz-controller/getQuestionsController';
+
+// <---------------------- MIDDLEWARES ---------------------->
+import authMiddleware from '../middlewares/authMiddleware';
+import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', signInController);
@@ -96,11 +96,11 @@ router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);
 router.get('/quiz/get-question-results', getQuestionResults);
 
-// collaborator routes
+// <---------------------- COLLABORATOR-ROUTES ---------------------->
 router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.process);
 
-// ai routes
-router.post('/ai/create-new-quiz', authMiddleware, chatWithAiController);
+// <---------------------- AI-ROUTES ---------------------->
+router.post('/ai/generate-new-quiz', authMiddleware, generateNewQuizController);
 
 router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsController);
 

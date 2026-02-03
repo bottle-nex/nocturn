@@ -36,7 +36,7 @@ export const GET_QUIZ_QUESTIONS = QUIZ_URL + '/get-quiz-questions';
 export const GET_SELECTED_QUESTION_DATA = QUIZ_URL + '/get-selected-question-data';
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
 
-export const CREATE_QUIZ_USING_AI = AI_URL + '/create-new-quiz';
+export const GENERATE_NEW_QUIZ = AI_URL + '/generate-new-quiz';
 
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';
