@@ -3,7 +3,7 @@ import { AiQuizMessage, prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 import { model } from '../../services/init.services';
-import { generated_question_type, StartEvent, StartGeneration } from '../types/createNewQuizType';
+import { generated_question_type, StartEvent } from '../types/createNewQuizType';
 
 export default class Chain {
     public async start(res: Response, session_id: string, event: StartEvent) {

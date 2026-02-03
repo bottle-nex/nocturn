@@ -104,6 +104,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
                         questions: [],
                     },
                 });
+                break;
 
             default:
                 ResponseWriter.error(
