@@ -121,7 +121,7 @@ export default function HomeRightUpperSection() {
             <div
                 ref={containerRef}
                 className={cn(
-                    'relative max-w-sm w-full h-11 rounded-beta',
+                    'relative max-w-sm w-full h-11 mt-10 rounded-beta',
                     'border-neutral-800 dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
                 )}
             >

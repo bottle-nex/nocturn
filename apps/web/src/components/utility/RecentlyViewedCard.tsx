@@ -54,7 +54,7 @@ export default function RecentlyViewedCard({
                             template={template}
                         />
 
-                        <div className="absolute inset-0 flex p-[2px] rounded-[12px] overflow-hidden">
+                        <div className="absolute inset-0 flex p-[2px] rounded-[10px] overflow-hidden">
                             <div
                                 className={cn(
                                     'w-full h-full opacity-0 group-hover:opacity-100',

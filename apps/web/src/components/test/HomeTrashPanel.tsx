@@ -22,6 +22,7 @@ import ToolTipComponent from '../utility/TooltipComponent';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
 import { MdDeleteSweep } from 'react-icons/md';
+import { SidebarTab } from '@/constants/SidebarTabConstants';
 
 export default function HomeTrashPanel() {
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
@@ -100,7 +101,7 @@ export default function HomeTrashPanel() {
         <AnimatePresence>
             <OpacityBackground
                 className="bg-black/10 dark:bg-white/10"
-                onBackgroundClick={() => setActiveTab(null)}
+                onBackgroundClick={() => setActiveTab(SidebarTab.HOME)}
             >
                 <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-alpha/70 border-none p-8 overflow-hidden">
                     <div className="flex flex-col w-full h-full gap-y-6 relative px-2">

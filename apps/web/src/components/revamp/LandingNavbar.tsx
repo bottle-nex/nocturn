@@ -233,24 +233,22 @@ export default function LandingNavbar() {
                 {session?.user.token ? (
                     <div className="flex gap-x-2.5">
                         <motion.button
-                            // whileHover={{
-                            //     scale: 1.03,
-                            //     y: -1,
-                            // }}
+                            initial={{ opacity: 0, scale: 0.9, y: 16 }}
+                            animate={{ opacity: 1, scale: [0.9, 1.06, 1], y: [16, -6, 0] }}
+                            transition={{
+                                opacity: { duration: 0.15 },
+                                scale: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
+                                y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
+                            }}
                             whileTap={{
                                 scale: 0.98,
                                 y: 0,
-                            }}
-                            transition={{
-                                type: 'tween',
-                                duration: 0.15,
-                                ease: 'easeOut',
                             }}
                             onClick={() => {
                                 if (!session.user.token) return;
                                 router.push('/home');
                             }}
-                            className="bg-nradiant hover:bg-nradiant text-dark-base text-[18px] h-11 w-33 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-200 ease-in-out"
+                            className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-200 ease-in-out"
                         >
                             Get Started
                         </motion.button>
@@ -265,7 +263,7 @@ export default function LandingNavbar() {
                                 duration: 0.15,
                                 ease: 'easeOut',
                             }}
-                            className="h-11 w-11 relative rounded-full border-[2px] border-nradiant overflow-hidden cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 shadow-xs"
+                            className="h-12 w-12 relative rounded-full border-[2px] border-[#09c92f] overflow-hidden cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 shadow-xs"
                             onClick={handleAuthClick}
                         >
                             <Image
@@ -277,12 +275,12 @@ export default function LandingNavbar() {
                         </motion.div>
                     </div>
                 ) : (
-                    <Button
+                    <motion.button
                         onClick={() => setOpenSigninModal(true)}
-                        className="bg-nradiant hover:bg-nradiant hover:flip-horizontal-bottom text-[18px] h-11 w-24 rounded-full shadow-xs"
+                        className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-25 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300"
                     >
                         Sign In
-                    </Button>
+                    </motion.button>
                 )}
             </div>
             <LogoutModal />

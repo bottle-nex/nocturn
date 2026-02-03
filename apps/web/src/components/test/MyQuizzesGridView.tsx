@@ -54,7 +54,7 @@ export default function MyQuizzesGridView({
         >
             <div
                 className={cn(
-                    'absolute top-5 z-10 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
+                    'absolute top-5 z-20 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
                     isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                 )}
             >

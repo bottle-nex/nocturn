@@ -15,7 +15,7 @@ export default function Home() {
 
     return (
         <div className="tracking-wider dark:bg-neutral-950 h-full w-screen overflow-x-hidden relative">
-            <div className="flex h-full">
+            <div className="flex h-full w-full">
                 <HomeSidebar />
                 <SidebarPanelRenderer />
             </div>
@@ -31,7 +31,7 @@ export default function Home() {
                     className=" text-neutral-500 dark:text-neutral-400 dark:invert"
                 /> */}
             </div>
-            {/* <AiChatBox /> */}
+            {/* <AIChatBoxrevamp /> */}
 
             {preview && <PreviewQuiz quiz={quiz!} onPreviewClose={() => setPreview(false)} />}
 

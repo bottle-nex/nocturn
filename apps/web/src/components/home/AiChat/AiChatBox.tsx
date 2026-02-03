@@ -11,7 +11,6 @@ import { useRef, useState } from 'react';
 import { GoPlus } from 'react-icons/go';
 import { IoMdArrowRoundUp } from 'react-icons/io';
 import { v4 as uuid } from 'uuid';
-import MessagesRenderer from './MessagesRenderer';
 import { FaSquare } from 'react-icons/fa6';
 import VoiceIcon from '@/components/ui/svg/VoiceIcon';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
@@ -26,7 +25,7 @@ export default function AiChatBox() {
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [prompt, setPrompt] = useState<string>('');
-    const [messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
+    const [_messageRendererPanel, setMessageRendererPanel] = useState<boolean>(false);
     const { messages, appendMessage, loading, sessionId, quiz } = useAiChatStore();
     const { session } = useUserSessionStore();
 
@@ -84,7 +83,7 @@ export default function AiChatBox() {
         <div
             ref={containerRef}
             className={cn(
-                'absolute bottom-10 right-10 max-w-87.5 w-full h-11 rounded-full px-2 z-10',
+                'absolute bottom-10 left-1/2 -translate-x-1/2 max-w-90 w-full h-11 rounded-beta px-2 z-20',
                 'border border-neutral-800 dark:border-neutral-800 dark:bg-dark-alpha dark:text-white',
                 'flex justify-center items-center',
             )}
@@ -145,7 +144,7 @@ export default function AiChatBox() {
                 </div>
             </ToolTipComponent>
 
-            {messageRendererPanel && <MessagesRenderer className="absolute bottom-12 " />}
+            {/* {messageRendererPanel && <MessagesRenderer className="absolute bottom-12 " />} */}
         </div>
     );
 }

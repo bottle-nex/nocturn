@@ -4,10 +4,9 @@ import HomePanel from './HomePanel';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
 import MyQuizzesPanel from './MyQuizzesPanel';
 import FavouriteQuizzesPanel from './FavouriteQuizzesPanel';
+import AIChatBoxrevamp from '../home/AiChat/AIChatBoxrevamp';
 
-export default function SidebarPanelRenderer() {
-    const { activeTab } = useHomeSidebarStore();
-
+function renderPanel(activeTab: SidebarTab) {
     switch (activeTab) {
         case SidebarTab.HOME:
             return <HomePanel />;
@@ -20,4 +19,16 @@ export default function SidebarPanelRenderer() {
         default:
             return;
     }
+}
+
+export default function SidebarPanelRenderer() {
+    const { activeTab } = useHomeSidebarStore();
+
+    return (
+        <div className="relative w-full">
+            <AIChatBoxrevamp />
+
+            {renderPanel(activeTab)}
+        </div>
+    );
 }
