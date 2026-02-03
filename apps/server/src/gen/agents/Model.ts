@@ -18,7 +18,6 @@ import { env } from '../../configs/env';
 import { generated_question_type } from '../types/createNewQuizType';
 
 export default class Model {
-
     public model: ChatGoogleGenerativeAI;
 
     public difficulty_asker: RunnableSequence<{ instruction: string }, { userResponse: string }>;
