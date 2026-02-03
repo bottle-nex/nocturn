@@ -18,7 +18,6 @@ export default function Page() {
             <NocturnLandingSection />
             <NocturnPerksSection />
             <NocturnFeaturesSection />
-            <NocturnUsersSection />
             <BigAnimatedText />
             <Footer /> */}
             {/* <NavbarTest /> */}

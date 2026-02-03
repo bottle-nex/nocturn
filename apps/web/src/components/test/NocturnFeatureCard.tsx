@@ -3,13 +3,13 @@ import { HiArrowNarrowRight } from 'react-icons/hi';
 import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 
-interface UserTypeCardData {
-    userType: string;
-    userRole: string;
+interface NocturnFeatureCardProps {
+    featureTag: string;
+    featureAction: string;
 
-    userHeading: string;
-    miniDesc: string;
-    detailedDesc: string;
+    featureHeading: string;
+    tagline: string;
+    description: string;
 
     buttonTitle: string;
     buttonIcon: React.ReactElement;
@@ -22,12 +22,12 @@ interface UserTypeCardData {
     onClick: () => void;
 }
 
-export default function UserTypeCard({
-    userType,
-    userRole,
-    userHeading,
-    miniDesc,
-    detailedDesc,
+export default function NocturnFeatureCard({
+    featureTag,
+    featureAction,
+    featureHeading,
+    tagline,
+    description,
     buttonTitle,
     buttonIcon,
     bgClassname,
@@ -35,7 +35,7 @@ export default function UserTypeCard({
     buttonClassName,
     border,
     onClick,
-}: UserTypeCardData) {
+}: NocturnFeatureCardProps) {
     return (
         <div
             className={cn(
@@ -44,12 +44,12 @@ export default function UserTypeCard({
             )}
         >
             <div className="flex justify-between text-xl w-full font-semibold">
-                <div>{userType}</div>
+                <div>{featureTag}</div>
                 <div
                     onClick={onClick}
                     className="flex items-center gap-x-1 hover:underline cursor-pointer"
                 >
-                    {userRole}
+                    {featureAction}
                     <HiArrowNarrowRight className="size-6" />
                 </div>
             </div>
@@ -60,13 +60,13 @@ export default function UserTypeCard({
                     textClassname,
                 )}
             >
-                <div className="text-[6rem] font-semibold leading-20 pt-10">{userHeading}</div>
+                <div className="text-[6rem] font-semibold leading-20 pt-10">{featureHeading}</div>
 
                 <div className={cn('h-px w-full border-t', border)} />
 
-                <div className="text-3xl tracking-wide font-normal">{miniDesc}</div>
+                <div className="text-3xl tracking-wide font-normal">{tagline}</div>
 
-                <div className="text-base font-semibold tracking-wide">{detailedDesc}</div>
+                <div className="text-base font-semibold tracking-wide">{description}</div>
 
                 <div className={cn('h-px w-full border-t', border)} />
 

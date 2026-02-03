@@ -251,7 +251,7 @@ export default function LandingNavbar() {
                             }}
                             className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-200 ease-in-out"
                         >
-                            Get Started
+                            Go to Home
                         </motion.button>
 
                         <motion.div
