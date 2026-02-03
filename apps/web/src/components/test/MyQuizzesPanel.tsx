@@ -112,7 +112,9 @@ export default function MyQuizzesPanel() {
         <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">
             <div className="w-full flex justify-start flex-col">
                 <div className="flex justify-between">
-                    <div className="text-4xl text-light-base">My Quizzes</div>
+                    <div className="text-4xl  text-dark-base dark:text-light-base">
+                        My Quizzes
+                    </div>
                 </div>
 
                 <QuizzesUpperSection

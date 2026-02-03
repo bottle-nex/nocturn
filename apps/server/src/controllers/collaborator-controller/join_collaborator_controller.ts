@@ -34,7 +34,6 @@ export default class Collaborator {
             ResponseWriter.not_authorized(res);
             return;
         }
-        console.log('Invite Collaborator Request Body:', req.body);
         const parsed_body = inviteCollaboratorSchema.safeParse(req.body.emails);
         if (!parsed_body.success) {
             ResponseWriter.invalid_data(res, 'Valid email is required');
