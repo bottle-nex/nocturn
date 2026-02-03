@@ -26,7 +26,6 @@ export default class CollaboratorsHandlers {
     }
 
     static handleIncomingQuizUpdate(payload: unknown) {
-
         const { updateQuiz } = useNewQuizStore.getState();
         const data = payload as {
             quiz: Partial<QuizType>;

@@ -1,8 +1,8 @@
 import z from 'zod';
 
-const question_schema = z.object({
-    question: z.string().min(5).describe('a one liner question'),
-    options: z.array(z.string()).length(4),
+export const question_schema = z.object({
+    question: z.string().min(5).max(150).describe('a one liner question'),
+    options: z.array(z.string().min(1).max(60)).length(4),
     correctAnswer: z.int().min(0).max(3),
     explanation: z
         .string()
@@ -53,5 +53,5 @@ export const reviser_schema = z.object({
         .min(5)
         .max(200)
         .describe('give a user response like you are doing the job'),
-    questions: z.array(question_schema).min(8).max(25),
+    questions: z.array(question_schema).min(1).max(25),
 });

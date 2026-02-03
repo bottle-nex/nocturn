@@ -1,4 +1,4 @@
-import { CustomResponse, stream } from '@nocturn/types';
+import { CustomResponse, STREAM, stream } from '@nocturn/types';
 import { Response } from 'express';
 
 export default class ResponseWriter {
@@ -139,6 +139,12 @@ export default class ResponseWriter {
             res.write(`data: ${JSON.stringify(data)}\n\n`);
         }
         static end(res: Response) {
+            res.write(
+                `data: ${JSON.stringify({
+                    type: STREAM.END,
+                    data: null,
+                })}\n\n`,
+            );
             res.end();
         }
     };

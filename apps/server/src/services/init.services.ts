@@ -8,6 +8,7 @@ import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
 import EmailServiceQueue from './email/email.services';
 import Chain from '../gen/agents/Chain';
+import Model from '../gen/agents/Model';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -20,6 +21,7 @@ export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 
 export let chain: Chain;
+export let model: Model;
 
 export default function initServices() {
     publisherInstance = new Redis(env.SERVER_REDIS_URL);
@@ -43,4 +45,5 @@ export default function initServices() {
     quizManagerInstance.set_phase_queue(phaseQueueInstance);
 
     chain = new Chain();
+    model = new Model();
 }
