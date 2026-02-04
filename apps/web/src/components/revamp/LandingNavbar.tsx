@@ -271,6 +271,7 @@ export default function LandingNavbar() {
                                 alt={session.user.name}
                                 fill
                                 unoptimized
+                                className="text-black"
                             />
                         </motion.div>
                     </div>
