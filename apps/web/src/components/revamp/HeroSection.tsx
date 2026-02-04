@@ -11,7 +11,7 @@ export default function HeroSection() {
     const { session } = useUserSessionStore();
 
     return (
-        <div className="h-screen w-screen bg-dark-base grid grid-cols-7 px-15 pt-25 relative">
+        <div className="h-screen w-full max-w-screen bg-dark-base grid grid-cols-7 px-15 pt-25 relative">
             {/* absolute text */}
             <div className="absolute bottom-10 left-15 flex flex-col gap-y-4 max-w-4xl">
                 <h1 className="text-7xl font-bold text-light-base leading-tight">

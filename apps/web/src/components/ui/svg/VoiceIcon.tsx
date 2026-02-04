@@ -11,7 +11,7 @@ export default function VoiceIcon({ size = 24, className = '', animate = false }
         <svg
             width={size}
             height={size}
-            viewBox="0 0 24 24"
+            viewBox="0 0 22 24"
             xmlns="http://www.w3.org/2000/svg"
             className={cn('block', className)}
             fill="currentColor"

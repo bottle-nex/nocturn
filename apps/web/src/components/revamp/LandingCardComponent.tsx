@@ -47,7 +47,7 @@ export default function LandingCardComponent() {
     }
 
     return (
-        <div className="w-screen h-screen flex flex-col relative items-center">
+        <div className="w-screen h-screen flex flex-col relative items-center overflow-hidden">
             <div className="flex flex-col items-center mt-[7%] gap-y-3 w-full max-w-[67rem]">
                 <div className="text-light-base text-[110px] leading-[1.04] font-bold w-full flex flex-col items-center">
                     <div>Outhink the room</div>
