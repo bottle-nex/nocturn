@@ -10,8 +10,7 @@ import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 
-
-const newChatPlaceholders = ['Have an idea?', "Don\'t know where to start?", 'Use me!'];
+const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
 const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
 
@@ -79,7 +78,6 @@ export default function AIChatBoxRevamp() {
 
     return (
         <div className="relative w-full overflow-hidden flex items-center justify-center text-neutral-200 font-sans">
-
             {/* Background hint */}
             <AnimatePresence>
                 {!expanded && (
@@ -116,13 +114,13 @@ export default function AIChatBoxRevamp() {
                         width: 'calc(100vw - 48px)',
                         height: 'calc(100vh - 48px)',
                         borderRadius: 16,
-                    }
+                    },
                 }}
                 transition={{
                     type: 'spring',
                     stiffness: 85, // Lower stiffness for more visible movement
                     damping: 18,
-                    mass: 1.2
+                    mass: 1.2,
                 }}
                 className="z-30 overflow-hidden bg-neutral-900 border border-neutral-800 shadow-2xl flex flex-row items-stretch"
             >
@@ -130,18 +128,18 @@ export default function AIChatBoxRevamp() {
                 <motion.div
                     layout="position"
                     className={cn(
-                        "flex flex-col relative shrink-0 transition-colors duration-500",
-                        expanded ? "border-r border-neutral-800" : ""
+                        'flex flex-col relative shrink-0 transition-colors duration-500',
+                        expanded ? 'border-r border-neutral-800' : '',
                     )}
                     // Explicitly animate width to prevent snapping
                     animate={{
-                        width: expanded ? 400 : "100%"
+                        width: expanded ? 400 : '100%',
                     }}
                     transition={{
                         type: 'spring',
                         stiffness: 85,
                         damping: 18,
-                        mass: 1.2
+                        mass: 1.2,
                     }}
                 >
                     {/* Header Controls */}
@@ -153,8 +151,13 @@ export default function AIChatBoxRevamp() {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="flex justify-between items-center px-4 py-3 border-b border-neutral-800 shrink-0"
                             >
-                                <span className="text-sm font-medium text-neutral-400">Chat Session</span>
-                                <button onClick={() => setExpanded(false)} className="p-2 hover:bg-neutral-800 rounded-full transition-colors">
+                                <span className="text-sm font-medium text-neutral-400">
+                                    Chat Session
+                                </span>
+                                <button
+                                    onClick={() => setExpanded(false)}
+                                    className="p-2 hover:bg-neutral-800 rounded-full transition-colors"
+                                >
                                     <X size={20} />
                                 </button>
                             </motion.div>
@@ -165,9 +168,9 @@ export default function AIChatBoxRevamp() {
                     <motion.div
                         layout
                         className={cn(
-                            "p-4 w-full flex flex-col",
+                            'p-4 w-full flex flex-col',
                             // Use margin-top auto to push it to bottom in expanded mode
-                            expanded ? "mt-auto" : ""
+                            expanded ? 'mt-auto' : '',
                         )}
                     >
                         <div
@@ -206,10 +209,16 @@ export default function AIChatBoxRevamp() {
                                             onClick={toggle}
                                             className={cn(
                                                 'w-8 h-8 flex items-center justify-center rounded-full transition-all',
-                                                listening ? 'bg-red-500/20 text-red-500' : 'hover:bg-neutral-800 text-neutral-400'
+                                                listening
+                                                    ? 'bg-red-500/20 text-red-500'
+                                                    : 'hover:bg-neutral-800 text-neutral-400',
                                             )}
                                         >
-                                            {listening ? <Loader2 size={16} className="animate-spin" /> : <Mic size={20} />}
+                                            {listening ? (
+                                                <Loader2 size={16} className="animate-spin" />
+                                            ) : (
+                                                <Mic size={20} />
+                                            )}
                                         </button>
                                     )}
 
@@ -220,7 +229,7 @@ export default function AIChatBoxRevamp() {
                                             'w-8 h-8 flex items-center justify-center rounded-full transition-all',
                                             hasContent
                                                 ? 'bg-neutral-100 text-neutral-900 hover:scale-105'
-                                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed',
                                         )}
                                     >
                                         <ArrowUp size={16} />
@@ -237,7 +246,9 @@ export default function AIChatBoxRevamp() {
                                     exit={{ opacity: 0 }}
                                     className="mt-4 text-center shrink-0"
                                 >
-                                    <p className="text-xs text-neutral-500">AI can make mistakes. Verify info.</p>
+                                    <p className="text-xs text-neutral-500">
+                                        AI can make mistakes. Verify info.
+                                    </p>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -251,13 +262,13 @@ export default function AIChatBoxRevamp() {
                     initial={{ opacity: 0, width: 0 }}
                     animate={{
                         opacity: expanded ? 1 : 0,
-                        width: expanded ? "100%" : 0
+                        width: expanded ? '100%' : 0,
                     }}
                     transition={{
                         type: 'spring',
                         stiffness: 85,
                         damping: 18,
-                        mass: 1.2
+                        mass: 1.2,
                     }}
                     className="h-full bg-neutral-900 overflow-hidden flex flex-col"
                 >
@@ -265,10 +276,11 @@ export default function AIChatBoxRevamp() {
                         <div className="w-16 h-16 rounded-full bg-neutral-800/50 mb-6 flex items-center justify-center">
                             <Expand className="text-neutral-600" size={24} />
                         </div>
-                        <h3 className="text-xl font-semibold text-neutral-300 mb-2">Expansion Complete</h3>
+                        <h3 className="text-xl font-semibold text-neutral-300 mb-2">
+                            Expansion Complete
+                        </h3>
                         <p className="max-w-md">
-                            The card has expanded upwards. The "Right Side" animated from 0 width to fill the space,
-                            allowing the parent container to interpolate its size smoothly.
+                            {"The card has expanded upwards. The 'Right Side' animated from 0 width to fill the space, allowing the parent container to interpolate its size smoothly."}
                         </p>
                     </div>
                 </motion.div>
@@ -276,4 +288,3 @@ export default function AIChatBoxRevamp() {
         </div>
     );
 }
-

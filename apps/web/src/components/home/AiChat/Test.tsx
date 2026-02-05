@@ -12,12 +12,10 @@ import { cn } from '@/lib/utils';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
-import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
 
-const newChatPlaceholders = ['Have an idea?', "Don\'t know where to start?", 'Use me!'];
+const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
 const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
 
@@ -31,19 +29,17 @@ export default function AIChatBoxrevamp() {
     const [expanded, setExpanded] = useState(false);
 
     const { messages, loading, quiz, appendMessage, sessionId } = useAiChatStore();
-    const { session } = useUserSessionStore();
 
     const animatedPlaceholders = useTypewriterPlaceholder(
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
-        onFinalTranscript: (text) =>
-            setPrompt((prev) => (prev ? prev + ' ' : '') + text),
+        onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
     });
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -98,7 +94,6 @@ export default function AIChatBoxrevamp() {
                     x: '-50%',
                     width: '100%',
                     maxWidth: 454,
-
                 },
                 expanded: {
                     left: -270,
@@ -174,9 +169,7 @@ export default function AIChatBoxrevamp() {
                                             disabled={loading}
                                             className={cn(
                                                 'w-8 h-8 flex items-center justify-center rounded-full',
-                                                listening
-                                                    ? 'bg-red-500'
-                                                    : 'hover:bg-neutral-800',
+                                                listening ? 'bg-red-500' : 'hover:bg-neutral-800',
                                                 loading && 'opacity-40 cursor-not-allowed',
                                             )}
                                         >
@@ -186,7 +179,9 @@ export default function AIChatBoxrevamp() {
                                                 <IoMicOutline
                                                     className={cn(
                                                         'size-5',
-                                                        listening ? 'text-white' : 'text-neutral-400',
+                                                        listening
+                                                            ? 'text-white'
+                                                            : 'text-neutral-400',
                                                     )}
                                                 />
                                             )}
@@ -227,10 +222,7 @@ export default function AIChatBoxrevamp() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: expanded ? 1 : 0 }}
                         transition={{ delay: 0.2 }}
-                        className={cn(
-                            'flex-1',
-                            expanded && 'border-l border-neutral-800',
-                        )}
+                        className={cn('flex-1', expanded && 'border-l border-neutral-800')}
                     />
                 </div>
             </div>
