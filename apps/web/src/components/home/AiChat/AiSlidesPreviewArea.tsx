@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { LiaPagerSolid } from "react-icons/lia";
-import ChangeThemePanel from "./ChangeThemePanel";
-import { Expand } from "lucide-react";
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { LiaPagerSolid } from 'react-icons/lia';
+import ChangeThemePanel from './ChangeThemePanel';
+import { Expand } from 'lucide-react';
 
 interface AiSlidesPreviewAreaProps {
     expanded: boolean;
@@ -10,7 +10,7 @@ interface AiSlidesPreviewAreaProps {
     currentTheme: string;
     setThemePanel: (value: boolean) => void;
     setCurrentTheme: (theme: string) => void;
-    setPreviewTheme: (theme: string | null) => void;
+    setPreviewTheme?: (theme: string | null) => void;
     onClose: () => void;
     onContinue: () => void;
 }
@@ -62,11 +62,11 @@ export default function AiSlidesPreviewArea({
                                 onThemeHover={setPreviewTheme}
                                 onThemeChange={(theme) => {
                                     setCurrentTheme(theme);
-                                    setPreviewTheme(null);
+                                    setPreviewTheme?.(null);
                                     setThemePanel(false);
                                 }}
                                 onClose={() => {
-                                    setPreviewTheme(null);
+                                    setPreviewTheme?.(null);
                                     setThemePanel(false);
                                 }}
                             />
@@ -101,9 +101,7 @@ export default function AiSlidesPreviewArea({
                 <div className="w-16 h-16 rounded-full bg-neutral-800/50 mb-6 flex items-center justify-center">
                     <Expand className="text-neutral-600" size={24} />
                 </div>
-                <h3 className="text-xl font-semibold text-neutral-300 mb-2">
-                    Expansion Complete
-                </h3>
+                <h3 className="text-xl font-semibold text-neutral-300 mb-2">Expansion Complete</h3>
                 <p className="max-w-md">
                     {
                         "The card has expanded upwards. The 'Right Side' animated from 0 width to fill the space, allowing the parent container to interpolate its size smoothly."

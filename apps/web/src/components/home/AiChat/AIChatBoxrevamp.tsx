@@ -9,7 +9,6 @@ import { AiQuizChatRole, AiQuizMessage, TemplateEnum } from '@nocturn/types';
 import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
-import { templates } from '@/lib/templates';
 import { useRouter } from 'next/navigation';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
 
@@ -29,11 +28,11 @@ export default function AIChatBoxRevamp() {
     const router = useRouter();
 
     const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
-    const [previewTheme, setPreviewTheme] = useState<string | null>(null);
+    // const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 
-    const activeTheme = previewTheme ?? currentTheme;
-    const template = templates.find((t) => t.id === activeTheme);
+    // const activeTheme = previewTheme ?? currentTheme;
+    // const template = templates.find((t) => t.id === activeTheme);
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
@@ -43,8 +42,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -150,7 +149,6 @@ export default function AIChatBoxRevamp() {
                         mass: 1.2,
                     }}
                 >
-
                     {/* The Input Container Area */}
                     <motion.div
                         layout
@@ -248,11 +246,10 @@ export default function AIChatBoxRevamp() {
                     currentTheme={currentTheme}
                     setThemePanel={setThemePanel}
                     setCurrentTheme={setCurrentTheme}
-                    setPreviewTheme={setPreviewTheme}
+                    // setPreviewTheme={setPreviewTheme}
                     onClose={handleOnClose}
                     onContinue={handleOnContinue}
                 />
-
             </motion.div>
         </div>
     );
