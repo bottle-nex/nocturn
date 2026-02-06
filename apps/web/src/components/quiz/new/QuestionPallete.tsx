@@ -14,14 +14,17 @@ import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
+import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 export default function QuestionPallete() {
     const { quiz, currentQuestionIndex, setCurrentQuestionIndex, addQuestion, removeQuestion } =
         useNewQuizStore();
-    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
+    const { setCurrentOn } = useCanvasSelectionStore();
     const { handleCollaboratorsQuestionChange } = useWebSocket();
+    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
     function handleQuestionChange(orderIndex: number) {
+        setCurrentOn(SELECTION_MODE.CANVAS);
         setCurrentQuestionIndex(orderIndex);
         handleCollaboratorsQuestionChange({ orderIndex });
     }

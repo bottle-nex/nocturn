@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils';
 import { QuestionType } from '@nocturn/types';
-import { SELECTION_MODE } from './Canvas';
-import { Dispatch, MouseEvent, SetStateAction, useState, useEffect, useRef } from 'react';
+import { MouseEvent, useState, useEffect, useRef } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -10,24 +9,22 @@ import Underline from '@tiptap/extension-underline';
 import Strike from '@tiptap/extension-strike';
 import FormattingToolbar from '../utility/RichTextEditor';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
+import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 interface CanvasHeadingProps {
     currentQ: QuestionType | undefined;
-    selectionMode: SELECTION_MODE;
     className?: string;
-    setSelectionMode: Dispatch<SetStateAction<SELECTION_MODE>>;
 }
 
 export default function CanvasHeading({
     currentQ,
-    selectionMode,
-    setSelectionMode,
 }: CanvasHeadingProps) {
     const { currentQuestionIndex } = useNewQuizStore();
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
     const { setState } = useDraftRendererStore();
-    const selectedStyles = 'border-2 border-[#5e59b3]';
+    const { currentOn, setCurrentOn } = useCanvasSelectionStore();
     const [question, setQuestion] = useState<string | undefined>(currentQ?.question);
+    const selectedStyles = 'border-2 border-[#5e59b3]';
     const isExternalUpdate = useRef(false);
     const currentQuestionIndexRef = useRef(currentQuestionIndex);
     function getFontSizeClass(text: string): string {
@@ -94,7 +91,7 @@ export default function CanvasHeading({
 
     function questionTapHandler(e: MouseEvent<HTMLDivElement>) {
         e.stopPropagation();
-        setSelectionMode(SELECTION_MODE.QUESTION);
+        setCurrentOn(SELECTION_MODE.QUESTION);
         setState(DraftRenderer.QUESTION);
         if (editor) {
             editor.commands.focus();
@@ -110,10 +107,10 @@ export default function CanvasHeading({
             editorElement.className = cn(
                 'w-full py-2 sm:py-3 px-2 rounded-md transition-all duration-200 focus:outline-gray-200',
                 newFontSizeClass,
-                selectionMode === SELECTION_MODE.QUESTION && selectedStyles,
+                currentOn === SELECTION_MODE.QUESTION && selectedStyles,
             );
         }
-    }, [question, editor, selectionMode]);
+    }, [question, editor, currentOn, setCurrentOn]);
 
     if (!editor) {
         return null;
@@ -136,7 +133,7 @@ export default function CanvasHeading({
                     )}
                 </div>
 
-                {selectionMode === SELECTION_MODE.QUESTION && (
+                {currentOn === SELECTION_MODE.QUESTION && (
                     <div className="mt-2 absolute left-1/2 -translate-x-1/2">
                         <FormattingToolbar editor={editor} className="w-fit mx-auto" />
                     </div>

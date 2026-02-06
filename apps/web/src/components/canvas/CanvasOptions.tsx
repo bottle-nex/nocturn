@@ -1,16 +1,12 @@
 import { cn } from '@/lib/utils';
 import CanvasBars from './CanvasBars';
 import NewQuizInteractiveIcons from '../quiz/new/NewQuizInteractiveIcons';
-import { SELECTION_MODE } from './Canvas';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { templates } from '@/lib/templates';
 import { QuestionType } from '@nocturn/types';
-
-interface CanvasOptionsProps {
-    selectionMode: SELECTION_MODE;
-    setSelectionMode: Dispatch<SetStateAction<SELECTION_MODE>>;
-}
+import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
+import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 
 export function getResponsiveGap(currentQ: QuestionType): string {
     const optionCount = currentQ?.options?.length || 4;
@@ -19,9 +15,11 @@ export function getResponsiveGap(currentQ: QuestionType): string {
     return 'gap-2 sm:gap-4 md:gap-6 lg:gap-8';
 }
 
-export default function CanvasOptions({ selectionMode, setSelectionMode }: CanvasOptionsProps) {
+export default function CanvasOptions() {
     const [votes, setVotes] = useState([0, 0, 0, 0]);
     const { quiz, currentQuestionIndex } = useNewQuizStore();
+    const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
+    const { setState } = useDraftRendererStore();
     const currentQ = quiz.questions[currentQuestionIndex];
     const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
@@ -42,13 +40,21 @@ export default function CanvasOptions({ selectionMode, setSelectionMode }: Canva
         return `max(${percentage * 0.8}%, 1.5rem)`;
     }
 
+    function optionsTapHandler(e: MouseEvent<HTMLDivElement>) {
+        e.stopPropagation();
+        setCurrentOn(SELECTION_MODE.OPTION);
+        setState(DraftRenderer.QUESTION);
+    }
+
     return (
         <div className="p-2 sm:p-4 pt-40 sm:pt-48 w-full h-full z-10">
             <div className={cn('w-full h-full flex flex-col items-end justify-center')}>
                 <div
+                    onClick={optionsTapHandler}
                     className={cn(
-                        'w-full h-full flex items-end justify-center ',
+                        'w-full h-full flex items-end justify-center px-4 rounded-beta',
                         getResponsiveGap(currentQ!),
+                        currentOn === SELECTION_MODE.OPTION && style
                     )}
                 >
                     {currentQ?.options?.map((option, idx) => (
@@ -64,10 +70,7 @@ export default function CanvasOptions({ selectionMode, setSelectionMode }: Canva
                     )) || []}
                 </div>
                 <div className="absolute bottom-1 right-1 ">
-                    <NewQuizInteractiveIcons
-                        selectionMode={selectionMode}
-                        setSelectionMode={setSelectionMode}
-                    />
+                    <NewQuizInteractiveIcons />
                 </div>
             </div>
         </div>
