@@ -426,3 +426,7 @@
         rgba(0, 0, 0, 0) 100%
     );
 }
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
