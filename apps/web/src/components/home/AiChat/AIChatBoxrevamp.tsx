@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Mic, X, ArrowUp, Expand, Loader2 } from 'lucide-react';
+import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import { AiQuizChatRole, AiQuizMessage, TemplateEnum } from '@nocturn/types';
@@ -10,8 +10,6 @@ import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import { templates } from '@/lib/templates';
-import { LiaPagerSolid } from 'react-icons/lia';
-import ChangeThemePanel from './ChangeThemePanel';
 import { useRouter } from 'next/navigation';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
 
@@ -101,18 +99,6 @@ export default function AIChatBoxRevamp() {
     return (
         <div className="relative w-full overflow-hidden flex items-center justify-center text-neutral-200 font-sans">
             {/* Background hint */}
-            <AnimatePresence>
-                {!expanded && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-800 font-bold text-4xl select-none "
-                    >
-                        AI CHAT CANVAS
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             <motion.div
                 layout
