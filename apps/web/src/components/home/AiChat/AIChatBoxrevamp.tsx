@@ -5,10 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Mic, X, ArrowUp, Expand, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
-import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
+import { AiQuizChatRole, AiQuizMessage, TemplateEnum } from '@nocturn/types';
 import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
+import { templates } from '@/lib/templates';
+import { LiaPagerSolid } from 'react-icons/lia';
+import ChangeThemePanel from './ChangeThemePanel';
+import { useRouter } from 'next/navigation';
+import AiSlidesPreviewArea from './AiSlidesPreviewArea';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -23,6 +28,15 @@ export default function AIChatBoxRevamp() {
     const [expanded, setExpanded] = useState(false);
 
     const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
+    const router = useRouter();
+
+    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
+    const [previewTheme, setPreviewTheme] = useState<string | null>(null);
+    const [themePanel, setThemePanel] = useState(false);
+
+    const activeTheme = previewTheme ?? currentTheme;
+    const template = templates.find((t) => t.id === activeTheme);
+
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
     });
@@ -31,8 +45,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-              ? difficultyPlaceholders
-              : newChatPlaceholders,
+                ? difficultyPlaceholders
+                : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -72,6 +86,14 @@ export default function AIChatBoxRevamp() {
             e.preventDefault();
             handleSubmit();
         }
+    }
+
+    function handleOnContinue() {
+        router.push(`/new/${quiz?.id}`);
+    }
+
+    function handleOnClose() {
+        setExpanded(false);
     }
 
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
@@ -142,27 +164,6 @@ export default function AIChatBoxRevamp() {
                         mass: 1.2,
                     }}
                 >
-                    {/* Header Controls */}
-                    <AnimatePresence>
-                        {expanded && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="flex justify-between items-center px-4 py-3 border-b border-neutral-800 shrink-0"
-                            >
-                                <span className="text-sm font-medium text-neutral-400">
-                                    Chat Session
-                                </span>
-                                <button
-                                    onClick={() => setExpanded(false)}
-                                    className="p-2 hover:bg-neutral-800 rounded-full transition-colors"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
 
                     {/* The Input Container Area */}
                     <motion.div
@@ -247,7 +248,7 @@ export default function AIChatBoxRevamp() {
                                     className="mt-4 text-center shrink-0"
                                 >
                                     <p className="text-xs text-neutral-500">
-                                        AI can make mistakes. Verify info.
+                                        AI can make mistakes. Always check your nocturn.
                                     </p>
                                 </motion.div>
                             )}
@@ -255,37 +256,17 @@ export default function AIChatBoxRevamp() {
                     </motion.div>
                 </motion.div>
 
-                {/* RIGHT SIDE (Expanded Content) */}
-                {/* We keep this in DOM but animate width 0 -> auto to ensure parent layout animates smoothly */}
-                <motion.div
-                    layout="position"
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{
-                        opacity: expanded ? 1 : 0,
-                        width: expanded ? '100%' : 0,
-                    }}
-                    transition={{
-                        type: 'spring',
-                        stiffness: 85,
-                        damping: 18,
-                        mass: 1.2,
-                    }}
-                    className="h-full bg-neutral-900 overflow-hidden flex flex-col"
-                >
-                    <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-neutral-500 min-w-[300px]">
-                        <div className="w-16 h-16 rounded-full bg-neutral-800/50 mb-6 flex items-center justify-center">
-                            <Expand className="text-neutral-600" size={24} />
-                        </div>
-                        <h3 className="text-xl font-semibold text-neutral-300 mb-2">
-                            Expansion Complete
-                        </h3>
-                        <p className="max-w-md">
-                            {
-                                "The card has expanded upwards. The 'Right Side' animated from 0 width to fill the space, allowing the parent container to interpolate its size smoothly."
-                            }
-                        </p>
-                    </div>
-                </motion.div>
+                <AiSlidesPreviewArea
+                    expanded={expanded}
+                    themePanel={themePanel}
+                    currentTheme={currentTheme}
+                    setThemePanel={setThemePanel}
+                    setCurrentTheme={setCurrentTheme}
+                    setPreviewTheme={setPreviewTheme}
+                    onClose={handleOnClose}
+                    onContinue={handleOnContinue}
+                />
+
             </motion.div>
         </div>
     );
