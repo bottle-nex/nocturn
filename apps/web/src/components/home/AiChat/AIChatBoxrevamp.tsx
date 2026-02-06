@@ -31,8 +31,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -280,7 +280,9 @@ export default function AIChatBoxRevamp() {
                             Expansion Complete
                         </h3>
                         <p className="max-w-md">
-                            {"The card has expanded upwards. The 'Right Side' animated from 0 width to fill the space, allowing the parent container to interpolate its size smoothly."}
+                            {
+                                "The card has expanded upwards. The 'Right Side' animated from 0 width to fill the space, allowing the parent container to interpolate its size smoothly."
+                            }
                         </p>
                     </div>
                 </motion.div>
