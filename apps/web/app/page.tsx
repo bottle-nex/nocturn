@@ -9,6 +9,7 @@ import LandingNavbar from '@/components/revamp/LandingNavbar';
 import HeroSection from '@/components/revamp/HeroSection';
 import RevampSection from '@/components/revamp/RevampSection';
 import FeaturesSection from '@/components/test/FeaturesSection';
+import InstructionsSection from '@/components/test/InstructionsSection';
 
 export default function Page() {
     return (
@@ -24,6 +25,7 @@ export default function Page() {
             <LandingNavbar />
             <RevampSection />
             <FeaturesSection />
+            <InstructionsSection />
             <LandingCardComponent />
             <HeroSection />
             {/* <LandingHeroSection /> */}
