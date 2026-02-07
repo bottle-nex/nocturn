@@ -48,8 +48,6 @@ export default class LiveQuizBackendActions {
                 return null;
             }
             
-
-            
         } catch (error) {
             console.error('error while fetching question');
             return null;

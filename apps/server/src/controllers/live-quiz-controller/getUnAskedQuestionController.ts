@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import { ApiResponse } from '@nocturn/types';
 
 export default async function getUnAskedQuestionController(req: Request, res: Response) {
     try {
@@ -55,11 +56,14 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
 
         // means no question is left for asking, leading quiz end
         if (quiz.questions.length === 0) {
-            ResponseWriter.success(
+            ResponseWriter.secure_success(
                 res,
                 {
-                    end: true,
-                    question: null,
+                    type: ApiResponse.GET_UN_ASKED_QUESTION,
+                    data: {
+                        end: true,
+                        question: null,
+                    },
                 },
                 'no more questions left',
             );
@@ -67,13 +71,16 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         }
 
         // if this part appears means questions are still left
-        ResponseWriter.success(
+        ResponseWriter.secure_success(
             res,
             {
-                end: false,
-                question: quiz.questions[0],
+                type: ApiResponse.GET_UN_ASKED_QUESTION,
+                data: {
+                    end: false,
+                    question: null,
+                },
             },
-            'found un-asked question',
+            'question fetched successfully',
         );
         return;
     } catch (error) {
