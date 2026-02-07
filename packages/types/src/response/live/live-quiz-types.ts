@@ -19,4 +19,5 @@ export interface LiveQuizDataResponse {
   question?: Partial<QuestionType>;
   isNextQuestionAvailable?: boolean;
   messages?: ChatMessageType[];
+  currentQ?: QuestionType;
 }

@@ -15,12 +15,27 @@ export default function HostQuestionActiveRenderer() {
     const { currentQuestion, gameSession, quiz, updateNextQuestion } = useLiveQuizStore();
     const { session } = useUserSessionStore();
 
+    // step 1: check if any not asked question exists on the local store
+    // step 2: if yes, then no need to fetch from server
+    // step 3: if no, then fetch a not asked question from the server
+
+    useEffect(() => {
+        if (!currentQuestion || !quiz || !gameSession) return;
+
+        // fetch from server
+        if(quiz.questions.length === 0 || !quiz.questions) {
+            
+        }
+
+
+    }, []);
+
     useEffect(() => {
         if (!quiz || !currentQuestion) return;
 
         if (!currentQuestion.isAsked) return;
 
-        // find any other quetion which is not asked
+        // find any other question which is not asked
         const question = quiz.questions.find((q) => !q.isAsked);
 
         if (!question) {

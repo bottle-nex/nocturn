@@ -36,6 +36,7 @@ interface LiveQuizStore {
         isActive: boolean;
     } | null;
     updateQuiz: (updatedFields: Partial<QuizType>) => void;
+    removeQuestionFromQuiz: (id: string) => void;
     updateGameSession: (updatedFields: Partial<GameSessionType>) => void;
     updateCurrentQuestion: (updatedFields: Partial<QuestionType>) => void;
     updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
@@ -82,6 +83,13 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
             return { quiz: updatedQuiz, currentQuestion };
         });
     },
+
+    removeQuestionFromQuiz: (id: string) => set({
+        quiz: {
+            ...get().quiz,
+            questions: get().quiz.questions.filter(q => q.id !== id),
+        },
+    }),
 
     gameSession: null,
     updateGameSession: (updatedFields) =>

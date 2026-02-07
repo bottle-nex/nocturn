@@ -94,7 +94,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             });
 
             // currentQuestion might be null if all the questions are asked
-            const currentQ = quiz?.questions;
+            const currentQ = quiz?.questions[0];
 
             const gameSession = await tx.gameSession.findUnique({
                 where: { id: gameSessionId },

@@ -23,6 +23,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
+import { useLiveSecondQuizStore } from '@/store/live-quiz/useLiveSecondQuizStore';
 
 export interface NewProps {
     params: Promise<{
@@ -41,6 +42,7 @@ export default function New({ params }: NewProps) {
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
     } = useLiveQuizStore();
+    const { updateSecondQuiz, updateSecondCurrentQuestion } = useLiveSecondQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
     const { setSpectatorData } = useLiveSpectatorStore();
@@ -61,13 +63,20 @@ export default function New({ params }: NewProps) {
                 if (response.success && response.data) {
                     const data = response.data;
                     updateQuiz(data.quiz);
+                    updateSecondQuiz(data.quiz as any);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    if (data.question) {
-                        updateCurrentQuestion(data.question);
+                    // if (data.question) {
+                    //     updateCurrentQuestion(data.currentQ!);
+                    //     updateSecondCurrentQuestion(data.question as any);
+                    // }
+
+                    // if not found meand all questions asked
+                    if(data.currentQ) {
+                        updateCurrentQuestion(data.currentQ);
                     }
                     setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {

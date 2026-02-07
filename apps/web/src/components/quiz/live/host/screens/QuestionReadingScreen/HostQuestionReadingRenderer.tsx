@@ -9,8 +9,16 @@ import { useEffect, useRef } from 'react';
 export default function HostQuestionReadingRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, quiz, updateQuiz } = useLiveQuizStore();
+    const { currentQuestion, gameSession, quiz, updateQuiz, removeQuestionFromQuiz } = useLiveQuizStore();
 
+    useEffect(() => {
+        if(!currentQuestion || !quiz || !gameSession) return;
+
+        // remove the current question from the quiz.questions
+        removeQuestionFromQuiz(currentQuestion.id);
+    }, [currentQuestion]);
+
+    // update it: remove the question from the quiz after it reaches reading phase
     useEffect(() => {
         if (!currentQuestion || !quiz || !gameSession) return;
 
