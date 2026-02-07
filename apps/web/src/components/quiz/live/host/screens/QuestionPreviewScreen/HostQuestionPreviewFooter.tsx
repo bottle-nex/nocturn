@@ -1,5 +1,5 @@
 import UtilityCard from '@/components/utility/UtilityCard';
-import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
+import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { templates } from '@/lib/templates';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';

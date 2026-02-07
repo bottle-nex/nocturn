@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import HostQuestionPreviewOptions from './HostQuestionPreviewOptions';
 import { QuestionType } from '@nocturn/types';
-import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
+import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function HostQuestionPreviewRenderer() {

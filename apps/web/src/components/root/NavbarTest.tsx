@@ -9,7 +9,7 @@ import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
 import NavInputBox from './NavInputBox';
 import { useEffect, useState } from 'react';
-import userQuizAction from '@/lib/backend/user-quiz-action';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 interface NavItem {
     label: string;

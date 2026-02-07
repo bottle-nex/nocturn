@@ -1,5 +1,5 @@
 'use client';
-import BackendActions from '@/lib/backend/quiz-backend-actions';
+import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Loader } from 'lucide-react';

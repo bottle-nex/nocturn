@@ -7,7 +7,7 @@ import { Input } from '../ui/input';
 import { FiArrowUp } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import userQuizAction from '@/lib/backend/user-quiz-action';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 export default function RevampSection() {
     const [expanded, setExpanded] = useState<boolean>(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import userQuizAction from '@/lib/backend/user-quiz-action';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 

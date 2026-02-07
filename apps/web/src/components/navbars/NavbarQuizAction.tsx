@@ -6,7 +6,7 @@ import { IoIosPlay } from 'react-icons/io';
 import { CiSaveDown1 } from 'react-icons/ci';
 import { MdPublish } from 'react-icons/md';
 import CreateQuizActionPanel from '../utility/CreateQuizActionPanel';
-import BackendActions from '@/lib/backend/quiz-backend-actions';
+import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';

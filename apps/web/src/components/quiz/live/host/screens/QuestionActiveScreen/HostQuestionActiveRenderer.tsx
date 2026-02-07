@@ -6,7 +6,7 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import HostQuestionActiveOptions from './HostQuestionActiveOptions';
-import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
+import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function HostQuestionActiveRenderer() {
@@ -23,8 +23,8 @@ export default function HostQuestionActiveRenderer() {
         if (!currentQuestion || !quiz || !gameSession) return;
 
         // fetch from server
-        if(quiz.questions.length === 0 || !quiz.questions) {
-            
+        if (quiz.questions.length === 0 || !quiz.questions) {
+
         }
 
 
