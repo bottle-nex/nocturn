@@ -11,7 +11,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        const { quiz_id } = req.body;
+        const { quizId: quiz_id } = req.params;
 
         if (!quiz_id) {
             ResponseWriter.invalid_data(res, 'quiz id is required');

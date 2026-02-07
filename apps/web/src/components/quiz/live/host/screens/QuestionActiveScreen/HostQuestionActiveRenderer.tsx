@@ -31,7 +31,10 @@ export default function HostQuestionActiveRenderer() {
                 // quiz end, no more questions
             }
 
-            updateQuiz({ questions: [data.question!] })
+            if (data.question) {
+                updateQuiz({ questions: [data.question] });
+            }
+
         }
     }
 
@@ -42,36 +45,36 @@ export default function HostQuestionActiveRenderer() {
 
     }, [currentQuestion]);
 
-    useEffect(() => {
-        if (!quiz || !currentQuestion) return;
+    // useEffect(() => {
+    //     if (!quiz || !currentQuestion) return;
 
-        if (!currentQuestion.isAsked) return;
+    //     if (!currentQuestion.isAsked) return;
 
-        // find any other question which is not asked
-        const question = quiz.questions.find((q) => !q.isAsked);
+    //     // find any other question which is not asked
+    //     const question = quiz.questions.find((q) => !q.isAsked);
 
-        if (!question) {
-            // fetch from backend
-            const fetchQuestion = async () => {
-                if (!quiz) return;
-                const question = await LiveQuizBackendActions.getQuestionDetailByIndex(
-                    quiz.id,
-                    0,
-                    session?.user.token,
-                );
+    //     if (!question) {
+    //         // fetch from backend
+    //         const fetchQuestion = async () => {
+    //             if (!quiz) return;
+    //             const question = await LiveQuizBackendActions.getQuestionDetailByIndex(
+    //                 quiz.id,
+    //                 0,
+    //                 session?.user.token,
+    //             );
 
-                if (!question) {
-                    // end of the quiz and show button to show final leaderboards
-                    return;
-                }
-                updateNextQuestion(question);
-            };
-            fetchQuestion();
-            return;
-        }
-        updateNextQuestion(question);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quiz]);
+    //             if (!question) {
+    //                 // end of the quiz and show button to show final leaderboards
+    //                 return;
+    //             }
+    //             updateNextQuestion(question);
+    //         };
+    //         fetchQuestion();
+    //         return;
+    //     }
+    //     updateNextQuestion(question);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [quiz]);
 
     if (!currentQuestion || !gameSession) {
         return (
