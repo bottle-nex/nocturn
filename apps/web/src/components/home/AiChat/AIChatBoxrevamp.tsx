@@ -11,7 +11,6 @@ import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import { useRouter } from 'next/navigation';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
-import { Button } from '@/components/ui/button';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -43,8 +42,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -185,9 +184,9 @@ export default function AIChatBoxRevamp() {
                             </div>
 
                             <div className="flex items-center justify-between px-3 pb-3 pt-2">
-                                <Button size={"icon"} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors">
+                                <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors">
                                     <Plus size={20} className="text-neutral-400" />
-                                </Button>
+                                </button>
 
                                 <div className="flex items-center gap-2">
                                     {!hasContent && (
@@ -208,8 +207,7 @@ export default function AIChatBoxRevamp() {
                                         </button>
                                     )}
 
-                                    <Button
-                                        size={"icon"}
+                                    <button
                                         disabled={!hasContent}
                                         onClick={handleSubmit}
                                         className={cn(
@@ -220,7 +218,7 @@ export default function AIChatBoxRevamp() {
                                         )}
                                     >
                                         <ArrowUp size={16} />
-                                    </Button>
+                                    </button>
                                 </div>
                             </div>
                         </div>
