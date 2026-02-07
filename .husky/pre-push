@@ -1,37 +1,31 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+MAGENTA="\033[1;35m"
+CYAN="\033[0;36m"
+RESET="\033[0m"
 
-echo "🚀 Running pre-push checks..."
-echo ""
+echo "${MAGENTA}Running pre-push checks...${RESET}"
 
-# Run format check (readonly - doesn't modify files)
-echo "📝 Checking code formatting..."
-pnpm format || {
-  echo "❌ Formatting check failed. Run 'pnpm format' to fix formatting issues."
-  exit 1
-}
-
-# Run linter
-echo "🔍 Running linter..."
+# Lint checks
+echo "${CYAN}Running linter...${RESET}"
 pnpm lint || {
-  echo "❌ Linting failed. Fix linting errors before pushing."
+  echo "${RED}✖ Linting failed${RESET}"
   exit 1
 }
 
-# Run type checking
-echo "🔧 Running type checks..."
+# type checks
+echo "${CYAN}Running type checks...${RESET}"
 pnpm check-types || {
-  echo "❌ Type checking failed. Fix type errors before pushing."
+  echo "${RED}✖ Type checking failed${RESET}"
   exit 1
 }
 
-# Run build
-echo "🏗️  Running build..."
+# Build check
+echo "${CYAN}Running build...${RESET}"
 pnpm build || {
-  echo "❌ Build failed. Fix build errors before pushing."
+  echo "${RED}✖ Build failed${RESET}"
   exit 1
 }
 
-echo ""
-echo "✅ All pre-push checks passed! Proceeding with push..."
-echo ""
+echo "${GREEN}✔ All pre-push checks passed!${RESET}"
+

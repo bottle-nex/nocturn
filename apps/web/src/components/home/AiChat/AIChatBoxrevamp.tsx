@@ -125,7 +125,7 @@ export default function AIChatBoxRevamp() {
                 }}
                 transition={{
                     type: 'spring',
-                    stiffness: 85, // Lower stiffness for more visible movement
+                    stiffness: 115, // Lower stiffness for more visible movement
                     damping: 18,
                     mass: 1.2,
                 }}
@@ -144,7 +144,7 @@ export default function AIChatBoxRevamp() {
                     }}
                     transition={{
                         type: 'spring',
-                        stiffness: 85,
+                        stiffness: 115,
                         damping: 18,
                         mass: 1.2,
                     }}
@@ -232,7 +232,7 @@ export default function AIChatBoxRevamp() {
                                     className="mt-4 text-center shrink-0"
                                 >
                                     <p className="text-xs text-neutral-500">
-                                        AI can make mistakes. Always check your nocturn.
+                                        AI can make mistakes. Always check your slides.
                                     </p>
                                 </motion.div>
                             )}
