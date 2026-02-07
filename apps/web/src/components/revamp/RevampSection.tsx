@@ -6,9 +6,13 @@ import Image from 'next/image';
 import { Input } from '../ui/input';
 import { FiArrowUp } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import userQuizAction from '@/lib/backend/user-quiz-action';
 
 export default function RevampSection() {
     const [expanded, setExpanded] = useState<boolean>(false);
+    const [quizCode, setQuizCode] = useState<string>('');
+    const router = useRouter();
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -27,6 +31,20 @@ export default function RevampSection() {
 
         mouseX.set(x);
         mouseY.set(y);
+    }
+
+    async function handleJoinQuiz() {
+        if (!quizCode.trim()) return;
+
+        try {
+            const quizId = await userQuizAction.joinQuiz(quizCode.trim());
+            setQuizCode('');
+
+            if (!quizId) return;
+            router.push(`/live/${quizId}`);
+        } catch (err) {
+            console.error('Failed to join quiz', err);
+        }
     }
 
     return (
@@ -141,7 +159,14 @@ export default function RevampSection() {
                                 className="flex relative z-10"
                             >
                                 <Input
-                                    className="border border-dark-base rounded-full h-14 w-80 pr-14 !bg-white"
+                                    value={quizCode}
+                                    onChange={(e) => setQuizCode(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleJoinQuiz();
+                                        }
+                                    }}
+                                    className="border border-dark-base rounded-full h-14 w-80 pr-14 bg-white!"
                                     placeholder="enter code"
                                 />
 

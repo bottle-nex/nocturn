@@ -26,6 +26,7 @@ import {
     subscriberInstance,
 } from '../services/init.services';
 import { env } from '../configs/env';
+import CollaboratorsStateManager from './CollaboratorsStateManager';
 
 export default class WebsocketServer {
     private wss: WebSocketServer;
@@ -48,6 +49,7 @@ export default class WebsocketServer {
     private participant_manager!: ParticipantManager;
     private spectator_manager!: SpectatorManager;
     private collaboration_manager!: CollaborationManager;
+    private collaborators_state_manager!: CollaboratorsStateManager;
     private subscriber_manager!: SubscriberManager;
 
     constructor(server: Server) {
@@ -109,6 +111,9 @@ export default class WebsocketServer {
             database_queue: this.database_queue,
             redis_cache: this.redis_cache,
         });
+        this.collaborators_state_manager = new CollaboratorsStateManager({
+            redis_cache: this.redis_cache,
+        });
         this.collaboration_manager = new CollaborationManager({
             publisher: this.publisher,
             subscriber: this.subscriber,
@@ -117,6 +122,7 @@ export default class WebsocketServer {
             databaseQueue: this.database_queue,
             redis_cache: this.redis_cache,
             quizManager: this.quizManager,
+            collaborators_state_manager: this.collaborators_state_manager,
         });
     }
 

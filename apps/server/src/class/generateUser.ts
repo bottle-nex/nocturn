@@ -120,14 +120,40 @@ const names = [
     'Miles Wallace',
     'Sophie West',
 ];
+
+const colors = [
+    '#FF5733',
+    '#33FF57',
+    '#3357FF',
+    '#FF33A1',
+    '#A133FF',
+    '#33FFF6',
+    '#FF8C33',
+    '#8CFF33',
+    '#338CFF',
+    '#FF3380',
+    '#8033FF',
+    '#33FFF0',
+    '#FF6633',
+    '#66FF33',
+    '#3366FF',
+    '#FF3366',
+    '#6633FF',
+    '#33FFF3',
+];
 export default class GenerateUser {
     static getRandomAvatar() {
         const position = Math.floor(Math.random() * users.length);
-        return users[position]!.avatar;
+        return users[position].avatar;
     }
 
     static getRandomName() {
         const position = Math.floor(Math.random() * names.length);
         return names[position] as string;
+    }
+
+    static getRandomColorsForCollaborators() {
+        const position = Math.floor(Math.random() * colors.length);
+        return colors[position] as string;
     }
 }

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import ResponseWriter from '../../class/response_writer';
 import { CollabRole, prisma } from '@nocturn/database';
 import { email_service_queue_instance } from '../../services/init.services';
+import GenerateUser from '../../class/generateUser';
 
 interface QuizWithCollabSession {
     id: string;
@@ -245,6 +246,7 @@ export default class Collaborator {
                 sessionId: collab_session.id,
                 userId: target_user.id,
                 role: CollabRole.VIEWER,
+                color: GenerateUser.getRandomColorsForCollaborators(),
                 joinedAt: new Date(),
             },
             include: {
@@ -337,6 +339,7 @@ export default class Collaborator {
                         sessionId: new_session.id,
                         userId: host_id,
                         role: CollabRole.HOST,
+                        color: GenerateUser.getRandomColorsForCollaborators(),
                         joinedAt: new Date(),
                     },
                 });

@@ -14,14 +14,19 @@ import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 export default function UploadQuizImage() {
     const [enableLeftView, setEnableLeftView] = useState(false);
     const [enableRightView, setEnableRightView] = useState(false);
-    const { currentQuestionIndex, setLoading, loading } = useNewQuizStore();
+    const { quiz, currentQuestionIndex, setLoading, loading } = useNewQuizStore();
+    const currentQ = quiz.questions[currentQuestionIndex];
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
 
     const handleImageSelect = async (file: File) => {
         setLoading(true);
         try {
             const imageUrl = await S3.handleUploadImage(file);
-            editQuestionAndBroadcast(currentQuestionIndex, { imageUrl: imageUrl });
+            editQuestionAndBroadcast(
+                currentQuestionIndex,
+                { imageUrl: imageUrl, id: currentQ.id },
+                { debounce: false },
+            );
         } catch (err) {
             console.error('Error in uploading image', err);
         } finally {

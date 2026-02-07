@@ -1,4 +1,3 @@
-import Footer from '@/components/root/Footer';
 // import NocturnPerksSection from '@/components/test/NocturnPerksSection';
 // import NocturnUsersSection from '@/components/test/NocturnUsersSection';
 // import NocturnFeaturesSection from '@/components/test/NocturnFeaturesSection';

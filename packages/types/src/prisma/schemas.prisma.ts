@@ -234,6 +234,7 @@ export interface Collaborator {
   sessionId: string;
   userId: string;
   role: CollabRole;
+  color: string;
   isBlocked: boolean;
   joinedAt?: Date | null;
   session: CollabSession;

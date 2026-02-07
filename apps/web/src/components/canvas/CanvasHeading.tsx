@@ -16,9 +16,7 @@ interface CanvasHeadingProps {
     className?: string;
 }
 
-export default function CanvasHeading({
-    currentQ,
-}: CanvasHeadingProps) {
+export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
     const { currentQuestionIndex } = useNewQuizStore();
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
     const { setState } = useDraftRendererStore();
@@ -64,7 +62,7 @@ export default function CanvasHeading({
             setQuestion(content);
             editQuestionAndBroadcast(
                 currentQuestionIndexRef.current,
-                { question: content },
+                { question: content, id: currentQ?.id },
                 { debounce: true, debounceMs: 2000 },
             );
         },

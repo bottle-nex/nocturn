@@ -7,7 +7,9 @@ export default function UserType() {
                         <h2 className="text-7xl font-black text-gray-900 mb-2">HOST</h2>
                         <p className="text-gray-700 font-semibold mb-8">Main Character Energy</p>
                         <p className="text-gray-700 text-sm leading-relaxed">
-                            You make the rules, you break the rules. Control the chaos, set the vibe, and watch your quiz empire unfold. Crown not included, but highly recommended.
+                            You make the rules, you break the rules. Control the chaos, set the
+                            vibe, and watch your quiz empire unfold. Crown not included, but highly
+                            recommended.
                         </p>
                     </div>
                     <p className="text-gray-700 font-semibold mt-8">🎭 The Boss</p>
@@ -29,7 +31,9 @@ export default function UserType() {
                         <h2 className="text-3xl font-black text-white mb-2">PARTICIPANTS</h2>
                         <p className="text-gray-300 font-semibold mb-4">The Gladiators</p>
                         <p className="text-gray-300 text-sm leading-relaxed">
-                            Sweat, stress, and questionable life choices—all for that sweet taste of victory. Battle it out, flex your brain cells, and pretend you knew the answer all along.
+                            Sweat, stress, and questionable life choices—all for that sweet taste of
+                            victory. Battle it out, flex your brain cells, and pretend you knew the
+                            answer all along.
                         </p>
                     </div>
 
@@ -54,12 +58,13 @@ export default function UserType() {
                         <h2 className="text-3xl font-black text-light-alpha mb-2">SPECTATOR</h2>
                         <p className="text-light-alpha font-semibold mb-8">Couch Critic Mode</p>
                         <p className="text-light-alpha text-sm leading-relaxed">
-                            Zero pressure, all the drama. Judge everyone&apos;s answers, sip your drink, and enjoy the show. You&apos;re basically royalty, but lazier.
+                            Zero pressure, all the drama. Judge everyone&apos;s answers, sip your
+                            drink, and enjoy the show. You&apos;re basically royalty, but lazier.
                         </p>
                     </div>
                     <p className="text-light-alpha font-semibold mt-8">🍿 Living the Dream</p>
                 </section>
             </div>
         </section>
-    )
+    );
 }

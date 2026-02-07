@@ -54,7 +54,7 @@ export default function CanvasOptions() {
                     className={cn(
                         'w-full h-full flex items-end justify-center px-4 rounded-beta',
                         getResponsiveGap(currentQ!),
-                        currentOn === SELECTION_MODE.OPTION && style
+                        currentOn === SELECTION_MODE.OPTION && style,
                     )}
                 >
                     {currentQ?.options?.map((option, idx) => (

@@ -116,7 +116,11 @@ export default function FeaturesShowcase() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="relative w-screen bg-dark-alpha" style={{ height: '1500vh' }}>
+        <section
+            ref={sectionRef}
+            className="relative w-screen bg-dark-alpha"
+            style={{ height: '1500vh' }}
+        >
             <div ref={pinRef} className="h-screen w-full overflow-hidden">
                 <div className="absolute inset-0" />
 
