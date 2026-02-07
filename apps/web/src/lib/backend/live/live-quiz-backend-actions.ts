@@ -1,3 +1,4 @@
+import { QuestionType } from '@nocturn/types';
 import axios from 'axios';
 import { GET_SELECTED_QUESTION_DATA } from 'routes/api_routes';
 
@@ -28,5 +29,31 @@ export default class LiveQuizBackendActions {
             console.warn(`Question at index ${questionIndex} not found`, err);
             return null;
         }
+    }
+
+    static async getUnAskedQuestion(token: string, quizId: string): Promise<{ end: boolean, question: QuestionType | null } | null> {
+        try {
+
+            const { data } = await axios.get(
+                `/${quizId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if(!data.success) {
+                console.error('question fetching failed');
+                return null;
+            }
+            
+
+            
+        } catch (error) {
+            console.error('error while fetching question');
+            return null;
+        }
+
     }
 }

@@ -12,23 +12,35 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 export default function HostQuestionActiveRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, quiz, updateNextQuestion } = useLiveQuizStore();
+    const { currentQuestion, gameSession, quiz, updateQuiz, updateNextQuestion } = useLiveQuizStore();
     const { session } = useUserSessionStore();
 
     // step 1: check if any not asked question exists on the local store
     // step 2: if yes, then no need to fetch from server
     // step 3: if no, then fetch a not asked question from the server
 
-    useEffect(() => {
-        if (!currentQuestion || !quiz || !gameSession) return;
+    async function getQuestion() {
+        if (!currentQuestion || !quiz || !gameSession || !session?.user.token) return;
 
         // fetch from server
         if (quiz.questions.length === 0 || !quiz.questions) {
+            const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id);
 
+            if (!data) return;
+            if (data.end) {
+                // quiz end, no more questions
+            }
+
+            updateQuiz({ questions: [data.question!] })
         }
+    }
 
+    useEffect(() => {
+        if (!currentQuestion || !quiz || !gameSession || !session?.user.token) return;
 
-    }, []);
+        getQuestion();
+
+    }, [currentQuestion]);
 
     useEffect(() => {
         if (!quiz || !currentQuestion) return;
