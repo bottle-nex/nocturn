@@ -2,7 +2,6 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { LiaPagerSolid } from 'react-icons/lia';
 import ChangeThemePanel from './ChangeThemePanel';
-import { Expand } from 'lucide-react';
 
 interface AiSlidesPreviewAreaProps {
     expanded: boolean;
@@ -25,7 +24,6 @@ export default function AiSlidesPreviewArea({
     onClose,
     onContinue,
 }: AiSlidesPreviewAreaProps) {
-
     if (!expanded) return null;
 
     return (
@@ -45,7 +43,6 @@ export default function AiSlidesPreviewArea({
             className="h-full bg-neutral-900 overflow-hidden flex flex-col"
         >
             <div className="flex-1 flex flex-col text-center text-neutral-500 min-w-75 px-10 py-5 ">
-
                 <SlidesPreviewNav
                     themePanel={themePanel}
                     currentTheme={currentTheme}
@@ -55,7 +52,6 @@ export default function AiSlidesPreviewArea({
                     onContinue={onContinue}
                     onClose={onClose}
                 />
-
             </div>
         </motion.div>
     );
