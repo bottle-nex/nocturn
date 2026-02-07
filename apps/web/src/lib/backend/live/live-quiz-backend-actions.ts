@@ -53,7 +53,7 @@ export default class LiveQuizBackendActions {
             }
 
             return null;
-        } catch (error) {
+        } catch {
             console.error('error while fetching question');
             return null;
         }

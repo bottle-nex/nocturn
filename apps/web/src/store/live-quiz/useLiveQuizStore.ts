@@ -84,12 +84,13 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
         });
     },
 
-    removeQuestionFromQuiz: (id: string) => set({
-        quiz: {
-            ...get().quiz,
-            questions: get().quiz.questions.filter(q => q.id !== id),
-        },
-    }),
+    removeQuestionFromQuiz: (id: string) =>
+        set({
+            quiz: {
+                ...get().quiz,
+                questions: get().quiz.questions.filter((q) => q.id !== id),
+            },
+        }),
 
     gameSession: null,
     updateGameSession: (updatedFields) =>

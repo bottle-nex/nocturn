@@ -12,7 +12,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 export default function HostQuestionActiveRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, quiz, updateQuiz, updateNextQuestion } = useLiveQuizStore();
+    const { currentQuestion, gameSession, quiz, updateQuiz } = useLiveQuizStore();
     const { session } = useUserSessionStore();
 
     // step 1: check if any not asked question exists on the local store
@@ -24,7 +24,10 @@ export default function HostQuestionActiveRenderer() {
 
         // fetch from server
         if (quiz.questions.length === 0 || !quiz.questions) {
-            const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id);
+            const data = await LiveQuizBackendActions.getUnAskedQuestion(
+                session.user.token,
+                quiz.id,
+            );
 
             if (!data) return;
             if (data.end) {
@@ -34,7 +37,6 @@ export default function HostQuestionActiveRenderer() {
             if (data.question) {
                 updateQuiz({ questions: [data.question] });
             }
-
         }
     }
 
@@ -43,6 +45,7 @@ export default function HostQuestionActiveRenderer() {
 
         getQuestion();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQuestion]);
 
     // useEffect(() => {

@@ -9,7 +9,7 @@ interface LiveSecondQuizStore {
     updateSecondCurrentQuestion: (question: QuestionType) => void;
 }
 
-export const useLiveSecondQuizStore = create<LiveSecondQuizStore>((set, get) => ({
+export const useLiveSecondQuizStore = create<LiveSecondQuizStore>((set) => ({
     secondQuiz: {} as QuizType,
     secondCurrentQuestion: null,
 
