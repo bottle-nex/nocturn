@@ -216,6 +216,7 @@ model Collaborator {
   userId    String
   role      CollabRole @default(VIEWER)
   isBlocked Boolean    @default(false)
+  color     String     @default("#E84545")
   joinedAt  DateTime?
 
   session CollabSession @relation(fields: [sessionId], references: [id])

@@ -1,37 +1,34 @@
 import RedisCache from '../cache/redis.cache';
-import { CustomWebSocket } from '../types/web-socket-types';
-import DatabaseQueue from '../queue/DatabaseQueue';
-import QuizManager from './QuizManager';
 import { prisma } from '@nocturn/database';
+import { collabStateCacheInstance } from '../services/init.services';
+import CollabStateCache from '../cache/collab_state.cache';
 
-export interface HostManagerDependencies {
-    socketMapping: Map<string, CustomWebSocket>;
-    sessionHostMapping: Map<string, string>;
-    quizManager: QuizManager;
-    databaseQueue: DatabaseQueue;
+export interface CollaboratorsStateManagerDependencies {
     redis_cache: RedisCache;
 }
 
 export default class CollaboratorsStateManager {
     private redis_cache: RedisCache;
-    private collaborators_state: Map<string, any> = new Map<string, any>();
+    private collaborator_quiz_state_cache: CollabStateCache = collabStateCacheInstance;
 
-    constructor(dependencies: HostManagerDependencies) {
+    constructor(dependencies: CollaboratorsStateManagerDependencies) {
         this.redis_cache = dependencies.redis_cache;
     }
 
-    public get_collaborators_state(session_id: string) {
-        return this.collaborators_state.get(session_id);
+    public async on_collaborators_connect(session_id: string, quiz_id: string) {
+        await this.populate_state_from_db_to_redis(session_id, quiz_id);
     }
 
-    public async on_collaborators_connect(session_id: string, quiz_id: string) {
-        const quiz_state = this.get_quiz_state(quiz_id);
-        if (!quiz_state) {
+    public async populate_state_from_db_to_redis(collab_session_id: string, quiz_id: string) {
+        const quiz = await this.get_quiz_state(quiz_id);
+        if (!quiz) {
             return;
         }
-        this.collaborators_state.set(session_id, {
-            quiz_state,
-        });
+        this.collaborator_quiz_state_cache.set_quiz_and_questions_state(
+            collab_session_id,
+            quiz_id,
+            quiz,
+        );
     }
 
     public async get_quiz_state(quiz_id: string) {

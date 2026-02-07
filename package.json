@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "husky": "^9.1.7",
+    "knip": "^5.82.1",
     "prettier": "^3.6.2",
     "prisma": "7.1.0",
     "turbo": "^2.5.4",

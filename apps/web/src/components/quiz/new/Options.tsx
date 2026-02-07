@@ -18,14 +18,18 @@ export default function Options() {
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
     const handleCorrectAnswerChange = (idx: number) => {
-        editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx });
+        editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx, id: currentQ?.id });
     };
 
     const handleInputChange = (value: string, index: number) => {
         if (!currentQ) return;
         const newOptions = [...currentQ.options];
         newOptions[index] = value;
-        editQuestionAndBroadcast(currentQuestionIndex, { options: newOptions }, { debounce: true });
+        editQuestionAndBroadcast(
+            currentQuestionIndex,
+            { options: newOptions, id: currentQ.id },
+            { debounce: true },
+        );
     };
 
     const handleDragStart = (index: number) => {
@@ -55,6 +59,7 @@ export default function Options() {
         editQuestionAndBroadcast(currentQuestionIndex, {
             options: newOptions,
             correctAnswer: newCorrectAnswer,
+            id: currentQ.id,
         });
 
         setDraggedIndex(null);

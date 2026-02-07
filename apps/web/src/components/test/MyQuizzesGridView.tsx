@@ -49,7 +49,7 @@ export default function MyQuizzesGridView({
     return (
         <div
             key={quiz.id}
-            className="max-w-100 w-full p-1 flex flex-col relative group "
+            className="max-w-100 w-full p-1 flex flex-col relative group"
             data-lenis-prevent
         >
             <div

@@ -9,20 +9,14 @@ import Image from 'next/image';
 import CanvasOptions from './CanvasOptions';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import { templates } from '@/lib/templates';
-
-export enum SELECTION_MODE {
-    CANVAS = 'CANVAS',
-    OPTION = 'OPTION',
-    QUESTION = 'QUESTION',
-    INTERACTION = 'INTERACTION',
-}
+import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 interface CanvasProps {
     className?: string;
 }
 
 export default function Canvas({ className }: CanvasProps): JSX.Element {
-    const [selectionMode, setSelectionMode] = useState<SELECTION_MODE>(SELECTION_MODE.CANVAS);
+    const { currentOn, setCurrentOn } = useCanvasSelectionStore();
     const selectedStyles = 'border-2 border-indigo-800/60';
     const [copied, setCopied] = useState<boolean>(false);
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -39,7 +33,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
     }, [copied]);
 
     function canvasTapHandler() {
-        setSelectionMode(SELECTION_MODE.CANVAS);
+        setCurrentOn(SELECTION_MODE.CANVAS);
     }
 
     return (
@@ -49,7 +43,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
             onClick={canvasTapHandler}
             className={cn(
                 'w-full md:max-w-5xl aspect-video rounded-lg relative overflow-hidden',
-                selectionMode === SELECTION_MODE.CANVAS && selectedStyles,
+                currentOn === SELECTION_MODE.CANVAS && selectedStyles,
                 className,
             )}
         >
@@ -60,17 +54,10 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 className="bg-[#196cff] h-full rounded-md relative flex flex-col"
             >
                 <JoinQuizCodeTicker />
-                <CanvasHeading
-                    currentQ={currentQ}
-                    selectionMode={selectionMode}
-                    setSelectionMode={setSelectionMode}
-                />
+                <CanvasHeading currentQ={currentQ} />
 
-                <div className="flex-1 flex items-end justify-center mb-6">
-                    <CanvasOptions
-                        selectionMode={selectionMode}
-                        setSelectionMode={setSelectionMode}
-                    />
+                <div className="flex-1 flex items-end justify-center mb-8">
+                    <CanvasOptions />
                     {currentQ?.imageUrl && (
                         <div
                             className={cn(

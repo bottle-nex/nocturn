@@ -9,6 +9,7 @@ import QuizSettings from '../class/quizSettings';
 import EmailServiceQueue from './email/email.services';
 import Chain from '../gen/agents/Chain';
 import Model from '../gen/agents/Model';
+import CollabStateCache from '../cache/collab_state.cache';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -19,6 +20,7 @@ export let quizSettingInstance: QuizSettings;
 export let email_service_queue_instance: EmailServiceQueue;
 export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
+export let collabStateCacheInstance: CollabStateCache;
 
 export let chain: Chain;
 export let model: Model;
@@ -30,6 +32,7 @@ export default function initServices() {
     email_service_queue_instance = new EmailServiceQueue('email-service-queue');
     databaseQueueInstance = new DatabaseQueue();
     quizControllerInstance = new QuizController();
+    collabStateCacheInstance = new CollabStateCache();
 
     quizManagerInstance = new QuizManager({
         publisher: publisherInstance,

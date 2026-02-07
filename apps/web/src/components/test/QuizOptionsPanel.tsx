@@ -54,7 +54,7 @@ export default function QuizOptionsPanel({
     }
 
     return (
-        <div className="flex gap-x-2.5 items-center relative">
+        <div className="flex gap-x-2.5 items-center z-10">
             {quiz.status === QuizStatusEnum.LIVE && (
                 <QuizStatusTicker className="!rounded-[px]" status={quiz.status} />
             )}

@@ -1,7 +1,7 @@
 import { Template } from '@/lib/templates';
 import { QuestionType } from '@nocturn/types';
-import { IoIosCheckmark } from 'react-icons/io';
-import { RxCross2 } from 'react-icons/rx';
+import { IoCheckmark } from 'react-icons/io5';
+import { RxCross1 } from 'react-icons/rx';
 
 interface CanvasBarsProps {
     idx: number;
@@ -26,11 +26,11 @@ export default function CanvasBars({
             className="flex flex-col items-center justify-end h-full flex-1 min-w-0 px-1"
         >
             <div className="flex items-center justify-center gap-x-1 mb-1 sm:mb-2 w-full">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     {currentQ.correctAnswer === idx ? (
-                        <IoIosCheckmark className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 bg-green-200 rounded-full border-[0.5px] border-green-500" />
+                        <IoCheckmark className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.25 text-dark-alpha bg-[#cae8ce] rounded-full " />
                     ) : (
-                        <RxCross2 className="bg-red-300 rounded-full p-0.5 sm:p-1 text-red-950 w-3 h-3 sm:w-4 sm:h-4" />
+                        <RxCross1 className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.5 text-dark-alpha bg-red-200 rounded-full " />
                     )}
                 </div>
                 <span className="text-xs sm:text-sm lg:text-base font-medium">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, MouseEvent, SetStateAction, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BsFillHandThumbsUpFill } from 'react-icons/bs';
 import { MdEmojiEmotions } from 'react-icons/md';
@@ -10,8 +10,8 @@ import { IconType } from 'react-icons/lib';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { cn } from '@/lib/utils';
-import { SELECTION_MODE } from '@/components/canvas/Canvas';
 import { InteractionEnum } from '@nocturn/types';
+import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 interface Icon {
     id: InteractionEnum;
@@ -33,20 +33,11 @@ interface AnimationIcon {
     containerIndex: number;
 }
 
-interface NewQuizInteractiveIconsProps {
-    selectionMode: SELECTION_MODE;
-    setSelectionMode: Dispatch<SetStateAction<SELECTION_MODE>>;
-}
-
-export default function NewQuizInteractiveIcons({
-    selectionMode,
-    setSelectionMode,
-}: NewQuizInteractiveIconsProps) {
+export default function NewQuizInteractiveIcons() {
     const [animatingIcons, setAnimatingIcons] = useState<AnimationIcon[]>([]);
     const { setState } = useDraftRendererStore();
+    const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
     const { quiz } = useNewQuizStore();
-
-    const selectedStyles = 'border-2 border-indigo-600/60';
 
     function createAnimation(Icon: React.ElementType, containerIndex: number) {
         const newIcon = {
@@ -63,7 +54,7 @@ export default function NewQuizInteractiveIcons({
 
     function interactionDivTapHandler(e: MouseEvent<HTMLDivElement>) {
         e.stopPropagation();
-        setSelectionMode(SELECTION_MODE.INTERACTION);
+        setCurrentOn(SELECTION_MODE.INTERACTION);
         setState(DraftRenderer.INTERACTION);
     }
 
@@ -71,8 +62,8 @@ export default function NewQuizInteractiveIcons({
         <div
             onClick={interactionDivTapHandler}
             className={cn(
-                'flex items-center justify-end gap-x-4 z-40 rounded-[12px] px-4 py-2',
-                selectionMode === SELECTION_MODE.INTERACTION && selectedStyles,
+                'flex items-center justify-end gap-x-4 z-40 rounded-beta px-4 py-2',
+                currentOn === SELECTION_MODE.INTERACTION && style,
             )}
         >
             {icons
@@ -85,7 +76,7 @@ export default function NewQuizInteractiveIcons({
                                 backgroundColor: `#00000070`,
                                 color: '#EEEEEEca',
                             }}
-                            size={28}
+                            size={22}
                             className="p-1.5 rounded-full transition-transform duration-200 ease-in-out hover:scale-105 hover:shadow-md cursor-pointer"
                         />
                         <AnimatePresence>

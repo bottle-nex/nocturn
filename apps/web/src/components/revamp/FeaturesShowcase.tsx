@@ -2,7 +2,7 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import NocturnFeatureCard from './NocturnFeatureCard';
+import FeatureCard from './FeatureCard';
 import { IoCreateSharp } from 'react-icons/io5';
 import { MdLiveTv } from 'react-icons/md';
 import { FaTrophy } from 'react-icons/fa';
@@ -13,10 +13,10 @@ import { useJoinQuizStore } from '@/store/home/useJoinQuizStore';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function NocturnUsersSection() {
+export default function FeaturesShowcase() {
     const sectionRef = useRef<HTMLDivElement | null>(null);
     const pinRef = useRef<HTMLDivElement | null>(null);
-    const featureCardsRef = useRef<HTMLDivElement[]>([]);
+    const cardsRef = useRef<HTMLDivElement[]>([]);
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { toggleJoinInput } = useJoinQuizStore();
@@ -34,7 +34,7 @@ export default function NocturnUsersSection() {
         if (!sectionRef.current || !pinRef.current) return;
 
         const ctx = gsap.context(() => {
-            const total = featureCardsRef.current.length;
+            const total = cardsRef.current.length;
 
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -55,7 +55,7 @@ export default function NocturnUsersSection() {
             const exitDuration = 0.1;
             const stackOffsetX = -50;
 
-            featureCardsRef.current.forEach((card, index) => {
+            cardsRef.current.forEach((card, index) => {
                 const start = index * perCardGap;
                 const depthIndex = total - 1 - index;
 
@@ -79,7 +79,7 @@ export default function NocturnUsersSection() {
 
             tl.to({}, { duration: longHoldAfterAll });
 
-            featureCardsRef.current.forEach((card) => {
+            cardsRef.current.forEach((card) => {
                 tl.to(
                     card,
                     { x: window.innerWidth + 300, duration: exitDuration, ease: 'power2.in' },
@@ -87,7 +87,7 @@ export default function NocturnUsersSection() {
                 );
             });
 
-            featureCardsRef.current.forEach((card, index) => {
+            cardsRef.current.forEach((card, index) => {
                 const depthIndex = total - 1 - index;
                 if (depthIndex === 0) return;
 
@@ -133,18 +133,18 @@ export default function NocturnUsersSection() {
                         <div
                             ref={(el) => {
                                 if (el) {
-                                    featureCardsRef.current[0] = el;
+                                    cardsRef.current[0] = el;
                                 }
                             }}
                             className="absolute inset-0 cursor-pointer"
                         >
-                            <NocturnFeatureCard
+                            <FeatureCard
                                 featureTag="FEATURE 01"
                                 featureAction="Start creating"
                                 featureHeading="CREATE"
                                 tagline="Cook up chaos, together"
                                 description="Build quizzes solo or gang up with your crew. Real-time collab means no more back-and-forth BS—just pure creative flow. Drag, drop, done."
-                                bgClassname="bg-pink-500 text-white"
+                                bgClassname="bg-[#F54D25] text-white"
                                 textClassname="text-white"
                                 border="border-white"
                                 buttonTitle="START CREATING"
@@ -157,18 +157,18 @@ export default function NocturnUsersSection() {
                         <div
                             ref={(el) => {
                                 if (el) {
-                                    featureCardsRef.current[1] = el;
+                                    cardsRef.current[1] = el;
                                 }
                             }}
                             className="absolute inset-0 cursor-pointer"
                         >
-                            <NocturnFeatureCard
+                            <FeatureCard
                                 featureTag="FEATURE 02"
                                 featureAction="Go live"
                                 featureHeading="HOST"
                                 tagline="Call the shots, own the room"
                                 description="Go live, lock in the stakes, and watch the players sweat. You control the pace, the questions, and the prize pool. It's your game, your rules."
-                                bgClassname="bg-indigo-600 text-white"
+                                bgClassname="bg-[#0881FE] text-white"
                                 textClassname="text-white"
                                 border="border-white"
                                 buttonTitle="HOST A QUIZ"
@@ -181,18 +181,18 @@ export default function NocturnUsersSection() {
                         <div
                             ref={(el) => {
                                 if (el) {
-                                    featureCardsRef.current[2] = el;
+                                    cardsRef.current[2] = el;
                                 }
                             }}
                             className="absolute inset-0 cursor-pointer"
                         >
-                            <NocturnFeatureCard
+                            <FeatureCard
                                 featureTag="FEATURE 03"
                                 featureAction="Join & win"
                                 featureHeading="WIN"
                                 tagline="Flex your brain, stack your SOL"
                                 description="Answer fast, answer right, get paid. Real Solana rewards for the sharpest minds. No fluff, no luck—just skill and speed."
-                                bgClassname="bg-yellow-400 text-black"
+                                bgClassname="bg-[#EFC11D] text-black"
                                 textClassname="text-black"
                                 border="border-black"
                                 buttonTitle="PLAY NOW"

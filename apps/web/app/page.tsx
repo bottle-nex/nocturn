@@ -1,4 +1,3 @@
-import Footer from '@/components/root/Footer';
 // import NocturnPerksSection from '@/components/test/NocturnPerksSection';
 // import NocturnUsersSection from '@/components/test/NocturnUsersSection';
 // import NocturnFeaturesSection from '@/components/test/NocturnFeaturesSection';
@@ -18,7 +17,6 @@ export default function Page() {
             <NocturnLandingSection />
             <NocturnPerksSection />
             <NocturnFeaturesSection />
-            <NocturnUsersSection />
             <BigAnimatedText />
             <Footer /> */}
             {/* <NavbarTest /> */}
@@ -29,7 +27,7 @@ export default function Page() {
             <LandingCardComponent />
             <HeroSection />
             {/* <LandingHeroSection /> */}
-            <Footer />
+            {/* <Footer /> */}
             {/* <NocturnFeaturesSection /> */}
         </div>
     );

@@ -59,7 +59,7 @@ export default function EmptyCanvas({
             style={{ boxSizing: 'border-box' }}
         >
             {question && options.length > 0 && (
-                <div className="absolute h-full w-full z-10 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
+                <div className="absolute h-full w-full z-5 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
                         style={{ color: template.text_color }}
                         className={cn(

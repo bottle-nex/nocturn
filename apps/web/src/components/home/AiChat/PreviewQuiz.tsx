@@ -126,12 +126,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
                         )}
                     </div>
 
-                    <div
-                        className={cn(
-                            'absolute left-1/2 -translate-x-1/2 text-4xl ',
-                            'dark:bg-clip-text dark:text-transparent dark:bg-linear-to-b dark:from-light-base dark:via-light-base/80 dark:to-light-base/10',
-                        )}
-                    >
+                    <div className={cn('absolute left-1/2 -translate-x-1/2 text-4xl ')}>
                         Previewing slides
                     </div>
 

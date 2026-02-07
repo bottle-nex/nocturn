@@ -13,6 +13,9 @@ import {
 import WebSocket from 'ws';
 import { v4 as uuid } from 'uuid';
 import QuizManager from './QuizManager';
+import CollaboratorsStateManager from './CollaboratorsStateManager';
+import CollabStateCache from '../cache/collab_state.cache';
+import { collabStateCacheInstance } from '../services/init.services';
 
 export interface CollaborationManagerDependencies {
     publisher: Redis;
@@ -22,6 +25,7 @@ export interface CollaborationManagerDependencies {
     databaseQueue: DatabaseQueue;
     quizManager: QuizManager;
     redis_cache: RedisCache;
+    collaborators_state_manager: CollaboratorsStateManager;
 }
 
 export default class CollaborationManager {
@@ -35,6 +39,8 @@ export default class CollaborationManager {
     private socket_mapping: Map<string, CustomWebSocket>;
     private collaborator_sockets_mapping: Map<string, Set<string>>;
     private collaborator_socket_mapping: Map<string, string> = new Map(); // Map<collaborator_id, socket_id>
+    private collaborators_state_manager: CollaboratorsStateManager;
+    private collaborator_quiz_state_cache: CollabStateCache = collabStateCacheInstance;
 
     constructor(dependencies: CollaborationManagerDependencies) {
         this.publisher = dependencies.publisher;
@@ -44,6 +50,7 @@ export default class CollaborationManager {
         this.redis_cache = dependencies.redis_cache;
         this.quizManager = dependencies.quizManager;
         this.collaborator_sockets_mapping = dependencies.collaborator_sockets_mapping;
+        this.collaborators_state_manager = dependencies.collaborators_state_manager;
     }
 
     public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
@@ -89,6 +96,10 @@ export default class CollaborationManager {
             .get(decoded_cookie_payload.collabSessionId)
             ?.add(new_collaborator_socket_id);
         this.setup_message_handlers(ws);
+        this.collaborators_state_manager.on_collaborators_connect(
+            decoded_cookie_payload.collabSessionId,
+            decoded_cookie_payload.quizId,
+        );
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -202,6 +213,11 @@ export default class CollaborationManager {
             return;
         }
 
+        await this.collaborator_quiz_state_cache.update_question_state(
+            ws.user.collabSessionId,
+            ws.user.quizId,
+            question,
+        );
         const data: PubSubMessageTypes = {
             type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
             payload: {

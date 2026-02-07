@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "apps/web": {
+      "entry": [
+        "app/**/page.{ts,tsx}",
+        "app/**/layout.{ts,tsx}",
+        "app/**/loading.{ts,tsx}",
+        "app/**/error.{ts,tsx}",
+        "app/**/not-found.{ts,tsx}",
+        "app/**/route.{ts,tsx}",
+        "app/api/**/*.{ts,tsx}",
+        "middleware.ts",
+        "next.config.ts",
+        "tailwind.config.ts",
+        "postcss.config.ts"
+      ],
+      "project": [
+        "**/*.{ts,tsx,js,jsx}"
+      ]
+    }
+  }
+}
