@@ -16,16 +16,21 @@ const envSchema = z.object({
     SERVER_AWS_BUCKET_NAME: z.string().min(1, 'AWS Bucket name is required'),
     SERVER_AWS_CLOUDFRONT_DOMAIN: z.string().min(1, 'CloudFront domain is required'),
     SERVER_REDIS_URL: z.url('Invalid Redis URL'),
-    SERVER_WEB_URL: z.string().min(1),
-    DATABASE_URL: z.string(),
+    SERVER_WEB_URL: z.string().min(1, 'Web URL is required'),
+    DATABASE_URL: z.string().min(1, 'Database URL is required'),
     SERVER_GEMINI_API_KEY: z.string().min(1, 'Gemini API Key is required'),
+    SERVER_DODO_API_KEY: z.string().min(1, 'Dodo API Key is required'),
+    SERVER_DODO_WEBHOOK_SECRET: z.string().min(1, 'Dodo Webhook Secret is required'),
+    SERVER_DODO_ENVIRONMENT: z.enum(['test', 'production']).default('test'),
+    SERVER_DODO_PRO_PRODUCT_ID: z.string().min(1, 'Dodo Pro Product ID is required'),
+    SERVER_DODO_ENTERPRISE_PRODUCT_ID: z.string().min(1, 'Dodo Enterprise Product ID is required'),
 });
 
 function parseEnv() {
     try {
         return envSchema.parse(process.env);
-    } catch {
-        console.error('Environment validation failed:');
+    } catch (err) {
+        console.error('Environment validation failed:', err);
         process.exit(1);
     }
 }

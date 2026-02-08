@@ -46,3 +46,8 @@ export const INVITE_COLLABORATOR_URL = QUIZ_URL + '/invite-collaborator';
 
 export const ALL_CONTRIBUTORS_DETAILS_URL =
     'https://api.github.com/repos/bottle-nex/nocturn/contributors';
+
+// Premium routes
+export const PREMIUM_URL = API_URL + '/premium';
+export const GET_TIERS_URL = PREMIUM_URL + '/tiers';
+export const CREATE_CHECKOUT_URL = PREMIUM_URL + '/create-checkout-session';

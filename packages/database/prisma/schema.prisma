@@ -32,6 +32,16 @@ model User {
   collaboratorInvitations CollaboratorInvitation[]
   aiChats                 AiQuizChatSession[]
 
+  // Premium relationships
+  subscriptions UserSubscription[]
+  payments      Payment[]
+  usageRecords  UsageRecord[]
+
+  // Premium fields (denormalized cache)
+  currentTier String?  @default("FREE")
+  isTrialing  Boolean  @default(false)
+  trialEndsAt DateTime?
+
   @@map("hosts")
 }
 
@@ -399,6 +409,152 @@ model AiQuizMessage {
   updatedAt           DateTime          @updatedAt
 }
 
+// ================ PREMIUM & SUBSCRIPTION MODELS ================
+
+model SubscriptionTier {
+  id          String  @id @default(cuid())
+  name        String  @unique // FREE, PRO, ENTERPRISE
+  displayName String
+  description String?
+
+  // Pricing
+  priceMonthly Float
+  priceYearly  Float?
+  currency     String @default("INR")
+
+  // Feature limits
+  maxQuizzesPerMonth       Int @default(-1) // -1 = unlimited
+  maxAiGenerationsPerMonth Int @default(5)
+  maxCollaborators         Int @default(1)
+  maxActiveQuizzes         Int @default(10)
+
+  // Feature flags
+  advancedTemplates Boolean @default(false)
+  customBranding    Boolean @default(false)
+  prioritySupport   Boolean @default(false)
+  advancedAnalytics Boolean @default(false)
+
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions UserSubscription[]
+
+  @@map("subscription_tiers")
+}
+
+model UserSubscription {
+  id     String @id @default(cuid())
+  userId String
+  tierId String
+
+  user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier SubscriptionTier @relation(fields: [tierId], references: [id])
+
+  status          SubscriptionStatus @default(ACTIVE)
+  billingInterval BillingInterval    @default(MONTHLY)
+
+  // Dodo Payments integration
+  dodoSubscriptionId String? @unique
+  dodoCustomerId     String?
+
+  // Dates
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAt           DateTime?
+  trialStart         DateTime?
+  trialEnd           DateTime?
+
+  amount   Float
+  currency String @default("INR")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments     Payment[]
+  usageRecords UsageRecord[]
+
+  @@index([userId, status])
+  @@index([dodoSubscriptionId])
+  @@map("user_subscriptions")
+}
+
+model Payment {
+  id             String  @id @default(cuid())
+  subscriptionId String?
+  userId         String
+
+  subscription UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  amount   Float
+  currency String        @default("INR")
+  status   PaymentStatus
+
+  dodoPaymentId String  @unique
+  dodoInvoiceId String?
+
+  failureReason String?
+  periodStart   DateTime?
+  periodEnd     DateTime?
+
+  paidAt    DateTime?
+  failedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, status])
+  @@index([dodoPaymentId])
+  @@map("payments")
+}
+
+model UsageRecord {
+  id             String @id @default(cuid())
+  userId         String
+  subscriptionId String
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  resourceType UsageResourceType
+  resourceId   String?
+  quantity     Int @default(1)
+
+  periodStart DateTime
+  periodEnd   DateTime
+  recordedAt  DateTime @default(now())
+
+  metadata Json?
+
+  @@index([userId, resourceType, periodStart])
+  @@map("usage_records")
+}
+
+model WebhookEvent {
+  id String @id @default(cuid())
+
+  provider  String
+  eventType String
+  eventId   String @unique
+  payload   Json
+  signature String
+
+  status        WebhookStatus @default(PENDING)
+  processedAt   DateTime?
+  failureReason String?
+  retryCount    Int           @default(0)
+
+  receivedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([provider, eventType])
+  @@index([status, createdAt])
+  @@index([eventId])
+  @@map("webhook_events")
+}
+
 enum QuizStatus {
   CREATED
   SCHEDULED
@@ -522,4 +678,40 @@ enum AiMessageElement {
   DIFFICULTY
   TITLE
   QUIZ
+}
+
+// ================ PREMIUM ENUMS ================
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum UsageResourceType {
+  QUIZ_CREATED
+  AI_GENERATION
+  COLLABORATOR_ADDED
+}
+
+enum WebhookStatus {
+  PENDING
+  PROCESSED
+  FAILED
+  SKIPPED
 }
