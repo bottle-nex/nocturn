@@ -11,6 +11,7 @@ import Chain from '../gen/agents/Chain';
 import Model from '../gen/agents/Model';
 import CollabStateCache from '../cache/collab_state.cache';
 import DodoPaymentService from './premium/DodoPaymentService';
+import DodoWebhookService from './premium/DodoWebhookService';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -23,6 +24,7 @@ export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 export let collabStateCacheInstance: CollabStateCache;
 export let dodo_payment_service: DodoPaymentService;
+export let dodo_webhook_service: DodoWebhookService;
 
 export let chain: Chain;
 export let model: Model;
@@ -38,6 +40,7 @@ export default function initServices() {
     dodo_payment_service = new DodoPaymentService(
         env.SERVER_NODE_ENV === 'development' ? 'test' : 'production',
     );
+    dodo_webhook_service = new DodoWebhookService();
     quizManagerInstance = new QuizManager({
         publisher: publisherInstance,
         subscriber: subscriberInstance,

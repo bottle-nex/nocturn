@@ -7,7 +7,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
         ResponseWriter.not_authorized(res, 'User authentication required');
         return;
     }
-    // console.log('controller hit');
+    //
 
     try {
         const quizzes = await prisma.quiz.findMany({

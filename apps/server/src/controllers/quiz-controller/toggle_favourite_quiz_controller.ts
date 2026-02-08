@@ -5,7 +5,6 @@ import { prisma } from '@nocturn/database';
 
 export default async function toggle_favourite_quiz_controller(req: Request, res: Response) {
     if (!req.user?.id) {
-        console.log('unauthorized');
         ResponseWriter.not_authorized(res);
         return;
     }

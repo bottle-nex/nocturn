@@ -256,7 +256,7 @@ export default class QuizController {
     ): Promise<quiz_controller> {
         try {
             const quiz = await this.find_quiz(quizId);
-            console.log('quiz ---------> ', quiz);
+
             let launching_quiz: { quiz: Partial<Quiz>; gameSession: Partial<GameSession> };
 
             if (quiz?.status === 'LIVE') {

@@ -40,8 +40,6 @@ export default async function generateNewQuizController(req: Request, res: Respo
             });
         }
 
-        console.log({ session });
-
         // create the user message
         await prisma.aiQuizMessage.create({
             data: {

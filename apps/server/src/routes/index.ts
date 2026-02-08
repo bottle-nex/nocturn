@@ -10,6 +10,7 @@ import collaboratorRoutes from './collaborator.router';
 import aiRoutes from './ai.router';
 import s3Routes from './s3.router';
 import premiumRoutes from './premium.router';
+import webhookRoutes from './webhook.router';
 
 // <---------------------- REGISTER-ROUTES ---------------------->
 router.use('/', authRoutes);
@@ -20,5 +21,6 @@ router.use('/', collaboratorRoutes);
 router.use('/', aiRoutes);
 router.use('/', s3Routes);
 router.use('/', premiumRoutes);
+router.use('/', webhookRoutes);
 
 export default router;

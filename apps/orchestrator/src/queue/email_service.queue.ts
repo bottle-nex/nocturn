@@ -32,12 +32,10 @@ export default class EmailServiceProcessor {
     }
 
     private async handle_collaborator_added_email(data: CollaboratorAddedEmailData) {
-        console.log('Sending collaborator added email');
         await ResendService.send_collaborator_added_email(data);
     }
 
     private async handle_collaborator_invite_email(data: CollaboratorInviteEmailData) {
-        console.log('Sending collaborator invite email');
         await ResendService.send_collaborator_invited_email(data);
     }
 }
