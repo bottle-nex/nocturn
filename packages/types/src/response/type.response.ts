@@ -1,8 +1,8 @@
-import { GetReviewsResponse } from "./home/get_reviews_type.response";
 import { UserQuizResponse } from "./home/user_quiz_types.response";
-import { getUnAskedQuestionResponse } from "./live/get-un-asked-question.response";
-import { LiveQuizDataResponse } from "./live/live-quiz-types";
 import { GetNewQuizResponse } from "./new/get_new_quiz.response";
+import { GetReviewsResponse } from "./home/get_reviews_type.response";
+import { LiveQuizDataResponse } from "./live/live-quiz-types";
+import { getUnAskedQuestionResponse } from "./live/get-un-asked-question.response";
 
 export enum ApiResponse {
   LIVE_QUIZ = "LIVE_QUIZ",

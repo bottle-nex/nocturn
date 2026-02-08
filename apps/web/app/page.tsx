@@ -9,6 +9,7 @@ import FeaturesSection from '@/components/test/FeaturesSection';
 import InstructionsSection from '@/components/test/InstructionsSection';
 import PricingComponent from '@/components/revamp/PricingComponent';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
+import Footer from '@/components/root/Footer';
 
 export default function Page() {
     return (
@@ -30,6 +31,7 @@ export default function Page() {
             {/* <LandingHeroSection /> */}
             {/* <Footer /> */}
             {/* <NocturnFeaturesSection /> */}
+            <Footer />
         </div>
     );
 }

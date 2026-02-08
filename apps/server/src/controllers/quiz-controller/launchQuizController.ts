@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
-import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
-import { quizControllerInstance } from '../../services/init.services';
+import ResponseWriter from '../../class/response_writer';
+import { env } from '../../configs/env';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
-import { env } from '../../configs/env';
-import ResponseWriter from '../../class/response_writer';
+import { Request, Response } from 'express';
+import { quizControllerInstance } from '../../services/init.services';
+import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 
 export default async function launchQuizController(req: Request, res: Response) {
     const userId = req.user?.id;
@@ -23,7 +23,6 @@ export default async function launchQuizController(req: Request, res: Response) 
     const parsed = createQuizSchema.safeParse(req.body);
     console.log('parsed is : ', parsed);
     if (!parsed.success) {
-        // contains value
         res.status(400).json({
             success: false,
             message: 'Error while creating quiz',

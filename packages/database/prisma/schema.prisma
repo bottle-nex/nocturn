@@ -35,7 +35,6 @@ model User {
   // Premium relationships
   subscriptions UserSubscription[]
   payments      Payment[]
-  usageRecords  UsageRecord[]
 
   // Premium fields (denormalized cache)
   currentTier String?  @default("FREE")
@@ -411,24 +410,25 @@ model AiQuizMessage {
 
 // ================ PREMIUM & SUBSCRIPTION MODELS ================
 
+enum SubscriptionType {
+    FREE
+    PRO
+}
 model SubscriptionTier {
   id          String  @id @default(cuid())
-  name        String  @unique // FREE, PRO, ENTERPRISE
+  name        SubscriptionType @unique
   displayName String
   description String?
 
-  // Pricing
   priceMonthly Float
   priceYearly  Float?
   currency     String @default("INR")
 
-  // Feature limits
   maxQuizzesPerMonth       Int @default(-1) // -1 = unlimited
   maxAiGenerationsPerMonth Int @default(5)
   maxCollaborators         Int @default(1)
   maxActiveQuizzes         Int @default(10)
 
-  // Feature flags
   advancedTemplates Boolean @default(false)
   customBranding    Boolean @default(false)
   prioritySupport   Boolean @default(false)
@@ -473,7 +473,6 @@ model UserSubscription {
   updatedAt DateTime @updatedAt
 
   payments     Payment[]
-  usageRecords UsageRecord[]
 
   @@index([userId, status])
   @@index([dodoSubscriptionId])
@@ -507,28 +506,6 @@ model Payment {
   @@index([userId, status])
   @@index([dodoPaymentId])
   @@map("payments")
-}
-
-model UsageRecord {
-  id             String @id @default(cuid())
-  userId         String
-  subscriptionId String
-
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subscription UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-
-  resourceType UsageResourceType
-  resourceId   String?
-  quantity     Int @default(1)
-
-  periodStart DateTime
-  periodEnd   DateTime
-  recordedAt  DateTime @default(now())
-
-  metadata Json?
-
-  @@index([userId, resourceType, periodStart])
-  @@map("usage_records")
 }
 
 model WebhookEvent {
