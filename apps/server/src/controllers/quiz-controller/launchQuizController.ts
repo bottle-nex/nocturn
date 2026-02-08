@@ -71,6 +71,7 @@ export default async function launchQuizController(req: Request, res: Response) 
             quizId,
             data.gameSession.id!,
             USER_TYPE.HOST,
+            req.user.name,
         );
         console.log('secure token data is : ', secureTokenData);
 

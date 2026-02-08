@@ -14,33 +14,6 @@ interface CheckoutResponse {
     sessionId: string;
 }
 
-interface PaymentStatus {
-    status: 'succeeded' | 'failed' | 'pending' | 'cancelled';
-    amount: number;
-    currency: string;
-    metadata: Record<string, string>;
-    paidAt?: Date;
-}
-
-interface SubscriptionDetails {
-    id: string;
-    status: 'active' | 'cancelled' | 'past_due' | 'trialing';
-    currentPeriodStart: Date;
-    currentPeriodEnd: Date;
-    cancelledAt?: Date;
-    plan: {
-        productId: string;
-        amount: number;
-        currency: string;
-        interval: 'month' | 'year';
-    };
-}
-
-interface CancelResponse {
-    cancelled: boolean;
-    endsAt: Date;
-}
-
 export default class DodoPaymentService {
     private producction_base_url: string = 'https://api.dodopayments.com/v1';
     private test_base_url: string = 'https://api-test.dodopayments.com/v1';
@@ -73,7 +46,7 @@ export default class DodoPaymentService {
     public async make_request<T>(
         method: 'GET' | 'POST' | 'DELETE',
         endpoint: string,
-        data?: any,
+        data?: Record<string, unknown>,
     ): Promise<T> {
         const base_url = this.env === 'production' ? this.producction_base_url : this.test_base_url;
         const url = `${base_url}${endpoint}`;
@@ -83,7 +56,11 @@ export default class DodoPaymentService {
             'Content-Type': 'application/json',
         };
 
-        const options: RequestInit = {
+        const options: {
+            method: string;
+            headers: Record<string, string>;
+            body?: string;
+        } = {
             method,
             headers,
         };

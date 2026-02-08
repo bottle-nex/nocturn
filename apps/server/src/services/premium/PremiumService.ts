@@ -1,3 +1,1 @@
-export default class PremiumService {
-    
-}
+export default class PremiumService {}

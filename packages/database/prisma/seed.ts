@@ -1,17 +1,17 @@
-import { prisma } from '../src/client';
+import { prisma } from "../src/client";
 
 async function seedSubscriptionTiers() {
-  console.log('Seeding subscription tiers...');
+  console.log("Seeding subscription tiers...");
 
   await prisma.subscriptionTier.createMany({
     data: [
       {
-        name: 'FREE',
-        displayName: 'Free Plan',
-        description: 'Perfect for getting started with quiz creation',
+        name: "FREE",
+        displayName: "Free Plan",
+        description: "Perfect for getting started with quiz creation",
         priceMonthly: 0,
         priceYearly: 0,
-        currency: 'INR',
+        currency: "INR",
         maxQuizzesPerMonth: 5,
         maxAiGenerationsPerMonth: 3,
         maxCollaborators: 1,
@@ -24,12 +24,12 @@ async function seedSubscriptionTiers() {
         sortOrder: 0,
       },
       {
-        name: 'PRO',
-        displayName: 'Pro Plan',
-        description: 'For professional quiz creators and educators',
+        name: "PRO",
+        displayName: "Pro Plan",
+        description: "For professional quiz creators and educators",
         priceMonthly: 999, // ₹999/month
         priceYearly: 9999, // ₹9,999/year (2 months free)
-        currency: 'INR',
+        currency: "INR",
         maxQuizzesPerMonth: -1, // Unlimited
         maxAiGenerationsPerMonth: -1, // Unlimited
         maxCollaborators: 5,
@@ -45,25 +45,25 @@ async function seedSubscriptionTiers() {
     skipDuplicates: true, // Skip if tiers already exist
   });
 
-  console.log('✓ Subscription tiers seeded successfully');
+  console.log("✓ Subscription tiers seeded successfully");
 }
 
 async function migrateExistingUsers() {
-  console.log('Migrating existing users to FREE tier...');
+  console.log("Migrating existing users to FREE tier...");
 
   // Get the FREE tier
   const freeTier = await prisma.subscriptionTier.findUnique({
-    where: { name: 'FREE' },
+    where: { name: "FREE" },
   });
 
   if (!freeTier) {
-    throw new Error('FREE tier not found. Run seedSubscriptionTiers first.');
+    throw new Error("FREE tier not found. Run seedSubscriptionTiers first.");
   }
 
   // Find all users without a current tier
   const users = await prisma.user.findMany({
     where: {
-      OR: [{ currentTier: null }, { currentTier: '' }],
+      OR: [{ currentTier: null }, { currentTier: "" }],
     },
   });
 
@@ -73,7 +73,7 @@ async function migrateExistingUsers() {
     // Update user with FREE tier
     await prisma.user.update({
       where: { id: user.id },
-      data: { currentTier: 'FREE' },
+      data: { currentTier: "FREE" },
     });
 
     // Create FREE subscription for user
@@ -86,12 +86,12 @@ async function migrateExistingUsers() {
         data: {
           userId: user.id,
           tierId: freeTier.id,
-          status: 'ACTIVE',
-          billingInterval: 'MONTHLY',
+          status: "ACTIVE",
+          billingInterval: "MONTHLY",
           currentPeriodStart: new Date(),
-          currentPeriodEnd: new Date('2099-12-31'), // Never expires for free tier
+          currentPeriodEnd: new Date("2099-12-31"), // Never expires for free tier
           amount: 0,
-          currency: 'INR',
+          currency: "INR",
         },
       });
     }
@@ -104,9 +104,9 @@ async function main() {
   try {
     await seedSubscriptionTiers();
     await migrateExistingUsers();
-    console.log('\n✓ Database seeding completed successfully!\n');
+    console.log("\n✓ Database seeding completed successfully!\n");
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
     throw error;
   }
 }
