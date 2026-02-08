@@ -10,6 +10,7 @@ import EmailServiceQueue from './email/email.services';
 import Chain from '../gen/agents/Chain';
 import Model from '../gen/agents/Model';
 import CollabStateCache from '../cache/collab_state.cache';
+import DodoPaymentService from './premium/DodoPaymentService';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -21,6 +22,7 @@ export let email_service_queue_instance: EmailServiceQueue;
 export let publisherInstance: Redis;
 export let subscriberInstance: Redis;
 export let collabStateCacheInstance: CollabStateCache;
+export let dodo_payment_service: DodoPaymentService;
 
 export let chain: Chain;
 export let model: Model;
@@ -33,7 +35,9 @@ export default function initServices() {
     databaseQueueInstance = new DatabaseQueue();
     quizControllerInstance = new QuizController();
     collabStateCacheInstance = new CollabStateCache();
-
+    dodo_payment_service = new DodoPaymentService(
+        env.SERVER_NODE_ENV === 'development' ? 'test' : 'production',
+    );
     quizManagerInstance = new QuizManager({
         publisher: publisherInstance,
         subscriber: subscriberInstance,

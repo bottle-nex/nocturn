@@ -9,23 +9,26 @@ import HeroSection from '@/components/revamp/HeroSection';
 import RevampSection from '@/components/revamp/RevampSection';
 import FeaturesSection from '@/components/test/FeaturesSection';
 import InstructionsSection from '@/components/test/InstructionsSection';
+import PricingComponent from '@/components/revamp/PricingComponent';
+import BigAnimatedText from '@/components/ui/BigAnimatedText';
 
 export default function Page() {
     return (
-        <div className="min-h-screen overflow-x-hidden w-full bg-alpha relative flex flex-col items-center">
+        <div className="min-h-screen overflow-x-hidden w-full bg-white relative flex flex-col items-center">
             {/* <Navbar />
             <NocturnLandingSection />
             <NocturnPerksSection />
             <NocturnFeaturesSection />
-            <BigAnimatedText />
             <Footer /> */}
             {/* <NavbarTest /> */}
             <LandingNavbar />
             <RevampSection />
             <FeaturesSection />
             <InstructionsSection />
-            <LandingCardComponent />
-            <HeroSection />
+            {/* <LandingCardComponent /> */}
+            {/* <HeroSection /> */}
+            <PricingComponent />
+            <BigAnimatedText />
             {/* <LandingHeroSection /> */}
             {/* <Footer /> */}
             {/* <NocturnFeaturesSection /> */}
