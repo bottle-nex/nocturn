@@ -13,6 +13,8 @@ export const useWebSocket = () => {
         const segments = pathname.split('/');
         const quizId = segments[segments.length - 1];
 
+        const gameSessionId = segments[segments.length - 1];
+
         if (!quizId || quizId === 'undefined' || quizId === '') {
             return;
         }
@@ -22,7 +24,8 @@ export const useWebSocket = () => {
         }
         lastQuizIdRef.current = quizId;
 
-        socket.current = getWebSocketClient(quizId);
+        // socket.current = getWebSocketClient(quizId);
+        socket.current = getWebSocketClient(gameSessionId);
         return () => {
             if (lastQuizIdRef.current !== quizId) {
                 cleanWebSocketClient();

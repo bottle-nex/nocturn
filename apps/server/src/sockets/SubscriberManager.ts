@@ -253,6 +253,10 @@ export default class SubscriberManager {
     ) {
         if (messages_to.includes(USER_TYPE.HOST)) {
             const host_socket_id = this.session_host_mapping.get(game_session_id);
+            if (!host_socket_id) {
+                return;
+            }
+
             if (host_socket_id && host_socket_id !== exclude_socket_id) {
                 const host_socket = this.socket_mapping.get(host_socket_id);
                 if (host_socket && host_socket.readyState === WebSocket.OPEN) {
