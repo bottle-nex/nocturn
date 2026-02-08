@@ -1,6 +1,5 @@
 import { prisma } from '@nocturn/database';
 import { DodoWebhookEvent } from '../../types/webhook-types';
-import chalk from 'chalk';
 
 export default class DodoWebhookService {
     public async processWebhookEvent(eventId: string): Promise<void> {
@@ -13,8 +12,6 @@ export default class DodoWebhookService {
         }
 
         const event = webhookEvent.payload as unknown as DodoWebhookEvent;
-        console.log(`Processing webhook event: ${event.type} (${eventId})`);
-        console.log('event is :::::::::::::::::::::::::::::::::::: ', event);
 
         switch (event.type) {
             case 'payment.succeeded':
@@ -39,7 +36,6 @@ export default class DodoWebhookService {
                 await this.handleSubscriptionPastDue(event, eventId);
                 break;
             default:
-                console.log(`Unhandled webhook event type: ${event.type}`);
                 await prisma.webhookEvent.update({
                     where: { eventId },
                     data: {
@@ -140,6 +136,27 @@ export default class DodoWebhookService {
                 },
             });
 
+            const tierId = event.data.metadata?.tier_id;
+            if (tierId) {
+                const checkoutSession = await tx.checkoutSession.findFirst({
+                    where: {
+                        userId: userId,
+                        tierId: tierId,
+                        status: 'PENDING',
+                    },
+                    orderBy: {
+                        createdAt: 'desc',
+                    },
+                });
+
+                if (checkoutSession) {
+                    await tx.checkoutSession.update({
+                        where: { id: checkoutSession.id },
+                        data: { status: 'FAILED' },
+                    });
+                }
+            }
+
             if (event.data.subscription_id) {
                 const subscription = await tx.userSubscription.findUnique({
                     where: { dodoSubscriptionId: event.data.subscription_id },
@@ -170,8 +187,7 @@ export default class DodoWebhookService {
         await prisma.$transaction(async (tx) => {
             const tierId = event.data.metadata?.tier_id;
             const userId = event.data.metadata?.user_id;
-            console.log('tierId is : ', tierId);
-            console.log('userId is : ', userId);
+
             if (!tierId || !userId) {
                 throw new Error('Missing tier_id or user_id in subscription metadata');
             }
@@ -179,7 +195,6 @@ export default class DodoWebhookService {
             const tier = await tx.subscriptionTier.findUnique({
                 where: { id: tierId },
             });
-            console.log(chalk.red('tier found is  : ', tier));
 
             if (!tier) {
                 throw new Error(`Tier not found: ${tierId}`);
@@ -219,7 +234,29 @@ export default class DodoWebhookService {
                 },
             });
 
-            console.log(chalk.blue('subscription upserted: ', subscription));
+            const checkoutSession = await tx.checkoutSession.findFirst({
+                where: {
+                    userId: userId,
+                    tierId: tierId,
+                    status: 'PENDING',
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            });
+
+            if (checkoutSession) {
+                await tx.checkoutSession.update({
+                    where: { id: checkoutSession.id },
+                    data: {
+                        status: 'COMPLETED',
+                        subscriptionId: subscription.id,
+                        completedAt: new Date(),
+                    },
+                });
+            } else {
+                console.warn('No pending checkout session found for subscription activation');
+            }
 
             await tx.user.update({
                 where: { id: subscription.userId },

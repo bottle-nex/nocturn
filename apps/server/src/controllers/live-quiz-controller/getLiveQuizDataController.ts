@@ -13,7 +13,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
     const { quizId: quizIdParams } = req.params;
 
     if (!token) {
-        console.log('No token found in cookies');
         ResponseWriter.not_authorized(res);
         return;
     }

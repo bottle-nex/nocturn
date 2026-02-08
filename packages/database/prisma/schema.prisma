@@ -33,8 +33,9 @@ model User {
   aiChats                 AiQuizChatSession[]
 
   // Premium relationships
-  subscriptions UserSubscription[]
-  payments      Payment[]
+  subscriptions    UserSubscription[]
+  payments         Payment[]
+  checkoutSessions CheckoutSession[]
 
   // Premium fields (denormalized cache)
   currentTier String?  @default("FREE")
@@ -439,7 +440,8 @@ model SubscriptionTier {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  subscriptions UserSubscription[]
+  subscriptions    UserSubscription[]
+  checkoutSessions CheckoutSession[]
 
   @@map("subscription_tiers")
 }
@@ -472,7 +474,8 @@ model UserSubscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  payments     Payment[]
+  payments        Payment[]
+  checkoutSession CheckoutSession?
 
   @@index([userId, status])
   @@index([dodoSubscriptionId])
@@ -530,6 +533,41 @@ model WebhookEvent {
   @@index([status, createdAt])
   @@index([eventId])
   @@map("webhook_events")
+}
+
+model CheckoutSession {
+  id String @id @default(cuid())
+
+  // Dodo Payments identifiers
+  dodoSessionId String @unique
+  checkoutUrl   String
+
+  // User context
+  userId String
+  tierId String
+
+  // Status tracking
+  status         CheckoutSessionStatus @default(PENDING)
+  subscriptionId String?               @unique
+
+  // Metadata
+  metadata Json?
+
+  // Relations
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier         SubscriptionTier  @relation(fields: [tierId], references: [id])
+  subscription UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  // Timestamps
+  expiresAt   DateTime
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, status])
+  @@index([dodoSessionId])
+  @@index([status, createdAt])
+  @@map("checkout_sessions")
 }
 
 enum QuizStatus {
@@ -691,4 +729,12 @@ enum WebhookStatus {
   PROCESSED
   FAILED
   SKIPPED
+}
+
+enum CheckoutSessionStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+  ABANDONED
+  FAILED
 }

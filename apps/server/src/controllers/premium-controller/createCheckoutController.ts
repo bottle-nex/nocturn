@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import ResponseWriter from '../../class/response_writer';
-import { createCheckoutSchema } from '../../schemas/premium/createCheckoutSchema';
-import { prisma } from '@nocturn/database';
 import { env } from '../../configs/env';
+import { prisma } from '@nocturn/database';
+import { Request, Response } from 'express';
+import { createCheckoutSchema } from '../../schemas/premium/createCheckoutSchema';
 import { dodo_payment_service } from '../../services/init.services';
+import ResponseWriter from '../../class/response_writer';
 
 const TIER_TO_PRODUCT_ID: Record<string, string | undefined> = {
     PRO: env.SERVER_DODO_PRO_PRODUCT_ID,
@@ -22,8 +22,7 @@ export default async function createCheckoutController(req: Request, res: Respon
             ResponseWriter.invalid_data(res, 'Invalid request data');
             return;
         }
-        const { tierId } = parsed_data;
-        console.log('tier id is : ', tierId);
+
         const tier = await prisma.subscriptionTier.findUnique({
             where: {
                 id: parsed_data.tierId,
@@ -70,7 +69,7 @@ export default async function createCheckoutController(req: Request, res: Respon
             userId: req.user.id,
             tierId: parsed_data.tierId,
             productId,
-            successUrl: `${frontend_url}/premium/success?session_id={CHECKOUT_SESSION_ID}`,
+            successUrl: `${frontend_url}/premium/success`,
             cancelUrl: `${frontend_url}/premium/cancel`,
             customerEmail: req.user.email || undefined,
         });

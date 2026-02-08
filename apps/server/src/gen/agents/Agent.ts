@@ -9,8 +9,6 @@ export default class Agent {
     static async ask_difficulty_node(state: QuizAgentGraphState): Promise<QuizAgentGraphState> {
         const { difficulty_asker } = chain.get_chain();
 
-        console.log('ask difficulty node');
-
         const response = await difficulty_asker.invoke({
             instruction: state.instruction,
         });

@@ -55,14 +55,12 @@ export default class CollaborationManager {
 
     public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
         if (!decoded_cookie_payload.userId || !decoded_cookie_payload.collabSessionId) {
-            console.log('invalid collaborator payload, closing socket');
             ws.close(socket_codes.UNAUTHENTICATED, 'Invalid collaborator payload');
             return;
         }
         const is_valid_user = await this.validate_collaborator_in_db(decoded_cookie_payload.userId);
 
         if (!is_valid_user) {
-            console.log('user validation failed, closing socket');
             ws.close(socket_codes.UNAUTHENTICATED, 'User validation failed');
             return;
         }
@@ -158,7 +156,6 @@ export default class CollaborationManager {
 
             const existing_socket = this.socket_mapping.get(exisiting_collaborator_socket_id);
             if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
-                console.log('closing the connection here ', existing_socket.user.name);
                 existing_socket.close(
                     socket_codes.DUPLICATE_CONNECTION,
                     'Another collaborator has connected',
@@ -182,7 +179,6 @@ export default class CollaborationManager {
         try {
             const { orderIndex } = payload;
             if (!ws.user.collabSessionId) {
-                console.log('closing because collab session does not exist');
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
                 return;
             }
@@ -208,7 +204,6 @@ export default class CollaborationManager {
             question,
         }: { questionIndex: number; question: Partial<QuestionType> } = payload;
         if (!ws.user.collabSessionId) {
-            console.log('closing because collab session does not exist');
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;
         }

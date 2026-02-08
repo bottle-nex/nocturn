@@ -44,20 +44,14 @@ export default class Chain {
 
     private async ask_difficulty(res: Response, instruction: string, session_id: string) {
         try {
-            console.log('sending the session id: ', session_id);
-
             ResponseWriter.stream.write(res, {
                 type: STREAM.ID,
                 data: session_id,
             });
 
-            console.log('difficulty chain hit');
-
             const response = await model.difficulty_asker.invoke({
                 instruction: instruction,
             });
-
-            console.log('response of difficulty chain: ', response);
 
             // update the session step and add agent and system message
             const { agentic_message, system_message } = await prisma.$transaction(async (tx) => {
@@ -112,8 +106,6 @@ export default class Chain {
         session_id: string,
         text_difficulty: string,
     ): Promise<number> {
-        console.log('compute text difficulty chain hit');
-
         const conversion = await model.text_to_number_difficulty.invoke({
             instruction: text_difficulty,
         });
@@ -138,14 +130,10 @@ export default class Chain {
         instruction: string,
         difficulty: number,
     ): Promise<{ plan: string; quiz_id: string }> {
-        console.log('plan chain hit');
-
         const response = await model.planner.invoke({
             instruction,
             difficulty,
         });
-
-        console.log('plan response: ', response.userResponse);
 
         // create the quiz
         const { quiz, agentic_message, system_message } = await prisma.$transaction(async (tx) => {
@@ -201,13 +189,9 @@ export default class Chain {
 
     private async executor(res: Response, session_id: string, quiz_id: string, plan: string) {
         try {
-            console.log('executor chain hit');
-
             const response = await model.executor.invoke({
                 instruction: plan,
             });
-
-            console.log('executor response: ', response);
 
             const parsed_questions = response.questions.map(
                 (q: generated_question_type, i: number) => {

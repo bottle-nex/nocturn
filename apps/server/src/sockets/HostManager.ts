@@ -61,7 +61,6 @@ export default class HostManager {
         console.log('INSIDE HOST HANDLE CONNECTION');
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
         if (!isValidHost) {
-            console.log('closing socket 7');
             ws.close();
             return;
         }

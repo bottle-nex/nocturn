@@ -13,12 +13,6 @@ export default async function webhookVerificationMiddleware(
         const webhookTimestamp = req.headers['webhook-timestamp'] as string;
         const webhookSignature = req.headers['webhook-signature'] as string;
 
-        console.log('Webhook headers:', {
-            'webhook-id': webhookId,
-            'webhook-timestamp': webhookTimestamp,
-            'webhook-signature': webhookSignature ? 'present' : 'missing',
-        });
-
         if (!webhookId || !webhookTimestamp || !webhookSignature) {
             res.status(401).json({ message: 'Missing webhook headers' });
             return;

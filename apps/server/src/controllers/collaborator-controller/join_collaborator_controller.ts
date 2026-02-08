@@ -46,7 +46,7 @@ export default class Collaborator {
                 req.params.quizId,
                 String(user.id),
             );
-            console.log('quiz found is : ', quiz);
+
             if (!quiz) {
                 ResponseWriter.not_found(res, 'Quiz not found or you are not the host');
                 return;
@@ -60,7 +60,7 @@ export default class Collaborator {
                 ResponseWriter.system_error(res);
                 return;
             }
-            console.log('parsed data is : ', parsed_body.data);
+
             await Collaborator.invite_users_by_emails(
                 res,
                 parsed_body.data,
@@ -180,7 +180,6 @@ export default class Collaborator {
                 email: true,
             },
         });
-        console.log('target user found is : ', target_user);
 
         if (!target_user) {
             const existing_invitation = await prisma.collaboratorInvitation.findUnique({
@@ -364,7 +363,6 @@ export default class Collaborator {
         quiz_id: string,
         host_id: string,
     ): Promise<QuizWithCollabSession | null> {
-        console.log('quiz id is : ', quiz_id, ' host id is : ', host_id);
         try {
             return await prisma.quiz.findUnique({
                 where: {
@@ -400,7 +398,6 @@ export default class Collaborator {
         inviterName: string,
         quizTitle: string,
     ) {
-        console.log(`Sending invitation email to ${email} for invitation ${invitationId}`);
         await email_service_queue_instance.email_to_invite_collaborators({
             email,
             note,
@@ -424,7 +421,6 @@ export default class Collaborator {
         quizId: string,
         inviter_name: string,
     ) {
-        console.log(`Sending notification email to ${email} for quiz ${quizId}`);
         await email_service_queue_instance.email_to_add_collaborators({
             email,
             note,
