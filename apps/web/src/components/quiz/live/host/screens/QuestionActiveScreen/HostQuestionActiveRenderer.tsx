@@ -6,45 +6,78 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import HostQuestionActiveOptions from './HostQuestionActiveOptions';
-import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
+import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function HostQuestionActiveRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, quiz, updateNextQuestion } = useLiveQuizStore();
+    const { currentQuestion, gameSession, quiz, updateQuiz } = useLiveQuizStore();
     const { session } = useUserSessionStore();
 
-    useEffect(() => {
-        if (!quiz || !currentQuestion) return;
+    // step 1: check if any not asked question exists on the local store
+    // step 2: if yes, then no need to fetch from server
+    // step 3: if no, then fetch a not asked question from the server
 
-        if (!currentQuestion.isAsked) return;
+    async function getQuestion() {
+        if (!currentQuestion || !quiz || !gameSession || !session?.user.token) return;
 
-        // find any other quetion which is not asked
-        const question = quiz.questions.find((q) => !q.isAsked);
+        // fetch from server
+        if (quiz.questions.length === 0 || !quiz.questions) {
+            const data = await LiveQuizBackendActions.getUnAskedQuestion(
+                session.user.token,
+                quiz.id,
+            );
 
-        if (!question) {
-            // fetch from backend
-            const fetchQuestion = async () => {
-                if (!quiz) return;
-                const question = await LiveQuizBackendActions.getQuestionDetailByIndex(
-                    quiz.id,
-                    0,
-                    session?.user.token,
-                );
+            if (!data) return;
+            if (data.end) {
+                // quiz end, no more questions
+            }
 
-                if (!question) {
-                    // end of the quiz and show button to show final leaderboards
-                    return;
-                }
-                updateNextQuestion(question);
-            };
-            fetchQuestion();
-            return;
+            if (data.question) {
+                updateQuiz({ questions: [data.question] });
+            }
         }
-        updateNextQuestion(question);
+    }
+
+    useEffect(() => {
+        if (!currentQuestion || !quiz || !gameSession || !session?.user.token) return;
+
+        getQuestion();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quiz]);
+    }, [currentQuestion]);
+
+    // useEffect(() => {
+    //     if (!quiz || !currentQuestion) return;
+
+    //     if (!currentQuestion.isAsked) return;
+
+    //     // find any other question which is not asked
+    //     const question = quiz.questions.find((q) => !q.isAsked);
+
+    //     if (!question) {
+    //         // fetch from backend
+    //         const fetchQuestion = async () => {
+    //             if (!quiz) return;
+    //             const question = await LiveQuizBackendActions.getQuestionDetailByIndex(
+    //                 quiz.id,
+    //                 0,
+    //                 session?.user.token,
+    //             );
+
+    //             if (!question) {
+    //                 // end of the quiz and show button to show final leaderboards
+    //                 return;
+    //             }
+    //             updateNextQuestion(question);
+    //         };
+    //         fetchQuestion();
+    //         return;
+    //     }
+    //     updateNextQuestion(question);
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [quiz]);
 
     if (!currentQuestion || !gameSession) {
         return (

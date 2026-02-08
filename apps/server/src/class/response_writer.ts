@@ -1,11 +1,27 @@
-import { CustomResponse, STREAM, stream } from '@nocturn/types';
+import { ApiResponsePayload, CustomResponse, STREAM, stream } from '@nocturn/types';
 import { Response } from 'express';
 
 export default class ResponseWriter {
+    static secure_success<T extends ApiResponsePayload>(
+        res: Response,
+        payload: T,
+        message: string = 'Request successfull',
+        status_code: number = 200,
+    ) {
+        const response: CustomResponse<T['data']> = {
+            success: true,
+            data: payload.data,
+            message,
+            meta: { timestamp: new Date().toISOString() },
+        };
+
+        this.send_response(res, response, status_code);
+    }
+
     static success<T>(
         res: Response,
         data: T,
-        message: string = 'Request successful',
+        message: string = 'Request successfull',
         status_code: number = 200,
     ) {
         const response: CustomResponse<T> = {

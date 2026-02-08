@@ -3,30 +3,40 @@ import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 
 export default async function getSelectedQuestionDetails(req: Request, res: Response) {
-    const { quizId, questionIndex } = req.params;
-
-    if (!quizId || questionIndex === undefined || questionIndex === null) {
-        ResponseWriter.invalid_data(res, 'Invalid request - quizId and questionIndex are required');
-        return;
-    }
-
-    const targetOrderIndex = Number(questionIndex);
-
-    if (isNaN(targetOrderIndex) || targetOrderIndex < 0) {
-        ResponseWriter.custom(
-            res,
-            false,
-            'INVALID_QUESTION_INDEX',
-            'Invalid questionIndex - must be a non-negative number',
-            400,
-        );
-        return;
-    }
-
     try {
+        const user = req.user;
+        if (!user) {
+            ResponseWriter.not_authorized(res);
+            return;
+        }
+
+        const { quizId, questionIndex } = req.params;
+
+        if (!quizId || questionIndex === undefined || questionIndex === null) {
+            ResponseWriter.invalid_data(
+                res,
+                'Invalid request - quizId and questionIndex are required',
+            );
+            return;
+        }
+
+        const targetOrderIndex = Number(questionIndex);
+
+        if (isNaN(targetOrderIndex) || targetOrderIndex < 0) {
+            ResponseWriter.custom(
+                res,
+                false,
+                'INVALID_QUESTION_INDEX',
+                'Invalid questionIndex - must be a non-negative number',
+                400,
+            );
+            return;
+        }
+
         const quiz = await prisma.quiz.findUnique({
             where: {
                 id: quizId,
+                hostId: user.id,
             },
             select: {
                 questions: {

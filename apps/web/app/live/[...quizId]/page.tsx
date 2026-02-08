@@ -66,8 +66,14 @@ export default function New({ params }: NewProps) {
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    if (data.question) {
-                        updateCurrentQuestion(data.question);
+                    // if (data.question) {
+                    //     updateCurrentQuestion(data.currentQ!);
+                    //     updateSecondCurrentQuestion(data.question as any);
+                    // }
+
+                    // if not found meand all questions asked
+                    if (data.currentQ) {
+                        updateCurrentQuestion(data.currentQ);
                     }
                     setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {

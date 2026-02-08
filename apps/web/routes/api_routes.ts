@@ -18,6 +18,7 @@ export const SPECTATOR_JOIN_QUIZ_URL = QUIZ_URL + '/spectator-join-quiz';
 export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';
 export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
+export const GET_UN_ASKED_QUESTION_URL = QUIZ_URL + '/get-un-asked-question';
 
 // favourite quiz routes
 export const TOGGLE_FAVOURITE_QUIZ_URL = QUIZ_URL + '/toggle-favourite-quiz';

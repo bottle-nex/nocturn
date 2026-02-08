@@ -5,46 +5,11 @@ import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import Image from 'next/image';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import HostQuestionPreviewOptions from './HostQuestionPreviewOptions';
-import { QuestionType } from '@nocturn/types';
-import LiveQuizBackendActions from '@/lib/backend/live-quiz-backend-actions';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 export default function HostQuestionPreviewRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, nextQuestion, quiz, updateCurrentQuestion, updateQuiz } =
-        useLiveQuizStore();
-    const { session } = useUserSessionStore();
-
-    useEffect(() => {
-        if (!quiz) return;
-
-        if (quiz.questions === undefined || quiz.questions.length === 0) {
-            async function fetchQuestion() {
-                if (!quiz) return;
-
-                const question: QuestionType =
-                    await LiveQuizBackendActions.getQuestionDetailByIndex(
-                        quiz.id,
-                        0,
-                        session?.user.token,
-                    );
-
-                if (question) {
-                    const isQuestionExists = quiz?.questions.find((q) => q && q.id === question.id);
-
-                    if (!isQuestionExists) {
-                        updateQuiz({
-                            questions: [question],
-                        });
-                    }
-                    updateCurrentQuestion(question);
-                }
-            }
-            fetchQuestion();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quiz]);
+    const { currentQuestion, nextQuestion, quiz, updateCurrentQuestion } = useLiveQuizStore();
 
     useEffect(() => {
         if (!nextQuestion) {

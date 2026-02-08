@@ -1,5 +1,6 @@
+import { CustomResponse, getUnAskedQuestionResponse, QuestionType } from '@nocturn/types';
 import axios from 'axios';
-import { GET_SELECTED_QUESTION_DATA } from 'routes/api_routes';
+import { GET_SELECTED_QUESTION_DATA, GET_UN_ASKED_QUESTION_URL } from 'routes/api_routes';
 
 export default class LiveQuizBackendActions {
     static async getQuestionDetailByIndex(quizId: string, questionIndex: number, token: string) {
@@ -26,6 +27,34 @@ export default class LiveQuizBackendActions {
             }
         } catch (err) {
             console.warn(`Question at index ${questionIndex} not found`, err);
+            return null;
+        }
+    }
+
+    static async getUnAskedQuestion(
+        token: string,
+        quizId: string,
+    ): Promise<{ end: boolean; question: QuestionType | null } | null> {
+        try {
+            const { data: response } = await axios.get<CustomResponse<getUnAskedQuestionResponse>>(
+                `${GET_UN_ASKED_QUESTION_URL}/${quizId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if (response.success && response.data) {
+                return {
+                    end: response.data.end,
+                    question: response.data.question,
+                };
+            }
+
+            return null;
+        } catch {
+            console.error('error while fetching question');
             return null;
         }
     }

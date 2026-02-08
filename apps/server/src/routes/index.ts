@@ -34,6 +34,7 @@ import delete_selected_quizzes_controller from '../controllers/quiz-controller/d
 import renameQuizController from '../controllers/quiz-controller/renameQuizController';
 import duplicateQuizController from '../controllers/quiz-controller/duplicateQuizController';
 import getQuestionsController from '../controllers/quiz-controller/getQuestionsController';
+import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 
 // <---------------------- MIDDLEWARES ---------------------->
 import authMiddleware from '../middlewares/authMiddleware';
@@ -66,6 +67,7 @@ router.put('/quiz/move-quizzes-to-trash', authMiddleware, delete_selected_quizze
 router.get('/quiz/get-user-trashed-quiz', authMiddleware, get_trashed_quizzes_controller);
 router.delete('/quiz/clear-trash', authMiddleware, delete_trashed_quizzes_controller);
 router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_quiz_controller);
+router.get('/quiz/get-un-asked-question/:quizId', authMiddleware, getUnAskedQuestionController);
 
 router.post('/get-presigned-url', getPreSignedUrlController);
 router.post(

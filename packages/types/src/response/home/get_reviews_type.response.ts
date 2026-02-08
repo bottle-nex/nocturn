@@ -8,6 +8,6 @@ export interface ReviewDTO {
   createdAt: string | Date;
 }
 
-export interface GetReviewsData {
+export interface GetReviewsResponse {
   reviews: ReviewDTO[];
 }

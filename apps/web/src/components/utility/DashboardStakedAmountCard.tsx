@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 // import { useLiveQuizStore } from '@/store/useLiveQuizStore';
 import { useRouter } from 'next/navigation';
-import userQuizAction from '@/lib/backend/user-quiz-action';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 export default function DashboardStakedAmountCard() {
     const [code, setCode] = useState<string>('');
