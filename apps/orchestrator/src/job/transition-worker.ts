@@ -23,6 +23,7 @@ export default class TransitionWorker {
         this.publisher = publisherInstnace;
         this.phase_queue_processor = phaseQueueProcessorInstance;
     }
+
     public async handle_transition_phase(data: PhaseQueueJobDataType) {
         if (
             data.fromPhase === QuizPhase.QUESTION_READING &&

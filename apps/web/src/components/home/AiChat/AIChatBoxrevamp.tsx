@@ -96,7 +96,7 @@ export default function AIChatBoxRevamp() {
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
     return (
-        <div className="relative w-full overflow-hidden flex items-center justify-center text-neutral-200 font-sans">
+        <div className="relative w-full overflow-hidden flex items-center justify-center text-neutral-200 font-sans ">
             {/* Background hint */}
 
             <motion.div
@@ -129,7 +129,10 @@ export default function AIChatBoxRevamp() {
                     damping: 18,
                     mass: 1.2,
                 }}
-                className="z-30 overflow-hidden bg-neutral-900 border border-neutral-800 shadow-2xl flex flex-row items-stretch"
+                className={cn(
+                    'z-30 shadow-2xl flex flex-row items-stretch',
+                    expanded ? 'bg-neutral-900 border border-neutral-800' : '',
+                )}
             >
                 {/* LEFT SIDE (Input Area / Sidebar) */}
                 <motion.div
@@ -153,9 +156,9 @@ export default function AIChatBoxRevamp() {
                     <motion.div
                         layout
                         className={cn(
-                            'p-4 w-full flex flex-col',
+                            'w-full flex flex-col',
                             // Use margin-top auto to push it to bottom in expanded mode
-                            expanded ? 'mt-auto' : '',
+                            expanded ? 'mt-auto px-3' : '',
                         )}
                     >
                         <div

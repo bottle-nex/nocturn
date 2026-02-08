@@ -53,16 +53,23 @@ export default class SpectatorManager {
 
     private is_new_spectator_allowed(game_session_id: string): boolean {
         const quiz_settings = this.quiz_settings.quiz_settings_mapping.get(game_session_id);
-        if (!quiz_settings?.allowNewSpectator) {
-            return false;
+        // if (!quiz_settings?.allowNewSpectator) {
+        //     return false;
+        // }
+        // return true;
+        if (!quiz_settings) {
+            return true;
         }
-        return true;
+        return quiz_settings.allowNewSpectator !== false;
     }
 
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+        console.log('[SPECTATOR CONNECT ENTRY]', payload.userId, payload.gameSessionId);
+
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
 
         if (!is_new_spectator_allowed) {
+            console.log('no new spectatirs are allowed');
             ws.close(
                 socket_codes.SPECTATOR_LIMIT_REACHED,
                 'New spectators are not allowed at this time',
@@ -73,6 +80,7 @@ export default class SpectatorManager {
         const is_valid_spectator = await this.validateSpectatorInDb(payload.quizId, payload.userId);
 
         if (!is_valid_spectator) {
+            console.log('not a valid spec');
             ws.close();
             return;
         }
@@ -93,6 +101,11 @@ export default class SpectatorManager {
         }
 
         this.session_spectators_mapping.get(payload.gameSessionId)?.add(new_spectator_socket_id);
+        console.log(
+            '[SPECTATOR REGISTERED]',
+            payload.gameSessionId,
+            Array.from(this.session_spectators_mapping.get(payload.gameSessionId) ?? []),
+        );
 
         this.setup_message_handlers(ws);
 
@@ -101,6 +114,8 @@ export default class SpectatorManager {
 
     private cleanup_existing_spectator_socket(spectator_id: string, game_session_id: string) {
         const existing_spectator_socket_id = this.spectator_socket_mapping.get(spectator_id);
+        console.log('[SPECTATOR CLEANUP]', spectator_id, game_session_id);
+
         if (existing_spectator_socket_id) {
             const existing_socket = this.socket_mapping.get(existing_spectator_socket_id);
 
@@ -110,6 +125,9 @@ export default class SpectatorManager {
                         socket_codes.DUPLICATE_CONNECTION,
                         'Another spectator has connected',
                     );
+                    setTimeout(() => {
+                        this.socket_mapping.delete(existing_socket.id);
+                    }, 1000);
                 } catch (err) {
                     console.warn('Error closing existing spectator socket', err);
                 }
@@ -148,6 +166,7 @@ export default class SpectatorManager {
 
     private handle_spectator_message(ws: CustomWebSocket, message: any) {
         const { type, payload } = message;
+        console.log('spectator incoming message');
 
         switch (type) {
             case MESSAGE_TYPES.SPECTATOR_NAME_CHANGE:
@@ -399,7 +418,7 @@ export default class SpectatorManager {
 
         const chatMessage = {
             senderId: sender_id,
-            senderRole: sender_role,
+            senderRole: String(sender_role),
             senderName: senderName,
             senderAvatar: senderAvatar,
             message,
@@ -412,7 +431,7 @@ export default class SpectatorManager {
                 id: ws.user.userId,
                 payload: payload,
             },
-            exclude_socket_id: ws.user.userId,
+            exclude_socket_id: ws.id,
         };
 
         this.quizManager.publish_event_to_redis(gameSessionId, event_data);

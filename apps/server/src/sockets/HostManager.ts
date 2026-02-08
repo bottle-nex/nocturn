@@ -58,6 +58,7 @@ export default class HostManager {
     }
 
     public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+        console.log('INSIDE HOST HANDLE CONNECTION');
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
         if (!isValidHost) {
             console.log('closing socket 7');
@@ -80,8 +81,8 @@ export default class HostManager {
         ws.id = this.generateSocketId();
         this.socketMapping.set(ws.id, ws);
         this.sessionHostMapping.set(payload.gameSessionId, ws.id);
-        this.quizManager.onHostconnect(payload.gameSessionId, payload.quizId, ws.id);
         this.setup_message_handlers(ws);
+        this.quizManager.onHostconnect(payload.gameSessionId, payload.quizId, ws.id);
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -91,6 +92,22 @@ export default class HostManager {
                 this.handle_host_message(ws, message);
             } catch (err) {
                 console.error('Error parsing message', err);
+            }
+        });
+
+        ws.on('close', () => {
+            try {
+                const gameSessionId = ws.user.gameSessionId;
+                if (!gameSessionId) return;
+
+                const mappedSocketID = this.sessionHostMapping.get(gameSessionId);
+                if (mappedSocketID === ws.id) {
+                    this.socketMapping.delete(gameSessionId);
+                }
+                this.socketMapping.delete(ws.id);
+            } catch (error) {
+                console.error('Error in closing host scket', error);
+                return;
             }
         });
     }
@@ -336,7 +353,7 @@ export default class HostManager {
 
         const chatMessage = {
             senderId: sender_id,
-            senderRole: sender_role,
+            senderRole: String(sender_role),
             senderName: senderName,
             senderAvatar: senderAvatar,
             message,
@@ -349,7 +366,7 @@ export default class HostManager {
                 id: ws.user.userId,
                 payload: payload,
             },
-            exclude_socket_id: ws.user.userId,
+            exclude_socket_id: ws.id,
         };
 
         this.quizManager.publish_event_to_redis(gameSessionId, event_data);
