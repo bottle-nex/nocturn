@@ -2,5 +2,5 @@ import { QuestionType } from "../../prisma/schemas.prisma";
 
 export interface getUnAskedQuestionResponse {
   end: boolean;
-  question: QuestionType | null;
+  question: Partial<QuestionType> | null;
 }

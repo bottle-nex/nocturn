@@ -116,6 +116,15 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                 },
             });
 
+            // fetch the current question with currentQuestionId
+            if (gameSession?.currentQuestionId) {
+                const currentQuestion = await tx.question.findUnique({
+                    where: {
+                        id: gameSession?.currentQuestionId,
+                    },
+                });
+            }
+
             const participants = await tx.participant.findMany({
                 where: {
                     quizId: quizId,

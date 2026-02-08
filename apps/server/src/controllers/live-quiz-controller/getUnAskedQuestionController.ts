@@ -71,13 +71,19 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         }
 
         // if this part appears means questions are still left
+        const question = quiz.questions[0];
         ResponseWriter.secure_success(
             res,
             {
                 type: ApiResponse.GET_UN_ASKED_QUESTION,
                 data: {
                     end: false,
-                    question: null,
+                    question: {
+                        ...question,
+                        explanation: question.explanation ?? undefined,
+                        hint: question.hint ?? undefined,
+                        imageUrl: question.imageUrl ?? undefined,
+                    },
                 },
             },
             'question fetched successfully',
