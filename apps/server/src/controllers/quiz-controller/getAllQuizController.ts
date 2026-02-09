@@ -45,47 +45,12 @@ export default async function getAllQuizController(req: Request, res: Response) 
             },
         });
 
-        const recentlyViewed = await prisma.quizViews.findMany({
-            where: {
-                userId: String(req.user.id),
-                quiz: { isDeleted: false },
-            },
-            include: {
-                quiz: {
-                    select: {
-                        id: true,
-                        title: true,
-                        description: true,
-                        prizePool: true,
-                        currency: true,
-                        status: true,
-                        scheduledAt: true,
-                        createdAt: true,
-                        theme: true,
-                        host: {
-                            select: {
-                                image: true,
-                            },
-                        },
-                    },
-                },
-            },
-            orderBy: {
-                viewedAt: 'desc',
-            },
-        });
-
         if (!quizzes || quizzes.length === 0) {
-            ResponseWriter.not_found(res, 'No quizzes found');
+            ResponseWriter.success(res, [], 'No quizzes found');
             return;
         }
 
-        const data = {
-            recentlyViewed,
-            quizzes,
-        };
-
-        ResponseWriter.success(res, data, 'Quizzes retrieved successfully');
+        ResponseWriter.success(res, quizzes, 'Quizzes retrieved successfully');
         return;
     } catch (err) {
         console.error('Error fetching quizzes:', err);

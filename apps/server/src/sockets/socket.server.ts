@@ -14,7 +14,13 @@ import SubscriberManager from './SubscriberManager';
 import DatabaseQueue from '../queue/DatabaseQueue';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
-import { CookiePayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import {
+    CollabSessionTokenPayload,
+    CookiePayload,
+    LiveGameTokenPayload,
+    NOCTURN_COOKIE_NAME,
+    USER_TYPE,
+} from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import {
     databaseQueueInstance,
@@ -162,36 +168,45 @@ export default class WebsocketServer {
                     return;
                 }
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
-                const redis_key: string = `game_session:${decoded_cookie_payload.gameSessionId || decoded_cookie_payload.collabSessionId}`;
-                this.subscriber.subscribe(redis_key);
+                const redis_key: string =
+                    'collabSessionId' in decoded_cookie_payload
+                        ? `collab_session:${decoded_cookie_payload.collabSessionId}`
+                        : `game_session:${decoded_cookie_payload.gameSessionId}`;
 
                 if (decoded_cookie_payload.quizId !== quizId) {
                     console.error('Token validation failed');
                     ws.close();
                     return;
                 }
+                this.subscriber.subscribe(redis_key);
 
-                if (decoded_cookie_payload.role) {
+                if ('gameSessionId' in decoded_cookie_payload) {
                     switch (decoded_cookie_payload.role) {
                         case USER_TYPE.HOST:
-                            await this.hostManager.handle_connection(ws, decoded_cookie_payload);
+                            await this.hostManager.handle_connection(
+                                ws,
+                                decoded_cookie_payload as LiveGameTokenPayload,
+                            );
                             break;
                         case USER_TYPE.PARTICIPANT:
                             await this.participant_manager.handle_connection(
                                 ws,
-                                decoded_cookie_payload,
+                                decoded_cookie_payload as LiveGameTokenPayload,
                             );
                             break;
                         case USER_TYPE.SPECTATOR:
                             await this.spectator_manager.handle_connection(
                                 ws,
-                                decoded_cookie_payload,
+                                decoded_cookie_payload as LiveGameTokenPayload,
                             );
                             break;
                         default:
                     }
-                } else if (decoded_cookie_payload.collabRole) {
-                    await this.collaboration_manager.handle_connection(ws, decoded_cookie_payload);
+                } else if ('collabSessionId' in decoded_cookie_payload) {
+                    await this.collaboration_manager.handle_connection(
+                        ws,
+                        decoded_cookie_payload as CollabSessionTokenPayload,
+                    );
                 }
             });
         } catch (err) {

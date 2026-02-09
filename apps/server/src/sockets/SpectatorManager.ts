@@ -1,8 +1,8 @@
 import Redis from 'ioredis';
 import {
-    CookiePayload,
     IncomingChatMessage,
     IncomingChatReaction,
+    LiveGameTokenPayload,
     MESSAGE_TYPES,
     PubSubMessageTypes,
     SpectatorNameChangeEvent,
@@ -63,7 +63,10 @@ export default class SpectatorManager {
         return quiz_settings.allowNewSpectator !== false;
     }
 
-    public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+    public async handle_connection(
+        ws: CustomWebSocket,
+        payload: LiveGameTokenPayload,
+    ): Promise<void> {
         console.log('[SPECTATOR CONNECT ENTRY]', payload.userId, payload.gameSessionId);
 
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);

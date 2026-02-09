@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import QuizManager from './QuizManager';
 import {
-    CookiePayload,
+    LiveGameTokenPayload,
     MESSAGE_TYPES,
     ParticipantNameChangeEvent,
     PubSubMessageTypes,
@@ -48,7 +48,10 @@ export default class ParticipantManager {
         this.redis_cache = dependencies.redis_cache;
     }
 
-    public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
+    public async handle_connection(
+        ws: CustomWebSocket,
+        decoded_cookie_payload: LiveGameTokenPayload,
+    ) {
         const is_valid_participant = await this.validate_participant_in_db(
             decoded_cookie_payload.quizId,
             decoded_cookie_payload.userId,

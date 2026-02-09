@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
+import GenerateUser from '../../class/generateUser';
 
 export default async function signInController(req: Request, res: Response) {
     const { user } = req.body;
@@ -49,6 +50,37 @@ export default async function signInController(req: Request, res: Response) {
         }
 
         const token = jwt.sign(jwtPayload, secret);
+
+        await prisma.$transaction(async (tx) => {
+            const checkForCollaborators = await tx.collaboratorInvitation.findMany({
+                where: {
+                    email: myUser.email,
+                },
+            });
+
+            if (checkForCollaborators.length > 0) {
+                await tx.collaborator.createMany({
+                    data: checkForCollaborators.map((invitiation) => {
+                        return {
+                            userId: myUser.id,
+                            sessionId: invitiation.sessionId,
+                            joinedAt: new Date(),
+                            color: GenerateUser.getRandomColorsForCollaborators(),
+                        };
+                    }),
+                    skipDuplicates: true,
+                });
+                await tx.collaboratorInvitation.updateMany({
+                    where: {
+                        email: myUser.email,
+                    },
+                    data: {
+                        status: 'ACCEPTED',
+                        acceptedAt: new Date(),
+                    },
+                });
+            }
+        });
 
         ResponseWriter.success(
             res,

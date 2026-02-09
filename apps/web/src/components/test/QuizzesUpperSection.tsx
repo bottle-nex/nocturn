@@ -110,7 +110,7 @@ export default function QuizzesUpperSection({
                         />
                     </Button>
 
-                    {selectedQuizes && selectedQuizes > 0 && (
+                    {(selectedQuizes ?? 0) > 0 && (
                         <div
                             onClick={onToggleSelectAll}
                             className="pl-4 flex gap-x-1.5 cursor-pointer select-none items-center text-light-base/80"
@@ -121,7 +121,7 @@ export default function QuizzesUpperSection({
                     )}
                 </div>
 
-                {selectedQuizes && selectedQuizes > 0 && (
+                {(selectedQuizes ?? 0) > 0 && (
                     <Button
                         onClick={onDeleteSelected}
                         className="rounded-sm h-11 w-45 bg-red-700 hover:bg-red-700/80 text-white flex items-center"

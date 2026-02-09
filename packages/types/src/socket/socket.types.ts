@@ -81,14 +81,26 @@ export interface SpectatorNameChangeEvent {
   choosenNickname: string;
 }
 
-export interface CookiePayload {
+export type CookiePayload = LiveGameTokenPayload | CollabSessionTokenPayload;
+
+export interface LiveGameTokenPayload {
   userId: string;
   quizId: string;
   gameSessionId: string;
   role: USER_TYPE | undefined;
   name: string;
-  collabRole?: CollabRole;
-  collabSessionId?: string;
+  tokenId: string;
+  iat: number;
+  exp: number;
+}
+
+export interface CollabSessionTokenPayload {
+  userId: string;
+  quizId: string;
+  role: CollabRole;
+  name: string;
+  color: string;
+  collabSessionId: string;
   tokenId: string;
   iat: number;
   exp: number;

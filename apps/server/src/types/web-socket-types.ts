@@ -1,10 +1,11 @@
 import { WebSocket } from 'ws';
 import { QuizPhase } from '@nocturn/database';
-import type { CookiePayload } from '@nocturn/types';
+import type { CollabSessionTokenPayload, LiveGameTokenPayload } from '@nocturn/types';
 
 export interface CustomWebSocket extends WebSocket {
     id: string;
-    user: CookiePayload;
+    user: LiveGameTokenPayload;
+    collabUser: CollabSessionTokenPayload;
 }
 
 export interface PhaseQueueJobDataType {
@@ -25,7 +26,6 @@ export interface PhaseTransitionJob {
     executeAt: number;
 }
 
-// Re-export types from shared types for backwards compatibility
 export type {
     CookiePayload,
     PubSubMessageTypes,

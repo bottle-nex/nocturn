@@ -103,7 +103,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
             return { spectator };
         });
 
-        const secureTokenData = QuizAction.generateUserToken(
+        const secureTokenData = QuizAction.generateLiveGameToken(
             result.spectator.id,
             quiz.id,
             gameSession.id,
