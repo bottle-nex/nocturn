@@ -118,7 +118,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
             // fetch the current question with currentQuestionId
             if (gameSession?.currentQuestionId) {
-                const currentQuestion = await tx.question.findUnique({
+                const _currentQuestion = await tx.question.findUnique({
                     where: {
                         id: gameSession?.currentQuestionId,
                     },
