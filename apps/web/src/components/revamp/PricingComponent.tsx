@@ -105,6 +105,7 @@ export default function PricingComponent(): JSX.Element {
             if (response.status === 200 && data.data?.checkoutUrl) {
                 window.location.href = data.data.checkoutUrl;
             } else {
+                console.log("inside else ")
                 toast.error(data.message || 'Failed to create checkout session');
             }
         } catch (error) {
