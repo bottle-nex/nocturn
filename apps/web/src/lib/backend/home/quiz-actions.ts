@@ -9,6 +9,7 @@ import {
     GET_ALL_OWNER_QUIZ_URL,
     GET_FAVOURITE_QUIZZES_URL,
     GET_QUIZ_QUESTIONS,
+    GET_SHARED_QUIZ_URL,
     GET_TRASHED_QUIZZES_URL,
     PERMANENTLY_DELETE_QUIZ_URL,
     RESTORE_TRASHED_QUIZ_URL,
@@ -40,7 +41,6 @@ export default class QuizActions {
         }
     }
 
-    // move to trash
     static async delete_quiz(token: string, quizId: string) {
         try {
             await axios.put(
@@ -98,6 +98,26 @@ export default class QuizActions {
             }
         } catch (err) {
             console.error('Error in fetching quizzes: ', err);
+            return;
+        }
+    }
+
+    static async get_shared_quizzes(token: string): Promise<UserQuizResponse | undefined> {
+        try {
+            const { data } = await axios.get<CustomResponse<UserQuizResponse>>(
+                GET_SHARED_QUIZ_URL,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (err) {
+            console.error('Error in fetching shared quizzes: ', err);
             return;
         }
     }

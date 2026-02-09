@@ -5,6 +5,7 @@ import { SidebarTab } from '@/constants/SidebarTabConstants';
 import MyQuizzesPanel from './MyQuizzesPanel';
 import FavouriteQuizzesPanel from './FavouriteQuizzesPanel';
 import AIChatBoxrevamp from '../home/AiChat/AIChatBoxrevamp';
+import SharedQuizPanel from './SharedQuizPanel';
 
 function renderPanel(activeTab: SidebarTab) {
     switch (activeTab) {
@@ -14,6 +15,8 @@ function renderPanel(activeTab: SidebarTab) {
             return <MyQuizzesPanel />;
         case SidebarTab.SETTINGS:
             return;
+        case SidebarTab.SHARED_WITH_ME:
+            return <SharedQuizPanel />;
         case SidebarTab.FAVORITES:
             return <FavouriteQuizzesPanel />;
         default:
