@@ -19,11 +19,14 @@ export default function HomePanel() {
                 setLoading(true);
                 if (!session?.user.token) return;
 
-                const quiz_response = await QuizActions.get_quizzes(session.user.token);
+                const [quiz_response, recently_viewed_response] = await Promise.all([
+                    QuizActions.get_quizzes(session.user.token),
+                    QuizActions.get_recently_viewed_quizzes(session.user.token),
+                ]);
 
-                setQuizs(quiz_response?.quizzes || []);
-                setAllQuizs(quiz_response?.quizzes || []);
-                setRecentlyViewed(quiz_response?.recentlyViewed || []);
+                setQuizs(quiz_response || []);
+                setAllQuizs(quiz_response || []);
+                setRecentlyViewed(recently_viewed_response || []);
             } catch (error) {
                 console.error('Error in getting quiz', error);
             } finally {

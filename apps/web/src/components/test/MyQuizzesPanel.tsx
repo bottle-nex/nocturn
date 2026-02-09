@@ -18,7 +18,7 @@ export enum Layouts {
 export default function MyQuizzesPanel() {
     const { session } = useUserSessionStore();
     const [_loading, setLoading] = useState<boolean>(false);
-    const { setAllQuizs, quizs, deleteQuiz } = useAllQuizsStore();
+    const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
     const { deleteQuiz: deleteRecentlyViewed } = useRecentlyViewedQuizStore();
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -31,7 +31,7 @@ export default function MyQuizzesPanel() {
                 setLoading(true);
                 if (!session?.user.token) return;
                 const quiz_response = await QuizActions.get_quizzes(session.user.token);
-                setAllQuizs(quiz_response?.quizzes || []);
+                setAllQuizs(quiz_response || []);
             } catch (error) {
                 console.error('Error in getting quiz', error);
             } finally {
@@ -104,9 +104,10 @@ export default function MyQuizzesPanel() {
         });
     }
 
-    const filteredQuizzes = quizs.filter((q) =>
-        q.title?.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    const filteredQuizzes =
+        quizs.length > 0
+            ? quizs.filter((q) => q.title?.toLowerCase().includes(searchQuery.toLowerCase()))
+            : [];
 
     return (
         <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">

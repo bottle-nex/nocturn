@@ -6,6 +6,7 @@ import { QuestionType, QuizType } from '@nocturn/types';
 export default class CollaboratorsHandlers {
     static handleIncomingQuestionTap(payload: unknown) {
         const { updateCollaboratorAtIndex } = useCollaboratorStore.getState();
+
         const data = payload as {
             orderIndex: number;
             collaboratorId: string;

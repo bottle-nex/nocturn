@@ -1,4 +1,4 @@
-import { CustomResponse, QuizType, UserQuizResponse } from '@nocturn/types';
+import { CustomResponse, QuizType, QuizViewsType, UserQuizResponse } from '@nocturn/types';
 import axios from 'axios';
 import {
     CHANGE_QUIZ_TITLE_URL,
@@ -9,6 +9,8 @@ import {
     GET_ALL_OWNER_QUIZ_URL,
     GET_FAVOURITE_QUIZZES_URL,
     GET_QUIZ_QUESTIONS,
+    GET_RECENTLY_VIEWED_URL,
+    GET_SHARED_QUIZ_URL,
     GET_TRASHED_QUIZZES_URL,
     PERMANENTLY_DELETE_QUIZ_URL,
     RESTORE_TRASHED_QUIZ_URL,
@@ -40,7 +42,6 @@ export default class QuizActions {
         }
     }
 
-    // move to trash
     static async delete_quiz(token: string, quizId: string) {
         try {
             await axios.put(
@@ -98,6 +99,49 @@ export default class QuizActions {
             }
         } catch (err) {
             console.error('Error in fetching quizzes: ', err);
+            return;
+        }
+    }
+
+    static async get_shared_quizzes(token: string): Promise<QuizType[] | undefined> {
+        try {
+            const { data } = await axios.get<CustomResponse<QuizType[]>>(GET_SHARED_QUIZ_URL, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (data.success) {
+                return data.data;
+            }
+            return [];
+        } catch (err) {
+            console.error('Error in fetching shared quizzes: ', err);
+            return;
+        }
+    }
+
+    static async get_recently_viewed_quizzes(token: string): Promise<QuizViewsType[] | undefined> {
+        if (!token) {
+            console.error('token not found');
+            return;
+        }
+
+        try {
+            const { data } = await axios.get<CustomResponse<QuizViewsType[]>>(
+                GET_RECENTLY_VIEWED_URL,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if (data.success) {
+                return data.data;
+            }
+        } catch (err) {
+            console.error('Error in fetching recently viewed quizzes: ', err);
             return;
         }
     }

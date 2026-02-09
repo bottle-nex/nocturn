@@ -82,14 +82,13 @@ export default async function getQuizController(req: Request, res: Response): Pr
         const collabSessionId =
             hasCollabSession && quiz.CollabSession ? quiz.CollabSession.id : undefined;
 
-        const secureTokenData = QuizAction.generateUserToken(
+        const secureTokenData = QuizAction.generateCollabSessionToken(
             userId,
             quiz.id,
-            '',
-            undefined,
-            req.user.name,
             userCollabRole,
-            collabSessionId,
+            req.user.name,
+            '#' + Math.floor(Math.random() * 16777215).toString(16),
+            collabSessionId!,
         );
 
         res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {

@@ -1,7 +1,13 @@
 import { prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
-import { CollabRole, CookiePayload, USER_TYPE } from '@nocturn/types';
+import {
+    CollabRole,
+    CollabSessionTokenPayload,
+    CookiePayload,
+    LiveGameTokenPayload,
+    USER_TYPE,
+} from '@nocturn/types';
 import { env } from '../configs/env';
 
 export default class QuizAction {
@@ -107,24 +113,69 @@ export default class QuizAction {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
     }
 
-    public static generateUserToken(
+    // public static generateUserToken(
+    //     userId: string,
+    //     quizId: string,
+    //     gameSessionId: string,
+    //     role: USER_TYPE | undefined,
+    //     name: string,
+    //     collabRole?: CollabRole,
+    //     collabSessionId?: string,
+    // ): string {
+    //     const tokenId = QuizAction.generateTokenId();
+    //     const payload: CookiePayload = {
+    //         userId,
+    //         quizId,
+    //         gameSessionId,
+    //         role,
+    //         name,
+    //         collabRole,
+    //         collabSessionId,
+    //         tokenId,
+    //         iat: Math.floor(Date.now() / 1000),
+    //         exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+    //     };
+
+    //     return jwt.sign(payload, env.SERVER_JWT_SECRET);
+    // }
+
+    public static generateCollabSessionToken(
+        userId: string,
+        quizId: string,
+        role: CollabRole,
+        name: string,
+        color: string,
+        collabSessionId: string,
+    ): string {
+        const tokenId = QuizAction.generateTokenId();
+        const payload: CollabSessionTokenPayload = {
+            userId,
+            quizId,
+            role,
+            color,
+            name,
+            collabSessionId,
+            tokenId,
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        };
+        return jwt.sign(payload, env.SERVER_JWT_SECRET);
+    }
+
+    public static generateLiveGameToken(
         userId: string,
         quizId: string,
         gameSessionId: string,
         role: USER_TYPE | undefined,
         name: string,
-        collabRole?: CollabRole,
-        collabSessionId?: string,
-    ): string {
+    ) {
         const tokenId = QuizAction.generateTokenId();
-        const payload: CookiePayload = {
+        const payload: LiveGameTokenPayload = {
             userId,
             quizId,
             gameSessionId,
             role,
             name,
-            collabRole,
-            collabSessionId,
             tokenId,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,

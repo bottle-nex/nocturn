@@ -105,11 +105,12 @@ export default async function spectatorJoinQuizViaURLController(req: Request, re
             console.error('Redis cache error:', redisErr);
         }
 
-        const secureTokenData = QuizAction.generateUserToken(
+        const secureTokenData = QuizAction.generateLiveGameToken(
             result.spectator.id,
             quiz.id,
             gameSession.id,
             USER_TYPE.SPECTATOR,
+            result.spectator.nickname,
         );
 
         try {

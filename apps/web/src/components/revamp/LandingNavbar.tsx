@@ -241,15 +241,11 @@ export default function LandingNavbar() {
                                 scale: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
                                 y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
                             }}
-                            whileTap={{
-                                scale: 0.98,
-                                y: 0,
-                            }}
                             onClick={() => {
                                 if (!session.user.token) return;
                                 router.push('/home');
                             }}
-                            className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-200 ease-in-out"
+                            className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out active:scale-102"
                         >
                             Go to Home
                         </motion.button>

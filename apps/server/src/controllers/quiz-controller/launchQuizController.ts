@@ -62,7 +62,7 @@ export default async function launchQuizController(req: Request, res: Response) 
             return;
         }
 
-        const secureTokenData = QuizAction.generateUserToken(
+        const secureTokenData = QuizAction.generateLiveGameToken(
             String(userId),
             quizId,
             data.gameSession.id!,

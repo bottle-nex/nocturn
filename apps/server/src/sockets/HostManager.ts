@@ -1,8 +1,8 @@
 import Redis from 'ioredis';
 import {
-    CookiePayload,
     IncomingChatMessage,
     IncomingChatReaction,
+    LiveGameTokenPayload,
     MESSAGE_TYPES,
     PubSubMessageTypes,
     SECONDS,
@@ -57,7 +57,10 @@ export default class HostManager {
         this.quiz_settings = quizSettingInstance;
     }
 
-    public async handle_connection(ws: CustomWebSocket, payload: CookiePayload): Promise<void> {
+    public async handle_connection(
+        ws: CustomWebSocket,
+        payload: LiveGameTokenPayload,
+    ): Promise<void> {
         console.log('INSIDE HOST HANDLE CONNECTION');
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
         if (!isValidHost) {
@@ -76,7 +79,7 @@ export default class HostManager {
             }
         }
 
-        ws.user = payload;
+        ws.user = payload as LiveGameTokenPayload;
         ws.id = this.generateSocketId();
         this.socketMapping.set(ws.id, ws);
         this.sessionHostMapping.set(payload.gameSessionId, ws.id);
@@ -331,7 +334,7 @@ export default class HostManager {
             type: MESSAGE_TYPES.HOST_CHANGE_QUESTION_PREVIEW,
             payload: {
                 id: ws.user.userId,
-                screen: ParticipantScreen.QUESTION_MOTIVATION, // this will same for both paritcipant and spectator
+                screen: ParticipantScreen.QUESTION_MOTIVATION,
             },
         };
 
@@ -448,7 +451,6 @@ export default class HostManager {
             'totalScore',
         ]);
 
-        // filter out the kicked participants
         const final_scores = scores.filter((s) => !s.isKicked);
 
         const event_data: PubSubMessageTypes = {

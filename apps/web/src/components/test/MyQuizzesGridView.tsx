@@ -18,8 +18,8 @@ interface MyQuizzesGridViewProps {
     formattedTime: string;
     currTemplate: Template;
     quiz: QuizType;
-    isSelected: boolean;
-    toggleQuizSelection: (quizId: string) => void;
+    isSelected?: boolean;
+    toggleQuizSelection?: (quizId: string) => void;
 }
 
 export default function MyQuizzesGridView({
@@ -59,7 +59,7 @@ export default function MyQuizzesGridView({
                 )}
             >
                 <div
-                    onClick={() => toggleQuizSelection(quiz.id)}
+                    onClick={() => toggleQuizSelection && toggleQuizSelection(quiz.id)}
                     className="text-dark-base flex justify-center items-center rounded-alpha cursor-pointer"
                 >
                     {isSelected ? (

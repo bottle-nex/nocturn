@@ -106,7 +106,7 @@ export default async function participantJoinController(req: Request, res: Respo
             return { participant };
         });
 
-        const secureTokenData = QuizAction.generateUserToken(
+        const secureTokenData = QuizAction.generateLiveGameToken(
             result.participant.id,
             quiz.id,
             gameSession.id,

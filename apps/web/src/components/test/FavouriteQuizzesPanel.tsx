@@ -39,7 +39,7 @@ export default function FavouriteQuizzesPanel() {
                 hasFetched.current = true;
 
                 const response = await QuizActions.get_quizzes(token);
-                setAllQuizs(response?.quizzes || []);
+                setAllQuizs(response || []);
             } catch (err) {
                 console.error('Error fetching quizzes:', err);
             }

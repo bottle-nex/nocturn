@@ -56,10 +56,10 @@ export default async function createCheckoutController(req: Request, res: Respon
         });
 
         if (existing_subscription && existing_subscription.tier.name !== 'FREE') {
-            ResponseWriter.error(
+            ResponseWriter.success(
                 res,
-                'ALREADY_SUBSCRIBED',
-                `You already have an active subscription (${existing_subscription.tier.name}). Please cancel it before subscribing to a new tier.`,
+                { checkoutUrl: null },
+                `You already have an active subscription (${existing_subscription.tier.name}).`,
             );
             return;
         }

@@ -22,6 +22,8 @@ import getQuestionsController from '../controllers/quiz-controller/getQuestionsC
 
 // <---------------------- MIDDLEWARES ---------------------->
 import authMiddleware from '../middlewares/authMiddleware';
+import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
+import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
@@ -34,6 +36,8 @@ router.post('/quiz/duplicate-quiz/:quizId', authMiddleware, duplicateQuizControl
 
 router.get('/quiz/get-quiz/:quizId', authMiddleware, getQuizController);
 router.get('/quiz/get-user-quiz', authMiddleware, getAllQuizController);
+router.get('/quiz/get-shared-quiz', authMiddleware, getSharedQuizController);
+router.get('/quiz/get-recently-viewed', authMiddleware, getRecentlyViewedController);
 
 router.put('/quiz/update-title', authMiddleware, renameQuizController);
 router.put('/quiz/restore-quiz/:quizId', authMiddleware, restore_trashed_quiz_controller);

@@ -5,7 +5,7 @@ import RedisCache from '../cache/redis.cache';
 import { prisma } from '@nocturn/database';
 import {
     COLLABORATORS_MESSAGE_TYPE,
-    CookiePayload,
+    CollabSessionTokenPayload,
     PubSubMessageTypes,
     QuestionType,
     socket_codes,
@@ -53,7 +53,10 @@ export default class CollaborationManager {
         this.collaborators_state_manager = dependencies.collaborators_state_manager;
     }
 
-    public async handle_connection(ws: CustomWebSocket, decoded_cookie_payload: CookiePayload) {
+    public async handle_connection(
+        ws: CustomWebSocket,
+        decoded_cookie_payload: CollabSessionTokenPayload,
+    ) {
         if (!decoded_cookie_payload.userId || !decoded_cookie_payload.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Invalid collaborator payload');
             return;
@@ -72,7 +75,7 @@ export default class CollaborationManager {
 
         const new_collaborator_socket_id = this.generateSocketId();
         ws.id = new_collaborator_socket_id;
-        ws.user = decoded_cookie_payload;
+        ws.collabUser = decoded_cookie_payload;
 
         this.socket_mapping.set(new_collaborator_socket_id, ws);
         this.collaborator_socket_mapping.set(
@@ -112,17 +115,23 @@ export default class CollaborationManager {
 
         ws.on('close', () => {
             // this.handle_participant_leave_gamesession(ws);
-            if (!ws.user.collabSessionId) {
+            if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(ws.user.userId, ws.user.collabSessionId);
+            this.cleanup_existing_collaborator_socket(
+                ws.collabUser.userId,
+                ws.collabUser.collabSessionId,
+            );
         });
 
         ws.on('error', () => {
-            if (!ws.user.collabSessionId) {
+            if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(ws.user.userId, ws.user.collabSessionId);
+            this.cleanup_existing_collaborator_socket(
+                ws.collabUser.userId,
+                ws.collabUser.collabSessionId,
+            );
         });
     }
 
@@ -178,7 +187,7 @@ export default class CollaborationManager {
     private async handle_question_tap(ws: CustomWebSocket, payload: any) {
         try {
             const { orderIndex } = payload;
-            if (!ws.user.collabSessionId) {
+            if (!ws.collabUser.collabSessionId) {
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
                 return;
             }
@@ -187,12 +196,12 @@ export default class CollaborationManager {
                 type: COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE,
                 payload: {
                     orderIndex,
-                    collaboratorId: ws.user.userId,
-                    collaboratorName: ws.user.name,
+                    collaboratorId: ws.collabUser.userId,
+                    collaboratorName: ws.collabUser.name,
                 },
                 exclude_socket_id: ws.id,
             };
-            await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
+            await this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
         } catch (err) {
             console.error('Error while handling question tap: ', err);
         }
@@ -203,14 +212,14 @@ export default class CollaborationManager {
             questionIndex,
             question,
         }: { questionIndex: number; question: Partial<QuestionType> } = payload;
-        if (!ws.user.collabSessionId) {
+        if (!ws.collabUser.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;
         }
 
         await this.collaborator_quiz_state_cache.update_question_state(
-            ws.user.collabSessionId,
-            ws.user.quizId,
+            ws.collabUser.collabSessionId,
+            ws.collabUser.quizId,
             question,
         );
         const data: PubSubMessageTypes = {
@@ -218,16 +227,16 @@ export default class CollaborationManager {
             payload: {
                 questionIndex,
                 question,
-                collaboratorId: ws.user.userId,
-                collaboratorName: ws.user.name,
+                collaboratorId: ws.collabUser.userId,
+                collaboratorName: ws.collabUser.name,
             },
             exclude_socket_id: ws.id,
         };
-        await this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
+        await this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
     private handle_quiz_update(ws: CustomWebSocket, payload: any) {
-        if (!ws.user.collabSessionId) {
+        if (!ws.collabUser.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;
         }
@@ -235,12 +244,12 @@ export default class CollaborationManager {
             type: COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE,
             payload: {
                 quiz: payload,
-                collaboratorId: ws.user.userId,
-                collaboratorName: ws.user.name,
+                collaboratorId: ws.collabUser.userId,
+                collaboratorName: ws.collabUser.name,
             },
             exclude_socket_id: ws.id,
         };
-        this.quizManager.publish_event_to_redis(ws.user.collabSessionId, data);
+        this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
     private async validate_collaborator_in_db(user_id: string): Promise<boolean> {

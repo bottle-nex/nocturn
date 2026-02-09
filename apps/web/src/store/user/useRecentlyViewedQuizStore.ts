@@ -1,12 +1,12 @@
-import { QuizType, UserQuizResponse } from '@nocturn/types';
+import { QuizType, QuizViewsType } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface RecentlyViewedQuizStoreData {
     quiz: QuizType[];
-    recentlyViewed: UserQuizResponse['recentlyViewed'];
+    recentlyViewed: QuizViewsType[];
 
     setQuizs: (quizs: QuizType[]) => void;
-    setRecentlyViewed: (recentlyViewed: UserQuizResponse['recentlyViewed']) => void;
+    setRecentlyViewed: (recentlyViewed: QuizViewsType[]) => void;
 
     deleteQuiz: (quizId: string) => void;
 }

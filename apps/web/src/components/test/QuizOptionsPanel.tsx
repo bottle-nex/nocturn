@@ -14,7 +14,7 @@ import { VscPreview } from 'react-icons/vsc';
 
 interface QuizOptionsPanelProps {
     quiz: QuizType;
-    toggleQuizSelection: (quizId: string) => void;
+    toggleQuizSelection?: (quizId: string) => void;
     setShowQuizTitleChangePanel: (val: boolean) => void;
     setShowPreview?: (val: boolean) => void;
 }
@@ -100,7 +100,9 @@ export default function QuizOptionsPanel({
             <ToolTipComponent content="delete">
                 <div
                     onClick={() => {
-                        toggleQuizSelection(quiz.id);
+                        if (toggleQuizSelection) {
+                            toggleQuizSelection(quiz.id);
+                        }
                         handleDeleteQuiz(quiz.id);
                     }}
                     className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
