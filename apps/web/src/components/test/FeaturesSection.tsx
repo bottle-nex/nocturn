@@ -27,7 +27,7 @@ export default function FeaturesSection() {
                 delayChildren: 0.15,
             },
         },
-    }
+    };
 
     const letterVariants: Variants = {
         hidden: {
