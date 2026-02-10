@@ -4,76 +4,165 @@ import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
+import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
 
-export default async function signInController(req: Request, res: Response) {
-    const { user } = req.body;
+export class SigninController {
+    static async oauthSignIn(req: Request, res: Response) {
+        const { user } = req.body;
 
-    try {
-        const existingUser = await prisma.user.findUnique({
-            where: {
-                email: user.email,
-            },
-        });
-
-        let myUser;
-        if (existingUser) {
-            myUser = await prisma.user.update({
-                where: {
-                    email: user.email,
-                },
-                data: {
-                    name: user.name,
-                    email: user.email,
-                    image: user.image,
-                },
+        try {
+            const existingUser = await prisma.user.findUnique({
+                where: { email: user.email },
             });
-        } else {
-            myUser = await prisma.user.create({
-                data: {
-                    name: user.name,
-                    email: user.email,
-                    image: user.image,
-                },
-            });
+
+            let myUser;
+            if (existingUser) {
+                myUser = await prisma.user.update({
+                    where: { email: user.email },
+                    data: {
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                    },
+                });
+            } else {
+                myUser = await prisma.user.create({
+                    data: {
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                    },
+                });
+            }
+
+            const secret = env.SERVER_JWT_SECRET;
+            if (!secret) {
+                ResponseWriter.system_error(res);
+                return;
+            }
+
+            const token = jwt.sign(
+                { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
+                secret,
+            );
+
+            await SigninController.processCollaboratorInvitations(myUser.id, myUser.email);
+
+            ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
+        } catch (err) {
+            console.error(err);
+            ResponseWriter.custom(
+                res,
+                false,
+                'AUTHENTICATION_FAILED',
+                'Authentication failed',
+                500,
+            );
         }
+    }
 
-        const jwtPayload = {
-            name: myUser.name,
-            email: myUser.email,
-            id: myUser.id,
-        };
+    static async sendOtp(req: Request, res: Response) {
+        const { email } = req.body;
 
-        const secret = env.SERVER_JWT_SECRET;
-        if (!secret) {
-            ResponseWriter.system_error(res);
+        if (!email) {
+            ResponseWriter.invalid_data(res, 'Email is required');
             return;
         }
 
-        const token = jwt.sign(jwtPayload, secret);
+        try {
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            await publisherInstance.set(`otp:${email}`, otp, 'EX', 60);
+            await email_service_queue_instance.email_send_otp({ email, otp });
 
+            ResponseWriter.success(res, null, 'OTP sent to your email');
+        } catch (err) {
+            console.error(err);
+            ResponseWriter.system_error(res);
+        }
+    }
+
+    static async verifyOtp(req: Request, res: Response) {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            ResponseWriter.invalid_data(res, 'Email and OTP are required');
+            return;
+        }
+
+        try {
+            const stored = await publisherInstance.get(`otp:${email}`);
+            if (!stored || stored !== otp) {
+                ResponseWriter.invalid_data(res, 'Invalid or expired OTP');
+                return;
+            }
+
+            await publisherInstance.del(`otp:${email}`);
+
+            const existingUser = await prisma.user.findUnique({
+                where: { email },
+            });
+
+            let myUser;
+            if (existingUser) {
+                myUser = await prisma.user.update({
+                    where: { email },
+                    data: { isVerified: true },
+                });
+            } else {
+                myUser = await prisma.user.create({
+                    data: {
+                        name: email.split('@')[0],
+                        email,
+                        isVerified: true,
+                        image: GenerateUser.getRandomAvatar(),
+                    },
+                });
+            }
+
+            const secret = env.SERVER_JWT_SECRET;
+            if (!secret) {
+                ResponseWriter.system_error(res);
+                return;
+            }
+
+            const token = jwt.sign(
+                { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
+                secret,
+            );
+
+            await SigninController.processCollaboratorInvitations(myUser.id, myUser.email);
+
+            ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
+        } catch (err) {
+            console.error(err);
+            ResponseWriter.custom(
+                res,
+                false,
+                'AUTHENTICATION_FAILED',
+                'Authentication failed',
+                500,
+            );
+        }
+    }
+
+    private static async processCollaboratorInvitations(userId: string, email: string) {
         await prisma.$transaction(async (tx) => {
             const checkForCollaborators = await tx.collaboratorInvitation.findMany({
-                where: {
-                    email: myUser.email,
-                },
+                where: { email },
             });
 
             if (checkForCollaborators.length > 0) {
                 await tx.collaborator.createMany({
-                    data: checkForCollaborators.map((invitiation) => {
-                        return {
-                            userId: myUser.id,
-                            sessionId: invitiation.sessionId,
-                            joinedAt: new Date(),
-                            color: GenerateUser.getRandomColorsForCollaborators(),
-                        };
-                    }),
+                    data: checkForCollaborators.map((invitation) => ({
+                        userId,
+                        sessionId: invitation.sessionId,
+                        joinedAt: new Date(),
+                        color: GenerateUser.getRandomColorsForCollaborators(),
+                    })),
                     skipDuplicates: true,
                 });
                 await tx.collaboratorInvitation.updateMany({
-                    where: {
-                        email: myUser.email,
-                    },
+                    where: { email },
                     data: {
                         status: 'ACCEPTED',
                         acceptedAt: new Date(),
@@ -81,19 +170,5 @@ export default async function signInController(req: Request, res: Response) {
                 });
             }
         });
-
-        ResponseWriter.success(
-            res,
-            {
-                user: myUser,
-                token,
-            },
-            'Authentication successful',
-        );
-        return;
-    } catch (err) {
-        console.error(err);
-        ResponseWriter.custom(res, false, 'AUTHENTICATION_FAILED', 'Authentication failed', 500);
-        return;
     }
 }

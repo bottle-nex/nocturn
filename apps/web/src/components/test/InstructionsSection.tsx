@@ -9,18 +9,24 @@ import {
     PublishCardContent,
 } from './InstructionSectionCards';
 import { GoPlus } from 'react-icons/go';
+import SectionHeading from '../ui/SectionHeading';
+import { BiCool } from 'react-icons/bi';
+import { PiTreePalmFill } from 'react-icons/pi';
 
 export default function App(): JSX.Element {
     return (
         <section className="relative min-h-screen w-full bg-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden">
-            <div className="flex flex-col gap-y-2">
-                <div className="w-full flex justify-center text-base tracking-wide">
-                    For everyone
-                </div>
-                <div className="w-full flex justify-center text-3xl tracking-wide">
-                    GET TO KNOW NOCTURN
+            <div className="inset-0 absolute">
+                <div className="relative h-full w-full">
+                    <PiTreePalmFill className="size-160 absolute -bottom-20 left-10 opacity-5 rotate-12" />
                 </div>
             </div>
+            <SectionHeading
+                title="How Nocturn Works"
+                description="Create engaging live quizzes with real-time multiplayer experiences, collaborate with your team on quiz content, and publish to your audience. From creation to launch, manage every aspect of your quiz seamlessly."
+                icon={<BiCool className="size-4" />}
+                ticker="acknowledge us"
+            />
 
             <div className="relative w-full max-w-200 h-65 z-10 -top-30">
                 <div className="absolute left-0 bottom-0 -rotate-2">

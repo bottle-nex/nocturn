@@ -3,6 +3,7 @@ import { premium_features, BILLING_INTERVAL, SubscriptionTierDTO } from '@noctur
 import { JSX, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { IoStar } from 'react-icons/io5';
+import { RiServiceFill } from 'react-icons/ri';
 import {
     LuUsers,
     LuCalendarCheck,
@@ -28,6 +29,7 @@ import { CREATE_CHECKOUT_URL, GET_TIERS_URL } from '../../../routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from 'sonner';
 import axios from 'axios';
+import SectionHeading from '../ui/SectionHeading';
 
 export default function PricingComponent(): JSX.Element {
     const [loadingTier, setLoadingTier] = useState<string | null>(null);
@@ -133,15 +135,15 @@ export default function PricingComponent(): JSX.Element {
     }
 
     return (
-        <main className="max-w-7xl mx-auto w-full px-6">
-            <div className="text-center py-16 space-y-4">
-                <h1 className="text-3xl md:text-4xl font-bold text-dark-alpha">Choose Your Plan</h1>
-                <p className="text-dark-alpha/60 text-base max-w-2xl mx-auto">
-                    Unlock powerful features and take your quizzes to the next level
-                </p>
-            </div>
+        <main className="max-w-7xl mx-auto w-full py-20 flex flex-col justify-center items-center">
+            <SectionHeading
+                title="Choose Your Plan"
+                description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
+                icon={<RiServiceFill className="size-4" />}
+                ticker="pricing plans"
+            />
 
-            <section className="w-full grid md:grid-cols-2 gap-8 pb-20 max-w-3xl mx-auto items-end">
+            <section className="w-full grid md:grid-cols-2 gap-8 py-20 max-w-3xl mx-auto items-end">
                 {premium_features.map((feature) => {
                     const isLoading = loadingTier === feature.id;
 

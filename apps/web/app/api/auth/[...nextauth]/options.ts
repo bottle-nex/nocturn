@@ -1,9 +1,11 @@
 import { Account, AuthOptions, ISODateString } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GitHubProvider from 'next-auth/providers/github';
+import FacebookProvider from 'next-auth/providers/facebook';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
-import { SIGNIN_URL } from 'routes/api_routes';
+import { SIGNIN_URL, VERIFY_OTP_URL } from 'routes/api_routes';
 
 export interface UserType {
     id?: string | null;
@@ -26,7 +28,11 @@ export const authOption: AuthOptions = {
     callbacks: {
         async signIn({ user, account }: { user: UserType; account: Account | null }) {
             try {
-                if (account?.provider === 'google' || account?.provider === 'github') {
+                if (
+                    account?.provider === 'google' ||
+                    account?.provider === 'github' ||
+                    account?.provider === 'facebook'
+                ) {
                     const response = await axios.post(`${SIGNIN_URL}`, {
                         user,
                         account,
@@ -40,6 +46,11 @@ export const authOption: AuthOptions = {
                         return true;
                     }
                 }
+
+                if (account?.provider === 'email-otp') {
+                    return !!user;
+                }
+
                 return false;
             } catch (err) {
                 console.error(err);
@@ -72,6 +83,45 @@ export const authOption: AuthOptions = {
         GitHubProvider({
             clientId: process.env.GITHUB_CLIENT_ID || '',
             clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+        }),
+        FacebookProvider({
+            clientId: process.env.FACEBOOK_CLIENT_ID || '',
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
+        }),
+        CredentialsProvider({
+            id: 'email-otp',
+            name: 'Email OTP',
+            credentials: {
+                email: { label: 'Email', type: 'email' },
+                otp: { label: 'OTP', type: 'text' },
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.otp) return null;
+
+                try {
+                    const response = await axios.post(VERIFY_OTP_URL, {
+                        email: credentials.email,
+                        otp: credentials.otp,
+                    });
+
+                    const result = response.data;
+
+                    if (result?.success) {
+                        const { user, token } = result.data;
+                        return {
+                            id: user.id.toString(),
+                            name: user.name,
+                            email: user.email,
+                            image: user.image ?? null,
+                            token,
+                        };
+                    }
+
+                    return null;
+                } catch {
+                    return null;
+                }
+            },
         }),
     ],
 };

@@ -245,7 +245,7 @@ export default function LandingNavbar() {
                                 if (!session.user.token) return;
                                 router.push('/home');
                             }}
-                            className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out active:scale-102"
+                            className="bg-nprimary text-light-alpha text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out active:scale-102"
                         >
                             Go to Home
                         </motion.button>
@@ -260,7 +260,7 @@ export default function LandingNavbar() {
                                 duration: 0.15,
                                 ease: 'easeOut',
                             }}
-                            className="h-12 w-12 relative rounded-full border-[2px] border-[#09c92f] overflow-hidden cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 shadow-xs"
+                            className="h-12 w-12 relative rounded-full border-[2px] border-nprimary overflow-hidden cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 shadow-xs"
                             onClick={handleAuthClick}
                         >
                             <Image

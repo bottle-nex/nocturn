@@ -1,4 +1,8 @@
-import { CollaboratorAddedEmailData, CollaboratorInviteEmailData } from '@nocturn/types';
+import {
+    CollaboratorAddedEmailData,
+    CollaboratorInviteEmailData,
+    OtpEmailData,
+} from '@nocturn/types';
 import { Resend } from 'resend';
 import { Env } from '../../configs/env';
 import EmailTemplate from './templates/email.templates';
@@ -33,6 +37,17 @@ export default class ResendService {
             from: 'Nocturn <noreply@nocturn.app>',
             to: data.email,
             subject: `${data.inviterName} invited you to collaborate on "${data.quizTitle}"`,
+            html,
+        });
+    }
+
+    static async send_otp_email(data: OtpEmailData) {
+        const html = EmailTemplate.generate_otp_email(data.otp);
+
+        await resend.emails.send({
+            from: 'Nocturn <noreply@nocturn.app>',
+            to: data.email,
+            subject: 'Your Nocturn sign-in code',
             html,
         });
     }

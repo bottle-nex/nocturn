@@ -6,6 +6,8 @@ import CanvasSkeleton from '@/components/skeletons/CanvasSkeleton';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import GetToKnowUs from '../base/GetToKnowUs';
+import HomeFeatures from '../base/HomeFeatures';
 
 export default function HomePanel() {
     const [loading, setLoading] = useState<boolean>(false);
@@ -42,32 +44,36 @@ export default function HomePanel() {
             className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 overflow-y-auto max-h-screen"
             data-lenis-prevent
         >
-            <div className="flex justify-between">
-                <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
-            </div>
-            {/* <HomeRightUpperSection /> */}
-            {/* <HomeStartWithAi /> */}
+            <section className="flex flex-col gap-y-8">
+                <div className="flex justify-between">
+                    <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
+                </div>
+                {/* <HomeRightUpperSection /> */}
+                {/* <HomeStartWithAi /> */}
 
-            {loading && (
-                <section className="flex items-center gap-4 flex-wrap mt-8">
-                    {Array.from({ length: 3 }).map((_, idx) => (
-                        <CanvasSkeleton key={idx} className="w-88" />
-                    ))}
-                </section>
-            )}
-
-            {recentlyViewed.length > 0 && (
-                <section className="mt-8">
-                    <h2 className="text-lg font-normal text-black dark:text-white mb-4">
-                        Recently Viewed
-                    </h2>
-                    <div className="gap-6 lg:grid-cols-3 grid">
-                        {recentlyViewed.map((quiz) => (
-                            <RecentlyViewedCard className="w-full" key={quiz.id} quiz={quiz} />
+                {loading && (
+                    <section className="flex items-center gap-4 flex-wrap mt-8">
+                        {Array.from({ length: 3 }).map((_, idx) => (
+                            <CanvasSkeleton key={idx} className="w-88" />
                         ))}
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
+
+                {recentlyViewed.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-lg font-normal text-black dark:text-white mb-4">
+                            Recently Viewed
+                        </h2>
+                        <div className="gap-6 lg:grid-cols-3 grid">
+                            {recentlyViewed.map((quiz) => (
+                                <RecentlyViewedCard className="w-full" key={quiz.id} quiz={quiz} />
+                            ))}
+                        </div>
+                    </section>
+                )}
+                <HomeFeatures />
+                <GetToKnowUs />
+            </section>
         </div>
     );
 }

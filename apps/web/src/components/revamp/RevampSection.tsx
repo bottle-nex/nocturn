@@ -145,7 +145,7 @@ export default function RevampSection() {
                                     mass: 0.15,
                                 }}
                                 onClick={() => setExpanded(true)}
-                                className="bg-[#09C92F] text-dark-base text-xl rounded-full h-14 w-40 cursor-pointer shadow-xs hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 relative z-10"
+                                className="bg-nprimary text-light-alpha text-xl rounded-full h-14 w-40 cursor-pointer shadow-xs hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 relative z-10"
                             >
                                 Join Quiz
                             </motion.button>
