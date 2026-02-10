@@ -5,8 +5,8 @@ const router: Router = Router();
 import { SigninController } from '../controllers/user-controller/signInController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
-router.post('/sign-in', SigninController.oauthSignIn);
-router.post('/send-otp', SigninController.sendOtp);
-router.post('/verify-otp', SigninController.verifyOtp);
+router.post('/sign-in', SigninController.oauth_signin);
+router.post('/send-otp', SigninController.send_otp);
+router.post('/verify-otp', SigninController.verify_otp);
 
 export default router;
