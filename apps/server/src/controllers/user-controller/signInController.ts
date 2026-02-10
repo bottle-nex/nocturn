@@ -7,7 +7,7 @@ import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
 
 export class SigninController {
-    static async oauthSignIn(req: Request, res: Response) {
+    static async oauth_signin(req: Request, res: Response) {
         const { user } = req.body;
 
         try {
@@ -46,7 +46,7 @@ export class SigninController {
                 secret,
             );
 
-            await SigninController.processCollaboratorInvitations(myUser.id, myUser.email);
+            await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
             ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
         } catch (err) {
@@ -61,7 +61,7 @@ export class SigninController {
         }
     }
 
-    static async sendOtp(req: Request, res: Response) {
+    static async send_otp(req: Request, res: Response) {
         const { email } = req.body;
 
         if (!email) {
@@ -81,7 +81,7 @@ export class SigninController {
         }
     }
 
-    static async verifyOtp(req: Request, res: Response) {
+    static async verify_otp(req: Request, res: Response) {
         const { email, otp } = req.body;
 
         if (!email || !otp) {
@@ -130,7 +130,7 @@ export class SigninController {
                 secret,
             );
 
-            await SigninController.processCollaboratorInvitations(myUser.id, myUser.email);
+            await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
             ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
         } catch (err) {
@@ -145,7 +145,7 @@ export class SigninController {
         }
     }
 
-    private static async processCollaboratorInvitations(userId: string, email: string) {
+    private static async process_collaborator_invitations(userId: string, email: string) {
         await prisma.$transaction(async (tx) => {
             const checkForCollaborators = await tx.collaboratorInvitation.findMany({
                 where: { email },
