@@ -7,7 +7,13 @@ interface UtilityCardProps extends HTMLMotionProps<'div'> {
     ref?: ForwardedRef<HTMLDivElement>;
 }
 
-export default function UtilityCard({ children, className, ref, style, ...props }: UtilityCardProps) {
+export default function UtilityCard({
+    children,
+    className,
+    ref,
+    style,
+    ...props
+}: UtilityCardProps) {
     return (
         <motion.div
             {...props}

@@ -67,14 +67,16 @@ export default function SigninModal() {
         if (result?.ok) {
             setOpenSigninModal(false);
             router.refresh();
-
         } else {
             setError('Invalid or expired OTP. Please try again.');
         }
     }
 
     return (
-        <OpacityBackground className='bg-neutral-900/20' onBackgroundClick={() => setOpenSigninModal(false)}>
+        <OpacityBackground
+            className="bg-neutral-900/20"
+            onBackgroundClick={() => setOpenSigninModal(false)}
+        >
             <motion.section
                 initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
@@ -114,7 +116,7 @@ export default function SigninModal() {
                     </p>
 
                     <section className="flex items-center justify-center gap-x-2 tracking-wider">
-                        {signin_options.map(option => (
+                        {signin_options.map((option) => (
                             <motion.button
                                 key={option.type}
                                 whileTap={{ scale: 0.98 }}
@@ -133,29 +135,31 @@ export default function SigninModal() {
                                     height={20}
                                     className="shrink-0"
                                 />
-                                <span className='text-sm'>{option.type}</span>
+                                <span className="text-sm">{option.type}</span>
                             </motion.button>
                         ))}
                     </section>
 
-                    <span className='block text-neutral-500 text-xs mt-4'>or sign in with</span>
+                    <span className="block text-neutral-500 text-xs mt-4">or sign in with</span>
 
                     {step === 'email' ? (
                         <>
                             <div className="w-full flex flex-col gap-y-1 mt-4">
-                                <Label className='font-semibold ml-0.5 text-sm' htmlFor="email">Work email</Label>
+                                <Label className="font-semibold ml-0.5 text-sm" htmlFor="email">
+                                    Work email
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder='youremail@example.com'
-                                    className='bg-light-base border-none p-5 mt-1.5'
+                                    placeholder="youremail@example.com"
+                                    className="bg-light-base border-none p-5 mt-1.5"
                                     value={email}
-                                    onChange={e => setEmail(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && handleSendOtp()}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
                                 />
                             </div>
                             <Button
-                                className='bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!'
+                                className="bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
                                 onClick={handleSendOtp}
                                 disabled={loading || !email}
                             >
@@ -164,37 +168,62 @@ export default function SigninModal() {
                         </>
                     ) : (
                         <>
-                            <p className='text-neutral-500 text-xs mt-4 text-center'>
-                                OTP sent to <span className='font-semibold text-neutral-700'>{email}</span>.{' '}
+                            <p className="text-neutral-500 text-xs mt-4 text-center">
+                                OTP sent to{' '}
+                                <span className="font-semibold text-neutral-700">{email}</span>.{' '}
                                 <button
                                     type="button"
-                                    className='underline cursor-pointer'
-                                    onClick={() => { setStep('email'); setOtp(''); setError(''); }}
+                                    className="underline cursor-pointer"
+                                    onClick={() => {
+                                        setStep('email');
+                                        setOtp('');
+                                        setError('');
+                                    }}
                                 >
                                     Change
                                 </button>
                             </p>
                             <div className="w-full flex flex-col items-center gap-y-3 mt-4">
-                                <Label className='font-semibold ml-0.5 text-sm self-start'>Enter OTP</Label>
+                                <Label className="font-semibold ml-0.5 text-sm self-start">
+                                    Enter OTP
+                                </Label>
                                 <InputOTP
                                     maxLength={6}
-                                    containerClassName='w-full'
+                                    containerClassName="w-full"
                                     value={otp}
                                     onChange={setOtp}
-                                    onKeyDown={e => e.key === 'Enter' && handleVerifyOtp()}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleVerifyOtp()}
                                 >
-                                    <InputOTPGroup className='w-full justify-between gap-x-2'>
-                                        <InputOTPSlot index={0} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
-                                        <InputOTPSlot index={1} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
-                                        <InputOTPSlot index={2} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
-                                        <InputOTPSlot index={3} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
-                                        <InputOTPSlot index={4} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
-                                        <InputOTPSlot index={5} className='flex-1 h-13 aspect-square text-base rounded-sm shadow-none' />
+                                    <InputOTPGroup className="w-full justify-between gap-x-2">
+                                        <InputOTPSlot
+                                            index={0}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
+                                        <InputOTPSlot
+                                            index={1}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
+                                        <InputOTPSlot
+                                            index={2}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
+                                        <InputOTPSlot
+                                            index={3}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
+                                        <InputOTPSlot
+                                            index={4}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
+                                        <InputOTPSlot
+                                            index={5}
+                                            className="flex-1 h-13 aspect-square text-base rounded-sm shadow-none"
+                                        />
                                     </InputOTPGroup>
                                 </InputOTP>
                             </div>
                             <Button
-                                className='bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!'
+                                className="bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
                                 onClick={handleVerifyOtp}
                                 disabled={loading || otp.length !== 6}
                             >
@@ -203,9 +232,7 @@ export default function SigninModal() {
                         </>
                     )}
 
-                    {error && (
-                        <p className='text-red-500 text-xs mt-3 text-center'>{error}</p>
-                    )}
+                    {error && <p className="text-red-500 text-xs mt-3 text-center">{error}</p>}
                 </section>
             </motion.section>
         </OpacityBackground>

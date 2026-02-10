@@ -28,7 +28,6 @@ export const authOption: AuthOptions = {
     callbacks: {
         async signIn({ user, account }: { user: UserType; account: Account | null }) {
             try {
-                console.log('accoutn provider is : ', account?.provider);
                 if (
                     account?.provider === 'google' ||
                     account?.provider === 'github' ||

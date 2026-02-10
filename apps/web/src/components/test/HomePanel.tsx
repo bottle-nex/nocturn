@@ -44,7 +44,7 @@ export default function HomePanel() {
             className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 overflow-y-auto max-h-screen"
             data-lenis-prevent
         >
-            <section className='flex flex-col gap-y-8'>
+            <section className="flex flex-col gap-y-8">
                 <div className="flex justify-between">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
                 </div>

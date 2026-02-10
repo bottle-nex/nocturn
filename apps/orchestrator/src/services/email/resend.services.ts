@@ -1,4 +1,8 @@
-import { CollaboratorAddedEmailData, CollaboratorInviteEmailData, OtpEmailData } from '@nocturn/types';
+import {
+    CollaboratorAddedEmailData,
+    CollaboratorInviteEmailData,
+    OtpEmailData,
+} from '@nocturn/types';
 import { Resend } from 'resend';
 import { Env } from '../../configs/env';
 import EmailTemplate from './templates/email.templates';

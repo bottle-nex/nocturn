@@ -3,7 +3,7 @@ import { premium_features, BILLING_INTERVAL, SubscriptionTierDTO } from '@noctur
 import { JSX, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { IoStar } from 'react-icons/io5';
-import { RiServiceFill } from "react-icons/ri";
+import { RiServiceFill } from 'react-icons/ri';
 import {
     LuUsers,
     LuCalendarCheck,
@@ -139,8 +139,8 @@ export default function PricingComponent(): JSX.Element {
             <SectionHeading
                 title="Choose Your Plan"
                 description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
-                icon={<RiServiceFill className='size-4' />}
-                ticker='pricing plans'
+                icon={<RiServiceFill className="size-4" />}
+                ticker="pricing plans"
             />
 
             <section className="w-full grid md:grid-cols-2 gap-8 py-20 max-w-3xl mx-auto items-end">

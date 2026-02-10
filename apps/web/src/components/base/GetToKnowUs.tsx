@@ -1,11 +1,6 @@
-import { JSX } from "react";
-interface GetToKnowUsCard {
-    image: string;
-    title: string
-}
+import { JSX } from 'react';
 
 export default function GetToKnowUs(): JSX.Element {
-
     return (
         <section className="w-full">
             <div className="flex items-center justify-start gap-x-3">
@@ -13,5 +8,5 @@ export default function GetToKnowUs(): JSX.Element {
                 <span className="h-1.25 w-36 bg-nprimary rounded-full" />
             </div>
         </section>
-    )
+    );
 }
