@@ -1,17 +1,16 @@
 'use client';
 import { cn } from '@/lib/utils';
 import React, { ForwardedRef } from 'react';
-import { motion } from 'motion/react';
-interface UtilityCardProps {
-    children: React.ReactNode;
-    className?: string;
+import { motion, HTMLMotionProps } from 'motion/react';
+
+interface UtilityCardProps extends HTMLMotionProps<'div'> {
     ref?: ForwardedRef<HTMLDivElement>;
-    style?: React.CSSProperties;
 }
 
-export default function UtilityCard({ children, className, ref, style }: UtilityCardProps) {
+export default function UtilityCard({ children, className, ref, style, ...props }: UtilityCardProps) {
     return (
         <motion.div
+            {...props}
             ref={ref}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

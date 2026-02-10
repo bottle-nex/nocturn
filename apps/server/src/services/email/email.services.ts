@@ -3,6 +3,7 @@ import {
     CollaboratorInviteEmailData,
     EmailJob,
     EmailJobType,
+    OtpEmailData,
 } from '@nocturn/types';
 import Bull from 'bull';
 import { env } from '../../configs/env';
@@ -51,6 +52,19 @@ export default class EmailServiceQueue {
             return job;
         } catch (err) {
             console.error('Error adding email job to queue:', err);
+            return undefined;
+        }
+    }
+
+    public async email_send_otp(data: OtpEmailData): Promise<Bull.Job<EmailJob> | undefined> {
+        try {
+            const job = await this.email_queue.add({
+                type: EmailJobType.OTP_EMAIL,
+                data,
+            });
+            return job;
+        } catch (err) {
+            console.error('Error adding OTP email job to queue:', err);
             return undefined;
         }
     }

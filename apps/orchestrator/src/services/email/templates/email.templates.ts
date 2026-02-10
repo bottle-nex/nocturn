@@ -164,4 +164,61 @@ export default class EmailTemplate {
 </html>
     `.trim();
     }
+
+    static generate_otp_email(otp: string): string {
+        return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Nocturn Sign-In Code</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0f172a;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 48px 20px;">
+                <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #1e293b; border: 2px solid #4f46e5; border-radius: 8px; box-shadow: 4px 4px 0px #4f46e5;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 32px 24px; text-align: center; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border-radius: 4px 4px 0 0;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
+                                Your Sign-In Code
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 32px 24px; text-align: center;">
+                            <p style="margin: 0 0 32px; color: #cbd5e1; font-size: 15px; line-height: 1.6;">
+                                Use the code below to sign in to your Nocturn account. It expires in <strong style="color: #e2e8f0;">10 minutes</strong>.
+                            </p>
+                            <div style="background-color: #0f172a; border: 2px solid #334155; padding: 28px 24px; margin: 0 auto; border-radius: 4px; display: inline-block;">
+                                <p style="margin: 0; color: #ffffff; font-size: 40px; font-weight: 700; letter-spacing: 16px; font-family: 'Courier New', Courier, monospace;">
+                                    ${otp}
+                                </p>
+                            </div>
+                            <p style="margin: 32px 0 0; color: #64748b; font-size: 13px; line-height: 1.6;">
+                                If you didn't request this code, you can safely ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 24px 32px; background-color: #0f172a; border-top: 2px solid #334155; border-radius: 0 0 4px 4px;">
+                            <p style="margin: 0; color: #64748b; font-size: 12px; text-align: center;">
+                                © ${new Date().getFullYear()} <strong style="color: #4f46e5;">Nocturn</strong>. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `.trim();
+    }
 }

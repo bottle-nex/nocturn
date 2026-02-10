@@ -5,6 +5,7 @@ import {
     CollaboratorInviteEmailData,
     EmailJob,
     EmailJobType,
+    OtpEmailData,
 } from '@nocturn/types';
 import ResendService from '../services/email/resend.services';
 export default class EmailServiceProcessor {
@@ -26,6 +27,8 @@ export default class EmailServiceProcessor {
                 return this.handle_collaborator_added_email(data as CollaboratorAddedEmailData);
             case EmailJobType.COLLABORATOR_INVITE:
                 return this.handle_collaborator_invite_email(data as CollaboratorInviteEmailData);
+            case EmailJobType.OTP_EMAIL:
+                return this.handle_otp_email(data as OtpEmailData);
             default:
                 throw new Error(`Unknown job type: ${job.data.type}`);
         }
@@ -37,5 +40,9 @@ export default class EmailServiceProcessor {
 
     private async handle_collaborator_invite_email(data: CollaboratorInviteEmailData) {
         await ResendService.send_collaborator_invited_email(data);
+    }
+
+    private async handle_otp_email(data: OtpEmailData) {
+        await ResendService.send_otp_email(data);
     }
 }

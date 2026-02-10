@@ -2,9 +2,11 @@ import { Router } from 'express';
 const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
-import signInController from '../controllers/user-controller/signInController';
+import { SigninController } from '../controllers/user-controller/signInController';
 
 // <---------------------- AUTH-ROUTES ---------------------->
-router.post('/sign-in', signInController);
+router.post('/sign-in', SigninController.oauthSignIn);
+router.post('/send-otp', SigninController.sendOtp);
+router.post('/verify-otp', SigninController.verifyOtp);
 
 export default router;

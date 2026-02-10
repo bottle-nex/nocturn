@@ -9,7 +9,7 @@ export default function UnclickableTicker({ children, className }: UnclickableTi
     return (
         <span
             className={cn(
-                'inline-flex items-center gap-x-2 text-[11px] px-2.5 py-1 rounded-full border border-neutral-400 bg-neutral-700 text-neutral-200 shadow-sm shadow-neutral-900 select-none whitespace-nowrap',
+                'inline-flex items-center gap-x-2 text-[11px] px-2.5 h-7 rounded-full border border-neutral-200 bg-light-alpha text-dark-alpha/70 shadow-sm  select-none whitespace-nowrap',
                 className,
             )}
         >

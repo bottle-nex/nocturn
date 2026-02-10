@@ -1,6 +1,7 @@
 export enum EmailJobType {
   COLLABORATOR_INVITE = "COLLABORATOR_INVITE",
   COLLABORATOR_ADDED = "COLLABORATOR_ADDED",
+  OTP_EMAIL = "OTP_EMAIL",
 }
 
 export interface CollaboratorInviteEmailData {
@@ -20,9 +21,15 @@ export interface CollaboratorAddedEmailData {
   inviterName: string;
 }
 
+export interface OtpEmailData {
+  email: string;
+  otp: string;
+}
+
 export type EmailJobData =
   | CollaboratorInviteEmailData
-  | CollaboratorAddedEmailData;
+  | CollaboratorAddedEmailData
+  | OtpEmailData;
 
 export interface EmailJob {
   type: EmailJobType;
