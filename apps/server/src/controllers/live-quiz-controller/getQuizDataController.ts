@@ -227,6 +227,14 @@ export default async function getQuizDataController(req: Request, res: Response)
 
         const sanitizedGameSession = QuizAction.sanitizeGameSession(result.gameSession, role);
         const spectatorLink = QuizAction.createSpectatorLink(quizId);
+        let currentQuestion;
+        if (result.question) {
+            currentQuestion = QuizAction.sanitizeCurrentQuestion(
+                result.question,
+                role,
+                result.gameSession.hostScreen,
+            );
+        }
 
         const data = await getChatsController(role, gameSessionId, quizId);
         const responseData: any = {
@@ -235,7 +243,7 @@ export default async function getQuizDataController(req: Request, res: Response)
             userData: result.userData,
             participants: result.participants,
             spectators: result.spectators,
-            currentQuestion: result.question,
+            currentQuestion: currentQuestion,
             role,
         };
 

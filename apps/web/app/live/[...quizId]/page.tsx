@@ -11,6 +11,7 @@ import {
 } from '@/store/live-quiz/useLiveQuizUserStore';
 import {
     CustomResponse,
+    getLiveQuizDataResponse,
     LiveQuizDataResponse,
     ParticipantType,
     SpectatorType,
@@ -52,7 +53,7 @@ export default function New({ params }: NewProps) {
     useEffect(() => {
         async function getLiveData() {
             try {
-                const { data: response } = await axios.get<CustomResponse<LiveQuizDataResponse>>(
+                const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
                     `${LIVE_QUIZ_DATA_URL}/${quizId}`,
                     {
                         withCredentials: true,
@@ -72,10 +73,10 @@ export default function New({ params }: NewProps) {
                     // }
 
                     // if not found meand all questions asked
-                    if (data.currentQ) {
-                        updateCurrentQuestion(data.currentQ);
+                    if (data.currentQuestion) {
+                        updateCurrentQuestion(data.currentQuestion);
                     }
-                    setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
+                    // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
                         case USER_TYPE.HOST:
                             setHostData(data.userData as UserType);

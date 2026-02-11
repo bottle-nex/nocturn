@@ -1,4 +1,4 @@
-import { prisma } from '@nocturn/database';
+import { HostScreen, prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import {
@@ -9,6 +9,7 @@ import {
     USER_TYPE,
 } from '@nocturn/types';
 import { env } from '../configs/env';
+import { QuestionType } from '../schemas/createQuizSchema';
 
 export default class QuizAction {
     private static generateSpectatorCode = customAlphabet(
@@ -207,6 +208,44 @@ export default class QuizAction {
 
             default: {
                 return {};
+            }
+        }
+    }
+
+    public static sanitizeCurrentQuestion(
+        question: Partial<QuestionType>,
+        role: USER_TYPE,
+        hostScreen: HostScreen,
+    ): Partial<QuestionType> | null {
+        switch (role) {
+            case USER_TYPE.HOST: {
+                return question;
+            }
+            default: {
+                switch (hostScreen) {
+                    case HostScreen.QUESTION_READING: {
+                        const rest = { ...question };
+                        delete rest.basePoints;
+                        delete rest.correctAnswer;
+                        delete rest.explanation;
+                        delete rest.hint;
+                        delete rest.options;
+                        delete rest.orderIndex;
+                        delete rest.timeLimit;
+                        return rest;
+                    }
+                    case HostScreen.QUESTION_ACTIVE: {
+                        const rest = { ...question };
+                        delete rest.basePoints;
+                        delete rest.correctAnswer;
+                        delete rest.explanation;
+                        return rest;
+                    }
+                    case HostScreen.QUESTION_RESULTS:
+                        return question;
+                    default:
+                        return null;
+                }
             }
         }
     }
