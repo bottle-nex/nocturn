@@ -11,7 +11,7 @@ import { CustomWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import { prisma } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
 import QuizSettings from '../class/quizSettings';
 import { quizSettingInstance } from '../services/init.services';

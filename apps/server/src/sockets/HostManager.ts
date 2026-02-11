@@ -21,7 +21,7 @@ import {
 } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
 import { WebSocket } from 'ws';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';

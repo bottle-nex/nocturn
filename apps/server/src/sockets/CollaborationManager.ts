@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import { CustomWebSocket } from '../types/web-socket-types';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
 import { prisma } from '@nocturn/database';
 import {

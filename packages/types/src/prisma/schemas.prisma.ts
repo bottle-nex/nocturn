@@ -92,6 +92,7 @@ export interface QuestionType {
   quizId: string;
   quiz?: QuizType;
   isAsked: boolean;
+  hintLaunched: boolean;
 }
 
 export interface QuizViewsType {

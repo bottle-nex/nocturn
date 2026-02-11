@@ -48,7 +48,7 @@ export default class LiveQuizBackendActions {
             if (response.success && response.data) {
                 return {
                     end: response.data.end,
-                    question: response.data.question,
+                    question: response.data.question as QuestionType,
                 };
             }
 

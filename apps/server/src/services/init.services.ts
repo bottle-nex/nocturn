@@ -1,5 +1,4 @@
 import RedisCache from '../cache/redis.cache';
-import DatabaseQueue from '../queue/DatabaseQueue';
 import QuizController from '../controllers/quiz-controller/quizController';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizManager from '../sockets/QuizManager';
@@ -12,6 +11,7 @@ import Model from '../gen/agents/Model';
 import CollabStateCache from '../cache/collab_state.cache';
 import DodoPaymentService from './premium/DodoPaymentService';
 import DodoWebhookService from './premium/DodoWebhookService';
+import DatabaseQueue from '../queue/database/database.queue';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
