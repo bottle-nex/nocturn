@@ -4,10 +4,11 @@ import { FaThumbsUp } from 'react-icons/fa6';
 import { IoIosPeople } from 'react-icons/io';
 import VoiceIcon from '../ui/svg/VoiceIcon';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
-import { cn } from '@/lib/utils';
+
+const solanaLetters = ['S', 'O', 'L', 'A', 'N', 'A'];
 
 export default function FeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
@@ -17,6 +18,44 @@ export default function FeaturesSection() {
     const [showAudiencePoll, setShowAudiencePoll] = useState<boolean>(false);
     const [audienceBarHeights, setAudienceBarHeights] = useState<number[]>([]);
     const [isHovered, setIsHovered] = useState<boolean>(false);
+
+    const containerVariants = {
+        hidden: {},
+        show: {
+            transition: {
+                staggerChildren: 0.08,
+                delayChildren: 0.15,
+            },
+        },
+    };
+
+    const letterVariants: Variants = {
+        hidden: {
+            opacity: 0,
+            y: 20,
+            filter: 'blur(10px)',
+            scale: 0.9,
+        },
+        show: {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            scale: 1,
+            transition: {
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+            },
+        },
+        exit: {
+            opacity: 0,
+            y: -10,
+            filter: 'blur(10px)',
+            scale: 0.8,
+            transition: {
+                duration: 0.3,
+            },
+        },
+    };
 
     useEffect(() => {
         if (!showAudiencePoll) {
@@ -94,42 +133,64 @@ export default function FeaturesSection() {
                                                 <motion.div
                                                     onHoverStart={() => setIsHovered(true)}
                                                     onHoverEnd={() => setIsHovered(false)}
-                                                    layout
-                                                    transition={{
-                                                        type: 'spring',
-                                                        stiffness: 500,
-                                                        damping: 35,
-                                                    }}
-                                                    className={cn(
-                                                        'absolute -left-74 top-10 select-none',
-                                                        'text-dark-base ring-1 ring-black/10 shadow-sm shadow-black/5',
-                                                        'w-52 h-15 text-xl rounded-xl bg-light-alpha',
-                                                        'flex items-center justify-center gap-x-3',
-                                                        isHovered ? 'flex-row-reverse' : 'flex-row',
-                                                    )}
+                                                    className="-left-74 -top-12 h-15 w-52 rounded-xl bg-white ring-1 ring-black/10 shadow-md absolute overflow-hidden flex items-center justify-center"
                                                 >
-                                                    <motion.div
-                                                        layout
-                                                        className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-black/10 shadow-md shadow-black/5 bg-dark-alpha z-12"
-                                                    >
-                                                        <Image
-                                                            src="/images/SOLANA.svg"
-                                                            alt="logo"
-                                                            fill
-                                                            unoptimized
-                                                            className="object-contain p-2"
-                                                        />
-                                                    </motion.div>
+                                                    <AnimatePresence mode="wait">
+                                                        {!isHovered && (
+                                                            <motion.div
+                                                                key="default"
+                                                                initial={{ y: 0, opacity: 1 }}
+                                                                animate={{ y: 0, opacity: 1 }}
+                                                                exit={{
+                                                                    y: -10,
+                                                                    opacity: 0,
+                                                                    filter: 'blur(6px)',
+                                                                    transition: {
+                                                                        duration: 0.35,
+                                                                        ease: [0.22, 1, 0.36, 1],
+                                                                    },
+                                                                }}
+                                                                className="absolute inset-0 flex items-center justify-center gap-x-3"
+                                                            >
+                                                                <div className="w-8 h-8 rounded-full relative overflow-hidden ring-1 ring-black/10 bg-black">
+                                                                    <Image
+                                                                        src="/images/SOLANA.svg"
+                                                                        alt="logo"
+                                                                        fill
+                                                                        className="object-contain p-1"
+                                                                    />
+                                                                </div>
 
-                                                    <motion.div
-                                                        layout
-                                                        className="flex flex-col -space-y-1.5"
-                                                    >
-                                                        <div>Solana staking</div>
-                                                        <div className="text-xs text-dark-base/50 tracking-wide">
-                                                            EASY MONEY
-                                                        </div>
-                                                    </motion.div>
+                                                                <div className="flex flex-col -space-y-1 text-dark-base">
+                                                                    <div>Solana staking</div>
+                                                                    <div className="text-xs text-black/50 tracking-wide">
+                                                                        EASY MONEY
+                                                                    </div>
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+
+                                                        {isHovered && (
+                                                            <motion.div
+                                                                key="letters"
+                                                                variants={containerVariants}
+                                                                initial="hidden"
+                                                                animate="show"
+                                                                exit="exit"
+                                                                className="absolute inset-0 flex items-center justify-between px-3"
+                                                            >
+                                                                {solanaLetters.map((letter, i) => (
+                                                                    <motion.div
+                                                                        key={i}
+                                                                        variants={letterVariants}
+                                                                        className="w-7 h-7 rounded-md bg-black text-white flex items-center justify-center text-sm font-semibold"
+                                                                    >
+                                                                        {letter}
+                                                                    </motion.div>
+                                                                ))}
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
                                                 </motion.div>
 
                                                 <div
