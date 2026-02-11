@@ -1,5 +1,5 @@
 import { Prisma } from '@nocturn/database';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import { QuizSetting, quizSettingsSchema } from '../schemas/quizSettingsSchema';
 import { databaseQueueInstance, quizManagerInstance } from '../services/init.services';
 import QuizManager from '../sockets/QuizManager';

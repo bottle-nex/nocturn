@@ -1,148 +1,33 @@
-import { JobOption, QueueJobTypes } from '../types/database-queue-types';
 import Bull from 'bull';
 import {
     prisma,
     GameSession,
     Participant,
-    Prisma,
     Quiz,
     Spectator,
     ChatMessage,
     ChatReaction,
-    Interactions,
     Response,
+    Question,
 } from '@nocturn/database';
-import RedisCache from '../cache/redis.cache';
-import { redisCacheInstance } from '../services/init.services';
-import { ReactorType } from '@nocturn/types';
-import { env } from '../configs/env';
 import { v4 as uuid } from 'uuid';
-const REDIS_URL = env.SERVER_REDIS_URL;
+import {
+    CreateLifelineUsageJob,
+    UpdateGameSessionJobtype,
+    UpdateParticipantJobType,
+    UpdateSpectatorJobType,
+    UpdateQuizJobType,
+    CreateChatMessageJobType,
+    CreateChatReactionJobType,
+    CreateParticipantResponseJobType,
+    UpdateQuestionJobType,
+} from '../../types/job.database.types';
+import RedisCache from '../../cache/redis.cache';
 
-interface CreateLifelineUsageJob {
-    participant_id: string;
-    game_session_id: string;
-}
+export class DatabaseQueueProcessors {
+    constructor(private redis_cache: RedisCache) {}
 
-interface UpdateGameSessionJobtype {
-    id: string;
-    game_session_id: string;
-    gameSession: Prisma.GameSessionUpdateInput;
-}
-
-interface UpdateParticipantJobType {
-    id: string;
-    game_session_id: string;
-    participant: Prisma.ParticipantUpdateInput;
-}
-
-interface UpdateSpectatorJobType {
-    id: string;
-    game_session_id: string;
-    spectator: Prisma.SpectatorUpdateInput;
-}
-
-interface UpdateQuizJobType {
-    id: string;
-    game_session_id: string;
-    quiz: Prisma.QuizUpdateInput;
-}
-
-interface CreateChatMessageJobType {
-    id: string;
-    game_session_id: string;
-    quiz_id: string;
-    chatMessage: {
-        senderId: string;
-        senderRole: string;
-        senderName: string;
-        senderAvatar: string;
-        message: string;
-        repliedToId?: string;
-    };
-}
-
-interface CreateChatReactionJobType {
-    id: string;
-    chat_message_id: string;
-    chat_reaction: {
-        reactorType: ReactorType;
-        reactorName: string;
-        reactorAvatar: string;
-        reaction: Interactions;
-        reactedAt?: Date;
-    };
-}
-
-interface CreateParticipantResponseJobType {
-    id: string;
-    game_session_id: string;
-    response: {
-        selectedAnswer: number;
-        isCorrect: boolean;
-        timeToAnswer: number;
-        pointsEarned: number;
-        timeBonus: number;
-        streakBonus: number;
-        answeredAt: Date;
-        questionId: string;
-    };
-}
-
-export default class DatabaseQueue {
-    private database_queue: Bull.Queue;
-    private redis_cache: RedisCache;
-    private default_job_options: JobOption = {
-        attempts: 3,
-        delay: 1000,
-        removeOnFail: 5,
-        removeOnComplete: 10,
-    };
-
-    constructor() {
-        this.redis_cache = redisCacheInstance;
-        this.database_queue = new Bull('database-operations', {
-            redis: REDIS_URL,
-        });
-        this.setupProcessors();
-    }
-
-    private setupProcessors() {
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_GAME_SESSION,
-            this.update_game_session_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_QUIZ,
-            this.update_quiz_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_PARTICIPANT,
-            this.update_participant_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_SPECTATOR,
-            this.update_spectator_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_CHAT_MESSAGE,
-            this.create_chat_message_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_CHAT_REACTION,
-            this.create_chat_reaction_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_PARTICIPANT_RESPONSE,
-            this.create_participant_response_processor.bind(this),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_LIFELINE_USAGE,
-            this.create_lifeline_usage_processor.bind(this),
-        );
-    }
-
-    private async create_lifeline_usage_processor(
+    async create_lifeline_usage_processor(
         job: Bull.Job,
     ): Promise<{ success: boolean; lifelineUsage?: any } | { success: boolean; error: string }> {
         try {
@@ -169,7 +54,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async update_spectator_processor(
+    async update_spectator_processor(
         job: Bull.Job,
     ): Promise<{ success: boolean; spectator: Spectator } | { success: boolean; error: string }> {
         const { id, game_session_id, spectator }: UpdateSpectatorJobType = job.data;
@@ -194,7 +79,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async update_participant_processor(
+    async update_participant_processor(
         job: Bull.Job,
     ): Promise<
         { success: boolean; participant: Participant } | { success: boolean; error: string }
@@ -223,7 +108,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async update_game_session_processor(
+    async update_game_session_processor(
         job: Bull.Job,
     ): Promise<
         { success: boolean; gameSession: GameSession } | { success: boolean; error: string }
@@ -248,7 +133,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async update_quiz_processor(
+    async update_quiz_processor(
         job: Bull.Job,
     ): Promise<{ success: boolean; quiz: Quiz } | { success: boolean; error: string }> {
         try {
@@ -269,7 +154,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async create_chat_message_processor(
+    async create_chat_message_processor(
         job: Bull.Job,
     ): Promise<
         { success: boolean; chatMessage: ChatMessage } | { success: boolean; error: string }
@@ -305,7 +190,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async create_chat_reaction_processor(
+    async create_chat_reaction_processor(
         job: Bull.Job,
     ): Promise<
         { success: boolean; chatReaction: ChatReaction } | { success: boolean; error: string }
@@ -338,7 +223,7 @@ export default class DatabaseQueue {
         }
     }
 
-    private async create_participant_response_processor(
+    async create_participant_response_processor(
         job: Bull.Job,
     ): Promise<
         { success: boolean; participantResponse: Response } | { success: boolean; error: string }
@@ -381,155 +266,31 @@ export default class DatabaseQueue {
         }
     }
 
-    public async update_game_session(
-        id: string,
-        gameSession: any,
-        game_session_id: string,
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue.add(
-            QueueJobTypes.UPDATE_GAME_SESSION,
-            { id, gameSession, game_session_id },
-            { ...this.default_job_options, ...options },
-        );
-    }
-
-    public async update_quiz(
-        id: string,
-        quiz: Prisma.QuizUpdateInput,
-        game_session_id: string,
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue.add(
-            QueueJobTypes.UPDATE_QUIZ,
-            { id, quiz, game_session_id },
-            { ...this.default_job_options, ...options },
-        );
-    }
-
-    public async update_participant(
-        id: string,
-        participant: Prisma.ParticipantUpdateInput,
-        game_session_id: string,
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue.add(
-            QueueJobTypes.UPDATE_PARTICIPANT,
-            { id, participant, game_session_id },
-            { ...this.default_job_options, ...options },
-        );
-    }
-
-    public async update_spectator(
-        id: string,
-        spectator: Prisma.SpectatorUpdateInput,
-        game_session_id: string,
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue.add(
-            QueueJobTypes.UPDATE_SPECTATOR,
-            { id, spectator, game_session_id },
-            { ...this.default_job_options, ...options },
-        );
-    }
-
-    public async create_chat_message(
-        id: string,
-        game_session_id: string,
-        quiz_id: string,
-        chatMessage: {
-            senderId: string;
-            senderRole: string;
-            senderName: string;
-            senderAvatar: string;
-            message: string;
-            repliedToId?: string | null;
-        },
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue.add(
-            QueueJobTypes.CREATE_CHAT_MESSAGE,
-            { id, game_session_id, quiz_id, chatMessage },
-            { ...this.default_job_options, ...options },
-        );
-    }
-
-    public async create_chat_reaction(
-        id: string,
-        chat_message_id: string,
-        chat_reaction: {
-            reactedAt: Date;
-            reaction: Interactions;
-            reactorAvatar: string;
-            reactorName: string;
-            reactorType: ReactorType;
-        },
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue
-            .add(
-                QueueJobTypes.CREATE_CHAT_REACTION,
-                { id, chat_message_id, chat_reaction },
-                { ...this.default_job_options, ...options },
-            )
-            .catch((err) => console.error('Failed to enqueue chat reaction:', err));
-    }
-
-    public async create_participant_response(
-        id: string,
-        game_session_id: string,
-        response: {
-            selectedAnswer: number;
-            isCorrect: boolean;
-            timeToAnswer: number;
-            pointsEarned: number;
-            timeBonus: number;
-            streakBonus: number;
-            answeredAt: Date;
-            questionId: string;
-        },
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue
-            .add(
-                QueueJobTypes.CREATE_PARTICIPANT_RESPONSE,
-                { id, game_session_id, response },
-                { ...this.default_job_options, ...options },
-            )
-            .catch((err) => console.error('Failed to enqueue participant response: ', err));
-    }
-
-    public async create_lifeline_usage(
-        participant_id: string,
-        game_session_id: string,
-        options?: Partial<JobOption>,
-    ) {
-        return await this.database_queue
-            .add(
-                QueueJobTypes.CREATE_LIFELINE_USAGE,
-                { participant_id, game_session_id },
-                { ...this.default_job_options, ...options },
-            )
-            .catch((err) => console.error('Failed to enqueue lifeline response: ', err));
-    }
-
-    public async check_lifeline_usage(
-        participantId: string,
-        gameSessionId: string,
-    ): Promise<boolean> {
+    async update_question_processor(
+        job: Bull.Job,
+    ): Promise<{ success: boolean; question: Question } | { success: boolean; error: string }> {
         try {
-            const usage = await prisma.lifelineUsage.findUnique({
+            const { game_session_id, question_id, question }: UpdateQuestionJobType = job.data;
+
+            const updatedQuestion = await prisma.question.update({
                 where: {
-                    participantId_gameSessionId: {
-                        participantId,
-                        gameSessionId,
-                    },
+                    id: question_id,
                 },
+                data: question,
             });
-            return !!usage;
+
+            await this.redis_cache.set_quiz(game_session_id, {});
+
+            return {
+                success: true,
+                question: updatedQuestion,
+            };
         } catch (error) {
-            console.error('Error checking lifeline usage:', error);
-            return false;
+            console.error('Error while processing update question: ', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+            };
         }
     }
 }

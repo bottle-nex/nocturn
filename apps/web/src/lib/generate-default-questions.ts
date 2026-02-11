@@ -20,6 +20,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 35,
             readingTime: 5,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'Which technology powers Web3 applications?',
@@ -32,6 +33,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 25,
             readingTime: 3,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'In Web2, data is primarily controlled by:',
@@ -50,6 +52,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 20,
             readingTime: 3,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'Which of the following is a Web3 wallet?',
@@ -62,6 +65,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 20,
             readingTime: 3,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'What is a smart contract in Web3?',
@@ -80,6 +84,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 40,
             readingTime: 4,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'Which is an example of a Web2 application?',
@@ -93,6 +98,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 25,
             readingTime: 3,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'Which is an example of a Web3 application?',
@@ -106,6 +112,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 30,
             readingTime: 4,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'How are identities managed in Web3 compared to Web2?',
@@ -124,6 +131,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 35,
             readingTime: 5,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'What is the economic model of Web3?',
@@ -142,6 +150,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 30,
             readingTime: 4,
             isAsked: false,
+            hintLaunched: false,
         },
         {
             question: 'Which statement about Web2 vs Web3 is correct?',
@@ -160,6 +169,7 @@ export function generateDefaultQuestions(): QuestionType[] {
             timeLimit: 40,
             readingTime: 5,
             isAsked: false,
+            hintLaunched: false,
         },
     ];
 

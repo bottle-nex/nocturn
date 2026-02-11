@@ -1,12 +1,18 @@
-import { Request, Response } from 'express';
+import {
+    ApiResponse,
+    LiveGameTokenPayload,
+    NOCTURN_COOKIE_NAME,
+    QuestionType,
+    USER_TYPE,
+} from '@nocturn/types';
 import { parse } from 'cookie';
-import { prisma, QuizPhase } from '@nocturn/database';
-import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
-import QuizAction from '../../class/quizAction';
-import getChatsController from '../chat-controller/getChatsController';
+import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
+import QuizAction from '../../class/quizAction';
+import { HostScreen, prisma } from '@nocturn/database';
+import getChatsController from '../chat-controller/getChatsController';
 
-export default async function getLiveQuizDataController(req: Request, res: Response) {
+export default async function getQuizDataController(req: Request, res: Response) {
     const cookieHeader = req.headers.cookie;
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const token = cookies[NOCTURN_COOKIE_NAME];
@@ -16,7 +22,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         ResponseWriter.not_authorized(res);
         return;
     }
-
     try {
         const decoded = QuizAction.verifyCookie(token);
         if (typeof decoded !== 'object' || !decoded) return ResponseWriter.not_authorized(res);
@@ -28,8 +33,36 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         }
 
         const result = await prisma.$transaction(async (tx) => {
+            const gameSession = await tx.gameSession.findUnique({
+                where: {
+                    id: gameSessionId,
+                    quizId: quizId,
+                },
+                select: {
+                    id: true,
+                    status: true,
+                    hostScreen: true,
+                    participantScreen: true,
+                    spectatorScreen: true,
+                    totalParticipants: true,
+                    activeParticipants: true,
+                    currentQuestionIndex: true,
+                    currentQuestionId: true,
+                    totalSpectators: true,
+                    avgResponseTime: true,
+                    correctAnswerRate: true,
+                    currentPhase: true,
+                    phaseEndTime: true,
+                    phaseStartTime: true,
+                },
+            });
+
+            // if current phase is lobby then return only one question as current questoin
+            // else return two questions, 1st current question, 2nd an unasked question
             const quiz = await tx.quiz.findUnique({
-                where: { id: quizId },
+                where: {
+                    id: quizId,
+                },
                 select: {
                     id: true,
                     title: true,
@@ -65,64 +98,23 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                             email: true,
                         },
                     },
-                    ...(role === USER_TYPE.HOST && {
-                        questions: {
-                            select: {
-                                id: true,
-                                question: true,
-                                options: true,
-                                explanation: true,
-                                hint: true,
-                                difficulty: true,
-                                basePoints: true,
-                                timeLimit: true,
-                                orderIndex: true,
-                                imageUrl: true,
-                                isAsked: true,
-                            },
-                            where: {
-                                isAsked: false,
-                            },
-                            orderBy: {
-                                orderIndex: 'asc',
-                            },
-                            take: 1,
-                        },
-                    }),
                 },
             });
 
-            // currentQuestion might be null if all the questions are asked
-            const currentQ = quiz?.questions?.[0];
+            // this will be our current question
+            let question;
 
-            const gameSession = await tx.gameSession.findUnique({
-                where: { id: gameSessionId },
-                select: {
-                    id: true,
-                    status: true,
-                    hostScreen: true,
-                    participantScreen: true,
-                    spectatorScreen: true,
-                    totalParticipants: true,
-                    activeParticipants: true,
-                    currentQuestionIndex: true,
-                    currentQuestionId: true,
-                    totalSpectators: true,
-                    avgResponseTime: true,
-                    correctAnswerRate: true,
-                    currentPhase: true,
-                    phaseEndTime: true,
-                    phaseStartTime: true,
-                },
-            });
-
-            // fetch the current question with currentQuestionId
-            if (gameSession?.currentQuestionId) {
-                const _currentQuestion = await tx.question.findUnique({
-                    where: {
-                        id: gameSession?.currentQuestionId,
-                    },
-                });
+            // get the question based on current quiz phase
+            switch (gameSession?.hostScreen) {
+                case HostScreen.LOBBY: {
+                    // get a random question
+                    question = await get_question(userId, quizId);
+                    break;
+                }
+                default: {
+                    question = await get_question(userId, quizId, gameSession?.currentQuestionId!);
+                    break;
+                }
             }
 
             const participants = await tx.participant.findMany({
@@ -140,27 +132,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                 take: 20,
             });
 
-            let question;
-            const questionId: string | null | undefined = gameSession?.currentQuestionId;
-
-            if (questionId) {
-                question = await tx.question.findUnique({
-                    where: {
-                        id: questionId,
-                    },
-                    select: {
-                        id: true,
-                        question: true,
-                        orderIndex: role === USER_TYPE.HOST,
-                        ...(questionId &&
-                            (gameSession?.currentPhase === QuizPhase.QUESTION_ACTIVE ||
-                                gameSession?.currentPhase === QuizPhase.SHOW_RESULTS) && {
-                                options: true,
-                            }),
-                    },
-                });
-            }
-
             const spectators = await tx.spectator.findMany({
                 where: {
                     quizId: quizId,
@@ -173,9 +144,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                 },
             });
 
-            // Role-specific data
             let userData = null;
-            let isNextQuestionAvailable = false;
 
             switch (role) {
                 case USER_TYPE.HOST:
@@ -190,7 +159,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                             isVerified: true,
                         },
                     });
-                    isNextQuestionAvailable = !!quiz?.questions.find((q) => !q.isAsked);
                     break;
 
                 // returning the participant data if the participant is not kicked
@@ -237,14 +205,12 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             }
 
             return {
-                quiz,
                 gameSession,
-                userData,
+                quiz,
+                question,
                 participants,
                 spectators,
-                currentQ,
-                question,
-                isNextQuestionAvailable,
+                userData,
             };
         });
 
@@ -260,29 +226,117 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
         const sanitizedGameSession = QuizAction.sanitizeGameSession(result.gameSession, role);
         const spectatorLink = QuizAction.createSpectatorLink(quizId);
+        let currentQuestion;
+        if (result.question) {
+            currentQuestion = QuizAction.sanitizeCurrentQuestion(
+                result.question,
+                role,
+                result.gameSession.hostScreen,
+            );
+        }
 
         const data = await getChatsController(role, gameSessionId, quizId);
         const responseData: any = {
-            success: true,
             quiz: { ...result.quiz, spectatorLink },
             gameSession: sanitizedGameSession,
             userData: result.userData,
             participants: result.participants,
             spectators: result.spectators,
-            currentQ: result.currentQ,
+            currentQuestion: currentQuestion,
             role,
-            question: result.question,
-            isNextQuestionAvailable: result.isNextQuestionAvailable,
         };
 
         if (data.messages) {
             responseData.messages = data.messages;
         }
-        ResponseWriter.success(res, responseData);
+        ResponseWriter.secure_success(res, {
+            type: ApiResponse.GET_LIVE_QUIZ_DATA,
+            data: responseData,
+        });
         return;
-    } catch (err) {
-        console.error('Unexpected error in getLiveQuizDataController:', err);
+    } catch (error) {
+        console.error('error in get live quiz data controller: ', error);
         ResponseWriter.system_error(res);
         return;
+    }
+}
+
+async function get_question(
+    host_id: string,
+    quiz_id: string,
+    question_id?: string,
+): Promise<Partial<QuestionType> | null> {
+    // if question-id is not provided then return an unasked question
+    if (!question_id) {
+        const quiz = await prisma.quiz.findUnique({
+            where: {
+                id: quiz_id,
+                hostId: host_id,
+            },
+            select: {
+                questions: {
+                    where: {
+                        isAsked: false,
+                    },
+                    select: {
+                        id: true,
+                        question: true,
+                        options: true,
+                        explanation: true,
+                        hint: true,
+                        difficulty: true,
+                        basePoints: true,
+                        timeLimit: true,
+                        orderIndex: true,
+                        imageUrl: true,
+                        isAsked: true,
+                    },
+                    orderBy: {
+                        orderIndex: 'asc',
+                    },
+                    take: 1,
+                },
+            },
+        });
+
+        if (!quiz || quiz.questions.length === 0) return null;
+
+        const question = quiz.questions[0];
+
+        return {
+            ...question,
+            explanation: question.explanation || undefined,
+            hint: question.hint || undefined,
+            imageUrl: question.imageUrl || undefined,
+        };
+    } else {
+        const question = await prisma.question.findUnique({
+            where: {
+                id: question_id,
+                quizId: quiz_id,
+            },
+            select: {
+                id: true,
+                question: true,
+                options: true,
+                explanation: true,
+                hint: true,
+                difficulty: true,
+                basePoints: true,
+                timeLimit: true,
+                orderIndex: true,
+                imageUrl: true,
+                isAsked: true,
+            },
+        });
+
+        if (!question) return null;
+
+        return {
+            ...question,
+            explanation: question.explanation || undefined,
+            hint: question.hint || undefined,
+            imageUrl: question.imageUrl || undefined,
+        };
     }
 }

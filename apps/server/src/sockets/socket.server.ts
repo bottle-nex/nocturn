@@ -11,7 +11,7 @@ import ParticipantManager from './ParticipantManager';
 import SpectatorManager from './SpectatorManager';
 import CollaborationManager from './CollaborationManager';
 import SubscriberManager from './SubscriberManager';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizSettings from '../class/quizSettings';
 import {

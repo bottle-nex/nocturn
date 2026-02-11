@@ -15,10 +15,15 @@ export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, isNextQuestionAvailable, gameSession, updateGameSession } =
-        useLiveQuizStore();
+    const {
+        currentQuestion,
+        gameSession,
+        updateGameSession,
+        updateCurrentQuestion,
+        quiz,
+    } = useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
-    const [quizEnded, setQuizEnded] = useState<boolean>(false);
+    const [quizEnded, _setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults } = useWebSocket();
 
     useEffect(() => {
@@ -26,12 +31,12 @@ export default function HostQuestionResultsRenderer() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        if (!isNextQuestionAvailable) {
-            setQuizEnded(true);
-            // alert(isNextQuestionAvailable);
-        }
-    }, [isNextQuestionAvailable]);
+    // useEffect(() => {
+    //     if (!isNextQuestionAvailable) {
+    //         setQuizEnded(true);
+    //         // alert(isNextQuestionAvailable);
+    //     }
+    // }, [isNextQuestionAvailable]);
 
     if (!currentQuestion || !gameSession) {
         return (
@@ -41,10 +46,11 @@ export default function HostQuestionResultsRenderer() {
         );
     }
 
-    function handleOnClick() {
+    function handleOnNextQuestion() {
         if (quizEnded) {
             handleHostQuizResults({});
         } else {
+            updateCurrentQuestion(quiz.questions[0]);
             handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
             updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
         }
@@ -100,7 +106,7 @@ export default function HostQuestionResultsRenderer() {
                         'px-3.5 !pl-4 py-1.5 text-xs rounded-md tracking-wider',
                         'hover:-translate-y-0.5 transition-all transform duration-150',
                     )}
-                    onClick={handleOnClick}
+                    onClick={handleOnNextQuestion}
                 >
                     {quizEnded ? 'Final Results' : 'Next Question'}
                     <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />

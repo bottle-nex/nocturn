@@ -8,7 +8,7 @@ import {
 } from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import { v4 as uuid } from 'uuid';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
 import { prisma, QuizPhase } from '@nocturn/database';
 import WebSocket from 'ws';

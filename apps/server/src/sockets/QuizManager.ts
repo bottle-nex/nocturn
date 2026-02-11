@@ -1,10 +1,10 @@
 import Redis from 'ioredis';
 import RedisCache from '../cache/redis.cache';
 import { Participant, QuizStatus, SessionStatus, Spectator, prisma } from '@nocturn/database';
-import { CookiePayload, MESSAGE_TYPES, PubSubMessageTypes, SECONDS } from '@nocturn/types';
+import { LiveGameTokenPayload, MESSAGE_TYPES, PubSubMessageTypes, SECONDS } from '@nocturn/types';
 import { PhaseQueueJobDataType } from '../types/web-socket-types';
 import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';
-import DatabaseQueue from '../queue/DatabaseQueue';
+import DatabaseQueue from '../queue/database/database.queue';
 import PhaseQueue from '../queue/PhaseQueue';
 import { PublicKey } from 'jsonwebtoken';
 
@@ -57,7 +57,7 @@ export default class QuizManager {
         await this.redis_cache.set_quiz(game_session_id, quiz);
     }
 
-    public async onParticipantConnect(decoded_cookie_payload: CookiePayload) {
+    public async onParticipantConnect(decoded_cookie_payload: LiveGameTokenPayload) {
         const particpant_id = decoded_cookie_payload.userId;
         const particicpant_cache = await this.redis_cache.get_participant(
             decoded_cookie_payload.gameSessionId,
@@ -78,7 +78,7 @@ export default class QuizManager {
         this.publish_event_to_redis(decoded_cookie_payload.gameSessionId, pub_sub_message);
     }
 
-    public async onSpectatorConnect(payload: CookiePayload) {
+    public async onSpectatorConnect(payload: LiveGameTokenPayload) {
         const spectator_id = payload.userId;
 
         const spectator_cache = await this.redis_cache.get_spectator(
