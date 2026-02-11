@@ -10,6 +10,8 @@ import InstructionsSection from '@/components/test/InstructionsSection';
 import PricingComponent from '@/components/revamp/PricingComponent';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import Footer from '@/components/root/Footer';
+import HeroSection from '@/components/revamp/HeroSection';
+import LandingSection from '@/components/test/LandingSection';
 
 export default function Page() {
     return (
@@ -21,11 +23,12 @@ export default function Page() {
             <Footer /> */}
             {/* <NavbarTest /> */}
             <LandingNavbar />
+            <LandingSection />
             <RevampSection />
             <FeaturesSection />
             <InstructionsSection />
             {/* <LandingCardComponent /> */}
-            {/* <HeroSection /> */}
+            <HeroSection />
             <PricingComponent />
             <BigAnimatedText />
             {/* <LandingHeroSection /> */}

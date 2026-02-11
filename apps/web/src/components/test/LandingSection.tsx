@@ -1,176 +1,57 @@
-'use client';
-
-import Image from 'next/image';
-import { Button } from '../ui/button';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { MdHomeFilled, MdChevronRight } from 'react-icons/md';
-import { FaLocationArrow } from 'react-icons/fa6';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { cn } from '@/lib/utils';
+import { IoIosArrowDown } from 'react-icons/io';
 
 export default function LandingSection() {
-    const { session, setOpenSigninModal } = useUserSessionStore();
-    const router = useRouter();
-
-    function getStartedHandler() {
-        if (session?.user.id) {
-            router.push('/home');
-        } else {
-            setOpenSigninModal(true);
-        }
-    }
-
     return (
-        <main className="w-full relative min-h-screen bg-[#eceadd] flex flex-col items-center justify-center border-b border-black overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 z-0 dot-bg" />
-
-            <div className="absolute top-160 left-80 w-8 h-8 border-t-2 border-l-2 border-black/40 z-0" />
-            <div className="absolute top-160 right-80 w-8 h-8 border-t-2 border-r-2 border-black/40 z-0" />
-            <div className="absolute bottom-27.5 left-80 w-8 h-8 border-b-2 border-l-2 border-black/40 z-0" />
-            <div className="absolute bottom-27.5 right-80 w-8 h-8 border-b-2 border-r-2 border-black/40 z-0" />
-
-            <div className="neo-shadow absolute top-44 right-[15.5%] text-white font-semibold bg-[#2F73DC] px-4 py-1.5 text-lg z-10">
-                Yo, I just won 5 SOL
+        <div className="h-screen w-screen bg-light-alpha flex flex-col pt-30 px-25">
+            <div
+                style={{
+                    fontWeight: 900,
+                }}
+                className={cn(
+                    'flex flex-col text-alpha text-[1.7rem] leading-none font-extrabold tracking-normal font-sans',
+                )}
+            >
+                <div>THE ULTIMATE</div>
+                <div>STAKE QUIZ</div>
             </div>
 
-            <div className="absolute top-54 right-[26%] text-3xl text-[#2F73DC] -rotate-180 z-10">
-                <FaLocationArrow />
+            <div
+                style={{
+                    fontWeight: 900,
+                }}
+                className={cn(
+                    'flex flex-col text-[8rem] leading-[0.95] text-dark-base tracking-tight font-sans pt-8',
+                )}
+            >
+                <div>RISK & REWARD</div>
+                <div>TEST YOUR</div>
+                <div>KNOWLEDGE</div>
             </div>
 
-            {/* <FloatingStickers/> */}
+            <div className="flex w-full h-full py-10">
+                <div className="w-1/2 h-full" />
 
-            <section className="max-w-3xl text-center mt-60 relative z-10">
-                <Button
-                    onClick={getStartedHandler}
-                    className="text-xl text-tprime rounded-none px-6 py-5 border-2 border-black shadow-custom cursor-pointer bg-white hover:bg-white active:scale-98"
-                >
-                    {session?.user.id ? (
-                        <span className="flex items-center gap-x-2">
-                            <MdHomeFilled style={{ fontSize: 40 }} /> Home
-                        </span>
-                    ) : (
-                        <span className="flex items-center gap-x-2">
-                            Get Started <MdChevronRight className="h-20 w-20" />
-                        </span>
-                    )}
-                </Button>
-
-                <div className="relative">
-                    <div className="absolute -top-20 -right-40 z-0">
-                        <Image alt="cat" width={280} height={280} src="/illustrations/cat.png" />
+                <div className="w-2/3 h-full flex flex-col text-dark-alpha justify-end text-[1.2rem] max-w-md gap-y-0.5">
+                    <div style={{ fontWeight: 800 }} className="font-sans uppercase flex gap-x-1">
+                        Are you ready to <div className="italic text-alpha"> stake your SOL?</div>
                     </div>
-                    <h1 className="text-8xl text-tprime mt-8 relative z-10">
-                        Put Your Money on Your Mind.
-                    </h1>
+                    <div className="leading-[1.3]">
+                        Join our stake-based quiz experience and challenge your knowledge while
+                        competing for real rewards. Test your skills, make your moves, and see if
+                        you can top the leaderboard.
+                    </div>
                 </div>
 
-                <p className="text-2xl mt-4 text-tprime">
-                    A high-stakes quiz arena where knowledge isn&apos;t just tested — it&apos;s
-                    wagered. Create or join competitive quizzes, stake real value, survive
-                    elimination rounds, and let skill decide the payout.
-                </p>
-            </section>
-
-            <section className="max-w-6xl mx-auto border-4 border-black h-[40vh] w-full mb-40 mt-20 bg-[#FF3F7F] relative overflow-hidden z-10">
-                <div className="absolute inset-0 flex items-center justify-between px-16">
-                    <motion.div
-                        className="flex flex-col gap-1"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <span className="text-xs font-bold tracking-[0.3em] text-tprime uppercase mb-1">
-                            LIVE NOW
-                        </span>
-                        <h2 className="text-7xl font-black text-tprime tracking-tighter leading-[0.85] mb-3">
-                            THE
-                            <br />
-                            <span className="text-white">ARENA</span>
-                        </h2>
-                        <p className="text-base font-medium text-tprime/70 max-w-xs leading-tight">
-                            High-stakes trivia where speed meets strategy. Winner takes all.
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        className="flex flex-col items-center gap-8"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.4, delay: 0.1 }}
-                    >
-                        <div className="relative">
-                            <motion.div
-                                className="w-24 h-24 border-4 border-black bg-[#FFC400] flex items-center justify-center shadow-[4px_4px_0_0_rgba(0,0,0,1)]"
-                                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                            >
-                                <span className="text-4xl font-black">?</span>
-                            </motion.div>
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-black rounded-full border-2 border-white" />
+                <div className="w-1/3 h-full flex items-end justify-end">
+                    <div className="h-12 w-33 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full bg-alpha flex justify-between items-center px-2">
+                        <div className="bg-light-base h-8 w-8 rounded-full flex justify-center items-center">
+                            <IoIosArrowDown className="text-dark-base/70 animate-bounce stroke-1 duration-300" />
                         </div>
-
-                        <div className="flex gap-10 text-center">
-                            <div>
-                                <span className="text-4xl font-black text-tprime block leading-none">
-                                    10s
-                                </span>
-                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
-                                    Answer Time
-                                </span>
-                            </div>
-                            <div className="w-0.5 bg-black/30" />
-                            <div>
-                                <span className="text-4xl font-black text-tprime block leading-none">
-                                    5x
-                                </span>
-                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
-                                    Multiplier
-                                </span>
-                            </div>
-                            <div className="w-0.5 bg-black/30" />
-                            <div>
-                                <span className="text-4xl font-black text-white block leading-none">
-                                    247
-                                </span>
-                                <span className="text-[10px] font-bold text-tprime/60 uppercase tracking-[0.2em] mt-1 block">
-                                    Players Live
-                                </span>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        className="flex flex-col items-end gap-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                        <div className="text-right space-y-3">
-                            <div className="bg-black text-[#FFC400] px-3 py-1 inline-block">
-                                <span className="text-xs font-black tracking-wider">
-                                    PRIZE POOL
-                                </span>
-                            </div>
-                            <p className="text-5xl font-black text-tprime leading-none">
-                                12.5 <span className="text-2xl">SOL</span>
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            className="text-white px-10 py-5 font-black text-sm uppercase tracking-[0.2em] border-2 border-black bg-[#22a094] shadow-custom active:scale-99"
-                        >
-                            Enter Arena →
-                        </button>
-
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-[#22a094] rounded-full animate-pulse" />
-                            <span className="text-[10px] text-tprime/50 uppercase tracking-[0.15em] font-bold">
-                                Powered by Solana
-                            </span>
-                        </div>
-                    </motion.div>
+                        <div className="flex justify-center items-center pr-2.5">Join Quiz</div>
+                    </div>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
     );
 }

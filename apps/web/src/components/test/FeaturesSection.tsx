@@ -4,12 +4,10 @@ import { FaThumbsUp } from 'react-icons/fa6';
 import { IoIosPeople } from 'react-icons/io';
 import VoiceIcon from '../ui/svg/VoiceIcon';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
-
-const solanaLetters = ['S', 'O', 'L', 'A', 'N', 'A'];
-
+import { SiSolana } from 'react-icons/si';
 export default function FeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
     const [showInteractionsPanel, setShowInteractionsPanel] = useState<boolean>(false);
@@ -18,45 +16,39 @@ export default function FeaturesSection() {
     const [showAudiencePoll, setShowAudiencePoll] = useState<boolean>(false);
     const [audienceBarHeights, setAudienceBarHeights] = useState<number[]>([]);
     const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [particles, setParticles] = useState<Particle[]>([]);
 
-    const containerVariants = {
-        hidden: {},
-        show: {
-            transition: {
-                staggerChildren: 0.08,
-                delayChildren: 0.15,
-            },
-        },
+    type Particle = {
+        id: number;
+        x: number;
+        y: number;
+        size: number;
+        color: string;
+        rotate: number;
+        duration: number;
+        isIcon: boolean;
     };
 
-    const letterVariants: Variants = {
-        hidden: {
-            opacity: 0,
-            y: 20,
-            filter: 'blur(10px)',
-            scale: 0.9,
-        },
-        show: {
-            opacity: 1,
-            y: 0,
-            filter: 'blur(0px)',
-            scale: 1,
-            transition: {
-                duration: 0.45,
-                ease: [0.22, 1, 0.36, 1],
-            },
-        },
-        exit: {
-            opacity: 0,
-            y: -10,
-            filter: 'blur(10px)',
-            scale: 0.8,
-            transition: {
-                duration: 0.3,
-            },
-        },
-    };
+    const PARTICLE_COUNT = 30;
+    const COLORS = ['#ff6b6b', '#ffd93d', '#6bcBef', '#b983ff', '#4cd137', '#ff9f43'];
 
+    const generateParticles = (): Particle[] => {
+        return Array.from({ length: PARTICLE_COUNT }).map((_, i) => {
+            const spread = (Math.random() - 0.5) * 180;
+            const height = -Math.random() * 40 - 30;
+
+            return {
+                id: i + Math.random(),
+                x: spread,
+                y: height,
+                size: Math.random() * 10 + 2,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                rotate: Math.random() * 360,
+                duration: Math.random() * 0.7 + 1.2,
+                isIcon: Math.random() > 0.65,
+            };
+        });
+    };
     useEffect(() => {
         if (!showAudiencePoll) {
             setAudienceBarHeights([10, 10, 10, 10]);
@@ -112,13 +104,28 @@ export default function FeaturesSection() {
 
     return (
         <div className="w-screen h-screen bg-white flex justify-center items-center relative overflow-hidden">
-            <div className="absolute bottom-4 right-4 text-dark-base flex flex-col w-75 gap-y-1 text-justify">
-                <div className="text-3xl font-semibold">Why Nocturn?</div>
+            <div className="absolute right-5 bottom-4 flex gap-x-3">
+                <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.5 }}
+                    className="px-6 py-4 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md hover:shadow-lg transition-shadow flex flex-col items-center justify-center gap-y-1 cursor-pointer group"
+                >
+                    <span className="text-xs text-dark-base/50 tracking-wide">EXPLORE</span>
+                    <span className="text-base font-semibold text-dark-base group-hover:text-alpha transition-colors">
+                        Features
+                    </span>
+                </motion.button>
 
-                <div className="text-[18px] text-dark-faded mt-1 tracking-wide">
-                    Guessing drains you. Knowing things finally feels rewarding, the way it probably
-                    should have always been.
-                </div>
+                <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.5 }}
+                    className="px-6 py-4 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md hover:shadow-lg transition-shadow flex flex-col items-center justify-center gap-y-1 cursor-pointer group"
+                >
+                    <span className="text-xs text-dark-base/50 tracking-wide">JOIN</span>
+                    <span className="text-base font-semibold text-dark-base group-hover:text-alpha transition-colors">
+                        Community
+                    </span>
+                </motion.button>
             </div>
 
             <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs">
@@ -130,68 +137,115 @@ export default function FeaturesSection() {
                                     <div className="w-140 h-140 aspect-square border border-dark-base/15 flex justify-center items-center rounded-[9rem] shadow-xs">
                                         <div className="w-110 h-110 aspect-square border border-dark-base/20 flex justify-center items-center rounded-[7rem] shadow-xs">
                                             <div className="w-80 h-80 aspect-square border border-dark-base/25 flex justify-center items-center rounded-[5rem] relative shadow-xs">
-                                                <motion.div
-                                                    onHoverStart={() => setIsHovered(true)}
-                                                    onHoverEnd={() => setIsHovered(false)}
-                                                    className="-left-74 -top-12 h-15 w-52 rounded-xl bg-white ring-1 ring-black/10 shadow-md absolute overflow-hidden flex items-center justify-center"
-                                                >
-                                                    <AnimatePresence mode="wait">
-                                                        {!isHovered && (
-                                                            <motion.div
-                                                                key="default"
-                                                                initial={{ y: 0, opacity: 1 }}
-                                                                animate={{ y: 0, opacity: 1 }}
-                                                                exit={{
-                                                                    y: -10,
-                                                                    opacity: 0,
-                                                                    filter: 'blur(6px)',
-                                                                    transition: {
-                                                                        duration: 0.35,
+                                                <div className="-left-74 -top-12 absolute select-none">
+                                                    <AnimatePresence>
+                                                        {isHovered &&
+                                                            particles.map((p) => (
+                                                                <motion.div
+                                                                    key={p.id}
+                                                                    initial={{
+                                                                        x: 0,
+                                                                        y: -10,
+                                                                        opacity: 1,
+                                                                        scale: 0.6,
+                                                                    }}
+                                                                    animate={{
+                                                                        x: [0, p.x * 0.7, p.x],
+                                                                        y: [0, p.y * 0.5, p.y],
+                                                                        opacity: [1, 1, 0],
+                                                                        rotate: p.rotate,
+                                                                        scale: [0.6, 1.2, 0.9],
+                                                                    }}
+                                                                    transition={{
+                                                                        duration: p.duration,
                                                                         ease: [0.22, 1, 0.36, 1],
-                                                                    },
-                                                                }}
-                                                                className="absolute inset-0 flex items-center justify-center gap-x-3"
-                                                            >
-                                                                <div className="w-8 h-8 rounded-full relative overflow-hidden ring-1 ring-black/10 bg-black">
-                                                                    <Image
-                                                                        src="/images/SOLANA.svg"
-                                                                        alt="logo"
-                                                                        fill
-                                                                        className="object-contain p-1"
-                                                                    />
-                                                                </div>
-
-                                                                <div className="flex flex-col -space-y-1 text-dark-base">
-                                                                    <div>Solana staking</div>
-                                                                    <div className="text-xs text-black/50 tracking-wide">
-                                                                        EASY MONEY
-                                                                    </div>
-                                                                </div>
-                                                            </motion.div>
-                                                        )}
-
-                                                        {isHovered && (
-                                                            <motion.div
-                                                                key="letters"
-                                                                variants={containerVariants}
-                                                                initial="hidden"
-                                                                animate="show"
-                                                                exit="exit"
-                                                                className="absolute inset-0 flex items-center justify-between px-3"
-                                                            >
-                                                                {solanaLetters.map((letter, i) => (
-                                                                    <motion.div
-                                                                        key={i}
-                                                                        variants={letterVariants}
-                                                                        className="w-7 h-7 rounded-md bg-black text-white flex items-center justify-center text-sm font-semibold"
-                                                                    >
-                                                                        {letter}
-                                                                    </motion.div>
-                                                                ))}
-                                                            </motion.div>
-                                                        )}
+                                                                    }}
+                                                                    className="absolute pointer-events-none"
+                                                                    style={{
+                                                                        width: p.size,
+                                                                        height: p.size,
+                                                                        left: `calc(50% + ${p.x}px)`,
+                                                                        top: `calc(50% + ${p.y}px)`,
+                                                                        transform:
+                                                                            'translate(-50%, -50%)',
+                                                                    }}
+                                                                >
+                                                                    {p.isIcon ? (
+                                                                        <SiSolana
+                                                                            size={p.size * 1.2}
+                                                                            style={{
+                                                                                color: p.color,
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        <div
+                                                                            style={{
+                                                                                width: '100%',
+                                                                                height: '100%',
+                                                                                background: p.color,
+                                                                                borderRadius:
+                                                                                    Math.random() >
+                                                                                    0.5
+                                                                                        ? 2
+                                                                                        : 999,
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </motion.div>
+                                                            ))}
                                                     </AnimatePresence>
-                                                </motion.div>
+
+                                                    <motion.div
+                                                        onHoverStart={() => {
+                                                            setIsHovered(true);
+                                                            setParticles(generateParticles());
+                                                        }}
+                                                        onHoverEnd={() => setIsHovered(false)}
+                                                        animate={{
+                                                            scale: isHovered ? 1.08 : 1,
+                                                        }}
+                                                        transition={{
+                                                            type: 'spring',
+                                                            stiffness: 380,
+                                                            damping: 14,
+                                                        }}
+                                                        className="relative h-15 w-53 rounded-xl bg-white ring-1 ring-black/10 shadow-md flex items-center justify-center gap-x-3 z-10"
+                                                    >
+                                                        <motion.div
+                                                            className="w-8.5 h-8.5 rounded-full relative overflow-hidden ring-1 ring-black/10 bg-black flex items-center justify-center z-10"
+                                                            initial={{
+                                                                opacity: 0,
+                                                                scale: 0.9,
+                                                                filter: 'blur(4px)',
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                scale: 1,
+                                                                filter: 'blur(0px)',
+                                                            }}
+                                                            exit={{
+                                                                opacity: 0,
+                                                                scale: 0.9,
+                                                                filter: 'blur(4px)',
+                                                            }}
+                                                            transition={{ duration: 0.35 }}
+                                                        >
+                                                            <Image
+                                                                src="/images/SOLANA.svg"
+                                                                alt="logo"
+                                                                fill
+                                                                className="object-contain p-2"
+                                                            />
+                                                        </motion.div>
+
+                                                        <div className="flex flex-col -space-y-1 text-dark-base text-xl z-10">
+                                                            <div>Solana staking</div>
+                                                            <div className="text-xs text-black/50 tracking-wide">
+                                                                EASY MONEY
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                </div>
 
                                                 <div
                                                     onMouseEnter={() => setShowAIWords(true)}
@@ -201,7 +255,7 @@ export default function FeaturesSection() {
                                                     <div className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-black/10 shadow-md shadow-black/5">
                                                         <VoiceIcon
                                                             size={25}
-                                                            className="animate-pulse text-red-500 pr-px"
+                                                            className="text-dark-base group-hover:text-red-500 pr-px transition-colors transform duration-300"
                                                             animate
                                                         />
                                                     </div>
