@@ -102,8 +102,6 @@ export default class QuizManager {
 
     public async publish_event_to_redis(session_id: string, event: PubSubMessageTypes) {
         try {
-            console.log('[REDIS PUBLISH]', 'game_session:' + session_id, event.payload);
-
             const key = this.get_redis_key(session_id);
             await this.publisher.publish(key, JSON.stringify(event));
         } catch (err) {

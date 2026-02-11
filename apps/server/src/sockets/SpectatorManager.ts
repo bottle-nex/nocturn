@@ -67,12 +67,9 @@ export default class SpectatorManager {
         ws: CustomWebSocket,
         payload: LiveGameTokenPayload,
     ): Promise<void> {
-        console.log('[SPECTATOR CONNECT ENTRY]', payload.userId, payload.gameSessionId);
-
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
 
         if (!is_new_spectator_allowed) {
-            console.log('no new spectatirs are allowed');
             ws.close(
                 socket_codes.SPECTATOR_LIMIT_REACHED,
                 'New spectators are not allowed at this time',
@@ -83,7 +80,6 @@ export default class SpectatorManager {
         const is_valid_spectator = await this.validateSpectatorInDb(payload.quizId, payload.userId);
 
         if (!is_valid_spectator) {
-            console.log('not a valid spec');
             ws.close();
             return;
         }
@@ -104,20 +100,17 @@ export default class SpectatorManager {
         }
 
         this.session_spectators_mapping.get(payload.gameSessionId)?.add(new_spectator_socket_id);
-        console.log(
-            '[SPECTATOR REGISTERED]',
-            payload.gameSessionId,
-            Array.from(this.session_spectators_mapping.get(payload.gameSessionId) ?? []),
-        );
 
         this.setup_message_handlers(ws);
 
         this.quizManager.onSpectatorConnect(payload);
+        if (!this.quiz_settings.quiz_settings_mapping.get(payload.gameSessionId)) {
+            await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
+        }
     }
 
     private cleanup_existing_spectator_socket(spectator_id: string, game_session_id: string) {
         const existing_spectator_socket_id = this.spectator_socket_mapping.get(spectator_id);
-        console.log('[SPECTATOR CLEANUP]', spectator_id, game_session_id);
 
         if (existing_spectator_socket_id) {
             const existing_socket = this.socket_mapping.get(existing_spectator_socket_id);
@@ -169,7 +162,6 @@ export default class SpectatorManager {
 
     private handle_spectator_message(ws: CustomWebSocket, message: any) {
         const { type, payload } = message;
-        console.log('spectator incoming message');
 
         switch (type) {
             case MESSAGE_TYPES.SPECTATOR_NAME_CHANGE:

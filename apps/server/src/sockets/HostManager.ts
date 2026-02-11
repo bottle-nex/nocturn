@@ -61,7 +61,6 @@ export default class HostManager {
         ws: CustomWebSocket,
         payload: LiveGameTokenPayload,
     ): Promise<void> {
-        console.log('INSIDE HOST HANDLE CONNECTION');
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
         if (!isValidHost) {
             ws.close();
@@ -84,7 +83,8 @@ export default class HostManager {
         this.socketMapping.set(ws.id, ws);
         this.sessionHostMapping.set(payload.gameSessionId, ws.id);
         this.setup_message_handlers(ws);
-        this.quizManager.onHostconnect(payload.gameSessionId, payload.quizId, ws.id);
+        await this.quizManager.onHostconnect(payload.gameSessionId, payload.quizId, ws.id);
+        await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -486,6 +486,8 @@ export default class HostManager {
         );
 
         // here call another function for processing the transaction of the winner if prize exists
+
+        this.quiz_settings.cleanup_session(game_session_id);
 
         if (!quiz.prizePool) {
             const rankers = final_scores.sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
