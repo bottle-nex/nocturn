@@ -32,12 +32,12 @@ export default function HostQuestionResultsRenderer() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        if (!isNextQuestionAvailable) {
-            setQuizEnded(true);
-            // alert(isNextQuestionAvailable);
-        }
-    }, [isNextQuestionAvailable]);
+    // useEffect(() => {
+    //     if (!isNextQuestionAvailable) {
+    //         setQuizEnded(true);
+    //         // alert(isNextQuestionAvailable);
+    //     }
+    // }, [isNextQuestionAvailable]);
 
     if (!currentQuestion || !gameSession) {
         return (

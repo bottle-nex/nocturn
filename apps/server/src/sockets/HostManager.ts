@@ -166,6 +166,8 @@ export default class HostManager {
             return;
         }
 
+        this.database_queue.update_question(question.id, { hintLaunched: true });
+
         const hint = question.hint;
         const hintPayload: PubSubMessageTypes = {
             type: MESSAGE_TYPES.HOST_EMITS_HINT,

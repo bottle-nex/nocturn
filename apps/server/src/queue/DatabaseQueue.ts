@@ -11,12 +11,14 @@ import {
     ChatReaction,
     Interactions,
     Response,
+    Question,
 } from '@nocturn/database';
 import RedisCache from '../cache/redis.cache';
 import { redisCacheInstance } from '../services/init.services';
 import { ReactorType } from '@nocturn/types';
 import { env } from '../configs/env';
 import { v4 as uuid } from 'uuid';
+import { success } from 'zod';
 const REDIS_URL = env.SERVER_REDIS_URL;
 
 interface CreateLifelineUsageJob {
@@ -89,6 +91,12 @@ interface CreateParticipantResponseJobType {
     };
 }
 
+interface UpdateQuestionJobType {
+    game_session_id: string;
+    question_id: string;
+    question: Prisma.QuestionUpdateInput;
+}
+
 export default class DatabaseQueue {
     private database_queue: Bull.Queue;
     private redis_cache: RedisCache;
@@ -139,6 +147,10 @@ export default class DatabaseQueue {
         this.database_queue.process(
             QueueJobTypes.CREATE_LIFELINE_USAGE,
             this.create_lifeline_usage_processor.bind(this),
+        );
+        this.database_queue.process(
+            QueueJobTypes.UPDATE_QUESTION,
+            this.update_question_processor.bind(this),
         );
     }
 
@@ -381,6 +393,36 @@ export default class DatabaseQueue {
         }
     }
 
+    private async update_question_processor(
+        job: Bull.Job,
+    ): Promise<{ success: boolean; question: Question } | { success: boolean; error: string }> {
+        try {
+            const { game_session_id, question_id, question }: UpdateQuestionJobType = job.data;
+
+            const updatedQuestion = await prisma.question.update({
+                where: {
+                    id: question_id,
+                },
+                data: question,
+            });
+
+            await this.redis_cache.set_quiz(game_session_id, {
+                
+            })
+
+            return {
+                success: true,
+                question: updatedQuestion,
+            };
+        } catch (error) {
+            console.error('Error while processing update question: ', error);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error',
+            };
+        }
+    }
+
     public async update_game_session(
         id: string,
         gameSession: any,
@@ -530,6 +572,24 @@ export default class DatabaseQueue {
         } catch (error) {
             console.error('Error checking lifeline usage:', error);
             return false;
+        }
+    }
+
+    public async update_question(
+        game_session_id: string,
+        question_id: string,
+        question: Prisma.QuestionUpdateInput,
+        options?: Partial<JobOption>,
+    ) {
+        try {
+            return await this.database_queue.add(
+                QueueJobTypes.UPDATE_QUESTION,
+                { game_session_id, question_id, question },
+                { ...this.default_job_options, ...options },
+            );
+        } catch (error) {
+            console.error('Error in updating question queue: ', error);
+            return;
         }
     }
 }
