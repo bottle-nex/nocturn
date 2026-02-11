@@ -51,6 +51,8 @@ export default class SubscriberManager {
             return;
         }
 
+        console.log('message from frontend is: ', message);
+
         switch (message.type) {
             case MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION:
                 this.broadcast_to_session(session_id, message, [

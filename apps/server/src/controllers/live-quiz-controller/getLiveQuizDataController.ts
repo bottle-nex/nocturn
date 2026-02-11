@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { parse } from 'cookie';
 import { prisma, QuizPhase } from '@nocturn/database';
-import { CookiePayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import QuizAction from '../../class/quizAction';
 import getChatsController from '../chat-controller/getChatsController';
 import ResponseWriter from '../../class/response_writer';
@@ -21,7 +21,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         const decoded = QuizAction.verifyCookie(token);
         if (typeof decoded !== 'object' || !decoded) return ResponseWriter.not_authorized(res);
 
-        const { quizId, gameSessionId, role, userId } = decoded as CookiePayload;
+        const { quizId, gameSessionId, role, userId } = decoded as LiveGameTokenPayload;
 
         if (!quizId || !gameSessionId || !role || !quizIdParams || quizIdParams !== quizId) {
             return ResponseWriter.not_authorized(res);
@@ -93,7 +93,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             });
 
             // currentQuestion might be null if all the questions are asked
-            const currentQ = quiz?.questions[0];
+            const currentQ = quiz?.questions?.[0];
 
             const gameSession = await tx.gameSession.findUnique({
                 where: { id: gameSessionId },

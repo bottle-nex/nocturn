@@ -46,7 +46,7 @@ export default function App(): JSX.Element {
                 </div>
             </div>
 
-            <div className="absolute top-2/3">
+            <div className="absolute top-[69%]">
                 <div className="relative z-20 w-230 h-14 ring-1 ring-black/10 rounded-full bg-light-alpha flex justify-between items-center px-6 shadow-sm">
                     <div className="text-neutral-400/80 text-sm">Create a quiz for me....</div>
 
