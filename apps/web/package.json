@@ -55,6 +55,7 @@
         "konva": "^9.3.22",
         "lenis": "^1.3.17",
         "lottie-react": "^2.4.1",
+        "lottie-web": "^5.13.0",
         "lucide-react": "^0.544.0",
         "moment": "^2.30.1",
         "motion": "^12.23.12",

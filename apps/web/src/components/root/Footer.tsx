@@ -59,9 +59,9 @@ export default function Footer() {
                         <div className="w-[87%] h-full p-2 flex justify-between">
                             <div className="bg-nprimary h-full w-full flex justify-between rounded-xl p-7 py-8 noise-bg shadow-sm">
                                 <div className="w-[30%] h-full flex flex-col justify-between">
-                                    <div className="text-7xl font-bold text-black tracking-tight">
+                                    <div className="text-7xl font-bold text-light-base tracking-tight">
                                         <div>NOCTURN</div>
-                                        <div className="text-xl tracking-normal font-semibold uppercase">
+                                        <div className="text-xl tracking-wide font-normal text-light-base/80 uppercase">
                                             Smart people love this app
                                         </div>
                                     </div>

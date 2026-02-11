@@ -260,7 +260,7 @@ export default function LandingNavbar() {
                                 duration: 0.15,
                                 ease: 'easeOut',
                             }}
-                            className="h-12 w-12 relative rounded-full border-[2px] border-nprimary overflow-hidden cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300 shadow-xs"
+                            className="h-12 w-12 relative rounded-full border-[2px] border-nprimary overflow-hidden cursor-pointer shadow-xs"
                             onClick={handleAuthClick}
                         >
                             <Image
@@ -275,7 +275,7 @@ export default function LandingNavbar() {
                 ) : (
                     <motion.button
                         onClick={() => setOpenSigninModal(true)}
-                        className="bg-[#09C92F] hover:bg-[#09C92F] text-dark-base text-[18px] h-12 w-25 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300"
+                        className="bg-alpha hover:bg-alpha text-light-base text-[18px] h-12 w-25 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300"
                     >
                         Sign In
                     </motion.button>
