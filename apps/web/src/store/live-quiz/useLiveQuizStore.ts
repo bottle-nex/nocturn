@@ -85,9 +85,8 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
     },
 
     removeQuestionFromQuiz: (id: string) => {
-
         const questions = get().quiz.questions;
-        if(!questions) return;
+        if (!questions) return;
 
         const matchedQuestion = get().quiz.questions.find((q) => q.id === id);
         if (!matchedQuestion) return;

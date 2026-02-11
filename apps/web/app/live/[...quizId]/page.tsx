@@ -12,7 +12,6 @@ import {
 import {
     CustomResponse,
     getLiveQuizDataResponse,
-    LiveQuizDataResponse,
     ParticipantType,
     SpectatorType,
     USER_TYPE,

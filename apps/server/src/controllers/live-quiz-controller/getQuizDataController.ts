@@ -4,13 +4,12 @@ import {
     NOCTURN_COOKIE_NAME,
     QuestionType,
     USER_TYPE,
-    getLiveQuizDataResponse,
 } from '@nocturn/types';
 import { parse } from 'cookie';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import QuizAction from '../../class/quizAction';
-import { HostScreen, prisma, QuizPhase } from '@nocturn/database';
+import { HostScreen, prisma } from '@nocturn/database';
 import getChatsController from '../chat-controller/getChatsController';
 
 export default async function getQuizDataController(req: Request, res: Response) {

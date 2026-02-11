@@ -17,14 +17,13 @@ export default function HostQuestionResultsRenderer() {
     const canvasWidth = useWidth(canvasRef);
     const {
         currentQuestion,
-        isNextQuestionAvailable,
         gameSession,
         updateGameSession,
         updateCurrentQuestion,
         quiz,
     } = useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
-    const [quizEnded, setQuizEnded] = useState<boolean>(false);
+    const [quizEnded, _setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults } = useWebSocket();
 
     useEffect(() => {

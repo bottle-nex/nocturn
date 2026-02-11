@@ -3,7 +3,7 @@ const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
 import participantJoinController from '../controllers/live-quiz-controller/participantJoinController';
-import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
+// import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import spectatorJoinController from '../controllers/live-quiz-controller/spectatorJoinController';
 import getLiveQuizSummarizedData from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
 import getSelectedQuestionDetails from '../controllers/live-quiz-controller/getSelectedQuestionDetails';

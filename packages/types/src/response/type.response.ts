@@ -20,7 +20,7 @@ export type ApiResponseData = {
   USER_QUIZ: UserQuizResponse;
   GET_REVIEW_DTO: GetReviewsResponse;
   GET_UN_ASKED_QUESTION: getUnAskedQuestionResponse;
-    GET_LIVE_QUIZ_DATA: getLiveQuizDataResponse;
+  GET_LIVE_QUIZ_DATA: getLiveQuizDataResponse;
 };
 
 export type ApiResponsePayload = {

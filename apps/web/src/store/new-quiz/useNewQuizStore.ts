@@ -81,6 +81,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
             imageUrl: '',
             quizId: '',
             isAsked: false,
+            hintLaunched: false,
         };
         set((state) => ({
             quiz: { ...state.quiz, questions: [...state.quiz.questions, question] },
