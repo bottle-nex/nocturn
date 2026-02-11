@@ -18,18 +18,23 @@ const feature_array: HomeFeaturesCard[] = [
         title: 'Create and Share',
         color: 'bg-[#66baff30]',
     },
-    { id: 2, image: '/icons/know-us/know-2.png', title: 'Discover New', color: 'bg-[#ffb24630]' },
+    {
+        id: 2,
+        image: '/icons/know-us/know-2.png',
+        title: 'Multiple Themes',
+        color: 'bg-[#ffb24630]',
+    },
     {
         id: 3,
         image: '/icons/know-us/know-4.png',
-        title: 'Track Your Progress',
+        title: 'Winners get prizes',
         color: 'bg-[#36ff7930]',
     },
-    { id: 4, image: '/icons/know-us/know-5.png', title: 'Invite Friends', color: 'bg-[#ff20202f]' },
+    { id: 4, image: '/icons/know-us/know-5.png', title: 'Infinite Users', color: 'bg-[#ff20202f]' },
     {
         id: 5,
         image: '/icons/know-us/know-3.png',
-        title: 'Track Your Progress',
+        title: 'Live leaderboards',
         color: 'bg-[#F0E9FF]',
     },
 ];
@@ -41,7 +46,7 @@ export default function HomeFeatures(): JSX.Element {
     return (
         <section className="w-full ml-1">
             <div className="flex items-center justify-start gap-x-3">
-                <h3 className="font-normal text-base">Features</h3>
+                <h3 className="text-base tracking-wide">Features</h3>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">

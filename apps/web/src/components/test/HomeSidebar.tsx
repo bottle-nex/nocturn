@@ -105,7 +105,7 @@ export default function HomeSidebar() {
 
     return (
         <aside
-            className="w-90 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-y-auto custom-scrollbar pt-4 flex flex-col justify-between"
+            className="w-90 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-hidden shrink-0 pt-4 flex flex-col justify-between"
             data-lenis-prevent
         >
             <div>
