@@ -4,7 +4,6 @@ import HomePanel from './HomePanel';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
 import MyQuizzesPanel from './MyQuizzesPanel';
 import FavouriteQuizzesPanel from './FavouriteQuizzesPanel';
-import AIChatBoxrevamp from '../home/AiChat/AIChatBoxrevamp';
 import SharedQuizPanel from './SharedQuizPanel';
 
 function renderPanel(activeTab: SidebarTab) {
@@ -28,9 +27,8 @@ export default function SidebarPanelRenderer() {
     const { activeTab } = useHomeSidebarStore();
 
     return (
-        <div className="relative w-full">
-            <AIChatBoxrevamp />
-
+        <div className="relative flex-1 h-full overflow-hidden">
+            {/* <AIChatBoxrevamp /> */}
             {renderPanel(activeTab)}
         </div>
     );

@@ -14,24 +14,11 @@ export default function Home() {
     const isTrashOpen = activeTab === SidebarTab.TRASH;
 
     return (
-        <div className="tracking-wider dark:bg-neutral-950 h-full w-screen overflow-x-hidden relative select-none">
+        <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden relative select-none">
             <div className="flex h-full">
                 <HomeSidebar />
                 <SidebarPanelRenderer />
             </div>
-
-            <div className="absolute bottom-8 right-10 w-10 h-10 liquid-metal-btn flex justify-center items-center">
-                <button className="liquid-metal-btn h-10 w-10 bg-red-500">hi there</button>
-                {/* <Image
-                    src={'/icons/ai.png'}
-                    alt="AI Icon"
-                    width={28}
-                    height={28}
-                    unoptimized
-                    className=" text-neutral-500 dark:text-neutral-400 dark:invert"
-                /> */}
-            </div>
-            {/* <AIChatBoxrevamp /> */}
 
             {preview && <PreviewQuiz quiz={quiz!} onPreviewClose={() => setPreview(false)} />}
 
