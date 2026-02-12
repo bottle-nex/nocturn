@@ -4,13 +4,11 @@
 // import NocturnLandingSection from '@/components/test/NocturnLandingSection';
 // import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import LandingNavbar from '@/components/revamp/LandingNavbar';
-import RevampSection from '@/components/revamp/RevampSection';
 import FeaturesSection from '@/components/test/FeaturesSection';
 import InstructionsSection from '@/components/test/InstructionsSection';
 import PricingComponent from '@/components/revamp/PricingComponent';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import Footer from '@/components/root/Footer';
-import HeroSection from '@/components/revamp/HeroSection';
 import LandingSection from '@/components/test/LandingSection';
 
 export default function Page() {
@@ -24,11 +22,11 @@ export default function Page() {
             {/* <NavbarTest /> */}
             <LandingNavbar />
             <LandingSection />
-            <RevampSection />
-            <FeaturesSection />
             <InstructionsSection />
+            {/* <RevampSection /> */}
+            <FeaturesSection />
             {/* <LandingCardComponent /> */}
-            <HeroSection />
+            {/* <HeroSection /> */}
             <PricingComponent />
             <BigAnimatedText />
             {/* <LandingHeroSection /> */}

@@ -1,3 +1,7 @@
+'use client';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+
 export function BlueFaceIllustration() {
     return (
         <svg
@@ -255,3 +259,85 @@ export function SolanaFunnyAnimatedIcon() {
         </svg>
     );
 }
+
+const AnimatedSvg: React.FC = () => {
+    const svgRef = useRef<SVGSVGElement>(null);
+    const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+    useEffect(() => {
+        if (!svgRef.current) return;
+
+        gsap.set(svgRef.current, { opacity: 1 });
+
+        // Intro timeline (runs once)
+        const intro = gsap.timeline({
+            onComplete: () => {
+                // Loop timeline starts AFTER intro finishes
+                const loop = gsap.timeline({ repeat: -1 });
+
+                loop
+                    // wait interval before rotating
+                    .to({}, { duration: 2 }) // <-- change interval here
+                    // rotate 180 degrees
+                    .to('.group3', {
+                        duration: 1,
+                        rotate: '+=90',
+                        ease: 'power2.inOut',
+                        transformOrigin: '124 124',
+                    });
+
+                tlRef.current = loop;
+            },
+        });
+
+        intro
+            .fromTo(
+                '.group3',
+                { transformOrigin: '124 124', rotate: -90, scale: 0.8 },
+                { duration: 1.2, rotate: 0, scale: 1, ease: 'expo.out' },
+                0,
+            )
+            .fromTo(
+                '#g3_mask rect',
+                {
+                    transformOrigin: (i: number) => ['0 124', '124 0', '124 124', '248 124'][i],
+                    scale: 0,
+                },
+                { duration: 0.6, scale: 1, ease: 'back.out(1.7)', stagger: 0.08 },
+                0.2,
+            );
+
+        tlRef.current = intro;
+
+        return () => {
+            tlRef.current?.kill();
+        };
+    }, []);
+
+    return (
+        <main className="svg-animation-container">
+            <svg
+                ref={svgRef}
+                id="svg-stage"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 248 248"
+            >
+                <g className="group3">
+                    <image
+                        href="https://assets.codepen.io/16327/flair-4.png"
+                        mask="url(#g3_mask)"
+                    />
+                </g>
+
+                <mask id="g3_mask" fill="#fff">
+                    <rect x="0" y="0" width="124" height="124" />
+                    <rect x="124" y="0" width="124" height="124" />
+                    <rect x="0" y="124" width="124" height="124" />
+                    <rect x="124" y="124" width="124" height="124" />
+                </mask>
+            </svg>
+        </main>
+    );
+};
+
+export default AnimatedSvg;
