@@ -1,0 +1,107 @@
+model Quiz {
+    id              String   @id @default(cuid())
+    title           String   @db.VarChar(50)
+    description     String?
+    theme           Template @default(CLASSIC)
+    participantCode String?  @unique
+    spectatorCode   String?  @unique
+    spectatorLink   String?
+
+    isFavourite Boolean?
+
+    prizePool Float // Maybe in lamports -> then Number
+    currency  String @default("SOL")
+
+    basePointsPerQuestion Int     @default(100)
+    pointsMultiplier      Float   @default(1.2)
+    timeBonus             Boolean @default(true)
+
+    eliminationThreshold Float @default(0.5)
+
+    questionTimeLimit     Int            @default(30)
+    breakBetweenQuestions Int            @default(5)
+    status                QuizStatus     @default(CREATED)
+    interactions          Interactions[]
+
+    isDeleted Boolean   @default(false)
+    deletedAt DateTime?
+
+    // deletedBy User <- if a collaborator/ moderator would be able to delete the quzi
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    scheduledAt DateTime?
+    startedAt   DateTime?
+    endedAt     DateTime?
+    hostId      String
+    host        User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+
+    autoSave          Boolean @default(true)
+    liveChat          Boolean @default(false)
+    spectatorMode     Boolean @default(false)
+    allowNewSpectator Boolean @default(true)
+
+    participants            Participant[]
+    spectators              Spectator[]
+    questions               Question[]
+    GameSession             GameSession?
+    chatMessage             ChatMessage[]
+    cdoBets                 CDOBets[]
+    quizViews               QuizViews[]
+    CollabSession           CollabSession?
+    collaboratorInvitations CollaboratorInvitation[]
+    aiChat                  AiQuizChatSession?
+
+    @@map("quizzes")
+}
+
+model QuizViews {
+    id       String   @id @default(cuid())
+    quizId   String
+    quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    userId   String
+    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    viewedAt DateTime @default(now())
+
+    @@unique([quizId, userId])
+    @@index([userId, viewedAt(sort: Desc)])
+    @@map("quiz_views")
+}
+
+model Question {
+    id            String   @id @default(cuid())
+    question      String
+    options       String[]
+    correctAnswer Int
+    explanation   String?
+    hint          String?
+
+    difficulty    Int           @default(1)
+    readingTime   Int           @default(7) // these will be in seconds
+    basePoints    Int           @default(100)
+    timeLimit     Int           @default(30) // these will be in seconds
+    imagePosition ImagePosition @default(RIGHT)
+
+    orderIndex   Int
+    imageUrl     String?
+    isAsked      Boolean @default(false)
+    hintLaunched Boolean @default(false)
+
+    quizId   String
+    quiz     Quiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    Response Response[]
+}
+
+model CDOBets {
+    id          String    @id @default(cuid())
+    quizId      String
+    quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    stakeAmount Int
+    betStatus   BetStatus
+
+    questionId    String
+    participantId String
+    participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+    @@map("cdo_bets")
+}

@@ -1,0 +1,174 @@
+
+enum QuizStatus {
+    CREATED
+    SCHEDULED
+    PUBLISHED
+    LIVE
+    COMPLETED
+    CANCELLED
+    PAYOUT_PENDING
+    PAYOUT_COMPLETED
+    NULL
+}
+
+enum Template {
+    CLASSIC
+    MODERN
+    PASTEL
+    NEON
+    YELLOW
+    GREEN
+    BLUE
+}
+
+enum Interactions {
+    THUMBS_UP
+    DOLLAR
+    BULB
+    HEART
+    SMILE
+}
+
+enum SessionStatus {
+    WAITING
+    LIVE
+    COMPLETED
+    PAUSED
+}
+
+enum ParticipantScreen {
+    LOBBY
+    COUNTDOWN
+    QUESTION_MOTIVATION
+    QUESTION_READING
+    QUESTION_ACTIVE
+    QUESTION_RESULTS
+    QUIZ_RESULTS
+}
+
+enum SpectatorScreen {
+    LOBBY
+    QUESTION_MOTIVATION
+    QUESTION_READING
+    QUESTION_ACTIVE
+    QUESTION_RESULTS
+    QUIZ_RESULTS
+}
+
+enum HostScreen {
+    LOBBY
+    QUESTION_PREVIEW
+    QUESTION_READING // 5 seconds
+    QUESTION_ACTIVE
+    QUESTION_RESULTS // will wait here for host for start next question
+    QUIZ_RESULTS
+}
+
+enum QuizPhase {
+    QUESTION_READING
+    QUESTION_ACTIVE
+    SHOW_RESULTS
+    WAITING_NEXT
+    QUIZ_RESULTS
+    TEST
+}
+
+enum ReactorType {
+    HOST
+    SPECTATOR
+}
+
+enum ImagePosition {
+    RIGHT
+    LEFT
+}
+
+enum BetStatus {
+    WON
+    PENDING
+    LOST
+}
+
+enum CollabRole {
+    HOST
+    EDITOR
+    VIEWER
+}
+
+enum CollaborationInvitationStatus {
+    PENDING
+    ACCEPTED
+    DECLINED
+    EXPIRED
+}
+
+enum AgentStep {
+    START
+    ASK_DIFFICULTY
+    WAIT_DIFFICULTY
+    PLANNING
+    GENERATE
+    REVISE
+    DONE
+}
+
+enum AiQuizChatRole {
+    SYSTEM
+    AGENT
+    USER
+}
+
+enum AiMessageElement {
+    DIFFICULTY
+    TITLE
+    QUIZ
+}
+
+// ================ PREMIUM ENUMS ================
+
+enum SubscriptionType {
+    FREE
+    PRO
+}
+
+enum SubscriptionStatus {
+    ACTIVE
+    TRIALING
+    PAST_DUE
+    CANCELLED
+    EXPIRED
+}
+
+enum BillingInterval {
+    MONTHLY
+    YEARLY
+}
+
+enum PaymentStatus {
+    PENDING
+    PROCESSING
+    SUCCESS
+    FAILED
+    REFUNDED
+}
+
+enum UsageResourceType {
+    QUIZ_CREATED
+    AI_GENERATION
+    COLLABORATOR_ADDED
+}
+
+enum WebhookStatus {
+    PENDING
+    PROCESSED
+    FAILED
+    SKIPPED
+}
+
+enum CheckoutSessionStatus {
+    PENDING
+    COMPLETED
+    EXPIRED
+    ABANDONED
+    FAILED
+}

@@ -1,0 +1,128 @@
+
+model GameSession {
+    id                   String        @id @default(cuid())
+    currentQuestionIndex Int           @default(0)
+    currentQuestionId    String?
+    status               SessionStatus @default(WAITING)
+
+    hostScreen        HostScreen        @default(LOBBY)
+    participantScreen ParticipantScreen @default(LOBBY)
+    spectatorScreen   SpectatorScreen   @default(LOBBY)
+
+    questionStartedAt DateTime?
+    questionEndsAt    DateTime?
+
+    lastEliminationAt Int?
+    nextEliminationAt Int?
+
+    totalParticipants  Int @default(0)
+    activeParticipants Int @default(0)
+    totalSpectators    Int @default(0)
+
+    avgResponseTime   Int   @default(0)
+    correctAnswerRate Float @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    currentPhase   QuizPhase? // e.g. QUESTION_READING, QUESTION_ACTIVE, SHOW_RESULTS
+    phaseStartTime DateTime? // when current phase started (absolute time from server)
+    phaseEndTime   DateTime?
+
+    quizId        String          @unique
+    quiz          Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    responses     Response[]
+    eliminations  Elimination[]
+    chatMessage   ChatMessage[]
+    lifelineUsage LifelineUsage[]
+
+    @@map("game_sessions")
+}
+
+model Response {
+    id             String  @id @default(cuid())
+    selectedAnswer Int
+    isCorrect      Boolean
+    timeToAnswer   Int
+    pointsEarned   Int
+
+    timeBonus   Int      @default(0)
+    streakBonus Int      @default(0)
+    answeredAt  DateTime @default(now())
+
+    participantId String
+    participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    questionId    String
+    question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    gameSessionId String
+    gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+
+    @@unique([participantId, questionId])
+    @@map("responses")
+}
+
+model Elimination {
+    id            String   @id @default(cuid())
+    participantId String
+    questionIndex Int
+    finalScore    Int
+    finalRank     Int
+    reason        String
+    eliminatedAt  DateTime @default(now())
+
+    gameSessionId String
+    gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+
+    @@map("eliminations")
+}
+
+model ChatMessage {
+    id String @id @default(cuid())
+
+    gameSessionId String
+    gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+
+    quizId String
+    quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+    senderId     String
+    senderRole   String
+    senderName   String
+    senderAvatar String?
+
+    message       String
+    chatReactions ChatReaction[]
+
+    repliedToId String?
+    repliedTo   ChatMessage?  @relation("Replies", fields: [repliedToId], references: [id])
+    replies     ChatMessage[] @relation("Replies")
+
+    createdAt DateTime @default(now())
+    editedAt  DateTime @updatedAt
+}
+
+model ChatReaction {
+    id String @id @default(cuid())
+
+    chatMessageId String
+    chatMessage   ChatMessage @relation(fields: [chatMessageId], references: [id])
+
+    reactorType   ReactorType
+    reactorName   String
+    reactorAvatar String
+    reaction      Interactions
+
+    reactedAt DateTime @default(now())
+}
+
+model LifelineUsage {
+    id            String      @id @default(cuid())
+    participantId String
+    participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    gameSessionId String
+    gameSession   GameSession @relation(fields: [gameSessionId], references: [id], onDelete: Cascade)
+    usedAt        DateTime    @default(now())
+
+    @@unique([participantId, gameSessionId])
+    @@map("lifeline_usage")
+}

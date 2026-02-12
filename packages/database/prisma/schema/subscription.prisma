@@ -1,0 +1,155 @@
+
+model SubscriptionTier {
+    id          String           @id @default(cuid())
+    name        SubscriptionType @unique
+    displayName String
+    description String?
+
+    priceMonthly Float
+    priceYearly  Float?
+    currency     String @default("INR")
+
+    maxQuizzesPerMonth       Int @default(-1) // -1 = unlimited
+    maxAiGenerationsPerMonth Int @default(5)
+    maxCollaborators         Int @default(1)
+    maxActiveQuizzes         Int @default(10)
+
+    advancedTemplates Boolean @default(false)
+    customBranding    Boolean @default(false)
+    prioritySupport   Boolean @default(false)
+    advancedAnalytics Boolean @default(false)
+
+    isActive  Boolean  @default(true)
+    sortOrder Int      @default(0)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    subscriptions    UserSubscription[]
+    checkoutSessions CheckoutSession[]
+
+    @@map("subscription_tiers")
+}
+
+model UserSubscription {
+    id     String @id @default(cuid())
+    userId String
+    tierId String
+
+    user User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    tier SubscriptionTier @relation(fields: [tierId], references: [id])
+
+    status          SubscriptionStatus @default(ACTIVE)
+    billingInterval BillingInterval    @default(MONTHLY)
+
+    // Dodo Payments integration
+    dodoSubscriptionId String? @unique
+    dodoCustomerId     String?
+
+    // Dates
+    currentPeriodStart DateTime
+    currentPeriodEnd   DateTime
+    cancelAt           DateTime?
+    trialStart         DateTime?
+    trialEnd           DateTime?
+
+    amount   Float
+    currency String @default("INR")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    payments        Payment[]
+    checkoutSession CheckoutSession?
+
+    @@index([userId, status])
+    @@index([dodoSubscriptionId])
+    @@map("user_subscriptions")
+}
+
+model Payment {
+    id             String  @id @default(cuid())
+    subscriptionId String?
+    userId         String
+
+    subscription UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+    user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    amount   Float
+    currency String        @default("INR")
+    status   PaymentStatus
+
+    dodoPaymentId String  @unique
+    dodoInvoiceId String?
+
+    failureReason String?
+    periodStart   DateTime?
+    periodEnd     DateTime?
+
+    paidAt    DateTime?
+    failedAt  DateTime?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    @@index([userId, status])
+    @@index([dodoPaymentId])
+    @@map("payments")
+}
+
+model WebhookEvent {
+    id String @id @default(cuid())
+
+    provider  String
+    eventType String
+    eventId   String @unique
+    payload   Json
+    signature String
+
+    status        WebhookStatus @default(PENDING)
+    processedAt   DateTime?
+    failureReason String?
+    retryCount    Int           @default(0)
+
+    receivedAt DateTime @default(now())
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@index([provider, eventType])
+    @@index([status, createdAt])
+    @@index([eventId])
+    @@map("webhook_events")
+}
+
+model CheckoutSession {
+    id String @id @default(cuid())
+
+    // Dodo Payments identifiers
+    dodoSessionId String @unique
+    checkoutUrl   String
+
+    // User context
+    userId String
+    tierId String
+
+    // Status tracking
+    status         CheckoutSessionStatus @default(PENDING)
+    subscriptionId String?               @unique
+
+    // Metadata
+    metadata Json?
+
+    // Relations
+    user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    tier         SubscriptionTier  @relation(fields: [tierId], references: [id])
+    subscription UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+    // Timestamps
+    expiresAt   DateTime
+    completedAt DateTime?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    @@index([userId, status])
+    @@index([dodoSessionId])
+    @@index([status, createdAt])
+    @@map("checkout_sessions")
+}
