@@ -1,0 +1,79 @@
+
+
+model User {
+    id            String  @id @default(cuid())
+    name          String
+    email         String  @unique
+    image         String?
+    walletAddress String? @unique
+
+    isVerified Boolean @default(false)
+    isActive   Boolean @default(true)
+
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    lastLoginAt DateTime @default(now())
+
+    Quiz Quiz[]
+
+    reviews   Review[]
+    quizViews QuizViews[]
+
+    hostedSessions          CollabSession[]          @relation("HostSessions")
+    collaborators           Collaborator[]
+    collaboratorInvitations CollaboratorInvitation[]
+    aiChats                 AiQuizChatSession[]
+
+    // Premium relationships
+    subscriptions    UserSubscription[]
+    payments         Payment[]
+    checkoutSessions CheckoutSession[]
+
+    // Premium fields (denormalized cache)
+    currentTier String?   @default("FREE")
+    isTrialing  Boolean   @default(false)
+    trialEndsAt DateTime?
+
+    @@map("hosts")
+}
+
+model Participant {
+    id                   String          @id @default(cuid())
+    nickname             String
+    avatar               String?
+    ipAddress            String?
+    isNameChanged        Boolean         @default(false)
+    warningCount         Int             @default(0)
+    isKicked             Boolean         @default(false)
+    isEliminated         Boolean         @default(false)
+    eliminatedAt         DateTime?
+    eliminatedAtQuestion String?
+    finalRank            Int?
+    totalScore           Int             @default(0)
+    correctAnswers       Int             @default(0)
+    longestStreak        Int             @default(0)
+    walletAddress        String?
+    quizId               String
+    quiz                 Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    Response             Response[]
+    lifelineUsage        LifelineUsage[]
+    cdoBets              CDOBets[]
+
+    @@map("participants")
+}
+
+model Spectator {
+    id            String   @id @default(cuid())
+    nickname      String
+    avatar        String?
+    isNameChanged Boolean  @default(false)
+    warningCount  Int      @default(0)
+    isKicked      Boolean  @default(false)
+    ipAddress     String?
+    connectionId  String?
+    joinedAt      DateTime @default(now())
+    quizId        String
+    quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+    @@map("spectators")
+}

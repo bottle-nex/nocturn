@@ -1,0 +1,49 @@
+model Collaborator {
+    id String @id @default(cuid())
+
+    sessionId String
+    userId    String
+    role      CollabRole @default(VIEWER)
+    isBlocked Boolean    @default(false)
+    color     String
+    joinedAt  DateTime?
+
+    session CollabSession @relation(fields: [sessionId], references: [id])
+    user    User          @relation(fields: [userId], references: [id])
+
+    @@unique([sessionId, userId])
+}
+
+model CollaboratorInvitation {
+    id    String @id @default(cuid())
+    email String
+
+    sessionId String
+    quizId    String
+    role      CollabRole                    @default(VIEWER)
+    status    CollaborationInvitationStatus @default(PENDING)
+    invitedBy String
+
+    invitedAt  DateTime  @default(now())
+    acceptedAt DateTime?
+
+    quiz    Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    inviter User @relation(fields: [invitedBy], references: [id])
+
+    @@unique([sessionId, email])
+}
+
+model CollabSession {
+    id     String @id @default(cuid())
+    hostId String
+    quizId String @unique
+
+    host          User           @relation("HostSessions", fields: [hostId], references: [id])
+    quiz          Quiz           @relation(fields: [quizId], references: [id])
+    collaborators Collaborator[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("collab_sessions")
+}
