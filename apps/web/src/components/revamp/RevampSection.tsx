@@ -1,18 +1,8 @@
 'use client';
-import { CgClose } from 'react-icons/cg';
-import { useState } from 'react';
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useSpring  } from 'framer-motion';
 import Image from 'next/image';
-import { Input } from '../ui/input';
-import { FiArrowUp } from 'react-icons/fi';
-import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 export default function RevampSection() {
-    const [expanded, setExpanded] = useState<boolean>(false);
-    const [quizCode, setQuizCode] = useState<string>('');
-    const router = useRouter();
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -33,30 +23,16 @@ export default function RevampSection() {
         mouseY.set(y);
     }
 
-    async function handleJoinQuiz() {
-        if (!quizCode.trim()) return;
-
-        try {
-            const quizId = await userQuizAction.joinQuiz(quizCode.trim());
-            setQuizCode('');
-
-            if (!quizId) return;
-            router.push(`/live/${quizId}`);
-        } catch (err) {
-            console.error('Failed to join quiz', err);
-        }
-    }
-
     return (
         <div
             onMouseMove={handleMouseMove}
-            className="w-screen h-screen bg-white text-dark-base flex justify-center items-center relative pb-30 overflow-hidden"
+            className="w-screen h-fit bg-white text-dark-base flex justify-center items-center relative pt-30 overflow-hidden"
         >
-            <div className="absolute left-1/2 -translate-x-1/2 -bottom-80">
+            {/* <div className="absolute left-1/2 -translate-x-1/2 -bottom-80">
                 <div className="w-260 h-175 overflow-hidden relative flip">
                     <Image src="/illustrations/img.png" alt="" fill className="object-cover" />
                 </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-col max-w-240 items-center text-center gap-y-3 relative">
                 <motion.div
@@ -95,7 +71,7 @@ export default function RevampSection() {
                     </div>
                 </div>
 
-                <div className="absolute top-88 right-[32%]">
+                {/* <div className="absolute top-88 right-[32%]">
                     <div className="w-30 h-15 overflow-hidden relative scale-x-[-1] rotate-8">
                         <Image
                             src="/illustrations/arrow_in.png"
@@ -104,7 +80,7 @@ export default function RevampSection() {
                             className="object-cover"
                         />
                     </div>
-                </div>
+                </div> */}
 
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 16 }}
@@ -131,7 +107,7 @@ export default function RevampSection() {
                     And confidence should probably be earned.
                 </motion.div>
 
-                <div className="w-full flex justify-center mt-6 relative">
+                {/* <div className="w-full flex justify-center mt-6 relative">
                     <AnimatePresence mode="wait">
                         {!expanded ? (
                             <motion.button
@@ -200,7 +176,7 @@ export default function RevampSection() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </div>
+                </div> */}
             </div>
         </div>
     );

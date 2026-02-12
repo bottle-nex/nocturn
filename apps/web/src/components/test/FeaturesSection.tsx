@@ -4,10 +4,12 @@ import { FaThumbsUp } from 'react-icons/fa6';
 import { IoIosPeople } from 'react-icons/io';
 import VoiceIcon from '../ui/svg/VoiceIcon';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion   } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
 import { SiSolana } from 'react-icons/si';
+import SectionHeading from '../ui/SectionHeading';
+import { BiCool } from 'react-icons/bi';
 export default function FeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
     const [showInteractionsPanel, setShowInteractionsPanel] = useState<boolean>(false);
@@ -103,32 +105,15 @@ export default function FeaturesSection() {
     ];
 
     return (
-        <div className="w-screen h-screen bg-white flex justify-center items-center relative overflow-hidden">
-            <div className="absolute right-5 bottom-4 flex gap-x-3">
-                <motion.button
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.5 }}
-                    className="px-6 py-4 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md hover:shadow-lg transition-shadow flex flex-col items-center justify-center gap-y-1 cursor-pointer group"
-                >
-                    <span className="text-xs text-dark-base/50 tracking-wide">EXPLORE</span>
-                    <span className="text-base font-semibold text-dark-base group-hover:text-alpha transition-colors">
-                        Features
-                    </span>
-                </motion.button>
+        <div className="w-screen min-h-screen h-full bg-white flex flex-col justify-center items-center relative overflow-hidden pt-20 select-none">
+            <SectionHeading
+                title="Features that shine"
+                description="Create engaging live quizzes with real-time multiplayer experiences, collaborate with your team on quiz content, and publish to your audience. From creation to launch, manage every aspect of your quiz seamlessly."
+                icon={<BiCool className="size-4" />}
+                ticker="acknowledge us"
+            />
 
-                <motion.button
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.5 }}
-                    className="px-6 py-4 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md hover:shadow-lg transition-shadow flex flex-col items-center justify-center gap-y-1 cursor-pointer group"
-                >
-                    <span className="text-xs text-dark-base/50 tracking-wide">JOIN</span>
-                    <span className="text-base font-semibold text-dark-base group-hover:text-alpha transition-colors">
-                        Community
-                    </span>
-                </motion.button>
-            </div>
-
-            <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs">
+            <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs -mt-50">
                 <div className="w-290 h-290 aspect-square border border-dark-base/2 flex justify-center items-center rounded-[19rem] shadow-xs">
                     <div className="w-260 h-260 aspect-square border border-dark-base/3 flex justify-center items-center rounded-[17rem] shadow-xs">
                         <div className="w-230 h-230 aspect-square border border-dark-base/4 flex justify-center items-center rounded-[15rem] shadow-xs">

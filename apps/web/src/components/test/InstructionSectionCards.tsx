@@ -62,7 +62,7 @@ export function CreateCardContent(): JSX.Element {
         <motion.div
             initial="rest"
             whileHover="hover"
-            className="w-50 h-50 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 flex justify-center items-center relative overflow-hidden"
+            className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 flex justify-center items-center relative overflow-hidden"
         >
             <Icon
                 Icon={HiOutlineRocketLaunch}
@@ -162,7 +162,7 @@ export function PublishCardContent(): JSX.Element {
             initial="initial"
             whileHover="hover"
             className={cn(
-                'w-50 h-50 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl',
+                'w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl',
                 'bg-light-alpha shrink-0 flex flex-col justify-around',
                 'relative overflow-hidden p-5 px-6',
                 'transition-all duration-300 hover:-translate-y-1.5 hover:scale-105',
@@ -288,7 +288,7 @@ export function PublishCardContent(): JSX.Element {
 
 export function LaunchCardContent(): JSX.Element {
     return (
-        <div className="w-50 h-50 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 relative group">
+        <div className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 relative group">
             <div className="absolute top-3.5 left-3.5 bg-light-base flex justify-center items-center cursor-pointer hover:bg-neutral-200/70 transition-colors transform duration-200 text-neutral-500 px-2 py-0.5 text-xs rounded-sm ring-1 ring-neutral-200">
                 Stake SOL
             </div>
@@ -316,7 +316,7 @@ export function ManageCardContent(): JSX.Element {
         <motion.div
             initial="initial"
             whileHover="hover"
-            className="w-50 h-50 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-white shrink-0 overflow-hidden"
+            className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-white shrink-0 overflow-hidden"
         >
             <div className="relative p-4 h-full flex items-center justify-center">
                 <div className="relative w-full h-[180px]">
