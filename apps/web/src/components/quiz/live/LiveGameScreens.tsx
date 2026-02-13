@@ -1,5 +1,4 @@
 import { JSX } from 'react';
-import { templates } from '@/lib/templates';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { LivePage, useSocketActionStore } from '@/store/socket.actions/useSocketActionStore';
 import CanvasAccents from '@/components/utility/CanvasAccents';
@@ -8,7 +7,6 @@ import LiveUserRendererScreens from './LiveUserRendererScreens';
 export default function LiveGameScreens(): JSX.Element {
     const { state } = useSocketActionStore();
     const { quiz } = useLiveQuizStore();
-    const template = templates.find((template) => template.id === quiz.theme);
     function renderScreens() {
         switch (state) {
             case LivePage.SPECTATOR_LIMIT_REACHED:
@@ -29,7 +27,7 @@ export default function LiveGameScreens(): JSX.Element {
     }
     return (
         <main className="h-screen w-screen relative">
-            <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />
+            <CanvasAccents design={quiz.template?.accentType} accentColor={quiz.template?.accentColor} />
             {renderScreens()}
         </main>
     );
