@@ -19,7 +19,7 @@ export default function CanvasBars({
     currentQTemplate,
     getBarHeight,
 }: CanvasBarsProps) {
-    const barColor = currentQTemplate?.theme?.bars?.[idx] ?? '#4F46E5';
+    const barColor = currentQTemplate?.bars?.[idx] ?? '#4F46E5';
 
     return (
         <div

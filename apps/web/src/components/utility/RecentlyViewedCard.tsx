@@ -45,11 +45,11 @@ export default function RecentlyViewedCard({
                 onPointerMove={handlers.onPointerMove}
                 className={cn('w-88 aspect-video rounded-sm cursor-pointer', className)}
             >
-                {quiz?.quiz?.theme && (
+                {quiz?.quiz?.template && (
                     <div className="relative group">
                         <EmptyCanvas
                             className="w-full aspect-video rounded-[6px] outline-2 outline-black/40 dark:outline-white/40"
-                            template={quiz.quiz.theme}
+                            template={quiz.quiz.template}
                         />
 
                         <div className="absolute inset-0 flex p-[2px] rounded-[10px] overflow-hidden">

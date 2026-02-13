@@ -29,8 +29,9 @@ interface AnimatingEmoji {
 
 export default function LiveQuizInteractionTicker({ className }: LiveQuizInteractionTickerProps) {
     const { quiz } = useLiveQuizStore();
-    const [animatingEmojis, setAnimatingEmojis] = useState<AnimatingEmoji[]>([]);
+    const theme = quiz.template;
 
+    const [animatingEmojis, setAnimatingEmojis] = useState<AnimatingEmoji[]>([]);
     const { subscribeToHandler, unsubscribeToHandler, handleSendInteractionMessage } =
         useWebSocket();
 
@@ -89,8 +90,8 @@ export default function LiveQuizInteractionTicker({ className }: LiveQuizInterac
         const iconProps = {
             size,
             style: {
-                border: `1px solid ${quiz.theme.theme?.border_color}50`,
-                backgroundColor: `${quiz.theme.theme?.text_color}20`,
+                border: `1px solid ${theme.borderColor}50`,
+                backgroundColor: `${theme.textColor}20`,
             },
             className:
                 'border-[1px] dark:border-neutral-500 border-neutral-300 p-2 rounded-full hover:shadow-sm transition-all duration-200 ease-in-out cursor-pointer select-none',
@@ -143,7 +144,7 @@ export default function LiveQuizInteractionTicker({ className }: LiveQuizInterac
 
     return (
         <div
-            style={{ color: quiz.theme.theme?.text_color }}
+            style={{ color: theme.textColor }}
             className={cn('flex items-center gap-x-2 z-[20] relative', className)}
         >
             {allowedEmojiTypes.map((emojiType) => (

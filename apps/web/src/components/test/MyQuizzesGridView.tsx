@@ -6,7 +6,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
-import { QuizType, TemplateType } from '@nocturn/types';
+import { QuizType } from '@nocturn/types';
 import HeartButton from '../ui/HeartButton';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
@@ -15,7 +15,6 @@ import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
-    currTemplate: TemplateType;
     quiz: QuizType;
     isSelected?: boolean;
     toggleQuizSelection?: (quizId: string) => void;
@@ -25,7 +24,6 @@ export default function MyQuizzesGridView({
     quiz,
     isSelected,
     toggleQuizSelection,
-    currTemplate,
     formattedTime,
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
@@ -84,7 +82,7 @@ export default function MyQuizzesGridView({
                     'w-full aspect-video rounded-[8px] outline select-none ',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
-                template={currTemplate}
+                template={quiz.template}
             />
 
             <div className="flex items-center gap-x-2.5 pt-2">

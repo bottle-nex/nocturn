@@ -7,24 +7,27 @@ export default async function getAllTemplatesController(req: Request, res: Respo
         ResponseWriter.not_authorized(res);
         return;
     }
-    console.log('controller hit');
 
     try {
         const templates = await prisma.template.findMany({
             select: {
                 id: true,
                 name: true,
-                theme: true,
+                backgroundColor: true,
+                textColor: true,
+                borderColor: true,
+                accentType: true,
+                accentColor: true,
+                bars: true,
+                src: true,
             },
         });
-        console.log('templates in db are: ', templates);
 
         if (!templates) {
             ResponseWriter.not_found(res, 'Templates not found');
             return;
         }
 
-        console.log('templates are: ', templates);
         ResponseWriter.success(res, templates, 'Fetched templates successfully');
         return;
     } catch (error) {

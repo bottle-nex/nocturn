@@ -29,7 +29,7 @@ export default function HostQuestionActiveFooter(): JSX.Element {
         <div
             style={{
                 zIndex: 100,
-                color: quiz.theme.theme?.text_color,
+                color: quiz.template.textColor,
             }}
             className="absolute bottom-4 left-4 flex items-center justify-start gap-x-4 w-fit"
         >
@@ -62,8 +62,8 @@ export default function HostQuestionActiveFooter(): JSX.Element {
                             strokeWidth={0.8}
                             className="w-6 h-6 rounded-full p-1.5"
                             style={{
-                                border: `1px solid ${quiz.theme.theme?.border_color}50`,
-                                backgroundColor: `${quiz.theme.theme?.text_color}20`,
+                                border: `1px solid ${quiz.template.borderColor}50`,
+                                backgroundColor: `${quiz.template.backgroundColor}20`,
                             }}
                         />
                         {hintLaunched ? 'hint launched' : 'launch hint'}

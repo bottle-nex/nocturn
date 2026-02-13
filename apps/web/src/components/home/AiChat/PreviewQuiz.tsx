@@ -72,7 +72,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
     const initialTheme = templates.find((t) => t.id === quiz?.templateId) ?? templates[0];
 
     const [currentTheme, setCurrentTheme] = useState<TemplateType>(initialTheme);
-    const [previewTheme, setPreviewTheme] = useState<TemplateType | null>(null);
+    const [_previewTheme, setPreviewTheme] = useState<TemplateType | null>(null);
     const [themePanel, setThemePanel] = useState<boolean>(false);
 
     const router = useRouter();
@@ -81,7 +81,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
         router.push(`/new/${quiz?.id}`);
     }
 
-    const activeTheme = previewTheme ?? currentTheme;
+    // const activeTheme = previewTheme ?? currentTheme;
 
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
@@ -161,7 +161,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
                                         onClick={() => setCurrentQuestion(q)}
                                         currentQuestionIndex={currentQuestion?.orderIndex || 1}
                                         orderIndex={q.orderIndex}
-                                        template={activeTheme}
+                                        template={quiz.template}
                                         question={q}
                                         collaboratorHighlight={cn('rounded-beta ')}
                                     />
@@ -172,7 +172,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
 
                     <div className="w-150 ">
                         <EmptyCanvas
-                            template={activeTheme}
+                            template={quiz!.template!}
                             question={currentQuestion?.question}
                             options={currentQuestion?.options}
                             className={cn(

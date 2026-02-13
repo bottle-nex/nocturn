@@ -23,8 +23,6 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
 
     const canvasWidth = useWidth(canvasRef);
 
-    const theme = quiz?.theme?.theme;
-
     useEffect(() => {
         if (copied) {
             const t = setTimeout(() => setCopied(false), 2000);
@@ -36,11 +34,13 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
         setCurrentOn(SELECTION_MODE.CANVAS);
     }
 
+    const theme = quiz.template;
+
     return (
         <div
             ref={canvasRef}
             style={{
-                color: theme?.text_color ?? '#000',
+                color: theme?.textColor ?? '#000',
                 boxSizing: 'border-box',
             }}
             onClick={canvasTapHandler}
@@ -50,11 +50,11 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 className,
             )}
         >
-            <CanvasAccents design={theme?.accent_type} accentColor={theme?.accent_color} />
+            <CanvasAccents design={theme?.accentType} accentColor={theme?.accentColor} />
 
             <div
                 style={{
-                    backgroundColor: theme?.background_color ?? '#196cff',
+                    backgroundColor: theme?.backgroundColor ?? '#196cff',
                 }}
                 className="h-full rounded-md relative flex flex-col"
             >

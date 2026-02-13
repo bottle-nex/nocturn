@@ -114,8 +114,8 @@ export default function MiniCanvas({
                 )}
                 <div
                     style={{
-                        backgroundColor: template?.theme.background_color,
-                        color: template?.theme.text_color,
+                        backgroundColor: template?.backgroundColor,
+                        color: template?.textColor,
                     }}
                     className="w-full h-full rounded-sm flex justify-center items-center relative group"
                 >
@@ -134,8 +134,8 @@ export default function MiniCanvas({
                     </div>
                     <CanvasAccents
                         className="rounded"
-                        design={template?.theme.accent_type}
-                        accentColor={template?.theme.accent_color}
+                        design={template?.accentType}
+                        accentColor={template?.accentColor}
                     />
                     <div className="text-xs">{preview}</div>
                 </div>

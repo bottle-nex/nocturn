@@ -13,6 +13,8 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function HostQuestionPreviewFooter() {
     const { quiz, currentQuestion, updateQuiz, updateCurrentQuestion } = useLiveQuizStore();
+    const theme = quiz.template;
+
     const { session } = useUserSessionStore();
     const [openExplanation, setOpenExplanation] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -210,8 +212,8 @@ export default function HostQuestionPreviewFooter() {
                             onClick={handlePreviousQuestion}
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${quiz.theme.theme.border_color}50`,
-                                backgroundColor: `${quiz.theme.theme.text_color}20`,
+                                border: `1px solid ${theme.borderColor}50`,
+                                backgroundColor: `${theme.textColor}20`,
                                 opacity: isPrevDisabled ? 0.5 : 1,
                             }}
                             size={32}
@@ -226,8 +228,8 @@ export default function HostQuestionPreviewFooter() {
                         <FaLightbulb
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${quiz.theme.theme.border_color}50`,
-                                backgroundColor: `${quiz.theme.theme.text_color}20`,
+                                border: `1px solid ${theme.borderColor}50`,
+                                backgroundColor: `${theme.textColor}20`,
                             }}
                             size={32}
                             className="rounded-full p-1.5 cursor-pointer"
@@ -245,8 +247,8 @@ export default function HostQuestionPreviewFooter() {
                             onClick={handleNextQuestion}
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${quiz.theme.theme.border_color}50`,
-                                backgroundColor: `${quiz.theme.theme.text_color}20`,
+                                border: `1px solid ${theme.borderColor}50`,
+                                backgroundColor: `${theme.textColor}20`,
                                 opacity: isNextDisabled ? 0.5 : 1,
                             }}
                             size={32}

@@ -62,7 +62,7 @@ export default function CanvasOptions() {
                             option={option}
                             votes={votes}
                             currentQ={currentQ}
-                            currentQTemplate={quiz.theme}
+                            currentQTemplate={quiz.template}
                             getBarHeight={getBarHeight}
                         />
                     )) || []}

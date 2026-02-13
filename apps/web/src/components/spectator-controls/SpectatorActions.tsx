@@ -109,7 +109,7 @@ export default function SpectatorActions({ onExpandChange }: SpectatorActionsPro
     };
 
     return (
-        <div className="h-full" style={{ color: quiz.theme.theme?.text_color }}>
+        <div className="h-full" style={{ color: quiz.template.textColor }}>
             <div className={cn(`fixed bottom-3 z-50 flex gap-1 border rounded-3xl p-2 right-4`)}>
                 <SpectatorControls
                     onClickPeople={() => {

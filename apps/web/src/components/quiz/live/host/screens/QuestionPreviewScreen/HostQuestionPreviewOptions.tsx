@@ -24,7 +24,7 @@ export default function HostQuestionPreviewOptions() {
                             className="w-full rounded-tr-md sm:rounded-tr-2xl transition-all duration-1000 ease-in-out border border-white/20 z-50"
                             style={{
                                 height: 8,
-                                backgroundColor: `${liveQuiz.theme.theme?.bars[idx]}` || '#4F46E5',
+                                backgroundColor: `${liveQuiz.template.bars[idx]}` || '#4F46E5',
                             }}
                         />
                         <div className="mt-1 sm:mt-2 min-h-[1.5rem] sm:min-h-[2rem] flex items-center justify-center w-full">

@@ -140,7 +140,6 @@ export default function MyQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={isSelected}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );
@@ -158,7 +157,6 @@ export default function MyQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={isSelected}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );

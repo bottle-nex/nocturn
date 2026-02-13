@@ -16,7 +16,7 @@ export default function Options() {
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-    const bars = quiz?.theme?.theme?.bars ?? [];
+    const bars = quiz?.template.bars ?? [];
 
     const handleCorrectAnswerChange = (idx: number) => {
         editQuestionAndBroadcast(currentQuestionIndex, {

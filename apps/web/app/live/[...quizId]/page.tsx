@@ -25,13 +25,12 @@ import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
 
 export interface NewProps {
-    params: Promise<{
-        quizId: string;
-    }>;
+    params: Promise<{ quizId: string }>;
 }
 
 export default function New({ params }: NewProps) {
-    const { quizId } = use(params);
+    const resolvedParams = use(params);
+    const quizId = resolvedParams.quizId;
     const router = useRouter();
 
     const {
@@ -49,7 +48,7 @@ export default function New({ params }: NewProps) {
     const { setParticipants } = useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
 
-    useEffect(() => {
+        useEffect(() => {
         async function getLiveData() {
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(

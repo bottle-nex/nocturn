@@ -104,22 +104,30 @@ async function migrateExistingUsers() {
 // <---------------- TEMPLATE SEEDING ---------------->
 async function seedTemplates() {
   console.log("Seeding templates...");
-
   for (const t of templates) {
     await prisma.template.upsert({
-      where: { id: t.id },
+      where: { name: t.name },
       update: {
-        name: t.name,
-        theme: t as unknown as Prisma.InputJsonValue,
+        backgroundColor: t.backgroundColor,
+        textColor: t.textColor,
+        borderColor: t.borderColor,
+        accentType: t.accentType,
+        accentColor: t.accentColor,
+        bars: t.bars,
+        src: t.src,
       },
       create: {
-        id: t.id,
         name: t.name,
-        theme: t as unknown as Prisma.InputJsonValue,
+        backgroundColor: t.backgroundColor,
+        textColor: t.textColor,
+        borderColor: t.borderColor,
+        accentType: t.accentType,
+        accentColor: t.accentColor,
+        bars: t.bars,
+        src: t.src,
       },
     });
   }
-
   console.log("Templates synced successfully");
 }
 

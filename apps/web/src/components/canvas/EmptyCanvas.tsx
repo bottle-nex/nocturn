@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import CanvasAccents from '../utility/CanvasAccents';
 import { motion } from 'framer-motion';
@@ -23,7 +25,12 @@ export default function EmptyCanvas({
     noTruncate = false,
     autoAnimateBars = false,
 }: EmptyCanvasProps) {
-    const barColors = template.theme.bars || [];
+    const barColors = template.bars;
+    const backgroundColor = template.backgroundColor;
+    const textColor = template.textColor;
+    const accentType = template.accentType;
+    const accentColor = template.accentColor;
+
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [barHeights, setBarHeights] = useState<number[]>([]);
 
@@ -61,7 +68,7 @@ export default function EmptyCanvas({
             {question && options.length > 0 && (
                 <div className="absolute h-full w-full z-5 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
-                        style={{ color: template.theme.text_color }}
+                        style={{ color: textColor }}
                         className={cn(
                             'max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1',
                             !noTruncate && 'truncate',
@@ -69,9 +76,11 @@ export default function EmptyCanvas({
                     >
                         Q. {question}
                     </div>
+
                     <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-4 md:gap-x-4 px-0.5 sm:px-1 pr-1 sm:pr-2">
                         {options.map((opt, idx) => {
                             const color = barColors[idx % barColors.length];
+
                             return (
                                 <div
                                     key={idx}
@@ -79,9 +88,7 @@ export default function EmptyCanvas({
                                 >
                                     <motion.div
                                         className="w-full rounded-tr-md"
-                                        style={{
-                                            backgroundColor: color,
-                                        }}
+                                        style={{ backgroundColor: color }}
                                         animate={{
                                             height: `${barHeights[idx] || 5}%`,
                                         }}
@@ -90,8 +97,9 @@ export default function EmptyCanvas({
                                             ease: 'easeInOut',
                                         }}
                                     />
+
                                     <span
-                                        style={{ color: template.theme.text_color }}
+                                        style={{ color: textColor }}
                                         className={cn(
                                             'mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] text-center w-8 sm:w-10 md:w-12',
                                             !noTruncate && 'truncate',
@@ -109,18 +117,15 @@ export default function EmptyCanvas({
                     </div>
                 </div>
             )}
+
             <div
                 style={{
-                    backgroundColor: template.theme.background_color,
-                    color: template.theme.text_color,
+                    backgroundColor,
+                    color: textColor,
                 }}
                 className="w-full h-full rounded-md flex justify-center items-center relative group overflow-hidden"
             >
-                <CanvasAccents
-                    className=""
-                    design={template.theme.accent_type}
-                    accentColor={template.theme.accent_color}
-                />
+                <CanvasAccents className="" design={accentType} accentColor={accentColor} />
             </div>
         </div>
     );

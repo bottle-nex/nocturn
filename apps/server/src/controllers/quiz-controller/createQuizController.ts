@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { createQuizSchema, TemplateEnum } from '../../schemas/createQuizSchema';
+import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { prisma } from '@nocturn/database';
+import { TemplateEnum } from '@nocturn/types';
 
 export default async function createQuizController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -10,7 +11,6 @@ export default async function createQuizController(req: Request, res: Response) 
     }
 
     const { data, success } = createQuizSchema.safeParse(req.body);
-    console.log('data from frontend is: ', data);
 
     if (!success) {
         console.log('failed to parse the data');
@@ -18,15 +18,14 @@ export default async function createQuizController(req: Request, res: Response) 
         return;
     }
 
-    const { id: _ignored, questions, ...quizData } = data;
+    const { id: _ignoredId, templateId: _ignoredTemplateId, questions, ...quizData } = data;
 
     try {
         const db_template = await prisma.template.findUnique({
             where: { name: TemplateEnum.CLASSIC },
         });
-        console.log('template in db is: ', db_template);
 
-        if (!db_template || !db_template.theme) {
+        if (!db_template) {
             ResponseWriter.not_found(res, 'Template not found');
             return;
         }
@@ -35,7 +34,6 @@ export default async function createQuizController(req: Request, res: Response) 
             data: {
                 ...quizData,
                 templateId: db_template.id,
-                theme: db_template.theme,
                 hostId: req.user.id,
                 questions: {
                     create: questions.map((q) => ({
@@ -57,7 +55,6 @@ export default async function createQuizController(req: Request, res: Response) 
                 template: true,
             },
         });
-        console.log('quiz created is: ', quiz);
 
         ResponseWriter.success(res, { id: quiz.id });
         return;

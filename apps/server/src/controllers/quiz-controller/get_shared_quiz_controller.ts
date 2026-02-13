@@ -30,7 +30,7 @@ export default async function getSharedQuizController(req: Request, res: Respons
                 status: true,
                 scheduledAt: true,
                 createdAt: true,
-                theme: true,
+                template: true,
                 isFavourite: true,
                 host: {
                     select: {

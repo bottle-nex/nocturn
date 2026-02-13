@@ -7,7 +7,7 @@ export default function ParticipantQuestionActiveFooter(): JSX.Element {
     return (
         <div
             style={{
-                color: quiz.theme.theme?.text_color,
+                color: quiz.template.textColor,
             }}
             className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit"
         >

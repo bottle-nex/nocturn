@@ -52,7 +52,7 @@ export default function ParticipantControls({
             {allParticipantControls.map((control, index) => (
                 <ToolTipComponent content={control.tooltip} key={index}>
                     <Button
-                        style={{ color: quiz.theme.theme?.text_color }}
+                        style={{ color: quiz.template.textColor }}
                         variant="ghost"
                         onClick={control.onClick}
                         className="hover:scale-105 dark:hover:bg-transparent hover:bg-transparent transition-all duration-300 dark:hover"

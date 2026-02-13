@@ -5,7 +5,6 @@ model Quiz {
 
     templateId      String
     template        Template @relation(fields: [templateId], references: [id])
-    theme   Json
 
     participantCode String?  @unique
     spectatorCode   String?  @unique

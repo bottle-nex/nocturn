@@ -27,7 +27,7 @@ export default function AIChatBoxRevamp() {
     const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
     const router = useRouter();
 
-    const [currentTheme, setCurrentTheme] = useState<TemplateType | undefined>(quiz?.theme);
+    const [currentTheme, setCurrentTheme] = useState<TemplateType | undefined>(quiz?.template);
     // const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 

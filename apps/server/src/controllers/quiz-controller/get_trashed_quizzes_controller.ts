@@ -22,7 +22,7 @@ export default async function get_trashed_quizzes_controller(req: Request, res: 
                 title: true,
                 description: true,
                 prizePool: true,
-                theme: true,
+                template: true,
                 currency: true,
                 status: true,
                 scheduledAt: true,

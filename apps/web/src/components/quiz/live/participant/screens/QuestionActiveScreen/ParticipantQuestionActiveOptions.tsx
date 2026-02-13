@@ -37,7 +37,7 @@ export default function ParticipantQuestionActiveOptions() {
 
     if (!currentQuestion) return null;
 
-    const barColors = liveQuiz.theme.theme?.bars ?? (['#3b82f6'] as Hex[]);
+    const barColors = liveQuiz.template?.bars ?? (['#3b82f6'] as Hex[]);
     const canRequestLifeline =
         gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
         !hasUsedLifeline &&
@@ -87,7 +87,7 @@ export default function ParticipantQuestionActiveOptions() {
 
         return {
             boxShadow,
-            backgroundColor: liveQuiz.theme.theme?.background_color,
+            backgroundColor: liveQuiz.template.backgroundColor,
         };
     };
 

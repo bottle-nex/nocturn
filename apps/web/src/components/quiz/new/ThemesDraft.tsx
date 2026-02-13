@@ -1,7 +1,7 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { TemplateEnum, TemplateType } from '@nocturn/types';
+import { TemplateType } from '@nocturn/types';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
@@ -17,8 +17,8 @@ export default function ThemesDraft() {
 
     function changeThemeHandler(template: TemplateType) {
         updateQuizAndBroadcast({
-            template: template.id as TemplateEnum, // enum for persistence
-            theme: template, // full object for rendering
+            template: template,
+            templateId: template.id,
         });
     }
 
@@ -46,7 +46,7 @@ export default function ThemesDraft() {
                 </div>
             </div>
 
-            <div className="mt-4 px-2 pb-4 overflow-y-auto flex-1">
+            <div className="mt-4 px-2 pb-4 pt-2 overflow-y-auto flex-1">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-6">
                     {templates.map((template) => (
                         <div
@@ -57,7 +57,7 @@ export default function ThemesDraft() {
                             <EmptyCanvas
                                 className={cn(
                                     'w-full aspect-video rounded-[8px] outline-black/40 dark:outline-white/40',
-                                    quiz.theme?.id === template.id &&
+                                    quiz.template?.id === template.id &&
                                         'outline-2 outline-indigo-800',
                                 )}
                                 template={template}

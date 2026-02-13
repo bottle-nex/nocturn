@@ -35,7 +35,7 @@ export default function QuestionPallete() {
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
-                currentQTemplate={quiz.theme}
+                currentQTemplate={quiz.template}
             />
             <SmallQuestionPallete
                 quiz={quiz}
@@ -43,7 +43,7 @@ export default function QuestionPallete() {
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
-                currentQTemplate={quiz.theme}
+                currentQTemplate={quiz.template}
             />
         </>
     );

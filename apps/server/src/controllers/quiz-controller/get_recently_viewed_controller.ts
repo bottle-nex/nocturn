@@ -26,7 +26,7 @@ export default async function getRecentlyViewedController(req: Request, res: Res
                         status: true,
                         scheduledAt: true,
                         createdAt: true,
-                        theme: true,
+                        template: true,
                         isFavourite: true,
                         host: {
                             select: {

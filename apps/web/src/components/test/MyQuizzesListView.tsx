@@ -1,4 +1,4 @@
-import { QuizType, TemplateType } from '@nocturn/types';
+import { QuizType } from '@nocturn/types';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,6 @@ import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesListViewProps {
     formattedTime: string;
-    currTemplate: TemplateType;
     quiz: QuizType;
     isSelected: boolean;
     toggleQuizSelection: (quizId: string) => void;
@@ -18,7 +17,6 @@ interface MyQuizzesListViewProps {
 
 export default function MyQuizzesListView({
     formattedTime,
-    currTemplate,
     quiz,
     isSelected,
     toggleQuizSelection,
@@ -41,11 +39,11 @@ export default function MyQuizzesListView({
             )}
         >
             <div className="flex items-center gap-x-3 max-w-[85%] w-full h-full">
-                {currTemplate && (
+                {quiz.template && (
                     <div className="relative group flex items-center gap-x-2">
                         <EmptyCanvas
                             className={cn('w-20 h-14 !rounded-[8px] cursor-auto')}
-                            template={currTemplate}
+                            template={quiz.template}
                         />
                         <div
                             onClick={(e) => {

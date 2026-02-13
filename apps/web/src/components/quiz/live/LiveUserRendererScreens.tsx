@@ -13,7 +13,7 @@ export default function LiveUserRendererScreens() {
     const { currentUserType } = useUserRoleStore();
     const { quiz } = useLiveQuizStore();
 
-    const template = quiz?.theme;
+    const theme = quiz.template;
 
     useWebSocket();
     useSubscribeEventHandlers();

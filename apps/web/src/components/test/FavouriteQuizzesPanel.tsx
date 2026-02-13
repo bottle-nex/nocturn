@@ -156,7 +156,6 @@ export default function FavouriteQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={selectedQuizIds.has(quiz.id)}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );
@@ -173,7 +172,6 @@ export default function FavouriteQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={selectedQuizIds.has(quiz.id)}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );

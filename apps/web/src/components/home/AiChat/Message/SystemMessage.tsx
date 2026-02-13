@@ -38,7 +38,7 @@ function TitleMessage({ title }: { title: string }) {
 
 function QuizMessage() {
     const { quiz, preview, setPreview } = useAiChatStore();
-    if (!quiz || !quiz.theme) return null;
+    if (!quiz || !quiz.template) return null;
 
     return (
         <div className="max-w-[400px] w-full ">
@@ -50,7 +50,7 @@ function QuizMessage() {
                     'max-w-[300px] w-full aspect-video rounded-[10px] outline-2 select-none',
                     'outline-black/40 dark:outline-white/40',
                 )}
-                template={quiz.theme}
+                template={quiz.template}
             />
         </div>
     );

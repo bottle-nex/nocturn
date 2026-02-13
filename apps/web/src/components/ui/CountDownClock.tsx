@@ -90,7 +90,7 @@ export default function CountDownClock(props: CountDownClockProps) {
 
     return (
         <div
-            style={{ color: template?.text_color }}
+            style={{ color: template?.textColor }}
             className={cn(
                 'flex items-center space-x-2 text-4xl font-bold text-white rounded-xl px-4 py-3',
                 // 'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha',

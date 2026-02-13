@@ -16,7 +16,7 @@ export default function SpectatorQuestionActiveOptions() {
     const { handleSpectatorLifelineResponse } = useWebSocket();
 
     const options = Array.isArray(currentQuestion?.options) ? currentQuestion.options : [];
-    const barColors = liveQuiz.theme.theme?.bars ?? ['#3b82f6'];
+    const barColors = liveQuiz.template.bars;
     const maxHeight = 12;
 
     const canVote = activeLifelineSession?.isActive && spectatorOwnVote === null;
@@ -73,7 +73,7 @@ export default function SpectatorQuestionActiveOptions() {
                                     !canVote && !isSelected && 'opacity-75 cursor-not-allowed',
                                 )}
                                 style={{
-                                    backgroundColor: liveQuiz.theme.theme?.background_color,
+                                    backgroundColor: liveQuiz.template.backgroundColor,
                                     boxShadow: isSelected
                                         ? '0 0 0 2px #10b981, 0 8px 30px rgba(16, 185, 129, 0.2)'
                                         : '0 4px 12px rgba(0,0,0,0.15)',

@@ -65,7 +65,7 @@ interface LiveQuizStore {
 }
 
 export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
-    quiz: {} as QuizType,
+    quiz: null as unknown as QuizType,
     updateQuiz: (updatedFields: Partial<QuizType>) => {
         set((state) => {
             const updatedQuiz: QuizType = { ...state.quiz, ...updatedFields };

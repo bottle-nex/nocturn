@@ -214,7 +214,7 @@ export default function HomeTrashPanel() {
                                                         'w-full aspect-video rounded-[8px] outline-2 select-none cursor-default',
                                                         'outline-black/40 dark:outline-white/40',
                                                     )}
-                                                    template={quiz.theme}
+                                                    template={quiz.template}
                                                 />
 
                                                 <div className="flex items-center gap-x-2.5 mt-3 w-full overflow-hidden">

@@ -50,7 +50,6 @@ export default function SharedQuizPanel() {
                         <MyQuizzesGridView
                             key={quiz.id}
                             quiz={quiz}
-                            currTemplate={quiz.theme}
                             formattedTime={formattedTime}
                         />
                     );
