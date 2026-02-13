@@ -1,13 +1,14 @@
 'use client';
-
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { RxCross1 } from 'react-icons/rx';
 import { Checkbox } from '@/components/ui/checkbox';
 import { templates } from '@/lib/templates';
-import { cn } from '@/lib/utils';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { MdOutlineDragIndicator } from 'react-icons/md';
 import ColoredInput from '@/components/utility/ColoredInput';
-import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function Options() {
     const { quiz, currentQuestionIndex } = useNewQuizStore();
@@ -17,11 +18,11 @@ export default function Options() {
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-    const handleCorrectAnswerChange = (idx: number) => {
+    function handleCorrectAnswerChange(idx: number) {
         editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx, id: currentQ?.id });
     };
 
-    const handleInputChange = (value: string, index: number) => {
+    function handleInputChange(value: string, index: number) {
         if (!currentQ) return;
         const newOptions = [...currentQ.options];
         newOptions[index] = value;
@@ -32,15 +33,15 @@ export default function Options() {
         );
     };
 
-    const handleDragStart = (index: number) => {
+    function handleDragStart(index: number) {
         setDraggedIndex(index);
     };
 
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
         e.preventDefault();
     };
 
-    const handleDrop = (dropIndex: number) => {
+    function handleDrop(dropIndex: number) {
         if (draggedIndex === null || !currentQ || draggedIndex === dropIndex) return;
         const newOptions = [...currentQ.options];
         const [draggedItem] = newOptions.splice(draggedIndex, 1);
@@ -64,6 +65,22 @@ export default function Options() {
 
         setDraggedIndex(null);
     };
+
+    function handleDeleteOption(index: number) {
+        if (!currentQ || index === currentQ.correctAnswer) return;
+        const newOptions = [...currentQ.options];
+        newOptions.splice(index, 1);
+        let newCorrectAnswer = currentQ.correctAnswer;
+        if (index < currentQ.correctAnswer) {
+            newCorrectAnswer -= 1;
+        }
+
+        editQuestionAndBroadcast(currentQuestionIndex, {
+            options: newOptions,
+            correctAnswer: newCorrectAnswer,
+            id: currentQ.id,
+        });
+    }
 
     if (!currentQ?.options) return null;
 
@@ -95,6 +112,9 @@ export default function Options() {
                         value={option}
                         onChange={(val) => handleInputChange(val, idx)}
                     />
+                    <Button onClick={() => handleDeleteOption(idx)} disabled={currentQ.options.length === 1 || currentQ.correctAnswer === idx} className='bg-dark-base' variant={"ghost"} size={"icon"}>
+                        <RxCross1 className='size-3' />
+                    </Button>
                 </div>
             ))}
         </div>

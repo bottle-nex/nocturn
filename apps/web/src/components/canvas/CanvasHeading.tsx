@@ -115,7 +115,7 @@ export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
     }
 
     return (
-        <div className="absolute top-16 sm:top-17 left-1/2 -translate-x-1/2 w-[90%] z-30">
+        <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 w-[90%] z-30">
             <div
                 onClick={questionTapHandler}
                 className={cn('p-1 rounded-[10px]')}

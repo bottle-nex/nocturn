@@ -47,7 +47,7 @@ export default function CanvasOptions() {
     }
 
     return (
-        <div className="p-2 sm:p-4 pt-40 sm:pt-48 w-full h-full z-10">
+        <div className="p-2 sm:p-4 pt-40 sm:pt-40 w-full h-full z-10">
             <div className={cn('w-full h-full flex flex-col items-end justify-center')}>
                 <div
                     onClick={optionsTapHandler}

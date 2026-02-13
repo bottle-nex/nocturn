@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --minify --external:@prisma/client --external:express --external:jsonwebtoken --external:@aws-sdk/* --external:ioredis --external:ws --external:winston --external:zod --external:cookie-parser --external:cors --external:dotenv",
+    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outdir=dist --format=cjs --loader:.ts=ts --sourcemap --minify --external:@aws-sdk/* --external:@langchain/* --external:@prisma/client --external:@prisma/instrumentation --external:bcryptjs --external:bull --external:chalk --external:cookie --external:cookie-parser --external:cors --external:dodopayments --external:dotenv --external:express --external:ioredis --external:jsonwebtoken --external:langchain --external:nanoid --external:node-cron --external:uuid --external:ws --external:zod",
     "start": "node dist/index.js",
     "dev": "pnpm build && pnpm start",
     "lint": "eslint './src/**/*.{ts,js}'",

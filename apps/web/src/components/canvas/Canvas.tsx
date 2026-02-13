@@ -53,7 +53,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 style={{ backgroundColor: template?.background_color }}
                 className="bg-[#196cff] h-full rounded-md relative flex flex-col"
             >
-                <JoinQuizCodeTicker />
+                {/* <JoinQuizCodeTicker /> */}
                 <CanvasHeading currentQ={currentQ} />
 
                 <div className="flex-1 flex items-end justify-center mb-8">
