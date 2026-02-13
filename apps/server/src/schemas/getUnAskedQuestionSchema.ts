@@ -7,4 +7,9 @@ export const getUnAskedQuestionSchema = z.object({
         .transform(Number)
         .refine((v) => Number.isInteger(v) && v >= 0)
         .optional(),
+    before: z
+        .string()
+        .transform(Number)
+        .refine((v) => Number.isInteger(v) && v >= 0)
+        .optional(),
 });

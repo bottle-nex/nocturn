@@ -15,6 +15,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         const parsed_data = getUnAskedQuestionSchema.safeParse({
             quizId: req.params.quizId,
             after: req.query.after,
+            before: req.query.before,
         });
 
         if (!parsed_data.success) {
@@ -22,10 +23,11 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        const { quizId: quiz_id, after: questionAfterIndex } = parsed_data.data;
-
-        console.log("quizId: ", quiz_id);
-        console.log("after: ", questionAfterIndex);
+        const {
+            quizId: quiz_id,
+            after: questionAfterIndex,
+            before: questionBeforeIndex,
+        } = parsed_data.data;
 
         const quiz = await prisma.quiz.findUnique({
             where: {
@@ -47,72 +49,16 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        const result = await prisma.$transaction(async (tx) => {
-            // if questionAfterIndex is not provided then return a random question
-            if (!questionAfterIndex) {
-                const question = await tx.question.findFirst({
-                    where: {
-                        quizId: quiz_id,
-                        isAsked: false,
-                    },
-                    select: {
-                        id: true,
-                        question: true,
-                        options: true,
-                        hint: true,
-                        difficulty: true,
-                        basePoints: true,
-                        timeLimit: true,
-                        orderIndex: true,
-                        imageUrl: true,
-                        isAsked: true,
-                    },
-                });
-                console.log("question is found and after is not provided: ", question);
-                return question;
-            }
-
-            if (quiz._count.questions < questionAfterIndex) return null;
-
-            let question: Partial<QuestionType> | null;
-
-            const raw_question = await tx.question.findFirst({
-                where: {
-                    quizId: quiz_id,
-                    isAsked: false,
-                    orderIndex: {
-                        gt: questionAfterIndex,
-                    },
-                },
-                select: {
-                    id: true,
-                    question: true,
-                    options: true,
-                    hint: true,
-                    difficulty: true,
-                    basePoints: true,
-                    timeLimit: true,
-                    orderIndex: true,
-                    imageUrl: true,
-                    isAsked: true,
-                },
-            });
-
-            question = raw_question
-                ? {
-                      ...raw_question,
-                      hint: raw_question.hint ?? undefined,
-                      imageUrl: raw_question.imageUrl ?? undefined,
-                  }
-                : null;
-
-            if (!question) {
+        const question = await prisma.$transaction(async (tx) => {
+            if (questionAfterIndex || questionAfterIndex === 0) {
+                if (quiz._count.questions < questionAfterIndex) return null;
+                console.log('after: ', questionAfterIndex);
                 const raw_question = await tx.question.findFirst({
                     where: {
                         quizId: quiz_id,
                         isAsked: false,
                         orderIndex: {
-                            lt: questionAfterIndex,
+                            gt: questionAfterIndex,
                         },
                     },
                     select: {
@@ -132,20 +78,81 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     },
                 });
 
-                question = raw_question
+                const question: Partial<QuestionType> | null = raw_question
                     ? {
                           ...raw_question,
                           hint: raw_question.hint ?? undefined,
                           imageUrl: raw_question.imageUrl ?? undefined,
                       }
                     : null;
+
+                return question;
             }
 
+            if (questionBeforeIndex) {
+                if (questionBeforeIndex <= 0) return null;
+                console.log('before: ', questionBeforeIndex);
+                const raw_question = await tx.question.findFirst({
+                    where: {
+                        quizId: quiz_id,
+                        isAsked: false,
+                        orderIndex: {
+                            lt: questionBeforeIndex,
+                        },
+                    },
+                    select: {
+                        id: true,
+                        question: true,
+                        options: true,
+                        hint: true,
+                        difficulty: true,
+                        basePoints: true,
+                        timeLimit: true,
+                        orderIndex: true,
+                        imageUrl: true,
+                        isAsked: true,
+                    },
+                    orderBy: {
+                        orderIndex: 'desc',
+                    },
+                });
+                console.log('found quesion index: ', raw_question);
+
+                const question: Partial<QuestionType> | null = raw_question
+                    ? {
+                          ...raw_question,
+                          hint: raw_question.hint ?? undefined,
+                          imageUrl: raw_question.imageUrl ?? undefined,
+                      }
+                    : null;
+
+                return question;
+            }
+
+            // if no index is provided then find a random one and return
+            const question = await tx.question.findFirst({
+                where: {
+                    quizId: quiz_id,
+                    isAsked: false,
+                },
+                select: {
+                    id: true,
+                    question: true,
+                    options: true,
+                    hint: true,
+                    difficulty: true,
+                    basePoints: true,
+                    timeLimit: true,
+                    orderIndex: true,
+                    imageUrl: true,
+                    isAsked: true,
+                },
+            });
+            console.log('question is found and after is not provided: ', question);
             return question;
         });
 
-        const question = result;
-
+        // no question found, means quiz ended
         if (!question) {
             ResponseWriter.secure_success(
                 res,
@@ -181,3 +188,5 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         ResponseWriter.system_error(res);
     }
 }
+
+function get_question() {}

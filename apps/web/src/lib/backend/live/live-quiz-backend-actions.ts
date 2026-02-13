@@ -34,12 +34,18 @@ export default class LiveQuizBackendActions {
     static async getUnAskedQuestion(
         token: string,
         quizId: string,
-        questionAfterIndex?: number,
+        getQuestion?: {
+            after: boolean;
+            index: number;
+        },
     ): Promise<{ end: boolean; question: QuestionType | null } | null> {
-        console.log('calling server');
+        const query = getQuestion?.after
+            ? `after=${getQuestion.index}`
+            : `before=${getQuestion?.index}`;
+
         try {
             const { data: response } = await axios.get<CustomResponse<getUnAskedQuestionResponse>>(
-                `${GET_UN_ASKED_QUESTION_URL}/${quizId}?${questionAfterIndex?.toString()}`,
+                `${GET_UN_ASKED_QUESTION_URL}/${quizId}?${query}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
