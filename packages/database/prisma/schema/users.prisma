@@ -9,6 +9,7 @@ model User {
 
     isVerified Boolean @default(false)
     isActive   Boolean @default(true)
+    learningJourneyStep Int[] @default([])
 
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt

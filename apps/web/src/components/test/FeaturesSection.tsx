@@ -4,7 +4,7 @@ import { FaThumbsUp } from 'react-icons/fa6';
 import { IoIosPeople } from 'react-icons/io';
 import VoiceIcon from '../ui/svg/VoiceIcon';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion   } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
 import { SiSolana } from 'react-icons/si';

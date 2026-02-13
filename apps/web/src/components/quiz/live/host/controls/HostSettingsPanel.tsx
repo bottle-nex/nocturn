@@ -17,8 +17,6 @@ enum SettingsView {
 
 interface QuizSetting {
     liveChat: boolean;
-    interactionMode: boolean;
-    watchLeaderBoard: boolean;
     allowNewSpectator: boolean;
 }
 
@@ -32,8 +30,6 @@ export default function HostSettingsPanel() {
     const { quiz, updateQuiz } = useLiveQuizStore();
     const [settings, setSettings] = useState<QuizSetting>({
         liveChat: quiz.liveChat,
-        interactionMode: false,
-        watchLeaderBoard: false,
         allowNewSpectator: quiz.allowNewSpectator,
     });
 

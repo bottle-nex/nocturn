@@ -1,10 +1,13 @@
-import { JSX, useCallback, useMemo, useState } from 'react';
+import { JSX, useCallback, useMemo, useRef, useState } from 'react';
 import UtilityCard from '../utility/UtilityCard';
 import { AnimatePresence, motion } from 'motion/react';
 import { IoMdCheckmark } from 'react-icons/io';
 import { Button } from '../ui/button';
 import { MdOutlineChevronRight, MdOutlineSegment } from 'react-icons/md';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
+import { LEARNING_JOURNEY_URL } from 'routes/api_routes';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface GetToKnowUsCardProps {
     id: number;
@@ -48,7 +51,11 @@ const cards: GetToKnowUsCardProps[] = [
 export default function GetToKnowUs(): JSX.Element {
     const [openCard, setOpenCard] = useState<number | null>(null);
     const [learntCards, setLearntCards] = useState<Set<number>>(new Set());
+    const { session } = useUserSessionStore();
     const selectedFeature = cards.find((f) => f.id === openCard);
+    const timeout = useRef<NodeJS.Timeout | null>(null);
+    const learntCardsRef = useRef(learntCards);
+    learntCardsRef.current = learntCards;
 
     const width = useMemo(() => {
         return (learntCards.size / cards.length) * 100;
@@ -68,6 +75,32 @@ export default function GetToKnowUs(): JSX.Element {
         } else {
             setOpenCard(id);
             setLearntCards((prev) => new Set(prev).add(id));
+        }
+        if (timeout.current) {
+            clearTimeout(timeout.current);
+        } else {
+            const newTimeout = setTimeout(() => {
+                makeBackendCall();
+            }, 5000);
+            timeout.current = newTimeout;
+        }
+    }
+
+    async function makeBackendCall() {
+        try {
+            await axios.post(
+                LEARNING_JOURNEY_URL,
+                {
+                    learningJourneyStep: Array.from(learntCardsRef.current),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.token}`,
+                    },
+                },
+            );
+        } catch (err) {
+            console.error('Error updating learning journey', err);
         }
     }
 
@@ -107,7 +140,7 @@ export default function GetToKnowUs(): JSX.Element {
                         )}
                         <h4
                             className={cn(
-                                'text-base text-center px-2 font-semibold',
+                                'text-base text-center px-2',
                                 hasViewed(card.id)
                                     ? 'text-green-700 dark:text-green-400'
                                     : 'text-alpha',

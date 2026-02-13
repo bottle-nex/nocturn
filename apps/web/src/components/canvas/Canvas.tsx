@@ -1,7 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { JSX, useEffect, useRef, useState } from 'react';
-import JoinQuizCodeTicker from '../quiz/new/JoinquizCodeTicker';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import CanvasAccents from '../utility/CanvasAccents';
 import CanvasHeading from './CanvasHeading';
@@ -53,7 +52,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 style={{ backgroundColor: template?.background_color }}
                 className="bg-[#196cff] h-full rounded-md relative flex flex-col"
             >
-                <JoinQuizCodeTicker />
+                {/* <JoinQuizCodeTicker /> */}
                 <CanvasHeading currentQ={currentQ} />
 
                 <div className="flex-1 flex items-end justify-center mb-8">

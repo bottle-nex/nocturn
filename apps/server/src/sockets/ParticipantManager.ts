@@ -13,6 +13,8 @@ import RedisCache from '../cache/redis.cache';
 import { prisma, QuizPhase } from '@nocturn/database';
 import WebSocket from 'ws';
 import { socket_codes } from '@nocturn/types';
+import QuizSettings from '../class/quizSettings';
+import { quizSettingInstance } from '../services/init.services';
 
 export interface ParticipantManagerDependencies {
     publisher: Redis;
@@ -34,7 +36,7 @@ export default class ParticipantManager {
     private socket_mapping: Map<string, CustomWebSocket>;
     private database_queue: DatabaseQueue;
     private redis_cache: RedisCache;
-
+    private quiz_settings: QuizSettings;
     private participant_socket_mapping: Map<string, string> = new Map(); // Map<participantId, socketId>
 
     constructor(dependencies: ParticipantManagerDependencies) {
@@ -46,6 +48,7 @@ export default class ParticipantManager {
         this.quizManager = dependencies.quizManager;
         this.database_queue = dependencies.databaseQueue;
         this.redis_cache = dependencies.redis_cache;
+        this.quiz_settings = quizSettingInstance;
     }
 
     public async handle_connection(
@@ -109,6 +112,11 @@ export default class ParticipantManager {
         this.setup_message_handlers(ws);
 
         this.quizManager.onParticipantConnect(decoded_cookie_payload);
+        if (!this.quiz_settings.quiz_settings_mapping.get(decoded_cookie_payload.gameSessionId)) {
+            await this.quiz_settings.seed_settings_for_session(
+                decoded_cookie_payload.gameSessionId,
+            );
+        }
     }
 
     private setup_message_handlers(ws: CustomWebSocket) {
@@ -617,6 +625,7 @@ export default class ParticipantManager {
             session_participants_socket_ids.delete(socket_id);
             if (session_participants_socket_ids.size === 0) {
                 this.session_participants_mapping.delete(game_session_id);
+                this.quiz_settings.cleanup_session(game_session_id);
             }
         }
     }

@@ -15,13 +15,8 @@ export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const {
-        currentQuestion,
-        gameSession,
-        updateGameSession,
-        updateCurrentQuestion,
-        quiz,
-    } = useLiveQuizStore();
+    const { currentQuestion, gameSession, updateGameSession, updateCurrentQuestion, quiz } =
+        useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
     const [quizEnded, _setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults } = useWebSocket();
