@@ -3,7 +3,6 @@ import CanvasBars from './CanvasBars';
 import NewQuizInteractiveIcons from '../quiz/new/NewQuizInteractiveIcons';
 import { MouseEvent, useEffect, useState } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { templates } from '@/lib/templates';
 import { QuestionType } from '@nocturn/types';
 import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
@@ -21,7 +20,6 @@ export default function CanvasOptions() {
     const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
     const { setState } = useDraftRendererStore();
     const currentQ = quiz.questions[currentQuestionIndex];
-    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -64,7 +62,7 @@ export default function CanvasOptions() {
                             option={option}
                             votes={votes}
                             currentQ={currentQ}
-                            currentQTemplate={currentQTemplate}
+                            currentQTemplate={quiz.template}
                             getBarHeight={getBarHeight}
                         />
                     )) || []}

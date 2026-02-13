@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
-import { v4 as uuid } from 'uuid';
 import { prisma } from '@nocturn/database';
+import { TemplateEnum } from '@nocturn/types';
 
 export default async function createQuizController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -11,25 +11,30 @@ export default async function createQuizController(req: Request, res: Response) 
     }
 
     const { data, success } = createQuizSchema.safeParse(req.body);
+
     if (!success) {
+        console.log('failed to parse the data');
         ResponseWriter.invalid_data(res, 'Invalid quiz data');
         return;
     }
 
-    const { id: _ignored, questions, ...quizData } = data;
+    const { id: _ignoredId, templateId: _ignoredTemplateId, questions, ...quizData } = data;
 
     try {
-        const quiz_id = uuid();
+        const db_template = await prisma.template.findUnique({
+            where: { name: TemplateEnum.CLASSIC },
+        });
+
+        if (!db_template) {
+            ResponseWriter.not_found(res, 'Template not found');
+            return;
+        }
 
         const quiz = await prisma.quiz.create({
             data: {
-                id: quiz_id,
                 ...quizData,
-                host: {
-                    connect: {
-                        id: req.user.id,
-                    },
-                },
+                templateId: db_template.id,
+                hostId: req.user.id,
                 questions: {
                     create: questions.map((q) => ({
                         question: q.question,
@@ -45,6 +50,9 @@ export default async function createQuizController(req: Request, res: Response) 
                         imageUrl: q.imageUrl,
                     })),
                 },
+            },
+            include: {
+                template: true,
             },
         });
 

@@ -24,6 +24,7 @@ import getQuestionsController from '../controllers/quiz-controller/getQuestionsC
 import authMiddleware from '../middlewares/authMiddleware';
 import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
+import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
@@ -62,5 +63,8 @@ router.post(
 );
 
 router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsController);
+
+// <---------------------- TEMPLATE-ROUTES ---------------------->
+router.get('/quiz/get-templates', authMiddleware, getAllTemplatesController);
 
 export default router;

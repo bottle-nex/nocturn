@@ -3,7 +3,6 @@ import EmptyCanvas from '../canvas/EmptyCanvas';
 import moment from 'moment';
 import { QuizViewsType } from '@nocturn/types';
 import { JSX } from 'react';
-import { templates } from '@/lib/templates';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -20,7 +19,6 @@ export default function RecentlyViewedCard({
     quiz,
     className,
 }: RecentlyViewedCardProps): JSX.Element {
-    const template = templates.find((t) => t.id === quiz.quiz?.theme);
     const formattedTime = moment(quiz.viewedAt).format('MMM D, YYYY');
     const router = useRouter();
     const quizId = quiz.quiz?.id;
@@ -47,11 +45,11 @@ export default function RecentlyViewedCard({
                 onPointerMove={handlers.onPointerMove}
                 className={cn('w-88 aspect-video rounded-sm cursor-pointer', className)}
             >
-                {template && (
+                {quiz?.quiz?.template && (
                     <div className="relative group">
                         <EmptyCanvas
                             className="w-full aspect-video rounded-[6px] outline-2 outline-black/40 dark:outline-white/40"
-                            template={template}
+                            template={quiz.quiz.template}
                         />
 
                         <div className="absolute inset-0 flex p-[2px] rounded-[10px] overflow-hidden">

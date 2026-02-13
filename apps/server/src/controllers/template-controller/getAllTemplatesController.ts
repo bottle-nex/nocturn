@@ -1,0 +1,38 @@
+import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
+import { prisma } from '@nocturn/database';
+
+export default async function getAllTemplatesController(req: Request, res: Response) {
+    if (!req.user.id) {
+        ResponseWriter.not_authorized(res);
+        return;
+    }
+
+    try {
+        const templates = await prisma.template.findMany({
+            select: {
+                id: true,
+                name: true,
+                backgroundColor: true,
+                textColor: true,
+                borderColor: true,
+                accentType: true,
+                accentColor: true,
+                bars: true,
+                src: true,
+            },
+        });
+
+        if (!templates) {
+            ResponseWriter.not_found(res, 'Templates not found');
+            return;
+        }
+
+        ResponseWriter.success(res, templates, 'Fetched templates successfully');
+        return;
+    } catch (error) {
+        console.error('Error in fetchinf templates: ', error);
+        ResponseWriter.system_error(res);
+        return;
+    }
+}

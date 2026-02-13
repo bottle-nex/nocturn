@@ -23,7 +23,7 @@ export default async function get_favourite_quizzes_controller(req: Request, res
                 status: true,
                 scheduledAt: true,
                 createdAt: true,
-                theme: true,
+                template: true,
                 host: {
                     select: {
                         image: true,

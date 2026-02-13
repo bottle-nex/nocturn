@@ -6,7 +6,6 @@ import { Button } from '../ui/button';
 import Lottie from 'lottie-react';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import moment from 'moment';
-import { templates } from '@/lib/templates';
 import emptyTrashAnimation from '../../assets/lottie/empty-trash.json';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
@@ -159,14 +158,9 @@ export default function HomeTrashPanel() {
                             {filteredQuizzes.length > 0 ? (
                                 <div className="grid grid-cols-3 gap-4 pb-4">
                                     {filteredQuizzes.map((quiz) => {
-                                        const template = templates.find(
-                                            (t) => t.id === quiz?.theme,
-                                        );
                                         const formattedTime = quiz.deletedAt
                                             ? moment(quiz.deletedAt).format('MMM D, YYYY')
                                             : '';
-
-                                        if (!template) return null;
 
                                         return (
                                             <div
@@ -220,7 +214,7 @@ export default function HomeTrashPanel() {
                                                         'w-full aspect-video rounded-[8px] outline-2 select-none cursor-default',
                                                         'outline-black/40 dark:outline-white/40',
                                                     )}
-                                                    template={template}
+                                                    template={quiz.template}
                                                 />
 
                                                 <div className="flex items-center gap-x-2.5 mt-3 w-full overflow-hidden">

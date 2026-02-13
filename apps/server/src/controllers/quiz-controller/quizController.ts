@@ -133,7 +133,7 @@ export default class QuizController {
                         basePointsPerQuestion: quiz_data.basePointsPerQuestion,
                         pointsMultiplier: quiz_data.pointsMultiplier,
                         timeBonus: quiz_data.timeBonus,
-                        theme: quiz_data.theme,
+                        templateId: quiz_data.templateId,
                         eliminationThreshold: quiz_data.eliminationThreshold,
                         questionTimeLimit: quiz_data.questionTimeLimit,
                         breakBetweenQuestions: quiz_data.breakBetweenQuestions,
@@ -146,6 +146,9 @@ export default class QuizController {
                         questions: {
                             create: questions,
                         },
+                    },
+                    include: {
+                        template: true,
                     },
                 });
             });
@@ -328,7 +331,7 @@ export default class QuizController {
                     id: true,
                     title: true,
                     description: true,
-                    theme: true,
+                    template: true,
                     status: true,
                     questionTimeLimit: true,
                     breakBetweenQuestions: true,

@@ -25,6 +25,9 @@ export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
 export const GET_UN_ASKED_QUESTION_URL = QUIZ_URL + '/get-un-asked-question';
 
+// template routes
+export const GET_QUIZ_TEMPLATES = QUIZ_URL + '/get-templates';
+
 // favourite quiz routes
 export const TOGGLE_FAVOURITE_QUIZ_URL = QUIZ_URL + '/toggle-favourite-quiz';
 export const GET_FAVOURITE_QUIZZES_URL = QUIZ_URL + '/get-favourite-quizzes';

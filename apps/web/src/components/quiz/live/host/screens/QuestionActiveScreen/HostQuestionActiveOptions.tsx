@@ -1,5 +1,4 @@
 'use client';
-import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { getResponsiveGap } from '@/components/canvas/CanvasOptions';
@@ -9,7 +8,6 @@ export default function HostQuestionActiveOptions() {
     const { currentQuestion, quiz: liveQuiz } = useLiveQuizStore();
     const { liveResponses } = useLiveQuizHostStore();
 
-    const template = templates.find((t) => t.id === liveQuiz?.theme);
     if (!currentQuestion?.options) return null;
 
     const maxVotes = Math.max(...liveResponses, 1);
@@ -39,7 +37,7 @@ export default function HostQuestionActiveOptions() {
                                 className="w-full rounded-tr-md sm:rounded-tr-2xl transition-all duration-700 ease-in-out border border-white/20 z-50"
                                 style={{
                                     height: `${height}px`,
-                                    backgroundColor: template?.bars[idx] || '#4F46E5',
+                                    backgroundColor: liveQuiz.template.bars[idx] || '#4F46E5',
                                 }}
                             />
                             <div className="mt-1 sm:mt-2 min-h-[1.5rem] sm:min-h-[2rem] flex items-center justify-center w-full">

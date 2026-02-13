@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { RxCross1 } from 'react-icons/rx';
 import { Checkbox } from '@/components/ui/checkbox';
-import { templates } from '@/lib/templates';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { MdOutlineDragIndicator } from 'react-icons/md';
@@ -14,18 +13,23 @@ export default function Options() {
     const { quiz, currentQuestionIndex } = useNewQuizStore();
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
     const currentQ = quiz.questions[currentQuestionIndex];
-    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-    function handleCorrectAnswerChange(idx: number) {
-        editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx, id: currentQ?.id });
-    }
+    const bars = quiz?.template.bars ?? [];
+
+    const handleCorrectAnswerChange = (idx: number) => {
+        editQuestionAndBroadcast(currentQuestionIndex, {
+            correctAnswer: idx,
+            id: currentQ?.id,
+        });
+    };
 
     function handleInputChange(value: string, index: number) {
         if (!currentQ) return;
         const newOptions = [...currentQ.options];
         newOptions[index] = value;
+
         editQuestionAndBroadcast(
             currentQuestionIndex,
             { options: newOptions, id: currentQ.id },
@@ -43,12 +47,16 @@ export default function Options() {
 
     function handleDrop(dropIndex: number) {
         if (draggedIndex === null || !currentQ || draggedIndex === dropIndex) return;
+
         const newOptions = [...currentQ.options];
         const [draggedItem] = newOptions.splice(draggedIndex, 1);
+
         if (draggedItem !== undefined) {
             newOptions.splice(dropIndex, 0, draggedItem);
         }
+
         let newCorrectAnswer = currentQ.correctAnswer;
+
         if (draggedIndex === currentQ.correctAnswer) {
             newCorrectAnswer = dropIndex;
         } else if (draggedIndex < currentQ.correctAnswer && dropIndex >= currentQ.correctAnswer) {
@@ -94,7 +102,7 @@ export default function Options() {
                     onDragOver={handleDragOver}
                     onDrop={() => handleDrop(idx)}
                     className={cn(
-                        'flex justify-start items-center gap-x-3 w-full transition-all duration-200 ease-outrounded-md',
+                        'flex justify-start items-center gap-x-3 w-full transition-all duration-200 ease-out rounded-md',
                         draggedIndex === idx ? 'opacity-50' : '',
                     )}
                 >
@@ -102,13 +110,15 @@ export default function Options() {
                         size={26}
                         className="text-neutral-500 dark:text-neutral-400 cursor-grab"
                     />
+
                     <Checkbox
                         checked={currentQ.correctAnswer === idx}
                         onCheckedChange={() => handleCorrectAnswerChange(idx)}
                         className="scale-150 p-px border border-neutral-300 dark:border-neutral-800 cursor-pointer"
                     />
+
                     <ColoredInput
-                        color={currentQTemplate?.bars?.[idx]}
+                        color={bars[idx]}
                         value={option}
                         onChange={(val) => handleInputChange(val, idx)}
                     />

@@ -67,7 +67,7 @@ export default async function getQuizDataController(req: Request, res: Response)
                     id: true,
                     title: true,
                     description: true,
-                    theme: true,
+                    template: true,
                     status: true,
                     questionTimeLimit: true,
                     breakBetweenQuestions: true,

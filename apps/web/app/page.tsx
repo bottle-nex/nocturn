@@ -1,9 +1,9 @@
 import InstructionsSection from '@/components/test/InstructionsSection';
 import PricingComponent from '@/components/revamp/PricingComponent';
 import BigAnimatedText from '@/components/ui/BigAnimatedText';
-import Footer from '@/components/root/Footer';
 import LandingSection from '@/components/test/LandingSection';
 import LandingNavbar from '@/components/revamp/LandingNavbar';
+import LandingPageFooter from '@/components/revamp/LandingPageFooter';
 
 export default function Page() {
     return (
@@ -24,7 +24,8 @@ export default function Page() {
             {/* <LandingHeroSection /> */}
             {/* <Footer /> */}
             {/* <NocturnFeaturesSection /> */}
-            <Footer />
+            <LandingPageFooter />
+            {/* <Footer /> */}
         </div>
     );
 }

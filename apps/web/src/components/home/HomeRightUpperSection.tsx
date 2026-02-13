@@ -196,7 +196,7 @@ function AIBuiltQuizs({ quizs }: { quizs: QuizType[] }) {
                     ai_quizs.map((q) => (
                         <RecentAICreatedCard
                             key={q.id}
-                            theme={q.theme}
+                            theme={q.template}
                             title={q.title}
                             difficulty={5}
                         />

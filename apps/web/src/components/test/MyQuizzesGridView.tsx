@@ -8,7 +8,6 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
 import { QuizType } from '@nocturn/types';
 import HeartButton from '../ui/HeartButton';
-import { Template } from '@/lib/templates';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
@@ -16,7 +15,6 @@ import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
-    currTemplate: Template;
     quiz: QuizType;
     isSelected?: boolean;
     toggleQuizSelection?: (quizId: string) => void;
@@ -26,7 +24,6 @@ export default function MyQuizzesGridView({
     quiz,
     isSelected,
     toggleQuizSelection,
-    currTemplate,
     formattedTime,
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
@@ -85,7 +82,7 @@ export default function MyQuizzesGridView({
                     'w-full aspect-video rounded-[8px] outline select-none ',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
-                template={currTemplate}
+                template={quiz.template}
             />
 
             <div className="flex items-center gap-x-2.5 pt-2">

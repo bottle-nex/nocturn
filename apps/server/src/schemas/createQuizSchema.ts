@@ -32,14 +32,27 @@ const questionSchema = z.object({
     imageUrl: z.string().optional(),
 });
 
+// const templateSchema = z.object({
+//     id: z.string(),
+//     name: z.string(),
+//     backgroundColor: z.string(),
+//     textColor: z.string(),
+//     borderColor: z.string(),
+//     accentType: z.string(),
+//     accentColor: z.string(),
+//     bars: z.array(z.string()),
+//     src: z.string(),
+//     createdAt: z.coerce.date(),
+//     updatedAt: z.coerce.date(),
+// });
+
 export const createQuizSchema = z.object({
     id: z.string().optional(),
     title: z.string().min(1).max(50),
     description: z.string().optional(),
-    theme: z.enum(Object.values(TemplateEnum)),
+    templateId: z.string(),
     prizePool: z.coerce.number().nonnegative(),
     currency: z.string().default('SOL'),
-    isDeleted: z.boolean(),
     basePointsPerQuestion: z.coerce.number().optional(),
     pointsMultiplier: z.coerce.number().optional(),
     timeBonus: z.coerce.boolean().optional(),

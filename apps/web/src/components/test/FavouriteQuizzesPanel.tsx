@@ -5,7 +5,6 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import QuizActions from '@/lib/backend/home/quiz-actions';
-import { templates } from '@/lib/templates';
 import moment from 'moment';
 import QuizzesUpperSection from './QuizzesUpperSection';
 import MyQuizzesGridView from './MyQuizzesGridView';
@@ -149,9 +148,6 @@ export default function FavouriteQuizzesPanel() {
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => {
-                            const currTemplate = templates.find((t) => t.id === quiz.theme);
-                            if (!currTemplate) return null;
-
                             const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
 
                             return (
@@ -160,7 +156,6 @@ export default function FavouriteQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={selectedQuizIds.has(quiz.id)}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={currTemplate}
                                     formattedTime={formattedTime}
                                 />
                             );
@@ -169,9 +164,6 @@ export default function FavouriteQuizzesPanel() {
                 ) : (
                     <div className="flex flex-col gap-4">
                         {filteredQuizzes.map((quiz) => {
-                            const currTemplate = templates.find((t) => t.id === quiz.theme);
-                            if (!currTemplate) return null;
-
                             const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
 
                             return (
@@ -180,7 +172,6 @@ export default function FavouriteQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={selectedQuizIds.has(quiz.id)}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={currTemplate}
                                     formattedTime={formattedTime}
                                 />
                             );

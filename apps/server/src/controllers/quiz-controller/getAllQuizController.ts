@@ -24,7 +24,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
                 status: true,
                 scheduledAt: true,
                 createdAt: true,
-                theme: true,
+                template: true,
                 isFavourite: true,
                 host: {
                     select: {

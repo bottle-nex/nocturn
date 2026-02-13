@@ -1,8 +1,9 @@
-import { templates } from '@/lib/templates';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import EmptyCanvas from '../canvas/EmptyCanvas';
+import { TemplateType } from '@nocturn/types';
 
 interface RecentAICreatedCardProps {
-    theme: string;
+    theme: TemplateType;
     title: string;
     difficulty: number;
 }
@@ -12,7 +13,7 @@ export default function RecentAICreatedCard({
     title,
     difficulty,
 }: RecentAICreatedCardProps) {
-    const template = templates.find((t) => t.id === theme);
+    const { templates } = useQuizTemplatesStore();
 
     return (
         <div className="w-full h-16 flex gap-x-2 px-2 py-2 hover:bg-neutral-900 transition cursor-pointer rounded-alpha">
@@ -24,7 +25,7 @@ export default function RecentAICreatedCard({
             ></div> */}
             <EmptyCanvas
                 className="w-12 aspect-video outline-2 outline-black/40 dark:outline-white/40"
-                template={template!}
+                template={theme ?? templates[0]!}
             />
             <div className="flex flex-col justify-around ">
                 <div className="w-65 text-sm truncate">{title}</div>

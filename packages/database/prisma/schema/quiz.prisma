@@ -2,7 +2,10 @@ model Quiz {
     id              String   @id @default(cuid())
     title           String   @db.VarChar(50)
     description     String?
-    theme           Template @default(CLASSIC)
+
+    templateId      String
+    template        Template @relation(fields: [templateId], references: [id])
+
     participantCode String?  @unique
     spectatorCode   String?  @unique
     spectatorLink   String?

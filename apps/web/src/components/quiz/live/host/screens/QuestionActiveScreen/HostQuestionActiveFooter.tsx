@@ -1,6 +1,5 @@
 import UtilityCard from '@/components/utility/UtilityCard';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { templates } from '@/lib/templates';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { JSX, useEffect, useState } from 'react';
 import { FaLightbulb } from 'react-icons/fa6';
@@ -11,7 +10,6 @@ export default function HostQuestionActiveFooter(): JSX.Element {
 
     const { handleLaunchHintEvent } = useWebSocket();
     const { currentQuestion, quiz } = useLiveQuizStore();
-    const template = templates.find((t) => t.id === quiz?.theme);
 
     useEffect(() => {
         setHintLaunched(false);
@@ -31,7 +29,7 @@ export default function HostQuestionActiveFooter(): JSX.Element {
         <div
             style={{
                 zIndex: 100,
-                color: template?.text_color,
+                color: quiz.template.textColor,
             }}
             className="absolute bottom-4 left-4 flex items-center justify-start gap-x-4 w-fit"
         >
@@ -64,8 +62,8 @@ export default function HostQuestionActiveFooter(): JSX.Element {
                             strokeWidth={0.8}
                             className="w-6 h-6 rounded-full p-1.5"
                             style={{
-                                border: `1px solid ${template?.border_color}50`,
-                                backgroundColor: `${template?.text_color}20`,
+                                border: `1px solid ${quiz.template.borderColor}50`,
+                                backgroundColor: `${quiz.template.backgroundColor}20`,
                             }}
                         />
                         {hintLaunched ? 'hint launched' : 'launch hint'}

@@ -1,6 +1,5 @@
-import { Template } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-import { QuestionType } from '@nocturn/types';
+import { QuestionType, TemplateType } from '@nocturn/types';
 import CanvasAccents from '../utility/CanvasAccents';
 import { BsThreeDots } from 'react-icons/bs';
 import { MouseEvent, useState, useRef } from 'react';
@@ -12,7 +11,7 @@ import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface MiniCanvasProps {
-    template: Template | undefined;
+    template: TemplateType | undefined;
     question: QuestionType;
     currentQuestionIndex: number;
     orderIndex: number;
@@ -115,8 +114,8 @@ export default function MiniCanvas({
                 )}
                 <div
                     style={{
-                        backgroundColor: template?.background_color,
-                        color: template?.text_color,
+                        backgroundColor: template?.backgroundColor,
+                        color: template?.textColor,
                     }}
                     className="w-full h-full rounded-sm flex justify-center items-center relative group"
                 >
@@ -135,8 +134,8 @@ export default function MiniCanvas({
                     </div>
                     <CanvasAccents
                         className="rounded"
-                        design={template?.accent_type}
-                        accentColor={template?.accent_color}
+                        design={template?.accentType}
+                        accentColor={template?.accentColor}
                     />
                     <div className="text-xs">{preview}</div>
                 </div>

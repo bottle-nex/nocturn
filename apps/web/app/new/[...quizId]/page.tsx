@@ -3,12 +3,13 @@ import CreateQuizNavBar from '@/components/navbars/CreateQuizNavbar';
 import QuizCreationPanels from '@/components/quiz/new/QuizCreationPanels';
 import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { CustomResponse, GetNewQuizResponse, QuizResponseType } from '@nocturn/types';
+import { CustomResponse, GetNewQuizResponse, QuizResponseType, TemplateType } from '@nocturn/types';
 import axios from 'axios';
 import { Loader } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
-import { GET_OWNER_QUIZ_URL } from 'routes/api_routes';
+import { GET_OWNER_QUIZ_URL, GET_QUIZ_TEMPLATES } from 'routes/api_routes';
 
 enum AllowanceEnum {
     ALLOWED = 'ALLOWED',
@@ -29,6 +30,7 @@ export default function New({ params }: NewProps) {
     const { session } = useUserSessionStore();
     const { updateQuiz, resetStore } = useNewQuizStore();
     const { setCollaborators } = useCollaboratorStore();
+    const { setTemplates } = useQuizTemplatesStore();
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -43,6 +45,7 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
+
                 if (data.success && data.data) {
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
@@ -69,6 +72,33 @@ export default function New({ params }: NewProps) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quizId, session?.user.token, updateQuiz]);
+
+    useEffect(() => {
+        async function fetchTemplates() {
+            try {
+                const { data } = await axios.get<CustomResponse<TemplateType[]>>(
+                    GET_QUIZ_TEMPLATES,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`,
+                        },
+                    },
+                );
+
+                if (data.data) {
+                    setTemplates(data.data);
+                }
+            } catch (err) {
+                console.error('Failed to fetch templates: ', err);
+                return;
+            }
+        }
+
+        if (session?.user.token) {
+            fetchTemplates();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [quizId, session?.user.token]);
 
     useEffect(() => {
         return () => {

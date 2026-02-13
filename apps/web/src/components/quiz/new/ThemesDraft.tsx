@@ -1,20 +1,24 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
-import { templates } from '@/lib/templates';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { TemplateEnum } from '@nocturn/types';
-import Image from 'next/image';
+import { TemplateType } from '@nocturn/types';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
+import EmptyCanvas from '@/components/canvas/EmptyCanvas';
+import { cn } from '@/lib/utils';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
     const { quiz } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
-    function changeThemeHandler(theme: string) {
+    const { templates } = useQuizTemplatesStore();
+
+    function changeThemeHandler(template: TemplateType) {
         updateQuizAndBroadcast({
-            theme: theme as TemplateEnum,
+            template: template,
+            templateId: template.id,
         });
     }
 
@@ -24,6 +28,7 @@ export default function ThemesDraft() {
                 <div className="text-lg font-medium">Themes</div>
                 <RxCross2 onClick={() => setState(DraftRenderer.NONE)} className="cursor-pointer" />
             </div>
+
             <div className="w-full px-2 mt-6">
                 <div className="flex items-center justify-start gap-x-1">
                     <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
@@ -33,33 +38,30 @@ export default function ThemesDraft() {
                         <AiOutlineQuestionCircle size={15} />
                     </ToolTipComponent>
                 </div>
+
                 <div className="flex w-full items-center justify-between mt-2">
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         Choose theme template
                     </span>
                 </div>
             </div>
-            <div className="mt-4 px-2 pb-4 overflow-y-auto flex-1">
+
+            <div className="mt-4 px-2 pb-4 pt-2 overflow-y-auto flex-1">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-6">
-                    {templates.map((template, idx) => (
+                    {templates.map((template) => (
                         <div
-                            onClick={() => changeThemeHandler(template.id)}
-                            key={idx}
-                            className={`flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px]`}
+                            key={template.id}
+                            onClick={() => changeThemeHandler(template)}
+                            className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
                         >
-                            <div
-                                className={`w-full relative overflow-hidden rounded-[10px] flex items-center justify-center border-2 hover:dark:border-indigo-800 hover:border-indigo-800 ${quiz.theme === template.id && 'border-2 border-indigo-800 bg-neutral-200'}`}
-                            >
-                                <Image
-                                    src={`/templates/${template.src}.png`}
-                                    alt="template"
-                                    width={160}
-                                    height={120}
-                                    className="rounded-md max-w-full max-h-full object-cover"
-                                    unoptimized
-                                />
-                            </div>
-                            <div className="text-center text-xs w-full ">{template.name}</div>
+                            <EmptyCanvas
+                                className={cn(
+                                    'w-full aspect-video rounded-[8px] outline-black/40 dark:outline-white/40',
+                                    quiz.template?.id === template.id &&
+                                        'outline-2 outline-indigo-800',
+                                )}
+                                template={template}
+                            />
                         </div>
                     ))}
                 </div>

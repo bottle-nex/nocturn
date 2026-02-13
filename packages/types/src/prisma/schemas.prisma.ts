@@ -30,11 +30,28 @@ export interface UserType {
   Quiz: QuizType[];
 }
 
+export interface TemplateType {
+  id: string;
+  name: string;
+  backgroundColor: string;
+  textColor: string;
+  borderColor: string;
+  accentType: string;
+  accentColor: string;
+  bars: string[];
+  src: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface QuizType {
   id: string;
   title: string;
   description?: string | null;
-  theme: TemplateEnum;
+
+  templateId?: string;
+  template: TemplateType;
+
   prizePool: number;
   currency: string;
   basePointsPerQuestion: number;

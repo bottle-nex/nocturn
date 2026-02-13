@@ -5,7 +5,6 @@ import { Message, User } from './specTypes';
 import { FcGlobe } from 'react-icons/fc';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { templates } from '@/lib/templates';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
 import { MdLeaderboard } from 'react-icons/md';
 import ExpandablePanel from '../quiz/live/common/ExpandablePanel';
@@ -34,7 +33,6 @@ export default function SpectatorActions({ onExpandChange }: SpectatorActionsPro
     const [openPeopleDropdown, setOpenPeopleDropdown] = useState(false);
 
     const { quiz } = useLiveQuizStore();
-    const template = templates.find((t) => t.id === quiz?.theme);
 
     const { spectatorData } = useLiveSpectatorStore();
     const { spectators } = useLiveSpectatorsStore();
@@ -111,7 +109,7 @@ export default function SpectatorActions({ onExpandChange }: SpectatorActionsPro
     };
 
     return (
-        <div className="h-full" style={{ color: template?.text_color }}>
+        <div className="h-full" style={{ color: quiz.template.textColor }}>
             <div className={cn(`fixed bottom-3 z-50 flex gap-1 border rounded-3xl p-2 right-4`)}>
                 <SpectatorControls
                     onClickPeople={() => {
