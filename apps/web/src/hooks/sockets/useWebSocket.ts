@@ -123,6 +123,16 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleUpdateCurrentQuestion(payload: unknown) {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.UPDATE_CURRENT_QUESTION,
+            payload: payload,
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     function handleLaunchHintEvent(payload: unknown) {
         const message: MessagePayload = {
             type: MESSAGE_TYPES.HOST_EMITS_HINT,
@@ -248,6 +258,7 @@ export const useWebSocket = () => {
         handleSendChatMessage,
         handleSendChatReactionMessage,
         handleSendHostLaunchQuestion,
+        handleUpdateCurrentQuestion,
         handleParticipantResponseMessage,
         handleLaunchHintEvent,
         handleParticipantLeaveGameSession,

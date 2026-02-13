@@ -71,7 +71,7 @@ export default class DatabaseQueue {
 
     public async update_game_session(
         id: string,
-        gameSession: any,
+        gameSession: Prisma.GameSessionUpdateInput,
         game_session_id: string,
         options?: Partial<JobOption>,
     ) {

@@ -16,6 +16,7 @@ import spectatorJoinQuizViaURLController from '../controllers/live-quiz-controll
 import authMiddleware from '../middlewares/authMiddleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import getQuizDataController from '../controllers/live-quiz-controller/getQuizDataController';
+import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->
 router.post('/quiz/participant-join-quiz', participantJoinController);
@@ -29,6 +30,11 @@ router.get(
     authMiddleware,
     verifyQuizOwnershipMiddleware,
     getSelectedQuestionDetails,
+);
+router.get(
+    '/quiz/get-un-asked-question/:quizId',
+    authMiddleware,
+    getUnAskedQuestionController,
 );
 router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);

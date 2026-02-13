@@ -8,25 +8,23 @@ import { IoIosReturnLeft } from 'react-icons/io';
 import { FaLightbulb } from 'react-icons/fa';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import DifficultyTicker from '@/components/tickers/DifficultyTicker';
-import { QuestionType } from '@nocturn/types';
+import { QuizType } from '@nocturn/types';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
+import { cn } from '@/lib/utils';
 
 export default function HostQuestionPreviewFooter() {
     const { quiz, currentQuestion, updateQuiz, updateCurrentQuestion } = useLiveQuizStore();
-    const theme = quiz.template;
-
     const { session } = useUserSessionStore();
     const [openExplanation, setOpenExplanation] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const { handleSendHostLaunchQuestion } = useWebSocket();
-    // @ts-expect-error: _count is not typed but exists on quiz
-    const totalQuestions = quiz?._count.questions;
+    const { handleSendHostLaunchQuestion, handleUpdateCurrentQuestion } = useWebSocket();
+    const [isQuestionAvailable, setIsQuestionAvailable] = useState<{ left: boolean, right: boolean }>({ left: true, right: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key === 'ArrowLeft') {
-            handlePreviousQuestion();
+            prevQuestion();
         } else if (event.key === 'ArrowRight') {
-            handleNextQuestion();
+            nextQuestion();
         }
     };
 
@@ -58,138 +56,91 @@ export default function HostQuestionPreviewFooter() {
         };
     });
 
-    function isQuestionDataComplete(question: QuestionType | undefined) {
-        return (
-            question &&
-            question.id &&
-            question.question &&
-            question.options &&
-            question.explanation !== undefined &&
-            question.difficulty !== undefined &&
-            question.basePoints !== undefined &&
-            question.timeLimit !== undefined &&
-            question.orderIndex !== undefined
-        );
-    }
+    // this is for handling the arrows button active or disabled
+    useEffect(() => {
+        if (currentQuestion?.orderIndex === 0) setIsQuestionAvailable(prev => ({ left: false, right: prev.right }));
+        else setIsQuestionAvailable(prev => ({ left: true, right: prev.right }));
 
-    async function navigateToQuestion(targetIndex: number) {
-        if (!quiz?.questions || targetIndex < 0 || targetIndex >= totalQuestions) return;
-        if (loading) return;
+        const questionCount = (quiz as QuizType & {
+            _count: { questions: number };
+        })._count.questions;
+        if (currentQuestion?.orderIndex === questionCount - 1) setIsQuestionAvailable(prev => ({ left: prev.left, right: false }));
+        else setIsQuestionAvailable(prev => ({ left: prev.left, right: true }));
+    }, [currentQuestion]);
 
-        const availableQuestions = quiz.questions
-            .filter((q) => q && !q.isAsked)
-            .sort((a, b) => (a?.orderIndex || 0) - (b?.orderIndex || 0));
+    async function handleUpdateQuestion(index: number, after: boolean) {
 
-        const targetQuestion = availableQuestions.find((q) => q && q.orderIndex === targetIndex);
-
-        if (isQuestionDataComplete(targetQuestion)) {
-            updateCurrentQuestion(targetQuestion!);
+        if (!session?.user.token || !currentQuestion) {
+            setLoading(false);
             return;
         }
 
-        if (!quiz?.id || !session?.user.token) return;
+        const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id, { after, index: index });
+
+        if (data?.end) {
+            // no more questions left
+        }
+        if (data?.question) {
+            if (quiz.questions) {
+                updateQuiz({ questions: [...quiz.questions, data.question] });
+            } else {
+                updateQuiz({ questions: [data.question] });
+            }
+
+            updateCurrentQuestion(data.question);
+            handleUpdateCurrentQuestion({
+                questionId: data.question.id,
+                questionIndex: data.question.orderIndex,
+            });
+        }
+        setLoading(false);
+    }
+
+    function prevQuestion() {
+        if (loading) return;
+        if (!session?.user.token || !currentQuestion) return;
+        if (!isQuestionAvailable.left) return;
+
         setLoading(true);
 
-        try {
-            const question: QuestionType = await LiveQuizBackendActions.getQuestionDetailByIndex(
-                quiz.id,
-                targetIndex,
-                session.user.token,
-            );
-
-            if (question && !question.isAsked) {
-                const existingQuestionIndex = quiz.questions.findIndex(
-                    (q) => q && q.id === question.id,
-                );
-
-                if (existingQuestionIndex !== -1) {
-                    const updatedQuestions = [...quiz.questions];
-                    updatedQuestions[existingQuestionIndex] = question;
-                    updateQuiz({
-                        questions: updatedQuestions,
-                    });
-                } else {
-                    const updatedQuestions = [...quiz.questions, question];
-                    updateQuiz({
-                        questions: updatedQuestions,
-                    });
-                }
-
-                updateCurrentQuestion(question);
-            } else if (question?.isAsked) {
-                const nextAvailableIndex = findNextAvailableQuestionIndex(targetIndex);
-                if (nextAvailableIndex !== -1 && nextAvailableIndex !== targetIndex) {
-                    navigateToQuestion(nextAvailableIndex);
-                }
-            }
-        } catch (error) {
-            console.error('Failed to fetch question data:', error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    function findNextAvailableQuestionIndex(fromIndex: number): number {
-        if (!quiz?.questions) return -1;
-
-        for (let i = fromIndex + 1; i < totalQuestions; i++) {
-            const question = quiz.questions.find((q) => q && q.orderIndex === i);
-            if (!question || !question.isAsked) {
-                return i;
+        if (quiz.questions && quiz.questions.length !== 0) {
+            const questions = quiz.questions.sort((a, b) => b.orderIndex - a.orderIndex);
+            const prevQuestion = questions.find(q => q.orderIndex < currentQuestion.orderIndex);
+            if (prevQuestion) {
+                updateCurrentQuestion(prevQuestion);
+                handleUpdateCurrentQuestion({
+                    questionId: prevQuestion.id,
+                    questionIndex: prevQuestion.orderIndex,
+                });
+                setLoading(false);
+                return;
             }
         }
-
-        return -1;
+        handleUpdateQuestion(currentQuestion.orderIndex, false);
     }
 
-    function findPreviousAvailableQuestionIndex(fromIndex: number): number {
-        if (!quiz?.questions) return -1;
-
-        for (let i = fromIndex - 1; i >= 0; i--) {
-            const question = quiz.questions.find((q) => q && q.orderIndex === i);
-            if (!question || !question.isAsked) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    function handlePreviousQuestion() {
+    async function nextQuestion() {
         if (loading) return;
-        if (!quiz?.questions || !currentQuestion) {
-            return;
-        }
+        if (!session?.user.token || !currentQuestion) return;
+        if (!isQuestionAvailable.right) return;
 
-        const prevIndex = findPreviousAvailableQuestionIndex(currentQuestion.orderIndex);
-        if (prevIndex !== -1) {
-            navigateToQuestion(prevIndex);
+        setLoading(true);
+
+        if (quiz.questions && quiz.questions.length !== 0) {
+            const questions = quiz.questions.sort((a, b) => a.orderIndex - b.orderIndex);
+            const nextQuestion = questions.find((q) => q.orderIndex > currentQuestion.orderIndex);
+            if (nextQuestion) {
+                updateCurrentQuestion(nextQuestion);
+                handleUpdateCurrentQuestion({
+                    questionId: nextQuestion.id,
+                    questionIndex: nextQuestion.orderIndex,
+                });
+                setLoading(false);
+                return;
+            }
         }
-        return -1;
+        handleUpdateQuestion(currentQuestion.orderIndex, true);
     }
-
-    function handleNextQuestion() {
-        if (loading) return;
-        if (!currentQuestion || !quiz?.questions) {
-            return;
-        }
-
-        const nextIndex = findNextAvailableQuestionIndex(currentQuestion.orderIndex);
-        if (nextIndex !== -1) {
-            navigateToQuestion(nextIndex);
-        }
-        return -1;
-    }
-
-    const hasPreviousAvailable = currentQuestion
-        ? findPreviousAvailableQuestionIndex(currentQuestion.orderIndex) !== -1
-        : false;
-
-    const hasNextAvailable = currentQuestion
-        ? findNextAvailableQuestionIndex(currentQuestion.orderIndex) !== -1
-        : false;
-
-    const isPrevDisabled = !currentQuestion || !hasPreviousAvailable || loading;
-    const isNextDisabled = !currentQuestion || !hasNextAvailable || loading;
 
     const [platform, setPlatform] = useState<'mac' | 'windows' | 'other'>('other');
     useEffect(() => {
@@ -209,15 +160,18 @@ export default function HostQuestionPreviewFooter() {
                 <div className="w-fit flex items-center justify-center gap-x-4 relative">
                     <ToolTipComponent content="previous question">
                         <BsArrowLeft
-                            onClick={handlePreviousQuestion}
+                            onClick={prevQuestion}
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${theme.borderColor}50`,
-                                backgroundColor: `${theme.textColor}20`,
-                                opacity: isPrevDisabled ? 0.5 : 1,
+                                border: `1px solid ${template?.border_color}50`,
+                                backgroundColor: `${template?.text_color}20`,
+                                opacity: !isQuestionAvailable.left ? 0.5 : 1,
                             }}
                             size={32}
-                            className={`rounded-full p-1.5 ${isPrevDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            className={cn(
+                                `rounded-full p-1.5 cursor-pointer`,
+                                !isQuestionAvailable.left ? 'cursor-not-allowed' : 'cursor-pointer',
+                            )}
                         />
                     </ToolTipComponent>
                     <div
@@ -228,8 +182,8 @@ export default function HostQuestionPreviewFooter() {
                         <FaLightbulb
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${theme.borderColor}50`,
-                                backgroundColor: `${theme.textColor}20`,
+                                border: `1px solid ${template?.border_color}50`,
+                                backgroundColor: `${template?.text_color}20`,
                             }}
                             size={32}
                             className="rounded-full p-1.5 cursor-pointer"
@@ -244,15 +198,18 @@ export default function HostQuestionPreviewFooter() {
                     </div>
                     <ToolTipComponent content="next question">
                         <BsArrowRight
-                            onClick={handleNextQuestion}
+                            onClick={nextQuestion}
                             strokeWidth={0.8}
                             style={{
-                                border: `1px solid ${theme.borderColor}50`,
-                                backgroundColor: `${theme.textColor}20`,
-                                opacity: isNextDisabled ? 0.5 : 1,
+                                border: `1px solid ${template?.border_color}50`,
+                                backgroundColor: `${template?.text_color}20`,
+                                opacity: !isQuestionAvailable.right ? 0.5 : 1,
                             }}
                             size={32}
-                            className={`rounded-full p-1.5 ${isNextDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            className={cn(
+                                `rounded-full p-1.5 cursor-pointer`,
+                                !isQuestionAvailable.right ? 'cursor-not-allowed' : 'cursor-pointer',
+                            )}
                         />
                     </ToolTipComponent>
                 </div>
@@ -283,3 +240,4 @@ export default function HostQuestionPreviewFooter() {
         </div>
     );
 }
+

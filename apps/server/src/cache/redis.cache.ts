@@ -44,7 +44,10 @@ export default class RedisCache {
         }
     }
 
-    public async get_game_session(sessionId: string): Promise<Partial<GameSession> | null> {
+    public async get_game_session(
+        sessionId: string,
+        fields?: (keyof GameSession)[],
+    ): Promise<Partial<GameSession> | null> {
         try {
             const key = this.get_game_session_key(sessionId);
             const data = await this.redis_cache.hgetall(key);
@@ -52,12 +55,24 @@ export default class RedisCache {
             if (Object.keys(data).length === 0) return null;
 
             const parsed: Partial<GameSession> = {};
+
             for (const [key, value] of Object.entries(data)) {
                 try {
                     parsed[key as keyof GameSession] = JSON.parse(value);
                 } catch {
                     parsed[key as keyof GameSession] = value as any;
                 }
+            }
+
+            // Apply field filtering if fields are specified
+            if (fields && fields.length > 0) {
+                const filtered: Partial<GameSession> = {};
+                for (const field of fields) {
+                    if (parsed[field] !== undefined) {
+                        filtered[field] = parsed[field] as any;
+                    }
+                }
+                return filtered;
             }
 
             return parsed;
@@ -366,7 +381,10 @@ export default class RedisCache {
         }
     }
 
-    public async get_quiz(game_session_id: string): Promise<Partial<QuizWithQuestions> | null> {
+    public async get_quiz(
+        game_session_id: string,
+        fields?: (keyof QuizWithQuestions)[],
+    ): Promise<Partial<QuizWithQuestions> | null> {
         try {
             const key = this.get_quiz_key(game_session_id);
             const data = await this.redis_cache.hgetall(key);
@@ -390,7 +408,20 @@ export default class RedisCache {
                 }
             }
 
-            return parsed as Partial<QuizWithQuestions>;
+            const result = parsed as Partial<QuizWithQuestions>;
+
+            // Apply field filtering if fields are specified
+            if (fields && fields.length > 0) {
+                const filtered: Partial<QuizWithQuestions> = {};
+                for (const field of fields) {
+                    if (field in result) {
+                        filtered[field] = result[field] as any;
+                    }
+                }
+                return filtered;
+            }
+
+            return result;
         } catch (error) {
             console.error('RedisCache error get_quiz : ', error);
             return null;

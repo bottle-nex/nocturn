@@ -238,11 +238,21 @@ export default class QuizAction {
                         const rest = { ...question };
                         delete rest.basePoints;
                         delete rest.correctAnswer;
+                        delete rest.difficulty;
                         delete rest.explanation;
+                        if (!rest.hintLaunched) delete rest.hint;
+                        delete rest.hintLaunched;
+                        delete rest.orderIndex;
+                        delete rest.readingTime;
                         return rest;
                     }
                     case HostScreen.QUESTION_RESULTS:
-                        return question;
+                        const rest = { ...question };
+                        delete rest.orderIndex;
+                        delete rest.readingTime;
+                        delete rest.timeLimit;
+                        delete rest.hintLaunched;
+                        return rest;
                     default:
                         return null;
                 }

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
-import { ApiResponse } from '@nocturn/types';
+import { ApiResponse, QuestionType } from '@nocturn/types';
+import { getUnAskedQuestionSchema } from '../../schemas/getUnAskedQuestionSchema';
 
 export default async function getUnAskedQuestionController(req: Request, res: Response) {
     try {
@@ -11,12 +12,20 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        const { quizId: quiz_id } = req.params;
+        const parsed_data = getUnAskedQuestionSchema.safeParse({
+            quizId: req.params.quizId,
+            after: req.query.after,
+        });
 
-        if (!quiz_id) {
-            ResponseWriter.invalid_data(res, 'quiz id is required');
+        if (!parsed_data.success) {
+            ResponseWriter.invalid_data(res, 'quiz id not found');
             return;
         }
+
+        const { quizId: quiz_id, after: questionAfterIndex } = parsed_data.data;
+
+        console.log("quizId: ", quiz_id);
+        console.log("after: ", questionAfterIndex);
 
         const quiz = await prisma.quiz.findUnique({
             where: {
@@ -24,15 +33,92 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                 hostId: user.id,
             },
             select: {
-                questions: {
+                id: true,
+                _count: {
+                    select: {
+                        questions: true,
+                    },
+                },
+            },
+        });
+
+        if (!quiz) {
+            ResponseWriter.not_found(res, 'quiz not found');
+            return;
+        }
+
+        const result = await prisma.$transaction(async (tx) => {
+            // if questionAfterIndex is not provided then return a random question
+            if (!questionAfterIndex) {
+                const question = await tx.question.findFirst({
                     where: {
+                        quizId: quiz_id,
                         isAsked: false,
                     },
                     select: {
                         id: true,
                         question: true,
                         options: true,
-                        explanation: true,
+                        hint: true,
+                        difficulty: true,
+                        basePoints: true,
+                        timeLimit: true,
+                        orderIndex: true,
+                        imageUrl: true,
+                        isAsked: true,
+                    },
+                });
+                console.log("question is found and after is not provided: ", question);
+                return question;
+            }
+
+            if (quiz._count.questions < questionAfterIndex) return null;
+
+            let question: Partial<QuestionType> | null;
+
+            const raw_question = await tx.question.findFirst({
+                where: {
+                    quizId: quiz_id,
+                    isAsked: false,
+                    orderIndex: {
+                        gt: questionAfterIndex,
+                    },
+                },
+                select: {
+                    id: true,
+                    question: true,
+                    options: true,
+                    hint: true,
+                    difficulty: true,
+                    basePoints: true,
+                    timeLimit: true,
+                    orderIndex: true,
+                    imageUrl: true,
+                    isAsked: true,
+                },
+            });
+
+            question = raw_question
+                ? {
+                      ...raw_question,
+                      hint: raw_question.hint ?? undefined,
+                      imageUrl: raw_question.imageUrl ?? undefined,
+                  }
+                : null;
+
+            if (!question) {
+                const raw_question = await tx.question.findFirst({
+                    where: {
+                        quizId: quiz_id,
+                        isAsked: false,
+                        orderIndex: {
+                            lt: questionAfterIndex,
+                        },
+                    },
+                    select: {
+                        id: true,
+                        question: true,
+                        options: true,
                         hint: true,
                         difficulty: true,
                         basePoints: true,
@@ -44,18 +130,23 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     orderBy: {
                         orderIndex: 'asc',
                     },
-                    take: 1,
-                },
-            },
+                });
+
+                question = raw_question
+                    ? {
+                          ...raw_question,
+                          hint: raw_question.hint ?? undefined,
+                          imageUrl: raw_question.imageUrl ?? undefined,
+                      }
+                    : null;
+            }
+
+            return question;
         });
 
-        if (!quiz) {
-            ResponseWriter.not_found(res, 'quiz not found');
-            return;
-        }
+        const question = result;
 
-        // means no question is left for asking, leading quiz end
-        if (quiz.questions.length === 0) {
+        if (!question) {
             ResponseWriter.secure_success(
                 res,
                 {
@@ -70,8 +161,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        // if this part appears means questions are still left
-        const question = quiz.questions[0];
         ResponseWriter.secure_success(
             res,
             {
@@ -80,7 +169,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     end: false,
                     question: {
                         ...question,
-                        explanation: question.explanation ?? undefined,
                         hint: question.hint ?? undefined,
                         imageUrl: question.imageUrl ?? undefined,
                     },
@@ -88,10 +176,8 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             },
             'question fetched successfully',
         );
-        return;
     } catch (error) {
-        console.error('error in un asked question controller: ', error);
+        console.error('error in un asked question controller:', error);
         ResponseWriter.system_error(res);
-        return;
     }
 }

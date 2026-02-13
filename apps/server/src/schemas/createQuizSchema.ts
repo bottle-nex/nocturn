@@ -30,6 +30,7 @@ const questionSchema = z.object({
     readingTime: z.number().min(1).max(600),
     orderIndex: z.number(),
     imageUrl: z.string().optional(),
+    hintLaunched: z.boolean(),
 });
 
 // const templateSchema = z.object({

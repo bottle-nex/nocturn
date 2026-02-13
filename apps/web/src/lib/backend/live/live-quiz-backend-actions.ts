@@ -34,10 +34,12 @@ export default class LiveQuizBackendActions {
     static async getUnAskedQuestion(
         token: string,
         quizId: string,
+        questionAfterIndex?: number,
     ): Promise<{ end: boolean; question: QuestionType | null } | null> {
+        console.log('calling server');
         try {
             const { data: response } = await axios.get<CustomResponse<getUnAskedQuestionResponse>>(
-                `${GET_UN_ASKED_QUESTION_URL}/${quizId}`,
+                `${GET_UN_ASKED_QUESTION_URL}/${quizId}?${questionAfterIndex?.toString()}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
