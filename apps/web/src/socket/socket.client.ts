@@ -1,3 +1,4 @@
+import WebSocketEvents from '@/lib/handle_socket_events';
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
 
 export interface MessagePayload {
@@ -60,7 +61,7 @@ export default class WebSocketClient {
                 clearTimeout(this.reconnect_timeout);
                 this.reconnect_timeout = null;
             }
-
+            WebSocketEvents.handle_incoming_socket_code_event(event.code);
             const shouldReconnect = !this.is_manually_closed && !isIntentionalClosure(event.code);
 
             if (shouldReconnect) {

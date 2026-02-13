@@ -1,7 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { JSX, useEffect, useRef, useState } from 'react';
-import JoinQuizCodeTicker from '../quiz/new/JoinquizCodeTicker';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import CanvasAccents from '../utility/CanvasAccents';
 import CanvasHeading from './CanvasHeading';

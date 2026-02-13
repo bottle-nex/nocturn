@@ -53,20 +53,20 @@ export default class SpectatorManager {
 
     private is_new_spectator_allowed(game_session_id: string): boolean {
         const quiz_settings = this.quiz_settings.quiz_settings_mapping.get(game_session_id);
-        // if (!quiz_settings?.allowNewSpectator) {
-        //     return false;
-        // }
-        // return true;
-        if (!quiz_settings) {
-            return true;
+        if (!quiz_settings || !quiz_settings.allowNewSpectator) {
+            return false;
         }
-        return quiz_settings.allowNewSpectator !== false;
+        return quiz_settings.allowNewSpectator;
     }
 
     public async handle_connection(
         ws: CustomWebSocket,
         payload: LiveGameTokenPayload,
     ): Promise<void> {
+        if (!this.quiz_settings.quiz_settings_mapping.get(payload.gameSessionId)) {
+            await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
+        }
+
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
 
         if (!is_new_spectator_allowed) {
@@ -85,7 +85,6 @@ export default class SpectatorManager {
         }
 
         this.cleanup_existing_spectator_socket(payload.userId, payload.gameSessionId);
-
         const new_spectator_socket_id = this.generateSocketId();
         ws.id = new_spectator_socket_id;
         ws.user = payload;
@@ -104,9 +103,6 @@ export default class SpectatorManager {
         this.setup_message_handlers(ws);
 
         this.quizManager.onSpectatorConnect(payload);
-        if (!this.quiz_settings.quiz_settings_mapping.get(payload.gameSessionId)) {
-            await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
-        }
     }
 
     private cleanup_existing_spectator_socket(spectator_id: string, game_session_id: string) {
@@ -334,6 +330,7 @@ export default class SpectatorManager {
             session_spectators_socket_ids.delete(socket_id);
             if (session_spectators_socket_ids.size === 0) {
                 this.session_spectators_mapping.delete(game_session_id);
+                this.quiz_settings.cleanup_session(game_session_id);
             }
         }
     }

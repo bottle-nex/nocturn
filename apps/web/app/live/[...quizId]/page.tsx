@@ -1,5 +1,4 @@
 'use client';
-import LiveUserRendererScreens from '@/components/quiz/live/LiveUserRendererScreens';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizGlobalChatStore } from '@/store/live-quiz/useLiveQuizGlobalChatStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
@@ -23,6 +22,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
+import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
 
 export interface NewProps {
     params: Promise<{
@@ -124,7 +124,7 @@ export default function New({ params }: NewProps) {
 
     return (
         <div className="w-full h-screen select-none">
-            <LiveUserRendererScreens />
+            <LiveGameScreens />
         </div>
     );
 }

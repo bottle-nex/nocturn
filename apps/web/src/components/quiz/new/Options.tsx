@@ -20,7 +20,7 @@ export default function Options() {
 
     function handleCorrectAnswerChange(idx: number) {
         editQuestionAndBroadcast(currentQuestionIndex, { correctAnswer: idx, id: currentQ?.id });
-    };
+    }
 
     function handleInputChange(value: string, index: number) {
         if (!currentQ) return;
@@ -31,15 +31,15 @@ export default function Options() {
             { options: newOptions, id: currentQ.id },
             { debounce: true },
         );
-    };
+    }
 
     function handleDragStart(index: number) {
         setDraggedIndex(index);
-    };
+    }
 
     function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
         e.preventDefault();
-    };
+    }
 
     function handleDrop(dropIndex: number) {
         if (draggedIndex === null || !currentQ || draggedIndex === dropIndex) return;
@@ -64,7 +64,7 @@ export default function Options() {
         });
 
         setDraggedIndex(null);
-    };
+    }
 
     function handleDeleteOption(index: number) {
         if (!currentQ || index === currentQ.correctAnswer) return;
@@ -112,8 +112,14 @@ export default function Options() {
                         value={option}
                         onChange={(val) => handleInputChange(val, idx)}
                     />
-                    <Button onClick={() => handleDeleteOption(idx)} disabled={currentQ.options.length === 1 || currentQ.correctAnswer === idx} className='bg-dark-base' variant={"ghost"} size={"icon"}>
-                        <RxCross1 className='size-3' />
+                    <Button
+                        onClick={() => handleDeleteOption(idx)}
+                        disabled={currentQ.options.length === 1 || currentQ.correctAnswer === idx}
+                        className="bg-dark-base"
+                        variant={'ghost'}
+                        size={'icon'}
+                    >
+                        <RxCross1 className="size-3" />
                     </Button>
                 </div>
             ))}

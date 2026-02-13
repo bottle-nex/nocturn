@@ -167,6 +167,7 @@ export default class WebsocketServer {
                     ws.close();
                     return;
                 }
+
                 const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
                 const redis_key: string =
                     'collabSessionId' in decoded_cookie_payload

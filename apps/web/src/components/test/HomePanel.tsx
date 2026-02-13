@@ -65,7 +65,7 @@ export default function HomePanel() {
                             Recently Viewed
                         </h2>
                         <div className="gap-6 lg:grid-cols-3 grid">
-                            {recentlyViewed.map((quiz) => (
+                            {recentlyViewed.slice(0, 3).map((quiz) => (
                                 <RecentlyViewedCard className="w-full" key={quiz.id} quiz={quiz} />
                             ))}
                         </div>

@@ -76,29 +76,29 @@ export default function GetToKnowUs(): JSX.Element {
             setOpenCard(id);
             setLearntCards((prev) => new Set(prev).add(id));
         }
-        console.log("clicked card with id", id);
         if (timeout.current) {
             clearTimeout(timeout.current);
-
         } else {
-            console.log("clearing the timeout");
             const newTimeout = setTimeout(() => {
-                makeBacendCall();
+                makeBackendCall();
             }, 5000);
             timeout.current = newTimeout;
         }
     }
 
-    async function makeBacendCall() {
+    async function makeBackendCall() {
         try {
-            console.log("amking the backend call");
-            const { data } = await axios.post(LEARNING_JOURNEY_URL, {
-                learningJourneyStep: Array.from(learntCardsRef.current),
-            }, {
-                headers: {
-                    Authorization: `Bearer ${session?.user.token}`,
-                }
-            })
+            await axios.post(
+                LEARNING_JOURNEY_URL,
+                {
+                    learningJourneyStep: Array.from(learntCardsRef.current),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.token}`,
+                    },
+                },
+            );
         } catch (err) {
             console.error('Error updating learning journey', err);
         }

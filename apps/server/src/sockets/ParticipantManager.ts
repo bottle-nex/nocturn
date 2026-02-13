@@ -625,6 +625,7 @@ export default class ParticipantManager {
             session_participants_socket_ids.delete(socket_id);
             if (session_participants_socket_ids.size === 0) {
                 this.session_participants_mapping.delete(game_session_id);
+                this.quiz_settings.cleanup_session(game_session_id);
             }
         }
     }
