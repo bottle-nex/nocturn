@@ -2,7 +2,6 @@
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState } from 'react';
 import QuizActions from '@/lib/backend/home/quiz-actions';
-import { templates } from '@/lib/templates';
 import moment from 'moment';
 import MyQuizzesGridView from './MyQuizzesGridView';
 import { QuizType } from '@nocturn/types';
@@ -45,16 +44,13 @@ export default function SharedQuizPanel() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sharedQuizs.map((quiz) => {
-                    const currTemplate = templates.find((t) => t.id === quiz.theme);
-                    if (!currTemplate) return null;
-
                     const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
 
                     return (
                         <MyQuizzesGridView
                             key={quiz.id}
                             quiz={quiz}
-                            currTemplate={currTemplate}
+                            currTemplate={quiz.theme}
                             formattedTime={formattedTime}
                         />
                     );

@@ -7,7 +7,6 @@ import CanvasHeading from './CanvasHeading';
 import Image from 'next/image';
 import CanvasOptions from './CanvasOptions';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
-import { templates } from '@/lib/templates';
 import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 interface CanvasProps {
@@ -21,13 +20,15 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
     const canvasRef = useRef<HTMLDivElement>(null);
     const { currentQuestionIndex, quiz } = useNewQuizStore();
     const currentQ = quiz.questions[currentQuestionIndex];
-    const template = templates.find((t) => t.id === quiz.theme);
+
     const canvasWidth = useWidth(canvasRef);
+
+    const theme = quiz?.theme?.theme;
+
     useEffect(() => {
         if (copied) {
-            setTimeout(() => {
-                setCopied(false);
-            }, 2000);
+            const t = setTimeout(() => setCopied(false), 2000);
+            return () => clearTimeout(t);
         }
     }, [copied]);
 
@@ -38,7 +39,10 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
     return (
         <div
             ref={canvasRef}
-            style={{ color: template?.text_color, boxSizing: 'border-box' }}
+            style={{
+                color: theme?.text_color ?? '#000',
+                boxSizing: 'border-box',
+            }}
             onClick={canvasTapHandler}
             className={cn(
                 'w-full md:max-w-5xl aspect-video rounded-lg relative overflow-hidden',
@@ -46,17 +50,20 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 className,
             )}
         >
-            <CanvasAccents design={template?.accent_type} accentColor={template?.accent_color} />
+            <CanvasAccents design={theme?.accent_type} accentColor={theme?.accent_color} />
 
             <div
-                style={{ backgroundColor: template?.background_color }}
-                className="bg-[#196cff] h-full rounded-md relative flex flex-col"
+                style={{
+                    backgroundColor: theme?.background_color ?? '#196cff',
+                }}
+                className="h-full rounded-md relative flex flex-col"
             >
                 {/* <JoinQuizCodeTicker /> */}
                 <CanvasHeading currentQ={currentQ} />
 
                 <div className="flex-1 flex items-end justify-center mb-8">
                     <CanvasOptions />
+
                     {currentQ?.imageUrl && (
                         <div
                             className={cn(

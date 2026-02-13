@@ -1,19 +1,15 @@
 'use client';
-
 import { useEffect, useState } from 'react';
-
 import EmptyCanvas from '@/components/canvas/EmptyCanvas';
 import MiniCanvas from '@/components/canvas/MiniCanvas';
 import PreviewQuizSkeleton from '@/components/skeletons/PreviewQuizSkeleton';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
-
 import QuizActions from '@/lib/backend/home/quiz-actions';
-import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
-
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { QuestionType, QuizType, TemplateEnum } from '@nocturn/types';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
+import { QuestionType, QuizType, TemplateType } from '@nocturn/types';
 
 import { LiaPagerSolid } from 'react-icons/lia';
 import ChangeThemePanel from './ChangeThemePanel';
@@ -42,9 +38,7 @@ export default function PreviewQuiz({
 
         try {
             setLoading(true);
-
             const data = await QuizActions.get_quiz_questions(session.user.token, quizId);
-
             setQuizData(data);
         } catch (err) {
             console.error('Failed to fetch quiz data', err);
@@ -69,22 +63,25 @@ export default function PreviewQuiz({
 }
 
 function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
+    const { templates } = useQuizTemplatesStore();
+
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(
         quiz?.questions?.[0] || null,
     );
 
-    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
-    const [previewTheme, setPreviewTheme] = useState<string | null>(null);
-    const [themePanel, setThemePanel] = useState(false);
+    const initialTheme = templates.find((t) => t.id === quiz?.templateId) ?? templates[0];
 
-    const activeTheme = previewTheme ?? currentTheme;
-    const template = templates.find((t) => t.id === activeTheme);
+    const [currentTheme, setCurrentTheme] = useState<TemplateType>(initialTheme);
+    const [previewTheme, setPreviewTheme] = useState<TemplateType | null>(null);
+    const [themePanel, setThemePanel] = useState<boolean>(false);
 
     const router = useRouter();
 
     function handleOnContinue() {
         router.push(`/new/${quiz?.id}`);
     }
+
+    const activeTheme = previewTheme ?? currentTheme;
 
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
@@ -164,7 +161,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
                                         onClick={() => setCurrentQuestion(q)}
                                         currentQuestionIndex={currentQuestion?.orderIndex || 1}
                                         orderIndex={q.orderIndex}
-                                        template={template}
+                                        template={activeTheme}
                                         question={q}
                                         collaboratorHighlight={cn('rounded-beta ')}
                                     />
@@ -175,7 +172,7 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
 
                     <div className="w-150 ">
                         <EmptyCanvas
-                            template={template!}
+                            template={activeTheme}
                             question={currentQuestion?.question}
                             options={currentQuestion?.options}
                             className={cn(

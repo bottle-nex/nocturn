@@ -1,13 +1,3 @@
-export enum TemplateEnum {
-  CLASSIC = "CLASSIC",
-  MODERN = "MODERN",
-  PASTEL = "PASTEL",
-  NEON = "NEON",
-  YELLOW = "YELLOW",
-  GREEN = "GREEN",
-  BLUE = "BLUE",
-}
-
 export enum QuizStatusEnum {
   CREATED = "CREATED",
   PUBLISHED = "PUBLISHED",
@@ -105,4 +95,14 @@ export enum AiMessageElement {
   DIFFICULTY = "DIFFICULTY",
   TITLE = "TITLE",
   QUIZ = "QUIZ",
+}
+
+export enum TemplateEnum {
+  CLASSIC = "CLASSIC",
+  MODERN = "MODERN",
+  NEON = "NEON",
+  YELLOW = "YELLOW",
+  GREEN = "GREEN",
+  PASTEL = "PASTEL",
+  BLUE = "BLUE",
 }

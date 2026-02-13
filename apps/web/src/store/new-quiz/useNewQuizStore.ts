@@ -3,10 +3,27 @@ import {
     QuestionType,
     QuizStatusEnum,
     QuizType,
-    TemplateEnum,
     InteractionEnum,
+    TemplateEnum,
+    TemplateType,
 } from '@nocturn/types';
 import { create } from 'zustand';
+
+const default_template: TemplateType = {
+    id: 'CLASSIC',
+    name: 'CLASSIC',
+    theme: {
+        background_color: '#F6F5F2',
+        text_color: '#000000',
+        border_color: '#000000',
+        accent_type: 'mountains',
+        accent_color: '#00000010',
+        bars: ['#E2C275', '#6886C5', '#CD5656', '#AEDADD', '#BCBAB8'],
+        src: 'classic-template',
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+};
 
 interface NewQuizStoreTypes {
     quiz: QuizType;
@@ -31,7 +48,8 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
         id: '',
         title: 'Centralized vs Decentralized: Know the Difference?',
         description: '',
-        theme: TemplateEnum.CLASSIC,
+        template: TemplateEnum.CLASSIC,
+        theme: default_template,
         prizePool: 0,
         currency: '',
         basePointsPerQuestion: 100,
@@ -169,7 +187,8 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
                 id: '',
                 title: 'Quiz Title',
                 description: '',
-                theme: TemplateEnum.CLASSIC,
+                template: TemplateEnum.CLASSIC,
+                theme: default_template,
                 prizePool: 0,
                 currency: '',
                 basePointsPerQuestion: 100,

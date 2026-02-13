@@ -1,5 +1,4 @@
-import { Template } from '@/lib/templates';
-import { QuizType } from '@nocturn/types';
+import { QuizType, TemplateType } from '@nocturn/types';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
@@ -11,7 +10,7 @@ import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesListViewProps {
     formattedTime: string;
-    currTemplate: Template;
+    currTemplate: TemplateType;
     quiz: QuizType;
     isSelected: boolean;
     toggleQuizSelection: (quizId: string) => void;

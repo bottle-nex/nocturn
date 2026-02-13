@@ -15,11 +15,35 @@ export interface UserType {
     Quiz: QuizType[];
 }
 
+export interface TemplateTheme {
+    background_color: string;
+    text_color: string;
+    border_color: string;
+    accent_type: string;
+    accent_color: string;
+    bars: string[];
+    src: string;
+}
+
+export interface TemplateType {
+    id: string;
+    name: TemplateEnum;
+    theme: TemplateTheme;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+// template -> enum
+// templateId -> cuid
 export interface QuizType {
     id: string;
     title: string;
     description?: string | null;
-    theme: TemplateEnum;
+
+    templateId?: string;
+    template: TemplateEnum;
+    theme: TemplateType;
+
     prizePool: number;
     currency: string;
     basePointsPerQuestion: number;
@@ -75,6 +99,7 @@ export interface QuestionType {
     quizId: string;
     quiz?: QuizType;
     isAsked: boolean;
+    hintLaunched?: boolean;
 }
 
 export interface ParticipantType {
@@ -183,10 +208,10 @@ export interface EliminationType {
 export enum TemplateEnum {
     CLASSIC = 'CLASSIC',
     MODERN = 'MODERN',
-    PASTEL = 'PASTEL',
     NEON = 'NEON',
     YELLOW = 'YELLOW',
     GREEN = 'GREEN',
+    PASTEL = 'PASTEL',
     BLUE = 'BLUE',
 }
 

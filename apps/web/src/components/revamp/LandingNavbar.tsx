@@ -67,7 +67,7 @@ export default function LandingNavbar() {
     return (
         <div
             className={cn(
-                'w-full h-21 px-6 fixed z-40 flex items-center justify-between transition-all duration-500 ease-in-out',
+                'w-full h-21 px-8 fixed z-40 flex items-center justify-between transition-all duration-500 ease-in-out',
                 isNavbarVisible
                     ? 'translate-y-0'
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
@@ -114,7 +114,7 @@ export default function LandingNavbar() {
                                             duration: 0.15,
                                             ease: 'easeOut',
                                         }}
-                                        className="bg-dark-faded text-light-base text-[18px] h-11 w-24 rounded-full shadow-xs cursor-pointer"
+                                        className="bg-dark-base text-light-base text-[18px] h-11 w-24 rounded-full shadow-xs cursor-pointer"
                                     >
                                         Home
                                     </motion.button>
@@ -141,7 +141,7 @@ export default function LandingNavbar() {
                                             duration: 0.15,
                                             ease: 'easeOut',
                                         }}
-                                        className="bg-dark-faded text-light-base text-[18px] h-11 w-29 rounded-full shadow-xs cursor-pointer"
+                                        className="bg-dark-base text-light-base text-[18px] h-11 w-29 rounded-full shadow-xs cursor-pointer"
                                     >
                                         Features
                                     </motion.button>
@@ -168,7 +168,7 @@ export default function LandingNavbar() {
                                             duration: 0.15,
                                             ease: 'easeOut',
                                         }}
-                                        className="bg-dark-faded text-light-base cursor-pointer text-[18px] h-11 w-25 rounded-full shadow-xs"
+                                        className="bg-dark-base text-light-base cursor-pointer text-[18px] h-11 w-25 rounded-full shadow-xs"
                                     >
                                         About
                                     </motion.button>
@@ -195,7 +195,7 @@ export default function LandingNavbar() {
                                             duration: 0.15,
                                             ease: 'easeOut',
                                         }}
-                                        className="bg-dark-faded text-light-base cursor-pointer text-[18px] h-11 w-20 rounded-full shadow-xs"
+                                        className="bg-dark-base text-light-base cursor-pointer text-[18px] h-11 w-20 rounded-full shadow-xs"
                                     >
                                         Faq
                                     </motion.button>
@@ -204,7 +204,7 @@ export default function LandingNavbar() {
                         )}
                     </AnimatePresence>
 
-                    <Button className="relative h-11 w-11 bg-dark-faded hover:bg-dark-faded shadow-xs text-light-base rounded-full overflow-hidden">
+                    <Button className="relative h-11 w-11 bg-dark-base hover:bg-dark-alpha shadow-xs text-light-base rounded-full overflow-hidden">
                         <motion.span
                             animate={isMenuOpen ? 'open' : 'closed'}
                             variants={{

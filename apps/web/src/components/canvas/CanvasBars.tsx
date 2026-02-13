@@ -1,5 +1,4 @@
-import { Template } from '@/lib/templates';
-import { QuestionType } from '@nocturn/types';
+import { QuestionType, TemplateType } from '@nocturn/types';
 import { IoCheckmark } from 'react-icons/io5';
 import { RxCross1 } from 'react-icons/rx';
 
@@ -8,7 +7,7 @@ interface CanvasBarsProps {
     option: string;
     votes: number[];
     currentQ: QuestionType;
-    currentQTemplate: Template | undefined;
+    currentQTemplate: TemplateType | undefined;
     getBarHeight: (voteValue: number) => string;
 }
 
@@ -20,6 +19,8 @@ export default function CanvasBars({
     currentQTemplate,
     getBarHeight,
 }: CanvasBarsProps) {
+    const barColor = currentQTemplate?.theme?.bars?.[idx] ?? '#4F46E5';
+
     return (
         <div
             key={idx}
@@ -28,9 +29,9 @@ export default function CanvasBars({
             <div className="flex items-center justify-center gap-x-1 mb-1 sm:mb-2 w-full">
                 <div className="shrink-0">
                     {currentQ.correctAnswer === idx ? (
-                        <IoCheckmark className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.25 text-dark-alpha bg-[#cae8ce] rounded-full " />
+                        <IoCheckmark className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.25 text-dark-alpha bg-[#cae8ce] rounded-full" />
                     ) : (
-                        <RxCross1 className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.5 text-dark-alpha bg-red-200 rounded-full " />
+                        <RxCross1 className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.5 text-dark-alpha bg-red-200 rounded-full" />
                     )}
                 </div>
                 <span className="text-xs sm:text-sm lg:text-base font-medium">
@@ -42,7 +43,7 @@ export default function CanvasBars({
                 className="w-full rounded-tr-md sm:rounded-tr-2xl transition-all duration-1000 ease-in-out border border-white/20 z-20"
                 style={{
                     height: getBarHeight(votes[idx]!),
-                    backgroundColor: `${currentQTemplate?.bars[idx]}` || '#4F46E5',
+                    backgroundColor: barColor,
                 }}
             />
 

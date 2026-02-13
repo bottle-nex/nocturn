@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { createQuizSchema } from '../../schemas/createQuizSchema';
-import { v4 as uuid } from 'uuid';
+import { createQuizSchema, TemplateEnum } from '../../schemas/createQuizSchema';
 import { prisma } from '@nocturn/database';
 
 export default async function createQuizController(req: Request, res: Response) {
@@ -11,7 +10,10 @@ export default async function createQuizController(req: Request, res: Response) 
     }
 
     const { data, success } = createQuizSchema.safeParse(req.body);
+    console.log('data from frontend is: ', data);
+
     if (!success) {
+        console.log('failed to parse the data');
         ResponseWriter.invalid_data(res, 'Invalid quiz data');
         return;
     }
@@ -19,17 +21,22 @@ export default async function createQuizController(req: Request, res: Response) 
     const { id: _ignored, questions, ...quizData } = data;
 
     try {
-        const quiz_id = uuid();
+        const db_template = await prisma.template.findUnique({
+            where: { name: TemplateEnum.CLASSIC },
+        });
+        console.log('template in db is: ', db_template);
+
+        if (!db_template || !db_template.theme) {
+            ResponseWriter.not_found(res, 'Template not found');
+            return;
+        }
 
         const quiz = await prisma.quiz.create({
             data: {
-                id: quiz_id,
                 ...quizData,
-                host: {
-                    connect: {
-                        id: req.user.id,
-                    },
-                },
+                templateId: db_template.id,
+                theme: db_template.theme,
+                hostId: req.user.id,
                 questions: {
                     create: questions.map((q) => ({
                         question: q.question,
@@ -46,7 +53,11 @@ export default async function createQuizController(req: Request, res: Response) 
                     })),
                 },
             },
+            include: {
+                template: true,
+            },
         });
+        console.log('quiz created is: ', quiz);
 
         ResponseWriter.success(res, { id: quiz.id });
         return;

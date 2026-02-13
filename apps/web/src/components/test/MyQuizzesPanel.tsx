@@ -3,7 +3,6 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useEffect, useState, useRef } from 'react';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
-import { templates } from '@/lib/templates';
 import moment from 'moment';
 import QuizzesUpperSection from './QuizzesUpperSection';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
@@ -132,9 +131,6 @@ export default function MyQuizzesPanel() {
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => {
-                            const currTemplate = templates.find((t) => t.id === quiz.theme);
-                            if (!currTemplate) return null;
-
                             const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
                             const isSelected = selectedQuizIds.has(quiz.id);
 
@@ -144,7 +140,7 @@ export default function MyQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={isSelected}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={currTemplate}
+                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );
@@ -153,9 +149,6 @@ export default function MyQuizzesPanel() {
                 ) : (
                     <div className="flex flex-col gap-4">
                         {filteredQuizzes.map((quiz) => {
-                            const currTemplate = templates.find((t) => t.id === quiz.theme);
-                            if (!currTemplate) return null;
-
                             const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
                             const isSelected = selectedQuizIds.has(quiz.id);
 
@@ -165,7 +158,7 @@ export default function MyQuizzesPanel() {
                                     quiz={quiz}
                                     isSelected={isSelected}
                                     toggleQuizSelection={toggleQuizSelection}
-                                    currTemplate={currTemplate}
+                                    currTemplate={quiz.theme}
                                     formattedTime={formattedTime}
                                 />
                             );

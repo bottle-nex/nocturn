@@ -1,13 +1,13 @@
-import { Template } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import CanvasAccents from '../utility/CanvasAccents';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { TemplateType } from '@nocturn/types';
 
 interface EmptyCanvasProps {
     question?: string;
     options?: string[];
-    template: Template;
+    template: TemplateType;
     className?: string;
     onClick?: () => void;
     noTruncate?: boolean;
@@ -23,7 +23,7 @@ export default function EmptyCanvas({
     noTruncate = false,
     autoAnimateBars = false,
 }: EmptyCanvasProps) {
-    const barColors = template.bars || [];
+    const barColors = template.theme.bars || [];
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [barHeights, setBarHeights] = useState<number[]>([]);
 
@@ -61,7 +61,7 @@ export default function EmptyCanvas({
             {question && options.length > 0 && (
                 <div className="absolute h-full w-full z-5 p-3 sm:p-6 md:p-8 py-4 sm:py-5 md:py-6 flex flex-col justify-between">
                     <div
-                        style={{ color: template.text_color }}
+                        style={{ color: template.theme.text_color }}
                         className={cn(
                             'max-w-full text-xs sm:text-sm md:text-base font-medium p-0.5 sm:p-1',
                             !noTruncate && 'truncate',
@@ -91,7 +91,7 @@ export default function EmptyCanvas({
                                         }}
                                     />
                                     <span
-                                        style={{ color: template.text_color }}
+                                        style={{ color: template.theme.text_color }}
                                         className={cn(
                                             'mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-[11px] text-center w-8 sm:w-10 md:w-12',
                                             !noTruncate && 'truncate',
@@ -111,15 +111,15 @@ export default function EmptyCanvas({
             )}
             <div
                 style={{
-                    backgroundColor: template.background_color,
-                    color: template.text_color,
+                    backgroundColor: template.theme.background_color,
+                    color: template.theme.text_color,
                 }}
                 className="w-full h-full rounded-md flex justify-center items-center relative group overflow-hidden"
             >
                 <CanvasAccents
                     className=""
-                    design={template.accent_type}
-                    accentColor={template.accent_color}
+                    design={template.theme.accent_type}
+                    accentColor={template.theme.accent_color}
                 />
             </div>
         </div>

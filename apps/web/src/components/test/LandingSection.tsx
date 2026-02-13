@@ -212,7 +212,7 @@ export default function LandingSection() {
     }
 
     return (
-        <div className="h-screen w-screen bg-light-alpha flex flex-col pt-24 px-20 relative overflow-hidden">
+        <div className="h-screen w-screen bg-light-alpha flex flex-col pt-24 px-8 relative">
             {/* animated object */}
             <div className="absolute top-[29.5rem] right-50">
                 <AnimatedSvg />
@@ -254,9 +254,16 @@ export default function LandingSection() {
                     'flex flex-col text-[8.8rem] leading-[0.95] text-dark-base tracking-tight font-sans pt-8',
                 )}
             >
-                <div className="headline-line overflow-hidden">RISK & REWARD</div>
-                <div className="headline-line overflow-hidden">TEST YOUR</div>
-                <div className="headline-line overflow-hidden">KNOWLEDGE</div>
+                <div className="headline-line">RISK & REWARD</div>
+                <div className="headline-line">TEST YOUR</div>
+                <div className="headline-line relative overflow-visible">
+                    <span className="headline-text inline-block relative">
+                        KNOWLEDGE
+                        <div className="absolute left-full ml-4 top-0">
+                            <AnimatedSvg />
+                        </div>
+                    </span>
+                </div>
             </div>
 
             <div className="flex w-full h-full py-10">

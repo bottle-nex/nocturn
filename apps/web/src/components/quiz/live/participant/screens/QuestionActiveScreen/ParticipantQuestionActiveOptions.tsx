@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { FaDotCircle, FaRegCircle, FaLifeRing } from 'react-icons/fa';
 import { getResponsiveGap } from '@/components/canvas/CanvasOptions';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
@@ -28,7 +27,6 @@ export default function ParticipantQuestionActiveOptions() {
 
     const [selected, setSelected] = useState<number | null>(null);
 
-    const template = templates.find((t) => t.id === liveQuiz?.theme);
     const { setResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
 
@@ -39,7 +37,7 @@ export default function ParticipantQuestionActiveOptions() {
 
     if (!currentQuestion) return null;
 
-    const barColors = template?.bars ?? (['#3b82f6'] as Hex[]);
+    const barColors = liveQuiz.theme.theme?.bars ?? (['#3b82f6'] as Hex[]);
     const canRequestLifeline =
         gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
         !hasUsedLifeline &&
@@ -89,7 +87,7 @@ export default function ParticipantQuestionActiveOptions() {
 
         return {
             boxShadow,
-            backgroundColor: template?.background_color,
+            backgroundColor: liveQuiz.theme.theme?.background_color,
         };
     };
 

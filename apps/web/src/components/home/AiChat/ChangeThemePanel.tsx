@@ -1,12 +1,13 @@
 import EmptyCanvas from '@/components/canvas/EmptyCanvas';
-import { templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
+import { TemplateType } from '@nocturn/types';
 import { RxCross2 } from 'react-icons/rx';
 
 interface ChangeThemePanelProps {
-    currentTheme?: string;
-    onThemeChange?: (theme: string) => void;
-    onThemeHover?: (theme: string | null) => void;
+    currentTheme?: TemplateType;
+    onThemeChange?: (theme: TemplateType) => void;
+    onThemeHover?: (theme: TemplateType | null) => void;
     onClose: () => void;
 }
 
@@ -16,6 +17,8 @@ export default function ChangeThemePanel({
     onThemeHover,
     onClose,
 }: ChangeThemePanelProps) {
+    const { templates } = useQuizTemplatesStore();
+
     return (
         <div
             onClick={(e) => e.stopPropagation()}
@@ -40,11 +43,11 @@ export default function ChangeThemePanel({
                 {templates.map((template) => (
                     <div
                         key={template.id}
-                        onClick={() => onThemeChange?.(template.id)}
-                        onMouseEnter={() => onThemeHover?.(template.id)}
+                        onClick={() => onThemeChange?.(template)}
+                        onMouseEnter={() => onThemeHover?.(template)}
                         className={cn(
                             'flex flex-col items-center p-1 rounded-[9px] cursor-pointer',
-                            currentTheme === template.id && 'bg-dark-alpha',
+                            currentTheme?.id === template.id && 'bg-dark-alpha',
                         )}
                     >
                         <div className="w-24">
@@ -54,7 +57,7 @@ export default function ChangeThemePanel({
                                 className={cn(
                                     'w-full aspect-video rounded-[8px] outline-2 select-none',
                                     'outline-black/40 dark:outline-white/40',
-                                    currentTheme === template.id && 'outline-alpha',
+                                    currentTheme?.id === template.id && 'outline-alpha',
                                 )}
                             />
                         </div>

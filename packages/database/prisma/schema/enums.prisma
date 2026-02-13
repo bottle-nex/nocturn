@@ -11,15 +11,15 @@ enum QuizStatus {
     NULL
 }
 
-enum Template {
-    CLASSIC
-    MODERN
-    PASTEL
-    NEON
-    YELLOW
-    GREEN
-    BLUE
-}
+// enum Template {
+//     CLASSIC
+//     MODERN
+//     PASTEL
+//     NEON
+//     YELLOW
+//     GREEN
+//     BLUE
+// }
 
 enum Interactions {
     THUMBS_UP

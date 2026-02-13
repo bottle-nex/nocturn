@@ -1,5 +1,7 @@
-import { prisma } from "../src/client";
+import { Prisma, prisma } from "../src";
+import { templates } from "../src/utils/templates";
 
+// <---------------- SUBSCRIPTION TIERS ---------------->
 async function seedSubscriptionTiers() {
   console.log("Seeding subscription tiers...");
 
@@ -27,13 +29,13 @@ async function seedSubscriptionTiers() {
         name: "PRO",
         displayName: "Pro Plan",
         description: "For professional quiz creators and educators",
-        priceMonthly: 999, // ₹999/month
-        priceYearly: 9999, // ₹9,999/year (2 months free)
+        priceMonthly: 999,
+        priceYearly: 9999,
         currency: "INR",
         maxQuizzesPerMonth: -1, // Unlimited
         maxAiGenerationsPerMonth: -1, // Unlimited
         maxCollaborators: 5,
-        maxActiveQuizzes: -1, // Unlimited
+        maxActiveQuizzes: -1,
         advancedTemplates: true,
         customBranding: true,
         prioritySupport: true,
@@ -42,16 +44,16 @@ async function seedSubscriptionTiers() {
         sortOrder: 1,
       },
     ],
-    skipDuplicates: true, // Skip if tiers already exist
+    skipDuplicates: true,
   });
 
   console.log("✓ Subscription tiers seeded successfully");
 }
 
+// <---------------- USER MIGRATION ---------------->
 async function migrateExistingUsers() {
   console.log("Migrating existing users to FREE tier...");
 
-  // Get the FREE tier
   const freeTier = await prisma.subscriptionTier.findUnique({
     where: { name: "FREE" },
   });
@@ -60,7 +62,6 @@ async function migrateExistingUsers() {
     throw new Error("FREE tier not found. Run seedSubscriptionTiers first.");
   }
 
-  // Find all users without a current tier
   const users = await prisma.user.findMany({
     where: {
       OR: [{ currentTier: null }, { currentTier: "" }],
@@ -70,13 +71,13 @@ async function migrateExistingUsers() {
   console.log(`Found ${users.length} users to migrate`);
 
   for (const user of users) {
-    // Update user with FREE tier
+    // Assign FREE tier
     await prisma.user.update({
       where: { id: user.id },
       data: { currentTier: "FREE" },
     });
 
-    // Create FREE subscription for user
+    // Create FREE subscription if not exists
     const existingSubscription = await prisma.userSubscription.findFirst({
       where: { userId: user.id },
     });
@@ -89,7 +90,7 @@ async function migrateExistingUsers() {
           status: "ACTIVE",
           billingInterval: "MONTHLY",
           currentPeriodStart: new Date(),
-          currentPeriodEnd: new Date("2099-12-31"), // Never expires for free tier
+          currentPeriodEnd: new Date("2099-12-31"), // Never expires
           amount: 0,
           currency: "INR",
         },
@@ -100,22 +101,44 @@ async function migrateExistingUsers() {
   console.log(`✓ Migrated ${users.length} users to FREE tier`);
 }
 
+// <---------------- TEMPLATE SEEDING ---------------->
+async function seedTemplates() {
+  console.log("Seeding templates...");
+
+  for (const t of templates) {
+    await prisma.template.upsert({
+      where: { id: t.id },
+      update: {
+        name: t.name,
+        theme: t as unknown as Prisma.InputJsonValue,
+      },
+      create: {
+        id: t.id,
+        name: t.name,
+        theme: t as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+
+  console.log("Templates synced successfully");
+}
+
+// <---------------- MAIN ---------------->
 async function main() {
   try {
     await seedSubscriptionTiers();
     await migrateExistingUsers();
+    await seedTemplates();
     console.log("\n✓ Database seeding completed successfully!\n");
   } catch (error) {
     console.error("Error seeding database:", error);
     throw error;
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

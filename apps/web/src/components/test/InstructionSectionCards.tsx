@@ -171,7 +171,7 @@ export function PublishCardContent(): JSX.Element {
         >
             <motion.div
                 variants={rowVariants}
-                className="relative w-full h-8"
+                className="relative w-full h-10"
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 {/* front */}
@@ -191,7 +191,7 @@ export function PublishCardContent(): JSX.Element {
                     className={cn(
                         'absolute inset-0 rounded-sm',
                         'flex items-center gap-x-2 px-2',
-                        'bg-indigo-200 text-sm tracking-wide text-neutral-700',
+                        'bg-indigo-200 text-base tracking-wide text-neutral-700',
                         'ring-1 ring-indigo-400',
                     )}
                     style={{
@@ -203,7 +203,7 @@ export function PublishCardContent(): JSX.Element {
                         <LuSave className="h-3.5 w-3.5 text-indigo-600" />
                     </div> */}
 
-                    <div className="flex-1 h-6 rounded-full text-indigo-600 text-[13px] flex items-center px-3 justify-center">
+                    <div className="flex-1 h-6 rounded-full text-indigo-600 text-sm flex items-center px-3 justify-center">
                         SAVE DRAFT
                     </div>
                 </div>
@@ -212,7 +212,7 @@ export function PublishCardContent(): JSX.Element {
             {/* PUBLISH QUIZ */}
             <motion.div
                 variants={rowVariants}
-                className="relative w-full h-8"
+                className="relative w-full h-10"
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 <div
@@ -242,7 +242,7 @@ export function PublishCardContent(): JSX.Element {
                         <LuSave className="h-3.5 w-3.5 text-indigo-600" />
                     </div> */}
 
-                    <div className="flex-1 h-6 rounded-full text-red-600/80 flex items-center px-3 justify-center text-[13px]">
+                    <div className="flex-1 h-6 rounded-full text-red-600/80 flex items-center px-3 justify-center text-sm">
                         PUBLISH QUIZ
                     </div>
                 </div>
@@ -251,7 +251,7 @@ export function PublishCardContent(): JSX.Element {
             {/* LAUNCH QUIZ */}
             <motion.div
                 variants={rowVariants}
-                className="relative w-full h-8"
+                className="relative w-full h-10"
                 style={{ transformStyle: 'preserve-3d' }}
             >
                 <div
@@ -277,7 +277,7 @@ export function PublishCardContent(): JSX.Element {
                         backfaceVisibility: 'hidden',
                     }}
                 >
-                    <div className="flex-1 h-6 rounded-full text-amber-600 flex items-center px-3 justify-center text-[13px]">
+                    <div className="flex-1 h-6 rounded-full text-amber-600 flex items-center px-3 justify-center text-sm">
                         LAUNCH QUIZ
                     </div>
                 </div>
@@ -288,7 +288,7 @@ export function PublishCardContent(): JSX.Element {
 
 export function LaunchCardContent(): JSX.Element {
     return (
-        <div className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 relative group">
+        <div className="w-60 h-60 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 relative group">
             <div className="absolute top-3.5 left-3.5 bg-light-base flex justify-center items-center cursor-pointer hover:bg-neutral-200/70 transition-colors transform duration-200 text-neutral-500 px-2 py-0.5 text-xs rounded-sm ring-1 ring-neutral-200">
                 Stake SOL
             </div>

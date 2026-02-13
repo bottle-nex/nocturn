@@ -6,9 +6,8 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
-import { QuizType } from '@nocturn/types';
+import { QuizType, TemplateType } from '@nocturn/types';
 import HeartButton from '../ui/HeartButton';
-import { Template } from '@/lib/templates';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
@@ -16,7 +15,7 @@ import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
-    currTemplate: Template;
+    currTemplate: TemplateType;
     quiz: QuizType;
     isSelected?: boolean;
     toggleQuizSelection?: (quizId: string) => void;

@@ -2,14 +2,15 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { LiaPagerSolid } from 'react-icons/lia';
 import ChangeThemePanel from './ChangeThemePanel';
+import { TemplateType } from '@nocturn/types';
 
 interface AiSlidesPreviewAreaProps {
     expanded: boolean;
     themePanel: boolean;
-    currentTheme: string;
+    currentTheme: TemplateType | undefined;
     setThemePanel: (value: boolean) => void;
-    setCurrentTheme: (theme: string) => void;
-    setPreviewTheme?: (theme: string | null) => void;
+    setCurrentTheme: (theme: TemplateType) => void;
+    setPreviewTheme?: (theme: TemplateType | null) => void;
     onClose: () => void;
     onContinue: () => void;
 }
@@ -45,7 +46,7 @@ export default function AiSlidesPreviewArea({
             <div className="flex-1 flex flex-col text-center text-neutral-500 min-w-75 px-10 py-5 ">
                 <SlidesPreviewNav
                     themePanel={themePanel}
-                    currentTheme={currentTheme}
+                    currentTheme={currentTheme!}
                     setThemePanel={setThemePanel}
                     setPreviewTheme={setPreviewTheme}
                     setCurrentTheme={setCurrentTheme}
@@ -59,10 +60,10 @@ export default function AiSlidesPreviewArea({
 
 interface SlidesPreviewNavProps {
     themePanel: boolean;
-    currentTheme: string;
+    currentTheme: TemplateType;
     setThemePanel: (value: boolean) => void;
-    setPreviewTheme?: (theme: string | null) => void;
-    setCurrentTheme: (theme: string) => void;
+    setPreviewTheme?: (theme: TemplateType | null) => void;
+    setCurrentTheme: (theme: TemplateType) => void;
     onContinue: () => void;
     onClose: () => void;
 }

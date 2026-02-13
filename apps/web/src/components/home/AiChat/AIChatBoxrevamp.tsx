@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
-import { AiQuizChatRole, AiQuizMessage, TemplateEnum } from '@nocturn/types';
+import { AiQuizChatRole, AiQuizMessage, TemplateType } from '@nocturn/types';
 import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
@@ -27,7 +27,7 @@ export default function AIChatBoxRevamp() {
     const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
     const router = useRouter();
 
-    const [currentTheme, setCurrentTheme] = useState<string>(quiz?.theme || TemplateEnum.CLASSIC);
+    const [currentTheme, setCurrentTheme] = useState<TemplateType | undefined>(quiz?.theme);
     // const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
 

@@ -4,11 +4,10 @@ import MiniCanvas from '@/components/canvas/MiniCanvas';
 import { Button } from '@/components/ui/button';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import UtilityCard from '@/components/utility/UtilityCard';
-import { Template, templates } from '@/lib/templates';
 import { cn } from '@/lib/utils';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useSideBarStore } from '@/store/new-quiz/useSideBar';
-import { QuizType } from '@nocturn/types';
+import { QuizType, TemplateType } from '@nocturn/types';
 import { useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
 import { TbPlus } from 'react-icons/tb';
@@ -21,7 +20,6 @@ export default function QuestionPallete() {
         useNewQuizStore();
     const { setCurrentOn } = useCanvasSelectionStore();
     const { handleCollaboratorsQuestionChange } = useWebSocket();
-    const currentQTemplate = templates.find((t) => t.id === quiz.theme);
 
     function handleQuestionChange(orderIndex: number) {
         setCurrentOn(SELECTION_MODE.CANVAS);
@@ -37,7 +35,7 @@ export default function QuestionPallete() {
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
-                currentQTemplate={currentQTemplate}
+                currentQTemplate={quiz.theme}
             />
             <SmallQuestionPallete
                 quiz={quiz}
@@ -45,7 +43,7 @@ export default function QuestionPallete() {
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
                 removeQuestion={removeQuestion}
-                currentQTemplate={currentQTemplate}
+                currentQTemplate={quiz.theme}
             />
         </>
     );
@@ -57,7 +55,7 @@ interface QuestionPallete {
     handleQuestionChange: (index: number) => void;
     addQuestion: () => void;
     removeQuestion: (index: number) => void;
-    currentQTemplate: Template | undefined;
+    currentQTemplate: TemplateType | undefined;
 }
 
 function BigQuestionPallete({

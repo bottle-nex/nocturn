@@ -1,0 +1,10 @@
+model Template {
+    id  String @id  @default(cuid())
+    name    String  @unique
+    theme   Json
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    quizzes Quiz[]
+}
