@@ -290,6 +290,7 @@ async function get_question(
                         orderIndex: true,
                         imageUrl: true,
                         isAsked: true,
+                        hintLaunched: true,
                     },
                     orderBy: {
                         orderIndex: 'asc',
@@ -327,6 +328,7 @@ async function get_question(
                 orderIndex: true,
                 imageUrl: true,
                 isAsked: true,
+                hintLaunched: true,
             },
         });
 

@@ -149,6 +149,10 @@ export default class HostManager {
                 this.handle_quiz_results(ws);
                 break;
 
+            case MESSAGE_TYPES.UPDATE_CURRENT_QUESTION:
+                this.handle_update_current_question(ws, payload);
+                break;
+
             default:
                 console.error('Unknown message type', type);
                 break;
@@ -166,7 +170,9 @@ export default class HostManager {
             return;
         }
 
-        this.database_queue.update_question(question.id, { hintLaunched: true });
+        this.database_queue.update_question(ws.user.gameSessionId, question.id, {
+            hintLaunched: true,
+        });
 
         const hint = question.hint;
         const hintPayload: PubSubMessageTypes = {
@@ -500,6 +506,20 @@ export default class HostManager {
                 rankers[2],
             );
         }
+    }
+
+    private async handle_update_current_question(
+        ws: CustomWebSocket,
+        payload: { questionId: string; questionIndex: number },
+    ) {
+        this.database_queue.update_game_session(
+            ws.user.gameSessionId,
+            {
+                currentQuestionId: payload.questionId,
+                currentQuestionIndex: payload.questionIndex,
+            },
+            ws.user.gameSessionId,
+        );
     }
 
     private async validateHostInDB(quizId: string, hostId: string): Promise<boolean> {

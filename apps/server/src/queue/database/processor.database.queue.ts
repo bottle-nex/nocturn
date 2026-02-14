@@ -270,16 +270,33 @@ export class DatabaseQueueProcessors {
         job: Bull.Job,
     ): Promise<{ success: boolean; question: Question } | { success: boolean; error: string }> {
         try {
-            const { game_session_id, question_id, question }: UpdateQuestionJobType = job.data;
+            const {
+                game_session_id,
+                question_id,
+                question: question_data,
+            }: UpdateQuestionJobType = job.data;
 
             const updatedQuestion = await prisma.question.update({
                 where: {
                     id: question_id,
                 },
-                data: question,
+                data: question_data,
             });
 
-            await this.redis_cache.set_quiz(game_session_id, {});
+            const quiz = await this.redis_cache.get_quiz(game_session_id);
+
+            if (!quiz || !quiz.questions) {
+                throw new Error('invalidated quiz or questions inside quiz');
+            }
+
+            const updatedQuestions = quiz.questions.map((q) =>
+                q.id === question_id ? { ...q, question_data } : q,
+            );
+
+            await this.redis_cache.set_quiz(game_session_id, {
+                ...quiz,
+                questions: updatedQuestions,
+            });
 
             return {
                 success: true,

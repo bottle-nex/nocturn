@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button';
 import CountDownClock from '@/components/ui/CountDownClock';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
+import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { cn } from '@/lib/utils';
 import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { HostScreenEnum } from '@nocturn/types';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -15,11 +17,18 @@ export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
-    const { currentQuestion, gameSession, updateGameSession, updateCurrentQuestion, quiz } =
-        useLiveQuizStore();
+    const {
+        currentQuestion,
+        gameSession,
+        updateGameSession,
+        updateCurrentQuestion,
+        quiz,
+        updateQuiz,
+    } = useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
     const [quizEnded, _setQuizEnded] = useState<boolean>(false);
-    const { handleHostQuizResults } = useWebSocket();
+    const { handleHostQuizResults, handleUpdateCurrentQuestion } = useWebSocket();
+    const { session } = useUserSessionStore();
 
     useEffect(() => {
         emptyLiveResponses();
@@ -41,11 +50,31 @@ export default function HostQuestionResultsRenderer() {
         );
     }
 
-    function handleOnNextQuestion() {
+    async function handleOnNextQuestion() {
+        if (!session?.user.token) return;
+
         if (quizEnded) {
             handleHostQuizResults({});
         } else {
-            updateCurrentQuestion(quiz.questions[0]);
+            if (!quiz.questions || quiz.questions.length === 0) {
+                const data = await LiveQuizBackendActions.getUnAskedQuestion(
+                    session.user.token,
+                    quiz.id,
+                );
+                if (data?.end) {
+                    // quiz ended
+                    return;
+                }
+                if (data?.question) {
+                    updateQuiz({ questions: [data?.question] });
+                }
+            }
+            const question = quiz.questions[0];
+            updateCurrentQuestion(question);
+            handleUpdateCurrentQuestion({
+                questionId: question.id,
+                questionIndex: question.orderIndex,
+            });
             handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
             updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
         }

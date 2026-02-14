@@ -23,7 +23,7 @@ export default function HostQuestionActiveRenderer() {
         if (!currentQuestion || !quiz || !gameSession || !session?.user.token) return;
 
         // fetch from server
-        if (quiz.questions.length === 0 || !quiz.questions) {
+        if (!quiz.questions || quiz.questions.length === 0) {
             const data = await LiveQuizBackendActions.getUnAskedQuestion(
                 session.user.token,
                 quiz.id,
