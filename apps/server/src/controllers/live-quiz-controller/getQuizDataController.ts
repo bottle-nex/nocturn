@@ -328,6 +328,7 @@ async function get_question(
                 orderIndex: true,
                 imageUrl: true,
                 isAsked: true,
+                hintLaunched: true,
             },
         });
 

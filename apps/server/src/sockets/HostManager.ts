@@ -170,7 +170,9 @@ export default class HostManager {
             return;
         }
 
-        // this.database_queue.update_question(question.id, { hintLaunched: true });
+        this.database_queue.update_question(ws.user.gameSessionId, question.id, {
+            hintLaunched: true,
+        });
 
         const hint = question.hint;
         const hintPayload: PubSubMessageTypes = {

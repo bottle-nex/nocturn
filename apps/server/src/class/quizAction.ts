@@ -224,26 +224,34 @@ export default class QuizAction {
             default: {
                 switch (hostScreen) {
                     case HostScreen.QUESTION_READING: {
-                        const rest = { ...question };
-                        delete rest.basePoints;
-                        delete rest.correctAnswer;
-                        delete rest.explanation;
-                        delete rest.hint;
-                        delete rest.options;
-                        delete rest.orderIndex;
-                        delete rest.timeLimit;
+                        const rest = this.pick(question, ['imageUrl', 'question', 'readingTime']);
+                        // const rest = { ...question };
+                        // delete rest.basePoints;
+                        // delete rest.correctAnswer;
+                        // delete rest.explanation;
+                        // delete rest.hint;
+                        // delete rest.options;
+                        // delete rest.orderIndex;
+                        // delete rest.timeLimit;
                         return rest;
                     }
                     case HostScreen.QUESTION_ACTIVE: {
-                        const rest = { ...question };
-                        delete rest.basePoints;
-                        delete rest.correctAnswer;
-                        delete rest.difficulty;
-                        delete rest.explanation;
-                        if (!rest.hintLaunched) delete rest.hint;
-                        delete rest.hintLaunched;
-                        delete rest.orderIndex;
-                        delete rest.readingTime;
+                        const rest = this.pick(question, [
+                            'imageUrl',
+                            'options',
+                            'question',
+                            'timeLimit',
+                            question.hintLaunched ? 'hint' : 'hintLaunched',
+                        ]);
+                        // const rest = { ...question };
+                        // delete rest.basePoints;
+                        // delete rest.correctAnswer;
+                        // delete rest.difficulty;
+                        // delete rest.explanation;
+                        // if (!rest.hintLaunched) delete rest.hint;
+                        // delete rest.hintLaunched;
+                        // delete rest.orderIndex;
+                        // delete rest.readingTime;
                         return rest;
                     }
                     case HostScreen.QUESTION_RESULTS:
@@ -301,5 +309,19 @@ export default class QuizAction {
             console.error('Error recording quiz view:', err);
             return { created: false };
         }
+    }
+    private static pick<T extends object, K extends keyof T>(
+        obj: T,
+        keys: readonly K[],
+    ): Pick<T, K> {
+        const result = {} as Pick<T, K>;
+
+        for (const key of keys) {
+            if (key in obj) {
+                result[key] = obj[key];
+            }
+        }
+
+        return result;
     }
 }
