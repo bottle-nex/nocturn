@@ -11,7 +11,7 @@ export function getResponsiveGap(currentQ: QuestionType): string {
     const optionCount = currentQ?.options?.length || 4;
     if (optionCount <= 2) return 'gap-8 sm:gap-12 md:gap-16';
     if (optionCount === 3) return 'gap-4 sm:gap-8 md:gap-12';
-    return 'gap-2 sm:gap-4 md:gap-6 lg:gap-8';
+    return 'gap-2 sm:gap-4 md:gap-6 lg:gap-2';
 }
 
 export default function CanvasOptions() {
@@ -50,7 +50,7 @@ export default function CanvasOptions() {
                 <div
                     onClick={optionsTapHandler}
                     className={cn(
-                        'w-full h-full flex items-end justify-center px-4 rounded-beta',
+                        'w-full h-full flex items-end justify-between px-4 rounded-beta gap-x-1',
                         getResponsiveGap(currentQ!),
                         currentOn === SELECTION_MODE.OPTION && style,
                     )}
