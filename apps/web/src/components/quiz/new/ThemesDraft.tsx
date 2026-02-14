@@ -5,15 +5,17 @@ import { TemplateType } from '@nocturn/types';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
-import EmptyCanvas from '@/components/canvas/EmptyCanvas';
 import { cn } from '@/lib/utils';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
+import ThemePreview from './ThemePreview';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
     const { quiz } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const { templates } = useQuizTemplatesStore();
+
+    const selectedTemplateId = quiz.templateId;
 
     function changeThemeHandler(template: TemplateType) {
         updateQuizAndBroadcast({
@@ -47,23 +49,29 @@ export default function ThemesDraft() {
             </div>
 
             <div className="mt-4 px-2 pb-4 pt-2 overflow-y-auto flex-1">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-6">
-                    {templates.map((template) => (
-                        <div
-                            key={template.id}
-                            onClick={() => changeThemeHandler(template)}
-                            className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
-                        >
-                            <EmptyCanvas
-                                className={cn(
-                                    'w-full aspect-video rounded-[8px] outline-black/40 dark:outline-white/40',
-                                    quiz.template?.id === template.id &&
-                                        'outline-2 outline-indigo-800',
-                                )}
-                                template={template}
-                            />
-                        </div>
-                    ))}
+                <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+                    {templates.map((template) => {
+                        const isActive = selectedTemplateId === template.id;
+
+                        return (
+                            <div
+                                key={template.id}
+                                onClick={() => changeThemeHandler(template)}
+                                className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
+                            >
+                                <ThemePreview
+                                    active={isActive}
+                                    className={cn(
+                                        'outline-1 outline-offset-2 transition-all duration-200',
+                                        isActive
+                                            ? 'outline-indigo-600'
+                                            : 'outline-neutral-500 hover:outline-neutral-400',
+                                    )}
+                                    template={template}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

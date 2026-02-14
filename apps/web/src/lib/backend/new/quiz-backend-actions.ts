@@ -26,7 +26,6 @@ export default class BackendActions {
             return false;
         }
         try {
-
             const { data } = await axios.post(`${CREATE_QUIZ_URL}/${quiz.id}`, quiz, {
                 headers: {
                     Authorization: `Bearer ${token}`,

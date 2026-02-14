@@ -48,7 +48,7 @@ export default function New({ params }: NewProps) {
     const { setParticipants } = useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
 
-        useEffect(() => {
+    useEffect(() => {
         async function getLiveData() {
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
