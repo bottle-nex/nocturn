@@ -9,11 +9,6 @@ export default function HostLobbyRenderer() {
     const { participants } = useLiveParticipantsStore();
     return (
         <div className="w-full max-h-full flex flex-col relative">
-            {/* <JoinQuizCodeTicker
-                link={quiz?.spectatorLink}
-                spectatorCode={quiz.spectatorCode}
-                participantCode={quiz.participantCode}
-            /> */}
             <JoinQuizCodesDropdown
                 link={quiz?.spectatorLink}
                 spectatorCode={quiz.spectatorCode}

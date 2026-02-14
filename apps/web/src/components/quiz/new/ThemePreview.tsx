@@ -48,10 +48,18 @@ export default function ThemePreview({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             className={cn(
-                'relative w-full aspect-video h-18 rounded-md overflow-hidden cursor-pointer',
+                'relative w-full aspect-16/11 rounded-md overflow-hidden cursor-pointer',
                 className,
             )}
         >
+            <div
+                style={{
+                    color: template.textColor,
+                }}
+                className="absolute top-1 left-1/2 -translate-x-1/2 z-20 text-[11px] font-medium capitalize"
+            >
+                {template.name}
+            </div>
             <div
                 style={{ backgroundColor }}
                 className="absolute inset-0 z-0 rounded-md overflow-hidden pointer-events-none"
@@ -59,11 +67,11 @@ export default function ThemePreview({
                 <CanvasAccents design={accentType} accentColor={accentColor} />
             </div>
 
-            <div className="absolute inset-0 z-10 flex items-end justify-around px-2 pb-2.5 pt-6 gap-x-1.5">
+            <div className="absolute inset-0 z-10 flex items-end justify-around px-2 pb-2 pt-1">
                 {heights.map((h, i) => (
                     <motion.div
                         key={i}
-                        className="flex-1 rounded-tr-[3px]"
+                        className="flex-1"
                         style={{ backgroundColor: bars[i % bars.length] }}
                         animate={{ height: `${h}%` }}
                         transition={{ duration: 0.6, ease: 'easeInOut' }}
