@@ -39,13 +39,21 @@ export default class LiveQuizBackendActions {
             index: number;
         },
     ): Promise<{ end: boolean; question: QuestionType | null } | null> {
-        const query = getQuestion?.after
-            ? `after=${getQuestion.index}`
-            : `before=${getQuestion?.index}`;
+        const params = new URLSearchParams();
+
+        if (getQuestion) {
+            if (getQuestion.after) {
+                params.set('after', getQuestion.index.toString());
+            } else if (!getQuestion.after) {
+                params.set('before', getQuestion.index.toString());
+            }
+        }
+
+        const url = `${GET_UN_ASKED_QUESTION_URL}/${quizId}${params.toString() ? `?${params.toString()}` : ''}`;
 
         try {
             const { data: response } = await axios.get<CustomResponse<getUnAskedQuestionResponse>>(
-                `${GET_UN_ASKED_QUESTION_URL}/${quizId}?${query}`,
+                url,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

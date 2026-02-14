@@ -1,15 +1,7 @@
-import z from 'zod';
+import { z } from 'zod';
 
 export const getUnAskedQuestionSchema = z.object({
-    quizId: z.uuid(),
-    after: z
-        .string()
-        .transform(Number)
-        .refine((v) => Number.isInteger(v) && v >= 0)
-        .optional(),
-    before: z
-        .string()
-        .transform(Number)
-        .refine((v) => Number.isInteger(v) && v >= 0)
-        .optional(),
+    quizId: z.string(),
+    after: z.coerce.number().int().min(0).optional(),
+    before: z.coerce.number().int().min(0).optional(),
 });

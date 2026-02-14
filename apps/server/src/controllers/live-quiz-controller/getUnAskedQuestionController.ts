@@ -12,6 +12,9 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
+        console.log("params quizid: ", req.params.quizId);
+        console.log('query: ', req.query);
+
         const parsed_data = getUnAskedQuestionSchema.safeParse({
             quizId: req.params.quizId,
             after: req.query.after,
@@ -19,6 +22,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         });
 
         if (!parsed_data.success) {
+            console.log({ parsed_data });
             ResponseWriter.invalid_data(res, 'quiz id not found');
             return;
         }
@@ -28,6 +32,8 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             after: questionAfterIndex,
             before: questionBeforeIndex,
         } = parsed_data.data;
+        
+        console.log({ quiz_id });
 
         const quiz = await prisma.quiz.findUnique({
             where: {
