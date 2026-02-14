@@ -254,13 +254,14 @@ export default class QuizAction {
                         // delete rest.readingTime;
                         return rest;
                     }
-                    case HostScreen.QUESTION_RESULTS:
+                    case HostScreen.QUESTION_RESULTS: {
                         const rest = { ...question };
                         delete rest.orderIndex;
                         delete rest.readingTime;
                         delete rest.timeLimit;
                         delete rest.hintLaunched;
                         return rest;
+                    }
                     default:
                         return null;
                 }

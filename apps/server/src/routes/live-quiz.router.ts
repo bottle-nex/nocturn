@@ -31,11 +31,7 @@ router.get(
     verifyQuizOwnershipMiddleware,
     getSelectedQuestionDetails,
 );
-router.get(
-    '/quiz/get-un-asked-question/:quizId',
-    authMiddleware,
-    getUnAskedQuestionController,
-);
+router.get('/quiz/get-un-asked-question/:quizId', authMiddleware, getUnAskedQuestionController);
 router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);
 router.get('/quiz/get-question-results', getQuestionResults);

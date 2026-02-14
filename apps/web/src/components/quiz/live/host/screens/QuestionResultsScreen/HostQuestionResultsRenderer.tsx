@@ -51,22 +51,22 @@ export default function HostQuestionResultsRenderer() {
     }
 
     async function handleOnNextQuestion() {
-
         if (!session?.user.token) return;
-        console.log("quiz: ", quiz);
 
         if (quizEnded) {
             handleHostQuizResults({});
         } else {
             if (!quiz.questions || quiz.questions.length === 0) {
-                console.log("db call");
-                const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id);
+                const data = await LiveQuizBackendActions.getUnAskedQuestion(
+                    session.user.token,
+                    quiz.id,
+                );
                 if (data?.end) {
                     // quiz ended
                     return;
                 }
                 if (data?.question) {
-                    updateQuiz({ questions: [data?.question] })
+                    updateQuiz({ questions: [data?.question] });
                 }
             }
             const question = quiz.questions[0];
@@ -139,4 +139,3 @@ export default function HostQuestionResultsRenderer() {
         </div>
     );
 }
-

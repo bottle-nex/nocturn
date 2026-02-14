@@ -19,7 +19,10 @@ export default function HostQuestionPreviewFooter() {
     const [openExplanation, setOpenExplanation] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const { handleSendHostLaunchQuestion, handleUpdateCurrentQuestion } = useWebSocket();
-    const [isQuestionAvailable, setIsQuestionAvailable] = useState<{ left: boolean, right: boolean }>({ left: true, right: true });
+    const [isQuestionAvailable, setIsQuestionAvailable] = useState<{
+        left: boolean;
+        right: boolean;
+    }>({ left: true, right: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
         if (event.key === 'ArrowLeft') {
@@ -59,24 +62,31 @@ export default function HostQuestionPreviewFooter() {
 
     // this is for handling the arrows button active or disabled
     useEffect(() => {
-        if (currentQuestion?.orderIndex === 0) setIsQuestionAvailable(prev => ({ left: false, right: prev.right }));
-        else setIsQuestionAvailable(prev => ({ left: true, right: prev.right }));
+        if (currentQuestion?.orderIndex === 0)
+            setIsQuestionAvailable((prev) => ({ left: false, right: prev.right }));
+        else setIsQuestionAvailable((prev) => ({ left: true, right: prev.right }));
 
-        const questionCount = (quiz as QuizType & {
-            _count: { questions: number };
-        })._count.questions;
-        if (currentQuestion?.orderIndex === questionCount - 1) setIsQuestionAvailable(prev => ({ left: prev.left, right: false }));
-        else setIsQuestionAvailable(prev => ({ left: prev.left, right: true }));
-    }, [currentQuestion]);
+        const questionCount = (
+            quiz as QuizType & {
+                _count: { questions: number };
+            }
+        )._count.questions;
+        if (currentQuestion?.orderIndex === questionCount - 1)
+            setIsQuestionAvailable((prev) => ({ left: prev.left, right: false }));
+        else setIsQuestionAvailable((prev) => ({ left: prev.left, right: true }));
+        // if anything happens remove quiz from here
+    }, [quiz, currentQuestion]);
 
     async function handleUpdateQuestion(index: number, after: boolean) {
-
         if (!session?.user.token || !currentQuestion) {
             setLoading(false);
             return;
         }
 
-        const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id, { after, index: index });
+        const data = await LiveQuizBackendActions.getUnAskedQuestion(session.user.token, quiz.id, {
+            after,
+            index: index,
+        });
 
         if (data?.end) {
             // no more questions left
@@ -106,7 +116,7 @@ export default function HostQuestionPreviewFooter() {
 
         if (quiz.questions && quiz.questions.length !== 0) {
             const questions = quiz.questions.sort((a, b) => b.orderIndex - a.orderIndex);
-            const prevQuestion = questions.find(q => q.orderIndex < currentQuestion.orderIndex);
+            const prevQuestion = questions.find((q) => q.orderIndex < currentQuestion.orderIndex);
             if (prevQuestion) {
                 updateCurrentQuestion(prevQuestion);
                 handleUpdateCurrentQuestion({
@@ -209,7 +219,9 @@ export default function HostQuestionPreviewFooter() {
                             size={32}
                             className={cn(
                                 `rounded-full p-1.5 cursor-pointer`,
-                                !isQuestionAvailable.right ? 'cursor-not-allowed' : 'cursor-pointer',
+                                !isQuestionAvailable.right
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-pointer',
                             )}
                         />
                     </ToolTipComponent>
@@ -241,4 +253,3 @@ export default function HostQuestionPreviewFooter() {
         </div>
     );
 }
-

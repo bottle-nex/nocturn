@@ -270,7 +270,11 @@ export class DatabaseQueueProcessors {
         job: Bull.Job,
     ): Promise<{ success: boolean; question: Question } | { success: boolean; error: string }> {
         try {
-            const { game_session_id, question_id, question: question_data }: UpdateQuestionJobType = job.data;
+            const {
+                game_session_id,
+                question_id,
+                question: question_data,
+            }: UpdateQuestionJobType = job.data;
 
             const updatedQuestion = await prisma.question.update({
                 where: {
@@ -286,9 +290,7 @@ export class DatabaseQueueProcessors {
             }
 
             const updatedQuestions = quiz.questions.map((q) =>
-                q.id === question_id
-                    ? { ...q, question_data }
-                    : q,
+                q.id === question_id ? { ...q, question_data } : q,
             );
 
             await this.redis_cache.set_quiz(game_session_id, {
