@@ -31,9 +31,9 @@ export default function HomeTrashPanel() {
     const { session } = useUserSessionStore();
     const [searchQuery, setSearchQuery] = useState<string>('');
 
-    const filteredQuizzes = trashedQuizzes.filter((quiz) =>
+    const filteredQuizzes = trashedQuizzes ? trashedQuizzes.filter((quiz) =>
         quiz.title.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    ) : [];
 
     async function handleDeleteAllTrashedQuizzes() {
         if (!session?.user.token) return;
@@ -237,29 +237,29 @@ export default function HomeTrashPanel() {
                                                             </span>
                                                             {quiz.daysLeftUntilPermanentDeletion !=
                                                                 null && (
-                                                                <>
-                                                                    <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
-                                                                    <span
-                                                                        className={cn(
-                                                                            'text-[13px] font-medium',
-                                                                            quiz.daysLeftUntilPermanentDeletion <=
-                                                                                3
-                                                                                ? 'text-red-500 dark:text-red-400'
-                                                                                : 'dark:text-light-base/60 text-dark-base/80',
-                                                                        )}
-                                                                    >
-                                                                        {
-                                                                            quiz.daysLeftUntilPermanentDeletion
-                                                                        }{' '}
-                                                                        day
-                                                                        {quiz.daysLeftUntilPermanentDeletion !==
-                                                                        1
-                                                                            ? 's'
-                                                                            : ''}{' '}
-                                                                        left
-                                                                    </span>
-                                                                </>
-                                                            )}
+                                                                    <>
+                                                                        <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
+                                                                        <span
+                                                                            className={cn(
+                                                                                'text-[13px] font-medium',
+                                                                                quiz.daysLeftUntilPermanentDeletion <=
+                                                                                    3
+                                                                                    ? 'text-red-500 dark:text-red-400'
+                                                                                    : 'dark:text-light-base/60 text-dark-base/80',
+                                                                            )}
+                                                                        >
+                                                                            {
+                                                                                quiz.daysLeftUntilPermanentDeletion
+                                                                            }{' '}
+                                                                            day
+                                                                            {quiz.daysLeftUntilPermanentDeletion !==
+                                                                                1
+                                                                                ? 's'
+                                                                                : ''}{' '}
+                                                                            left
+                                                                        </span>
+                                                                    </>
+                                                                )}
                                                         </div>
                                                     </div>
                                                 </div>

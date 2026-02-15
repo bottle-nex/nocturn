@@ -10,6 +10,7 @@ import AnimatedClock from '../ui/animated-icons/AnimatedClock';
 import { SiSolana } from 'react-icons/si';
 import SectionHeading from '../ui/SectionHeading';
 import { BiCool } from 'react-icons/bi';
+
 export default function FeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
     const [showInteractionsPanel, setShowInteractionsPanel] = useState<boolean>(false);

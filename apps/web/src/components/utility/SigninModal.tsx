@@ -82,7 +82,7 @@ export default function SigninModal() {
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="relative bg-white border-2 border-black w-100 max-w-[90vw] rounded-md overflow-hidden shadow-sm"
+                className="relative bg-light-alpha dark:bg-dark-base border-2 border-black w-100 max-w-[90vw] rounded-md overflow-hidden shadow-sm"
             >
                 <div className="bg-ndarkest border-b-2 border-black flex items-center justify-between h-full w-full">
                     <div className="relative h-40 w-full">
@@ -104,14 +104,14 @@ export default function SigninModal() {
                     </motion.button>
                 </div>
 
-                <section className="p-6 flex flex-col items-center tracking-wide rounded-t-xl">
-                    <div className="font-semibold text-ndarkest px-2 py-px text-sm rounded-alpha mb-1">
+                <section className="p-6 flex flex-col items-center tracking-wide rounded-t-xl text-dark-alpha dark:text-light-base">
+                    <div className="font-semibold  px-2 py-px text-sm rounded-alpha mb-1">
                         NOCTURN
                     </div>
-                    <div className="text-ndarkest text-2xl font-bold mb-1">
+                    <div className="text-2xl font-bold mb-1 text-dark-alpha/80 dark:text-light-base/80">
                         Your next question awaits
                     </div>
-                    <p className="text-ndarker text-[14px] mb-5 text-center">
+                    <p className="text-[14px] mb-5 text-center text-dark-alpha/80 dark:text-light-base/80">
                         Choose your preferred sign in method
                     </p>
 
@@ -125,7 +125,7 @@ export default function SigninModal() {
                                     stiffness: 300,
                                     damping: 18,
                                 }}
-                                className="h-8 px-2 rounded-sm bg-neutral-200 text-dark-base font-normal text-base flex items-center justify-center gap-x-2 cursor-pointer capitalize"
+                                className="h-8 px-2 rounded-sm bg-neutral-200 dark:bg-neutral-800 text-dark-base dark:text-neutral-200 font-normal text-base flex items-center justify-center gap-x-2 cursor-pointer capitalize ring-1 ring-dark-base/20 dark:ring-light-base/10"
                                 onClick={() => singinHandler(option.type)}
                             >
                                 <Image
@@ -159,7 +159,7 @@ export default function SigninModal() {
                                 />
                             </div>
                             <Button
-                                className="bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
+                                className="bg-dark-alpha dark:bg-light-alpha text-light-alpha dark:text-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700 dark:disabled:bg-light-base disabled:opacity-100!"
                                 onClick={handleSendOtp}
                                 disabled={loading || !email}
                             >
@@ -223,7 +223,7 @@ export default function SigninModal() {
                                 </InputOTP>
                             </div>
                             <Button
-                                className="bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
+                                className="dark:bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
                                 onClick={handleVerifyOtp}
                                 disabled={loading || otp.length !== 6}
                             >

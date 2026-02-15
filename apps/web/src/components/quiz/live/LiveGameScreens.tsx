@@ -3,10 +3,14 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { LivePage, useSocketActionStore } from '@/store/socket.actions/useSocketActionStore';
 import CanvasAccents from '@/components/utility/CanvasAccents';
 import LiveUserRendererScreens from './LiveUserRendererScreens';
+import { useSubscribeEventHandlers } from '@/hooks/sockets/useSubscribeEventHandlers';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 export default function LiveGameScreens(): JSX.Element {
     const { state } = useSocketActionStore();
     const { quiz } = useLiveQuizStore();
+    useWebSocket();
+    useSubscribeEventHandlers();
     function renderScreens() {
         switch (state) {
             case LivePage.SPECTATOR_LIMIT_REACHED:
@@ -25,8 +29,12 @@ export default function LiveGameScreens(): JSX.Element {
                 return <div>Unknown state</div>;
         }
     }
+
     return (
-        <main className="h-screen w-screen relative">
+        <main style={{
+            backgroundColor: quiz.template.backgroundColor,
+            color: quiz.template.textColor
+        }} className="h-screen w-screen relative">
             <CanvasAccents
                 design={quiz.template?.accentType}
                 accentColor={quiz.template?.accentColor}

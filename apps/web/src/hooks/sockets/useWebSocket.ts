@@ -16,14 +16,16 @@ export const useWebSocket = () => {
         const gameSessionId = segments[segments.length - 1];
 
         if (!quizId || quizId === 'undefined' || quizId === '') {
+            console.log("returning from here");
             return;
         }
         if (lastQuizIdRef.current === quizId) {
+            console.log("making the clinet 1")
             socket.current = getWebSocketClient(quizId);
             return;
         }
         lastQuizIdRef.current = quizId;
-
+        console.log("making the clinet 2")
         // socket.current = getWebSocketClient(quizId);
         socket.current = getWebSocketClient(gameSessionId);
         return () => {
