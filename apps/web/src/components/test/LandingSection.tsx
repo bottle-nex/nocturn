@@ -11,13 +11,15 @@ import { IoCloseOutline } from 'react-icons/io5';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
 import { closeBtn, container, input, text } from '../utility/framer-utils/LandingHeroSectionUtils';
+import Lottie from 'lottie-react';
+import monitor from '../ui/animated-icons/animated-json/monitor.json';
+import LandingSectionBigTextComponent from './LandingSectionBigTextComponent';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(TextPlugin, SplitText);
 }
 
 export default function LandingSection() {
-    const headlineRef = useRef<HTMLDivElement>(null);
     const descriptionRef = useRef<HTMLDivElement>(null);
     const taglineRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState<boolean>(false);
@@ -27,94 +29,6 @@ export default function LandingSection() {
 
     useEffect(() => {
         const master = gsap.timeline({ delay: 0.2 });
-
-        if (headlineRef.current) {
-            const lines = headlineRef.current.querySelectorAll('.headline-line');
-
-            lines.forEach((line, lineIndex) => {
-                const text = line.textContent || '';
-                line.innerHTML = '';
-
-                [...text].forEach((char) => {
-                    const span = document.createElement('span');
-                    span.className = 'char inline-block';
-                    span.textContent = char === ' ' ? '\u00A0' : char;
-                    span.style.transformOrigin = 'center bottom';
-                    line.appendChild(span);
-                });
-
-                const chars = line.querySelectorAll('.char');
-
-                if (lineIndex === 0) {
-                    gsap.set(chars, {
-                        x: -100,
-                        opacity: 0,
-                        rotationY: -90,
-                    });
-
-                    master.to(
-                        chars,
-                        {
-                            x: 0,
-                            opacity: 1,
-                            rotationY: 0,
-                            duration: 1.2,
-                            ease: 'expo.out',
-                            stagger: {
-                                each: 0.03,
-                                from: 'start',
-                            },
-                        },
-                        0.4,
-                    );
-                } else if (lineIndex === 1) {
-                    gsap.set(chars, {
-                        rotationX: 90,
-                        y: 50,
-                        opacity: 0,
-                        transformPerspective: 1000,
-                    });
-
-                    master.to(
-                        chars,
-                        {
-                            rotationX: 0,
-                            y: 0,
-                            opacity: 1,
-                            duration: 1,
-                            ease: 'back.out(1.2)',
-                            stagger: {
-                                each: 0.025,
-                                from: 'random',
-                            },
-                        },
-                        0.6,
-                    );
-                } else {
-                    gsap.set(chars, {
-                        scale: 0,
-                        y: 100,
-                        opacity: 0,
-                    });
-
-                    master.to(
-                        chars,
-                        {
-                            scale: 1,
-                            y: 0,
-                            opacity: 1,
-                            duration: 1.1,
-                            ease: 'elastic.out(1, 0.6)',
-                            stagger: {
-                                each: 0.02,
-                                from: 'center',
-                            },
-                        },
-                        0.8,
-                    );
-                }
-            });
-        }
 
         if (taglineRef.current) {
             const split = new SplitText(taglineRef.current, { type: 'words,chars' });
@@ -162,36 +76,6 @@ export default function LandingSection() {
                 1.8,
             );
         }
-
-        // Continuous subtle animations
-        const continuousTimeline = gsap.timeline({ repeat: -1, repeatDelay: 2 });
-
-        if (headlineRef.current) {
-            const allChars = headlineRef.current.querySelectorAll('.char');
-            const randomChars = gsap.utils.shuffle([...allChars]).slice(0, 5);
-
-            continuousTimeline.to(
-                randomChars,
-                {
-                    y: -8,
-                    duration: 0.3,
-                    ease: 'power2.out',
-                    stagger: 0.1,
-                },
-                3,
-            );
-
-            continuousTimeline.to(
-                randomChars,
-                {
-                    y: 0,
-                    duration: 0.3,
-                    ease: 'power2.in',
-                    stagger: 0.1,
-                },
-                3.5,
-            );
-        }
     }, []);
 
     async function handleJoinQuiz() {
@@ -214,57 +98,48 @@ export default function LandingSection() {
     return (
         <div className="h-screen w-screen bg-light-alpha flex flex-col pt-24 px-8 relative">
             {/* animated object */}
-            <div className="absolute top-[29.5rem] right-50">
+            {/* <div className="absolute top-[29.5rem] right-50">
                 <AnimatedSvg />
+            </div> */}
+            <div className="absolute left-[28%] bottom-3 w-[200px] h-[200px] scale-x-[-1]">
+                <Lottie animationData={monitor} style={{ width: '100%', height: '100%' }} />
             </div>
 
             {/* top small text */}
-            <motion.div
-                initial={{
-                    scale: 0.6,
-                    opacity: 0,
-                    x: 0,
-                }}
-                animate={{
-                    scale: 1,
-                    opacity: 1,
-                    x: 0,
-                }}
-                transition={{
-                    duration: 0.6,
-                    type: 'spring',
-                    stiffness: 550,
-                    damping: 18,
-                    mass: 0.6,
-                }}
-                style={{ fontWeight: 900 }}
-                className={cn(
-                    'flex flex-col text-alpha text-[1.7rem] leading-none font-extrabold tracking-normal font-sans',
-                )}
-            >
-                <div className="small-line">THE ULTIMATE</div>
-                <div className="small-line">STAKE QUIZ</div>
-            </motion.div>
+            <div className="flex -space-x-58 w-fit">
+                <div className="mt-1">
+                    <AnimatedSvg />
+                </div>
+                <motion.div
+                    initial={{
+                        scale: 0.6,
+                        opacity: 0,
+                        x: 0,
+                    }}
+                    animate={{
+                        scale: 1,
+                        opacity: 1,
+                        x: 0,
+                    }}
+                    transition={{
+                        duration: 0.6,
+                        type: 'spring',
+                        stiffness: 550,
+                        damping: 18,
+                        mass: 0.6,
+                    }}
+                    style={{ fontWeight: 900 }}
+                    className={cn(
+                        'flex flex-col text-alpha text-[1.7rem] leading-none font-extrabold tracking-normal font-sans',
+                    )}
+                >
+                    <div className="small-line">THE ULTIMATE</div>
+                    <div className="small-line">STAKE QUIZ</div>
+                </motion.div>
+            </div>
 
             {/* big text section middle */}
-            <div
-                ref={headlineRef}
-                style={{ fontWeight: 900 }}
-                className={cn(
-                    'flex flex-col text-[8.8rem] leading-[0.95] text-dark-base tracking-tight font-sans pt-8',
-                )}
-            >
-                <div className="headline-line">RISK & REWARD</div>
-                <div className="headline-line">TEST YOUR</div>
-                <div className="headline-line relative overflow-visible">
-                    <span className="headline-text inline-block relative">
-                        KNOWLEDGE
-                        <div className="absolute left-full ml-4 top-0">
-                            <AnimatedSvg />
-                        </div>
-                    </span>
-                </div>
-            </div>
+            <LandingSectionBigTextComponent />
 
             <div className="flex w-full h-full py-10">
                 <div className="w-1/2 h-full" />

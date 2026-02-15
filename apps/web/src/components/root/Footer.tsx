@@ -20,12 +20,12 @@ export default function Footer() {
     return (
         <>
             <div className="h-auto w-full flex flex-col justify-between items-between relative z-40">
-                <footer className="relative w-screen h-[50vh] flex items-center bg-white">
-                    <div className="w-full h-full flex p-4">
+                <footer className="relative w-screen h-[47vh] flex items-center bg-white">
+                    <div className="w-full h-full flex p-3">
                         <div className="w-[13%] h-full p-2 flex flex-col gap-y-2">
                             <motion.div
                                 className="h-full w-full rounded-xl bg-[#1b1b1b] flex justify-center items-center text-white cursor-pointer shadow-sm"
-                                whileHover={{ scale: 0.95 }}
+                                whileHover={{ scale: 0.97 }}
                                 transition={{
                                     type: 'spring',
                                     stiffness: 300,
@@ -38,13 +38,13 @@ export default function Footer() {
                             </motion.div>
 
                             <motion.div
-                                whileHover={{ scale: 0.95 }}
+                                whileHover={{ scale: 0.97 }}
                                 transition={{
                                     type: 'spring',
                                     stiffness: 300,
                                     damping: 20,
                                 }}
-                                className="h-full w-full rounded-xl bg-[#1b1b1b] flex justify-center items-center text-white hover:scale-95 cursor-pointer shadow-sm"
+                                className="h-full w-full rounded-xl bg-[#1b1b1b] flex justify-center items-center text-white cursor-pointer shadow-sm"
                             >
                                 <a
                                     href="https://github.com/bottle-nex/nocturn"
@@ -66,14 +66,14 @@ export default function Footer() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-x-1.5 text-base text-ndarkest font-semibold tracking-tight">
+                                    <div className="flex items-center gap-x-1.5 text-base text-[#dfdef3] tracking-wide">
                                         <FaRegCopyright className="mb-0.5 size-4.5" />
                                         <span>2025 All right reserved</span>
                                     </div>
                                 </div>
 
-                                <div className="w-[15%] h-full flex flex-col justify-between text-ndarkest">
-                                    <div className="flex flex-col items-start gap-y-1 text-xl font-semibold">
+                                <div className="w-[15%] h-full flex flex-col justify-between text-[#dfdef3]">
+                                    <div className="flex flex-col items-start gap-y-1 text-xl">
                                         <span
                                             onClick={handleCreateQuizClick}
                                             className="hover:underline cursor-pointer"
@@ -94,7 +94,7 @@ export default function Footer() {
                                         </span>
                                     </div>
 
-                                    <div className="text-base text-ndarkest font-semibold flex flex-col">
+                                    <div className="text-base text-[#dfdef3] flex flex-col tracking-wide">
                                         <div className="hover:underline cursor-pointer">BRAND</div>
                                         <div className="hover:underline cursor-pointer">
                                             PRIVACY NOTICE

@@ -135,7 +135,7 @@ export default function PricingComponent(): JSX.Element {
     }
 
     return (
-        <main className="max-w-7xl mx-auto w-full pt-25 flex flex-col justify-center items-center -mt-60 bg-light-alpha z-2">
+        <main className="max-w-7xl mx-auto w-full pt-25 flex flex-col justify-center items-center mt-10">
             <SectionHeading
                 title="Choose Your Plan"
                 description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
