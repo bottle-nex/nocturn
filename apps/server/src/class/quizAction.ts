@@ -225,14 +225,6 @@ export default class QuizAction {
                 switch (hostScreen) {
                     case HostScreen.QUESTION_READING: {
                         const rest = this.pick(question, ['imageUrl', 'question', 'readingTime']);
-                        // const rest = { ...question };
-                        // delete rest.basePoints;
-                        // delete rest.correctAnswer;
-                        // delete rest.explanation;
-                        // delete rest.hint;
-                        // delete rest.options;
-                        // delete rest.orderIndex;
-                        // delete rest.timeLimit;
                         return rest;
                     }
                     case HostScreen.QUESTION_ACTIVE: {
@@ -243,23 +235,19 @@ export default class QuizAction {
                             'timeLimit',
                             ...(question.hintLaunched ? (['hint'] as const) : []),
                         ]);
-                        // const rest = { ...question };
-                        // delete rest.basePoints;
-                        // delete rest.correctAnswer;
-                        // delete rest.difficulty;
-                        // delete rest.explanation;
-                        // if (!rest.hintLaunched) delete rest.hint;
-                        // delete rest.hintLaunched;
-                        // delete rest.orderIndex;
-                        // delete rest.readingTime;
                         return rest;
                     }
                     case HostScreen.QUESTION_RESULTS: {
-                        const rest = { ...question };
-                        delete rest.orderIndex;
-                        delete rest.readingTime;
-                        delete rest.timeLimit;
-                        delete rest.hintLaunched;
+                        const rest = this.pick(question, [
+                            'basePoints',
+                            'correctAnswer',
+                            'difficulty',
+                            'explanation',
+                            'hint',
+                            'imageUrl',
+                            'options',
+                            'question',
+                        ]);
                         return rest;
                     }
                     default:
