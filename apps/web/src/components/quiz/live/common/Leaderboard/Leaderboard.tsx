@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
+import Tiers from "./Tiers";
 import Explanation from "./Explanation";
 import Graph from "./Graph";
 import Rank from "./Rank";
-import Tiers from "./Tiers";
 
-export default function Page() {
+export default function Leaderboard() {
     return (
         <div className="h-screen w-screen flex justify-end items-center bg-light-alpha p-2">
             <div
