@@ -40,6 +40,7 @@
         "@tiptap/starter-kit": "^3.0.7",
         "@types/gsap": "^3.0.0",
         "@types/html2canvas": "^1.0.0",
+        "apexcharts": "^5.4.0",
         "axios": "^1.10.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
