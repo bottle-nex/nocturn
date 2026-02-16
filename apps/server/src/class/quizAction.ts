@@ -241,7 +241,7 @@ export default class QuizAction {
                             'options',
                             'question',
                             'timeLimit',
-                            question.hintLaunched ? 'hint' : 'hintLaunched',
+                            ...(question.hintLaunched ? (['hint'] as const) : []),
                         ]);
                         // const rest = { ...question };
                         // delete rest.basePoints;

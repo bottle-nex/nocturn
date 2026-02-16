@@ -125,7 +125,7 @@ export default function Options() {
                     <Button
                         onClick={() => handleDeleteOption(idx)}
                         disabled={currentQ.options.length === 1 || currentQ.correctAnswer === idx}
-                        className="bg-dark-base"
+                        className="dark:bg-dark-base bg-neutral-200"
                         variant={'ghost'}
                         size={'icon'}
                     >

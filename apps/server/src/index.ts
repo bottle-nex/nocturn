@@ -30,6 +30,13 @@ app.use('/api/v1', router);
 
 new WebsocketServer(server);
 
-server.listen(PORT, () => {
-    console.warn('Application started at port @ ', PORT);
-});
+async function main() {
+    await new Promise((res) => {
+        server.listen(PORT, () => {
+            console.log(' fsfsf');
+            res('ho');
+        });
+    });
+    console.log('logged"');
+}
+main();

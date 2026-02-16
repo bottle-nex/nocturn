@@ -19,11 +19,9 @@ export const useWebSocket = () => {
             return;
         }
         if (lastQuizIdRef.current === quizId) {
-            socket.current = getWebSocketClient(quizId);
             return;
         }
         lastQuizIdRef.current = quizId;
-
         // socket.current = getWebSocketClient(quizId);
         socket.current = getWebSocketClient(gameSessionId);
         return () => {

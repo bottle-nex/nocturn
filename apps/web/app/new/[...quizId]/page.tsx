@@ -1,6 +1,7 @@
 'use client';
 import CreateQuizNavBar from '@/components/navbars/CreateQuizNavbar';
 import QuizCreationPanels from '@/components/quiz/new/QuizCreationPanels';
+import { cleanWebSocketClient } from '@/lib/singleton-socket';
 import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
@@ -103,6 +104,7 @@ export default function New({ params }: NewProps) {
     useEffect(() => {
         return () => {
             resetStore();
+            cleanWebSocketClient();
         };
     }, [resetStore]);
     return (

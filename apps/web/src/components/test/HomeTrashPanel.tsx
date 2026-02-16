@@ -31,9 +31,11 @@ export default function HomeTrashPanel() {
     const { session } = useUserSessionStore();
     const [searchQuery, setSearchQuery] = useState<string>('');
 
-    const filteredQuizzes = trashedQuizzes.filter((quiz) =>
-        quiz.title.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    const filteredQuizzes = trashedQuizzes
+        ? trashedQuizzes.filter((quiz) =>
+              quiz.title.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+        : [];
 
     async function handleDeleteAllTrashedQuizzes() {
         if (!session?.user.token) return;
