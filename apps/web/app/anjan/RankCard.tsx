@@ -34,7 +34,7 @@ export default function RankCard({ growth, rank, image, name, streak = 0, points
     }
 
     return (
-        <div className="h-16 bg-black flex justify-between items-center px-6 py-2 font-extralight text-sm tracking-wider ">
+        <div className="h-16 bg-light-alpha text-dark-alpha flex justify-between items-center px-6 py-2 font-extralight text-sm tracking-wider ">
             <div className="flex justify-between items-center gap-x-8 ">
                 <div className="flex justify-between items-center gap-x-4 ">
                     <GrowthSign growth={growth} />
