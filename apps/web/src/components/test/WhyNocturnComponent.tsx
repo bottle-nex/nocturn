@@ -115,14 +115,10 @@ export default function WhyNocturnComponent() {
     }, [isMobile]);
 
     return (
-        <div
-            ref={containerRef}
-            className="relative w-full bg-light-alpha"
-            style={{ height: isMobile ? '350vh' : '400vh' }}
-        >
+        <div ref={containerRef} className="relative w-full bg-light-alpha">
             <div
                 ref={pinContainerRef}
-                className="h-screen w-full flex flex-col items-center justify-center"
+                className="h-screen w-full flex flex-col items-center justify-between relative"
             >
                 <div className="pt-12 md:pt-20 px-4 z-10">
                     <SectionHeading
@@ -133,37 +129,10 @@ export default function WhyNocturnComponent() {
                     />
                 </div>
 
-                <div className="relative flex-1 w-full flex items-center justify-center px-4 md:px-8 mt-15">
-                    <div className="relative w-full max-w-2xl md:max-w-3xl lg:max-w-4xl h-[500px] md:h-[600px] flex justify-center left-1/2 -translate-x-1/2">
-                        <div
-                            ref={card1Ref}
-                            className="absolute inset-0 flex items-center justify-center"
-                        >
-                            <div className="w-full h-full">
-                                <WhyNocturnCard1 />
-                            </div>
-                        </div>
-
-                        <div
-                            ref={card2Ref}
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={{ top: '30px' }} // 5 units = 20px margin
-                        >
-                            <div className="w-full h-full">
-                                <WhyNocturnCard2 />
-                            </div>
-                        </div>
-
-                        <div
-                            ref={card3Ref}
-                            className="absolute inset-0 flex items-center justify-center"
-                            style={{ top: '60px' }} // 10 units = 40px margin (5 + 5 from card 2)
-                        >
-                            <div className="w-full h-full">
-                                <WhyNocturnCard3 />
-                            </div>
-                        </div>
-                    </div>
+                <div className="w-full flex items-center justify-around px-12">
+                    <WhyNocturnCard1 />
+                    <WhyNocturnCard2 />
+                    <WhyNocturnCard3 />
                 </div>
             </div>
         </div>
