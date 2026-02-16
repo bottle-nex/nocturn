@@ -352,9 +352,6 @@ importers:
       '@types/html2canvas':
         specifier: ^1.0.0
         version: 1.0.0
-      apexcharts:
-        specifier: ^5.4.0
-        version: 5.4.0
       axios:
         specifier: ^1.10.0
         version: 1.13.2
@@ -427,6 +424,9 @@ importers:
       react:
         specifier: ^19.1.1
         version: 19.2.3
+      react-apexcharts:
+        specifier: ^1.9.0
+        version: 1.9.0(apexcharts@5.4.0)(react@19.2.3)
       react-dom:
         specifier: ^19.1.1
         version: 19.2.3(react@19.2.3)
@@ -7961,6 +7961,12 @@ packages:
     resolution: {integrity: sha512-sPO4tDJp+sRbV8F/LhUZ/woHmi4dg0Phd+Kt1Jw0orSfGfEqGCm7fFXiTIAvuuAwpwxqPEYEnfNzOLEfUrdg1A==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
+
+  react-apexcharts@1.9.0:
+    resolution: {integrity: sha512-DDBzQFuKdwyCEZnji1yIcjlnV8hRr4VDabS5Y3iuem/WcTq6n4VbjWPzbPm3aOwW4I+rf/gA3zWqhws4z9CwLw==}
+    peerDependencies:
+      apexcharts: '>=4.0.0'
+      react: '>=16.8.0'
 
   react-devtools-core@6.1.5:
     resolution: {integrity: sha512-ePrwPfxAnB+7hgnEr8vpKxL9cmnp7F322t8oqcPshbIQQhDKgFDW4tjhF2wjVbdXF9O/nyuy3sQWd9JGpiLPvA==}
@@ -18602,6 +18608,12 @@ snapshots:
   react-activity-calendar@2.7.15(react@19.2.3):
     dependencies:
       date-fns: 4.1.0
+      react: 19.2.3
+
+  react-apexcharts@1.9.0(apexcharts@5.4.0)(react@19.2.3):
+    dependencies:
+      apexcharts: 5.4.0
+      prop-types: 15.8.1
       react: 19.2.3
 
   react-devtools-core@6.1.5(bufferutil@4.1.0)(utf-8-validate@5.0.10):

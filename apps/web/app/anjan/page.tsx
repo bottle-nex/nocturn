@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import RankCard, { GROWTH } from "./RankCard";
-
+import Explanation from "./Explanation";
+import Graph from "./Graph";
 
 export default function Page() {
     return (
@@ -15,12 +15,14 @@ export default function Page() {
                 <div className="col-span-2 row-span-2 border border-dark-base rounded-beta ">
                     {/* top tiers */}
                 </div>
-                <div className="col-span-2 row-span-1 border border-dark-base rounded-beta ">
-                    {/* explanation */}
-                </div>
-                <div className="col-span-2 row-span-1 border border-dark-base rounded-beta">
-                    {/* graph */}
-                </div>
+                <Explanation
+                    className="col-span-2 row-span-1 border border-dark-base rounded-beta "
+                    explanation={"this is the question's explanation how this is answer is correct"}
+                />
+                <Graph
+                    className="col-span-2 row-span-1 border border-dark-base rounded-beta"
+                    points={[10, 25, 18, 40, 22, 55, 30, 10, 25, 18, 40, 22, 55, 30, 10, 25, 18, 40, 22, 55, 30]}
+                />
                 <div className="col-span-4 row-span-2 border border-dark-base rounded-beta">
                     {/* rank cards */}
                 </div>
