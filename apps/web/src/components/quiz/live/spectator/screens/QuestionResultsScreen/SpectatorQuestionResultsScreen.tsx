@@ -78,6 +78,7 @@ export default function ParticipantQuestionResultsRenderer() {
     }, [participantData, sortedParticipants, responses, getResponse]);
 
     if (!currentQuestion) {
+        console.log({ currentQuestion });
         return (
             <div className="text-center text-neutral-400 w-full">Error in fetching question</div>
         );

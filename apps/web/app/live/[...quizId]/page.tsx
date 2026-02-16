@@ -59,19 +59,16 @@ export default function New({ params }: NewProps) {
                 );
                 if (response.success && response.data) {
                     const data = response.data;
+                    console.log({ data });
                     updateQuiz(data.quiz);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    // if (data.question) {
-                    //     updateCurrentQuestion(data.currentQ!);
-                    //     updateSecondCurrentQuestion(data.question as any);
-                    // }
-
                     // if not found meand all questions asked
                     if (data.currentQuestion) {
+                        console.log('current question');
                         updateCurrentQuestion(data.currentQuestion);
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
