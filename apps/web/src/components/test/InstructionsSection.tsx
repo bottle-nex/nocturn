@@ -29,7 +29,7 @@ export default function App(): JSX.Element {
             initial="hidden"
             viewport={{ once: true, amount: 0.35 }}
             onViewportEnter={startSequence}
-            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden"
+            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden pt-10"
         >
             <div className="inset-0 absolute">
                 <div className="relative h-full w-full">

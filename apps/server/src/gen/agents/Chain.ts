@@ -229,7 +229,7 @@ export default class Chain {
                         id: true,
                         title: true,
                         description: true,
-                        theme: true,
+                        template: true,
                         basePointsPerQuestion: true,
                         pointsMultiplier: true,
                         timeBonus: true,

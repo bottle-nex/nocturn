@@ -15,7 +15,7 @@ if (typeof window !== 'undefined') {
 
 export default function LandingSection() {
     return (
-        <div className="h-screen w-screen flex flex-col items-center justify-between pt-25 gap-y-8 select-none">
+        <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none">
             <div className="flex flex-col items-center justify-between h-full">
                 <div className="flex flex-col gap-y-5 items-center">
                     <motion.div

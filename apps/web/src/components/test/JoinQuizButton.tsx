@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 const container: Variants = {
     closed: {
-        width: 170,
+        width: 160,
         transition: { type: 'spring', stiffness: 260, damping: 22 },
     },
     open: {
@@ -81,7 +81,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin?: (code: string) => 
                 animate={open ? 'open' : 'closed'}
                 initial="closed"
                 className={clsx(
-                    'relative flex items-center rounded-full h-15 px-3 overflow-hidden',
+                    'relative flex items-center rounded-full h-13 px-2 overflow-hidden',
                     'ring-1 ring-black/10 shadow-sm backdrop-blur-sm',
                     open ? 'bg-light-base text-black' : 'bg-alpha text-light-base',
                 )}
@@ -92,7 +92,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin?: (code: string) => 
                         e.stopPropagation();
                         setOpen(false);
                     }}
-                    className="absolute right-4 h-7 w-7 rounded-full bg-black text-light-base flex items-center justify-center hover:opacity-70 z-10"
+                    className="absolute right-4 h-6 w-6 rounded-full bg-black text-light-base flex items-center justify-center hover:opacity-70 z-10"
                 >
                     <IoCloseOutline size={17} />
                 </motion.div>
@@ -111,7 +111,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin?: (code: string) => 
                             if (open) handleJoin();
                         }}
                         className={clsx(
-                            'h-10 w-10 rounded-full flex items-center justify-center shrink-0',
+                            'h-9 w-9 rounded-full flex items-center justify-center shrink-0',
                             open ? 'bg-alpha text-light-base' : 'bg-light-base text-black',
                         )}
                     >
