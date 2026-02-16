@@ -1,5 +1,4 @@
 'use client';
-
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
@@ -21,6 +20,8 @@ export default function FavouriteQuizzesPanel() {
     const { deleteQuiz: deleteRecentlyViewed } = useRecentlyViewedQuizStore();
 
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
+    const selectionMode = selectedQuizIds.size > 0;
+
     const [searchQuery, setSearchQuery] = useState('');
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
 
@@ -66,8 +67,7 @@ export default function FavouriteQuizzesPanel() {
         if (!input) return;
 
         const handler = (e: Event) => {
-            const value = (e.target as HTMLInputElement).value;
-            setSearchQuery(value);
+            setSearchQuery((e.target as HTMLInputElement).value);
         };
 
         input.addEventListener('input', handler);
@@ -89,6 +89,10 @@ export default function FavouriteQuizzesPanel() {
             }
             return next;
         });
+    }
+
+    function handleCancelSelection() {
+        setSelectedQuizIds(new Set());
     }
 
     async function handleDeleteSelectedQuizzes() {
@@ -116,11 +120,7 @@ export default function FavouriteQuizzesPanel() {
     function handleToggleSelectAll() {
         setSelectedQuizIds((prev) => {
             if (favouriteQuizzes.length === 0) return prev;
-
-            if (prev.size === favouriteQuizzes.length) {
-                return new Set();
-            }
-
+            if (prev.size === favouriteQuizzes.length) return new Set();
             return new Set(favouriteQuizzes.map((q) => q.id));
         });
     }
@@ -135,6 +135,7 @@ export default function FavouriteQuizzesPanel() {
                 <QuizzesUpperSection
                     selectedQuizes={selectedQuizIds.size}
                     onDeleteSelected={handleDeleteSelectedQuizzes}
+                    onCancelSelection={handleCancelSelection}
                     onToggleSelectAll={handleToggleSelectAll}
                     isAllSelected={isAllSelected}
                     activeLayoutTab={activeLayoutTab}
@@ -147,35 +148,29 @@ export default function FavouriteQuizzesPanel() {
                     <div>No favourite quizzes yet</div>
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredQuizzes.map((quiz) => {
-                            const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
-
-                            return (
-                                <MyQuizzesGridView
-                                    key={quiz.id}
-                                    quiz={quiz}
-                                    isSelected={selectedQuizIds.has(quiz.id)}
-                                    toggleQuizSelection={toggleQuizSelection}
-                                    formattedTime={formattedTime}
-                                />
-                            );
-                        })}
+                        {filteredQuizzes.map((quiz) => (
+                            <MyQuizzesGridView
+                                key={quiz.id}
+                                quiz={quiz}
+                                isSelected={selectedQuizIds.has(quiz.id)}
+                                selectionMode={selectionMode}
+                                toggleQuizSelection={toggleQuizSelection}
+                                formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                            />
+                        ))}
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        {filteredQuizzes.map((quiz) => {
-                            const formattedTime = moment(quiz.createdAt).format('MMM D, YYYY');
-
-                            return (
-                                <MyQuizzesListView
-                                    key={quiz.id}
-                                    quiz={quiz}
-                                    isSelected={selectedQuizIds.has(quiz.id)}
-                                    toggleQuizSelection={toggleQuizSelection}
-                                    formattedTime={formattedTime}
-                                />
-                            );
-                        })}
+                        {filteredQuizzes.map((quiz) => (
+                            <MyQuizzesListView
+                                key={quiz.id}
+                                quiz={quiz}
+                                isSelected={selectedQuizIds.has(quiz.id)}
+                                selectionMode={selectionMode}
+                                toggleQuizSelection={toggleQuizSelection}
+                                formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                            />
+                        ))}
                     </div>
                 )}
             </div>

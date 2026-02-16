@@ -13,6 +13,7 @@ import { Layouts } from './MyQuizzesPanel';
 
 interface QuizzesUpperSectionData {
     onDeleteSelected?: () => void;
+    onCancelSelection?: () => void;
     selectedQuizes?: number;
     onToggleSelectAll?: () => void;
     isAllSelected?: boolean;
@@ -22,6 +23,7 @@ interface QuizzesUpperSectionData {
 
 export default function QuizzesUpperSection({
     onDeleteSelected,
+    onCancelSelection,
     selectedQuizes,
     onToggleSelectAll,
     isAllSelected,
@@ -50,7 +52,7 @@ export default function QuizzesUpperSection({
                         className={cn(
                             'h-full w-full pl-10 rounded-beta',
                             'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
-                            'dark:!bg-dark-base !bg-light-base border-neutral-800',
+                            'dark:bg-dark-base! bg-light-base! border-neutral-800',
                         )}
                     />
 
@@ -61,7 +63,7 @@ export default function QuizzesUpperSection({
                 </div>
 
                 <Button
-                    size={'sm'}
+                    size="sm"
                     onClick={handleCreateQuiz}
                     className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
                 >
@@ -122,13 +124,23 @@ export default function QuizzesUpperSection({
                 </div>
 
                 {(selectedQuizes ?? 0) > 0 && (
-                    <Button
-                        onClick={onDeleteSelected}
-                        className="rounded-sm h-11 w-45 bg-red-700 hover:bg-red-700/80 text-white flex items-center"
-                    >
-                        <PiTrashSimple className="size-4.5 mb-px" />
-                        <span>Delete selected ({selectedQuizes})</span>
-                    </Button>
+                    <div className="flex items-center gap-x-3">
+                        <Button
+                            onClick={onCancelSelection}
+                            variant="outline"
+                            className="rounded-sm h-11 px-5 !border-neutral-800"
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            onClick={onDeleteSelected}
+                            className="rounded-sm h-11 px-5 bg-red-700 hover:bg-red-700/80 text-white flex items-center gap-x-2"
+                        >
+                            <PiTrashSimple className="size-4.5 mb-px" />
+                            <span>Delete selected ({selectedQuizes})</span>
+                        </Button>
+                    </div>
                 )}
             </div>
         </div>

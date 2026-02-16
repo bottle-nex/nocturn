@@ -32,9 +32,11 @@ export default function QuizOptionsPanel({
     async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token) return;
         try {
-            await QuizActions.delete_quiz(session.user.token, quizId);
-            deleteQuiz(quizId);
-            toast.success('Quiz deleted successfully');
+            const res = await QuizActions.delete_quiz(session.user.token, quizId);
+            if (res) {
+                deleteQuiz(quizId);
+                toast.success('Deleted quiz successfully');
+            }
         } catch {
             console.error('Failed to delete the quiz');
         }
@@ -99,7 +101,9 @@ export default function QuizOptionsPanel({
 
             <ToolTipComponent content="delete">
                 <div
-                    onClick={() => {
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         if (toggleQuizSelection) {
                             toggleQuizSelection(quiz.id);
                         }

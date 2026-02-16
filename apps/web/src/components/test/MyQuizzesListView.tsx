@@ -3,7 +3,6 @@ import EmptyCanvas from '../canvas/EmptyCanvas';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { BsDot } from 'react-icons/bs';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
 import QuizOptionsPanel from './QuizOptionsPanel';
@@ -12,6 +11,7 @@ interface MyQuizzesListViewProps {
     formattedTime: string;
     quiz: QuizType;
     isSelected: boolean;
+    selectionMode: boolean;
     toggleQuizSelection: (quizId: string) => void;
 }
 
@@ -19,73 +19,61 @@ export default function MyQuizzesListView({
     formattedTime,
     quiz,
     isSelected,
+    selectionMode,
     toggleQuizSelection,
 }: MyQuizzesListViewProps) {
     const router = useRouter();
-    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
+    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
+
+    function handleClick() {
+        if (selectionMode) return toggleQuizSelection(quiz.id);
+        router.push(`/new/${quiz.id}`);
+    }
 
     return (
         <div
-            key={quiz.id}
-            onClick={() => router.push(`/new/${quiz.id}`)}
-            data-lenis-prevent
+            onClick={handleClick}
             className={cn(
-                'dark:bg-neutral-800/40 bg-light-base rounded-[8px]',
-                'relative flex items-center gap-x-3 p-2',
-                'border group cursor-pointer overflow-y-auto',
-                isSelected
-                    ? 'border border-indigo-800'
-                    : 'dark:border-neutral-800/40 border-neutral-300 ',
+                'rounded-lg flex items-center gap-x-3 p-2 border group cursor-pointer',
+                isSelected ? 'border-indigo-800' : 'border-neutral-300 dark:border-neutral-800/40',
             )}
         >
-            <div className="flex items-center gap-x-3 max-w-[85%] w-full h-full">
-                {quiz.template && (
-                    <div className="relative group flex items-center gap-x-2">
-                        <EmptyCanvas
-                            className={cn('w-20 h-14 !rounded-[8px] cursor-auto')}
-                            template={quiz.template}
-                        />
-                        <div
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleQuizSelection(quiz.id);
-                            }}
-                            className={`text-dark-base flex justify-center items-center rounded-alpha cursor-pointer absolute top-1 left-1 transition-all transform duration-200 ${
-                                isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                            }`}
-                        >
-                            {isSelected ? (
-                                <MdCheckBox className="size-6 text-indigo-700" />
-                            ) : (
-                                <MdCheckBoxOutlineBlank className="size-6 text-indigo-700" />
-                            )}
-                        </div>
-                    </div>
-                )}
+            <div className="relative">
+                <EmptyCanvas className="w-20 h-14 !rounded-lg" template={quiz.template} />
 
-                <div className="flex items-between justify-start gap-x-2.5 px-1 h-full">
-                    <div className="min-w-0 flex flex-col items-around justify-between h-12 max-w-180">
-                        <span className="block text-normal dark:text-light-base text-dark-base truncate">
-                            {quiz.title}
-                        </span>
-
-                        <span className="block dark:text-light-base/60 text-black/60 text-[13px] flex items-center gap-x-1 tracking-wide">
-                            <span>Created at {formattedTime}</span>
-                            <BsDot />
-                            <span>{quiz.host?.name}</span>
-                        </span>
-                    </div>
+                <div
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleQuizSelection(quiz.id);
+                    }}
+                    className={cn(
+                        'absolute top-1 left-1 transition-all',
+                        selectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                    )}
+                >
+                    {isSelected ? (
+                        <MdCheckBox className="size-6 text-indigo-700" />
+                    ) : (
+                        <MdCheckBoxOutlineBlank className="size-6 text-indigo-700" />
+                    )}
                 </div>
             </div>
 
-            <div className="flex justify-end items-center w-[30%] opacity-0 group-hover:opacity-100 transition-all transform duration-200 pr-4">
-                <QuizOptionsPanel
-                    quiz={quiz}
-                    toggleQuizSelection={toggleQuizSelection}
-                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                    // setShowPreview={setShowPreview}
-                />
+            <div className="flex justify-between w-full">
+                <div>
+                    <div className="truncate">{quiz.title}</div>
+                    <div className="text-sm opacity-60">Created at {formattedTime}</div>
+                </div>
+
+                {!selectionMode && (
+                    <QuizOptionsPanel
+                        quiz={quiz}
+                        toggleQuizSelection={toggleQuizSelection}
+                        setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                    />
+                )}
             </div>
+
             {showQuizTitleChangePanel && (
                 <QuizTitleChangePanel
                     quizId={quiz.id}
