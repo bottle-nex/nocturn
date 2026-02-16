@@ -38,7 +38,6 @@ export default class WebSocketClient {
         }
 
         this.ws = new WebSocket(this.url);
-        console.log("initializing websocket connection to url: ", this.url);
         this.ws.onopen = () => {
             this.is_connected = true;
             this.reconnect_attempts = 0;

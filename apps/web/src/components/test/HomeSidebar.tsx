@@ -13,6 +13,7 @@ import { PiChats, PiTrashSimple } from 'react-icons/pi';
 import { RiSettings6Line } from 'react-icons/ri';
 import { FaRegHeart } from 'react-icons/fa6';
 import { useDragQuizStore } from '@/store/home/useDragQuizStore';
+import { RiVipCrownLine } from 'react-icons/ri';
 
 export interface SidebarItem {
     tab: SidebarTab;
@@ -46,6 +47,11 @@ const sidebarItems: SidebarItem[] = [
         tab: SidebarTab.SETTINGS,
         label: 'Settings',
         icon: <RiSettings6Line size={18} />,
+    },
+    {
+        tab: SidebarTab.PREMIUM,
+        label: 'Premium',
+        icon: <RiVipCrownLine size={18} />,
     },
     { tab: SidebarTab.CHATS, label: 'Chats', icon: <PiChats size={18} /> },
     { tab: SidebarTab.TRASH, label: 'Trash', icon: <PiTrashSimple size={18} /> },
@@ -140,7 +146,7 @@ export default function HomeSidebar() {
                     <span className="block text-xs font-normal mt-2 px-8.25">utility</span>
 
                     <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(3, 5).map((item) => (
+                        {sidebarItems.slice(3, 6).map((item) => (
                             <div
                                 onClick={() => handleTabChange(item.tab)}
                                 className={cn(

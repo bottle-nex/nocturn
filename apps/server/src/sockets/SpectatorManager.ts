@@ -68,7 +68,7 @@ export default class SpectatorManager {
         }
 
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
-        console.log("is new spectator allowed: ", is_new_spectator_allowed);
+        console.log('is new spectator allowed: ', is_new_spectator_allowed);
         if (!is_new_spectator_allowed) {
             ws.close(
                 socket_codes.SPECTATOR_LIMIT_REACHED,

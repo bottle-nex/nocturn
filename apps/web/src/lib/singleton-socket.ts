@@ -4,7 +4,7 @@ let client: WebSocketClient | null = null;
 let currentQuizId: string | null = null;
 
 export function getWebSocketClient(quizId: string) {
-    console.log("creating socket using quiz id is : ", quizId)
+    console.log('creating socket using quiz id is : ', quizId);
     if (client && currentQuizId === quizId) {
         console.log('returning client 1');
         return client;
@@ -22,7 +22,7 @@ export function getWebSocketClient(quizId: string) {
 
 export function cleanWebSocketClient() {
     if (client) {
-        console.log("closing the client connection")
+        console.log('closing the client connection');
         client.close();
     }
     client = null;

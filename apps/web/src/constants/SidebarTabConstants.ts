@@ -1,10 +1,12 @@
 export enum SidebarTab {
-    HOME = 'HOME',
-    SHARED_WITH_ME = 'SHARED_WITH_ME',
-    MY_QUIZZES = 'MY_QUIZZES',
+    HOME = 'home',
+    SHARED_WITH_ME = 'shared-with-me',
+    MY_QUIZZES = 'my-quizzes',
 
-    FAVORITES = 'FAVORITES',
-    SETTINGS = 'SETTINGS',
-    TRASH = 'TRASH',
-    CHATS = 'CHATS',
+    FAVORITES = 'favorites',
+    SETTINGS = 'settings',
+    PREMIUM = 'premium',
+
+    TRASH = 'trash',
+    CHATS = 'chats',
 }
