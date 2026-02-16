@@ -6,6 +6,14 @@ interface RankProps {
 }
 
 export default function Rank({ className }: RankProps) {
+
+    function randomGrowth(): GROWTH {
+        const random = Math.random();
+        if (random < 0.33) return GROWTH.NEUTRAL;
+        else if (random < 0.66) return GROWTH.DOWN;
+        else return GROWTH.UP;
+    }
+
     return (
         <div
             className={cn(
@@ -47,7 +55,7 @@ export default function Rank({ className }: RankProps) {
                 {Array.from({ length: 40 }).map((_, i) => (
                     <RankCard
                         key={i}
-                        growth={GROWTH.UP}
+                        growth={randomGrowth()}
                         rank={i + 1}
                         image={"/images/founders/anjan.jpg"}
                         name={"Anjan Suman"}

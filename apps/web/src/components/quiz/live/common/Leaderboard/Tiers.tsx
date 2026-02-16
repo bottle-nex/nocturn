@@ -1,3 +1,4 @@
+import ToolTipComponent from "@/components/utility/TooltipComponent";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -46,19 +47,21 @@ function Bar({ rank, image, name, points }: BarProps) {
     return (
         <div
             className={cn(
-                "relative w-30 rounded-t-beta bg-blue-400 overflow-hidden text-dark-alpha ",
+                "relative w-30 rounded-tr-[10px] bg-blue-400 overflow-hidden text-dark-alpha select-none ",
                 rank === 1 ? "h-50" : rank === 2 ? "h-40" : "h-30",
             )}
         >
             <div className="absolute top-3 left-1/2 z-20 -translate-x-1/2 space-y-1 ">
-                <Image
-                    src={image}
-                    alt={name}
-                    width={48}
-                    height={48}
-                    unoptimized
-                    className="rounded-full border-2 border-white shadow-md object-cover "
-                />
+                <ToolTipComponent content={name} side="top" >
+                    <Image
+                        src={image}
+                        alt={name}
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="rounded-full border-2 border-white shadow-md object-cover "
+                    />
+                </ToolTipComponent>
                 <div className="relative z-10 flex h-full items-end justify-center pb-2 font-extralight text-sm tracking-wide ">
                     {name.split(" ")[0]}
                 </div>
