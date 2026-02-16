@@ -1,5 +1,4 @@
 'use client';
-
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
@@ -65,7 +64,22 @@ export default function LandingNavbar() {
     }
 
     return (
-        <div
+        <motion.div
+            initial={{
+                opacity: 0,
+                filter: 'blur(10px)',
+            }}
+            animate={{
+                opacity: 1,
+                filter: 'blur(0px)',
+            }}
+            transition={{
+                type: 'spring',
+                damping: 20,
+                mass: 0.8,
+                stiffness: 260,
+                delay: 0.5,
+            }}
             className={cn(
                 'w-full h-21 px-8 fixed z-40 flex items-center justify-between transition-all duration-500 ease-in-out',
                 isNavbarVisible
@@ -283,6 +297,6 @@ export default function LandingNavbar() {
             </div>
             <LogoutModal />
             <SigninModal />
-        </div>
+        </motion.div>
     );
 }

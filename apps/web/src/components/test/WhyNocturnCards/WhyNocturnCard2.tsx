@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 export default function WhyNocturnCard2() {
     return (
-        <div className="h-[65vh] w-full max-w-110 shadow-xs shadow-black/5 rounded-4xl bg-[#e1ff86] flex flex-col py-15 px-12 gap-y-2 relative">
+        <div className="h-[60vh] w-full max-w-100 shadow-xs shadow-black/5 rounded-4xl bg-[#e1ff86] flex flex-col py-15 px-12 gap-y-2 relative">
             <AvatarWithName
                 src="/images/landing/avatar1.png"
                 name="Piyush"
@@ -30,7 +30,8 @@ export default function WhyNocturnCard2() {
             </div>
             <div className="text-[#222d02] text-[15px] font-extralight tracking-wide">
                 Turn quiz creation into a shared experience. Invite collaborators, brainstorm
-                together, and watch the quiz evolve live, fast, interactive, and built as a team.
+                together, and watch the quiz evolve live, fast and interactive, with ideas flowing
+                seamlessly as everyone builds it together.
             </div>
             <div className="absolute left-1/2 -translate-x-1/2 top-55 h-90 w-90">
                 <Image
