@@ -24,7 +24,7 @@ export default function Rank({ className }: RankProps) {
             <div
                 className={cn(
                     "sticky top-0 z-20 w-full h-16",
-                    "bg-light-alpha text-dark-alpha",
+                    "text-dark-alpha",
                     "flex justify-between items-center",
                     "px-6 py-2",
                     "font-extralight text-sm tracking-wider",
