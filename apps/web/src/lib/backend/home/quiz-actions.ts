@@ -16,6 +16,7 @@ import {
     RESTORE_TRASHED_QUIZ_URL,
     TOGGLE_FAVOURITE_QUIZ_URL,
 } from 'routes/api_routes';
+import { toast } from 'sonner';
 
 export type TrashedQuizWithDaysLedt = QuizType & {
     daysLeftUntilPermanentDeletion?: number | null;
@@ -42,9 +43,9 @@ export default class QuizActions {
         }
     }
 
-    static async delete_quiz(token: string, quizId: string) {
+    static async delete_quiz(token: string, quizId: string): Promise<string | null> {
         try {
-            await axios.put(
+            const { data } = await axios.put(
                 `${DELETE_QUIZ_URL}/${quizId}`,
                 {},
                 {
@@ -53,9 +54,16 @@ export default class QuizActions {
                     },
                 },
             );
+
+            if (data.message === 'CANNOT_DELETE_ONGOING_QUIZ') {
+                toast.error('Cannot delete a live quiz');
+                return null;
+            }
+
+            return data;
         } catch (error) {
             console.error('Error in deleting quiz: ', error);
-            return;
+            return null;
         }
     }
 

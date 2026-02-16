@@ -17,47 +17,48 @@ interface MyQuizzesGridViewProps {
     formattedTime: string;
     quiz: QuizType;
     isSelected?: boolean;
+    selectionMode?: boolean;
     toggleQuizSelection?: (quizId: string) => void;
 }
 
 export default function MyQuizzesGridView({
     quiz,
     isSelected,
+    selectionMode,
     toggleQuizSelection,
     formattedTime,
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { updateQuizFavourite } = useAllQuizsStore();
-    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
-    const [showPreview, setShowPreview] = useState<boolean>(false);
+    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+
+    function handleCardClick() {
+        if (selectionMode) return toggleQuizSelection?.(quiz.id);
+        router.push(`/new/${quiz.id}`);
+    }
 
     async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
-        if (!session?.user.token) return;
-
-        try {
-            await QuizActions.toggle_favourite_quiz(session.user.token, quizId, isFavourite);
-            updateQuizFavourite(quizId, isFavourite);
-        } catch (error) {
-            console.error('Error in adding quiz to favourites:', error);
-        }
+        if (!session?.user.token || selectionMode) return;
+        await QuizActions.toggle_favourite_quiz(session.user.token, quizId, isFavourite);
+        updateQuizFavourite(quizId, isFavourite);
     }
 
     return (
-        <div
-            key={quiz.id}
-            className="max-w-100 w-full p-1 flex flex-col relative group"
-            data-lenis-prevent
-        >
+        <div className="max-w-100 w-full p-1 flex flex-col relative group">
             <div
                 className={cn(
-                    'absolute top-5 z-20 pr-6 pl-4 flex justify-between gap-x-2 w-full transition-all duration-100',
-                    isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                    'absolute top-5 z-20 pr-6 pl-4 flex justify-between w-full transition-all',
+                    selectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                 )}
             >
                 <div
-                    onClick={() => toggleQuizSelection && toggleQuizSelection(quiz.id)}
-                    className="text-dark-base flex justify-center items-center rounded-alpha cursor-pointer"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleQuizSelection?.(quiz.id);
+                    }}
+                    className="cursor-pointer"
                 >
                     {isSelected ? (
                         <MdCheckBox className="size-6 text-indigo-700" />
@@ -66,20 +67,22 @@ export default function MyQuizzesGridView({
                     )}
                 </div>
 
-                <QuizOptionsPanel
-                    quiz={quiz}
-                    toggleQuizSelection={toggleQuizSelection}
-                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                    setShowPreview={setShowPreview}
-                />
+                {!selectionMode && (
+                    <QuizOptionsPanel
+                        quiz={quiz}
+                        toggleQuizSelection={toggleQuizSelection}
+                        setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                        setShowPreview={setShowPreview}
+                    />
+                )}
             </div>
 
             <EmptyCanvas
-                onClick={() => router.push(`/new/${quiz.id}`)}
+                onClick={handleCardClick}
                 question={quiz.questions[0].question}
                 options={quiz.questions[0].options}
                 className={cn(
-                    'w-full aspect-video rounded-[8px] outline select-none ',
+                    'w-full aspect-video rounded-[8px] outline select-none',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
                 )}
                 template={quiz.template}
@@ -98,12 +101,8 @@ export default function MyQuizzesGridView({
 
                 <div className="flex items-center justify-between w-full">
                     <div>
-                        <span className="block text-normal mt-1 text-dark-base dark:text-light-base">
-                            {quiz.title?.slice(0, 28)}…
-                        </span>
-                        <span className="block dark:text-white/60 text-black/60 text-[13px]">
-                            last viewed {formattedTime}
-                        </span>
+                        <span className="block text-normal mt-1">{quiz.title?.slice(0, 28)}…</span>
+                        <span className="text-[13px] opacity-60">last viewed {formattedTime}</span>
                     </div>
                     <HeartButton
                         liked={quiz.isFavourite}

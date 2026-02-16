@@ -18,7 +18,7 @@ export default async function deleteQuizController(req: Request, res: Response) 
     }
 
     try {
-        const quiz = await prisma.quiz.findFirst({
+        const quiz = await prisma.quiz.findUnique({
             where: {
                 id: quizId,
                 hostId: String(userId),
@@ -36,18 +36,12 @@ export default async function deleteQuizController(req: Request, res: Response) 
         }
 
         if (quiz.status === QuizStatus.LIVE) {
-            ResponseWriter.error(
-                res,
-                'CANNOT_DELETE_ONGOING_QUIZ',
-                "quiz is live can't delete",
-                undefined,
-                409,
-            );
+            ResponseWriter.success(res, quiz.id, 'CANNOT_DELETE_ONGOING_QUIZ', 200);
             return;
         }
 
         await QuizAction.moveToTrash(quizId, String(userId));
-        ResponseWriter.success(res, undefined, 'Quiz moved to trash successfully');
+        ResponseWriter.success(res, quiz.id, 'Quiz moved to trash successfully');
         return;
     } catch (error) {
         console.error('error in deleting quiz: ', error);
