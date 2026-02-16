@@ -159,7 +159,7 @@ export default function SigninModal() {
                                 />
                             </div>
                             <Button
-                                className="bg-dark-alpha dark:bg-light-alpha text-light-alpha dark:text-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700 dark:disabled:bg-light-base disabled:opacity-100!"
+                                className="bg-dark-alpha dark:bg-light-alpha dark:inset-shadow-neutral-500/80 inset-shadow-xs text-light-alpha dark:text-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700 dark:disabled:bg-light-base disabled:opacity-100! cursor-pointer"
                                 onClick={handleSendOtp}
                                 disabled={loading || !email}
                             >

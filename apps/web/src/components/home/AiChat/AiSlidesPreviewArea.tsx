@@ -16,7 +16,6 @@ interface AiSlidesPreviewAreaProps {
 }
 
 export default function AiSlidesPreviewArea({
-    expanded,
     themePanel,
     currentTheme,
     setThemePanel,
@@ -25,25 +24,20 @@ export default function AiSlidesPreviewArea({
     onClose,
     onContinue,
 }: AiSlidesPreviewAreaProps) {
-    if (!expanded) return null;
-
     return (
         <motion.div
-            layout="position"
             initial={{ opacity: 0, width: 0 }}
-            animate={{
-                opacity: expanded ? 1 : 0,
-                width: expanded ? '100%' : 0,
-            }}
+            animate={{ opacity: 1, width: '100%' }}
+            exit={{ opacity: 0, width: 0 }}
             transition={{
                 type: 'spring',
-                stiffness: 85,
-                damping: 18,
-                mass: 1.2,
+                stiffness: 170,
+                damping: 26,
+                mass: 1,
             }}
             className="h-full bg-neutral-900 overflow-hidden flex flex-col"
         >
-            <div className="flex-1 flex flex-col text-center text-neutral-500 min-w-75 px-10 py-5 ">
+            <div className="flex-1 flex flex-col text-center text-neutral-500 min-w-75 px-10 py-5">
                 <SlidesPreviewNav
                     themePanel={themePanel}
                     currentTheme={currentTheme!}

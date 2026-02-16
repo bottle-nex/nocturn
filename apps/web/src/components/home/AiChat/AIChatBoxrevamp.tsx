@@ -16,6 +16,13 @@ const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
 const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
 
+const spring = {
+    type: 'spring' as const,
+    stiffness: 170,
+    damping: 26,
+    mass: 1,
+};
+
 export default function AIChatBoxRevamp() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -28,11 +35,7 @@ export default function AIChatBoxRevamp() {
     const router = useRouter();
 
     const [currentTheme, setCurrentTheme] = useState<TemplateType | undefined>(quiz?.template);
-    // const [previewTheme, setPreviewTheme] = useState<string | null>(null);
     const [themePanel, setThemePanel] = useState(false);
-
-    // const activeTheme = previewTheme ?? currentTheme;
-    // const template = templates.find((t) => t.id === activeTheme);
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
@@ -70,11 +73,9 @@ export default function AIChatBoxRevamp() {
         };
 
         appendMessage(message);
-        // AiBackendAction.create_new_quiz(session?.user.token, id, finalPrompt);
 
         setValue('');
         setPrompt('');
-
         setExpanded(true);
     }
 
@@ -96,71 +97,78 @@ export default function AIChatBoxRevamp() {
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
     return (
-        <div className="relative w-full overflow-hidden flex items-center justify-center text-neutral-200 font-sans ">
-            {/* Background hint */}
+        <>
+            {/* Backdrop */}
+            <AnimatePresence>
+                {expanded && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed inset-0 z-30 bg-black/60"
+                        onClick={handleOnClose}
+                    />
+                )}
+            </AnimatePresence>
 
+            {/* Main container */}
             <motion.div
-                layout
-                initial="collapsed"
-                animate={expanded ? 'expanded' : 'collapsed'}
-                variants={{
-                    collapsed: {
-                        position: 'fixed',
-                        bottom: 32,
-                        left: '50%',
-                        x: '-50%',
-                        width: 460,
-                        height: 'auto', // Hug content initially
-                        borderRadius: 24,
-                    },
-                    expanded: {
-                        position: 'fixed',
-                        bottom: 24,
-                        left: 24,
-                        x: '0%',
-                        width: 'calc(100vw - 48px)',
-                        height: 'calc(100vh - 48px)',
-                        borderRadius: 16,
-                    },
-                }}
-                transition={{
-                    type: 'spring',
-                    stiffness: 115, // Lower stiffness for more visible movement
-                    damping: 18,
-                    mass: 1.2,
-                }}
+                initial={false}
+                animate={
+                    expanded
+                        ? {
+                              bottom: 24,
+                              left: 24,
+                              right: 24,
+                              top: 24,
+                              borderRadius: 16,
+                          }
+                        : {
+                              bottom: 32,
+                              left: 'calc(50% - 230px)',
+                              right: 'calc(50% - 230px)',
+                              top: 'auto',
+                              borderRadius: 24,
+                          }
+                }
+                transition={spring}
                 className={cn(
-                    'z-30 shadow-2xl flex flex-row items-stretch',
-                    expanded ? 'bg-neutral-900 border border-neutral-800' : '',
+                    'fixed z-40 flex flex-row overflow-hidden text-neutral-200 font-sans',
+                    expanded
+                        ? 'bg-neutral-900 border border-neutral-800 shadow-2xl'
+                        : 'shadow-2xl',
                 )}
             >
-                {/* LEFT SIDE (Input Area / Sidebar) */}
+                {/* Left sidebar — textarea lives here */}
                 <motion.div
-                    layout="position"
-                    className={cn(
-                        'flex flex-col relative shrink-0 transition-colors duration-500',
-                        expanded ? 'border-r border-neutral-800' : '',
-                    )}
-                    // Explicitly animate width to prevent snapping
+                    initial={false}
                     animate={{
                         width: expanded ? 400 : '100%',
                     }}
-                    transition={{
-                        type: 'spring',
-                        stiffness: 115,
-                        damping: 18,
-                        mass: 1.2,
-                    }}
+                    transition={spring}
+                    className={cn(
+                        'flex flex-col shrink-0 relative h-full',
+                        expanded ? 'border-r border-neutral-800' : '',
+                    )}
                 >
-                    {/* The Input Container Area */}
-                    <motion.div
-                        layout
-                        className={cn(
-                            'w-full flex flex-col',
-                            // Use margin-top auto to push it to bottom in expanded mode
-                            expanded ? 'mt-auto px-3' : '',
+                    {/* Messages area — only visible when expanded */}
+                    <AnimatePresence>
+                        {expanded && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3, delay: 0.15 }}
+                                className="flex-1 overflow-y-auto px-3 pt-4"
+                            >
+                                {/* Messages will render here */}
+                            </motion.div>
                         )}
-                    >
+                    </AnimatePresence>
+
+                    {/* Input pinned to bottom */}
+                    <div className={cn('w-full', expanded ? 'p-3' : '')}>
                         <div
                             className={cn(
                                 'rounded-2xl bg-neutral-950 border transition-colors relative overflow-hidden',
@@ -228,32 +236,35 @@ export default function AIChatBoxRevamp() {
 
                         <AnimatePresence>
                             {expanded && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="mt-4 text-center shrink-0"
+                                <motion.p
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 6 }}
+                                    transition={{ duration: 0.25, delay: 0.2 }}
+                                    className="mt-3 text-center text-xs text-neutral-500"
                                 >
-                                    <p className="text-xs text-neutral-500">
-                                        AI can make mistakes. Always check your slides.
-                                    </p>
-                                </motion.div>
+                                    AI can make mistakes. Always check your slides.
+                                </motion.p>
                             )}
                         </AnimatePresence>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
-                <AiSlidesPreviewArea
-                    expanded={expanded}
-                    themePanel={themePanel}
-                    currentTheme={currentTheme}
-                    setThemePanel={setThemePanel}
-                    setCurrentTheme={setCurrentTheme}
-                    // setPreviewTheme={setPreviewTheme}
-                    onClose={handleOnClose}
-                    onContinue={handleOnContinue}
-                />
+                {/* Right side — slides preview */}
+                <AnimatePresence>
+                    {expanded && (
+                        <AiSlidesPreviewArea
+                            expanded={expanded}
+                            themePanel={themePanel}
+                            currentTheme={currentTheme}
+                            setThemePanel={setThemePanel}
+                            setCurrentTheme={setCurrentTheme}
+                            onClose={handleOnClose}
+                            onContinue={handleOnContinue}
+                        />
+                    )}
+                </AnimatePresence>
             </motion.div>
-        </div>
+        </>
     );
 }
