@@ -1,35 +1,39 @@
 'use client';
 import React, { useState } from 'react';
 import type { JSX } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { IoMicOutline } from 'react-icons/io5';
-import {
-    CreateCardContent,
-    LaunchCardContent,
-    ManageCardContent,
-    PublishCardContent,
-} from './InstructionSectionCards';
-import { GoPlus } from 'react-icons/go';
+import { AnimatePresence, motion, useAnimation } from 'framer-motion';
 import SectionHeading from '../ui/SectionHeading';
-import { BiCool } from 'react-icons/bi';
+import { BiCool, BiSolidChalkboard } from 'react-icons/bi';
 import { PiTreePalmFill } from 'react-icons/pi';
-import { cards, pill, pillContent } from '../utility/framer-utils/InstructionSectionUtils';
+import { CreateCardContent } from './InstructionSectionCards/CreateCardContent';
+import { PublishCardContent } from './InstructionSectionCards/PublishCardContent';
+import LaunchCardContent from './InstructionSectionCards/LaunchCardContent';
+import { ManageCardContent } from './InstructionSectionCards/ManageCardContent';
+import InstructionSectionChatBox from './InstructionSectionCards/InstructionSectionChatBox';
+import { cn } from '@/lib/utils';
+import InstructionSectionHoverCard from './InstructionSectionCards/InstructionSectionHoverCard';
+import { MdPublish, MdRocketLaunch } from 'react-icons/md';
+import { SiSolana } from 'react-icons/si';
 
 export default function App(): JSX.Element {
     const controls = useAnimation();
     const [_expanded, setExpanded] = useState<boolean>(false);
+    const [activeCard, setActiveCard] = useState<string | null>(null);
 
     const startSequence = async () => {
         await controls.start('show');
         setExpanded(true);
     };
+
+    const isInactive = (id: string) => activeCard !== null && activeCard !== id;
+
     return (
         <motion.section
             whileInView="visible"
             initial="hidden"
             viewport={{ once: true, amount: 0.35 }}
             onViewportEnter={startSequence}
-            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden"
+            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden pt-10"
         >
             <div className="inset-0 absolute">
                 <div className="relative h-full w-full">
@@ -37,61 +41,160 @@ export default function App(): JSX.Element {
                 </div>
             </div>
 
+            <AnimatePresence>
+                {activeCard && (
+                    <motion.div
+                        initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                        animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
+                        exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                        transition={{ duration: 0.25 }}
+                        className="absolute inset-0 bg-white/20 z-3"
+                    />
+                )}
+            </AnimatePresence>
+
             <SectionHeading
                 title="The Nocturn Workflow"
-                description="Create engaging live quizzes with real-time multiplayer experiences, collaborate with your team on quiz content, and publish to your audience. From creation to launch, manage every aspect of your quiz seamlessly."
+                description="Create engaging live quizzes with real-time multiplayer experiences, collaborate with your team on quiz content, and publish to your audience."
                 icon={<BiCool className="size-4" />}
                 ticker="acknowledge us"
             />
 
             {/* cards */}
-            <div className="relative w-full max-w-216 h-65 z-10 -top-20">
-                {[CreateCardContent, PublishCardContent, LaunchCardContent, ManageCardContent].map(
-                    (Card, i) => (
-                        <motion.div
-                            key={i}
-                            custom={i}
-                            variants={cards}
-                            initial="hidden"
-                            animate="show"
-                            className={
-                                [
-                                    'absolute left-0 bottom-2 -rotate-2',
-                                    'absolute left-53 bottom-4 rotate-2',
-                                    'absolute right-55 bottom-2 -rotate-3',
-                                    'absolute right-0 bottom-2 rotate-3',
-                                ][i]
-                            }
-                        >
-                            <Card />
-                        </motion.div>
-                    ),
-                )}
-            </div>
-
-            {/* expanding mic */}
-            <div className="absolute top-[75%]">
-                <motion.div
-                    variants={pill}
-                    initial="hidden"
-                    animate="show"
-                    className="relative z-20 h-15 rounded-full bg-light-alpha ring-1 ring-black/10 shadow-sm flex items-center px-6 overflow-hidden"
-                >
-                    <motion.div
-                        variants={pillContent}
-                        initial="hidden"
-                        animate="show"
-                        className="flex w-full justify-between items-center"
+            <div className="relative w-full max-w-216 h-65 z-20 -top-20">
+                <div className="absolute left-0 bottom-2 -rotate-2">
+                    <div
+                        onMouseEnter={() => setActiveCard('create')}
+                        onMouseLeave={() => setActiveCard(null)}
+                        className={cn(
+                            'relative group transition-all duration-300',
+                            isInactive('create') && 'blur-[3px] opacity-40',
+                        )}
                     >
-                        <div className="text-neutral-400/80 text-sm">Create a quiz for me....</div>
+                        <CreateCardContent />
+                        {activeCard === 'create' && (
+                            <AnimatePresence>
+                                <InstructionSectionHoverCard
+                                    icon={<BiSolidChalkboard className="size-5" />}
+                                    title="New Quiz"
+                                    description="Create your first Noc"
+                                    points={[
+                                        { color: '#ffd53e', point_title: 'Click on New Quiz' },
+                                        {
+                                            color: '#70ee3a',
+                                            point_title: 'Add questions & options',
+                                        },
+                                        {
+                                            color: '#3ec2ff',
+                                            point_title: 'Customize quiz template',
+                                        },
+                                        { color: '#ff3e3e', point_title: 'Add interactions' },
+                                    ]}
+                                    className="rotate-0 ml-0"
+                                />
+                            </AnimatePresence>
+                        )}
+                    </div>
+                </div>
 
-                        <div className="flex gap-x-2.5 mt-px">
-                            <GoPlus className="size-5.5" />
-                            <IoMicOutline className="size-5" />
-                        </div>
-                    </motion.div>
-                </motion.div>
+                <div className="absolute left-53 bottom-4 rotate-2">
+                    <div
+                        onMouseEnter={() => setActiveCard('publish')}
+                        onMouseLeave={() => setActiveCard(null)}
+                        className={cn(
+                            'relative group transition-all duration-300',
+                            isInactive('publish') && 'blur-[3px] opacity-40 scale-95',
+                        )}
+                    >
+                        <PublishCardContent />
+                        {activeCard === 'publish' && (
+                            <AnimatePresence>
+                                <InstructionSectionHoverCard
+                                    icon={<MdPublish className="size-5" />}
+                                    title="Publish Quiz"
+                                    description="Save or Publish it for later"
+                                    points={[
+                                        { color: '#ffd53e', point_title: 'Complete the edits' },
+                                        { color: '#70ee3a', point_title: 'Save the created draft' },
+                                        {
+                                            color: '#3ec2ff',
+                                            point_title: 'Publish it to avoid edits',
+                                        },
+                                        { color: '#ff3e3e', point_title: 'Launch it anytime' },
+                                    ]}
+                                    className="rotate-0"
+                                />
+                            </AnimatePresence>
+                        )}
+                    </div>
+                </div>
+
+                <div className="absolute right-55 bottom-2 -rotate-3">
+                    <div
+                        onMouseEnter={() => setActiveCard('launch')}
+                        onMouseLeave={() => setActiveCard(null)}
+                        className={cn(
+                            'relative group transition-all duration-300',
+                            isInactive('launch') && 'blur-[3px] opacity-40 scale-95',
+                        )}
+                    >
+                        <LaunchCardContent />
+                        {activeCard === 'launch' && (
+                            <AnimatePresence>
+                                <InstructionSectionHoverCard
+                                    icon={<SiSolana className="" />}
+                                    title="Stake SOLANA"
+                                    description="Make quiz worth taking"
+                                    points={[
+                                        {
+                                            color: '#ffd53e',
+                                            point_title: 'Connect your crypto wallet',
+                                        },
+                                        { color: '#70ee3a', point_title: 'Go to the quiz' },
+                                        {
+                                            color: '#3ec2ff',
+                                            point_title: 'Add prizes for participants',
+                                        },
+                                        { color: '#ff3e3e', point_title: 'Make the game fun' },
+                                    ]}
+                                    className="rotate-0"
+                                />
+                            </AnimatePresence>
+                        )}
+                    </div>
+                </div>
+
+                <div className="absolute right-0 bottom-2 rotate-3">
+                    <div
+                        onMouseEnter={() => setActiveCard('manage')}
+                        onMouseLeave={() => setActiveCard(null)}
+                        className={cn(
+                            'relative group transition-all duration-300',
+                            isInactive('manage') && 'blur-[3px] opacity-40 scale-95',
+                        )}
+                    >
+                        <ManageCardContent />
+                        {activeCard === 'manage' && (
+                            <AnimatePresence>
+                                <InstructionSectionHoverCard
+                                    icon={<MdRocketLaunch className="size-5" />}
+                                    title="Live Quiz"
+                                    description="The action begins"
+                                    points={[
+                                        { color: '#ffd53e', point_title: 'Launch the quiz' },
+                                        { color: '#70ee3a', point_title: 'Share player codes' },
+                                        { color: '#3ec2ff', point_title: 'Begin the game' },
+                                        { color: '#ff3e3e', point_title: 'See live leaderboards' },
+                                    ]}
+                                    className="rotate-0"
+                                />
+                            </AnimatePresence>
+                        )}
+                    </div>
+                </div>
             </div>
+
+            <InstructionSectionChatBox />
         </motion.section>
     );
 }
