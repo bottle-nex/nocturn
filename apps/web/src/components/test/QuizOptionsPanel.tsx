@@ -1,19 +1,21 @@
 'use client';
 import { QuizStatusEnum, QuizType } from '@nocturn/types';
-import QuizStatusTicker from '../tickers/QuizstatusTicker';
-import ToolTipComponent from '../utility/TooltipComponent';
 import { PiPresentationChart, PiTrashSimple } from 'react-icons/pi';
 import { useRouter } from 'next/navigation';
 import { BiPencil } from 'react-icons/bi';
 import { FaRegClone } from 'react-icons/fa6';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import QuizActions from '@/lib/backend/home/quiz-actions';
 import { toast } from 'sonner';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
-import { VscPreview } from 'react-icons/vsc';
+import { IoEye } from 'react-icons/io5';
+import QuizActions from '@/lib/backend/home/quiz-actions';
+import QuizStatusTicker from '../tickers/QuizstatusTicker';
+import ToolTipComponent from '../utility/TooltipComponent';
+import { Dispatch, SetStateAction } from 'react';
 
 interface QuizOptionsPanelProps {
     quiz: QuizType;
+    setEditingTitle: Dispatch<SetStateAction<boolean>>;
     toggleQuizSelection?: (quizId: string) => void;
     setShowQuizTitleChangePanel: (val: boolean) => void;
     setShowPreview?: (val: boolean) => void;
@@ -22,7 +24,7 @@ interface QuizOptionsPanelProps {
 export default function QuizOptionsPanel({
     quiz,
     toggleQuizSelection,
-    setShowQuizTitleChangePanel,
+    setEditingTitle,
     setShowPreview,
 }: QuizOptionsPanelProps) {
     const router = useRouter();
@@ -58,44 +60,44 @@ export default function QuizOptionsPanel({
     return (
         <div className="flex gap-x-2.5 items-center z-10">
             {quiz.status === QuizStatusEnum.LIVE && (
-                <QuizStatusTicker className="!rounded-[px]" status={quiz.status} />
+                <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
             )}
 
             {quiz.status === QuizStatusEnum.COMPLETED && (
                 <ToolTipComponent content="results">
                     <div
                         onClick={() => router.push(`/new/${quiz.id}`)}
-                        className="bg-light-base text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                        className="bg-light-base text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                     >
-                        <PiPresentationChart className="size-5" />
+                        <PiPresentationChart className="size-3" />
                     </div>
                 </ToolTipComponent>
             )}
 
             <ToolTipComponent content="rename">
                 <div
-                    onClick={() => setShowQuizTitleChangePanel(false)}
-                    className="bg-light-base/70 backdrop-blur-xs text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    onClick={() => setEditingTitle(true)}
+                    className="bg-light-base/70 backdrop-blur-xs text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                 >
-                    <BiPencil className="size-5" />
+                    <BiPencil className="size-3" />
                 </div>
             </ToolTipComponent>
 
             <ToolTipComponent content="preview">
                 <div
                     onClick={() => setShowPreview!(true)}
-                    className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    className="bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                 >
-                    <VscPreview className="size-5" />
+                    <IoEye className="size-3" />
                 </div>
             </ToolTipComponent>
 
             <ToolTipComponent content="duplicate">
                 <div
                     onClick={() => handleDuplicateQuiz(quiz.id)}
-                    className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    className="bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                 >
-                    <FaRegClone className="size-4" />
+                    <FaRegClone className="size-3" />
                 </div>
             </ToolTipComponent>
 
@@ -109,9 +111,9 @@ export default function QuizOptionsPanel({
                         }
                         handleDeleteQuiz(quiz.id);
                     }}
-                    className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                    className="bg-light-base/70 backdrop-blur-sm text-pink-600 h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
                 >
-                    <PiTrashSimple className="size-5 stroke-3" />
+                    <PiTrashSimple className="size-3 stroke-3" />
                 </div>
             </ToolTipComponent>
         </div>

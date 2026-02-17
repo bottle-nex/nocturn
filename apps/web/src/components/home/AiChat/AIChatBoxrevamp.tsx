@@ -8,13 +8,14 @@ import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
 import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import Message from './Message/Message';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
 import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -30,6 +31,13 @@ export default function AIChatBoxRevamp() {
     const [expanded, setExpanded] = useState(false);
 
     const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
+    const { templates } = useQuizTemplatesStore();
+    const randomValue = useMemo(
+        () => Math.floor(Math.random() * templates.length),
+        [templates.length],
+    );
+
+    const selectedTemplate = templates[randomValue];
     const router = useRouter();
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
@@ -40,8 +48,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -82,7 +90,7 @@ export default function AIChatBoxRevamp() {
 
     function handleOnContinue() {
         if (quiz) {
-            updateQuiz(quiz);
+            updateQuiz({ ...quiz, template: selectedTemplate });
         }
         router.push(`/new/${quiz?.id}`);
     }
@@ -152,7 +160,11 @@ export default function AIChatBoxRevamp() {
                     </div>
                 </div>
 
-                <AiSlidesPreviewArea onClose={handleOnClose} onContinue={handleOnContinue} />
+                <AiSlidesPreviewArea
+                    onClose={handleOnClose}
+                    onContinue={handleOnContinue}
+                    selectedTemplate={selectedTemplate}
+                />
             </div>
         </OpacityBackground>
     );

@@ -111,7 +111,10 @@ export default function MyQuizzesPanel() {
                 onLayoutChange={setActiveLayoutTab}
             />
 
-            <div className="w-full mt-6 overflow-y-auto overflow-x-hidden">
+            <div
+                className="w-full mt-6 overflow-y-auto overflow-x-hidden custom-scrollbar"
+                data-lenis-prevent
+            >
                 {activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => (

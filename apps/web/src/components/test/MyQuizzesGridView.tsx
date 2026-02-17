@@ -29,14 +29,27 @@ export default function MyQuizzesGridView({
     formattedTime,
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
-    const { session } = useUserSessionStore();
-    const { updateQuizFavourite } = useAllQuizsStore();
     const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [editingTitle, setEditingTitle] = useState<boolean>(false);
+    const { session } = useUserSessionStore();
+    const { updateQuizFavourite, updateQuiz } = useAllQuizsStore();
 
     function handleCardClick() {
         if (selectionMode) return toggleQuizSelection?.(quiz.id);
         router.push(`/new/${quiz.id}`);
+    }
+
+    function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
+        e.stopPropagation();
+        const value = e.target.value;
+        updateQuiz(quiz.id, { title: value });
+    }
+
+    async function handleSaveTitle() {
+        if (!session?.user.token || !quiz.title?.trim()) return;
+        setEditingTitle(false);
+        await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
     }
 
     async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
@@ -70,6 +83,7 @@ export default function MyQuizzesGridView({
                 {!selectionMode && (
                     <QuizOptionsPanel
                         quiz={quiz}
+                        setEditingTitle={setEditingTitle}
                         toggleQuizSelection={toggleQuizSelection}
                         setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
                         setShowPreview={setShowPreview}
@@ -100,8 +114,24 @@ export default function MyQuizzesGridView({
                 )}
 
                 <div className="flex items-center justify-between w-full">
-                    <div>
-                        <span className="block text-normal mt-1">{quiz.title?.slice(0, 28)}…</span>
+                    <div className="flex flex-col">
+                        {editingTitle ? (
+                            <input
+                                value={quiz.title}
+                                onChange={(e) => handleEditTitle(e)}
+                                onBlur={handleSaveTitle}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSaveTitle();
+                                }}
+                                placeholder="Quiz title"
+                                autoFocus
+                                className="border-none outline-none w-60"
+                            />
+                        ) : (
+                            <span className="block text-normal mt-1">
+                                {quiz.title?.slice(0, 28)}…
+                            </span>
+                        )}
                         <span className="text-[13px] opacity-60">last viewed {formattedTime}</span>
                     </div>
                     <HeartButton
