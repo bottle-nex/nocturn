@@ -8,11 +8,8 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { cn } from '@/lib/utils';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
-import { QuestionType, QuizType, TemplateType } from '@nocturn/types';
+import { QuestionType, QuizType } from '@nocturn/types';
 
-import { LiaPagerSolid } from 'react-icons/lia';
-import ChangeThemePanel from './ChangeThemePanel';
 import { useRouter } from 'next/navigation';
 
 interface PreviewQuizProps {
@@ -63,17 +60,9 @@ export default function PreviewQuiz({
 }
 
 function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
-    const { templates } = useQuizTemplatesStore();
-
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(
         quiz?.questions?.[0] || null,
     );
-
-    const initialTheme = templates.find((t) => t.id === quiz?.templateId) ?? templates[0];
-
-    const [currentTheme, setCurrentTheme] = useState<TemplateType>(initialTheme);
-    const [_previewTheme, setPreviewTheme] = useState<TemplateType | null>(null);
-    const [themePanel, setThemePanel] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -93,36 +82,6 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
                 )}
             >
                 <div className="relative w-full flex justify-between items-center">
-                    <div
-                        className={cn(
-                            'relative flex items-center gap-x-1 px-3 py-1.5',
-                            'rounded-beta hover:bg-dark-alpha transition cursor-pointer',
-                        )}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setThemePanel(true);
-                        }}
-                    >
-                        <LiaPagerSolid size={20} />
-                        <span>Change theme</span>
-
-                        {themePanel && (
-                            <ChangeThemePanel
-                                currentTheme={currentTheme}
-                                onThemeHover={setPreviewTheme}
-                                onThemeChange={(theme) => {
-                                    setCurrentTheme(theme);
-                                    setPreviewTheme(null);
-                                    setThemePanel(false);
-                                }}
-                                onClose={() => {
-                                    setPreviewTheme(null);
-                                    setThemePanel(false);
-                                }}
-                            />
-                        )}
-                    </div>
-
                     <div className={cn('absolute left-1/2 -translate-x-1/2 text-4xl ')}>
                         Previewing slides
                     </div>

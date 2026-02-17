@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import Message from './Message/Message';
 import { useEffect, useRef } from 'react';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 interface MessagesRendererProps {
     className?: string;
@@ -11,6 +12,7 @@ interface MessagesRendererProps {
 
 export default function MessagesRenderer({ className }: MessagesRendererProps) {
     const { messages } = useAiChatStore();
+    const { session } = useUserSessionStore();
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -34,7 +36,7 @@ export default function MessagesRenderer({ className }: MessagesRendererProps) {
         >
             <div className="flex flex-col gap-y-1 p-2">
                 {messages.map((m, i) => (
-                    <Message key={m.id ?? i} message={m} loading={false} />
+                    <Message image={session?.user.image} key={m.id ?? i} message={m} loading={false} />
                 ))}
             </div>
         </div>

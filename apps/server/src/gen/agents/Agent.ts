@@ -2,7 +2,7 @@ import { prisma } from '@nocturn/database';
 import { chain } from '../../services/init.services';
 import { QuizAgentGraphState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
 import { StateGraph } from '@langchain/langgraph';
-import { AgentStep, AiMessageElement, AiQuizChatRole } from '@nocturn/types';
+import { AgentStep, AiMessageElement, AiQuizChatRole, TemplateEnum } from '@nocturn/types';
 import ResponseWriter from '../../class/response_writer';
 
 export default class Agent {
@@ -86,11 +86,16 @@ export default class Agent {
         });
 
         // create the quiz
+        const db_template = await prisma.template.findUniqueOrThrow({
+            where: { name: TemplateEnum.CLASSIC },
+        });
+
         const quiz = await prisma.quiz.create({
             data: {
                 hostId: state.userId,
                 title: plan.title,
                 prizePool: 0,
+                templateId: db_template.id,
             },
         });
 

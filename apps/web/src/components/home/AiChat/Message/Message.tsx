@@ -7,14 +7,19 @@ import SystemMessage from './SystemMessage';
 
 interface BuilderMessageProps {
     message: AiQuizMessage;
+    image: string;
     loading: boolean;
 }
 
-export default function Message({ message }: BuilderMessageProps): JSX.Element {
+export default function Message({ message, image }: BuilderMessageProps): JSX.Element {
     return (
-        <div className="w-full shrink-0">
+        <div className="w-full shrink-0 tracking-wide ">
             {message.role === AiQuizChatRole.USER && (
-                <UserMessage content={message.content} createdAt={message.createdAt} />
+                <UserMessage
+                    content={message.content}
+                    createdAt={message.createdAt}
+                    image={image}
+                />
             )}
 
             {message.role === AiQuizChatRole.AGENT && (

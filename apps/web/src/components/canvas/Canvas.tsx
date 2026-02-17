@@ -63,7 +63,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 <CanvasHeading currentQ={currentQ} />
 
                 <div className="flex-1 flex items-end justify-center mb-8">
-                    <CanvasOptions />
+                    <CanvasOptions currentQ={currentQ} />
 
                     {currentQ?.imageUrl && (
                         <div

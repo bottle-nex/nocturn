@@ -4,6 +4,7 @@ import ResponseWriter from '../../class/response_writer';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 import { model } from '../../services/init.services';
 import { generated_question_type, StartEvent } from '../types/createNewQuizType';
+import { TemplateEnum } from '../../schemas/createQuizSchema';
 
 export default class Chain {
     public async start(res: Response, session_id: string, event: StartEvent) {
@@ -137,11 +138,16 @@ export default class Chain {
 
         // create the quiz
         const { quiz, agentic_message, system_message } = await prisma.$transaction(async (tx) => {
+            const db_template = await tx.template.findUniqueOrThrow({
+                where: { name: TemplateEnum.CLASSIC },
+            });
+
             const quiz = await tx.quiz.create({
                 data: {
                     title: response.title,
                     hostId: user_id,
                     prizePool: 0,
+                    templateId: db_template.id,
                 },
             });
 

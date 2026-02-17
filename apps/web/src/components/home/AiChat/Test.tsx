@@ -153,7 +153,10 @@ export default function AIChatBoxrevamp() {
                             )}
                         >
                             <ToolTipComponent content="Attach file" side="top">
-                                <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800">
+                                <button
+                                    aria-label="Attach file"
+                                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800"
+                                >
                                     <GoPlus size={20} className="text-neutral-400" />
                                 </button>
                             </ToolTipComponent>
@@ -165,6 +168,9 @@ export default function AIChatBoxrevamp() {
                                         side="top"
                                     >
                                         <button
+                                            aria-label={
+                                                listening ? 'Stop recording' : 'Voice input'
+                                            }
                                             onClick={!loading ? toggle : undefined}
                                             disabled={loading}
                                             className={cn(
@@ -194,6 +200,7 @@ export default function AIChatBoxrevamp() {
                                     side="top"
                                 >
                                     <button
+                                        aria-label={hasContent ? 'Send message' : 'Type a message'}
                                         disabled={!hasContent}
                                         onClick={handleSubmit}
                                         className={cn(

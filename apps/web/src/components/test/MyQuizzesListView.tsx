@@ -6,6 +6,10 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
 import QuizOptionsPanel from './QuizOptionsPanel';
+import PreviewQuiz from '../home/AiChat/PreviewQuiz';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import QuizActions from '@/lib/backend/home/quiz-actions';
 
 interface MyQuizzesListViewProps {
     formattedTime: string;
@@ -24,10 +28,25 @@ export default function MyQuizzesListView({
 }: MyQuizzesListViewProps) {
     const router = useRouter();
     const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [editingTitle, setEditingTitle] = useState(false);
+    const { session } = useUserSessionStore();
+    const { updateQuiz } = useAllQuizsStore();
 
     function handleClick() {
         if (selectionMode) return toggleQuizSelection(quiz.id);
         router.push(`/new/${quiz.id}`);
+    }
+
+    function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
+        e.stopPropagation();
+        updateQuiz(quiz.id, { title: e.target.value });
+    }
+
+    async function handleSaveTitle() {
+        if (!session?.user.token || !quiz.title?.trim()) return;
+        setEditingTitle(false);
+        await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
     }
 
     return (
@@ -39,7 +58,7 @@ export default function MyQuizzesListView({
             )}
         >
             <div className="relative">
-                <EmptyCanvas className="w-20 h-14 !rounded-lg" template={quiz.template} />
+                <EmptyCanvas className="w-20 h-14 rounded-lg!" template={quiz.template} />
 
                 <div
                     onClick={(e) => {
@@ -61,15 +80,32 @@ export default function MyQuizzesListView({
 
             <div className="flex justify-between w-full">
                 <div>
-                    <div className="truncate">{quiz.title}</div>
+                    {editingTitle ? (
+                        <input
+                            value={quiz.title}
+                            onChange={handleEditTitle}
+                            onBlur={handleSaveTitle}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSaveTitle();
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder="Quiz title"
+                            autoFocus
+                            className="border-none outline-none w-60 truncate"
+                        />
+                    ) : (
+                        <div className="truncate">{quiz.title}</div>
+                    )}
                     <div className="text-sm opacity-60">Created at {formattedTime}</div>
                 </div>
 
                 {!selectionMode && (
                     <QuizOptionsPanel
                         quiz={quiz}
+                        setEditingTitle={setEditingTitle}
                         toggleQuizSelection={toggleQuizSelection}
                         setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                        setShowPreview={setShowPreview}
                     />
                 )}
             </div>
@@ -78,6 +114,14 @@ export default function MyQuizzesListView({
                 <QuizTitleChangePanel
                     quizId={quiz.id}
                     setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
+                />
+            )}
+
+            {showPreview && (
+                <PreviewQuiz
+                    onPreviewClose={() => setShowPreview(false)}
+                    quizId={quiz.id}
+                    fetchFromServer
                 />
             )}
         </div>
