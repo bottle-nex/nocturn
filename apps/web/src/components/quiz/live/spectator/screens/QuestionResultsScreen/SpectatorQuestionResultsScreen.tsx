@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import Leaderboard from '../../../common/Leaderboard/Leaderboard';
+import { cn } from '@/lib/utils';
+import NotchCard from '@/components/ui/NotchCard';
 
 export default function ParticipantQuestionResultsRenderer() {
     const { currentQuestion, setAlreadyResponded } = useLiveQuizStore();
@@ -20,23 +22,32 @@ export default function ParticipantQuestionResultsRenderer() {
 
     return (
         <div className='w-full flex justify-between items-center '>
-            <div className='text-dark-alpha p-2 flex flex-col gap-y-4 '>
-                <div className='text-3xl'>
+            <div className='text-dark-alpha p-2 flex flex-col items-end w-full gap-y-4 '>
+                <div className='text-3xl w-full flex justify-end '>
                     {currentQuestion.question}
                 </div>
-                <div className='flex flex-col gap-y-2'>
-                    {currentQuestion.options.map((option, i) => (
-                        <div
-                            key={i}
-                            className='w-fit border border-dark-alpha px-3 py-1.5 rounded-beta text-lg '
-                        >
-                            {option}
-                        </div>
-                    ))}
+                <div className='gap-y-2 w-full flex flex-col items-end '>
+                    {currentQuestion.options.map((option, i) => {
+                        const correct = i === currentQuestion.correctAnswer;
+                        return (
+                            <div className="w-fit">
+                                <NotchCard
+                                    label={correct ? 'correct answer' : ''}
+                                    className={cn(
+                                        correct ? "border-[#00bd00] " : "",
+                                        'rounded-beta ',
+                                    )}
+                                >
+                                    <div>{option}</div>
+                                </NotchCard>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
             <Leaderboard
                 className='relative z-10 '
+                spectator
             />
         </div>
     );

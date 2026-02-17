@@ -461,10 +461,19 @@ export default class HostManager {
 
         const final_scores = scores.filter((s) => !s.isKicked);
 
+        const rankers = scores
+            .filter(
+                (p): p is typeof p & { finalRank: number } =>
+                    typeof p.finalRank === "number"
+            )
+            .sort((a, b) => a.finalRank - b.finalRank)
+            .slice(0, 3);
+
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
             payload: {
                 scores: final_scores,
+                rankers: rankers,
                 screen: ParticipantScreen.QUIZ_RESULTS,
             },
         };
@@ -496,15 +505,15 @@ export default class HostManager {
         this.quiz_settings.cleanup_session(game_session_id);
 
         if (!quiz.prizePool) {
-            const rankers = final_scores.sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
+            // const rankers = Array.from(final_scores).sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
 
-            this.quizManager.distribute_prize(
-                game_session_id,
-                quiz_id,
-                rankers[0],
-                rankers[1],
-                rankers[2],
-            );
+            // this.quizManager.distribute_prize(
+            //     game_session_id,
+            //     quiz_id,
+            //     rankers[0],
+            //     rankers[1],
+            //     rankers[2],
+            // );
         }
     }
 

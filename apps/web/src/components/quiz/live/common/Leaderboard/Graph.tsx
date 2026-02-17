@@ -1,5 +1,6 @@
 "use client";
 
+import NotchCard from "@/components/ui/NotchCard";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 
@@ -65,15 +66,16 @@ export default function Graph({ className, points = [] }: GraphProps) {
 
 
     return (
-        <div
+        <NotchCard
             className={cn(
-                "relative w-full h-full text-dark-alpha ",
+                "w-full h-full text-dark-alpha ",
                 className,
             )}
+            label={"progress"}
+            labelClassname={cn(
+                'ml-1'
+            )}
         >
-            <div className="absolute -top-1.5 left-3 bg-light-alpha text-sm px-1 h-2 flex items-center justify-center">
-                progress
-            </div>
             <Chart
                 options={options}
                 series={series}
@@ -81,6 +83,6 @@ export default function Graph({ className, points = [] }: GraphProps) {
                 height="100%"
                 width="100%"
             />
-        </div>
+        </NotchCard>
     );
 }
