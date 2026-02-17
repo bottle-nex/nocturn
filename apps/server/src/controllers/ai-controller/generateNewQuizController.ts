@@ -12,9 +12,8 @@ export default async function generateNewQuizController(req: Request, res: Respo
             ResponseWriter.not_authorized(res, 'not authorized');
             return;
         }
-
         const parsed_data = generateNewQuizSchema.safeParse(req.body);
-
+        console.log('parsed data is : ', parsed_data);
         if (!parsed_data.success) {
             ResponseWriter.invalid_data(res, 'invalid data provided');
             return;
@@ -22,13 +21,14 @@ export default async function generateNewQuizController(req: Request, res: Respo
 
         const { instruction, sessionId } = parsed_data.data;
 
-        // try to fetch the ai-chat-session
         let session;
-        session = await prisma.aiQuizChatSession.findUnique({
-            where: {
-                id: sessionId,
-            },
-        });
+        if (sessionId) {
+            session = await prisma.aiQuizChatSession.findUnique({
+                where: {
+                    id: sessionId,
+                },
+            });
+        }
 
         if (!session || session?.userId !== user.id) {
             session = await prisma.aiQuizChatSession.create({
@@ -39,8 +39,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
                 },
             });
         }
-
-        // create the user message
+        console.log('session is : ', session);
         await prisma.aiQuizMessage.create({
             data: {
                 aiQuizChatSessionId: session.id,

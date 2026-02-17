@@ -14,12 +14,15 @@ export function getResponsiveGap(currentQ: QuestionType): string {
     return 'gap-2 sm:gap-4 md:gap-6 lg:gap-0';
 }
 
-export default function CanvasOptions() {
+interface CanvasOptionsProps {
+    currentQ: QuestionType;
+}
+
+export default function CanvasOptions({ currentQ }: CanvasOptionsProps) {
     const [votes, setVotes] = useState([0, 0, 0, 0]);
-    const { quiz, currentQuestionIndex } = useNewQuizStore();
+    const { quiz } = useNewQuizStore();
     const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
     const { setState } = useDraftRendererStore();
-    const currentQ = quiz.questions[currentQuestionIndex];
 
     useEffect(() => {
         const interval = setInterval(() => {

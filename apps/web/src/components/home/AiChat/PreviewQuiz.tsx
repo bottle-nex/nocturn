@@ -12,7 +12,6 @@ import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import { QuestionType, QuizType, TemplateType } from '@nocturn/types';
 
 import { LiaPagerSolid } from 'react-icons/lia';
-import ChangeThemePanel from './ChangeThemePanel';
 import { useRouter } from 'next/navigation';
 
 interface PreviewQuizProps {
@@ -93,36 +92,6 @@ function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
                 )}
             >
                 <div className="relative w-full flex justify-between items-center">
-                    <div
-                        className={cn(
-                            'relative flex items-center gap-x-1 px-3 py-1.5',
-                            'rounded-beta hover:bg-dark-alpha transition cursor-pointer',
-                        )}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setThemePanel(true);
-                        }}
-                    >
-                        <LiaPagerSolid size={20} />
-                        <span>Change theme</span>
-
-                        {themePanel && (
-                            <ChangeThemePanel
-                                currentTheme={currentTheme}
-                                onThemeHover={setPreviewTheme}
-                                onThemeChange={(theme) => {
-                                    setCurrentTheme(theme);
-                                    setPreviewTheme(null);
-                                    setThemePanel(false);
-                                }}
-                                onClose={() => {
-                                    setPreviewTheme(null);
-                                    setThemePanel(false);
-                                }}
-                            />
-                        )}
-                    </div>
-
                     <div className={cn('absolute left-1/2 -translate-x-1/2 text-4xl ')}>
                         Previewing slides
                     </div>

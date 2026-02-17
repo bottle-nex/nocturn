@@ -3,7 +3,6 @@
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { cn } from '@/lib/utils';
 import { LiaPagerSolid } from 'react-icons/lia';
-import ChangeThemePanel from '../home/AiChat/ChangeThemePanel';
 import { useState } from 'react';
 
 interface PreviewQuizSkeletonProps {
@@ -37,14 +36,6 @@ export default function PreviewQuizSkeleton({ onPreviewClose }: PreviewQuizSkele
                     >
                         <LiaPagerSolid size={20} />
                         <span>Change theme</span>
-
-                        {themePanel && (
-                            <ChangeThemePanel
-                                onClose={() => {
-                                    setThemePanel(false);
-                                }}
-                            />
-                        )}
                     </div>
 
                     {/* Center Text Placeholder */}

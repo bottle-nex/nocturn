@@ -1,11 +1,11 @@
 import { useAiChatStore } from '@/store/home/useAiChatStore';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { AiQuizMessage, QuizType, STREAM, stream } from '@nocturn/types';
 import { GENERATE_NEW_QUIZ } from 'routes/api_routes';
 
 export default class AiBackendAction {
-    static async create_new_quiz(token: string, sessionId: string, instruction: string) {
+    static async create_new_quiz(token: string, sessionId: string | null, instruction: string) {
         const { setLoading } = useAiChatStore.getState();
-
         try {
             setLoading(false);
 
@@ -16,7 +16,7 @@ export default class AiBackendAction {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    sessionId,
+                    ...(sessionId && { sessionId }),
                     instruction,
                 }),
             });
@@ -66,9 +66,10 @@ export default class AiBackendAction {
     }
 
     static handle_stream(stream: stream) {
+        console.log('streaming event: ', stream);
         const { appendMessage, setSessionId, appendMultipleMessages, setQuiz } =
             useAiChatStore.getState();
-
+        const { updateQuiz } = useNewQuizStore.getState();
         switch (stream.type) {
             case STREAM.MESSAGE: {
                 appendMessage(stream.data as AiQuizMessage);

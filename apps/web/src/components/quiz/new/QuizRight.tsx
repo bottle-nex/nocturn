@@ -9,6 +9,7 @@ import { BiSolidMessageEdit } from 'react-icons/bi';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import Drafts from './Drafts';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { FaBrush } from 'react-icons/fa';
 
 interface option {
     name: string;
@@ -27,7 +28,7 @@ const option_one: option[] = [
     {
         name: 'THEME',
         type: DraftRenderer.THEME,
-        icon: <FaDartLang className="size-5 text-neutral-900 dark:text-neutral-100" />,
+        icon: <FaBrush className="size-5 text-neutral-900 dark:text-neutral-100" />,
         message: 'Choose a theme for your quiz',
     },
     {

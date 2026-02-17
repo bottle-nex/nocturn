@@ -1,31 +1,29 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
-import { useAiChatStore } from '@/store/home/useAiChatStore';
-import useVoiceRecognition from '@/hooks/useVoiceRecognition';
-import { AiQuizChatRole, AiQuizMessage, TemplateType } from '@nocturn/types';
-import { v4 as uuid } from 'uuid';
 import { cn } from '@/lib/utils';
-import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
 import { useRouter } from 'next/navigation';
+import { v7 as uuid } from 'uuid';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
+import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
+import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
+import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import React, { useRef, useState } from 'react';
+import Message from './Message/Message';
+import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
+import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
+import OpacityBackground from '@/components/utility/OpacityBackground';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
 const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
 
-const spring = {
-    type: 'spring' as const,
-    stiffness: 170,
-    damping: 26,
-    mass: 1,
-};
-
 export default function AIChatBoxRevamp() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+    const { session } = useUserSessionStore();
+    const { updateQuiz } = useNewQuizStore();
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
@@ -33,9 +31,6 @@ export default function AIChatBoxRevamp() {
 
     const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
     const router = useRouter();
-
-    const [currentTheme, setCurrentTheme] = useState<TemplateType | undefined>(quiz?.template);
-    const [themePanel, setThemePanel] = useState(false);
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
         onFinalTranscript: (text) => setPrompt((prev) => (prev ? prev + ' ' : '') + text),
@@ -45,8 +40,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-              ? difficultyPlaceholders
-              : newChatPlaceholders,
+                ? difficultyPlaceholders
+                : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -56,23 +51,22 @@ export default function AIChatBoxRevamp() {
         el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         const finalPrompt = `${value} ${prompt}`.trim();
         if (!finalPrompt) return;
 
         stop();
 
-        const id = sessionId || uuid();
-
         const message: AiQuizMessage = {
             id: uuid(),
-            aiQuizChatSessionId: id,
+            aiQuizChatSessionId: sessionId || '',
             role: AiQuizChatRole.USER,
             content: finalPrompt,
             createdAt: new Date(),
         };
 
         appendMessage(message);
+        AiBackendAction.create_new_quiz(session?.user.token, sessionId, finalPrompt);
 
         setValue('');
         setPrompt('');
@@ -87,6 +81,9 @@ export default function AIChatBoxRevamp() {
     }
 
     function handleOnContinue() {
+        if (quiz) {
+            updateQuiz(quiz);
+        }
         router.push(`/new/${quiz?.id}`);
     }
 
@@ -96,175 +93,172 @@ export default function AIChatBoxRevamp() {
 
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
+    if (!expanded) {
+        return (
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 w-115 text-neutral-200">
+                <InputBox
+                    textareaRef={textareaRef}
+                    value={value}
+                    isFocused={isFocused}
+                    hasContent={hasContent}
+                    listening={listening}
+                    interimTranscript={interimTranscript}
+                    animatedPlaceholders={animatedPlaceholders}
+                    onChange={handleChange}
+                    onKeyDown={handleOnKeyDown}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    onToggleVoice={toggle}
+                    onSubmit={handleSubmit}
+                />
+            </div>
+        );
+    }
+
     return (
-        <>
-            {/* Backdrop */}
-            <AnimatePresence>
-                {expanded && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 z-30 bg-black/60"
-                        onClick={handleOnClose}
-                    />
-                )}
-            </AnimatePresence>
+        <OpacityBackground className="bg-black/20">
+            <div className="fixed inset-6 z-40 flex flex-row overflow-hidden rounded-2xl bg-light-alpha dark:bg-dark-alpha border dark:border-light-base/10 border-dark-alpha/10 shadow-2xl text-neutral-200 max-w-8xl mx-auto">
+                <div className="flex flex-col w-100 shrink-0 border-r dark:border-light-base/10 border-dark-alpha/10 h-full">
+                    <section
+                        className="flex-1 overflow-y-auto px-3 pt-4 space-y-2 custom-scrollbar"
+                        data-lenis-prevent
+                    >
+                        {messages.map((msg) => (
+                            <Message
+                                key={msg.id}
+                                message={msg}
+                                loading={false}
+                                image={session?.user.image}
+                            />
+                        ))}
+                    </section>
 
-            {/* Main container */}
-            <motion.div
-                initial={false}
-                animate={
-                    expanded
-                        ? {
-                              bottom: 24,
-                              left: 24,
-                              right: 24,
-                              top: 24,
-                              borderRadius: 16,
-                          }
-                        : {
-                              bottom: 32,
-                              left: 'calc(50% - 230px)',
-                              right: 'calc(50% - 230px)',
-                              top: 'auto',
-                              borderRadius: 24,
-                          }
-                }
-                transition={spring}
-                className={cn(
-                    'fixed z-40 flex flex-row overflow-hidden text-neutral-200 font-sans',
-                    expanded
-                        ? 'bg-neutral-900 border border-neutral-800 shadow-2xl'
-                        : 'shadow-2xl',
+                    <div className="p-3">
+                        <InputBox
+                            textareaRef={textareaRef}
+                            value={value}
+                            isFocused={isFocused}
+                            hasContent={hasContent}
+                            listening={listening}
+                            interimTranscript={interimTranscript}
+                            animatedPlaceholders={animatedPlaceholders}
+                            onChange={handleChange}
+                            onKeyDown={handleOnKeyDown}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            onToggleVoice={toggle}
+                            onSubmit={handleSubmit}
+                        />
+                    </div>
+                </div>
+
+                <AiSlidesPreviewArea onClose={handleOnClose} onContinue={handleOnContinue} />
+            </div>
+        </OpacityBackground>
+    );
+}
+
+/* ── Shared input box ── */
+
+interface InputBoxProps {
+    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+    value: string;
+    isFocused: boolean;
+    hasContent: boolean;
+    listening: boolean;
+    interimTranscript: string;
+    animatedPlaceholders: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+    onFocus: () => void;
+    onBlur: () => void;
+    onToggleVoice: () => void;
+    onSubmit: () => void;
+}
+
+function InputBox({
+    textareaRef,
+    value,
+    isFocused,
+    hasContent,
+    listening,
+    interimTranscript,
+    animatedPlaceholders,
+    onChange,
+    onKeyDown,
+    onFocus,
+    onBlur,
+    onToggleVoice,
+    onSubmit,
+}: InputBoxProps) {
+    return (
+        <div
+            className={cn(
+                'rounded-2xl dark:bg-dark-alpha bg-light-base border dark:border-light-alpha/10 border-dark-alpha/10 transition-colors relative overflow-hidden',
+                isFocused && 'ring-2 ring-nprimary/60',
+            )}
+        >
+            <div className="px-4 pt-3">
+                <textarea
+                    ref={textareaRef}
+                    rows={1}
+                    value={value}
+                    onChange={onChange}
+                    onKeyDown={onKeyDown}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    placeholder={value ? '' : animatedPlaceholders}
+                    className="w-full resize-none bg-transparent outline-none text-[15px] dark:text-light-base text-dark-base placeholder:text-neutral-500 max-h-30 overflow-y-auto"
+                />
+                {listening && interimTranscript && (
+                    <div className="text-sm text-neutral-400 italic mt-1 pb-2">
+                        {interimTranscript}
+                    </div>
                 )}
-            >
-                {/* Left sidebar — textarea lives here */}
-                <motion.div
-                    initial={false}
-                    animate={{
-                        width: expanded ? 400 : '100%',
-                    }}
-                    transition={spring}
-                    className={cn(
-                        'flex flex-col shrink-0 relative h-full',
-                        expanded ? 'border-r border-neutral-800' : '',
-                    )}
+            </div>
+
+            <div className="flex items-center justify-between px-3 pb-3 pt-2">
+                <button
+                    aria-label="sdsdv"
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors"
                 >
-                    {/* Messages area — only visible when expanded */}
-                    <AnimatePresence>
-                        {expanded && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.3, delay: 0.15 }}
-                                className="flex-1 overflow-y-auto px-3 pt-4"
-                            >
-                                {/* Messages will render here */}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    <Plus size={20} className="text-neutral-400" />
+                </button>
 
-                    {/* Input pinned to bottom */}
-                    <div className={cn('w-full', expanded ? 'p-3' : '')}>
-                        <div
+                <div className="flex items-center gap-2">
+                    {!hasContent && (
+                        <button
+                            onClick={onToggleVoice}
                             className={cn(
-                                'rounded-2xl bg-neutral-950 border transition-colors relative overflow-hidden',
-                                isFocused ? 'border-neutral-700' : 'border-neutral-800',
+                                'w-8 h-8 flex items-center justify-center rounded-full transition-all',
+                                listening
+                                    ? 'bg-red-500/20 text-red-500'
+                                    : 'hover:bg-neutral-800 text-neutral-400',
                             )}
                         >
-                            <div className="px-4 pt-3">
-                                <textarea
-                                    ref={textareaRef}
-                                    rows={1}
-                                    value={value}
-                                    onChange={handleChange}
-                                    onKeyDown={handleOnKeyDown}
-                                    onFocus={() => setIsFocused(true)}
-                                    onBlur={() => setIsFocused(false)}
-                                    placeholder={value ? '' : animatedPlaceholders}
-                                    className="w-full resize-none bg-transparent outline-none text-[15px] text-neutral-100 placeholder:text-neutral-500 max-h-[120px] overflow-y-auto"
-                                />
-                                {listening && interimTranscript && (
-                                    <div className="text-sm text-neutral-400 italic mt-1 pb-2">
-                                        {interimTranscript}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="flex items-center justify-between px-3 pb-3 pt-2">
-                                <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors">
-                                    <Plus size={20} className="text-neutral-400" />
-                                </button>
-
-                                <div className="flex items-center gap-2">
-                                    {!hasContent && (
-                                        <button
-                                            onClick={toggle}
-                                            className={cn(
-                                                'w-8 h-8 flex items-center justify-center rounded-full transition-all',
-                                                listening
-                                                    ? 'bg-red-500/20 text-red-500'
-                                                    : 'hover:bg-neutral-800 text-neutral-400',
-                                            )}
-                                        >
-                                            {listening ? (
-                                                <Loader2 size={16} className="animate-spin" />
-                                            ) : (
-                                                <Mic size={20} />
-                                            )}
-                                        </button>
-                                    )}
-
-                                    <button
-                                        disabled={!hasContent}
-                                        onClick={handleSubmit}
-                                        className={cn(
-                                            'w-8 h-8 flex items-center justify-center rounded-full transition-all',
-                                            hasContent
-                                                ? 'bg-neutral-100 text-neutral-900 hover:scale-105'
-                                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed',
-                                        )}
-                                    >
-                                        <ArrowUp size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <AnimatePresence>
-                            {expanded && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: 6 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 6 }}
-                                    transition={{ duration: 0.25, delay: 0.2 }}
-                                    className="mt-3 text-center text-xs text-neutral-500"
-                                >
-                                    AI can make mistakes. Always check your slides.
-                                </motion.p>
+                            {listening ? (
+                                <Loader2 size={16} className="animate-spin" />
+                            ) : (
+                                <Mic size={20} />
                             )}
-                        </AnimatePresence>
-                    </div>
-                </motion.div>
-
-                {/* Right side — slides preview */}
-                <AnimatePresence>
-                    {expanded && (
-                        <AiSlidesPreviewArea
-                            expanded={expanded}
-                            themePanel={themePanel}
-                            currentTheme={currentTheme}
-                            setThemePanel={setThemePanel}
-                            setCurrentTheme={setCurrentTheme}
-                            onClose={handleOnClose}
-                            onContinue={handleOnContinue}
-                        />
+                        </button>
                     )}
-                </AnimatePresence>
-            </motion.div>
-        </>
+
+                    <button
+                        aria-label="sdsdvsdv"
+                        disabled={!hasContent}
+                        onClick={onSubmit}
+                        className={cn(
+                            'w-8 h-8 flex items-center justify-center rounded-full transition-all',
+                            hasContent
+                                ? 'bg-neutral-100 text-neutral-900 hover:scale-105'
+                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed',
+                        )}
+                    >
+                        <ArrowUp size={16} />
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }
