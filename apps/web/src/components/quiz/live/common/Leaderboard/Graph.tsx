@@ -11,9 +11,10 @@ const Chart = dynamic(() => import("react-apexcharts"), {
 interface GraphProps {
     className?: string;
     points?: number[];
+    label?: string;
 }
 
-export default function Graph({ className, points = [] }: GraphProps) {
+export default function Graph({ className, points = [], label }: GraphProps) {
     const series = [
         {
             name: "rank",
@@ -71,7 +72,7 @@ export default function Graph({ className, points = [] }: GraphProps) {
                 "w-full h-full text-dark-alpha ",
                 className,
             )}
-            label={"progress"}
+            label={label}
             labelClassname={cn(
                 'ml-1'
             )}

@@ -26,12 +26,19 @@ type ParticipantMode = {
 type LeaderboardMode = HostMode | SpectatorMode | ParticipantMode;
 
 interface BaseProps {
+    explanation: string;
     className?: string;
 }
 
 type LeaderboardProps = BaseProps & LeaderboardMode;
 
-export default function Leaderboard({ className }: LeaderboardProps) {
+export default function Leaderboard({
+    className,
+    explanation,
+    host,
+    spectator,
+    participant,
+}: LeaderboardProps) {
     return (
         <div
             className={cn(
@@ -53,28 +60,23 @@ export default function Leaderboard({ className }: LeaderboardProps) {
                     label={'explanation'}
                 >
                     <div>
-                        this is the question's explanation of how this is answer is correct.
+                        {explanation}
                     </div>
                 </NotchCard>
 
                 <Graph
                     className="col-span-2 row-span-2 border border-dark-base rounded-[10px]"
-                    points={[10, 25, 18, 40, 22, 55, 30]}
+                    points={[10, 1]}
+                    label={participant ? 'your progress' : "participant's progress"}
                 />
 
                 <NotchCard
-                    className="col-span-2 row-span-1 border border-dark-alpha rounded-[10px] h-full min-h-0 "
+                    className="col-span-2 row-span-1 border border-dark-alpha rounded-[10px] h-full min-h-0 flex justify-center items-center "
                     label={"your response"}
                 >
-                    <RankCard
-                        growth={GROWTH.UP}
-                        rank={31}
-                        image={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-6.jpg'}
-                        name={'John Doe'}
-                        streak={1}
-                        points={22}
-                    />
-
+                    <div>
+                        {host ? "you're the host man, why do wanna respond." : spectator ? "you're a spectator your can't respond, haha!" : ""}
+                    </div>
                 </NotchCard>
 
                 <Rank className="col-span-4 row-span-4 border border-dark-base rounded-[10px] overflow-hidden" />
