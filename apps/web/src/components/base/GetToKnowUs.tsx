@@ -289,15 +289,21 @@ function KnowUsBigCard({
                         )}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <section data-lenis-prevent className="relative w-full flex flex-col items-start justify-start gap-y-4 overflow-y-auto min-h-0 custom-scrollbar">
+                        <section
+                            data-lenis-prevent
+                            className="relative w-full flex flex-col items-start justify-start gap-y-4 overflow-y-auto min-h-0 custom-scrollbar"
+                        >
                             <h4 className="text-xl font mb-2">{selectedFeature.title}</h4>
-                            <section className='w-full h-80 shrink-0 rounded-lg relative bg-blue-500'>
-                            </section>
-                            <section className='space-y-6'>
+                            <section className="w-full h-80 shrink-0 rounded-lg relative bg-blue-500"></section>
+                            <section className="space-y-6">
                                 {selectedFeature.paragraphs.map((section, index) => (
                                     <div key={index}>
-                                        <h5 className="text-base font-semibold mb-1">{section.title}</h5>
-                                        <p className="text-[15px] text-dark-base/70">{section.paragraph}</p>
+                                        <h5 className="text-base font-semibold mb-1">
+                                            {section.title}
+                                        </h5>
+                                        <p className="text-[15px] text-dark-base/70">
+                                            {section.paragraph}
+                                        </p>
                                     </div>
                                 ))}
                             </section>

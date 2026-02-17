@@ -2,7 +2,6 @@ import { QuestionType } from '@nocturn/types';
 import CanvasAccents from '../utility/CanvasAccents';
 import UtilityCard from '../utility/UtilityCard';
 import CanvasHeading from './CanvasHeading';
-import CanvasBars from './CanvasBars';
 import CanvasOptions from './CanvasOptions';
 
 interface PreviewCanvasProps {
@@ -15,7 +14,6 @@ interface PreviewCanvasProps {
 }
 
 export default function PreviewCanvas({
-    orderIndex,
     question,
     accentType,
     accentColor,

@@ -3,15 +3,12 @@
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { cn } from '@/lib/utils';
 import { LiaPagerSolid } from 'react-icons/lia';
-import { useState } from 'react';
 
 interface PreviewQuizSkeletonProps {
     onPreviewClose?: () => void;
 }
 
 export default function PreviewQuizSkeleton({ onPreviewClose }: PreviewQuizSkeletonProps) {
-    const [themePanel, setThemePanel] = useState<boolean>(false);
-
     return (
         <OpacityBackground onBackgroundClick={onPreviewClose}>
             <div
@@ -31,7 +28,6 @@ export default function PreviewQuizSkeleton({ onPreviewClose }: PreviewQuizSkele
                         )}
                         onClick={(e) => {
                             e.stopPropagation();
-                            setThemePanel(true);
                         }}
                     >
                         <LiaPagerSolid size={20} />

@@ -8,10 +8,8 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { cn } from '@/lib/utils';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
-import { QuestionType, QuizType, TemplateType } from '@nocturn/types';
+import { QuestionType, QuizType } from '@nocturn/types';
 
-import { LiaPagerSolid } from 'react-icons/lia';
 import { useRouter } from 'next/navigation';
 
 interface PreviewQuizProps {
@@ -62,17 +60,9 @@ export default function PreviewQuiz({
 }
 
 function PreviewQuizWithData({ quiz, onPreviewClose }: PreviewQuizProps) {
-    const { templates } = useQuizTemplatesStore();
-
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(
         quiz?.questions?.[0] || null,
     );
-
-    const initialTheme = templates.find((t) => t.id === quiz?.templateId) ?? templates[0];
-
-    const [currentTheme, setCurrentTheme] = useState<TemplateType>(initialTheme);
-    const [_previewTheme, setPreviewTheme] = useState<TemplateType | null>(null);
-    const [themePanel, setThemePanel] = useState<boolean>(false);
 
     const router = useRouter();
 
