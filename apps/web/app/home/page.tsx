@@ -48,7 +48,7 @@ export default function Home() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session?.user.token]);
-
+    console.log('is trash open : ', isTrashOpen);
     return (
         <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden relative select-none">
             <div className="flex h-full">

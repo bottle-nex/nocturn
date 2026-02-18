@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma, QuizStatus } from '@nocturn/database';
-import { QuizStatusEnum } from '@nocturn/types';
+import { prisma } from '@nocturn/database';
 
 export default async function delete_selected_quizzes_controller(req: Request, res: Response) {
     if (!req.user?.id) {
         ResponseWriter.not_authorized(res);
         return;
     }
+    console.log('request looks like : ', req.body);
 
     const { quizIds } = req.body;
 
@@ -31,20 +31,18 @@ export default async function delete_selected_quizzes_controller(req: Request, r
             return;
         }
 
-        const deletatbleQuizzes = quizzes.filter(
-            (quiz) => !quiz.isDeleted && quiz.status !== QuizStatusEnum.LIVE,
-        );
+        const deletatbleQuizzes = quizzes.filter((quiz) => !quiz.isDeleted);
+
         if (deletatbleQuizzes.length === 0) {
             ResponseWriter.not_found(res);
             return;
         }
 
-        await prisma.quiz.updateMany({
+        const result = await prisma.quiz.updateMany({
             where: {
                 id: { in: deletatbleQuizzes.map((q) => q.id) },
                 hostId: String(req.user.id),
                 isDeleted: false,
-                status: { not: QuizStatus.LIVE },
             },
             data: {
                 isDeleted: true,
@@ -52,7 +50,11 @@ export default async function delete_selected_quizzes_controller(req: Request, r
             },
         });
 
-        ResponseWriter.success(res, {}, 'Deleted quizzes successfully');
+        ResponseWriter.success(
+            res,
+            { deleted_length: result.count },
+            result.count > 0 ? 'Deleted quizzes successfully' : 'No quizzes were deleted',
+        );
         return;
     } catch (err) {
         console.error('Failed to delete seleced quizzes: ', err);

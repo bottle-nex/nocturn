@@ -74,7 +74,7 @@ export default class QuizActions {
         }
 
         try {
-            await axios.put(
+            const { data } = await axios.put(
                 DELETE_SELECTED_QUIZZES_URL,
                 {
                     quizIds,
@@ -85,6 +85,12 @@ export default class QuizActions {
                     },
                 },
             );
+            const message = 'successfully deleted';
+            const append =
+                data.data.deleted_length > 1
+                    ? data.data.deleted_length + ' quizzes'
+                    : data.data.deleted_length + ' quiz';
+            toast.success(message + ' ' + append);
         } catch (error) {
             console.error('Error in deleting selected quizzes: ', error);
             return;

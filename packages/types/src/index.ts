@@ -17,5 +17,6 @@ export * from "./stream/stream.types";
 export * from "../src/response/new/get_new_quiz.response";
 
 export * from "../src/const/nocturn.const";
+export * from "../src/const/dummyprompt.const";
 export * from "../src/socket/collaborators/collaborators.types";
 export * from "./premium/premium.types";

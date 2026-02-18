@@ -45,6 +45,8 @@ export default async function getAllQuizController(req: Request, res: Response) 
             },
         });
 
+        console.log('quizzes to return : ', quizzes);
+
         if (!quizzes || quizzes.length === 0) {
             ResponseWriter.success(res, [], 'No quizzes found');
             return;

@@ -36,7 +36,12 @@ export default function MessagesRenderer({ className }: MessagesRendererProps) {
         >
             <div className="flex flex-col gap-y-1 p-2">
                 {messages.map((m, i) => (
-                    <Message image={session?.user.image} key={m.id ?? i} message={m} loading={false} />
+                    <Message
+                        image={session?.user.image}
+                        key={m.id ?? i}
+                        message={m}
+                        loading={false}
+                    />
                 ))}
             </div>
         </div>

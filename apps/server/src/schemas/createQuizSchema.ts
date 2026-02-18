@@ -29,7 +29,7 @@ const questionSchema = z.object({
     timeLimit: z.number().min(1).max(600),
     readingTime: z.number().min(1).max(600),
     orderIndex: z.number(),
-    imageUrl: z.string().optional(),
+    imageUrl: z.string().nullable().optional(),
     hintLaunched: z.boolean(),
 });
 

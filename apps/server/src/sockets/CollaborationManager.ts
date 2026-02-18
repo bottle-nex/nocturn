@@ -186,6 +186,7 @@ export default class CollaborationManager {
 
     private async handle_question_tap(ws: CustomWebSocket, payload: any) {
         try {
+            console.log('payload is : ', payload);
             const { orderIndex } = payload;
             if (!ws.collabUser.collabSessionId) {
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
@@ -201,7 +202,10 @@ export default class CollaborationManager {
                 },
                 exclude_socket_id: ws.id,
             };
-            await this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
+            await this.quizManager.publish_collab_event_to_redis(
+                ws.collabUser.collabSessionId,
+                data,
+            );
         } catch (err) {
             console.error('Error while handling question tap: ', err);
         }
@@ -232,7 +236,7 @@ export default class CollaborationManager {
             },
             exclude_socket_id: ws.id,
         };
-        await this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
+        await this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
     private handle_quiz_update(ws: CustomWebSocket, payload: any) {
@@ -249,7 +253,7 @@ export default class CollaborationManager {
             },
             exclude_socket_id: ws.id,
         };
-        this.quizManager.publish_event_to_redis(ws.collabUser.collabSessionId, data);
+        this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
     private async validate_collaborator_in_db(user_id: string): Promise<boolean> {

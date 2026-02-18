@@ -8,12 +8,22 @@ import { motion } from 'framer-motion';
 import LandingSectionLeftCard from './LandingSectionCards/LandingSectionLeftCard';
 import LandingSectionMidCard from './LandingSectionCards/LandingSectionMidCard';
 import LandingSectionRightCard from './LandingSectionCards/LandingSectionRightCard';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
+import { useRouter } from 'next/navigation';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(TextPlugin, SplitText);
 }
 
 export default function LandingSection() {
+    const router = useRouter();
+    async function handleJoinQuiz(code: string) {
+        const quizId = await userQuizAction.joinQuiz(code);
+        if (quizId) {
+            router.push(`/live/${quizId}`);
+        }
+    }
+
     return (
         <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none">
             <div className="flex flex-col items-center justify-between h-full">
@@ -83,7 +93,7 @@ export default function LandingSection() {
                             knowledge matters
                         </motion.div>
                     </div>
-                    <JoinQuizButton />
+                    <JoinQuizButton onJoin={handleJoinQuiz} />
                 </div>
             </div>
 
