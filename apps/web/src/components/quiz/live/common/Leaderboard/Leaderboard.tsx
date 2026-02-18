@@ -4,6 +4,7 @@ import Graph from "./Graph";
 import Rank from "./Rank";
 import RankCard, { GROWTH } from "./RankCard";
 import NotchCard from "@/components/ui/NotchCard";
+import { useLiveParticipantsStore } from "@/store/live-quiz/useLiveParticipantsStore";
 
 type HostMode = {
     host: true;
@@ -39,6 +40,9 @@ export default function Leaderboard({
     spectator,
     participant,
 }: LeaderboardProps) {
+
+    const { response } = useLiveParticipantsStore();
+
     return (
         <div
             className={cn(
@@ -75,7 +79,13 @@ export default function Leaderboard({
                     label={"your response"}
                 >
                     <div>
-                        {host ? "you're the host man, why do wanna respond." : spectator ? "you're a spectator your can't respond, haha!" : ""}
+                        {
+                            host
+                                ? "you're the host man, why do wanna respond."
+                                : spectator
+                                    ? "you're a spectator your can't respond, haha!"
+                                    : ''
+                        }
                     </div>
                 </NotchCard>
 
