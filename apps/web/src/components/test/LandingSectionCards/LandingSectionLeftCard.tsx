@@ -1,5 +1,8 @@
 'use client';
+import SigninModal from '@/components/utility/SigninModal';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaRegSave } from 'react-icons/fa';
 import { GrSend } from 'react-icons/gr';
@@ -9,6 +12,8 @@ import { PiPlus } from 'react-icons/pi';
 
 export default function LandingSectionLeftCard() {
     const [showNewQuizOptions, setShowNewQuizOptions] = useState<boolean>(false);
+    const router = useRouter();
+    const { session, setOpenSigninModal } = useUserSessionStore();
 
     const container: Variants = {
         hidden: {},
@@ -123,7 +128,15 @@ export default function LandingSectionLeftCard() {
                 </AnimatePresence>
 
                 <div className="absolute h-16 w-60 ring-1 ring-black/5 bg-[#f8f8f8] shadow-xs shadow-black/10 rounded-xl -left-25 top-12 rotate-4 p-3 flex justify-end items-center">
-                    <div className="bg-indigo-500 text-light-base flex gap-x-1.5 px-3 py-2 w-fit rounded-alpha justify-center items-center shadow-xs shadow-black/5">
+                    <div
+                        onClick={() => {
+                            if (!session?.user.token) {
+                                setOpenSigninModal(true);
+                            }
+                            router.push('/new');
+                        }}
+                        className="bg-indigo-500 hover:-translate-y-px text-light-base flex gap-x-1.5 px-3 py-2 w-fit rounded-alpha justify-center items-center shadow-xs shadow-black/5 cursor-pointer active:scale-95 transition-all transform duration-200"
+                    >
                         <PiPlus />
                         New quiz
                     </div>
@@ -137,6 +150,7 @@ export default function LandingSectionLeftCard() {
                     <span className="text-dark-base">New Quiz</span> to start creating a quiz.
                 </div>
             </div>
+            <SigninModal />
         </motion.div>
     );
 }

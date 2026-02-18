@@ -49,7 +49,7 @@ export default function LandingSectionMidCard() {
                         />
                     </div>
                     <div className="w-full h-11 flex flex-col justify-between pl-1">
-                        <div className="text-xs text-dark-base/60">Piyush Raj</div>
+                        <div className="text-xs text-dark-base/60">John Wick</div>
                         <div className="text-dark-base/90 text-[11px] leading-3">
                             Added modern theme and base points per Q
                         </div>

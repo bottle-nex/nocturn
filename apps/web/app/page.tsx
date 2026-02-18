@@ -4,8 +4,8 @@ import BigAnimatedText from '@/components/ui/BigAnimatedText';
 import LandingSection from '@/components/test/LandingSection';
 import LandingNavbar from '@/components/revamp/LandingNavbar';
 import FeaturesSection from '@/components/test/FeaturesSection';
-import Footer from '@/components/root/Footer';
 import WhyNocturn from '@/components/test/WhyNocturnComponent';
+import LandingFooter from '@/components/test/LandingFooter';
 
 export default function Page() {
     return (
@@ -17,7 +17,8 @@ export default function Page() {
             <WhyNocturn />
             <PricingComponent />
             <BigAnimatedText />
-            <Footer />
+            <LandingFooter />
+            {/* <Footer /> */}
         </div>
     );
 }
