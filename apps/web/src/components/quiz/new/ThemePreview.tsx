@@ -10,6 +10,7 @@ interface ThemeBarsPreviewProps {
     active?: boolean;
     className?: string;
     onClick?: () => void;
+    showText?: boolean;
 }
 
 export default function ThemePreview({
@@ -17,6 +18,7 @@ export default function ThemePreview({
     active = false,
     className,
     onClick,
+    showText,
 }: ThemeBarsPreviewProps) {
     const { bars, backgroundColor, accentType, accentColor } = template;
 
@@ -52,14 +54,16 @@ export default function ThemePreview({
                 className,
             )}
         >
-            <div
-                style={{
-                    color: template.textColor,
-                }}
-                className="absolute top-1 left-1/2 -translate-x-1/2 z-20 text-[11px] font-medium capitalize"
-            >
-                {template.name}
-            </div>
+            {!showText && (
+                <div
+                    style={{
+                        color: template.textColor,
+                    }}
+                    className="absolute top-1 left-1/2 -translate-x-1/2 z-20 text-[11px] font-medium capitalize"
+                >
+                    {template.name}
+                </div>
+            )}
             <div
                 style={{ backgroundColor }}
                 className="absolute inset-0 z-0 rounded-md overflow-hidden pointer-events-none"

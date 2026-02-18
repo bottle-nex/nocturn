@@ -7,13 +7,13 @@ import { BiCool, BiSolidChalkboard } from 'react-icons/bi';
 import { PiTreePalmFill } from 'react-icons/pi';
 import { CreateCardContent } from './InstructionSectionCards/CreateCardContent';
 import { PublishCardContent } from './InstructionSectionCards/PublishCardContent';
-import LaunchCardContent from './InstructionSectionCards/LaunchCardContent';
 import { ManageCardContent } from './InstructionSectionCards/ManageCardContent';
 import InstructionSectionChatBox from './InstructionSectionCards/InstructionSectionChatBox';
 import { cn } from '@/lib/utils';
 import InstructionSectionHoverCard from './InstructionSectionCards/InstructionSectionHoverCard';
 import { MdPublish, MdRocketLaunch } from 'react-icons/md';
 import { SiSolana } from 'react-icons/si';
+import StakeSolanaCardContent from './InstructionSectionCards/StakeSolanaCardContent';
 
 export default function App(): JSX.Element {
     const controls = useAnimation();
@@ -97,13 +97,13 @@ export default function App(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="absolute left-53 bottom-4 rotate-2">
+                <div className="absolute left-53 bottom-4 rotate-2 hover:z-10 transition-all transform duration-250 hover:scale-105">
                     <div
                         onMouseEnter={() => setActiveCard('publish')}
                         onMouseLeave={() => setActiveCard(null)}
                         className={cn(
                             'relative group transition-all duration-300',
-                            isInactive('publish') && 'blur-[3px] opacity-40 scale-95',
+                            isInactive('publish') && 'blur-[3px] opacity-40',
                         )}
                     >
                         <PublishCardContent />
@@ -135,10 +135,10 @@ export default function App(): JSX.Element {
                         onMouseLeave={() => setActiveCard(null)}
                         className={cn(
                             'relative group transition-all duration-300',
-                            isInactive('launch') && 'blur-[3px] opacity-40 scale-95',
+                            isInactive('launch') && 'blur-[3px] opacity-40 ',
                         )}
                     >
-                        <LaunchCardContent />
+                        <StakeSolanaCardContent />
                         {activeCard === 'launch' && (
                             <AnimatePresence>
                                 <InstructionSectionHoverCard
@@ -170,7 +170,7 @@ export default function App(): JSX.Element {
                         onMouseLeave={() => setActiveCard(null)}
                         className={cn(
                             'relative group transition-all duration-300',
-                            isInactive('manage') && 'blur-[3px] opacity-40 scale-95',
+                            isInactive('manage') && 'blur-[3px] opacity-40 ',
                         )}
                     >
                         <ManageCardContent />

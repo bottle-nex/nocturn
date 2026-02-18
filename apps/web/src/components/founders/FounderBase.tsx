@@ -111,10 +111,10 @@ export default function FounderBase() {
                     name="Anjan Suman"
                     role="FullStack Developer"
                     image="/images/founders/anjan.jpg"
-                    twitterUrl="https://x.com/AnjanSuman8"
-                    linkedinUrl="https://www.linkedin.com/in/anjansuman/"
-                    githubUrl="https://github.com/Anjansuman"
-                    githubUsername="Anjansuman"
+                    twitterUrl="https://x.com/anjanstwt"
+                    linkedinUrl="https://www.linkedin.com/in/anjanstwt/"
+                    githubUrl="https://github.com/anjanstwt"
+                    githubUsername="anjanstwt"
                     className="dark:border-b border-b dark:border-gray-700 border-gray-200"
                 />
                 <DeveloperCard
