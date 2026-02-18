@@ -10,20 +10,81 @@ import { IoIosPeople } from 'react-icons/io';
 import { PiBroomFill } from 'react-icons/pi';
 import { SiSolana } from 'react-icons/si';
 
-type IconProps = {
-    Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+export function CreateCardContent(): JSX.Element {
+    return (
+        <motion.div
+            initial="rest"
+            whileHover="hover"
+            className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 flex justify-center items-center relative"
+        >
+            <FloatItem x={-8} y={-84}>
+                <div className="bg-amber-50 ring-1 ring-amber-300 h-7 w-7 rounded-full flex justify-center items-center">
+                    <HiOutlineRocketLaunch className="text-amber-600 size-4.5" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={55} y={22}>
+                <div className="bg-indigo-50 ring-1 ring-indigo-300 shadow-xs h-7 w-7 shadow-black/5 flex justify-center items-center rounded-full">
+                    <SiSolana className="text-indigo-600 size-3.5 -rotate-6" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={-73} y={23}>
+                <div className="bg-pink-50 ring-1 ring-pink-300 shadow-xs shdaow-black/5 flex justify-center items-center h-7 w-7 rounded-full">
+                    <PiBroomFill className="text-pink-600/70 size-4 -rotate-6" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={-60} y={-68} flip>
+                <div className="bg-cyan-50 ring-1 ring-cyan-300 shadow-xs shdaow-black/5 flex justify-center items-center h-7 w-7 rounded-full">
+                    <GrSend className="text-cyan-600 size-4" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={43} y={-64} flip>
+                <div className="bg-green-50 h-7 w-7 flex justify-center items-center ring-1 ring-green-300 shadow-xs shadow-black/5 rounded-full">
+                    <BiSearchAlt className="text-green-600 size-4.5" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={-82} y={-26} rotate={-5}>
+                <div className="bg-red-50 h-7 w-7 flex justify-center items-center ring-1 ring-red-300 shadow-xs shadow-black/5 rounded-full">
+                    <IoIosPeople className="text-red-600 size-4.75" />
+                </div>
+            </FloatItem>
+
+            <FloatItem x={61} y={-23} rotate={8}>
+                <div className="bg-purple-50 h-7 w-7 flex justify-center items-center ring-1 ring-purple-300 shadow-xs shadow-black/5 rounded-full">
+                    <VoiceIcon className="text-purple-600 size-5" />
+                </div>
+            </FloatItem>
+
+            <div className="h-24 w-24 bg-light-base rounded-full flex justify-center items-center relative overflow-hidden z-10 ring-1 ring-black/10 shadow-sm shadow-black/5">
+                <Image
+                    src="/illustrations/coffee_guy.png"
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-contain mt-3"
+                />
+            </div>
+        </motion.div>
+    );
+}
+
+type FloatItemProps = {
+    children: React.ReactNode;
     x: number;
     y: number;
     className?: string;
-    size?: number | string;
     rotate?: number;
     flip?: boolean;
 };
 
-function Icon({ Icon, x, y, className, size = 'size-5', rotate = 0, flip = false }: IconProps) {
+function FloatItem({ children, x, y, className, rotate = 0, flip = false }: FloatItemProps) {
     return (
         <motion.div
-            className="absolute left-1/2 top-1/2 pointer-events-none"
+            className={`absolute left-1/2 top-1/2 pointer-events-none ${className}`}
             variants={{
                 rest: {
                     x: 0,
@@ -49,73 +110,7 @@ function Icon({ Icon, x, y, className, size = 'size-5', rotate = 0, flip = false
                 transform: `translate(-50%, -50%) ${flip ? 'scaleX(-1)' : ''}`,
             }}
         >
-            <Icon className={`${size} ${className}`} />
-        </motion.div>
-    );
-}
-
-export function CreateCardContent(): JSX.Element {
-    return (
-        <motion.div
-            initial="rest"
-            whileHover="hover"
-            className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 flex justify-center items-center relative"
-        >
-            <Icon
-                Icon={HiOutlineRocketLaunch}
-                className="text-amber-600"
-                x={-5}
-                y={-80}
-                size="size-6"
-            />
-
-            <Icon
-                Icon={SiSolana}
-                className="text-indigo-600 -rotate-6"
-                x={53}
-                y={19}
-                size="size-4"
-            />
-
-            <Icon
-                Icon={PiBroomFill}
-                className="text-pink-600/70 -rotate-6"
-                x={-70}
-                y={20}
-                size="size-5"
-            />
-
-            <Icon Icon={GrSend} className="text-cyan-600" x={-57} y={-64} size="size-5" flip />
-
-            <Icon Icon={BiSearchAlt} className="text-green-600" x={42} y={-60} size="size-6" flip />
-
-            <Icon
-                Icon={IoIosPeople}
-                className="text-red-600"
-                x={-76}
-                y={-23}
-                size="size-5.5"
-                rotate={-5}
-            />
-
-            <Icon
-                Icon={VoiceIcon}
-                className="text-purple-600"
-                x={58}
-                y={-20}
-                size="size-5"
-                rotate={8}
-            />
-
-            <div className="h-24 w-24 bg-light-base rounded-full flex justify-center items-center relative overflow-hidden z-10 ring-1 ring-black/10 shadow-sm shadow-black/5">
-                <Image
-                    src="/illustrations/coffee_guy.png"
-                    alt=""
-                    fill
-                    unoptimized
-                    className="object-contain mt-3"
-                />
-            </div>
+            {children}
         </motion.div>
     );
 }

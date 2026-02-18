@@ -42,7 +42,7 @@ export default function InstructionSectionHoverCard({
             )}
         >
             <div className="relative h-full w-full flex flex-col gap-y-1">
-                <div className="w-full flex gap-x-2.5 text-black/70 items-center h-8">
+                <div className="w-full flex gap-x-2.5 text-black/70 items-center h-8 mb-3">
                     <div className="bg-[#3583ff20] h-8 w-8 flex justify-center items-center ring-1 ring-[#3583ff60] shadow-xs shadow-black/5 rounded-sm text-[#3583ff]">
                         {icon}
                     </div>
@@ -55,7 +55,7 @@ export default function InstructionSectionHoverCard({
 
                 {points.map((point, i) => (
                     <React.Fragment key={i}>
-                        <div className="mt-3 flex gap-x-2.5 w-full h-8 items-center">
+                        <div className="flex gap-x-2.5 w-full h-8 items-center">
                             <div
                                 className="h-2 w-2 rounded-full"
                                 style={{ backgroundColor: point.color }}
