@@ -36,7 +36,7 @@ const closeBtn: Variants = {
     },
 };
 
-export default function JoinQuizButton({ onJoin }: { onJoin?: (code: string) => void }) {
+export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => void }) {
     const [open, setOpen] = useState<boolean>(false);
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +48,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin?: (code: string) => 
 
         await new Promise((r) => setTimeout(r, 900));
 
-        onJoin?.(code);
+        onJoin(code);
 
         setLoading(false);
         setCode('');

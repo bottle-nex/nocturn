@@ -75,6 +75,8 @@ export default class WebSocketClient {
 
     private handle_incoming_message(parsed_data: ParsedMessage) {
         const { type, payload } = parsed_data;
+        console.log('type : ', type);
+        console.log('payload is : ', payload);
         const handlers = this.handlers.get(type);
         if (handlers) {
             handlers.forEach((handler) => handler(payload));

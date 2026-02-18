@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { v7 as uuid } from 'uuid';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { useTypewriterPlaceholder } from '@/hooks/useTypewriterPlaceholder';
-import { Plus, Mic, ArrowUp, Loader2 } from 'lucide-react';
-import { AiQuizChatRole, AiQuizMessage } from '@nocturn/types';
+import { HiPlus, HiMicrophone, HiArrowUp, HiSparkles, HiArrowUpRight } from 'react-icons/hi2';
+import { CgSpinner } from 'react-icons/cg';
+import { AiQuizChatRole, AiQuizMessage, dummyPrompts } from '@nocturn/types';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import React, { useMemo, useRef, useState } from 'react';
 import Message from './Message/Message';
@@ -16,6 +17,8 @@ import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
+import Spinner from '@/components/ui/Spinner';
+
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -24,13 +27,12 @@ const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'ab
 export default function AIChatBoxRevamp() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { session } = useUserSessionStore();
-    const { updateQuiz } = useNewQuizStore();
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
-    const { quiz, messages, sessionId, appendMessage } = useAiChatStore();
+    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat } = useAiChatStore();
     const { templates } = useQuizTemplatesStore();
     const randomValue = useMemo(
         () => Math.floor(Math.random() * templates.length),
@@ -48,8 +50,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-              ? difficultyPlaceholders
-              : newChatPlaceholders,
+                ? difficultyPlaceholders
+                : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -75,7 +77,7 @@ export default function AIChatBoxRevamp() {
 
         appendMessage(message);
         AiBackendAction.create_new_quiz(session?.user.token, sessionId, finalPrompt);
-
+        setLoading(true);
         setValue('');
         setPrompt('');
         setExpanded(true);
@@ -89,13 +91,14 @@ export default function AIChatBoxRevamp() {
     }
 
     function handleOnContinue() {
-        if (quiz) {
-            updateQuiz({ ...quiz, template: selectedTemplate });
+        if (selectedTemplate) {
+            useNewQuizStore.getState().setPendingTemplate(selectedTemplate);
         }
         router.push(`/new/${quiz?.id}`);
     }
 
     function handleOnClose() {
+        resetChat();
         setExpanded(false);
     }
 
@@ -141,7 +144,34 @@ export default function AIChatBoxRevamp() {
                         ))}
                     </section>
 
-                    <div className="p-3">
+                    <div className="p-3 mb-2">
+                        {loading && (
+                            <div className="flex items-center justify-start gap-x-3 mb-2 ml-2">
+                                <Spinner />
+                                <span className='text-sm text-dark-alpha dark:text-light-alpha'>loading..</span>
+                            </div>
+                        )}
+                        {messages.length < 1 && (
+                            <div className="mb-3 space-y-1.5">
+                                <p className="px-1 text-[11px] font-medium uppercase tracking-widest dark:text-light-alpha/30 text-dark-alpha/30">
+                                    Try asking
+                                </p>
+                                {dummyPrompts.map((dp) => (
+                                    <button
+                                        key={dp.id}
+                                        type="button"
+                                        onClick={() => setValue(dp.prompt)}
+                                        className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:dark:bg-light-alpha/5 hover:bg-dark-alpha/5 cursor-pointer"
+                                    >
+                                        <HiSparkles className="shrink-0 text-[13px] dark:text-light-alpha/25 text-dark-alpha/25 group-hover:dark:text-light-alpha/60 group-hover:text-dark-alpha/60 transition-colors" />
+                                        <span className="truncate text-[13px] leading-snug font-normal dark:text-light-alpha/50 text-dark-alpha/50 group-hover:dark:text-light-alpha/90 group-hover:text-dark-alpha/90 transition-colors">
+                                            {dp.prompt}
+                                        </span>
+                                        <HiArrowUpRight className="shrink-0 ml-auto text-[11px] opacity-0 group-hover:opacity-50 transition-opacity" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                         <InputBox
                             textareaRef={textareaRef}
                             value={value}
@@ -234,7 +264,7 @@ function InputBox({
                     aria-label="sdsdv"
                     className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors"
                 >
-                    <Plus size={20} className="text-neutral-400" />
+                    <HiPlus className="text-neutral-400 text-xl" />
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -249,9 +279,9 @@ function InputBox({
                             )}
                         >
                             {listening ? (
-                                <Loader2 size={16} className="animate-spin" />
+                                <CgSpinner className="animate-spin text-base" />
                             ) : (
-                                <Mic size={20} />
+                                <HiMicrophone className="text-xl" />
                             )}
                         </button>
                     )}
@@ -267,7 +297,7 @@ function InputBox({
                                 : 'bg-neutral-800 text-neutral-500 cursor-not-allowed',
                         )}
                     >
-                        <ArrowUp size={16} />
+                        <HiArrowUp className="text-base" />
                     </button>
                 </div>
             </div>

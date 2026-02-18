@@ -18,6 +18,8 @@ interface AiChatStore {
 
     preview: boolean;
     setPreview: (preview: boolean) => void;
+
+    resetChat: () => void;
 }
 
 export const useAiChatStore = create<AiChatStore>((set, get) => ({
@@ -41,4 +43,13 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
 
     preview: false,
     setPreview: (preview: boolean) => set({ preview }),
+
+    resetChat: () =>
+        set({
+            quiz: null,
+            loading: false,
+            messages: [],
+            sessionId: null,
+            preview: false,
+        }),
 }));

@@ -35,17 +35,6 @@ export default async function permanently_delete_quiz_controller(req: Request, r
             return;
         }
 
-        if (quiz?.status === 'LIVE') {
-            ResponseWriter.error(
-                res,
-                'CANNOT_DELETE_ONGOING_QUIZ',
-                "quiz is live can't delete",
-                undefined,
-                409,
-            );
-            return;
-        }
-
         QuizAction.permanentDeleteQuiz(quizId, String(userId));
         ResponseWriter.success(res, quiz, 'Quiz deleted successfully');
         return;

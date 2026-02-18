@@ -51,7 +51,12 @@ export default function New({ params }: NewProps) {
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
                             if (data.data.quiz) {
-                                updateQuiz(data.data.quiz);
+                                const { pendingTemplate, setPendingTemplate } = useNewQuizStore.getState();
+                                const quizData = pendingTemplate
+                                    ? { ...data.data.quiz, template: pendingTemplate }
+                                    : data.data.quiz;
+                                updateQuiz(quizData);
+                                if (pendingTemplate) setPendingTemplate(null);
                                 setCollaborators(data.data.quiz.CollabSession?.collaborators || []);
                                 setAllowance(AllowanceEnum.ALLOWED);
                             }

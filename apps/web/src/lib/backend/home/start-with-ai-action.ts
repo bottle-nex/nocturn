@@ -65,11 +65,21 @@ export default class AiBackendAction {
     }
 
     static handle_stream(stream: stream) {
-        const { appendMessage, setSessionId, appendMultipleMessages, setQuiz } =
-            useAiChatStore.getState();
+        const {
+            loading,
+            appendMessage,
+            setSessionId,
+            appendMultipleMessages,
+            setQuiz,
+            setLoading,
+        } = useAiChatStore.getState();
+        if (!loading) {
+            setLoading(true);
+        }
         switch (stream.type) {
             case STREAM.MESSAGE: {
                 appendMessage(stream.data as AiQuizMessage);
+                setLoading(false);
                 return;
             }
             case STREAM.ID: {
@@ -78,10 +88,12 @@ export default class AiBackendAction {
             }
             case STREAM.MESSAGES: {
                 appendMultipleMessages(stream.data as AiQuizMessage[]);
+                setLoading(false);
                 return;
             }
             case STREAM.QUIZ: {
                 setQuiz(stream.data as QuizType);
+                setLoading(false);
                 return;
             }
         }

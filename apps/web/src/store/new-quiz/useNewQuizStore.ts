@@ -28,6 +28,8 @@ interface NewQuizStoreTypes {
     loading: boolean;
     setLoading: (loading: boolean) => void;
     updateQuiz: (quiz: Partial<QuizType>) => void;
+    pendingTemplate: TemplateType | null;
+    setPendingTemplate: (template: TemplateType | null) => void;
     addQuestion: () => void;
     getQuestion: (questionIndex: number) => QuestionType | null;
     editQuestion: (questionIndex: number, question: Partial<QuestionType>) => void;
@@ -71,6 +73,9 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
         questions: generateDefaultQuestions(),
         interactions: Object.values(InteractionEnum),
     },
+
+    pendingTemplate: null,
+    setPendingTemplate: (template) => set({ pendingTemplate: template }),
 
     currentQuestionIndex: 0,
     setCurrentQuestionIndex: (index: number) => set({ currentQuestionIndex: index }),
@@ -180,6 +185,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
 
     resetStore: () => {
         set({
+            pendingTemplate: null,
             quiz: {
                 id: '',
                 title: 'Quiz Title',
