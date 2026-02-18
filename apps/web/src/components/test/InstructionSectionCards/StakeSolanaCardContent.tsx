@@ -5,10 +5,10 @@ import { IoBatteryHalf } from 'react-icons/io5';
 import { MdNetworkCell } from 'react-icons/md';
 import { SiSolana } from 'react-icons/si';
 
-export default function LaunchCardContent(): JSX.Element {
+export default function StakeSolanaCardContent(): JSX.Element {
     return (
         <div className="w-60 h-60 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 relative group overflow-hidden">
-            <div className="group relative absolute h-15 w-15 bg-light-base ring-2 ring-light-alpha shadow-md shadow-black/10 rounded-xl z-10 top-30 left-1/2 -translate-x-1/2 flex justify-center items-center">
+            <div className="group relative absolute h-15 w-15 bg-light-base ring-2 ring-light-alpha shadow-md shadow-black/10 rounded-xl z-10 top-30 left-1/2 -translate-x-1/2 flex justify-center items-center group-hover:-translate-y-1 transition-all transform duration-250 ease-in-out ">
                 <svg width="0" height="0" className="absolute">
                     <defs>
                         <linearGradient id="solanaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -38,7 +38,8 @@ export default function LaunchCardContent(): JSX.Element {
                 />
             </div>
 
-            <div className="absolute h-70 w-40 ring-8 ring-dark-base/90 top-15 left-1/2 -translate-x-1/2 rounded-3xl flex flex-col py-1.5 px-2.75">
+            {/* iphone */}
+            <div className="absolute h-70 w-40 ring-8 ring-dark-base/90 top-15 left-1/2 -translate-x-1/2 rounded-3xl flex flex-col py-1.5 px-2.75 group-hover:-translate-y-1 transition-all transform duration-250 ease-in-out shadow-xl shadow-neutral-600">
                 <div className="bg-light-base mt-5 h-full w-full absolute left-0 rounded-t-2xl"></div>
                 <div className="h-10 w-0.75 bg-neutral-700 absolute rounded-full -right-2.5 top-27" />
 
