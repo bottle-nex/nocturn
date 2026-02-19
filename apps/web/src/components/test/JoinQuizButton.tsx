@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import clsx from 'clsx';
-import { useRouter } from 'next/navigation';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
+import { useRouter } from 'next/navigation';
 
 const container: Variants = {
     closed: {
@@ -38,27 +38,24 @@ const closeBtn: Variants = {
     },
 };
 
-export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => void }) {
+export default function JoinQuizButton() {
     const [open, setOpen] = useState<boolean>(false);
     const [code, setCode] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, _setLoading] = useState<boolean>(false);
     const router = useRouter();
 
-    async function handleJoin() {
+    async function handleJoinQuiz() {
         if (!code.trim()) return;
 
-        setLoading(true);
+        try {
+            const quizId = await userQuizAction.joinQuiz(code.trim());
+            setCode('');
 
-        const quizId = await userQuizAction.joinQuiz(code.trim());
-        setCode('');
-        setOpen(false);
-        setLoading(false);
-
-        if (!quizId) return;
-        router.push(`/live/${quizId}`);
-        await new Promise((r) => setTimeout(r, 900));
-
-        onJoin(code);
+            if (!quizId) return;
+            router.push(`/live/${quizId}`);
+        } catch (err) {
+            console.error('Failed to join quiz', err);
+        }
     }
 
     return (
@@ -114,7 +111,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => v
                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            if (open) handleJoin();
+                            if (open) handleJoinQuiz();
                         }}
                         className={clsx(
                             'h-9 w-9 rounded-full flex items-center justify-center shrink-0',
@@ -143,7 +140,7 @@ export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => v
                                 key="input"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
+                                onKeyDown={(e) => e.key === 'Enter' && handleJoinQuiz()}
                                 placeholder="Enter code"
                                 variants={input}
                                 initial="closed"
