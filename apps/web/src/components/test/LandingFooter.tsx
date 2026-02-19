@@ -23,8 +23,8 @@ const links = {
         { name: 'Support', href: '#' },
         { name: 'Privacy Policy', href: '#' },
         { name: 'Terms of Service', href: '#' },
-    ]
-}
+    ],
+};
 
 export default function LandingFooter() {
     return (

@@ -209,6 +209,9 @@
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
 
@@ -254,6 +257,9 @@
     );
 
     -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -327,7 +333,6 @@ svg {
     overflow: visible;
 }
 
-<<<<<<< HEAD
 .loader {
   width: 45px;
   aspect-ratio: .75;
@@ -345,7 +350,6 @@ svg {
   60% {background-position: 0% 50% ,50% 100%,100% 0%  }
   80% {background-position: 0% 50% ,50% 50% ,100% 100%}
 }
-=======
 .white-btn {
     background: rgba(227, 227, 227, 0.8);
     border: 1px solid transparent;
@@ -378,4 +382,3 @@ svg {
     transition: all 180ms cubic-bezier(.22,1,.36,1);
 }
 
->>>>>>> 689536b (card update and bug report added)
