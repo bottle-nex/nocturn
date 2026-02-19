@@ -53,9 +53,8 @@ export default function AiSlidesPreviewArea({
                 className="flex-1 flex flex-col items-center text-center text-neutral-500 px-10 py-5 w-full mx-auto overflow-y-auto custom-scrollbar gap-y-8"
                 data-lenis-prevent
             >
-                {quiz?.questions &&
-                    quiz?.questions?.length > 0 &&
-                    quiz?.questions.map((question, index) => (
+                {(quiz?.questions?.length ?? 0) > 0 &&
+                    quiz!.questions!.map((question, index) => (
                         <div key={index} className="w-full flex justify-center">
                             <PreviewCanvas
                                 orderIndex={question.orderIndex}

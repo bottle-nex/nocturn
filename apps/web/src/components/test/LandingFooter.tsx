@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils';
+import { Audiowide } from 'next/font/google';
+import Link from 'next/link';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { Audiowide } from 'next/font/google';
 import { MdOutlineCopyright } from 'react-icons/md';
 
 const audio = Audiowide({
@@ -9,9 +10,25 @@ const audio = Audiowide({
     weight: ['400'],
 });
 
+const links = {
+    row_one: [
+        { name: 'Home', href: '#' },
+        { name: 'Features', href: '#' },
+        { name: 'Pricing', href: '#' },
+        { name: 'Blog', href: '#' },
+    ],
+    row_two: [
+        { name: 'About Us', href: '#' },
+        { name: 'Contact', href: '#' },
+        { name: 'Support', href: '#' },
+        { name: 'Privacy Policy', href: '#' },
+        { name: 'Terms of Service', href: '#' },
+    ]
+}
+
 export default function LandingFooter() {
     return (
-        <div className="h-[70vh] w-screen relative bg-light-base">
+        <footer className="h-[70vh] w-screen relative bg-light-base text-[#4f46e5]">
             <div className="h-full w-full flex justify-between pt-20 px-30">
                 <div className="flex flex-col gap-y-3">
                     <div className="flex gap-x-4">
@@ -108,6 +125,6 @@ export default function LandingFooter() {
             >
                 NOCTURN
             </div>
-        </div>
+        </footer>
     );
 }
