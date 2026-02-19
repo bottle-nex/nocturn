@@ -2,8 +2,7 @@
 import { cn } from '@/lib/utils';
 import React, { ForwardedRef, ReactNode } from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
-import { RxCross2 } from "react-icons/rx";
-
+import { RxCross2 } from 'react-icons/rx';
 
 interface UtilityCardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
     ref?: ForwardedRef<HTMLDivElement>;
@@ -34,7 +33,12 @@ export default function UtilityCard({
             style={style}
         >
             {onClose && (
-                <button type="button" title="Close" onClick={onClose} className="absolute top-2 right-2 cursor-pointer">
+                <button
+                    type="button"
+                    title="Close"
+                    onClick={onClose}
+                    className="absolute top-2 right-2 cursor-pointer"
+                >
                     <RxCross2 />
                 </button>
             )}

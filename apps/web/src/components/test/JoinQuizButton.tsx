@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 const container: Variants = {
     closed: {
@@ -40,19 +42,23 @@ export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => v
     const [open, setOpen] = useState<boolean>(false);
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const router = useRouter();
 
     async function handleJoin() {
         if (!code.trim()) return;
 
         setLoading(true);
 
+        const quizId = await userQuizAction.joinQuiz(code.trim());
+        setCode('');
+        setOpen(false);
+        setLoading(false);
+
+        if (!quizId) return;
+        router.push(`/live/${quizId}`);
         await new Promise((r) => setTimeout(r, 900));
 
         onJoin(code);
-
-        setLoading(false);
-        setCode('');
-        setOpen(false);
     }
 
     return (

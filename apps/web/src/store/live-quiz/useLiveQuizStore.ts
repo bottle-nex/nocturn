@@ -106,25 +106,16 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
         })),
 
     currentQuestion: null,
-    updateCurrentQuestion: (updateFields) =>
+    updateCurrentQuestion: (updateFields: Partial<QuestionType> | null) =>
         set((state) => {
-            const current = state.currentQuestion;
-
-            if (!updateFields) return { currentQuestion: current };
-
-            if (updateFields.id !== undefined && updateFields.question !== undefined) {
-                return { currentQuestion: updateFields as QuestionType };
-            }
-
-            if (current) {
-                return { currentQuestion: { ...current, ...updateFields } as QuestionType };
-            }
-
-            if (updateFields.id !== undefined) {
-                return { currentQuestion: updateFields as QuestionType };
-            }
-
-            return { currentQuestion: null };
+            if (updateFields === null) return { currentQuestion: null };
+            if (!state.currentQuestion) return { currentQuestion: updateFields as QuestionType };
+            return {
+                currentQuestion: {
+                    ...state.currentQuestion,
+                    ...updateFields,
+                },
+            };
         }),
 
     nextQuestion: null,
