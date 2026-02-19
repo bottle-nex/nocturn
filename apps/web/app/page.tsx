@@ -9,16 +9,19 @@ import LandingFooter from '@/components/test/LandingFooter';
 
 export default function Page() {
     return (
-        <div className="min-h-screen overflow-x-hidden w-full bg-white relative flex flex-col items-center">
-            <LandingNavbar />
-            <LandingSection />
-            <InstructionsSection />
-            <FeaturesSection />
-            <WhyNocturn />
-            <PricingComponent />
-            <BigAnimatedText />
-            <LandingFooter />
-            {/* <Footer /> */}
+        <div className="overflow-x-hidden w-full relative">
+            <div className="min-h-screen w-full bg-white relative z-10 flex flex-col items-center mb-[70vh]">
+                <LandingNavbar />
+                <LandingSection />
+                <InstructionsSection />
+                <FeaturesSection />
+                <WhyNocturn />
+                <PricingComponent />
+                <BigAnimatedText />
+            </div>
+            <footer className="fixed bottom-0 left-0 w-full z-0">
+                <LandingFooter />
+            </footer>
         </div>
     );
 }

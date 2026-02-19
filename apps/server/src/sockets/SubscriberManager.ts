@@ -50,7 +50,6 @@ export default class SubscriberManager {
             console.error('Invalid game session id in channel', channel);
             return;
         }
-        console.log('message from the subscriber : ', message);
         switch (message.type) {
             case MESSAGE_TYPES.PARTICIPANT_JOIN_GAME_SESSION:
                 this.broadcast_to_session(session_id, message, [

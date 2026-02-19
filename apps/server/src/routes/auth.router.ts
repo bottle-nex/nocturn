@@ -4,7 +4,7 @@ const router: Router = Router();
 // <---------------------- CONTROLLERS ---------------------->
 import { SigninController } from '../controllers/user-controller/signInController';
 import upsertLearningJourneyController from '../controllers/user-controller/upsertLearningJourneyController';
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 
 // <---------------------- AUTH-ROUTES ---------------------->
 router.post('/sign-in', SigninController.oauth_signin);

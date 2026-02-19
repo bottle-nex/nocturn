@@ -1,4 +1,4 @@
-import { GameSession, Question, Response, Spectator } from '@nocturn/database';
+import { GameSession, Question, Response, Spectator, Template } from '@nocturn/database';
 import Redis from 'ioredis';
 import { Participant, Quiz } from '@nocturn/database';
 import { env } from '../configs/env';
@@ -10,6 +10,8 @@ const REDIS_URL = env.SERVER_REDIS_URL;
 
 type QuizWithQuestions = Quiz & {
     questions: Question[];
+    template?: Template;
+    host?: { name: string | null; image: string | null; email: string };
 };
 
 // interface LifelineSession {
@@ -103,21 +105,31 @@ export default class RedisCache {
     ): Promise<Participant | null> {
         const participant_key = this.get_participants_key(game_session_id);
         try {
-            const data = await this.redis_cache.hgetall(participant_key);
-            if (!data) return null;
             const participant: Record<string, unknown> = {};
-            const field_prefix = `${participant_id}:`;
+            const match_pattern = `${participant_id}:*`;
+            let cursor = '0';
 
-            Object.entries(data).forEach(([field, value]) => {
-                if (field.startsWith(field_prefix)) {
-                    const field_name = field.slice(field_prefix.length);
+            do {
+                const [nextCursor, results] = await this.redis_cache.hscan(
+                    participant_key,
+                    cursor,
+                    'MATCH',
+                    match_pattern,
+                    'COUNT',
+                    100,
+                );
+                cursor = nextCursor;
+
+                for (let i = 0; i < results.length; i += 2) {
+                    const field_name = results[i].slice(participant_id.length + 1);
                     try {
-                        participant[field_name] = JSON.parse(value);
+                        participant[field_name] = JSON.parse(results[i + 1]);
                     } catch {
-                        participant[field_name] = value;
+                        participant[field_name] = results[i + 1];
                     }
                 }
-            });
+            } while (cursor !== '0');
+
             return Object.keys(participant).length > 0 ? (participant as Participant) : null;
         } catch (err) {
             console.error('Error in get_participant :', err);
@@ -430,6 +442,128 @@ export default class RedisCache {
 
     private get_quiz_key(game_session_id: string): string {
         return `game_session:${game_session_id}:quiz`;
+    }
+
+    //  <------------------ BATCH (PIPELINE) ------------------>
+
+    public async get_live_quiz_batch(
+        game_session_id: string,
+        participantFields?: (keyof Participant)[],
+        spectatorFields?: (keyof Spectator)[],
+    ) {
+        try {
+            const gameSessionKey = this.get_game_session_key(game_session_id);
+            const quizKey = this.get_quiz_key(game_session_id);
+            const participantsKey = this.get_participants_key(game_session_id);
+            const spectatorKey = this.get_spectator_key(game_session_id);
+
+            const pipeline = this.redis_cache.pipeline();
+            pipeline.hgetall(gameSessionKey);
+            pipeline.hgetall(quizKey);
+            pipeline.hgetall(participantsKey);
+            pipeline.hgetall(spectatorKey);
+
+            const results = await pipeline.exec();
+            if (!results) {
+                return {
+                    gameSession: null,
+                    quiz: null,
+                    cachedParticipants: [],
+                    cachedSpectators: [],
+                };
+            }
+            const [gsErr, gsData] = results[0] as [Error | null, Record<string, string>];
+            let gameSession: Partial<GameSession> | null = null;
+            if (!gsErr && gsData && Object.keys(gsData).length > 0) {
+                const parsed: Partial<GameSession> = {};
+                for (const [key, value] of Object.entries(gsData)) {
+                    try {
+                        parsed[key as keyof GameSession] = JSON.parse(value);
+                    } catch {
+                        parsed[key as keyof GameSession] = value as any;
+                    }
+                }
+                gameSession = parsed;
+            }
+
+            // Parse quiz
+            const [qErr, qData] = results[1] as [Error | null, Record<string, string>];
+            let quiz: Partial<QuizWithQuestions> | null = null;
+            if (!qErr && qData && Object.keys(qData).length > 0) {
+                const parsed: Partial<Quiz> = {};
+                for (const [key, value] of Object.entries(qData)) {
+                    try {
+                        parsed[key as keyof Quiz] = JSON.parse(value);
+                    } catch {
+                        if (key === 'questions') {
+                            console.error(`Critical field 'questions' failed to parse in batch.`);
+                            return {
+                                gameSession,
+                                quiz: null,
+                                cachedParticipants: [],
+                                cachedSpectators: [],
+                            };
+                        }
+                        parsed[key as keyof Quiz] = value as any;
+                    }
+                }
+                quiz = parsed as Partial<QuizWithQuestions>;
+            }
+
+            // Parse participants
+            const [pErr, pData] = results[2] as [Error | null, Record<string, string>];
+            let cachedParticipants: Record<string, unknown>[] = [];
+            if (!pErr && pData && Object.keys(pData).length > 0) {
+                const participantsMap: Record<string, Record<string, unknown>> = {};
+                for (const [field, value] of Object.entries(pData)) {
+                    const [participantId, fieldName] = field.split(':');
+                    if (!participantsMap[participantId]) {
+                        participantsMap[participantId] = {};
+                    }
+                    try {
+                        participantsMap[participantId][fieldName] = JSON.parse(value);
+                    } catch {
+                        participantsMap[participantId][fieldName] = value;
+                    }
+                }
+                cachedParticipants = Object.entries(participantsMap).map(([id, participant]) => {
+                    if (participantFields && participantFields.length > 0) {
+                        const filtered: Record<string, unknown> = { id };
+                        for (const field of participantFields) {
+                            if (participant[field] !== undefined) {
+                                filtered[field] = participant[field];
+                            }
+                        }
+                        return filtered;
+                    }
+                    return { id, ...participant };
+                });
+            }
+
+            // Parse spectators
+            const [sErr, sData] = results[3] as [Error | null, Record<string, string>];
+            let cachedSpectators: Record<string, unknown>[] = [];
+            if (!sErr && sData && Object.keys(sData).length > 0) {
+                cachedSpectators = Object.entries(sData).map(([id, value]) => {
+                    const spectator = JSON.parse(value);
+                    if (spectatorFields && spectatorFields.length > 0) {
+                        const filtered: any = { id };
+                        for (const field of spectatorFields) {
+                            if (spectator[field] !== undefined) {
+                                filtered[field] = spectator[field];
+                            }
+                        }
+                        return filtered;
+                    }
+                    return { id, ...spectator };
+                });
+            }
+
+            return { gameSession, quiz, cachedParticipants, cachedSpectators };
+        } catch (err) {
+            console.error('Error in get_live_quiz_batch:', err);
+            return { gameSession: null, quiz: null, cachedParticipants: [], cachedSpectators: [] };
+        }
     }
 
     //  <------------------ PHASE ------------------>

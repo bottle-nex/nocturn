@@ -5,7 +5,7 @@ const router: Router = Router();
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 
 // <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 
 // <---------------------- COLLABORATOR-ROUTES ---------------------->
 router.post('/quiz/invite-collaborator/:quizId', authMiddleware, Collaborator.process);

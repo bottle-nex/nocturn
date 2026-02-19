@@ -8,7 +8,7 @@ import {
     SECONDS,
     USER_TYPE,
 } from '@nocturn/types';
-import { CustomWebSocket } from '../types/web-socket-types';
+import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import {
     prisma,
@@ -58,7 +58,7 @@ export default class HostManager {
     }
 
     public async handle_connection(
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
         payload: LiveGameTokenPayload,
     ): Promise<void> {
         const isValidHost = await this.validateHostInDB(payload.quizId, payload.userId);
@@ -87,7 +87,7 @@ export default class HostManager {
         await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
     }
 
-    private setup_message_handlers(ws: CustomWebSocket) {
+    private setup_message_handlers(ws: GameWebSocket) {
         ws.on('message', (data) => {
             try {
                 const message = JSON.parse(data.toString());
@@ -114,7 +114,7 @@ export default class HostManager {
         });
     }
 
-    private handle_host_message(ws: CustomWebSocket, message: any) {
+    private handle_host_message(ws: GameWebSocket, message: any) {
         const { type, payload } = message;
         switch (type) {
             case MESSAGE_TYPES.HOST_CHANGE_QUESTION_PREVIEW:
@@ -159,7 +159,7 @@ export default class HostManager {
         }
     }
 
-    private async handle_host_emits_hint(payload: any, ws: CustomWebSocket) {
+    private async handle_host_emits_hint(payload: any, ws: GameWebSocket) {
         const { questionId: question_id } = payload;
         if (ws.user.role !== USER_TYPE.HOST) {
             return;
@@ -184,7 +184,7 @@ export default class HostManager {
         this.quizManager.publish_event_to_redis(ws.user.gameSessionId, hintPayload);
     }
 
-    private handle_settings_change(ws: CustomWebSocket, payload: any): void {
+    private handle_settings_change(ws: GameWebSocket, payload: any): void {
         this.quiz_settings.update_quiz_settings_on_db_and_cache(
             ws.user.gameSessionId,
             ws.user.quizId,
@@ -192,7 +192,7 @@ export default class HostManager {
         );
     }
 
-    private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket): void {
+    private handle_incoming_interaction_event(payload: any, ws: GameWebSocket): void {
         const { reactionType } = payload;
         const published_message: PubSubMessageTypes = {
             type: MESSAGE_TYPES.INTERACTION_EVENT,
@@ -204,7 +204,7 @@ export default class HostManager {
         this.quizManager.publish_event_to_redis(ws.user.gameSessionId, published_message);
     }
 
-    private async handle_question_launch(payload: any, ws: CustomWebSocket) {
+    private async handle_question_launch(payload: any, ws: GameWebSocket) {
         const { questionId, questionIndex } = payload;
 
         const { gameSessionId: game_session_id } = ws.user;
@@ -320,7 +320,7 @@ export default class HostManager {
         });
     }
 
-    private async handle_host_question_preview_page_change(ws: CustomWebSocket) {
+    private async handle_host_question_preview_page_change(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const gameSession = await this.redis_cache.get_game_session(game_session_id);
 
@@ -349,7 +349,7 @@ export default class HostManager {
         this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
-    private async handle_send_chat_message(payload: IncomingChatMessage, ws: CustomWebSocket) {
+    private async handle_send_chat_message(payload: IncomingChatMessage, ws: GameWebSocket) {
         const { gameSessionId, quizId, userId: sender_id, role: sender_role } = ws.user;
         const { senderName, message, repliedToId, senderAvatar } = payload;
 
@@ -388,10 +388,7 @@ export default class HostManager {
             });
     }
 
-    private handle_incoming_chat_reaction_event(
-        payload: IncomingChatReaction,
-        ws: CustomWebSocket,
-    ) {
+    private handle_incoming_chat_reaction_event(payload: IncomingChatReaction, ws: GameWebSocket) {
         const { userId, gameSessionId: game_session_id } = ws.user;
         const { chatMessageId, reactedAt, reaction, reactorAvatar, reactorName, reactorType } =
             payload;
@@ -438,7 +435,7 @@ export default class HostManager {
             });
     }
 
-    private async handle_quiz_results(ws: CustomWebSocket) {
+    private async handle_quiz_results(ws: GameWebSocket) {
         const { gameSessionId: game_session_id, quizId: quiz_id } = ws.user;
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
@@ -514,7 +511,7 @@ export default class HostManager {
     }
 
     private async handle_update_current_question(
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
         payload: { questionId: string; questionIndex: number },
     ) {
         this.database_queue.update_game_session(

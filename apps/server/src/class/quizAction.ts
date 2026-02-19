@@ -1,4 +1,4 @@
-import { HostScreen, prisma } from '@nocturn/database';
+import { GameSession, HostScreen, prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import {
@@ -185,20 +185,23 @@ export default class QuizAction {
         return jwt.sign(payload, env.SERVER_JWT_SECRET);
     }
 
-    public static sanitizeGameSession(gameSession: any, role: string) {
+    public static sanitizeGameSession(
+        gameSession: Partial<GameSession>,
+        role: USER_TYPE,
+    ): Partial<GameSession> {
         switch (role) {
-            case 'HOST': {
+            case USER_TYPE.HOST: {
                 return gameSession;
             }
 
-            case 'PARTICIPANT': {
+            case USER_TYPE.PARTICIPANT: {
                 const rest = { ...gameSession };
                 delete rest.hostScreen;
                 delete rest.spectatorScreen;
                 return rest;
             }
 
-            case 'SPECTATOR': {
+            case USER_TYPE.SPECTATOR: {
                 const rest = { ...gameSession };
                 delete rest.hostScreen;
                 delete rest.participantScreen;

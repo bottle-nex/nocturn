@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
+import { Audiowide } from 'next/font/google';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { Audiowide } from 'next/font/google';
 import { MdOutlineCopyright } from 'react-icons/md';
 
 const audio = Audiowide({
@@ -11,7 +11,7 @@ const audio = Audiowide({
 
 export default function LandingFooter() {
     return (
-        <div className="h-[70vh] w-screen relative bg-light-base">
+        <footer className="h-[70vh] w-screen relative bg-light-base text-[#4f46e5]">
             <div className="h-full w-full flex justify-between pt-20 px-30">
                 <div className="flex flex-col gap-y-3">
                     <div className="flex gap-x-4">
@@ -108,6 +108,6 @@ export default function LandingFooter() {
             >
                 NOCTURN
             </div>
-        </div>
+        </footer>
     );
 }

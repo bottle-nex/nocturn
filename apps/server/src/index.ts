@@ -6,14 +6,16 @@ import WebsocketServer from './sockets/socket.server.ts';
 import http from 'http';
 import initServices from './services/init.services.ts';
 import { env } from './configs/env.ts';
+import { prisma } from '@nocturn/database';
 import './services/cron.ts';
+import parser_middleware from './middlewares/parser.middleware.ts';
 
 const PORT = env.SERVER_PORT;
 const WEB_URL = env.SERVER_WEB_URL;
 const app = express();
 const server = http.createServer(app);
 
-app.use(express.json());
+app.use(parser_middleware);
 app.use(cookieParser());
 app.use(
     cors({
@@ -30,13 +32,7 @@ app.use('/api/v1', router);
 
 new WebsocketServer(server);
 
-async function main() {
-    await new Promise((res) => {
-        server.listen(PORT, () => {
-            console.log(' fsfsf');
-            res('ho');
-        });
-    });
-    console.log('logged"');
-}
-main();
+server.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
+    await prisma.$queryRawUnsafe('SELECT 1').catch(() => {});
+});
