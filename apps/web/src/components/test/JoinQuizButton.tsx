@@ -4,13 +4,8 @@ import { useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import clsx from 'clsx';
-<<<<<<< HEAD
-import { useRouter } from 'next/navigation';
-import userQuizAction from '@/lib/backend/base/user-quiz-action';
-=======
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
->>>>>>> 689536b (card update and bug report added)
 
 const container: Variants = {
     closed: {
