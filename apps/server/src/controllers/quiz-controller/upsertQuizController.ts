@@ -12,13 +12,7 @@ export default async function upsertQuizController(req: Request, res: Response) 
         return;
     }
 
-    console.log('DATA FROM FRONTEND IS ---------------------------------> ', req.body);
-
     const parsed = createQuizSchema.safeParse(req.body);
-    console.log(
-        'PARSED DATA IS :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::>',
-        parsed,
-    );
     if (!parsed.success) {
         ResponseWriter.invalid_data(res, 'Error while creating quiz');
         return;
@@ -32,8 +26,6 @@ export default async function upsertQuizController(req: Request, res: Response) 
         ResponseWriter.not_authorized(res, 'Unauthorized');
         return;
     }
-
-    console.log('data from FRONTEND IS: ', parsed.data);
 
     try {
         const data = await quizControllerInstance.update_quiz_status(

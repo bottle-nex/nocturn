@@ -5,10 +5,16 @@ import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
+import crypto from "crypto";
 
 export class SigninController {
     static async oauth_signin(req: Request, res: Response) {
         const { user } = req.body;
+
+        if(!user || !user.email) {
+            ResponseWriter.not_authorized(res, 'invalid user data');
+            return;
+        }
 
         try {
             const existingUser = await prisma.user.findUnique({
@@ -44,6 +50,7 @@ export class SigninController {
             const token = jwt.sign(
                 { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
                 secret,
+                { expiresIn: '7d' },
             );
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
@@ -70,7 +77,7 @@ export class SigninController {
         }
 
         try {
-            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            const otp = crypto.randomInt(100000, 999999).toString();
             await publisherInstance.set(`otp:${email}`, otp, 'EX', 60);
             await email_service_queue_instance.email_send_otp({ email, otp });
 

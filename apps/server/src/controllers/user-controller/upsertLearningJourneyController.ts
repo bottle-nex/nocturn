@@ -16,11 +16,11 @@ export default async function upsertLearningJourneyController(req: Request, res:
             !Array.isArray(learningJourneyStep) ||
             learningJourneyStep.some((step) => typeof step !== 'number')
         ) {
-            ResponseWriter.not_found(res, 'Invalid learningJourneyStep');
+            ResponseWriter.invalid_data(res, 'Invalid learningJourneyStep');
             return;
         }
         if (learningJourneyStep.some((step) => step < 0 || step > 5)) {
-            ResponseWriter.success(res, 'learningJourneyStep must be between 0 and 5');
+            ResponseWriter.invalid_data(res, 'learningJourneyStep must be between 0 and 5');
             return;
         }
         await prisma.user.update({
