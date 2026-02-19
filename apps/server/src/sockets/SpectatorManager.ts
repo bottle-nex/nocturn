@@ -7,7 +7,7 @@ import {
     PubSubMessageTypes,
     SpectatorNameChangeEvent,
 } from '@nocturn/types';
-import { CustomWebSocket } from '../types/web-socket-types';
+import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import { prisma } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
@@ -60,7 +60,7 @@ export default class SpectatorManager {
     }
 
     public async handle_connection(
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
         payload: LiveGameTokenPayload,
     ): Promise<void> {
         if (!this.quiz_settings.quiz_settings_mapping.get(payload.gameSessionId)) {
@@ -68,7 +68,6 @@ export default class SpectatorManager {
         }
 
         const is_new_spectator_allowed = this.is_new_spectator_allowed(payload.gameSessionId);
-        console.log('is new spectator allowed: ', is_new_spectator_allowed);
         if (!is_new_spectator_allowed) {
             ws.close(
                 socket_codes.SPECTATOR_LIMIT_REACHED,
@@ -137,7 +136,7 @@ export default class SpectatorManager {
         }
     }
 
-    private setup_message_handlers(ws: CustomWebSocket) {
+    private setup_message_handlers(ws: GameWebSocket) {
         ws.on('message', (data) => {
             try {
                 const message = JSON.parse(data.toString());
@@ -156,7 +155,7 @@ export default class SpectatorManager {
         });
     }
 
-    private handle_spectator_message(ws: CustomWebSocket, message: any) {
+    private handle_spectator_message(ws: GameWebSocket, message: any) {
         const { type, payload } = message;
 
         switch (type) {
@@ -189,7 +188,7 @@ export default class SpectatorManager {
         }
     }
 
-    private async handle_spectator_lifeline_response(payload: any, ws: CustomWebSocket) {
+    private async handle_spectator_lifeline_response(payload: any, ws: GameWebSocket) {
         // checks:
         // question phase active or not
         // lifeline used or not
@@ -302,7 +301,7 @@ export default class SpectatorManager {
         return counts;
     }
 
-    private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
+    private handle_incoming_interaction_event(payload: any, ws: GameWebSocket) {
         const { reactionType } = payload;
         const published_message: PubSubMessageTypes = {
             type: MESSAGE_TYPES.INTERACTION_EVENT,
@@ -314,7 +313,7 @@ export default class SpectatorManager {
         this.quizManager.publish_event_to_redis(ws.user.gameSessionId, published_message);
     }
 
-    private cleanup_spectator_socket(ws: CustomWebSocket): void {
+    private cleanup_spectator_socket(ws: GameWebSocket): void {
         if (!ws || !ws.id || !ws.user) {
             return;
         }
@@ -359,7 +358,7 @@ export default class SpectatorManager {
 
     private async handle_spectator_name_change(
         payload: SpectatorNameChangeEvent,
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
     ) {
         if (!ws.user) {
             console.error('Missing ws.user in name change handler');
@@ -386,7 +385,7 @@ export default class SpectatorManager {
         this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
-    private async handle_send_chat_message(payload: IncomingChatMessage, ws: CustomWebSocket) {
+    private async handle_send_chat_message(payload: IncomingChatMessage, ws: GameWebSocket) {
         if (!ws.user) {
             console.error('Missing ws.user in chat handler');
             return;
@@ -437,10 +436,7 @@ export default class SpectatorManager {
             });
     }
 
-    private handle_incoming_chat_reaction_event(
-        payload: IncomingChatReaction,
-        ws: CustomWebSocket,
-    ) {
+    private handle_incoming_chat_reaction_event(payload: IncomingChatReaction, ws: GameWebSocket) {
         if (!ws.user) {
             console.error('Missing ws.user in chat reaction handler');
             return;
@@ -491,7 +487,7 @@ export default class SpectatorManager {
         return uuid();
     }
 
-    private async handle_spectator_leave_gamesession(ws: CustomWebSocket) {
+    private async handle_spectator_leave_gamesession(ws: GameWebSocket) {
         if (!ws.user) return;
 
         const { gameSessionId: game_session_id } = ws.user;

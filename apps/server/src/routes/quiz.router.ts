@@ -21,7 +21,7 @@ import duplicateQuizController from '../controllers/quiz-controller/duplicateQui
 import getQuestionsController from '../controllers/quiz-controller/getQuestionsController';
 
 // <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';

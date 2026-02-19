@@ -4,7 +4,15 @@ import type { CollabSessionTokenPayload, LiveGameTokenPayload } from '@nocturn/t
 
 export interface CustomWebSocket extends WebSocket {
     id: string;
+    user?: LiveGameTokenPayload;
+    collabUser?: CollabSessionTokenPayload;
+}
+
+export interface GameWebSocket extends CustomWebSocket {
     user: LiveGameTokenPayload;
+}
+
+export interface CollabWebSocket extends CustomWebSocket {
     collabUser: CollabSessionTokenPayload;
 }
 

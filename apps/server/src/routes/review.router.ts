@@ -6,7 +6,7 @@ import reviewAppController from '../controllers/appReview-controller/reviewAppCo
 import getReviewController from '../controllers/appReview-controller/getReviewController';
 
 // <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 
 // <---------------------- REVIEW-ROUTES ---------------------->
 router.post('/user/create-review', authMiddleware, reviewAppController);

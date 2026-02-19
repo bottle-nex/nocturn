@@ -13,7 +13,7 @@ import getQuestionResults from '../controllers/live-quiz-controller/getQuestionR
 import spectatorJoinQuizViaURLController from '../controllers/live-quiz-controller/spectatorJoinQuizViaURLController';
 
 // <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
@@ -22,6 +22,7 @@ import getLiveQuizDataController from '../controllers/live-quiz-controller/getLi
 router.post('/quiz/participant-join-quiz', participantJoinController);
 router.get('/quiz/spectator-join-quiz-via-link', spectatorJoinQuizViaURLController);
 router.post('/quiz/spectator-join-quiz', spectatorJoinController);
+
 router.get('/quiz/get-live-quiz-data/:quizId', getLiveQuizDataController);
 
 router.get('/quiz/get-sumarized-quiz/:quizId', authMiddleware, getLiveQuizSummarizedData);

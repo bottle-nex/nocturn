@@ -78,7 +78,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
         }
 
         const result = await prisma.$transaction(async (tx) => {
-            const spectator = await prisma.spectator.create({
+            const spectator = await tx.spectator.create({
                 data: {
                     quizId: quiz.id,
                     nickname: GenerateUser.getRandomName(),

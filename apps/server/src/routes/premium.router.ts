@@ -2,7 +2,7 @@ import { Router } from 'express';
 import createCheckoutController from '../controllers/premium-controller/createCheckoutController';
 import getTiersController from '../controllers/premium-controller/getTiersController';
 import verifySessionController from '../controllers/premium-controller/verifySessionController';
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 
 const router: Router = Router();
 

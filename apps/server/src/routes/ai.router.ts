@@ -5,7 +5,7 @@ const router: Router = Router();
 import generateNewQuizController from '../controllers/ai-controller/generateNewQuizController';
 
 // <---------------------- MIDDLEWARES ---------------------->
-import authMiddleware from '../middlewares/authMiddleware';
+import authMiddleware from '../middlewares/auth.middleware';
 
 // <---------------------- AI-ROUTES ---------------------->
 router.post('/ai/generate-new-quiz', authMiddleware, generateNewQuizController);

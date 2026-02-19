@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { CustomWebSocket } from '../types/web-socket-types';
+import { CustomWebSocket, CollabWebSocket } from '../types/web-socket-types';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
 import { prisma } from '@nocturn/database';
@@ -54,7 +54,7 @@ export default class CollaborationManager {
     }
 
     public async handle_connection(
-        ws: CustomWebSocket,
+        ws: CollabWebSocket,
         decoded_cookie_payload: CollabSessionTokenPayload,
     ) {
         if (!decoded_cookie_payload.userId || !decoded_cookie_payload.collabSessionId) {
@@ -103,7 +103,7 @@ export default class CollaborationManager {
         );
     }
 
-    private setup_message_handlers(ws: CustomWebSocket) {
+    private setup_message_handlers(ws: CollabWebSocket) {
         ws.on('message', (data) => {
             try {
                 const message = JSON.parse(data.toString());
@@ -135,7 +135,7 @@ export default class CollaborationManager {
         });
     }
 
-    private handle_collaborator_message(ws: CustomWebSocket, message: any) {
+    private handle_collaborator_message(ws: CollabWebSocket, message: any) {
         switch (message.type) {
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
                 this.handle_question_tap(ws, message.payload);
@@ -184,7 +184,7 @@ export default class CollaborationManager {
         }
     }
 
-    private async handle_question_tap(ws: CustomWebSocket, payload: any) {
+    private async handle_question_tap(ws: CollabWebSocket, payload: any) {
         try {
             console.log('payload is : ', payload);
             const { orderIndex } = payload;
@@ -211,7 +211,7 @@ export default class CollaborationManager {
         }
     }
 
-    private async handle_question_update(ws: CustomWebSocket, payload: any) {
+    private async handle_question_update(ws: CollabWebSocket, payload: any) {
         const {
             questionIndex,
             question,
@@ -239,7 +239,7 @@ export default class CollaborationManager {
         await this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
-    private handle_quiz_update(ws: CustomWebSocket, payload: any) {
+    private handle_quiz_update(ws: CollabWebSocket, payload: any) {
         if (!ws.collabUser.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;

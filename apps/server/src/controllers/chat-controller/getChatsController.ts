@@ -33,10 +33,11 @@ export default async function getChatsController(
                     },
                 },
             },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
+            take: 50,
         });
 
-        return { success: true, messages: messages as ChatMessageType[] };
+        return { success: true, messages: messages.reverse() as ChatMessageType[] };
     } catch (error) {
         console.error('Unable to fetch messages', error);
         return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };

@@ -21,7 +21,7 @@ import {
     NOCTURN_COOKIE_NAME,
     USER_TYPE,
 } from '@nocturn/types';
-import { CustomWebSocket } from '../types/web-socket-types';
+import { CollabWebSocket, CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import {
     databaseQueueInstance,
     phaseQueueInstance,
@@ -185,19 +185,19 @@ export default class WebsocketServer {
                     switch (decoded_cookie_payload.role) {
                         case USER_TYPE.HOST:
                             await this.hostManager.handle_connection(
-                                ws,
+                                ws as GameWebSocket,
                                 decoded_cookie_payload as LiveGameTokenPayload,
                             );
                             break;
                         case USER_TYPE.PARTICIPANT:
                             await this.participant_manager.handle_connection(
-                                ws,
+                                ws as GameWebSocket,
                                 decoded_cookie_payload as LiveGameTokenPayload,
                             );
                             break;
                         case USER_TYPE.SPECTATOR:
                             await this.spectator_manager.handle_connection(
-                                ws,
+                                ws as GameWebSocket,
                                 decoded_cookie_payload as LiveGameTokenPayload,
                             );
                             break;
@@ -205,7 +205,7 @@ export default class WebsocketServer {
                     }
                 } else if ('collabSessionId' in decoded_cookie_payload) {
                     await this.collaboration_manager.handle_connection(
-                        ws,
+                        ws as CollabWebSocket,
                         decoded_cookie_payload as CollabSessionTokenPayload,
                     );
                 }

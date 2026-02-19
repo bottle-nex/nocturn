@@ -34,7 +34,7 @@ export default async function verifyQuizOwnershipMiddleware(
 
         next();
     } catch {
-        res.status(500).json({ message: 'Error deleting quiz' });
+        res.status(500).json({ message: 'Error verifying quiz ownership' });
         return;
     }
 }

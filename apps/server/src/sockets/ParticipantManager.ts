@@ -6,7 +6,7 @@ import {
     ParticipantNameChangeEvent,
     PubSubMessageTypes,
 } from '@nocturn/types';
-import { CustomWebSocket } from '../types/web-socket-types';
+import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
@@ -52,7 +52,7 @@ export default class ParticipantManager {
     }
 
     public async handle_connection(
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
         decoded_cookie_payload: LiveGameTokenPayload,
     ) {
         const is_valid_participant = await this.validate_participant_in_db(
@@ -119,7 +119,7 @@ export default class ParticipantManager {
         }
     }
 
-    private setup_message_handlers(ws: CustomWebSocket) {
+    private setup_message_handlers(ws: GameWebSocket) {
         ws.on('message', (data) => {
             try {
                 const message = JSON.parse(data.toString());
@@ -140,7 +140,7 @@ export default class ParticipantManager {
         });
     }
 
-    private handle_participant_message(ws: CustomWebSocket, message: any) {
+    private handle_participant_message(ws: GameWebSocket, message: any) {
         const { type, payload } = message;
         switch (type) {
             case MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE:
@@ -172,7 +172,7 @@ export default class ParticipantManager {
         }
     }
 
-    private async handle_participant_request_lifeline(payload: any, ws: CustomWebSocket) {
+    private async handle_participant_request_lifeline(payload: any, ws: GameWebSocket) {
         const { gameSessionId, userId } = ws.user;
         const { questionId } = payload;
 
@@ -389,7 +389,7 @@ export default class ParticipantManager {
         }
     }
 
-    private handle_incoming_interaction_event(payload: any, ws: CustomWebSocket) {
+    private handle_incoming_interaction_event(payload: any, ws: GameWebSocket) {
         const { reactionType } = payload;
         const published_message: PubSubMessageTypes = {
             type: MESSAGE_TYPES.INTERACTION_EVENT,
@@ -403,7 +403,7 @@ export default class ParticipantManager {
 
     private async handle_participant_name_change(
         payload: ParticipantNameChangeEvent,
-        ws: CustomWebSocket,
+        ws: GameWebSocket,
     ) {
         const { gameSessionId: game_session_id } = ws.user;
         const { choosenNickname } = payload;
@@ -429,7 +429,7 @@ export default class ParticipantManager {
         this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
-    private async handle_participant_response(payload: any, ws: CustomWebSocket) {
+    private async handle_participant_response(payload: any, ws: GameWebSocket) {
         const { userId: participant_id, gameSessionId: game_session_id } = ws.user;
 
         const { selectedAnswer } = payload;
@@ -523,7 +523,7 @@ export default class ParticipantManager {
         this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
-    private async handle_participant_leave_gamesession(ws: CustomWebSocket) {
+    private async handle_participant_leave_gamesession(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const user_id = ws.user.userId;
 
@@ -547,7 +547,7 @@ export default class ParticipantManager {
         // this.database_queue.delete_participant(user_id, game_session_id);
     }
 
-    private async handle_participant_warning_count(ws: CustomWebSocket) {
+    private async handle_participant_warning_count(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
         const participants_key = this.redis_cache.get_participants_key(game_session_id);
@@ -608,7 +608,7 @@ export default class ParticipantManager {
         }
     }
 
-    private cleanup_participant_socket(ws: CustomWebSocket): void {
+    private cleanup_participant_socket(ws: GameWebSocket): void {
         if (!ws.id || !ws.user) {
             return;
         }

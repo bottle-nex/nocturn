@@ -88,7 +88,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
             userId,
             quiz.id,
             userCollabRole,
-            req.user.name,
+            req?.user.name,
             '#' + Math.floor(Math.random() * 16777215).toString(16),
             collabSessionId!,
         );

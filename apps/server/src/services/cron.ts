@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import cleanupTrashedQuizzes from '../jobs/clearnup-trashed-quizzes';
+import cleanupTrashedQuizzes from '../jobs/cleanup-trashed-quizzes';
 
 cron.schedule('0 2 * * *', async () => {
     await cleanupTrashedQuizzes();
