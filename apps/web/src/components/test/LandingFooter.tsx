@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
 import { Audiowide } from 'next/font/google';
-import Link from 'next/link';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineCopyright } from 'react-icons/md';
@@ -9,22 +8,6 @@ const audio = Audiowide({
     subsets: ['latin'],
     weight: ['400'],
 });
-
-const links = {
-    row_one: [
-        { name: 'Home', href: '#' },
-        { name: 'Features', href: '#' },
-        { name: 'Pricing', href: '#' },
-        { name: 'Blog', href: '#' },
-    ],
-    row_two: [
-        { name: 'About Us', href: '#' },
-        { name: 'Contact', href: '#' },
-        { name: 'Support', href: '#' },
-        { name: 'Privacy Policy', href: '#' },
-        { name: 'Terms of Service', href: '#' },
-    ],
-};
 
 export default function LandingFooter() {
     return (
