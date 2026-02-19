@@ -145,6 +145,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             });
 
             let userData = null;
+            let participantResponse = null;
 
             switch (role) {
                 case USER_TYPE.HOST:
@@ -184,6 +185,24 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                             walletAddress: true,
                         },
                     });
+
+                    const currentQuestionId = gameSession?.currentQuestionId;
+                    if (currentQuestionId && userData?.id) {
+                        participantResponse = await tx.response.findFirst({
+                            where: {
+                                gameSessionId: gameSessionId,
+                                participantId: userData.id,
+                                questionId: currentQuestionId,
+                            },
+                            select: {
+                                id: true,
+                                selectedAnswer: true,
+                                isCorrect: true,
+                                pointsEarned: true,
+                                timeToAnswer: true,
+                            },
+                        });
+                    }
                     break;
 
                 // returning the spectator data if the spectator is not kicked
@@ -211,6 +230,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                 participants,
                 spectators,
                 userData,
+                participantResponse,
             };
         });
 
@@ -244,6 +264,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             spectators: result.spectators,
             currentQuestion: currentQuestion,
             role,
+            response: result.participantResponse,
         };
 
         if (data.messages) {

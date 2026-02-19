@@ -4,6 +4,7 @@ import {
   ParticipantType,
   QuestionType,
   QuizType,
+  ResponseType,
   SpectatorType,
   UserType,
 } from "../../prisma/schemas.prisma";
@@ -18,4 +19,5 @@ export interface getLiveQuizDataResponse {
   currentQuestion: Partial<QuestionType> | null;
   role: USER_TYPE;
   messages?: ChatMessageType[];
+  response?: Partial<ResponseType>;
 }

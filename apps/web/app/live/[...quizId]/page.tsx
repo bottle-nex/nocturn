@@ -45,7 +45,7 @@ export default function New({ params }: NewProps) {
     const { setSpectatorData } = useLiveSpectatorStore();
     const { setCurrentUserType } = useUserRoleStore();
     const { setChatMessages } = useLiveQuizGlobalChatStore();
-    const { setParticipants } = useLiveParticipantsStore();
+    const { setParticipants, setResponse } = useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
 
     useEffect(() => {
@@ -59,7 +59,6 @@ export default function New({ params }: NewProps) {
                 );
                 if (response.success && response.data) {
                     const data = response.data;
-                    console.log({ data });
                     updateQuiz(data.quiz);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
@@ -68,8 +67,10 @@ export default function New({ params }: NewProps) {
                     setChatMessages(data.messages || []);
                     // if not found meand all questions asked
                     if (data.currentQuestion) {
-                        console.log('current question');
                         updateCurrentQuestion(data.currentQuestion);
+                    }
+                    if (data.response) {
+                        setResponse(data.response);
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
