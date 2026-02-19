@@ -11,8 +11,6 @@ export default function SpectaorQuestionActiveRenderer() {
     const { currentQuestion, gameSession } = useLiveQuizStore();
 
     if (!currentQuestion || !gameSession) {
-        console.log({ currentQuestion });
-        console.log({ gameSession });
         return (
             <div className="text-center text-neutral-400 w-full">
                 Error in getting current question

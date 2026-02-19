@@ -19,7 +19,6 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import Spinner from '@/components/ui/Spinner';
 
-
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
 const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'abra ka dabra!'];
@@ -32,7 +31,8 @@ export default function AIChatBoxRevamp() {
     const [isFocused, setIsFocused] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
-    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat } = useAiChatStore();
+    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat } =
+        useAiChatStore();
     const { templates } = useQuizTemplatesStore();
     const randomValue = useMemo(
         () => Math.floor(Math.random() * templates.length),
@@ -50,8 +50,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -148,7 +148,9 @@ export default function AIChatBoxRevamp() {
                         {loading && (
                             <div className="flex items-center justify-start gap-x-3 mb-2 ml-2">
                                 <Spinner />
-                                <span className='text-sm text-dark-alpha dark:text-light-alpha'>loading..</span>
+                                <span className="text-sm text-dark-alpha dark:text-light-alpha">
+                                    loading..
+                                </span>
                             </div>
                         )}
                         {messages.length < 1 && (

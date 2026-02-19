@@ -163,7 +163,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     break;
 
                 // returning the participant data if the participant is not kicked
-                case USER_TYPE.PARTICIPANT:
+                case USER_TYPE.PARTICIPANT: {
                     userData = await tx.participant.findFirst({
                         where: {
                             quizId: quizId,
@@ -204,6 +204,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                         });
                     }
                     break;
+                }
 
                 // returning the spectator data if the spectator is not kicked
                 case USER_TYPE.SPECTATOR:

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface NotchedCardProps {
     label?: string;
@@ -16,7 +16,7 @@ export default function NotchCard({
     return (
         <fieldset
             className={cn(
-                "border border-dark-alpha px-3 py-2 text-lg",
+                'border border-dark-alpha px-3 py-2 text-lg',
                 label && '-mt-1 ',
                 className,
             )}
@@ -24,7 +24,7 @@ export default function NotchCard({
             {label && (
                 <legend
                     className={cn(
-                        "px-1 text-xs tracking-wide text-dark-alpha leading-none",
+                        'px-1 text-xs tracking-wide text-dark-alpha leading-none',
                         labelClassname,
                     )}
                 >
@@ -36,5 +36,3 @@ export default function NotchCard({
         </fieldset>
     );
 }
-
-

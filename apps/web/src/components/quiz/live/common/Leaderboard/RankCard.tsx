@@ -1,11 +1,11 @@
-import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
-import { CgLoadbar } from "react-icons/cg";
-import Image from "next/image";
+import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
+import { CgLoadbar } from 'react-icons/cg';
+import Image from 'next/image';
 
 export enum GROWTH {
-    UP = "UP",
-    DOWN = "DOWN",
-    NEUTRAL = "NEUTRAL",
+    UP = 'UP',
+    DOWN = 'DOWN',
+    NEUTRAL = 'NEUTRAL',
 }
 
 interface RankProps {
@@ -18,7 +18,6 @@ interface RankProps {
 }
 
 export default function RankCard({ growth, rank, image, name, streak = 0, points = 0 }: RankProps) {
-
     function computeRank(rank: number): string {
         const lastDigit = rank % 10;
         switch (lastDigit) {
@@ -38,9 +37,7 @@ export default function RankCard({ growth, rank, image, name, streak = 0, points
             <div className="flex justify-between items-center gap-x-8 ">
                 <div className="flex justify-between items-center gap-x-4 ">
                     <GrowthSign growth={growth} />
-                    <div className="w-10 ">
-                        {computeRank(rank)}
-                    </div>
+                    <div className="w-10 ">{computeRank(rank)}</div>
                 </div>
                 <div className="flex justify-between items-center gap-x-3 ">
                     <Image
@@ -49,19 +46,13 @@ export default function RankCard({ growth, rank, image, name, streak = 0, points
                         height={32}
                         width={32}
                         unoptimized
-                        className={"rounded-full"}
+                        className={'rounded-full'}
                     />
-                    <div>
-                        {name}
-                    </div>
+                    <div>{name}</div>
                 </div>
             </div>
-            <div className="w-10 flex justify-center items-center ">
-                {streak}
-            </div>
-            <div>
-                {points + " points"}
-            </div>
+            <div className="w-10 flex justify-center items-center ">{streak}</div>
+            <div>{points + ' points'}</div>
         </div>
     );
 }

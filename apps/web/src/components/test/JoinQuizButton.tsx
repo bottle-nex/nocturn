@@ -59,7 +59,6 @@ export default function JoinQuizButton({ onJoin }: { onJoin: (code: string) => v
         await new Promise((r) => setTimeout(r, 900));
 
         onJoin(code);
-
     }
 
     return (

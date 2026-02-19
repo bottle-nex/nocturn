@@ -108,6 +108,7 @@ export default function New({ params }: NewProps) {
         setChatMessages,
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
+        setResponse,
         router,
     ]);
 

@@ -462,10 +462,7 @@ export default class HostManager {
         const final_scores = scores.filter((s) => !s.isKicked);
 
         const rankers = scores
-            .filter(
-                (p): p is typeof p & { finalRank: number } =>
-                    typeof p.finalRank === "number"
-            )
+            .filter((p): p is typeof p & { finalRank: number } => typeof p.finalRank === 'number')
             .sort((a, b) => a.finalRank - b.finalRank)
             .slice(0, 3);
 
@@ -506,7 +503,6 @@ export default class HostManager {
 
         if (!quiz.prizePool) {
             // const rankers = Array.from(final_scores).sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
-
             // this.quizManager.distribute_prize(
             //     game_session_id,
             //     quiz_id,

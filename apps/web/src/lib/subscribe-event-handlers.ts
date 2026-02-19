@@ -223,7 +223,6 @@ export class SubscribeEventHandlers {
     static handleIncomingHintEvents(payload: unknown) {
         if (typeof payload !== 'object' || payload === null || !('hint' in payload)) return;
         const { hint } = payload as { hint: string };
-        console.log('hint currently is : ', hint);
         const { updateCurrentQuestion } = useLiveQuizStore.getState();
         updateCurrentQuestion({ hint });
     }

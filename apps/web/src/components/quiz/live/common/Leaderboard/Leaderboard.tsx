@@ -1,10 +1,8 @@
-import { cn } from "@/lib/utils";
-import Tiers from "./Tiers";
-import Graph from "./Graph";
-import Rank from "./Rank";
-import RankCard, { GROWTH } from "./RankCard";
-import NotchCard from "@/components/ui/NotchCard";
-import { useLiveParticipantsStore } from "@/store/live-quiz/useLiveParticipantsStore";
+import { cn } from '@/lib/utils';
+import Tiers from './Tiers';
+import Graph from './Graph';
+import Rank from './Rank';
+import NotchCard from '@/components/ui/NotchCard';
 
 type HostMode = {
     host: true;
@@ -40,21 +38,15 @@ export default function Leaderboard({
     spectator,
     participant,
 }: LeaderboardProps) {
-
-    const { response } = useLiveParticipantsStore();
+    // const { response } = useLiveParticipantsStore();
 
     return (
-        <div
-            className={cn(
-                "flex justify-end items-center p-2 text-dark-alpha h-full",
-                className
-            )}
-        >
+        <div className={cn('flex justify-end items-center p-2 text-dark-alpha h-full', className)}>
             <div
                 className={cn(
-                    "h-full w-210 border border-dark-base rounded-2xl bg-light-alpha/10 backdrop-blur-[2px] shadow-md",
-                    "grid grid-cols-4 grid-rows-8",
-                    "p-3 gap-3"
+                    'h-full w-210 border border-dark-base rounded-2xl bg-light-alpha/10 backdrop-blur-[2px] shadow-md',
+                    'grid grid-cols-4 grid-rows-8',
+                    'p-3 gap-3',
                 )}
             >
                 <Tiers className="col-span-2 row-span-3 border border-dark-base rounded-[10px]" />
@@ -63,9 +55,7 @@ export default function Leaderboard({
                     className="col-span-2 row-span-2 border border-dark-base rounded-[10px] px-4 py-3 flex justify-center items-center font-extralight tracking-wide"
                     label={'explanation'}
                 >
-                    <div>
-                        {explanation}
-                    </div>
+                    <div>{explanation}</div>
                 </NotchCard>
 
                 <Graph
@@ -76,16 +66,14 @@ export default function Leaderboard({
 
                 <NotchCard
                     className="col-span-2 row-span-1 border border-dark-alpha rounded-[10px] h-full min-h-0 flex justify-center items-center "
-                    label={"your response"}
+                    label={'your response'}
                 >
                     <div>
-                        {
-                            host
-                                ? "you're the host man, why do wanna respond."
-                                : spectator
-                                    ? "you're a spectator your can't respond, haha!"
-                                    : ''
-                        }
+                        {host
+                            ? "you're the host man, why do wanna respond."
+                            : spectator
+                              ? "you're a spectator your can't respond, haha!"
+                              : ''}
                     </div>
                 </NotchCard>
 
