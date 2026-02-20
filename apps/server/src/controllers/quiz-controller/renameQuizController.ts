@@ -4,7 +4,10 @@ import { renameQuizSchema } from '../../schemas/renameQuizSchema';
 import { prisma } from '@nocturn/database';
 
 export default async function renameQuizController(req: Request, res: Response) {
-    if (!req.user?.id) {
+
+    const user = req.user;
+
+    if (!user || !user.id) {
         ResponseWriter.not_authorized(res);
         return;
     }
@@ -16,10 +19,10 @@ export default async function renameQuizController(req: Request, res: Response) 
     }
 
     try {
-        const quiz = await prisma.quiz.findMany({
+        const quiz = await prisma.quiz.findUnique({
             where: {
                 id: data.quizId,
-                hostId: req.user.id,
+                hostId: user.id,
             },
         });
 
@@ -31,7 +34,7 @@ export default async function renameQuizController(req: Request, res: Response) 
         await prisma.quiz.update({
             where: {
                 id: data.quizId,
-                hostId: req.user.id,
+                hostId: user.id,
             },
             data: {
                 title: data.name,

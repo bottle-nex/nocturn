@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import upsertLearningJourneyController from '../user-controller/upsertLearningJourneyController';
 
 export default async function duplicateQuizController(req: Request, res: Response) {
-    if (!req.user.id) {
+
+    const user = req.user;
+
+    if (!user || !user.id) {
         ResponseWriter.not_authorized(res);
         return;
     }
@@ -18,7 +22,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
         const quiz = await prisma.quiz.findUnique({
             where: {
                 id: quizId,
-                hostId: req.user.id,
+                hostId: user.id,
                 isDeleted: false,
             },
             include: {
@@ -35,7 +39,9 @@ export default async function duplicateQuizController(req: Request, res: Respons
             data: {
                 title: quiz.title,
                 description: quiz.description,
-                theme: quiz.theme,
+                template: {
+                    connect: { id: quiz.templateId, }
+                },
                 prizePool: quiz.prizePool,
                 currency: quiz.currency,
                 basePointsPerQuestion: quiz.basePointsPerQuestion,
@@ -50,7 +56,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                 spectatorMode: quiz.spectatorMode,
                 allowNewSpectator: quiz.allowNewSpectator,
                 host: {
-                    connect: { id: req.user.id },
+                    connect: { id: user.id },
                 },
                 questions: {
                     create: quiz.questions.map((q) => ({
@@ -65,6 +71,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                         explanation: q.explanation,
                         hint: q.hint,
                         imageUrl: q.imageUrl,
+                        isAsked: false,
                     })),
                 },
             },
