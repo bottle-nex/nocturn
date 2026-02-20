@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 type CheckoutStatus = 'PENDING' | 'COMPLETED' | 'EXPIRED' | 'FAILED' | 'ABANDONED';
@@ -20,7 +20,7 @@ interface VerifySessionData {
     };
 }
 
-export default function PremiumSuccessPage() {
+function PremiumSuccessContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const sessionId = searchParams.get('session_id');
@@ -269,4 +269,23 @@ export default function PremiumSuccessPage() {
     }
 
     return null;
+}
+
+export default function PremiumSuccessPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex min-h-screen items-center justify-center bg-delta">
+                    <div className="max-w-md rounded-prime bg-charlie p-8 text-center">
+                        <div className="mb-6 flex justify-center">
+                            <div className="h-16 w-16 animate-spin rounded-full border-4 border-gamma border-t-alpha"></div>
+                        </div>
+                        <h1 className="mb-4 text-2xl font-bold text-gamma">Loading...</h1>
+                    </div>
+                </div>
+            }
+        >
+            <PremiumSuccessContent />
+        </Suspense>
+    );
 }
