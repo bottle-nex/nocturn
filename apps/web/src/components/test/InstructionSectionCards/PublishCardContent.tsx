@@ -5,7 +5,6 @@ import React from 'react';
 import Image from 'next/image';
 import { LuSave } from 'react-icons/lu';
 import { MdOutlineRocketLaunch, MdPublish } from 'react-icons/md';
-import { GoPlus } from 'react-icons/go';
 
 const containerVariants = {
     initial: {
@@ -18,23 +17,6 @@ const containerVariants = {
         transition: {
             staggerChildren: 0.18,
             staggerDirection: 1,
-        },
-    },
-};
-
-const plusVariants: Variants = {
-    initial: {
-        opacity: 0,
-        filter: 'blur(6px)',
-        scale: 0.75,
-    },
-    hover: {
-        opacity: 1,
-        filter: 'blur(0px)',
-        scale: 1,
-        transition: {
-            duration: 0.18,
-            ease: [0.22, 1, 0.36, 1],
         },
     },
 };
@@ -195,21 +177,22 @@ export function PublishCardContent(): React.JSX.Element {
             {/* characters */}
             <motion.div
                 variants={charactersContainerVariants}
-                className="relative top-34 flex items-center -space-x-3"
+                className="relative top-33 flex items-center -space-x-3.5"
             >
-                <motion.div
+                {/* <motion.div
                     variants={plusVariants}
-                    className="h-7 w-7 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full flex justify-center items-center z-0 bg-light-alpha white-btn"
+                    className="h-6.5 w-6.5 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full flex justify-center items-center z-5 bg-light-alpha white-btn"
                 >
                     <GoPlus />
-                </motion.div>
+                </motion.div> */}
 
                 <motion.div
                     variants={avatarVariants}
-                    className="h-9 w-9 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full relative overflow-hidden z-1"
+                    className="h-9 w-9 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full relative overflow-hidden z-4"
                 >
                     <Image
-                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-9.jpg'}
+                        // src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-9.jpg'}
+                        src={'/images/landing/avatar1.png'}
                         alt=""
                         fill
                         unoptimized
@@ -219,10 +202,10 @@ export function PublishCardContent(): React.JSX.Element {
 
                 <motion.div
                     variants={avatarVariants}
-                    className="h-9 w-9 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full relative overflow-hidden z-2"
+                    className="h-9 w-9 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full relative overflow-hidden z-3"
                 >
                     <Image
-                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg'}
+                        src={'/images/landing/avatar2.png'}
                         alt=""
                         fill
                         unoptimized
@@ -232,10 +215,10 @@ export function PublishCardContent(): React.JSX.Element {
 
                 <motion.div
                     variants={avatarVariants}
-                    className="h-9 w-9 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full relative overflow-hidden z-3"
+                    className="h-9 w-9 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full relative overflow-hidden z-2"
                 >
                     <Image
-                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-11.jpg'}
+                        src={'/images/landing/avatar3.png'}
                         alt=""
                         fill
                         unoptimized
@@ -245,10 +228,10 @@ export function PublishCardContent(): React.JSX.Element {
 
                 <motion.div
                     variants={avatarVariants}
-                    className="h-9 w-9 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-full relative overflow-hidden z-4"
+                    className="h-9 w-9 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full relative overflow-hidden z-1"
                 >
                     <Image
-                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-13.jpg'}
+                        src={'/images/landing/avatar4.png'}
                         alt=""
                         fill
                         unoptimized
