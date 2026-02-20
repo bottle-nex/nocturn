@@ -18,15 +18,12 @@ export default function FavouriteQuizzesPanel() {
     const { session } = useUserSessionStore();
     const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
     const { deleteQuiz: deleteRecentlyViewed } = useRecentlyViewedQuizStore();
-
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const selectionMode = selectedQuizIds.size > 0;
-
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
-
-    const searchListenerAttached = useRef(false);
-    const hasFetched = useRef(false);
+    const searchListenerAttached = useRef<boolean>(false);
+    const hasFetched = useRef<boolean>(false);
 
     useEffect(() => {
         async function fetchQuizzes() {
@@ -133,6 +130,7 @@ export default function FavouriteQuizzesPanel() {
                 </div>
 
                 <QuizzesUpperSection
+                    quizzes={quizs}
                     selectedQuizes={selectedQuizIds.size}
                     onDeleteSelected={handleDeleteSelectedQuizzes}
                     onCancelSelection={handleCancelSelection}

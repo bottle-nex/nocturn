@@ -11,11 +11,10 @@ export class SigninController {
     static async oauth_signin(req: Request, res: Response) {
         const { user } = req.body;
 
-        if (!user || !user.email) {
-            ResponseWriter.not_authorized(res, 'invalid user data');
+        if (!user) {
+            ResponseWriter.not_found(res, 'Insufficient data');
             return;
         }
-
         try {
             const existingUser = await prisma.user.findUnique({
                 where: { email: user.email },
