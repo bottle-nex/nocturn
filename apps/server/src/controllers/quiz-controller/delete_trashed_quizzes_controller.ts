@@ -3,7 +3,6 @@ import ResponseWriter from '../../class/response_writer';
 import { prisma, QuizStatus } from '@nocturn/database';
 
 export default async function delete_trashed_quizzes_controller(req: Request, res: Response) {
-
     const user = req.user;
 
     if (!user || !user.id) {

@@ -4,7 +4,6 @@ import { renameQuizSchema } from '../../schemas/renameQuizSchema';
 import { prisma } from '@nocturn/database';
 
 export default async function renameQuizController(req: Request, res: Response) {
-
     const user = req.user;
 
     if (!user || !user.id) {

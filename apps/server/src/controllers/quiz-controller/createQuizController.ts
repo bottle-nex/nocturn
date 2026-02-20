@@ -20,8 +20,6 @@ export default async function createQuizController(req: Request, res: Response) 
 
     const { questions, ...quizData } = data;
 
-    
-
     try {
         const db_template = await prisma.template.findUnique({
             where: { name: TemplateEnum.CLASSIC },

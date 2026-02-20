@@ -5,13 +5,13 @@ import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
-import crypto from "crypto";
+import crypto from 'crypto';
 
 export class SigninController {
     static async oauth_signin(req: Request, res: Response) {
         const { user } = req.body;
 
-        if(!user || !user.email) {
+        if (!user || !user.email) {
             ResponseWriter.not_authorized(res, 'invalid user data');
             return;
         }

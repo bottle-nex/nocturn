@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
-import upsertLearningJourneyController from '../user-controller/upsertLearningJourneyController';
 
 export default async function duplicateQuizController(req: Request, res: Response) {
-
     const user = req.user;
 
     if (!user || !user.id) {
@@ -40,7 +38,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                 title: quiz.title,
                 description: quiz.description,
                 template: {
-                    connect: { id: quiz.templateId, }
+                    connect: { id: quiz.templateId },
                 },
                 prizePool: quiz.prizePool,
                 currency: quiz.currency,
