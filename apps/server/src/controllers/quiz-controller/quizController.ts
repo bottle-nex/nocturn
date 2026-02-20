@@ -11,30 +11,30 @@ export enum QUIZ_STATUS {
 
 type quiz_controller =
     | {
-          type: QUIZ_STATUS.SAVE_NEW_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          error?: unknown;
-          isHost?: boolean;
-      }
+        type: QUIZ_STATUS.SAVE_NEW_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        error?: unknown;
+        isHost?: boolean;
+    }
     | { type: QUIZ_STATUS.UPDATE_QUIZ; success: boolean; quiz?: Partial<Quiz>; error?: unknown }
     | {
-          type: QUIZ_STATUS.PUBLISH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      }
+        type: QUIZ_STATUS.PUBLISH_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        status?: QuizStatus;
+        error?: unknown;
+        isHost?: boolean;
+    }
     | {
-          type: QUIZ_STATUS.LAUNCH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          gameSession?: Partial<GameSession>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      };
+        type: QUIZ_STATUS.LAUNCH_QUIZ;
+        success: boolean;
+        quiz?: Partial<Quiz>;
+        gameSession?: Partial<GameSession>;
+        status?: QuizStatus;
+        error?: unknown;
+        isHost?: boolean;
+    };
 
 export default class QuizController {
     public async update_quiz_status(
@@ -49,7 +49,7 @@ export default class QuizController {
                 return await this.handle_save_new_quiz(quizId, quiz_data, questions, hostId);
 
             case QUIZ_STATUS.UPDATE_QUIZ:
-                return await this.handle_update_quiz(quizId, quiz_data, questions);
+                return await this.handle_update_quiz(hostId, quizId, quiz_data, questions);
 
             case QUIZ_STATUS.PUBLISH_QUIZ:
                 return await this.handle_publish_quiz(quizId, quiz_data, questions, hostId);
@@ -107,7 +107,7 @@ export default class QuizController {
                     };
                 }
 
-                return await this.handle_update_quiz(quizId, quiz_data, questions);
+                return await this.handle_update_quiz(hostId, quizId, quiz_data, questions);
             }
         } catch (error) {
             return this.handle_error(QUIZ_STATUS.SAVE_NEW_QUIZ, error);
@@ -115,12 +115,17 @@ export default class QuizController {
     }
 
     private async handle_update_quiz(
+        hostId: string,
         quizId: string,
         quiz_data: CreateQuizType,
         questions: QuestionType[],
     ): Promise<quiz_controller> {
         try {
             // check for the valid owner, before calling this function
+
+            const isValidOwner = await QuizAction.validOwner(hostId, quizId);
+            if (!isValidOwner) return this.handle_error(QUIZ_STATUS.UPDATE_QUIZ, 'invalidated owner');
+
             const quiz = await prisma.$transaction(async (tx) => {
                 await tx.question.deleteMany({
                     where: {
@@ -206,7 +211,7 @@ export default class QuizController {
                     };
                 }
 
-                const data = await this.handle_update_quiz(quizId, quiz_data, questions);
+                const data = await this.handle_update_quiz(hostId, quizId, quiz_data, questions);
 
                 if (!data.quiz) {
                     return {
