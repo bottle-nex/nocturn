@@ -16,29 +16,38 @@ export function getResponsiveGap(currentQ: QuestionType): string {
 
 interface CanvasOptionsProps {
     currentQ: QuestionType;
+    animate?: boolean;
 }
 
-export default function CanvasOptions({ currentQ }: CanvasOptionsProps) {
+export default function CanvasOptions({ currentQ, animate = false }: CanvasOptionsProps) {
     const [votes, setVotes] = useState([0, 0, 0, 0]);
     const { quiz } = useNewQuizStore();
     const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
     const { setState } = useDraftRendererStore();
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setVotes((prev) => {
-                return prev.map(() => {
-                    return Math.floor(Math.random() * 80) + 10;
+        if (animate) {
+            const interval = setInterval(() => {
+                setVotes((prev) => {
+                    return prev.map(() => {
+                        return Math.floor(Math.random() * 80) + 10;
+                    });
                 });
-            });
-        }, 2000);
+            }, 2000);
 
-        return () => clearInterval(interval);
-    }, [currentQ]);
+            return () => clearInterval(interval);
+        }
+    }, [currentQ, animate]);
+
+    useEffect(() => {
+        if (!animate) {
+            setVotes(currentQ.options.map(() => 0));
+        }
+    }, [animate, currentQ]);
 
     function getBarHeight(voteValue: number): string {
-        const percentage = Math.max(voteValue, 5);
-        return `max(${percentage * 0.8}%, 1.5rem)`;
+        const percentage = Math.max(voteValue, 1);
+        return `max(${percentage * 0.8}%, 0.20rem)`;
     }
 
     function optionsTapHandler(e: MouseEvent<HTMLDivElement>) {

@@ -2,6 +2,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { TemplateType } from '@nocturn/types';
+import { useRef } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
@@ -11,17 +12,23 @@ import ThemePreview from './ThemePreview';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz } = useNewQuizStore();
+    const { quiz, setIsHoveringTheme } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const { templates } = useQuizTemplatesStore();
 
     const selectedTemplateId = quiz.templateId;
 
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     function changeThemeHandler(template: TemplateType) {
-        updateQuizAndBroadcast({
-            template: template,
-            templateId: template.id,
-        });
+        setIsHoveringTheme(true);
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+            updateQuizAndBroadcast({
+                template: template,
+                templateId: template.id,
+            });
+        }, 500);
     }
 
     return (
@@ -56,7 +63,11 @@ export default function ThemesDraft() {
                         return (
                             <div
                                 key={template.id}
-                                onClick={() => changeThemeHandler(template)}
+                                onMouseEnter={() => changeThemeHandler(template)}
+                                onMouseLeave={() => {
+                                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                                    setIsHoveringTheme(false);
+                                }}
                                 className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
                             >
                                 <ThemePreview

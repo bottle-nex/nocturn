@@ -47,8 +47,8 @@ export default function CanvasBars({
                 }}
             />
 
-            <div className="mt-1 sm:mt-2 min-h-[1.5rem] sm:min-h-[2rem] flex items-center justify-center w-full">
-                <div className="text-xs sm:text-sm text-center px-0.5 sm:px-1 leading-tight font-light break-words">
+            <div className="mt-1 sm:mt-2 min-h-6 sm:min-h-8 flex items-center justify-center w-full">
+                <div className="text-xs sm:text-sm text-center px-0.5 sm:px-1 leading-tight font-light wrap-break-words">
                     <span className="hidden sm:inline">{option}</span>
                 </div>
             </div>
