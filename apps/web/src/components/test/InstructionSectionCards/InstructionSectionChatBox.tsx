@@ -6,7 +6,7 @@ import { IoMicOutline } from 'react-icons/io5';
 
 export default function InstructionSectionChatBox() {
     return (
-        <div className="absolute top-[75%]">
+        <div className="absolute top-[78%] select-none">
             <motion.div
                 variants={pill}
                 initial="hidden"

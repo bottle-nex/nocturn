@@ -33,7 +33,7 @@ export default function App(): JSX.Element {
             initial="hidden"
             viewport={{ once: true, amount: 0.35 }}
             onViewportEnter={startSequence}
-            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden pt-10"
+            className="relative min-h-screen w-full bg-linear-to-b from-transparent to-light-base flex flex-col items-center justify-around px-6 font-sans text-dark-base overflow-x-hidden pt-6"
         >
             <div className="inset-0 absolute">
                 <div className="relative h-full w-full">
@@ -61,8 +61,8 @@ export default function App(): JSX.Element {
             />
 
             {/* cards */}
-            <div className="relative w-full max-w-216 h-65 z-20 -top-20">
-                <div className="absolute left-0 bottom-2 -rotate-2">
+            <div className="relative w-full max-w-216 h-65 z-20 -top-24">
+                <div className="absolute left-0 -bottom-8 -rotate-2">
                     <div
                         onMouseEnter={() => setActiveCard('create')}
                         onMouseLeave={() => setActiveCard(null)}
@@ -97,7 +97,7 @@ export default function App(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="absolute left-53 bottom-4 rotate-2 hover:z-10 transition-all transform duration-250 hover:scale-105">
+                <div className="absolute left-53 -bottom-8 rotate-2 hover:z-10 transition-all transform duration-250 hover:scale-105">
                     <div
                         onMouseEnter={() => setActiveCard('publish')}
                         onMouseLeave={() => setActiveCard(null)}
@@ -129,7 +129,7 @@ export default function App(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="absolute right-55 bottom-2 -rotate-3">
+                <div className="absolute right-55 -bottom-10 -rotate-3">
                     <div
                         onMouseEnter={() => setActiveCard('launch')}
                         onMouseLeave={() => setActiveCard(null)}
@@ -164,7 +164,7 @@ export default function App(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="absolute right-0 bottom-2 rotate-3">
+                <div className="absolute right-0 -bottom-7 rotate-3">
                     <div
                         onMouseEnter={() => setActiveCard('manage')}
                         onMouseLeave={() => setActiveCard(null)}
