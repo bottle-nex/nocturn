@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { HiOutlineMinus, HiOutlinePlusSmall } from 'react-icons/hi2';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
@@ -36,11 +36,28 @@ const navItem: Variants = {
 };
 
 export default function LandingNavbar() {
-    const { session, setOpenSigninModal, setOpenLogoutModal } = useUserSessionStore();
+    const { session, openSigninModal, openLogoutModal, setOpenSigninModal, setOpenLogoutModal } =
+        useUserSessionStore();
     const [isNavbarVisible, setIsNavbarVisible] = useState<boolean>(true);
     const [lastScrollY, setLastScrollY] = useState<number>(0);
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const router = useRouter();
+
+    useEffect(() => {
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key !== 'Escape') return;
+            if (openSigninModal) {
+                setOpenSigninModal(false);
+            }
+            if (openLogoutModal) {
+                setOpenLogoutModal(false);
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [openSigninModal, setOpenSigninModal, openLogoutModal, setOpenLogoutModal]);
 
     useEffect(() => {
         function handleScroll() {
@@ -289,7 +306,7 @@ export default function LandingNavbar() {
                 ) : (
                     <motion.button
                         onClick={() => setOpenSigninModal(true)}
-                        className="bg-alpha hover:bg-alpha text-light-base text-[18px] h-12 w-25 rounded-full shadow-xs cursor-pointer hover:scale-103 hover:-translate-y-0.5 transition-all transform duration-300"
+                        className="bg-alpha hover:bg-alpha text-light-base text-[18px] h-12 w-25 rounded-full shadow-xs cursor-pointer active:scale-95 transition-all transform duration-300"
                     >
                         Sign In
                     </motion.button>

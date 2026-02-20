@@ -12,6 +12,7 @@ import QuizActions from '@/lib/backend/home/quiz-actions';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { Dispatch, SetStateAction } from 'react';
+import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 
 interface QuizOptionsPanelProps {
     quiz: QuizType;
@@ -30,6 +31,7 @@ export default function QuizOptionsPanel({
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { deleteQuiz, addQuiz } = useAllQuizsStore();
+    const { deleteQuiz: deleteRecentlyViewed } = useRecentlyViewedQuizStore();
 
     async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token) return;
@@ -37,6 +39,7 @@ export default function QuizOptionsPanel({
             const res = await QuizActions.delete_quiz(session.user.token, quizId);
             if (res) {
                 deleteQuiz(quizId);
+                deleteRecentlyViewed(quizId);
                 toast.success('Deleted quiz successfully');
             }
         } catch {

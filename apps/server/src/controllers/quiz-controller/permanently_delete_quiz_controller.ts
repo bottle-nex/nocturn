@@ -21,6 +21,7 @@ export default async function permanently_delete_quiz_controller(req: Request, r
             where: {
                 id: quizId,
                 isDeleted: true,
+                hostId: userId,
             },
             select: {
                 id: true,
@@ -35,7 +36,7 @@ export default async function permanently_delete_quiz_controller(req: Request, r
             return;
         }
 
-        QuizAction.permanentDeleteQuiz(quizId, String(userId));
+        await QuizAction.permanentDeleteQuiz(quizId, String(userId));
         ResponseWriter.success(res, quiz, 'Quiz deleted successfully');
         return;
     } catch {

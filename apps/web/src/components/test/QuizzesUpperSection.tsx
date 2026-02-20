@@ -15,8 +15,10 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Loader } from 'lucide-react';
+import { QuizType } from '@nocturn/types';
 
 interface QuizzesUpperSectionData {
+    quizzes: QuizType[];
     onDeleteSelected?: () => void;
     onCancelSelection?: () => void;
     selectedQuizes?: number;
@@ -27,6 +29,7 @@ interface QuizzesUpperSectionData {
 }
 
 export default function QuizzesUpperSection({
+    quizzes,
     isAllSelected,
     selectedQuizes,
     activeLayoutTab,
@@ -92,57 +95,59 @@ export default function QuizzesUpperSection({
             </div>
 
             <div className="w-full flex justify-between items-center">
-                <div className="flex items-center gap-x-1 h-11">
-                    <Button
-                        onClick={() => onLayoutChange?.(Layouts.GRID)}
-                        className={cn(
-                            'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
-                            activeLayoutTab === Layouts.GRID
-                                ? 'bg-indigo-600/20 border-indigo-800/70'
-                                : 'border-transparent bg-indigo-600/5',
-                        )}
-                    >
-                        <TbLayoutGridFilled
+                {quizzes && quizzes.length > 0 && (
+                    <div className="flex items-center gap-x-1 h-11">
+                        <Button
+                            onClick={() => onLayoutChange?.(Layouts.GRID)}
                             className={cn(
-                                'size-4',
+                                'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
                                 activeLayoutTab === Layouts.GRID
-                                    ? 'text-indigo-700 dark:text-light-base'
-                                    : 'text-indigo-900',
+                                    ? 'bg-indigo-600/20 border-indigo-800/70'
+                                    : 'border-transparent bg-indigo-600/5',
                             )}
-                        />
-                    </Button>
-
-                    <Button
-                        onClick={() => onLayoutChange?.(Layouts.LIST)}
-                        className={cn(
-                            'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
-                            activeLayoutTab === Layouts.LIST
-                                ? 'bg-indigo-600/20 border-indigo-800/70'
-                                : 'border-transparent bg-indigo-600/5',
-                        )}
-                    >
-                        <FaAlignJustify
-                            className={cn(
-                                'size-4',
-                                activeLayoutTab === Layouts.LIST
-                                    ? 'text-indigo-700 dark:text-light-base'
-                                    : 'text-indigo-900',
-                            )}
-                        />
-                    </Button>
-
-                    {(selectedQuizes ?? 0) > 0 && (
-                        <div
-                            onClick={onToggleSelectAll}
-                            className="pl-4 flex gap-x-1.5 cursor-pointer select-none items-center text-light-base/80"
                         >
-                            {isAllSelected ? <RiRecordCircleLine /> : <RiCircleLine />}
-                            <span className="text-lg text-light-base/80">select all</span>
-                        </div>
-                    )}
-                </div>
+                            <TbLayoutGridFilled
+                                className={cn(
+                                    'size-4',
+                                    activeLayoutTab === Layouts.GRID
+                                        ? 'text-indigo-700 dark:text-light-base'
+                                        : 'text-indigo-900',
+                                )}
+                            />
+                        </Button>
 
-                {(selectedQuizes ?? 0) > 0 && (
+                        <Button
+                            onClick={() => onLayoutChange?.(Layouts.LIST)}
+                            className={cn(
+                                'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
+                                activeLayoutTab === Layouts.LIST
+                                    ? 'bg-indigo-600/20 border-indigo-800/70'
+                                    : 'border-transparent bg-indigo-600/5',
+                            )}
+                        >
+                            <FaAlignJustify
+                                className={cn(
+                                    'size-4',
+                                    activeLayoutTab === Layouts.LIST
+                                        ? 'text-indigo-700 dark:text-light-base'
+                                        : 'text-indigo-900',
+                                )}
+                            />
+                        </Button>
+
+                        {(selectedQuizes ?? 0) > 0 && (
+                            <div
+                                onClick={onToggleSelectAll}
+                                className="pl-4 flex gap-x-1.5 cursor-pointer select-none items-center text-light-base/80"
+                            >
+                                {isAllSelected ? <RiRecordCircleLine /> : <RiCircleLine />}
+                                <span className="text-lg text-light-base/80">select all</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {quizzes && quizzes.length > 0 && (selectedQuizes ?? 0) > 0 && (
                     <div className="flex items-center gap-x-3">
                         <Button
                             onClick={onCancelSelection}

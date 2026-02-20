@@ -1,5 +1,4 @@
 'use client';
-
 import { cn } from '@/lib/utils';
 import CanvasAccents from '../utility/CanvasAccents';
 import { motion } from 'framer-motion';
@@ -30,10 +29,8 @@ export default function EmptyCanvas({
     const textColor = template.textColor;
     const accentType = template.accentType;
     const accentColor = template.accentColor;
-
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [barHeights, setBarHeights] = useState<number[]>([]);
-
     const shouldAnimate = autoAnimateBars || isHovered;
 
     useEffect(() => {
@@ -41,7 +38,6 @@ export default function EmptyCanvas({
             setBarHeights(options.map(() => 5));
             return;
         }
-
         setBarHeights(options.map(() => Math.random() * 60 + 20));
 
         const interval = setInterval(() => {
