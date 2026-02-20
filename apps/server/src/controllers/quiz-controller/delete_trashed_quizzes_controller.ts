@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma } from '@nocturn/database';
+import { prisma, QuizStatus } from '@nocturn/database';
 
 export default async function delete_trashed_quizzes_controller(req: Request, res: Response) {
-    if (!req.user?.id) {
+    const user = req.user;
+
+    if (!user || !user.id) {
         ResponseWriter.not_authorized(res);
         return;
     }
@@ -11,8 +13,11 @@ export default async function delete_trashed_quizzes_controller(req: Request, re
     try {
         const trashedQuizzes = await prisma.quiz.deleteMany({
             where: {
-                hostId: String(req.user.id),
+                hostId: user.id,
                 isDeleted: true,
+                status: {
+                    not: QuizStatus.LIVE,
+                },
             },
         });
 

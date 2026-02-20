@@ -43,6 +43,7 @@ export default async function getAllQuizController(req: Request, res: Response) 
                     },
                 },
             },
+            take: 20,
         });
 
         console.log('quizzes to return : ', quizzes);

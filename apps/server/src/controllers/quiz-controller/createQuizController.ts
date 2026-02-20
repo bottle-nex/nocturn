@@ -18,7 +18,7 @@ export default async function createQuizController(req: Request, res: Response) 
         return;
     }
 
-    const { id: _ignoredId, templateId: _ignoredTemplateId, questions, ...quizData } = data;
+    const { questions, ...quizData } = data;
 
     try {
         const db_template = await prisma.template.findUnique({
