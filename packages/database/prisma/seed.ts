@@ -1,4 +1,4 @@
-import { Prisma, prisma } from "../src";
+import { Prisma, prisma, TemplateEnum } from "../src";
 import { templates } from "../src/utils/templates";
 
 // <---------------- SUBSCRIPTION TIERS ---------------->
@@ -106,8 +106,9 @@ async function seedTemplates() {
   console.log("Seeding templates...");
   for (const t of templates) {
     await prisma.template.upsert({
-      where: { name: t.name },
+      where: { name: t.name as TemplateEnum },
       update: {
+        id: t.id,
         backgroundColor: t.backgroundColor,
         textColor: t.textColor,
         borderColor: t.borderColor,
@@ -117,7 +118,8 @@ async function seedTemplates() {
         src: t.src,
       },
       create: {
-        name: t.name,
+        id: t.id,
+        name: t.name as TemplateEnum,
         backgroundColor: t.backgroundColor,
         textColor: t.textColor,
         borderColor: t.borderColor,

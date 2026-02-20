@@ -69,13 +69,12 @@ export default async function getQuizController(req: Request, res: Response): Pr
             : null;
 
         const is_collaborator = !!collaborator;
-
         if (!is_owner && !is_collaborator) {
             ResponseWriter.not_authorized(res, 'Access to this quiz is denied');
             return;
         }
 
-        await QuizAction.record_quiz_view(quizId, String(userId));
+        QuizAction.record_quiz_view(quizId, String(userId));
 
         const userCollabRole: CollabRole = is_owner
             ? CollabRole.HOST
@@ -84,26 +83,25 @@ export default async function getQuizController(req: Request, res: Response): Pr
         const collabSessionId =
             hasCollabSession && quiz.CollabSession ? quiz.CollabSession.id : undefined;
 
-        if (!collabSessionId) {
-            ResponseWriter.not_found(res, 'collaboration session not found');
-            return;
+        if (collabSessionId) {
+            const secureTokenData = QuizAction.generateCollabSessionToken(
+                userId,
+                quiz.id,
+                userCollabRole,
+                req?.user.name,
+                '#' + Math.floor(Math.random() * 16777215).toString(16),
+                collabSessionId,
+            );
+
+            res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
+                httpOnly: true,
+                secure: env.SERVER_NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 24 * 60 * 60 * 1000,
+            });
+        } else {
+            res.clearCookie(NOCTURN_COOKIE_NAME);
         }
-
-        const secureTokenData = QuizAction.generateCollabSessionToken(
-            userId,
-            quiz.id,
-            userCollabRole,
-            req?.user.name,
-            '#' + Math.floor(Math.random() * 16777215).toString(16),
-            collabSessionId,
-        );
-
-        res.cookie(NOCTURN_COOKIE_NAME, secureTokenData, {
-            httpOnly: true,
-            secure: env.SERVER_NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000,
-        });
 
         ResponseWriter.success(
             res,

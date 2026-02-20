@@ -34,6 +34,7 @@ export default async function publishQuizController(req: Request, res: Response)
         questions,
         userId,
     );
+    console.log('data is : ', data);
 
     if (!data || data.error || !data.quiz) {
         console.error('Error publishing quiz:', data?.error);

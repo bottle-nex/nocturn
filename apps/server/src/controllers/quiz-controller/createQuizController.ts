@@ -5,12 +5,14 @@ import { prisma } from '@nocturn/database';
 import { TemplateEnum } from '@nocturn/types';
 
 export default async function createQuizController(req: Request, res: Response) {
+    const now = Date.now();
     if (!req.user?.id) {
         ResponseWriter.not_authorized(res);
         return;
     }
 
-    const { data, success } = createQuizSchema.safeParse(req.body);
+    const { data, success } = createQuizSchema.safeParse(req.body ?? {});
+    console.log('parsing time taken is : ', now - Date.now());
 
     if (!success) {
         console.log('failed to parse the data');
@@ -18,45 +20,30 @@ export default async function createQuizController(req: Request, res: Response) 
         return;
     }
 
-    const { questions, ...quizData } = data;
+    const { questions, id: _id, templateId: _templateId, ...quizData } = data;
 
     try {
-        const db_template = await prisma.template.findUnique({
-            where: { name: TemplateEnum.CLASSIC },
-        });
-
-        if (!db_template) {
-            ResponseWriter.not_found(res, 'Template not found');
-            return;
-        }
-
+        console.log('db query time taken is : ', Date.now() - now);
+        const randomNumber = Math.floor(Math.random() * Object.values(TemplateEnum).length);
         const quiz = await prisma.quiz.create({
             data: {
                 ...quizData,
-                templateId: db_template.id,
+                templateId: Object.values(TemplateEnum)[randomNumber],
                 hostId: req.user.id,
-                questions: {
-                    create: questions.map((q) => ({
-                        question: q.question,
-                        options: q.options,
-                        correctAnswer: q.correctAnswer,
-                        difficulty: q.difficulty,
-                        basePoints: q.basePoints,
-                        timeLimit: q.timeLimit,
-                        readingTime: q.readingTime,
-                        orderIndex: q.orderIndex,
-                        explanation: q.explanation,
-                        hint: q.hint,
-                        imageUrl: q.imageUrl,
-                    })),
-                },
+                ...(questions.length > 0 && {
+                    questions: {
+                        create: questions.map((question) => question),
+                    },
+                }),
             },
             include: {
                 template: true,
+                questions: true,
             },
         });
+        console.log('quiz creation time taken is : ', Date.now() - now);
 
-        ResponseWriter.success(res, { id: quiz.id });
+        ResponseWriter.created(res, quiz);
         return;
     } catch (error) {
         console.error('Failed to create quiz:', error);

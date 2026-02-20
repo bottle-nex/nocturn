@@ -1,3 +1,5 @@
+import { TemplateEnum } from "../../generated/client";
+
 export interface Template {
   id: string;
   name: string;
@@ -13,7 +15,7 @@ export interface Template {
 export const templates: Template[] = [
   {
     id: "CLASSIC",
-    name: "CLASSIC",
+    name: TemplateEnum.CLASSIC,
     backgroundColor: "#F6F5F2",
     textColor: "#000000",
     borderColor: "#000000",
@@ -24,7 +26,7 @@ export const templates: Template[] = [
   },
   {
     id: "MODERN",
-    name: "MODERN",
+    name: TemplateEnum.MODERN,
     backgroundColor: "#ff80ab",
     textColor: "#000000",
     borderColor: "#D1D5DB",
@@ -35,7 +37,7 @@ export const templates: Template[] = [
   },
   {
     id: "NEON",
-    name: "NEON",
+    name: TemplateEnum.NEON,
     backgroundColor: "#000000",
     textColor: "#EEEEEE",
     borderColor: "#000000",
@@ -46,7 +48,7 @@ export const templates: Template[] = [
   },
   {
     id: "YELLOW",
-    name: "YELLOW",
+    name: TemplateEnum.YELLOW,
     backgroundColor: "#FFCC00",
     textColor: "#000000",
     borderColor: "#000000",
@@ -57,7 +59,7 @@ export const templates: Template[] = [
   },
   {
     id: "GREEN",
-    name: "GREEN",
+    name: TemplateEnum.GREEN,
     backgroundColor: "#0c6c45",
     textColor: "#EEEEEE",
     borderColor: "#000000",
@@ -68,7 +70,7 @@ export const templates: Template[] = [
   },
   {
     id: "PASTEL",
-    name: "PASTEL",
+    name: TemplateEnum.PASTEL,
     backgroundColor: "#DDDAD0",
     textColor: "#000000",
     borderColor: "#000000",
@@ -79,7 +81,7 @@ export const templates: Template[] = [
   },
   {
     id: "BLUE",
-    name: "BLUE",
+    name: TemplateEnum.BLUE,
     backgroundColor: "#196aff",
     textColor: "#EEEEEE",
     borderColor: "#EEEEEE",

@@ -40,6 +40,7 @@ export default function CreateQuizActionPanel({
     return (
         <UtilityCard
             ref={ref}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className="absolute right-0 top-full mt-2 w-[20rem] dark:bg-dark-base bg-neutral-100 border border-neutral-300 dark:border-neutral-800 rounded-md shadow-xl z-40 overflow-hidden p-0"
         >
             <div className="flex flex-col w-full gap-y-1">

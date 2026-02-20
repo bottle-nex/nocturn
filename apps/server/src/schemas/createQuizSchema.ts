@@ -20,7 +20,7 @@ export enum Interactions {
 
 const questionSchema = z.object({
     question: z.string(),
-    options: z.array(z.string().min(1)).min(4),
+    options: z.array(z.string().min(1)).min(3).default(['', '', '']),
     correctAnswer: z.number(),
     explanation: z.string().optional(),
     hint: z.string().optional(),
@@ -33,26 +33,12 @@ const questionSchema = z.object({
     hintLaunched: z.boolean(),
 });
 
-// const templateSchema = z.object({
-//     id: z.string(),
-//     name: z.string(),
-//     backgroundColor: z.string(),
-//     textColor: z.string(),
-//     borderColor: z.string(),
-//     accentType: z.string(),
-//     accentColor: z.string(),
-//     bars: z.array(z.string()),
-//     src: z.string(),
-//     createdAt: z.coerce.date(),
-//     updatedAt: z.coerce.date(),
-// });
-
 export const createQuizSchema = z.object({
     id: z.string().optional(),
-    title: z.string().min(1).max(50),
+    title: z.string().min(1).max(50).optional().default('Quiz title goes here'),
     description: z.string().optional(),
-    templateId: z.string(),
-    prizePool: z.coerce.number().nonnegative(),
+    templateId: z.string().optional(),
+    prizePool: z.coerce.number().nonnegative().optional().default(0),
     currency: z.string().default('SOL'),
     basePointsPerQuestion: z.coerce.number().optional(),
     pointsMultiplier: z.coerce.number().optional(),
@@ -64,8 +50,24 @@ export const createQuizSchema = z.object({
     autoSave: z.coerce.boolean().optional(),
     liveChat: z.coerce.boolean().optional(),
     spectatorMode: z.coerce.boolean().optional(),
-    questions: z.array(questionSchema),
-    interactions: z.array(z.enum(Interactions)),
+    questions: z
+        .array(questionSchema)
+        .optional()
+        .default([
+            {
+                question: 'Ask your first question!',
+                options: ['option 1', 'option 2', 'option 3', 'option 4'],
+                correctAnswer: 0,
+                difficulty: 1,
+                basePoints: 100,
+                timeLimit: 30,
+                readingTime: 4,
+                orderIndex: 0,
+                imageUrl: null,
+                hintLaunched: false,
+            },
+        ]),
+    interactions: z.array(z.enum(Interactions)).optional().default([]),
 });
 
 export type QuestionType = z.infer<typeof questionSchema>;

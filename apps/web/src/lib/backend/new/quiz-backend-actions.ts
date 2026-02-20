@@ -3,21 +3,26 @@ import axios from 'axios';
 import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
 
 export default class BackendActions {
-    static async createQuiz(token: string, quiz: QuizType) {
-        if (!token || !quiz) return;
+    static async createQuiz(token: string): Promise<QuizType | null> {
+        if (!token) return null;
 
         try {
-            const { data } = await axios.post(CREATE_QUIZ_URL, quiz, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+            const { data } = await axios.post(
+                CREATE_QUIZ_URL,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            });
+            );
             if (data.success) {
-                return data.data;
+                return data.data as QuizType;
             }
+            return null;
         } catch (error) {
             console.error('failed to create quiz', error);
-            return;
+            return null;
         }
     }
 

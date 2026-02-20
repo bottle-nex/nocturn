@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SlArrowDown } from 'react-icons/sl';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { IoIosPlay } from 'react-icons/io';
@@ -8,6 +8,7 @@ import { MdPublish } from 'react-icons/md';
 import CreateQuizActionPanel from '../utility/CreateQuizActionPanel';
 import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { PiSpinnerThin } from 'react-icons/pi';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { QuizStatusEnum } from '@nocturn/types';
@@ -16,6 +17,7 @@ import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
+import { Button } from '../ui/button';
 
 interface Option {
     name: string;
@@ -28,6 +30,7 @@ export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [currentAction, setCurrentAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [buttonText, setButtonText] = useState<string>('Save Draft');
     const { session } = useUserSessionStore();
     const { quiz } = useNewQuizStore();
     const { updateQuiz: updateAllQuiz } = useAllQuizsStore();
@@ -39,7 +42,10 @@ export default function NavbarQuizAction() {
             console.error('Quiz or token is missing');
             return;
         }
+
         setIsLoading(true);
+        setButtonText('Saving draft..');
+        setActionsPanel(false);
         try {
             const isSaved = await BackendActions.upsertQuizAction(quiz, session.user.token);
             if (isSaved) {
@@ -56,6 +62,7 @@ export default function NavbarQuizAction() {
         } finally {
             setIsLoading(false);
             setActionsPanel(false);
+            setButtonText('Save Draft');
         }
     }
 
@@ -65,6 +72,8 @@ export default function NavbarQuizAction() {
             return;
         }
         setIsLoading(true);
+        setButtonText('Publishing..');
+        setActionsPanel(false);
         try {
             const isPublished = await BackendActions.publishQuiz(quiz, session.user.token);
             if (isPublished) {
@@ -77,10 +86,11 @@ export default function NavbarQuizAction() {
             }
             toast.error('Failed to publish quiz');
         } catch (error) {
-            console.error('Failed to save quiz:', error);
+            console.error('Failed to publish quiz:', error);
         } finally {
             setIsLoading(false);
             setActionsPanel(false);
+            setButtonText('Save Draft');
         }
     }
 
@@ -90,6 +100,8 @@ export default function NavbarQuizAction() {
             return;
         }
         setIsLoading(true);
+        setButtonText('Launching..');
+        setActionsPanel(false);
         try {
             const isPublished = await BackendActions.launchQuiz(quiz, session.user.token);
             if (isPublished) {
@@ -101,12 +113,13 @@ export default function NavbarQuizAction() {
                 router.push(`/live/${quiz.id}`);
                 return;
             }
-            toast.error('Failed to publish quiz');
+            toast.error('Failed to launch quiz');
         } catch (error) {
-            console.error('Failed to save quiz:', error);
+            console.error('Failed to launch quiz:', error);
         } finally {
             setIsLoading(false);
             setActionsPanel(false);
+            setButtonText('Save Draft');
         }
     }
 
@@ -130,36 +143,30 @@ export default function NavbarQuizAction() {
         },
     ];
 
-    useEffect(() => {
-        // Auto-save functionality (commented out for now)
-        // const interval = setInterval(() => {
-        //     handleSaveDraft();
-        // }, 30 * 1000); // 30 seconds
-        // return () => {
-        //     clearInterval(interval);
-        // }
-    }, []);
-
     return (
-        <div
-            className="relative select-none flex shrink-0 items-center gap-x-3"
-            onClick={() => setActionsPanel((prev) => !prev)}
-        >
+        <div className="relative select-none flex shrink-0 items-center gap-x-3">
             <AutoSaveComponent />
             {quiz.status !== QuizStatusEnum.NULL && (
                 <QuizStatusTicker className="" status={quiz?.status} />
             )}
             <ToolTipComponent content={'this will be saved every 30sec'}>
-                <div className="w-full flex justify-around items-center gap-x-2 bg-indigo-600 text-white dark:text-white transition-colors rounded-full cursor-pointer px-4 py-2">
-                    <div className="rounded-l-full text-[13px] font-normal flex justify-center items-center ">
-                        {isLoading ? 'Saving...' : (currentAction ?? options[1]?.name)}
+                <Button
+                    onClick={() => setActionsPanel((prev) => !prev)}
+                    disabled={isLoading}
+                    variant={null}
+                    size={null}
+                    className="w-full flex justify-around items-center gap-x-2 bg-indigo-600 text-white dark:text-white transition-colors rounded-full cursor-pointer px-4 py-2 max-w-fit overflow-hidden whitespace-nowrap"
+                >
+                    <div className="rounded-l-full text-[13px] font-normal flex justify-center items-center gap-x-2">
+                        {isLoading && <PiSpinnerThin className="animate-spin size-5 text-white" />}
+                        {buttonText}
                     </div>
                     <div className="rounded-r-full text-[13px] flex justify-center items-center ">
                         <SlArrowDown
                             className={`${actionsPanel ? 'rotate-180' : ''} transition-all`}
                         />
                     </div>
-                </div>
+                </Button>
             </ToolTipComponent>
             {actionsPanel && (
                 <CreateQuizActionPanel
