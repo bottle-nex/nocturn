@@ -3,7 +3,6 @@ import Image from 'next/image';
 import UtilityCard from './UtilityCard';
 import LogoutModal from './LogoutModal';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { IoChevronDownSharp } from 'react-icons/io5';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { SiGithub } from 'react-icons/si';
@@ -89,8 +88,6 @@ export default function ProfileMenu() {
                         alt="user-logo"
                         className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
                     />
-                    <span className="font-normal text-nowrap">{session?.user.name}</span>
-                    <IoChevronDownSharp />
                 </div>
             )}
             {mounted && createPortal(dropdownContent, document.body)}

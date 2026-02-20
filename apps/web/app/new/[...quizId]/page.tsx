@@ -29,14 +29,22 @@ export default function New({ params }: NewProps) {
     const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
     const { quizId } = use(params);
     const { session } = useUserSessionStore();
-    const { updateQuiz, resetStore } = useNewQuizStore();
+    const { quiz, updateQuiz, resetStore } = useNewQuizStore();
     const { setCollaborators } = useCollaboratorStore();
     const { setTemplates } = useQuizTemplatesStore();
 
+    const storeHasQuiz = quiz.id === quizId && quiz.id !== '';
+
     useEffect(() => {
+        if (storeHasQuiz) {
+            setAllowance(AllowanceEnum.ALLOWED);
+        }
+
         const fetchQuiz = async () => {
             try {
-                setAllowance(AllowanceEnum.LOADING);
+                if (!storeHasQuiz) {
+                    setAllowance(AllowanceEnum.LOADING);
+                }
                 const { data } = await axios.get<CustomResponse<GetNewQuizResponse>>(
                     `${GET_OWNER_QUIZ_URL}/${quizId}`,
                     {
@@ -71,6 +79,9 @@ export default function New({ params }: NewProps) {
                 }
             } catch (error) {
                 console.error('Error while fetching quiz', error);
+                if (!storeHasQuiz) {
+                    setAllowance(AllowanceEnum.NOT_ALLOWED);
+                }
             }
         };
 
@@ -78,7 +89,7 @@ export default function New({ params }: NewProps) {
             fetchQuiz();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quizId, session?.user.token, updateQuiz]);
+    }, [quizId, session?.user.token, updateQuiz, storeHasQuiz]);
 
     useEffect(() => {
         async function fetchTemplates() {

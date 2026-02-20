@@ -78,7 +78,7 @@ export class SigninController {
 
         try {
             const otp = crypto.randomInt(100000, 999999).toString();
-            await publisherInstance.set(`otp:${email}`, otp, 'EX', 60);
+            await publisherInstance.set(`otp:${email}`, otp, 'EX', 100);
             await email_service_queue_instance.email_send_otp({ email, otp });
 
             ResponseWriter.success(res, null, 'OTP sent to your email');

@@ -54,7 +54,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             console.log(
                 'fall backing to the database for quiz data - cache miss for gameSession or quiz',
             );
-            return await fallbackToDatabase(req, res, quizId, gameSessionId, role, userId);
+            return await fallbackToDatabase(res, quizId, gameSessionId, role, userId);
         }
 
         const questions = quiz.questions || [];
@@ -206,7 +206,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 }
 
 async function fallbackToDatabase(
-    req: Request,
     res: Response,
     quizId: string,
     gameSessionId: string,

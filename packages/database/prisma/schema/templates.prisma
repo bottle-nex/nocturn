@@ -1,26 +1,26 @@
 model Template {
-    id              String   @id @default(cuid())
-    name            String   @unique
-    backgroundColor String   @map("background_color")
-    textColor       String   @map("text_color")
-    borderColor     String   @map("border_color")
-    accentType      String   @map("accent_type")
-    accentColor     String   @map("accent_color")
+    id              String       @id @default(cuid())
+    name            TemplateEnum @unique @default(CLASSIC)
+    backgroundColor String       @map("background_color")
+    textColor       String       @map("text_color")
+    borderColor     String       @map("border_color")
+    accentType      String       @map("accent_type")
+    accentColor     String       @map("accent_color")
     bars            String[]
     src             String
-    
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
-    quizzes         Quiz[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    quizzes   Quiz[]
 }
 
-/*
-  <---------- theme json data ---------->
-  background_color: string;
-  text_color: string;
-  border_color: string;
-  accent_type: string;
-  accent_color: string;
-  bars: string[];
-  src: string;
-*/
+/**
+ * <---------- theme json data ---------->
+ * background_color: string;
+ * text_color: string;
+ * border_color: string;
+ * accent_type: string;
+ * accent_color: string;
+ * bars: string[];
+ * src: string;
+ */

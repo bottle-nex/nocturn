@@ -10,6 +10,11 @@ import { RiCircleLine, RiRecordCircleLine } from 'react-icons/ri';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
 import { Layouts } from './MyQuizzesPanel';
+import BackendActions from '@/lib/backend/new/quiz-backend-actions';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { Loader } from 'lucide-react';
 
 interface QuizzesUpperSectionData {
     onDeleteSelected?: () => void;
@@ -22,20 +27,33 @@ interface QuizzesUpperSectionData {
 }
 
 export default function QuizzesUpperSection({
-    onDeleteSelected,
-    onCancelSelection,
-    selectedQuizes,
-    onToggleSelectAll,
     isAllSelected,
+    selectedQuizes,
     activeLayoutTab,
     onLayoutChange,
+    onDeleteSelected,
+    onCancelSelection,
+    onToggleSelectAll,
 }: QuizzesUpperSectionData) {
-    const { session } = useUserSessionStore();
     const router = useRouter();
+    const { session } = useUserSessionStore();
+    const { updateQuiz } = useNewQuizStore();
+    const [creating, setCreating] = useState(false);
 
-    function handleCreateQuiz() {
-        if (!session?.user.token) return;
-        router.push('/new');
+    async function handleCreateQuiz() {
+        if (!session?.user.token || creating) return;
+        setCreating(true);
+        try {
+            const quiz = await BackendActions.createQuiz(session.user.token);
+            if (!quiz) {
+                toast.error('Failed to create quiz');
+                return;
+            }
+            updateQuiz(quiz);
+            router.push(`/new/${quiz.id}`);
+        } finally {
+            setCreating(false);
+        }
     }
 
     return (
@@ -65,10 +83,11 @@ export default function QuizzesUpperSection({
                 <Button
                     size="sm"
                     onClick={handleCreateQuiz}
+                    disabled={creating}
                     className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
                 >
-                    <FiPlus />
-                    <span>New Quiz</span>
+                    {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />}
+                    <span>{creating ? 'Creating...' : 'New Quiz'}</span>
                 </Button>
             </div>
 

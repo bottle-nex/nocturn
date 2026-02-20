@@ -179,7 +179,7 @@ export default class QuizController {
             // if quiz exists, update the quiz
             if (quiz) {
                 // add checks for other status types
-
+                console.log('quiz status is : ', quiz.status);
                 // don't update if live or publish
                 if (quiz.status === 'LIVE' || quiz.status === 'PUBLISHED') {
                     return {
@@ -313,10 +313,9 @@ export default class QuizController {
     private async launch_quiz_tx(
         quizId: string,
     ): Promise<{ quiz: Partial<Quiz>; gameSession: Partial<GameSession> }> {
+        const participantCode = await QuizAction.generateUniqueCode('participant');
+        const spectatorCode = await QuizAction.generateUniqueCode('spectator');
         const result = await prisma.$transaction(async (tx) => {
-            const participantCode = await QuizAction.generateUniqueCode('participant');
-            const spectatorCode = await QuizAction.generateUniqueCode('spectator');
-
             const quiz = await tx.quiz.update({
                 where: {
                     id: quizId,
