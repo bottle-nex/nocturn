@@ -28,7 +28,7 @@ interface Option {
 
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
-    const [currentAction, setCurrentAction] = useState<string | null>(null);
+    const [_currentAction, setCurrentAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
     const { session } = useUserSessionStore();

@@ -3,7 +3,6 @@ import Image from 'next/image';
 import UtilityCard from './UtilityCard';
 import LogoutModal from './LogoutModal';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { IoChevronDownSharp } from 'react-icons/io5';
 import { useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { SiGithub } from 'react-icons/si';

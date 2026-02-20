@@ -54,7 +54,6 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
-                console.log('new quiz response is : ', data);
 
                 if (data.success && data.data) {
                     switch (data.data.type) {
