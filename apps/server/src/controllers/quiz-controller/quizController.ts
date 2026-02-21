@@ -1,338 +1,448 @@
 import { GameSession, Quiz, QuizStatus, prisma } from '@nocturn/database';
+import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
-import { CreateQuizType, QuestionType, TemplateEnum } from '../../schemas/createQuizSchema';
+import ResponseWriter from '../../class/response_writer';
+import { env } from '../../configs/env';
+import { createQuizSchema } from '../../schemas/createQuizSchema';
+import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
+import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import { redisCacheInstance } from '../../services/init.services';
 
-export enum QUIZ_STATUS {
-    SAVE_NEW_QUIZ = 'SAVE_NEW_QUIZ',
-    UPDATE_QUIZ = 'UPDATE_QUIZ',
-    PUBLISH_QUIZ = 'PUBLISH_QUIZ',
-    LAUNCH_QUIZ = 'LAUNCH_QUIZ',
-}
-
-type quiz_controller =
-    | {
-          type: QUIZ_STATUS.SAVE_NEW_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          error?: unknown;
-          isHost?: boolean;
-      }
-    | { type: QUIZ_STATUS.UPDATE_QUIZ; success: boolean; quiz?: Partial<Quiz>; error?: unknown }
-    | {
-          type: QUIZ_STATUS.PUBLISH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      }
-    | {
-          type: QUIZ_STATUS.LAUNCH_QUIZ;
-          success: boolean;
-          quiz?: Partial<Quiz>;
-          gameSession?: Partial<GameSession>;
-          status?: QuizStatus;
-          error?: unknown;
-          isHost?: boolean;
-      };
+const NON_EDITABLE_STATUSES: QuizStatus[] = [
+    'LIVE',
+    'PUBLISHED',
+    'COMPLETED',
+    'PAYOUT_PENDING',
+    'PAYOUT_COMPLETED',
+];
 
 export default class QuizController {
-    public async update_quiz_status(
-        status: QUIZ_STATUS,
-        quizId: string,
-        quiz_data: CreateQuizType,
-        questions: QuestionType[],
-        hostId: string,
-    ): Promise<quiz_controller | null> {
-        switch (status) {
-            case QUIZ_STATUS.SAVE_NEW_QUIZ:
-                return await this.handle_save_new_quiz(quizId, quiz_data, questions, hostId);
+    // ─── Public Route Handlers ────────────────────────────────────────────────
 
-            case QUIZ_STATUS.UPDATE_QUIZ:
-                return await this.handle_update_quiz(quizId, quiz_data, questions);
+    public static async save(req: Request, res: Response) {
+        const userId = req.user?.id;
+        const quizId = req.params.quizId;
 
-            case QUIZ_STATUS.PUBLISH_QUIZ:
-                return await this.handle_publish_quiz(quizId, quiz_data, questions, hostId);
+        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
+        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
 
-            case QUIZ_STATUS.LAUNCH_QUIZ:
-                return await this.handle_launch_quiz(quizId, quiz_data, questions, hostId);
+        const parsed = createQuizSchema.safeParse(req.body);
+        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
-            default:
-                return null;
-        }
+        const { questions, ...quiz_data } = parsed.data;
+        await QuizController.handle_save(res, quizId, userId, quiz_data, questions || []);
     }
 
-    private async handle_save_new_quiz(
+    public static async update(req: Request, res: Response) {
+        const userId = req.user?.id;
+        const quizId = req.params.quizId;
+
+        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
+        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+
+        const parsed = createQuizSchema.safeParse(req.body);
+        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+
+        const { questions, ...quiz_data } = parsed.data;
+        await QuizController.handle_update(res, quizId, userId, quiz_data, questions || []);
+    }
+
+    public static async publish(req: Request, res: Response) {
+        const userId = req.user?.id;
+        const quizId = req.params.quizId;
+
+        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
+        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+
+        const parsed = createQuizSchema.safeParse(req.body);
+        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+
+        const { questions, ...quiz_data } = parsed.data;
+        await QuizController.handle_publish(res, quizId, userId, quiz_data, questions || []);
+    }
+
+    public static async launch(req: Request, res: Response) {
+        const userId = req.user?.id;
+        const quizId = req.params.quizId;
+
+        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
+        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+
+        const parsed = createQuizSchema.safeParse(req.body);
+        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+
+        const { questions, ...quiz_data } = parsed.data;
+        await QuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
+    }
+
+    // ─── Private: Core Logic ──────────────────────────────────────────────────
+
+    private static async handle_save(
+        res: Response,
         quizId: string,
-        quiz_data: CreateQuizType,
-        questions: QuestionType[],
         hostId: string,
-    ): Promise<quiz_controller> {
+        quiz_data: Omit<CreateQuizType, 'questions'>,
+        questions: QuestionType[],
+    ) {
         try {
-            let quiz = await this.find_quiz(quizId);
-            if (!quiz) {
-                const { templateId, ...restQuizData } = quiz_data;
-                const randomTemplate =
-                    templateId ??
-                    Object.values(TemplateEnum)[
-                        Math.floor(Math.random() * Object.values(TemplateEnum).length)
-                    ];
-                quiz = await prisma.quiz.create({
-                    data: {
-                        ...restQuizData,
-                        templateId: randomTemplate,
-                        scheduledAt: quiz_data.scheduledAt
-                            ? new Date(quiz_data.scheduledAt)
-                            : undefined,
-                        hostId: hostId,
-                        questions: {
-                            create: questions,
-                        },
-                    },
-                });
+            const existing = await QuizController.findQuiz(quizId);
 
-                const response: quiz_controller = {
-                    type: QUIZ_STATUS.SAVE_NEW_QUIZ,
-                    success: true,
-                    quiz: quiz,
-                };
-                return response;
-            } else {
-                const isValidOwner = await QuizAction.validOwner(hostId, quizId);
-                if (!isValidOwner) {
-                    return {
-                        type: QUIZ_STATUS.SAVE_NEW_QUIZ,
-                        success: false,
-                        isHost: false,
-                    };
-                }
-
-                return await this.handle_update_quiz(quizId, quiz_data, questions);
+            if (!existing) {
+                // Brand new — create directly with DRAFT status
+                const quiz = await QuizController.createQuiz(
+                    quizId,
+                    hostId,
+                    quiz_data,
+                    questions,
+                    QuizStatus.CREATED,
+                );
+                return ResponseWriter.success(res, { quiz }, 'Quiz saved successfully', 201);
             }
+
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
+            if (!QuizController.validateEditable(res, existing.status)) return;
+
+            const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
+            return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
         } catch (error) {
-            return this.handle_error(QUIZ_STATUS.SAVE_NEW_QUIZ, error);
+            QuizController.internalError(res, error);
         }
     }
 
-    private async handle_update_quiz(
+    private static async handle_update(
+        res: Response,
         quizId: string,
-        quiz_data: CreateQuizType,
+        hostId: string,
+        quiz_data: Omit<CreateQuizType, 'questions'>,
         questions: QuestionType[],
-    ): Promise<quiz_controller> {
+    ) {
         try {
-            // check for the valid owner, before calling this function
-            const quiz = await prisma.$transaction(async (tx) => {
-                await tx.question.deleteMany({
-                    where: {
-                        quizId,
-                    },
-                });
+            const existing = await QuizController.findQuiz(quizId);
 
-                return await tx.quiz.update({
-                    where: {
+            if (!existing)
+                return ResponseWriter.error(
+                    res,
+                    'QUIZ_NOT_FOUND',
+                    'Quiz not found',
+                    undefined,
+                    404,
+                );
+
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
+            if (!QuizController.validateEditable(res, existing.status)) return;
+
+            const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
+            return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
+        } catch (error) {
+            QuizController.internalError(res, error);
+        }
+    }
+
+    private static async handle_publish(
+        res: Response,
+        quizId: string,
+        hostId: string,
+        quiz_data: Omit<CreateQuizType, 'questions'>,
+        questions: QuestionType[],
+    ) {
+        try {
+            const existing = await QuizController.findQuiz(quizId);
+
+            if (existing?.status === 'LIVE')
+                return ResponseWriter.error(
+                    res,
+                    'QUIZ_ALREADY_LIVE',
+                    'Quiz is already live',
+                    undefined,
+                    400,
+                );
+
+            if (existing?.status === 'PUBLISHED')
+                return ResponseWriter.error(
+                    res,
+                    'QUIZ_ALREADY_PUBLISHED',
+                    'Quiz is already published',
+                    undefined,
+                    400,
+                );
+
+            if (!existing) {
+                // Brand new — create directly with PUBLISHED status, no intermediate steps
+                const quiz = await QuizController.createQuiz(
+                    quizId,
+                    hostId,
+                    quiz_data,
+                    questions,
+                    'PUBLISHED',
+                );
+                return ResponseWriter.success(res, { quiz }, 'Quiz published successfully', 200);
+            }
+
+            // Exists and is editable — validate owner, update + set PUBLISHED in one transaction
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
+
+            const quiz = await QuizController.updateQuizDataWithStatus(
+                quizId,
+                quiz_data,
+                questions,
+                'PUBLISHED',
+            );
+            return ResponseWriter.success(res, { quiz }, 'Quiz published successfully', 200);
+        } catch (error) {
+            QuizController.internalError(res, error);
+        }
+    }
+
+    private static async handle_launch(
+        req: Request,
+        res: Response,
+        quizId: string,
+        hostId: string,
+        quiz_data: Omit<CreateQuizType, 'questions'>,
+        questions: QuestionType[],
+    ) {
+        try {
+            const [existing, participantCode, spectatorCode, host] = await Promise.all([
+                QuizController.findQuiz(quizId),
+                QuizAction.generateUniqueCode('participant'),
+                QuizAction.generateUniqueCode('spectator'),
+                QuizController.get_host_details(res, hostId),
+            ]);
+
+            if (!host) return; // response already sent inside get_host_details
+
+            if (existing?.status === 'LIVE')
+                return ResponseWriter.error(
+                    res,
+                    'QUIZ_ALREADY_LIVE',
+                    'Quiz is already live',
+                    undefined,
+                    400,
+                );
+
+            if (existing && existing.hostId !== hostId)
+                return ResponseWriter.error(
+                    res,
+                    'NOT_OWNER',
+                    'You are not the owner of this quiz',
+                    undefined,
+                    403,
+                );
+
+            let quiz: Partial<Quiz>;
+            let gameSession: Partial<GameSession>;
+
+            if (!existing) {
+                ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
+                    const createData: any = {
+                        ...quiz_data,
                         id: quizId,
-                    },
-                    data: {
-                        title: quiz_data.title,
-                        description: quiz_data.description,
-                        prizePool: quiz_data.prizePool,
-                        currency: quiz_data.currency,
-                        basePointsPerQuestion: quiz_data.basePointsPerQuestion,
-                        pointsMultiplier: quiz_data.pointsMultiplier,
-                        timeBonus: quiz_data.timeBonus,
-                        templateId: quiz_data.templateId,
-                        eliminationThreshold: quiz_data.eliminationThreshold,
-                        questionTimeLimit: quiz_data.questionTimeLimit,
-                        breakBetweenQuestions: quiz_data.breakBetweenQuestions,
+                        hostId,
+                        status: 'LIVE',
+                        startedAt: new Date(),
+                        participantCode,
+                        spectatorCode,
                         scheduledAt: quiz_data.scheduledAt
                             ? new Date(quiz_data.scheduledAt)
                             : undefined,
-                        autoSave: quiz_data.autoSave,
-                        liveChat: quiz_data.liveChat,
-                        spectatorMode: quiz_data.spectatorMode,
-                        questions: {
-                            create: questions,
+                        questions: { create: questions },
+                    };
+                    if (!createData.templateId) delete createData.templateId;
+
+                    const created = await tx.quiz.create({
+                        data: createData,
+                        include: {
+                            questions: true,
+                            template: true,
                         },
-                    },
-                    include: {
-                        template: true,
-                    },
-                });
+                    });
+
+                    const session = await tx.gameSession.create({
+                        data: {
+                            quizId: created.id,
+                            hostScreen: 'LOBBY',
+                            participantScreen: 'LOBBY',
+                            questionStartedAt: new Date(),
+                            status: 'WAITING',
+                        },
+                    });
+
+                    return { quiz: created, gameSession: session };
+                }));
+            } else if (existing.status === 'PUBLISHED') {
+                ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
+                    const updated = await tx.quiz.update({
+                        where: { id: quizId },
+                        data: {
+                            status: 'LIVE',
+                            startedAt: new Date(),
+                            participantCode,
+                            spectatorCode,
+                        },
+                        include: {
+                            questions: true,
+                            template: true,
+                        },
+                    });
+
+                    const session = await tx.gameSession.create({
+                        data: {
+                            quizId,
+                            hostScreen: 'LOBBY',
+                            participantScreen: 'LOBBY',
+                            questionStartedAt: new Date(),
+                            status: 'WAITING',
+                        },
+                    });
+
+                    return { quiz: updated, gameSession: session };
+                }));
+            } else {
+                if (!QuizController.validateEditable(res, existing.status)) return;
+
+                ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
+                    await tx.question.deleteMany({ where: { quizId } });
+
+                    const updated = await tx.quiz.update({
+                        where: { id: quizId },
+                        data: {
+                            ...quiz_data,
+                            status: 'LIVE',
+                            startedAt: new Date(),
+                            participantCode,
+                            spectatorCode,
+                            scheduledAt: quiz_data.scheduledAt
+                                ? new Date(quiz_data.scheduledAt)
+                                : undefined,
+                            questions: { create: questions },
+                        },
+                        // select: {
+                        //     id: true, title: true, description: true, template: true, status: true,
+                        //     questionTimeLimit: true, breakBetweenQuestions: true, eliminationThreshold: true,
+                        //     timeBonus: true, liveChat: true, spectatorMode: true, basePointsPerQuestion: true,
+                        //     pointsMultiplier: true, prizePool: true, currency: true,
+                        //     _count: { select: { questions: true, participants: true } },
+                        // },
+                        include: {
+                            questions: true,
+                            template: true,
+                        },
+                    });
+
+                    const session = await tx.gameSession.create({
+                        data: {
+                            quizId,
+                            hostScreen: 'LOBBY',
+                            participantScreen: 'LOBBY',
+                            questionStartedAt: new Date(),
+                            status: 'WAITING',
+                        },
+                    });
+
+                    return { quiz: updated, gameSession: session };
+                }));
+            }
+
+            // host data now passed into set_host
+            redisCacheInstance.set_host(gameSession.id as string, hostId, host);
+            redisCacheInstance.set_game_session(gameSession.id as string, gameSession);
+            redisCacheInstance.set_quiz(gameSession.id as string, quiz);
+
+            const token = QuizAction.generateLiveGameToken(
+                String(hostId),
+                quizId,
+                gameSession.id!,
+                USER_TYPE.HOST,
+                req.user?.name,
+            );
+
+            res.cookie(NOCTURN_COOKIE_NAME, token, {
+                httpOnly: true,
+                secure: env.SERVER_NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 1000,
             });
 
-            const response: quiz_controller = {
-                type: QUIZ_STATUS.UPDATE_QUIZ,
-                success: true,
-                quiz: quiz,
-            };
-
-            return response;
+            return ResponseWriter.success(
+                res,
+                { quiz, gameSession },
+                'Quiz launched successfully',
+                200,
+            );
         } catch (error) {
-            return this.handle_error(QUIZ_STATUS.UPDATE_QUIZ, error);
+            QuizController.internalError(res, error);
         }
     }
+    // ─── Private: DB Operations ───────────────────────────────────────────────
 
-    // add host auth
-    private async handle_publish_quiz(
+    private static async findQuiz(quizId: string): Promise<Quiz | null> {
+        return prisma.quiz.findUnique({ where: { id: quizId } });
+    }
+
+    private static async createQuiz(
         quizId: string,
-        quiz_data: CreateQuizType,
-        questions: QuestionType[],
         hostId: string,
-    ): Promise<quiz_controller> {
-        try {
-            const quiz = await this.find_quiz(quizId);
-            let publishing_quiz;
+        quiz_data: Omit<CreateQuizType, 'questions'>,
+        questions: QuestionType[],
+        status: QuizStatus,
+    ): Promise<Quiz> {
+        const createData: any = {
+            ...quiz_data,
+            id: quizId,
+            hostId,
+            status,
+            scheduledAt: quiz_data.scheduledAt ? new Date(quiz_data.scheduledAt) : undefined,
+            questions: { create: questions },
+        };
 
-            // if quiz exists, update the quiz
-            if (quiz) {
-                // add checks for other status types
-                console.log('quiz status is : ', quiz.status);
-                // don't update if live or publish
-                if (quiz.status === 'LIVE' || quiz.status === 'PUBLISHED') {
-                    return {
-                        type: QUIZ_STATUS.PUBLISH_QUIZ,
-                        success: false,
-                        status: quiz.status,
-                    };
-                }
+        if (!createData.templateId) delete createData.templateId;
 
-                const isValidOwner = await QuizAction.validOwner(hostId, quizId);
-
-                if (!isValidOwner) {
-                    return {
-                        type: QUIZ_STATUS.PUBLISH_QUIZ,
-                        success: false,
-                        isHost: false,
-                    };
-                }
-
-                const data = await this.handle_update_quiz(quizId, quiz_data, questions);
-
-                if (!data.quiz) {
-                    return {
-                        type: QUIZ_STATUS.PUBLISH_QUIZ,
-                        success: false,
-                        error: data.error,
-                    };
-                }
-
-                publishing_quiz = await prisma.quiz.update({
-                    where: {
-                        id: data.quiz.id,
-                    },
-                    data: {
-                        status: 'PUBLISHED',
-                    },
-                });
-            } else {
-                // create the quiz
-                const data = await this.handle_save_new_quiz(quizId, quiz_data, questions, hostId);
-
-                if (!data.quiz) {
-                    return {
-                        type: QUIZ_STATUS.PUBLISH_QUIZ,
-                        success: false,
-                    };
-                }
-
-                publishing_quiz = await prisma.quiz.update({
-                    where: {
-                        id: data.quiz.id,
-                    },
-                    data: {
-                        status: 'PUBLISHED',
-                    },
-                });
-            }
-
-            const response = {
-                type: QUIZ_STATUS.PUBLISH_QUIZ,
-                success: true,
-                quiz: publishing_quiz,
-            };
-
-            return response;
-        } catch (error) {
-            return this.handle_error(QUIZ_STATUS.PUBLISH_QUIZ, error);
-        }
+        return prisma.quiz.create({ data: createData });
     }
 
-    // add host auth
-    private async handle_launch_quiz(
+    private static async updateQuizData(
         quizId: string,
-        quiz_data: CreateQuizType,
+        quiz_data: Omit<CreateQuizType, 'questions'>,
         questions: QuestionType[],
-        hostId: string,
-    ): Promise<quiz_controller> {
-        try {
-            const quiz = await this.find_quiz(quizId);
-
-            let launching_quiz: { quiz: Partial<Quiz>; gameSession: Partial<GameSession> };
-
-            if (quiz?.status === 'LIVE') {
-                return {
-                    type: QUIZ_STATUS.LAUNCH_QUIZ,
-                    success: false,
-                    status: quiz.status,
-                };
-            }
-
-            if (quiz?.status === 'PUBLISHED') {
-                // validate owner
-                const isValidOwner = await QuizAction.validOwner(hostId, quizId);
-
-                if (!isValidOwner) {
-                    return {
-                        type: QUIZ_STATUS.LAUNCH_QUIZ,
-                        success: false,
-                        isHost: false,
-                    };
-                }
-
-                launching_quiz = await this.launch_quiz_tx(quiz?.id);
-            } else {
-                const data = await this.handle_publish_quiz(quizId, quiz_data, questions, hostId);
-
-                if (!data.quiz) {
-                    return {
-                        type: QUIZ_STATUS.LAUNCH_QUIZ,
-                        success: false,
-                        error: data.error,
-                    };
-                }
-
-                launching_quiz = await this.launch_quiz_tx(data.quiz.id!);
-            }
-
-            const response: quiz_controller = {
-                type: QUIZ_STATUS.LAUNCH_QUIZ,
-                success: true,
-                quiz: launching_quiz.quiz,
-                gameSession: launching_quiz.gameSession,
-            };
-
-            return response;
-        } catch (error) {
-            return this.handle_error(QUIZ_STATUS.LAUNCH_QUIZ, error);
-        }
+    ): Promise<Partial<Quiz>> {
+        return QuizController.updateQuizDataWithStatus(quizId, quiz_data, questions);
     }
 
-    private async launch_quiz_tx(
+    // Single transaction: delete old questions + update quiz fields + optionally set status
+    private static async updateQuizDataWithStatus(
+        quizId: string,
+        quiz_data: Omit<CreateQuizType, 'questions'>,
+        questions: QuestionType[],
+        status?: QuizStatus,
+    ): Promise<Partial<Quiz>> {
+        return prisma.$transaction(async (tx) => {
+            await tx.question.deleteMany({ where: { quizId } });
+
+            return tx.quiz.update({
+                where: { id: quizId },
+                data: {
+                    ...quiz_data,
+                    ...(status && { status }),
+                    scheduledAt: quiz_data.scheduledAt
+                        ? new Date(quiz_data.scheduledAt)
+                        : undefined,
+                    questions: { create: questions },
+                },
+                include: { template: true },
+            });
+        });
+    }
+
+    private static async launchTransaction(
         quizId: string,
     ): Promise<{ quiz: Partial<Quiz>; gameSession: Partial<GameSession> }> {
         const participantCode = await QuizAction.generateUniqueCode('participant');
         const spectatorCode = await QuizAction.generateUniqueCode('spectator');
-        const result = await prisma.$transaction(async (tx) => {
+
+        return prisma.$transaction(async (tx) => {
             const quiz = await tx.quiz.update({
-                where: {
-                    id: quizId,
-                },
-                data: {
-                    status: 'LIVE',
-                    startedAt: new Date(),
-                    participantCode,
-                    spectatorCode,
-                },
+                where: { id: quizId },
+                data: { status: 'LIVE', startedAt: new Date(), participantCode, spectatorCode },
                 select: {
                     id: true,
                     title: true,
@@ -349,18 +459,13 @@ export default class QuizController {
                     pointsMultiplier: true,
                     prizePool: true,
                     currency: true,
-                    _count: {
-                        select: {
-                            questions: true,
-                            participants: true,
-                        },
-                    },
+                    _count: { select: { questions: true, participants: true } },
                 },
             });
 
             const gameSession = await tx.gameSession.create({
                 data: {
-                    quizId: quizId,
+                    quizId,
                     hostScreen: 'LOBBY',
                     participantScreen: 'LOBBY',
                     questionStartedAt: new Date(),
@@ -376,28 +481,66 @@ export default class QuizController {
                     currentQuestionIndex: true,
                 },
             });
+
             return { quiz, gameSession };
         });
-
-        return result;
     }
 
-    private async find_quiz(quizId: string): Promise<Quiz | null> {
-        const quiz = await prisma.quiz.findUnique({
-            where: {
-                id: quizId,
-            },
-        });
+    // ─── Private: Validation ──────────────────────────────────────────────────
 
-        return quiz;
+    private static async validateOwner(res: Response, hostId: string, quizId: string) {
+        const isValid = await QuizAction.validOwner(hostId, quizId);
+        if (!isValid) {
+            ResponseWriter.error(
+                res,
+                'NOT_OWNER',
+                'You are not the owner of this quiz',
+                undefined,
+                403,
+            );
+            return false;
+        }
+        return true;
     }
 
-    private handle_error(type: QUIZ_STATUS, error: unknown): quiz_controller {
-        const response: quiz_controller = {
-            type,
-            success: false,
-            error,
-        };
-        return response;
+    private static async get_host_details(res: Response, host_id: string) {
+        try {
+            const host = await prisma.user.findUnique({
+                where: {
+                    id: host_id,
+                },
+            });
+            if (!host) {
+                ResponseWriter.not_found(res, 'unable to find host data');
+                return null;
+            }
+
+            return host;
+        } catch (error) {
+            console.error('error while getting host details in quiz controller: ', error);
+            return null;
+        }
+    }
+
+    private static validateEditable(res: Response, status: QuizStatus) {
+        if (NON_EDITABLE_STATUSES.includes(status)) {
+            const isLive = status === 'LIVE';
+            ResponseWriter.error(
+                res,
+                isLive ? 'QUIZ_ALREADY_LIVE' : 'QUIZ_ALREADY_PUBLISHED',
+                isLive
+                    ? 'Quiz is live and cannot be edited'
+                    : 'Quiz is published and cannot be edited',
+                undefined,
+                400,
+            );
+            return false;
+        }
+        return true;
+    }
+
+    private static internalError(res: Response, error: unknown) {
+        console.error('[QuizController]', error);
+        ResponseWriter.system_error(res);
     }
 }

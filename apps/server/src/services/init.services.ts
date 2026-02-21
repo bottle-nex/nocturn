@@ -1,5 +1,4 @@
 import RedisCache from '../cache/redis.cache';
-import QuizController from '../controllers/quiz-controller/quizController';
 import PhaseQueue from '../queue/PhaseQueue';
 import QuizManager from '../sockets/QuizManager';
 import Redis from 'ioredis';
@@ -15,7 +14,6 @@ import DatabaseQueue from '../queue/database/database.queue';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
-export let quizControllerInstance: QuizController;
 export let phaseQueueInstance: PhaseQueue;
 export let quizManagerInstance: QuizManager;
 export let quizSettingInstance: QuizSettings;
@@ -35,7 +33,6 @@ export default function initServices() {
     redisCacheInstance = new RedisCache();
     email_service_queue_instance = new EmailServiceQueue('email-service-queue');
     databaseQueueInstance = new DatabaseQueue();
-    quizControllerInstance = new QuizController();
     collabStateCacheInstance = new CollabStateCache();
     dodo_payment_service = new DodoPaymentService(
         env.SERVER_NODE_ENV === 'development' ? 'test' : 'production',

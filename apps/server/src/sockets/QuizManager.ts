@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import RedisCache from '../cache/redis.cache';
-import { Participant, QuizStatus, SessionStatus, Spectator, prisma } from '@nocturn/database';
+import { Participant, QuizStatus, SessionStatus, Spectator } from '@nocturn/database';
 import { LiveGameTokenPayload, MESSAGE_TYPES, PubSubMessageTypes, SECONDS } from '@nocturn/types';
 import { PhaseQueueJobDataType } from '../types/web-socket-types';
 import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';
@@ -29,33 +29,6 @@ export default class QuizManager {
 
     public set_phase_queue(phase_queue_instance: PhaseQueue) {
         this.phase_queue = phase_queue_instance;
-    }
-
-    public async onHostconnect(game_session_id: string, quiz_id: string, _host_socket_id: string) {
-        const game_session = await prisma.gameSession.findUnique({
-            where: { id: game_session_id },
-        });
-        //     this.broadcast_to_session()
-        if (!game_session) {
-            throw new Error('Game session not found');
-        }
-
-        const quiz = await prisma.quiz.findUnique({
-            where: {
-                id: quiz_id,
-            },
-            include: {
-                questions: true,
-                template: true,
-            },
-        });
-
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-
-        await this.redis_cache.set_game_session(game_session_id, game_session);
-        await this.redis_cache.set_quiz(game_session_id, quiz);
     }
 
     public async onParticipantConnect(decoded_cookie_payload: LiveGameTokenPayload) {

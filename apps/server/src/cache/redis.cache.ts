@@ -1,4 +1,4 @@
-import { GameSession, Question, Response, Spectator, Template } from '@nocturn/database';
+import { GameSession, Question, Response, Spectator, Template, User } from '@nocturn/database';
 import Redis from 'ioredis';
 import { Participant, Quiz } from '@nocturn/database';
 import { env } from '../configs/env';
@@ -95,6 +95,85 @@ export default class RedisCache {
 
     private get_game_session_key(game_live_session_id: string) {
         return `game_session:${game_live_session_id}`;
+    }
+
+    //  <------------------ HOST ------------------>
+
+    public async set_host(game_session_id: string, host_id: string, host: Partial<User>) {
+        try {
+            const host_key = this.get_host_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+
+            Object.entries(host).forEach(([field, value]) => {
+                const field_key = `${host_id}:${field}`;
+                const field_value = typeof value === 'string' ? value : JSON.stringify(value);
+                pipeline.hset(host_key, field_key, field_value);
+            });
+
+            await pipeline.exec();
+            await this.redis_cache.expire(host_key, 60 * 60 * 24);
+        } catch (err) {
+            console.error('Error while setting participant in cache : ', err);
+        }
+    }
+
+    public async get_host(
+        game_session_id: string,
+        host_id: string,
+        fields?: (keyof User)[],
+    ): Promise<Partial<User> | null> {
+        const host_key = this.get_host_key(game_session_id);
+
+        try {
+            const host: Record<string, unknown> = {};
+            const match_pattern = `${host_id}:*`;
+            let cursor = '0';
+
+            do {
+                const [nextCursor, results] = await this.redis_cache.hscan(
+                    host_key,
+                    cursor,
+                    'MATCH',
+                    match_pattern,
+                    'COUNT',
+                    100,
+                );
+
+                cursor = nextCursor;
+
+                for (let i = 0; i < results.length; i += 2) {
+                    const field_name = results[i].slice(host_id.length + 1);
+
+                    try {
+                        host[field_name] = JSON.parse(results[i + 1]);
+                    } catch {
+                        host[field_name] = results[i + 1];
+                    }
+                }
+            } while (cursor !== '0');
+
+            if (Object.keys(host).length === 0) return null;
+
+            // field filtering (same behavior as get_all_participants)
+            if (fields && fields.length > 0) {
+                const filtered: Record<string, unknown> = {};
+                for (const field of fields) {
+                    if (host[field] !== undefined) {
+                        filtered[field] = host[field];
+                    }
+                }
+                return filtered as Partial<User>;
+            }
+
+            return host as Partial<User>;
+        } catch (err) {
+            console.error('Error in get_host :', err);
+            return null;
+        }
+    }
+
+    public get_host_key(game_session_id: string) {
+        return `game_session:${game_session_id}:host`;
     }
 
     //  <------------------ PARTICIPANT ------------------>

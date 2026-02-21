@@ -83,7 +83,6 @@ export default class HostManager {
         this.socketMapping.set(ws.id, ws);
         this.sessionHostMapping.set(payload.gameSessionId, ws.id);
         this.setup_message_handlers(ws);
-        await this.quizManager.onHostconnect(payload.gameSessionId, payload.quizId, ws.id);
         await this.quiz_settings.seed_settings_for_session(payload.gameSessionId);
     }
 
