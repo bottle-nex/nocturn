@@ -12,23 +12,28 @@ import ThemePreview from './ThemePreview';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, setIsHoveringTheme } = useNewQuizStore();
+    const { quiz, setIsHoveringTemplate } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const { templates } = useQuizTemplatesStore();
 
     const selectedTemplateId = quiz.templateId;
 
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    function hoverThemeHandler(template: TemplateType) {
+        if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = setTimeout(() => {
+            setIsHoveringTemplate(template);
+        }, 500);
+    }
 
     function changeThemeHandler(template: TemplateType) {
-        setIsHoveringTheme(true);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        timeoutRef.current = setTimeout(() => {
-            updateQuizAndBroadcast({
-                template: template,
-                templateId: template.id,
-            });
-        }, 500);
+        updateQuizAndBroadcast({
+            template: template,
+            templateId: template.id,
+        });
     }
 
     return (
@@ -63,11 +68,14 @@ export default function ThemesDraft() {
                         return (
                             <div
                                 key={template.id}
-                                onMouseEnter={() => changeThemeHandler(template)}
+                                onMouseEnter={() => hoverThemeHandler(template)}
                                 onMouseLeave={() => {
-                                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-                                    setIsHoveringTheme(false);
+                                    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                    leaveTimeoutRef.current = setTimeout(() => {
+                                        setIsHoveringTemplate(null);
+                                    }, 500);
                                 }}
+                                onClick={() => changeThemeHandler(template)}
                                 className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
                             >
                                 <ThemePreview

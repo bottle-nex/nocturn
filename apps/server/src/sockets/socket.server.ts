@@ -173,9 +173,6 @@ export default class WebsocketServer {
                     'collabSessionId' in decoded_cookie_payload
                         ? `collab_session:${decoded_cookie_payload.collabSessionId}`
                         : `game_session:${decoded_cookie_payload.gameSessionId}`;
-                console.log('redis key is : ', redis_key);
-                console.log('decoded cookie payload is : ', decoded_cookie_payload);
-                console.log('quiz id is : ', quizId);
                 if (decoded_cookie_payload.quizId !== quizId) {
                     console.error('Token validation failed');
                     ws.close();

@@ -26,8 +26,8 @@ interface NewQuizStoreTypes {
     currentQuestionIndex: number;
     loading: boolean;
     pendingTemplate: TemplateType | null;
-    isHoveringTheme: boolean;
-    setIsHoveringTheme: (isHovering: boolean) => void;
+    isHoveringTemplate: TemplateType | null;
+    setIsHoveringTemplate: (template: TemplateType | null) => void;
     setLoading: (loading: boolean) => void;
     updateQuiz: (quiz: Partial<QuizType>) => void;
     setPendingTemplate: (template: TemplateType | null) => void;
@@ -95,9 +95,9 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
 
     pendingTemplate: null,
     setPendingTemplate: (template) => set({ pendingTemplate: template }),
-    
-    isHoveringTheme: false,
-    setIsHoveringTheme: (isHovering: boolean) => set({ isHoveringTheme: isHovering }),
+
+    isHoveringTemplate: null,
+    setIsHoveringTemplate: (template: TemplateType | null) => set({ isHoveringTemplate: template }),
 
     currentQuestionIndex: 0,
     setCurrentQuestionIndex: (index: number) => set({ currentQuestionIndex: index }),
