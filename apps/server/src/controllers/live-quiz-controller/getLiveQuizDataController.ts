@@ -75,17 +75,30 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
         switch (role) {
             case USER_TYPE.HOST: {
-                userData = await prisma.user.findUnique({
-                    where: { id: userId },
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                        image: true,
-                        walletAddress: true,
-                        isVerified: true,
-                    },
-                });
+                const host = await redisCacheInstance.get_host(gameSessionId, userId, [
+                    'id',
+                    'name',
+                    'email',
+                    'image',
+                    'walletAddress',
+                    'isVerified',
+                ]);
+                if (!host) {
+                    ResponseWriter.not_found(res, 'unable to fetch host data.');
+                    return;
+                }
+                userData = host;
+                // userData = await prisma.user.findUnique({
+                //     where: { id: userId },
+                //     select: {
+                //         id: true,
+                //         name: true,
+                //         email: true,
+                //         image: true,
+                //         walletAddress: true,
+                //         isVerified: true,
+                //     },
+                // });
                 break;
             }
 
