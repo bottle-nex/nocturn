@@ -7,6 +7,5 @@ export enum SidebarTab {
     SETTINGS = 'settings',
     PREMIUM = 'premium',
 
-    TRASH = 'trash',
     CHATS = 'chats',
 }

@@ -2,21 +2,24 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { GoHeart, GoHeartFill } from 'react-icons/go';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const PARTICLE_COUNT = 14;
 
 interface HeartButtonData {
+    className?: string;
     liked: boolean;
+    disabled?: boolean;
     onToggle: (toggle: boolean) => void;
 }
 
-export default function HeartButton({ onToggle, liked }: HeartButtonData) {
+export default function HeartButton({ onToggle, liked, className, disabled }: HeartButtonData) {
     const [bursts, setBursts] = useState<number[]>([]);
 
     const handleClick = () => {
+        if (disabled) return;
         const toggle = !liked;
         onToggle(toggle);
-
         if (toggle) {
             const id = Date.now();
             setBursts((prev) => [...prev, id]);
@@ -29,7 +32,13 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
     return (
         <div
             onClick={handleClick}
-            className="h-8 w-8 flex justify-center items-center hover:bg-red-500/20 rounded-full group/heart cursor-pointer"
+            className={cn(
+                'h-8 w-8 flex justify-center items-center rounded-full group/heart',
+                disabled
+                    ? 'opacity-50 cursor-auto pointer-events-none'
+                    : 'cursor-pointer hover:bg-red-500/20',
+                className,
+            )}
         >
             <AnimatePresence>
                 {bursts.map((id) =>
@@ -53,17 +62,9 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
                             <motion.span
                                 key={`${id}-${i}`}
                                 initial={{ scale: 0.8, opacity: 1, x: 0, y: 0 }}
-                                animate={{
-                                    scale: 0,
-                                    opacity: 0,
-                                    x,
-                                    y,
-                                }}
+                                animate={{ scale: 0, opacity: 0, x, y }}
                                 exit={{ opacity: 0 }}
-                                transition={{
-                                    duration: 0.7,
-                                    ease: 'easeOut',
-                                }}
+                                transition={{ duration: 0.7, ease: 'easeOut' }}
                                 className={`absolute ${randomSize} rounded-full z-100 ${randomColor}`}
                             />
                         );
@@ -73,13 +74,8 @@ export default function HeartButton({ onToggle, liked }: HeartButtonData) {
 
             <motion.div
                 whileTap={{ scale: 0.8 }}
-                animate={{
-                    scale: liked ? [0.2, 1.25, 1] : 1,
-                }}
-                transition={{
-                    duration: 0.45,
-                    ease: 'easeOut',
-                }}
+                animate={{ scale: liked ? [0.2, 1.25, 1] : 1 }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
                 className="relative z-10"
             >
                 {liked ? (

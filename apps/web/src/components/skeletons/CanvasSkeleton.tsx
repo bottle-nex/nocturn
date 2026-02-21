@@ -52,11 +52,11 @@ export default function CanvasSkeletonCard() {
             </div>
 
             <div className="flex items-center gap-x-2 pt-2">
-                <div className="size-8 rounded-full bg-neutral-300 dark:bg-neutral-800/80 animate-pulse [animation-duration:2s]" />
+                <div className="size-8 rounded-full bg-neutral-300 dark:bg-neutral-800/80 animate-pulse animation-duration-[2s]" />
 
                 <div className="space-y-2">
-                    <div className="h-3 w-32 bg-neutral-300 dark:bg-neutral-800/80 rounded-sm animate-pulse [animation-duration:2s]" />
-                    <div className="h-2 w-20 bg-neutral-300 dark:bg-neutral-800/80 rounded animate-pulse [animation-duration:2s]" />
+                    <div className="h-3 w-32 bg-neutral-300 dark:bg-neutral-800/80 rounded-sm animate-pulse animation-duration-[2s]" />
+                    <div className="h-2 w-20 bg-neutral-300 dark:bg-neutral-800/80 rounded animate-pulse animation-duration-[2s]" />
                 </div>
             </div>
         </div>

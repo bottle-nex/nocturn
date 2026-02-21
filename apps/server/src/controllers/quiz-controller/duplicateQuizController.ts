@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma } from '@nocturn/database';
+import { prisma, TemplateEnum } from '@nocturn/database';
 
 export default async function duplicateQuizController(req: Request, res: Response) {
     const user = req.user;
@@ -25,6 +25,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
             },
             include: {
                 questions: true,
+                template: true,
             },
         });
 
@@ -35,27 +36,14 @@ export default async function duplicateQuizController(req: Request, res: Respons
 
         const duplicateQuiz = await prisma.quiz.create({
             data: {
-                title: quiz.title,
+                title: `${quiz.title}`,
                 description: quiz.description,
-                template: {
-                    connect: { id: quiz.templateId },
-                },
-                prizePool: quiz.prizePool,
-                currency: quiz.currency,
-                basePointsPerQuestion: quiz.basePointsPerQuestion,
-                pointsMultiplier: quiz.pointsMultiplier,
-                timeBonus: quiz.timeBonus,
-                eliminationThreshold: quiz.eliminationThreshold,
-                isFavourite: quiz.isFavourite,
-                questionTimeLimit: quiz.questionTimeLimit,
-                breakBetweenQuestions: quiz.breakBetweenQuestions,
-                autoSave: quiz.autoSave,
-                liveChat: quiz.liveChat,
-                spectatorMode: quiz.spectatorMode,
-                allowNewSpectator: quiz.allowNewSpectator,
-                host: {
-                    connect: { id: user.id },
-                },
+                templateId: TemplateEnum.CLASSIC,
+                prizePool: 0,
+                currency: 'SOL',
+                isFavourite: false,
+                allowNewSpectator: true,
+                hostId: req.user.id,
                 questions: {
                     create: quiz.questions.map((q) => ({
                         question: q.question,
@@ -78,6 +66,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                 questions: {
                     take: 1,
                 },
+                template: true,
             },
         });
 

@@ -19,13 +19,14 @@ import { QuizType } from '@nocturn/types';
 
 interface QuizzesUpperSectionData {
     quizzes: QuizType[];
-    onDeleteSelected?: () => void;
+    onDeleteSelected?: () => Promise<void> | void;
     onCancelSelection?: () => void;
     selectedQuizes?: number;
     onToggleSelectAll?: () => void;
     isAllSelected?: boolean;
     activeLayoutTab?: Layouts;
     onLayoutChange?: (layout: Layouts) => void;
+    isBulkDeleting?: boolean;
 }
 
 export default function QuizzesUpperSection({
@@ -37,14 +38,16 @@ export default function QuizzesUpperSection({
     onDeleteSelected,
     onCancelSelection,
     onToggleSelectAll,
+    isBulkDeleting,
 }: QuizzesUpperSectionData) {
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { updateQuiz } = useNewQuizStore();
     const [creating, setCreating] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     async function handleCreateQuiz() {
-        if (!session?.user.token || creating) return;
+        if (!session?.user.token || creating || deleting || isBulkDeleting) return;
         setCreating(true);
         try {
             const quiz = await BackendActions.createQuiz(session.user.token);
@@ -58,6 +61,18 @@ export default function QuizzesUpperSection({
             setCreating(false);
         }
     }
+
+    async function handleDeleteSelected() {
+        if (!onDeleteSelected || deleting || isBulkDeleting) return;
+        setDeleting(true);
+        try {
+            await onDeleteSelected();
+        } finally {
+            setDeleting(false);
+        }
+    }
+
+    const actionsDisabled = creating || deleting || isBulkDeleting;
 
     return (
         <div className="flex flex-col gap-y-6 relative justify-between items-start mt-10">
@@ -76,7 +91,6 @@ export default function QuizzesUpperSection({
                             'dark:bg-dark-base! bg-light-base! border-neutral-800',
                         )}
                     />
-
                     <PiMagnifyingGlass
                         size={20}
                         className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
@@ -86,7 +100,7 @@ export default function QuizzesUpperSection({
                 <Button
                     size="sm"
                     onClick={handleCreateQuiz}
-                    disabled={creating}
+                    disabled={actionsDisabled}
                     className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
                 >
                     {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />}
@@ -98,6 +112,7 @@ export default function QuizzesUpperSection({
                 {quizzes && quizzes.length > 0 && (
                     <div className="flex items-center gap-x-1 h-11">
                         <Button
+                            disabled={actionsDisabled}
                             onClick={() => onLayoutChange?.(Layouts.GRID)}
                             className={cn(
                                 'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
@@ -117,6 +132,7 @@ export default function QuizzesUpperSection({
                         </Button>
 
                         <Button
+                            disabled={actionsDisabled}
                             onClick={() => onLayoutChange?.(Layouts.LIST)}
                             className={cn(
                                 'flex justify-center items-center rounded-sm border shadow-none hover:bg-indigo-600/20 h-7 w-7',
@@ -137,8 +153,13 @@ export default function QuizzesUpperSection({
 
                         {(selectedQuizes ?? 0) > 0 && (
                             <div
-                                onClick={onToggleSelectAll}
-                                className="pl-4 flex gap-x-1.5 cursor-pointer select-none items-center text-light-base/80"
+                                onClick={actionsDisabled ? undefined : onToggleSelectAll}
+                                className={cn(
+                                    'pl-4 flex gap-x-1.5 select-none items-center text-light-base/80',
+                                    actionsDisabled
+                                        ? 'opacity-50 cursor-not-allowed'
+                                        : 'cursor-pointer',
+                                )}
                             >
                                 {isAllSelected ? <RiRecordCircleLine /> : <RiCircleLine />}
                                 <span className="text-lg text-light-base/80">select all</span>
@@ -151,6 +172,7 @@ export default function QuizzesUpperSection({
                     <div className="flex items-center gap-x-3">
                         <Button
                             onClick={onCancelSelection}
+                            disabled={actionsDisabled}
                             variant="outline"
                             className="rounded-sm h-11 px-5 !border-neutral-800"
                         >
@@ -158,11 +180,20 @@ export default function QuizzesUpperSection({
                         </Button>
 
                         <Button
-                            onClick={onDeleteSelected}
+                            onClick={handleDeleteSelected}
+                            disabled={actionsDisabled}
                             className="rounded-sm h-11 px-5 bg-red-700 hover:bg-red-700/80 text-white flex items-center gap-x-2"
                         >
-                            <PiTrashSimple className="size-4.5 mb-px" />
-                            <span>Delete selected ({selectedQuizes})</span>
+                            {deleting || isBulkDeleting ? (
+                                <Loader className="animate-spin size-4" />
+                            ) : (
+                                <PiTrashSimple className="size-4.5 mb-px" />
+                            )}
+                            <span>
+                                {deleting || isBulkDeleting
+                                    ? 'Deleting selected'
+                                    : `Delete selected (${selectedQuizes})`}
+                            </span>
                         </Button>
                     </div>
                 )}
