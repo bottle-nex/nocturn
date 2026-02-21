@@ -10,7 +10,7 @@ import { redisCacheInstance } from '../../services/init.services';
 
 const NON_EDITABLE_STATUSES: QuizStatus[] = ['LIVE', 'PUBLISHED', 'COMPLETED', 'PAYOUT_PENDING', 'PAYOUT_COMPLETED'];
 
-export default class NewQuizController {
+export default class QuizController {
 
     // ─── Public Route Handlers ────────────────────────────────────────────────
 
@@ -25,7 +25,7 @@ export default class NewQuizController {
         if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
         const { questions, ...quiz_data } = parsed.data;
-        await NewQuizController.handle_save(res, quizId, userId, quiz_data, questions || []);
+        await QuizController.handle_save(res, quizId, userId, quiz_data, questions || []);
     }
 
     public static async update(req: Request, res: Response) {
@@ -39,7 +39,7 @@ export default class NewQuizController {
         if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
         const { questions, ...quiz_data } = parsed.data;
-        await NewQuizController.handle_update(res, quizId, userId, quiz_data, questions || []);
+        await QuizController.handle_update(res, quizId, userId, quiz_data, questions || []);
     }
 
     public static async publish(req: Request, res: Response) {
@@ -53,7 +53,7 @@ export default class NewQuizController {
         if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
         const { questions, ...quiz_data } = parsed.data;
-        await NewQuizController.handle_publish(res, quizId, userId, quiz_data, questions || []);
+        await QuizController.handle_publish(res, quizId, userId, quiz_data, questions || []);
     }
 
     public static async launch(req: Request, res: Response) {
@@ -67,7 +67,7 @@ export default class NewQuizController {
         if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
         const { questions, ...quiz_data } = parsed.data;
-        await NewQuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
+        await QuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
     }
 
     // ─── Private: Core Logic ──────────────────────────────────────────────────
@@ -80,22 +80,22 @@ export default class NewQuizController {
         questions: QuestionType[],
     ) {
         try {
-            const existing = await NewQuizController.findQuiz(quizId);
+            const existing = await QuizController.findQuiz(quizId);
 
             if (!existing) {
                 // Brand new — create directly with DRAFT status
-                const quiz = await NewQuizController.createQuiz(quizId, hostId, quiz_data, questions, QuizStatus.CREATED);
+                const quiz = await QuizController.createQuiz(quizId, hostId, quiz_data, questions, QuizStatus.CREATED);
                 return ResponseWriter.success(res, { quiz }, 'Quiz saved successfully', 201);
             }
 
-            if (!(await NewQuizController.validateOwner(res, hostId, quizId))) return;
-            if (!NewQuizController.validateEditable(res, existing.status)) return;
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
+            if (!QuizController.validateEditable(res, existing.status)) return;
 
-            const quiz = await NewQuizController.updateQuizData(quizId, quiz_data, questions);
+            const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
             return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
 
         } catch (error) {
-            NewQuizController.internalError(res, error);
+            QuizController.internalError(res, error);
         }
     }
 
@@ -107,19 +107,19 @@ export default class NewQuizController {
         questions: QuestionType[],
     ) {
         try {
-            const existing = await NewQuizController.findQuiz(quizId);
+            const existing = await QuizController.findQuiz(quizId);
 
             if (!existing)
                 return ResponseWriter.error(res, 'QUIZ_NOT_FOUND', 'Quiz not found', undefined, 404);
 
-            if (!(await NewQuizController.validateOwner(res, hostId, quizId))) return;
-            if (!NewQuizController.validateEditable(res, existing.status)) return;
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
+            if (!QuizController.validateEditable(res, existing.status)) return;
 
-            const quiz = await NewQuizController.updateQuizData(quizId, quiz_data, questions);
+            const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
             return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
 
         } catch (error) {
-            NewQuizController.internalError(res, error);
+            QuizController.internalError(res, error);
         }
     }
 
@@ -131,7 +131,7 @@ export default class NewQuizController {
         questions: QuestionType[],
     ) {
         try {
-            const existing = await NewQuizController.findQuiz(quizId);
+            const existing = await QuizController.findQuiz(quizId);
 
             if (existing?.status === 'LIVE')
                 return ResponseWriter.error(res, 'QUIZ_ALREADY_LIVE', 'Quiz is already live', undefined, 400);
@@ -141,18 +141,18 @@ export default class NewQuizController {
 
             if (!existing) {
                 // Brand new — create directly with PUBLISHED status, no intermediate steps
-                const quiz = await NewQuizController.createQuiz(quizId, hostId, quiz_data, questions, 'PUBLISHED');
+                const quiz = await QuizController.createQuiz(quizId, hostId, quiz_data, questions, 'PUBLISHED');
                 return ResponseWriter.success(res, { quiz }, 'Quiz published successfully', 200);
             }
 
             // Exists and is editable — validate owner, update + set PUBLISHED in one transaction
-            if (!(await NewQuizController.validateOwner(res, hostId, quizId))) return;
+            if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
 
-            const quiz = await NewQuizController.updateQuizDataWithStatus(quizId, quiz_data, questions, 'PUBLISHED');
+            const quiz = await QuizController.updateQuizDataWithStatus(quizId, quiz_data, questions, 'PUBLISHED');
             return ResponseWriter.success(res, { quiz }, 'Quiz published successfully', 200);
 
         } catch (error) {
-            NewQuizController.internalError(res, error);
+            QuizController.internalError(res, error);
         }
     }
 
@@ -166,10 +166,10 @@ export default class NewQuizController {
     ) {
         try {
             const [existing, participantCode, spectatorCode, host] = await Promise.all([
-                NewQuizController.findQuiz(quizId),
+                QuizController.findQuiz(quizId),
                 QuizAction.generateUniqueCode('participant'),
                 QuizAction.generateUniqueCode('spectator'),
-                NewQuizController.get_host_details(res, hostId),
+                QuizController.get_host_details(res, hostId),
             ]);
 
             if (!host) return; // response already sent inside get_host_details
@@ -198,7 +198,15 @@ export default class NewQuizController {
                     };
                     if (!createData.templateId) delete createData.templateId;
 
-                    const created = await tx.quiz.create({ data: createData });
+                    const created = await tx.quiz.create(
+                        {
+                            data: createData,
+                            include: {
+                                questions: true,
+                                template: true,
+                            },
+                        },
+                    );
 
                     const session = await tx.gameSession.create({
                         data: {
@@ -207,10 +215,6 @@ export default class NewQuizController {
                             participantScreen: 'LOBBY',
                             questionStartedAt: new Date(),
                             status: 'WAITING',
-                        },
-                        select: {
-                            id: true, status: true, hostScreen: true, participantScreen: true,
-                            totalParticipants: true, activeParticipants: true, currentQuestionIndex: true,
                         },
                     });
 
@@ -221,13 +225,10 @@ export default class NewQuizController {
                     const updated = await tx.quiz.update({
                         where: { id: quizId },
                         data: { status: 'LIVE', startedAt: new Date(), participantCode, spectatorCode },
-                        select: {
-                            id: true, title: true, description: true, template: true, status: true,
-                            questionTimeLimit: true, breakBetweenQuestions: true, eliminationThreshold: true,
-                            timeBonus: true, liveChat: true, spectatorMode: true, basePointsPerQuestion: true,
-                            pointsMultiplier: true, prizePool: true, currency: true,
-                            _count: { select: { questions: true, participants: true } },
-                        },
+                        include: {
+                            questions: true,
+                            template: true,
+                        }
                     });
 
                     const session = await tx.gameSession.create({
@@ -238,16 +239,12 @@ export default class NewQuizController {
                             questionStartedAt: new Date(),
                             status: 'WAITING',
                         },
-                        select: {
-                            id: true, status: true, hostScreen: true, participantScreen: true,
-                            totalParticipants: true, activeParticipants: true, currentQuestionIndex: true,
-                        },
                     });
 
                     return { quiz: updated, gameSession: session };
                 }));
             } else {
-                if (!NewQuizController.validateEditable(res, existing.status)) return;
+                if (!QuizController.validateEditable(res, existing.status)) return;
 
                 ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
                     await tx.question.deleteMany({ where: { quizId } });
@@ -263,13 +260,17 @@ export default class NewQuizController {
                             scheduledAt: quiz_data.scheduledAt ? new Date(quiz_data.scheduledAt) : undefined,
                             questions: { create: questions },
                         },
-                        select: {
-                            id: true, title: true, description: true, template: true, status: true,
-                            questionTimeLimit: true, breakBetweenQuestions: true, eliminationThreshold: true,
-                            timeBonus: true, liveChat: true, spectatorMode: true, basePointsPerQuestion: true,
-                            pointsMultiplier: true, prizePool: true, currency: true,
-                            _count: { select: { questions: true, participants: true } },
-                        },
+                        // select: {
+                        //     id: true, title: true, description: true, template: true, status: true,
+                        //     questionTimeLimit: true, breakBetweenQuestions: true, eliminationThreshold: true,
+                        //     timeBonus: true, liveChat: true, spectatorMode: true, basePointsPerQuestion: true,
+                        //     pointsMultiplier: true, prizePool: true, currency: true,
+                        //     _count: { select: { questions: true, participants: true } },
+                        // },
+                        include: {
+                            questions: true,
+                            template: true,
+                        }
                     });
 
                     const session = await tx.gameSession.create({
@@ -280,10 +281,6 @@ export default class NewQuizController {
                             questionStartedAt: new Date(),
                             status: 'WAITING',
                         },
-                        select: {
-                            id: true, status: true, hostScreen: true, participantScreen: true,
-                            totalParticipants: true, activeParticipants: true, currentQuestionIndex: true,
-                        },
                     });
 
                     return { quiz: updated, gameSession: session };
@@ -291,7 +288,9 @@ export default class NewQuizController {
             }
 
             // host data now passed into set_host
-            redisCacheInstance.set_host(gameSession.id!, hostId, host);
+            redisCacheInstance.set_host(gameSession.id as string, hostId, host);
+            redisCacheInstance.set_game_session(gameSession.id as string, gameSession);
+            redisCacheInstance.set_quiz(gameSession.id as string, quiz);
 
             const token = QuizAction.generateLiveGameToken(
                 String(hostId),
@@ -311,7 +310,7 @@ export default class NewQuizController {
             return ResponseWriter.success(res, { quiz, gameSession }, 'Quiz launched successfully', 200);
 
         } catch (error) {
-            NewQuizController.internalError(res, error);
+            QuizController.internalError(res, error);
         }
     }
     // ─── Private: DB Operations ───────────────────────────────────────────────
@@ -346,7 +345,7 @@ export default class NewQuizController {
         quiz_data: Omit<CreateQuizType, 'questions'>,
         questions: QuestionType[],
     ): Promise<Partial<Quiz>> {
-        return NewQuizController.updateQuizDataWithStatus(quizId, quiz_data, questions);
+        return QuizController.updateQuizDataWithStatus(quizId, quiz_data, questions);
     }
 
     // Single transaction: delete old questions + update quiz fields + optionally set status
