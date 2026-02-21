@@ -99,11 +99,7 @@ export default class RedisCache {
 
     //  <------------------ HOST ------------------>
 
-    public async set_host(
-        game_session_id: string,
-        host_id: string,
-        host: Partial<User>,
-    ) {
+    public async set_host(game_session_id: string, host_id: string, host: Partial<User>) {
         try {
             const host_key = this.get_host_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
@@ -124,7 +120,7 @@ export default class RedisCache {
     public async get_host(
         game_session_id: string,
         host_id: string,
-        fields?: (keyof User)[]
+        fields?: (keyof User)[],
     ): Promise<Partial<User> | null> {
         const host_key = this.get_host_key(game_session_id);
 
@@ -140,7 +136,7 @@ export default class RedisCache {
                     'MATCH',
                     match_pattern,
                     'COUNT',
-                    100
+                    100,
                 );
 
                 cursor = nextCursor;

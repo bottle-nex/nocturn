@@ -6,7 +6,6 @@ import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType } from '@nocturn/type
 import { env } from '../../configs/env';
 
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
-
     const user = req.user;
     if (!user || !user.id) {
         ResponseWriter.not_authorized(res);
@@ -32,10 +31,10 @@ export default async function getQuizController(req: Request, res: Response): Pr
                                     id: user.id,
                                     isBlocked: false,
                                 },
-                            }
-                        }
-                    }
-                ]
+                            },
+                        },
+                    },
+                ],
             },
             include: {
                 template: true,
@@ -89,7 +88,10 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 quiz.id,
                 userCollabRole,
                 req?.user.name,
-                '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'),
+                '#' +
+                    Math.floor(Math.random() * 16777215)
+                        .toString(16)
+                        .padStart(6, '0'),
                 collabSessionId,
             );
 

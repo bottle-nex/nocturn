@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import RedisCache from '../cache/redis.cache';
-import { Participant, QuizStatus, SessionStatus, Spectator, prisma } from '@nocturn/database';
+import { Participant, QuizStatus, SessionStatus, Spectator } from '@nocturn/database';
 import { LiveGameTokenPayload, MESSAGE_TYPES, PubSubMessageTypes, SECONDS } from '@nocturn/types';
 import { PhaseQueueJobDataType } from '../types/web-socket-types';
 import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';

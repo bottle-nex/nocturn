@@ -2,7 +2,6 @@ import { Router } from 'express';
 const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
-import upsertQuizController from '../controllers/quiz-controller/upsertQuizController';
 import getQuizController from '../controllers/quiz-controller/getQuizController';
 import getAllQuizController from '../controllers/quiz-controller/getAllQuizController';
 import permanently_delete_quiz_controller from '../controllers/quiz-controller/permanently_delete_quiz_controller';
@@ -30,7 +29,7 @@ router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_
 router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_controller);
 
 // <---------------------- QUIZ-ROUTES ---------------------->
-router.post('/quiz/create-quiz/:quizId', authMiddleware, upsertQuizController);
+router.post('/quiz/create-quiz/:quizId', authMiddleware, QuizController.save);
 router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.post('/quiz/duplicate-quiz/:quizId', authMiddleware, duplicateQuizController);
 
