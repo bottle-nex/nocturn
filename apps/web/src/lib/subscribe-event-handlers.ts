@@ -19,7 +19,7 @@ import {
     SpectatorScreenEnum,
     SpectatorType,
 } from '@nocturn/types';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 // FIX: Type guards for better type safety
 const isParticipant = (payload: unknown): payload is ParticipantType => {

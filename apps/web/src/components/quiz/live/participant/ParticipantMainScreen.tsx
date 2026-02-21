@@ -10,7 +10,7 @@ import ParticipantPanelRenderer from './ParticipantChannelRenderer';
 import ParticipantQuestionActiveScreen from './screens/QuestionActiveScreen/ParticipantQuestionActiveScreen';
 import ParticipantQuestionResultsScreen from './screens/QuestionResultsScreen/ParticipantQuestionResultsScreen';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import { useUserRoleStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import FullScreenWarningPanel from '../common/FullScreenWarningPanel';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';

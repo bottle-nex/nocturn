@@ -7,7 +7,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "db:generate": "cd packages/db && npx prisma generate && cd ../..",
+    "db:generate": "cd packages/database && npx prisma generate && cd ../..",
     "remove-logs": "turbo run remove-logs",
     "prepare": "husky"
   },

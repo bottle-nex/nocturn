@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Layouts } from './MyQuizzesPanel';
 import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import { useState } from 'react';
 import { Loader } from 'lucide-react';
 import { QuizType } from '@nocturn/types';

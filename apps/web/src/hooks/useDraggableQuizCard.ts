@@ -4,7 +4,7 @@ import { useDragQuizStore } from '@/store/home/useDragQuizStore';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 interface UseDraggableQuizCardProps {
     quizId?: string;

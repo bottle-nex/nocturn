@@ -4,7 +4,7 @@ import {
     SPECTATOR_JOIN_QUIZ_URL,
     SPECTATOR_JOIN_QUIZ_URL_VIA_LINK,
 } from 'routes/api_routes';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 interface JoinQuizResponse {
     quizId: string;

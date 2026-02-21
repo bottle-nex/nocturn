@@ -27,7 +27,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 import { CREATE_CHECKOUT_URL, GET_TIERS_URL } from '../../../routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import axios from 'axios';
 import SectionHeading from '../ui/SectionHeading';
 

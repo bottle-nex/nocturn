@@ -2,7 +2,7 @@ import { cleanWebSocketClient } from '@/lib/singleton-socket';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export const useParticipantWarning = () => {
     const { participantData, removeParticipantData } = useLiveParticipantStore();

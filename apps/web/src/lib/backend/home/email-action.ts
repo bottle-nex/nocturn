@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { INVITE_COLLABORATOR_URL } from 'routes/api_routes';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export default class EmailAction {
     static async add_collaborator(token: string, emails: string[], quizId: string, note?: string) {

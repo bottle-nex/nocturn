@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { GET_PRESIGNED_URL } from 'routes/api_routes';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export default class S3 {
     static async handleUploadImage(file: File) {

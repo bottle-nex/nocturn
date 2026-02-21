@@ -9,7 +9,7 @@ import moment from 'moment';
 import emptyTrashAnimation from '../../assets/lottie/empty-trash.json';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import { useAllTrashedQuizzesStore } from '@/store/user/useAllTrashedQuizzesStore';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { useEffect, useState } from 'react';

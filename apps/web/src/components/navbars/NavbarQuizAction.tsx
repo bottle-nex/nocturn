@@ -12,7 +12,7 @@ import { PiSpinnerThin } from 'react-icons/pi';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { QuizStatusEnum } from '@nocturn/types';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';

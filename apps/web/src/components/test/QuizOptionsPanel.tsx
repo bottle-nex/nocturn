@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BiPencil } from 'react-icons/bi';
 import { FaRegClone } from 'react-icons/fa6';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { IoEye } from 'react-icons/io5';
 import QuizActions from '@/lib/backend/home/quiz-actions';

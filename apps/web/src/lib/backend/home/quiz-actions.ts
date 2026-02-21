@@ -16,7 +16,7 @@ import {
     RESTORE_TRASHED_QUIZ_URL,
     TOGGLE_FAVOURITE_QUIZ_URL,
 } from 'routes/api_routes';
-import { toast } from 'sonner';
+import { toast } from '@/lib/toast';
 
 export type TrashedQuizWithDaysLedt = QuizType & {
     daysLeftUntilPermanentDeletion?: number | null;
