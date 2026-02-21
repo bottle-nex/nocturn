@@ -19,9 +19,8 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
     const selectedStyles = 'border-2 border-indigo-800/60';
     const [copied, setCopied] = useState<boolean>(false);
     const canvasRef = useRef<HTMLDivElement>(null);
-    const { currentQuestionIndex, quiz } = useNewQuizStore();
+    const { currentQuestionIndex, isHoveringTemplate, quiz } = useNewQuizStore();
     const currentQ = quiz.questions[currentQuestionIndex];
-
     const canvasWidth = useWidth(canvasRef);
 
     useEffect(() => {
@@ -35,7 +34,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
         setCurrentOn(SELECTION_MODE.CANVAS);
     }
 
-    const theme = quiz.template;
+    const theme = isHoveringTemplate ?? quiz.template;
 
     return (
         <div
@@ -63,7 +62,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
                 <CanvasHeading currentQ={currentQ} />
 
                 <div className="flex-1 flex items-end justify-center mb-8">
-                    <CanvasOptions currentQ={currentQ} />
+                    <CanvasOptions animate={!!isHoveringTemplate} currentQ={currentQ} />
 
                     {currentQ?.imageUrl && (
                         <div

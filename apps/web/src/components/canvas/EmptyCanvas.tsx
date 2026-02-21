@@ -10,9 +10,9 @@ interface EmptyCanvasProps {
     options?: string[];
     template: TemplateType;
     className?: string;
-    onClick?: () => void;
     noTruncate?: boolean;
     autoAnimateBars?: boolean;
+    onClick?: () => void;
 }
 
 export default function EmptyCanvas({
@@ -35,7 +35,7 @@ export default function EmptyCanvas({
 
     useEffect(() => {
         if (!shouldAnimate) {
-            setBarHeights(options.map(() => 5));
+            setBarHeights(options.map(() => 2));
             return;
         }
         setBarHeights(options.map(() => Math.random() * 60 + 20));
@@ -73,7 +73,7 @@ export default function EmptyCanvas({
                         Q. {question}
                     </div>
 
-                    <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-4 md:gap-x-4 px-0.5 sm:px-1 pr-1 sm:pr-2">
+                    <div className="flex items-end justify-around mt-3 sm:mt-4 md:mt-5 h-full w-full gap-x-2 sm:gap-x-2 md:gap-x-2 px-0.5 sm:px-1 pr-1 sm:pr-2">
                         {options.map((opt, idx) => {
                             const color = barColors[idx % barColors.length];
 

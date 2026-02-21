@@ -11,7 +11,7 @@ export enum TemplateEnum {
 }
 
 export enum Interactions {
-    TUMBS_UP = 'THUMBS_UP',
+    THUMBS_UP = 'THUMBS_UP',
     DOLLAR = 'DOLLAR',
     BULB = 'BULB',
     HEART = 'HEART',
@@ -20,10 +20,10 @@ export enum Interactions {
 
 const questionSchema = z.object({
     question: z.string(),
-    options: z.array(z.string().min(1)).min(3).default(['', '', '']),
+    options: z.array(z.string()).min(3),
     correctAnswer: z.number(),
-    explanation: z.string().optional(),
-    hint: z.string().optional(),
+    explanation: z.string().nullable().optional(),
+    hint: z.string().nullable().optional(),
     difficulty: z.number(),
     basePoints: z.number(),
     timeLimit: z.number().min(1).max(600),
@@ -35,8 +35,8 @@ const questionSchema = z.object({
 
 export const createQuizSchema = z.object({
     id: z.string().optional(),
-    title: z.string().min(1).max(50).optional().default('Quiz title goes here'),
-    description: z.string().optional(),
+    title: z.string().min(1).max(50),
+    description: z.string().nullable().optional(),
     templateId: z.string().optional(),
     prizePool: z.coerce.number().nonnegative().optional().default(0),
     currency: z.string().default('SOL'),
@@ -50,24 +50,8 @@ export const createQuizSchema = z.object({
     autoSave: z.coerce.boolean().optional(),
     liveChat: z.coerce.boolean().optional(),
     spectatorMode: z.coerce.boolean().optional(),
-    questions: z
-        .array(questionSchema)
-        .optional()
-        .default([
-            {
-                question: 'Ask your first question!',
-                options: ['option 1', 'option 2', 'option 3', 'option 4'],
-                correctAnswer: 0,
-                difficulty: 1,
-                basePoints: 100,
-                timeLimit: 30,
-                readingTime: 4,
-                orderIndex: 0,
-                imageUrl: null,
-                hintLaunched: false,
-            },
-        ]),
-    interactions: z.array(z.enum(Interactions)).optional().default([]),
+    questions: z.array(questionSchema),
+    interactions: z.array(z.enum(Interactions)).optional().default([Interactions.THUMBS_UP]),
 });
 
 export type QuestionType = z.infer<typeof questionSchema>;

@@ -43,6 +43,9 @@ export default async function getAllQuizController(req: Request, res: Response) 
                     },
                 },
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
             take: 20,
         });
 

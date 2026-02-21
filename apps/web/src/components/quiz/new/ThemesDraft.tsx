@@ -2,6 +2,7 @@ import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { TemplateType } from '@nocturn/types';
+import { useRef } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
@@ -11,11 +12,22 @@ import ThemePreview from './ThemePreview';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz } = useNewQuizStore();
+    const { quiz, setIsHoveringTemplate } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const { templates } = useQuizTemplatesStore();
 
     const selectedTemplateId = quiz.templateId;
+
+    const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    function hoverThemeHandler(template: TemplateType) {
+        if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+        if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = setTimeout(() => {
+            setIsHoveringTemplate(template);
+        }, 300);
+    }
 
     function changeThemeHandler(template: TemplateType) {
         updateQuizAndBroadcast({
@@ -56,6 +68,14 @@ export default function ThemesDraft() {
                         return (
                             <div
                                 key={template.id}
+                                onMouseEnter={() => hoverThemeHandler(template)}
+                                onMouseLeave={() => {
+                                    if (hoverTimeoutRef.current)
+                                        clearTimeout(hoverTimeoutRef.current);
+                                    leaveTimeoutRef.current = setTimeout(() => {
+                                        setIsHoveringTemplate(null);
+                                    }, 300);
+                                }}
                                 onClick={() => changeThemeHandler(template)}
                                 className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"
                             >

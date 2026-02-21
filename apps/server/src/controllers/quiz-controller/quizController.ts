@@ -1,6 +1,6 @@
 import { GameSession, Quiz, QuizStatus, prisma } from '@nocturn/database';
 import QuizAction from '../../class/quizAction';
-import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
+import { CreateQuizType, QuestionType, TemplateEnum } from '../../schemas/createQuizSchema';
 
 export enum QUIZ_STATUS {
     SAVE_NEW_QUIZ = 'SAVE_NEW_QUIZ',
@@ -71,9 +71,16 @@ export default class QuizController {
         try {
             let quiz = await this.find_quiz(quizId);
             if (!quiz) {
+                const { templateId, ...restQuizData } = quiz_data;
+                const randomTemplate =
+                    templateId ??
+                    Object.values(TemplateEnum)[
+                        Math.floor(Math.random() * Object.values(TemplateEnum).length)
+                    ];
                 quiz = await prisma.quiz.create({
                     data: {
-                        ...quiz_data,
+                        ...restQuizData,
+                        templateId: randomTemplate,
                         scheduledAt: quiz_data.scheduledAt
                             ? new Date(quiz_data.scheduledAt)
                             : undefined,

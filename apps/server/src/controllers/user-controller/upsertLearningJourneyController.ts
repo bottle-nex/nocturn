@@ -11,6 +11,7 @@ export default async function upsertLearningJourneyController(req: Request, res:
 
     try {
         const { learningJourneyStep } = req.body;
+        console.log('Received learningJourneyStep:', learningJourneyStep);
         if (
             !learningJourneyStep ||
             !Array.isArray(learningJourneyStep) ||
