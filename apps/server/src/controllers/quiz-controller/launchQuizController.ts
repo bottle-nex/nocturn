@@ -4,7 +4,7 @@ import { env } from '../../configs/env';
 import { QUIZ_STATUS } from './quizController';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { Request, Response } from 'express';
-import { quizControllerInstance } from '../../services/init.services';
+import { quizControllerInstance, redisCacheInstance } from '../../services/init.services';
 import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 
 export default async function launchQuizController(req: Request, res: Response) {
@@ -23,6 +23,7 @@ export default async function launchQuizController(req: Request, res: Response) 
     const parsed = createQuizSchema.safeParse(req.body);
 
     if (!parsed.success) {
+        console.log('error in parsing: ', parsed.error);
         res.status(400).json({
             success: false,
             message: 'Error while creating quiz',
@@ -61,6 +62,9 @@ export default async function launchQuizController(req: Request, res: Response) 
             ResponseWriter.error(res, 'QUIZ_ALREADY_LIVE', 'quiz is already live', undefined, 400);
             return;
         }
+
+        // set the host data in cache
+        redisCacheInstance.set_host(data.gameSession.id || '', userId, {});
 
         const secureTokenData = QuizAction.generateLiveGameToken(
             String(userId),

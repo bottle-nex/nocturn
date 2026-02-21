@@ -134,6 +134,7 @@ export class SigninController {
             const token = jwt.sign(
                 { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
                 secret,
+                { expiresIn: '7d' },
             );
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
