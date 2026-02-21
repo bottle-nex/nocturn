@@ -9,7 +9,7 @@ import Image from 'next/image';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import HeartButton from '../ui/HeartButton';
-import QuizOptionsPanel from './QuizOptionsPanel';
+import QuizOptionsPanel, { LoadingAction } from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
