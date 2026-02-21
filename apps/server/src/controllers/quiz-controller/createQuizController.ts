@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { prisma } from '@nocturn/database';
-import { TemplateEnum } from '@nocturn/types';
+import { TemplateEnum } from '../../schemas/createQuizSchema';
+import { getRandomSampleQuiz } from '../../data/sampleQuizData';
 
 export default async function createQuizController(req: Request, res: Response) {
     const now = Date.now();
@@ -11,30 +11,33 @@ export default async function createQuizController(req: Request, res: Response) 
         return;
     }
 
-    const { data, success } = createQuizSchema.safeParse(req.body ?? {});
-    console.log('parsing time taken is : ', now - Date.now());
-
-    if (!success) {
-        console.log('failed to parse the data');
-        ResponseWriter.invalid_data(res, 'Invalid quiz data');
-        return;
-    }
-
-    const { questions, id: _id, templateId: _templateId, ...quizData } = data;
+    const sample = getRandomSampleQuiz();
+    const templates = Object.values(TemplateEnum);
+    const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
 
     try {
-        console.log('db query time taken is : ', Date.now() - now);
-        const randomNumber = Math.floor(Math.random() * Object.values(TemplateEnum).length);
         const quiz = await prisma.quiz.create({
             data: {
-                ...quizData,
-                templateId: Object.values(TemplateEnum)[randomNumber],
+                title: sample.title,
+                templateId: randomTemplate,
+                prizePool: 0,
+                currency: 'SOL',
                 hostId: req.user.id,
-                ...(questions.length > 0 && {
-                    questions: {
-                        create: questions.map((question) => question),
-                    },
-                }),
+                questions: {
+                    create: [
+                        {
+                            question: sample.question,
+                            options: sample.options,
+                            correctAnswer: sample.correctAnswer,
+                            difficulty: 1,
+                            basePoints: 100,
+                            timeLimit: 30,
+                            readingTime: 4,
+                            orderIndex: 0,
+                            hintLaunched: false,
+                        },
+                    ],
+                },
             },
             include: {
                 template: true,

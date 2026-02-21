@@ -16,8 +16,14 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 
 export default function QuestionPallete() {
-    const { quiz, currentQuestionIndex, isHoveringTemplate, setCurrentQuestionIndex, addQuestion, removeQuestion } =
-        useNewQuizStore();
+    const {
+        quiz,
+        currentQuestionIndex,
+        isHoveringTemplate,
+        setCurrentQuestionIndex,
+        addQuestion,
+        removeQuestion,
+    } = useNewQuizStore();
     const { setCurrentOn } = useCanvasSelectionStore();
     const { handleCollaboratorsQuestionChange } = useWebSocket();
 

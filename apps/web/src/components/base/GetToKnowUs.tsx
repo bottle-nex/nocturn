@@ -1,4 +1,4 @@
-import { JSX, useCallback, useMemo, useRef, useState } from 'react';
+import { JSX, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import UtilityCard from '../utility/UtilityCard';
 import { AnimatePresence, motion } from 'motion/react';
 import { IoMdCheckmark } from 'react-icons/io';
@@ -169,15 +169,35 @@ export default function GetToKnowUs(): JSX.Element {
         }
         if (timeout.current) {
             clearTimeout(timeout.current);
-        } else {
-            const newTimeout = setTimeout(() => {
-                makeBackendCall();
-            }, 5000);
-            timeout.current = newTimeout;
         }
+        timeout.current = setTimeout(() => {
+            timeout.current = null;
+            makeBackendCall();
+        }, 5000);
     }
 
+    useEffect(() => {
+        if (!session?.user.token) return;
+        async function fetchLearningJourney() {
+            try {
+                const res = await axios.get(LEARNING_JOURNEY_URL, {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.token}`,
+                    },
+                });
+                const steps: number[] = res.data?.data?.learningJourneyStep;
+                if (Array.isArray(steps) && steps.length > 0) {
+                    setLearntCards(new Set(steps));
+                }
+            } catch (err) {
+                console.error('Error fetching learning journey', err);
+            }
+        }
+        fetchLearningJourney();
+    }, [session?.user.token]);
+
     async function makeBackendCall() {
+        if (!session?.user.token) return;
         try {
             await axios.post(
                 LEARNING_JOURNEY_URL,
@@ -316,14 +336,18 @@ function KnowUsBigCard({
                                 Close
                             </Button>
                             <Button
-                                onClick={() => handleCardClick(selectedFeature.id + 1)}
+                                onClick={() =>
+                                    selectedFeature.id >= cards.length
+                                        ? setOpenCard(null)
+                                        : handleCardClick(selectedFeature.id + 1)
+                                }
                                 className={cn(
                                     'rounded-full text-sm py-5 px-5! gap-x-1',
                                     'bg-dark-base hover:bg-dark-alpha  dark:bg-light-base hover:dark:bg-light-alpha',
                                 )}
                             >
-                                Learn Next
-                                <MdOutlineChevronRight />
+                                {selectedFeature.id >= cards.length ? 'Done' : 'Learn Next'}
+                                {selectedFeature.id < cards.length && <MdOutlineChevronRight />}
                             </Button>
                         </section>
                     </UtilityCard>

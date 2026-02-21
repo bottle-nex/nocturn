@@ -26,7 +26,7 @@ export default function ThemesDraft() {
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
         hoverTimeoutRef.current = setTimeout(() => {
             setIsHoveringTemplate(template);
-        }, 500);
+        }, 300);
     }
 
     function changeThemeHandler(template: TemplateType) {
@@ -70,10 +70,11 @@ export default function ThemesDraft() {
                                 key={template.id}
                                 onMouseEnter={() => hoverThemeHandler(template)}
                                 onMouseLeave={() => {
-                                    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                                    if (hoverTimeoutRef.current)
+                                        clearTimeout(hoverTimeoutRef.current);
                                     leaveTimeoutRef.current = setTimeout(() => {
                                         setIsHoveringTemplate(null);
-                                    }, 500);
+                                    }, 300);
                                 }}
                                 onClick={() => changeThemeHandler(template)}
                                 className="flex flex-col items-center gap-y-1 p-0 w-full h-auto rounded-[9px] cursor-pointer"

@@ -21,7 +21,7 @@ interface CanvasOptionsProps {
 
 export default function CanvasOptions({ currentQ, animate = false }: CanvasOptionsProps) {
     const [votes, setVotes] = useState([0, 0, 0, 0]);
-    const { quiz } = useNewQuizStore();
+    const { quiz, isHoveringTemplate } = useNewQuizStore();
     const { currentOn, style, setCurrentOn } = useCanvasSelectionStore();
     const { setState } = useDraftRendererStore();
 
@@ -74,7 +74,7 @@ export default function CanvasOptions({ currentQ, animate = false }: CanvasOptio
                             option={option}
                             votes={votes}
                             currentQ={currentQ}
-                            currentQTemplate={quiz.template}
+                            currentQTemplate={isHoveringTemplate ?? quiz.template}
                             getBarHeight={getBarHeight}
                         />
                     )) || []}

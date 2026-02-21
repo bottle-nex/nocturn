@@ -1,16 +1,16 @@
 import { cn } from '@/lib/utils';
-import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
-import EmptyCanvas from '../canvas/EmptyCanvas';
-import { useRouter } from 'next/navigation';
-import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import QuizActions from '@/lib/backend/home/quiz-actions';
-import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
-import Image from 'next/image';
 import { QuizType } from '@nocturn/types';
-import HeartButton from '../ui/HeartButton';
 import { useState } from 'react';
-import QuizTitleChangePanel from './QuizTitleChangePanel';
+import { useRouter } from 'next/navigation';
+import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import Image from 'next/image';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
+import EmptyCanvas from '../canvas/EmptyCanvas';
+import QuizActions from '@/lib/backend/home/quiz-actions';
+import HeartButton from '../ui/HeartButton';
+import QuizTitleChangePanel from './QuizTitleChangePanel';
 import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {

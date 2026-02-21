@@ -90,6 +90,15 @@ export default function Options() {
         });
     }
 
+    function handleAddOption() {
+        if (!currentQ || currentQ.options.length >= 6) return;
+        const newOptions = [...currentQ.options, ''];
+        editQuestionAndBroadcast(currentQuestionIndex, {
+            options: newOptions,
+            id: currentQ.id,
+        });
+    }
+
     if (!currentQ?.options) return null;
 
     return (
@@ -133,6 +142,16 @@ export default function Options() {
                     </Button>
                 </div>
             ))}
+            <Button
+                className={cn(
+                    'w-full dark:text-dark-alpha dark:bg-light-alpha hover:bg-light-base',
+                    'text-light-alpha bg-dark-alpha hover:bg-dark-base',
+                    currentQ.options.length >= 6 && 'cursor-not-allowed opacity-50',
+                )}
+                onClick={handleAddOption}
+            >
+                Add Option
+            </Button>
         </div>
     );
 }
