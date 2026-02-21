@@ -40,7 +40,7 @@ export default function LandingSection() {
                     </motion.div>
                     <div
                         style={{ fontWeight: 900 }}
-                        className="text-[6.5rem] leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative"
+                        className="text-[6.5rem] leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relativez"
                     >
                         <motion.div
                             initial={{
