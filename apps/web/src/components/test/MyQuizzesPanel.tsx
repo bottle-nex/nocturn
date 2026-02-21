@@ -17,11 +17,12 @@ export enum Layouts {
 export default function MyQuizzesPanel() {
     const { session } = useUserSessionStore();
     const [loading, setLoading] = useState(true);
-    const { quizs, setAllQuizs } = useAllQuizsStore();
+    const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const selectionMode = selectedQuizIds.size > 0;
     const [searchQuery, _setSearchQuery] = useState<string>('');
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
+    const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
 
     useEffect(() => {
         async function get_quiz_data() {
@@ -43,6 +44,57 @@ export default function MyQuizzesPanel() {
         q.title?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
+    function toggleQuizSelection(quizId: string) {
+        if (bulkDeleting) return;
+
+        setSelectedQuizIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(quizId)) next.delete(quizId);
+            else next.add(quizId);
+            return next;
+        });
+    }
+
+    function cancelSelection() {
+        if (bulkDeleting) return;
+        setSelectedQuizIds(new Set());
+    }
+
+    function toggleSelectAll() {
+        if (bulkDeleting) return;
+
+        setSelectedQuizIds((prev) => {
+            if (prev.size === filteredQuizzes.length) return new Set();
+            return new Set(filteredQuizzes.map((q) => q.id));
+        });
+    }
+
+    async function deleteSelected() {
+        if (!session?.user.token || selectedQuizIds.size === 0 || bulkDeleting) return;
+
+        setBulkDeleting(true);
+
+        try {
+            const ids = Array.from(selectedQuizIds);
+
+            for (const id of ids) {
+                try {
+                    await QuizActions.delete_quiz(session.user.token, id);
+                    deleteQuiz(id);
+                } catch {
+                    console.error('Failed to delete selected quizzes');
+                }
+            }
+
+            setSelectedQuizIds(new Set());
+        } finally {
+            setBulkDeleting(false);
+        }
+    }
+
+    const isAllSelected =
+        filteredQuizzes.length > 0 && selectedQuizIds.size === filteredQuizzes.length;
+
     return (
         <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">
             <div className="text-4xl text-dark-base dark:text-light-base">My Quizzes</div>
@@ -50,10 +102,10 @@ export default function MyQuizzesPanel() {
             <QuizzesUpperSection
                 quizzes={quizs}
                 selectedQuizes={selectedQuizIds.size}
-                onDeleteSelected={() => {}}
-                onCancelSelection={() => setSelectedQuizIds(new Set())}
-                onToggleSelectAll={() => {}}
-                isAllSelected={false}
+                onDeleteSelected={deleteSelected}
+                onCancelSelection={cancelSelection}
+                onToggleSelectAll={toggleSelectAll}
+                isAllSelected={isAllSelected}
                 activeLayoutTab={activeLayoutTab}
                 onLayoutChange={setActiveLayoutTab}
             />
@@ -68,10 +120,6 @@ export default function MyQuizzesPanel() {
                             <CanvasSkeletonCard key={i} />
                         ))}
                     </div>
-                ) : quizs.length === 0 ? (
-                    <div className="w-full h-[55vh] flex items-center justify-center text-neutral-500 dark:text-neutral-400 text-lg">
-                        No quizzes found
-                    </div>
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => (
@@ -80,8 +128,9 @@ export default function MyQuizzesPanel() {
                                 quiz={quiz}
                                 isSelected={selectedQuizIds.has(quiz.id)}
                                 selectionMode={selectionMode}
-                                toggleQuizSelection={() => {}}
+                                toggleQuizSelection={toggleQuizSelection}
                                 formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                                bulkDeleting={bulkDeleting}
                             />
                         ))}
                     </div>
@@ -93,8 +142,9 @@ export default function MyQuizzesPanel() {
                                 quiz={quiz}
                                 isSelected={selectedQuizIds.has(quiz.id)}
                                 selectionMode={selectionMode}
-                                toggleQuizSelection={() => {}}
+                                toggleQuizSelection={toggleQuizSelection}
                                 formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                                bulkDeleting={bulkDeleting}
                             />
                         ))}
                     </div>

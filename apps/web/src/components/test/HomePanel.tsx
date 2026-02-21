@@ -12,9 +12,8 @@ export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
     const { setAllQuizs, quizs } = useAllQuizsStore();
     const { recentlyViewed, setQuizs, setRecentlyViewed } = useRecentlyViewedQuizStore();
-
-    const [loading, setLoading] = useState(true);
-    const fetchedRef = useRef(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const fetchedRef = useRef<boolean>(false);
 
     useEffect(() => {
         if (!token) {

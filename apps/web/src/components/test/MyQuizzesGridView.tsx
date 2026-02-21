@@ -6,11 +6,9 @@ import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import Image from 'next/image';
-import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import HeartButton from '../ui/HeartButton';
-import QuizTitleChangePanel from './QuizTitleChangePanel';
 import QuizOptionsPanel from './QuizOptionsPanel';
 
 interface MyQuizzesGridViewProps {
@@ -19,6 +17,7 @@ interface MyQuizzesGridViewProps {
     isSelected?: boolean;
     selectionMode?: boolean;
     toggleQuizSelection?: (quizId: string) => void;
+    bulkDeleting?: boolean;
 }
 
 export default function MyQuizzesGridView({
@@ -27,51 +26,43 @@ export default function MyQuizzesGridView({
     selectionMode,
     toggleQuizSelection,
     formattedTime,
+    bulkDeleting,
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
-    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
-    const [showPreview, setShowPreview] = useState(false);
-    const [editingTitle, setEditingTitle] = useState<boolean>(false);
     const { session } = useUserSessionStore();
-    const { updateQuizFavourite, updateQuiz } = useAllQuizsStore();
+    const { updateQuizFavourite } = useAllQuizsStore();
+    const [quizAction, setQuizAction] = useState<LoadingAction>(null);
+    const isLocked = bulkDeleting || quizAction !== null;
 
     function handleCardClick() {
+        if (isLocked) return;
         if (selectionMode) return toggleQuizSelection?.(quiz.id);
         router.push(`/new/${quiz.id}`);
     }
 
-    function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
-        e.stopPropagation();
-        const value = e.target.value;
-        updateQuiz(quiz.id, { title: value });
-    }
-
-    async function handleSaveTitle() {
-        if (!session?.user.token || !quiz.title?.trim()) return;
-        setEditingTitle(false);
-        await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
-    }
-
     async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
-        if (!session?.user.token || selectionMode) return;
+        if (!session?.user.token || selectionMode || isLocked) return;
         await QuizActions.toggle_favourite_quiz(session.user.token, quizId, isFavourite);
         updateQuizFavourite(quizId, isFavourite);
     }
+
+    const showOptions = selectionMode || quizAction !== null;
 
     return (
         <div className="max-w-100 w-full p-1 flex flex-col relative group">
             <div
                 className={cn(
                     'absolute top-5 z-20 pr-6 pl-4 flex justify-between w-full transition-all',
-                    selectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                    showOptions ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
                 )}
             >
                 <div
                     onClick={(e) => {
                         e.stopPropagation();
+                        if (isLocked) return;
                         toggleQuizSelection?.(quiz.id);
                     }}
-                    className="cursor-pointer"
+                    className={cn('cursor-pointer', isLocked && 'pointer-events-none opacity-50')}
                 >
                     {isSelected ? (
                         <MdCheckBox className="size-6 text-indigo-700" />
@@ -82,11 +73,9 @@ export default function MyQuizzesGridView({
 
                 {!selectionMode && (
                     <QuizOptionsPanel
+                        disabled={isLocked}
+                        setQuizAction={setQuizAction}
                         quiz={quiz}
-                        setEditingTitle={setEditingTitle}
-                        toggleQuizSelection={toggleQuizSelection}
-                        setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                        setShowPreview={setShowPreview}
                     />
                 )}
             </div>
@@ -96,8 +85,9 @@ export default function MyQuizzesGridView({
                 question={quiz.questions[0]?.question}
                 options={quiz.questions[0]?.options}
                 className={cn(
-                    'w-full aspect-video rounded-[8px] outline select-none',
+                    'w-full aspect-video rounded-[8px] outline select-none transition-all duration-200',
                     isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
+                    isLocked && 'pointer-events-none opacity-80',
                 )}
                 template={quiz.template}
             />
@@ -113,48 +103,21 @@ export default function MyQuizzesGridView({
                     />
                 )}
 
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full mt-0.5">
                     <div className="flex flex-col">
-                        {editingTitle ? (
-                            <input
-                                value={quiz.title}
-                                onChange={(e) => handleEditTitle(e)}
-                                onBlur={handleSaveTitle}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleSaveTitle();
-                                }}
-                                placeholder="Quiz title"
-                                autoFocus
-                                className="border-none outline-none w-60"
-                            />
-                        ) : (
-                            <span className="block text-normal mt-1">
-                                {quiz.title?.slice(0, 28)}…
-                            </span>
-                        )}
-                        <span className="text-[13px] opacity-60">last viewed {formattedTime}</span>
+                        <span className="block text-base">{quiz.title?.slice(0, 28)}…</span>
+                        <span className="block text-xs text-light-base/70">
+                            Created at {formattedTime}
+                        </span>
                     </div>
+
                     <HeartButton
+                        disabled={isLocked || selectionMode}
                         liked={quiz.isFavourite}
                         onToggle={(toggle) => handleFavouriteToggle(quiz.id, toggle)}
                     />
                 </div>
             </div>
-
-            {showQuizTitleChangePanel && (
-                <QuizTitleChangePanel
-                    quizId={quiz.id}
-                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                />
-            )}
-
-            {showPreview && (
-                <PreviewQuiz
-                    onPreviewClose={() => setShowPreview(false)}
-                    quizId={quiz.id}
-                    fetchFromServer
-                />
-            )}
         </div>
     );
 }

@@ -11,7 +11,6 @@ import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
 import { useAllTrashedQuizzesStore } from '@/store/user/useAllTrashedQuizzesStore';
-import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { IoMdRefresh } from 'react-icons/io';
@@ -21,15 +20,32 @@ import ToolTipComponent from '../utility/TooltipComponent';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
 import { MdDeleteSweep } from 'react-icons/md';
-import { SidebarTab } from '@/constants/SidebarTabConstants';
+import CanvasSkeletonCard from '@/components/skeletons/CanvasSkeleton';
+import { Loader } from 'lucide-react';
 
-export default function HomeTrashPanel() {
+export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
         useAllTrashedQuizzesStore();
     const { addQuiz } = useAllQuizsStore();
-    const { setActiveTab } = useHomeSidebarStore();
     const { session } = useUserSessionStore();
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [loading, setLoading] = useState(true);
+    const [clearingTrash, setClearingTrash] = useState(false);
+    const [quizActionLoading, setQuizActionLoading] = useState<
+        Record<string, 'restore' | 'delete' | null>
+    >({});
+
+    function startQuizAction(id: string, type: 'restore' | 'delete') {
+        setQuizActionLoading((prev) => ({ ...prev, [id]: type }));
+    }
+
+    function stopQuizAction(id: string) {
+        setQuizActionLoading((prev) => {
+            const copy = { ...prev };
+            delete copy[id];
+            return copy;
+        });
+    }
 
     const filteredQuizzes = trashedQuizzes
         ? trashedQuizzes.filter((quiz) =>
@@ -38,52 +54,52 @@ export default function HomeTrashPanel() {
         : [];
 
     async function handleDeleteAllTrashedQuizzes() {
-        if (!session?.user.token) return;
-
+        if (!session?.user.token || clearingTrash) return;
+        setClearingTrash(true);
         try {
             await QuizActions.delete_all_trashed_quizzes(session.user.token);
             resetTrashQuizStore();
             toast.success('Cleared trash successfully');
-        } catch (error) {
-            console.error('Failed to delete quizzes', error);
+        } catch {
             toast.error('Failed to clear trash');
+        } finally {
+            setClearingTrash(false);
         }
     }
 
     useEffect(() => {
         async function get_quiz_data() {
+            if (!session?.user.token) return;
+            setLoading(true);
             try {
-                if (!session?.user.token) return;
-
-                // fetchig trashed quizzes
-                const trashed_quiz_response = await QuizActions.get_trashed_quizzes(
-                    session.user.token,
-                );
-                setAllTrashedQuizzes(trashed_quiz_response!);
-            } catch (error) {
-                console.error('Error in getting quiz', error);
+                const res = await QuizActions.get_trashed_quizzes(session.user.token);
+                setAllTrashedQuizzes(res || []);
+            } finally {
+                setLoading(false);
             }
         }
         get_quiz_data();
     }, [session?.user.token, setAllTrashedQuizzes]);
 
     async function handleRestoreQuiz(quizId: string) {
-        if (!session?.user.token) return;
-
+        if (!session?.user.token || quizActionLoading[quizId]) return;
+        startQuizAction(quizId, 'restore');
         try {
             const restoredQuiz = await QuizActions.restore_trashed_quiz(session.user.token, quizId);
             if (!restoredQuiz) return;
-
             removeTrashedQuizById(restoredQuiz.id);
             addQuiz(restoredQuiz);
             toast.success('Quiz restored');
-        } catch (error) {
-            console.error('Restore failed', error);
+        } catch {
+            console.error('Failed to restpre quiz');
+        } finally {
+            stopQuizAction(quizId);
         }
     }
 
     async function handlePermanentlyDeleteQuiz(quizId: string) {
-        if (!session?.user.token) return;
+        if (!session?.user.token || quizActionLoading[quizId]) return;
+        startQuizAction(quizId, 'delete');
         try {
             const deletedQuiz = await QuizActions.permanently_delete_quiz(
                 session.user.token,
@@ -92,19 +108,17 @@ export default function HomeTrashPanel() {
             if (!deletedQuiz) return;
             removeTrashedQuizById(deletedQuiz.id);
             toast.success('Quiz permanently deleted');
-        } catch (error) {
-            console.error('Error in permanently deleting quiz: ', error);
-            return;
+        } catch {
+            console.error('Failed to premanently delete quiz');
+        } finally {
+            stopQuizAction(quizId);
         }
     }
 
     return (
         <AnimatePresence>
-            <OpacityBackground
-                className="bg-black/10 dark:bg-white/10"
-                onBackgroundClick={() => setActiveTab(SidebarTab.HOME)}
-            >
-                <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-alpha/70 border-none p-8 overflow-hidden">
+            <OpacityBackground className="bg-black/10 dark:bg-white/10" onBackgroundClick={onClose}>
+                <UtilityCard className="max-w-[70vw] mx-auto w-full h-[80vh] rounded-md bg-white dark:bg-dark-alpha border-none p-8 overflow-hidden">
                     <div className="flex flex-col w-full h-full gap-y-6 relative px-2">
                         <div className="flex w-full justify-between items-center">
                             <div className="flex flex-col justify-center -space-y-0.5">
@@ -115,39 +129,34 @@ export default function HomeTrashPanel() {
                                     Items in trash are permanently deleted after 30 days
                                 </div>
                             </div>
+
                             <div className="flex gap-x-2 items-center">
-                                <div
-                                    className={cn(
-                                        'relative w-md h-10 rounded-beta',
-                                        'border-dark-base dark:border-neutral-700 dark:bg-zinc-800 dark:text-white',
-                                    )}
-                                >
+                                <div className="relative w-md h-10 rounded-beta border-dark-base dark:border-neutral-700 dark:bg-zinc-800 dark:text-white">
                                     <Input
                                         placeholder="search trashed quizzes"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className={cn(
-                                            'h-full w-full pl-10 rounded-beta',
-                                            'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
-                                            'dark:bg-dark-base! bg-light-base! border-neutral-800',
-                                        )}
+                                        className="h-full w-full pl-10 rounded-beta placeholder:text-dark-base/60 dark:placeholder:text-neutral-500 dark:bg-dark-base! bg-light-base! border-neutral-800"
                                     />
-
                                     <PiMagnifyingGlass
                                         size={20}
                                         className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
                                     />
                                 </div>
+
                                 <ToolTipComponent content="Empty Trash">
                                     <Button
                                         variant={'outline'}
                                         size={'icon'}
                                         onClick={handleDeleteAllTrashedQuizzes}
-                                        className={cn(
-                                            'rounded-alpha bg-red-700/60! hover:bg-red-700/40! tracking-wide text-light-base flex items-center text-[13px] shadow-sm aspect-square',
-                                        )}
+                                        disabled={clearingTrash}
+                                        className="rounded-alpha bg-red-700/60! hover:bg-red-700/40! tracking-wide text-light-base flex items-center text-[13px] shadow-sm aspect-square"
                                     >
-                                        <MdDeleteSweep className="mb-px size-4" />
+                                        {clearingTrash ? (
+                                            <Loader className="animate-spin size-4" />
+                                        ) : (
+                                            <MdDeleteSweep className="mb-px size-4" />
+                                        )}
                                     </Button>
                                 </ToolTipComponent>
                             </div>
@@ -157,23 +166,31 @@ export default function HomeTrashPanel() {
                             className="w-full h-full overflow-y-auto custom-scrollbar mt-2"
                             data-lenis-prevent
                         >
-                            {filteredQuizzes.length > 0 ? (
+                            {loading ? (
+                                <div className="grid grid-cols-3 gap-4 pb-4">
+                                    {Array.from({ length: 6 }).map((_, i) => (
+                                        <CanvasSkeletonCard key={i} />
+                                    ))}
+                                </div>
+                            ) : filteredQuizzes.length > 0 ? (
                                 <div className="grid grid-cols-3 gap-4 pb-4">
                                     {filteredQuizzes.map((quiz) => {
                                         const formattedTime = quiz.deletedAt
                                             ? moment(quiz.deletedAt).format('MMM D, YYYY')
                                             : '';
+                                        const isOperating = !!quizActionLoading[quiz.id];
 
                                         return (
                                             <div
                                                 key={quiz.id}
                                                 className="max-w-100 w-full p-1 flex flex-col relative group"
-                                                data-lenis-prevent
                                             >
                                                 <div
                                                     className={cn(
                                                         'absolute top-5 z-50 right-5 flex justify-end gap-x-2 w-full transition-all duration-100',
-                                                        'opacity-0 group-hover:opacity-100',
+                                                        isOperating
+                                                            ? 'opacity-100'
+                                                            : 'opacity-0 group-hover:opacity-100',
                                                     )}
                                                 >
                                                     <div className="flex gap-x-2.5 items-center">
@@ -183,16 +200,29 @@ export default function HomeTrashPanel() {
                                                                     e.stopPropagation();
                                                                     handleRestoreQuiz(quiz.id);
                                                                 }}
-                                                                className="bg-light-base/70 backdrop-blur-sm text-dark-base h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                                                className={cn(
+                                                                    'bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer',
+                                                                    isOperating &&
+                                                                        quizActionLoading[
+                                                                            quiz.id
+                                                                        ] !== 'restore' &&
+                                                                        'pointer-events-none',
+                                                                )}
                                                             >
-                                                                <IoMdRefresh
-                                                                    style={{
-                                                                        transform: 'scaleX(-1)',
-                                                                    }}
-                                                                    className="size-5"
-                                                                />
+                                                                {quizActionLoading[quiz.id] ===
+                                                                'restore' ? (
+                                                                    <Loader className="size-3.5 animate-spin" />
+                                                                ) : (
+                                                                    <IoMdRefresh
+                                                                        style={{
+                                                                            transform: 'scaleX(-1)',
+                                                                        }}
+                                                                        className="size-3.5"
+                                                                    />
+                                                                )}
                                                             </div>
                                                         </ToolTipComponent>
+
                                                         <ToolTipComponent content="delete permanently">
                                                             <div
                                                                 onClick={(e) => {
@@ -201,9 +231,21 @@ export default function HomeTrashPanel() {
                                                                         quiz.id,
                                                                     );
                                                                 }}
-                                                                className="bg-light-base/70 backdrop-blur-sm text-red-600 h-8 w-8 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer"
+                                                                className={cn(
+                                                                    'bg-light-base/70 backdrop-blur-sm text-red-600 h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer',
+                                                                    isOperating &&
+                                                                        quizActionLoading[
+                                                                            quiz.id
+                                                                        ] !== 'delete' &&
+                                                                        'pointer-events-none',
+                                                                )}
                                                             >
-                                                                <PiTrashSimple className="size-5 stroke-2" />
+                                                                {quizActionLoading[quiz.id] ===
+                                                                'delete' ? (
+                                                                    <Loader className="size-3.5 animate-spin" />
+                                                                ) : (
+                                                                    <PiTrashSimple className="size-3.5 stroke-2" />
+                                                                )}
                                                             </div>
                                                         </ToolTipComponent>
                                                     </div>
@@ -212,10 +254,7 @@ export default function HomeTrashPanel() {
                                                 <EmptyCanvas
                                                     question={quiz.questions?.[0]?.question}
                                                     options={quiz.questions?.[0]?.options}
-                                                    className={cn(
-                                                        'w-full aspect-video rounded-[8px] outline-2 select-none cursor-default',
-                                                        'outline-black/40 dark:outline-white/40',
-                                                    )}
+                                                    className="w-full aspect-video rounded-[8px] outline-2 select-none cursor-default outline-black/40 dark:outline-white/40"
                                                     template={quiz.template}
                                                 />
 

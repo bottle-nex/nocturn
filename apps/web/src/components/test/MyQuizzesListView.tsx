@@ -1,3 +1,5 @@
+'use client';
+
 import { QuizType } from '@nocturn/types';
 import EmptyCanvas from '../canvas/EmptyCanvas';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
@@ -5,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import QuizTitleChangePanel from './QuizTitleChangePanel';
-import QuizOptionsPanel from './QuizOptionsPanel';
+import QuizOptionsPanel, { LoadingAction } from './QuizOptionsPanel';
 import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
@@ -17,6 +19,7 @@ interface MyQuizzesListViewProps {
     isSelected: boolean;
     selectionMode: boolean;
     toggleQuizSelection: (quizId: string) => void;
+    bulkDeleting?: boolean;
 }
 
 export default function MyQuizzesListView({
@@ -25,26 +28,34 @@ export default function MyQuizzesListView({
     isSelected,
     selectionMode,
     toggleQuizSelection,
+    bulkDeleting,
 }: MyQuizzesListViewProps) {
     const router = useRouter();
-    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState(false);
-    const [showPreview, setShowPreview] = useState(false);
-    const [editingTitle, setEditingTitle] = useState(false);
     const { session } = useUserSessionStore();
     const { updateQuiz } = useAllQuizsStore();
+    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
+    const [showPreview, setShowPreview] = useState<boolean>(false);
+    const [editingTitle, setEditingTitle] = useState<boolean>(false);
+    const [quizAction, setQuizAction] = useState<LoadingAction>(null);
+
+    const isLocked = bulkDeleting || quizAction !== null;
 
     function handleClick() {
+        if (isLocked) return;
         if (selectionMode) return toggleQuizSelection(quiz.id);
         router.push(`/new/${quiz.id}`);
     }
 
     function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
+        if (isLocked) return;
         e.stopPropagation();
         updateQuiz(quiz.id, { title: e.target.value });
     }
 
     async function handleSaveTitle() {
+        if (isLocked) return;
         if (!session?.user.token || !quiz.title?.trim()) return;
+
         setEditingTitle(false);
         await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
     }
@@ -53,8 +64,9 @@ export default function MyQuizzesListView({
         <div
             onClick={handleClick}
             className={cn(
-                'rounded-lg flex items-center gap-x-3 p-2 border group cursor-pointer',
+                'rounded-lg flex items-center gap-x-3 p-2 border group transition-opacity',
                 isSelected ? 'border-indigo-800' : 'border-neutral-300 dark:border-neutral-800/40',
+                isLocked && 'pointer-events-none opacity-90',
             )}
         >
             <div className="relative">
@@ -63,11 +75,13 @@ export default function MyQuizzesListView({
                 <div
                     onClick={(e) => {
                         e.stopPropagation();
+                        if (isLocked) return;
                         toggleQuizSelection(quiz.id);
                     }}
                     className={cn(
                         'absolute top-1 left-1 transition-all',
                         selectionMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                        isLocked && 'pointer-events-none opacity-50',
                     )}
                 >
                     {isSelected ? (
@@ -85,27 +99,23 @@ export default function MyQuizzesListView({
                             value={quiz.title}
                             onChange={handleEditTitle}
                             onBlur={handleSaveTitle}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSaveTitle();
-                            }}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
                             onClick={(e) => e.stopPropagation()}
-                            placeholder="Quiz title"
                             autoFocus
-                            className="border-none outline-none w-60 truncate"
+                            className="border-none outline-none w-60 truncate bg-transparent"
                         />
                     ) : (
                         <div className="truncate">{quiz.title}</div>
                     )}
+
                     <div className="text-sm opacity-60">Created at {formattedTime}</div>
                 </div>
 
                 {!selectionMode && (
                     <QuizOptionsPanel
+                        disabled={isLocked}
+                        setQuizAction={setQuizAction}
                         quiz={quiz}
-                        setEditingTitle={setEditingTitle}
-                        toggleQuizSelection={toggleQuizSelection}
-                        setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                        setShowPreview={setShowPreview}
                     />
                 )}
             </div>
