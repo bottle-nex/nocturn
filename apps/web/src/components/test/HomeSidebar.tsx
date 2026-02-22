@@ -1,5 +1,5 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { MdOutlineFolderShared, MdOutlineHomeMax } from 'react-icons/md';
 import { cn } from '@/lib/utils';
@@ -20,25 +20,13 @@ export interface SidebarItem {
     label: string;
     icon?: React.ReactNode;
     className?: string;
+    onClick: () => void;
 }
-
-const sidebarItems: SidebarItem[] = [
-    { tab: SidebarTab.HOME, label: 'Home', icon: <MdOutlineHomeMax size={18} /> },
-    { tab: SidebarTab.MY_QUIZZES, label: 'My Quizzes', icon: <GoPeople size={18} /> },
-    {
-        tab: SidebarTab.SHARED_WITH_ME,
-        label: 'Shared with me',
-        icon: <MdOutlineFolderShared size={18} />,
-    },
-    { tab: SidebarTab.FAVORITES, label: 'Favorites', icon: <FaRegHeart size={17} /> },
-    { tab: SidebarTab.SETTINGS, label: 'Settings', icon: <RiSettings6Line size={18} /> },
-    { tab: SidebarTab.PREMIUM, label: 'Premium', icon: <RiVipCrownLine size={18} /> },
-    { tab: SidebarTab.CHATS, label: 'Chats', icon: <PiChats size={18} /> },
-];
 
 export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
     const { activeTab, setActiveTab } = useHomeSidebarStore();
     const searchParams = useSearchParams();
+    const router = useRouter();
     const { session } = useUserSessionStore();
     const { isDragging, isOverTrash, setOverTrash } = useDragQuizStore();
 
@@ -85,6 +73,51 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
         setActiveTab(tab);
     }
 
+    const sidebarItems: SidebarItem[] = [
+        {
+            tab: SidebarTab.HOME,
+            label: 'Home',
+            icon: <MdOutlineHomeMax size={18} />,
+            onClick: () => handleTabChange(SidebarTab.HOME),
+        },
+        {
+            tab: SidebarTab.MY_QUIZZES,
+            label: 'My Quizzes',
+            icon: <GoPeople size={18} />,
+            onClick: () => handleTabChange(SidebarTab.MY_QUIZZES),
+        },
+        {
+            tab: SidebarTab.SHARED_WITH_ME,
+            label: 'Shared with me',
+            icon: <MdOutlineFolderShared size={18} />,
+            onClick: () => handleTabChange(SidebarTab.SHARED_WITH_ME),
+        },
+        {
+            tab: SidebarTab.FAVORITES,
+            label: 'Favorites',
+            icon: <FaRegHeart size={17} />,
+            onClick: () => handleTabChange(SidebarTab.FAVORITES),
+        },
+        {
+            tab: SidebarTab.SETTINGS,
+            label: 'Settings',
+            icon: <RiSettings6Line size={18} />,
+            onClick: () => handleTabChange(SidebarTab.SETTINGS),
+        },
+        {
+            tab: SidebarTab.PREMIUM,
+            label: 'Premium',
+            icon: <RiVipCrownLine size={18} />,
+            onClick: () => router.push('/premium'),
+        },
+        {
+            tab: SidebarTab.CHATS,
+            label: 'Chats',
+            icon: <PiChats size={18} />,
+            onClick: () => handleTabChange(SidebarTab.CHATS),
+        },
+    ];
+
     return (
         <aside
             className="w-80 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-hidden shrink-0 pt-4 flex flex-col justify-between"
@@ -98,7 +131,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         {sidebarItems.slice(0, 3).map((item) => (
                             <div
                                 key={item.tab}
-                                onClick={() => handleTabChange(item.tab)}
+                                onClick={item.onClick}
                                 className={cn(
                                     'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
                                     'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
@@ -124,7 +157,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         {sidebarItems.slice(3, 6).map((item) => (
                             <div
                                 key={item.tab}
-                                onClick={() => handleTabChange(item.tab)}
+                                onClick={item.onClick}
                                 className={cn(
                                     'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
                                     'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
@@ -146,23 +179,25 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
 
             <section className="ml-4 mt-8">
                 <section className="flex flex-col gap-y-2 mt-2 px-4">
-                    <div
-                        onClick={() => handleTabChange(SidebarTab.CHATS)}
-                        className={cn(
-                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                            'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                        )}
-                    >
-                        {activeTab === SidebarTab.CHATS && (
-                            <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                        )}
+                    {sidebarItems.slice(6).map((item) => (
+                        <div
+                            key={item.tab}
+                            onClick={item.onClick}
+                            className={cn(
+                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
+                                'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
+                            )}
+                        >
+                            {activeTab === item.tab && (
+                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
+                            )}
 
-                        <span className="p-1 rounded">
-                            <PiChats size={18} />
-                        </span>
-
-                        <span className="text-sm dark:text-white/80 text-black/90">Chats</span>
-                    </div>
+                            <span className="p-1 rounded">{item.icon}</span>
+                            <span className="text-sm dark:text-white/80 text-black/90">
+                                {item.label}
+                            </span>
+                        </div>
+                    ))}
 
                     <div
                         ref={trashRef}

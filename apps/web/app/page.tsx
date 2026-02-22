@@ -10,13 +10,16 @@ import LandingFooter from '@/components/test/LandingFooter';
 export default function Page() {
     return (
         <div className="overflow-x-hidden w-full relative">
-            <div className="min-h-screen w-full bg-white relative z-10 flex flex-col items-center mb-[70vh]">
+            <div className="min-h-screen w-full bg-white relative z-10 flex flex-col items-center mb-[60vh]">
                 <LandingNavbar />
                 <LandingSection />
                 <InstructionsSection />
                 <FeaturesSection />
                 <WhyNocturn />
-                <PricingComponent />
+                <PricingComponent
+                    className="flex flex-col items-center justify-center pt-48"
+                    showHeading
+                />
                 <BigAnimatedText />
             </div>
             <footer className="fixed bottom-0 left-0 w-full z-0">

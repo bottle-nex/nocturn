@@ -5,6 +5,7 @@ import { SplitText } from 'gsap/SplitText';
 import JoinQuizButton from './JoinQuizButton';
 import { RiVipCrown2Line } from 'react-icons/ri';
 import { motion } from 'framer-motion';
+import Shuffle from '../animation/ShuffleText';
 import LandingSectionLeftCard from './LandingSectionCards/LandingSectionLeftCard';
 import LandingSectionMidCard from './LandingSectionCards/LandingSectionMidCard';
 import LandingSectionRightCard from './LandingSectionCards/LandingSectionRightCard';
@@ -15,7 +16,7 @@ if (typeof window !== 'undefined') {
 
 export default function LandingSection() {
     return (
-        <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none">
+        <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none relative">
             <div className="flex flex-col items-center justify-between h-full">
                 <div className="flex flex-col gap-y-5 items-center">
                     <motion.div
@@ -38,11 +39,15 @@ export default function LandingSection() {
                         <RiVipCrown2Line className="size-3.5" />
                         Mom was right, studying pays
                     </motion.div>
-                    <div
-                        style={{ fontWeight: 900 }}
-                        className="text-[6.5rem] leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative"
-                    >
+                    <div className="leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative max-w-220 text-center">
+                        <Shuffle
+                            text="Nocturn"
+                            tag="h1"
+                            className="text-[12.5rem] italic font-semibold"
+                            shuffleDirection="up"
+                        />
                         <motion.div
+                            className="text-[1.2rem] text-dark-base/60 tracking-wide"
                             initial={{
                                 scale: 0.8,
                                 opacity: 0,
@@ -60,27 +65,8 @@ export default function LandingSection() {
                                 delay: 0.1,
                             }}
                         >
-                            The ultimate fun
-                        </motion.div>
-                        <motion.div
-                            initial={{
-                                scale: 0.8,
-                                opacity: 0,
-                                y: 20,
-                            }}
-                            animate={{
-                                scale: 1,
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 260,
-                                damping: 20,
-                                delay: 0.1,
-                            }}
-                        >
-                            knowledge matters
+                            Host live quizzes, compete in real time, and win crypto rewards. where
+                            knowledge meets the blockchain.
                         </motion.div>
                     </div>
                     <JoinQuizButton />
