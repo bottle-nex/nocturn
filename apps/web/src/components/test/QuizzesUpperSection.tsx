@@ -100,7 +100,7 @@ export default function QuizzesUpperSection({
                 <Button
                     onClick={handleCreateQuiz}
                     disabled={actionsDisabled}
-                    className="px-8 py-4.75 bg-nprimary dark:bg-light-base dark:hover:bg-light-alpha font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
+                    className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
                 >
                     {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />}
                     <span>{creating ? 'Creating...' : 'New Quiz'}</span>
