@@ -125,7 +125,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                 <div className="text-xl dark:text-nlighter text-ndarkest tracking-wide">
                                     Trashed Quizzes
                                 </div>
-                                <div className="text-sm text-light-base/50 tracking-wide">
+                                <div className="text-sm dark:text-light-base/50 text-dark-alpha/50 tracking-wide">
                                     Items in trash are permanently deleted after 30 days
                                 </div>
                             </div>

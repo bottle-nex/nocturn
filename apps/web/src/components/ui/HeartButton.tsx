@@ -81,7 +81,7 @@ export default function HeartButton({ onToggle, liked, className, disabled }: He
                 {liked ? (
                     <GoHeartFill className="size-5 text-red-500 pt-px" />
                 ) : (
-                    <GoHeart className="size-5 text-light-base group-hover/heart:text-red-500 transition-colors pt-px" />
+                    <GoHeart className="size-5 text-red-500/50 dark:text-light-base group-hover/heart:text-red-500 transition-colors pt-px" />
                 )}
             </motion.div>
         </div>

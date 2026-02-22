@@ -321,7 +321,7 @@ function KnowUsBigCard({
                                         <h5 className="text-base font-semibold mb-1">
                                             {section.title}
                                         </h5>
-                                        <p className="text-[15px] text-dark-base/70">
+                                        <p className="text-[15px] text-dark-base/70 dark:text-light-alpha/70 ">
                                             {section.paragraph}
                                         </p>
                                     </div>

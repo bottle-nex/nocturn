@@ -143,7 +143,9 @@ export default function FavouriteQuizzesPanel() {
 
             <div className="w-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
                 {filteredQuizzes.length === 0 ? (
-                    <div>No favourite quizzes yet</div>
+                    <div className="text-dark-alpha/70 dark:text-light-base/70">
+                        No favourite quizzes yet
+                    </div>
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => (

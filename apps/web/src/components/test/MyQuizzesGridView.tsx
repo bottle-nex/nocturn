@@ -106,7 +106,7 @@ export default function MyQuizzesGridView({
                 <div className="flex items-center justify-between w-full mt-0.5">
                     <div className="flex flex-col">
                         <span className="block text-base">{quiz.title?.slice(0, 28)}…</span>
-                        <span className="block text-xs text-light-base/70">
+                        <span className="block text-xs dark:text-light-base/70 text-dark-alpha/70 ">
                             Created at {formattedTime}
                         </span>
                     </div>

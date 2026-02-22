@@ -264,9 +264,9 @@ function InputBox({
             <div className="flex items-center justify-between px-3 pb-3 pt-2">
                 <button
                     aria-label="sdsdv"
-                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800 transition-colors"
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-200 hover:dark:bg-neutral-800 transition-colors cursor-pointer "
                 >
-                    <HiPlus className="text-neutral-400 text-xl" />
+                    <HiPlus className="dark:text-light-alpha/80 text-dark-alpha/70 text-xl" />
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -274,16 +274,16 @@ function InputBox({
                         <button
                             onClick={onToggleVoice}
                             className={cn(
-                                'w-8 h-8 flex items-center justify-center rounded-full transition-all',
+                                'w-8 h-8 flex items-center justify-center rounded-full transition-all cursor-pointer ',
                                 listening
                                     ? 'bg-red-500/20 text-red-500'
-                                    : 'hover:bg-neutral-800 text-neutral-400',
+                                    : 'hover:bg-neutral-200 hover:dark:bg-neutral-800 text-dark-alpha/80 dark:text-light-alpha/80 ',
                             )}
                         >
                             {listening ? (
                                 <CgSpinner className="animate-spin text-base" />
                             ) : (
-                                <HiMicrophone className="text-xl" />
+                                <HiMicrophone className="text-lg " />
                             )}
                         </button>
                     )}
@@ -293,13 +293,19 @@ function InputBox({
                         disabled={!hasContent}
                         onClick={onSubmit}
                         className={cn(
-                            'w-8 h-8 flex items-center justify-center rounded-full transition-all',
+                            'w-8 h-8 flex items-center justify-center rounded-full transition-all cursor-pointer ',
                             hasContent
-                                ? 'bg-neutral-100 text-neutral-900 hover:scale-105'
-                                : 'bg-neutral-800 text-neutral-500 cursor-not-allowed',
+                                ? 'dark:bg-neutral-100 bg-dark-alpha text-neutral-900 hover:scale-105'
+                                : 'dark:bg-neutral-800 bg-neutral-500 text-neutral-500 cursor-not-allowed',
                         )}
                     >
-                        <HiArrowUp className="text-base" />
+                        <HiArrowUp
+                            className={cn(
+                                hasContent
+                                    ? 'text-light-alpha dark:text-dark-base'
+                                    : 'text-light-alpha/70',
+                            )}
+                        />
                     </button>
                 </div>
             </div>
