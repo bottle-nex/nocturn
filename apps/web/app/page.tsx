@@ -16,7 +16,10 @@ export default function Page() {
                 <InstructionsSection />
                 <FeaturesSection />
                 <WhyNocturn />
-                <PricingComponent className='flex flex-col items-center justify-center pt-48' showHeading />
+                <PricingComponent
+                    className="flex flex-col items-center justify-center pt-48"
+                    showHeading
+                />
                 <BigAnimatedText />
             </div>
             <footer className="fixed bottom-0 left-0 w-full z-0">

@@ -74,13 +74,48 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
     }
 
     const sidebarItems: SidebarItem[] = [
-        { tab: SidebarTab.HOME, label: 'Home', icon: <MdOutlineHomeMax size={18} />, onClick: () => handleTabChange(SidebarTab.HOME) },
-        { tab: SidebarTab.MY_QUIZZES, label: 'My Quizzes', icon: <GoPeople size={18} />, onClick: () => handleTabChange(SidebarTab.MY_QUIZZES) },
-        { tab: SidebarTab.SHARED_WITH_ME, label: 'Shared with me', icon: <MdOutlineFolderShared size={18} />, onClick: () => handleTabChange(SidebarTab.SHARED_WITH_ME) },
-        { tab: SidebarTab.FAVORITES, label: 'Favorites', icon: <FaRegHeart size={17} />, onClick: () => handleTabChange(SidebarTab.FAVORITES) },
-        { tab: SidebarTab.SETTINGS, label: 'Settings', icon: <RiSettings6Line size={18} />, onClick: () => handleTabChange(SidebarTab.SETTINGS) },
-        { tab: SidebarTab.PREMIUM, label: 'Premium', icon: <RiVipCrownLine size={18} />, onClick: () => router.push('/premium') },
-        { tab: SidebarTab.CHATS, label: 'Chats', icon: <PiChats size={18} />, onClick: () => handleTabChange(SidebarTab.CHATS) },
+        {
+            tab: SidebarTab.HOME,
+            label: 'Home',
+            icon: <MdOutlineHomeMax size={18} />,
+            onClick: () => handleTabChange(SidebarTab.HOME),
+        },
+        {
+            tab: SidebarTab.MY_QUIZZES,
+            label: 'My Quizzes',
+            icon: <GoPeople size={18} />,
+            onClick: () => handleTabChange(SidebarTab.MY_QUIZZES),
+        },
+        {
+            tab: SidebarTab.SHARED_WITH_ME,
+            label: 'Shared with me',
+            icon: <MdOutlineFolderShared size={18} />,
+            onClick: () => handleTabChange(SidebarTab.SHARED_WITH_ME),
+        },
+        {
+            tab: SidebarTab.FAVORITES,
+            label: 'Favorites',
+            icon: <FaRegHeart size={17} />,
+            onClick: () => handleTabChange(SidebarTab.FAVORITES),
+        },
+        {
+            tab: SidebarTab.SETTINGS,
+            label: 'Settings',
+            icon: <RiSettings6Line size={18} />,
+            onClick: () => handleTabChange(SidebarTab.SETTINGS),
+        },
+        {
+            tab: SidebarTab.PREMIUM,
+            label: 'Premium',
+            icon: <RiVipCrownLine size={18} />,
+            onClick: () => router.push('/premium'),
+        },
+        {
+            tab: SidebarTab.CHATS,
+            label: 'Chats',
+            icon: <PiChats size={18} />,
+            onClick: () => handleTabChange(SidebarTab.CHATS),
+        },
     ];
 
     return (
@@ -158,7 +193,9 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             )}
 
                             <span className="p-1 rounded">{item.icon}</span>
-                            <span className="text-sm dark:text-white/80 text-black/90">{item.label}</span>
+                            <span className="text-sm dark:text-white/80 text-black/90">
+                                {item.label}
+                            </span>
                         </div>
                     ))}
 
@@ -169,10 +206,10 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5 transition-all duration-200',
                             'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                             isDragging &&
-                            'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
+                                'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
                             isOverTrash &&
-                            isDragging &&
-                            'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
+                                isDragging &&
+                                'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
                         )}
                     >
                         <span
@@ -188,8 +225,8 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             className={cn(
                                 'text-sm dark:text-white/80 text-black/90 transition-colors',
                                 isOverTrash &&
-                                isDragging &&
-                                'text-red-600 dark:text-red-400 font-semibold',
+                                    isDragging &&
+                                    'text-red-600 dark:text-red-400 font-semibold',
                             )}
                         >
                             {isOverTrash && isDragging ? 'Drop here' : 'Trash'}

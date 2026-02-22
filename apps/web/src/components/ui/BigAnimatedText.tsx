@@ -95,12 +95,12 @@ export default function BigAnimatedText() {
                 alt='sd'
                 className='absolute left-32 -bottom-3'
             /> */}
-            <section className='w-full max-w-7xl relative mx-auto h-140'>
+            <section className="w-full max-w-7xl relative mx-auto h-140">
                 <Image
-                    src={"/illustrations/animated-text.jpeg"}
+                    src={'/illustrations/animated-text.jpeg'}
                     fill
-                    alt='sd'
-                    className='object-cover rounded-lg'
+                    alt="sd"
+                    className="object-cover rounded-lg"
                 />
             </section>
             <div className="flex flex-col items-center gap-y-8">

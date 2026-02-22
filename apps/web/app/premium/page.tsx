@@ -1,13 +1,14 @@
-import PremiumPageMain from "@/components/premium/PremiumPageMain";
-import LandingNavbar from "@/components/revamp/LandingNavbar";
-import PricingComponent from "@/components/revamp/PricingComponent";
-import LandingFooter from "@/components/test/LandingFooter";
-import { Metadata } from "next";
-import { JSX } from "react";
+import PremiumPageMain from '@/components/premium/PremiumPageMain';
+import LandingNavbar from '@/components/revamp/LandingNavbar';
+import PricingComponent from '@/components/revamp/PricingComponent';
+import LandingFooter from '@/components/test/LandingFooter';
+import { Metadata } from 'next';
+import { JSX } from 'react';
 
 export const metadata: Metadata = {
-    title: "Premium | Nocturn",
-    description: "Unlock premium quizzes and exclusive experiences with Nocturn Premium. AI-powered quiz generation, unlimited participants, advanced analytics, and Solana prize pools.",
+    title: 'Premium | Nocturn',
+    description:
+        'Unlock premium quizzes and exclusive experiences with Nocturn Premium. AI-powered quiz generation, unlimited participants, advanced analytics, and Solana prize pools.',
 };
 
 export default function PremiumPage(): JSX.Element {
@@ -22,5 +23,5 @@ export default function PremiumPage(): JSX.Element {
                 <LandingFooter />
             </footer>
         </div>
-    )
+    );
 }

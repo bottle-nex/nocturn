@@ -36,7 +36,10 @@ interface PricingComponentProps {
     className?: string;
 }
 
-export default function PricingComponent({ className, showHeading = true }: PricingComponentProps): JSX.Element {
+export default function PricingComponent({
+    className,
+    showHeading = true,
+}: PricingComponentProps): JSX.Element {
     const [loadingTier, setLoadingTier] = useState<string | null>(null);
     const [tiers, setTiers] = useState<SubscriptionTierDTO[] | null>(null);
     const [tiersLoading, setTiersLoading] = useState<boolean>(true);
@@ -140,10 +143,10 @@ export default function PricingComponent({ className, showHeading = true }: Pric
     }
 
     return (
-        <main className={cn("max-w-7xl mx-auto w-full", className)}>
+        <main className={cn('max-w-7xl mx-auto w-full', className)}>
             {showHeading && (
                 <SectionHeading
-                className='pb-16'
+                    className="pb-16"
                     title="Choose your Nocturn subscription"
                     description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
                     icon={<RiServiceFill className="size-4" />}

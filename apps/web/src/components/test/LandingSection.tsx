@@ -39,9 +39,7 @@ export default function LandingSection() {
                         <RiVipCrown2Line className="size-3.5" />
                         Mom was right, studying pays
                     </motion.div>
-                    <div
-                        className="leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative max-w-220 text-center"
-                    >
+                    <div className="leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative max-w-220 text-center">
                         <Shuffle
                             text="Nocturn"
                             tag="h1"
@@ -49,7 +47,7 @@ export default function LandingSection() {
                             shuffleDirection="up"
                         />
                         <motion.div
-                            className='text-[1.2rem] text-dark-base/60 tracking-wide'
+                            className="text-[1.2rem] text-dark-base/60 tracking-wide"
                             initial={{
                                 scale: 0.8,
                                 opacity: 0,
@@ -67,7 +65,8 @@ export default function LandingSection() {
                                 delay: 0.1,
                             }}
                         >
-                            Host live quizzes, compete in real time, and win crypto rewards. where knowledge meets the blockchain.
+                            Host live quizzes, compete in real time, and win crypto rewards. where
+                            knowledge meets the blockchain.
                         </motion.div>
                     </div>
                     <JoinQuizButton />

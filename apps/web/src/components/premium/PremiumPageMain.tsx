@@ -1,8 +1,8 @@
-"use client"
-import { JSX } from "react";
-import { Button } from "../ui/button";
-import { MdKeyboardArrowRight } from "react-icons/md";
-import { useMotionValue } from "framer-motion";
+'use client';
+import { JSX } from 'react';
+import { Button } from '../ui/button';
+import { MdKeyboardArrowRight } from 'react-icons/md';
+import { useMotionValue } from 'framer-motion';
 
 export default function PremiumPageMain(): JSX.Element {
     const mouseX = useMotionValue(0);
@@ -17,11 +17,22 @@ export default function PremiumPageMain(): JSX.Element {
     }
 
     return (
-        <section onMouseMove={handleMouseMove} className="w-full z-10 relative h-screen flex items-center justify-center overflow-hidden">
+        <section
+            onMouseMove={handleMouseMove}
+            className="w-full z-10 relative h-screen flex items-center justify-center overflow-hidden"
+        >
             <div className="flex flex-col items-center px-6 text-center -mt-20 relative z-10">
-                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">Unlock premium quizzes</h1>
-                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">& exclusive experiences</h1>
-                <p className="block text-center mt-8 max-w-5xl">Elevate your quiz game with Nocturn Premium. Get access to AI-powered quiz generation, unlimited participants, advanced analytics, and Solana prize pools to make every quiz unforgettable.</p>
+                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">
+                    Unlock premium quizzes
+                </h1>
+                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">
+                    & exclusive experiences
+                </h1>
+                <p className="block text-center mt-8 max-w-5xl">
+                    Elevate your quiz game with Nocturn Premium. Get access to AI-powered quiz
+                    generation, unlimited participants, advanced analytics, and Solana prize pools
+                    to make every quiz unforgettable.
+                </p>
                 <section className="mt-8 flex items-center justify-center">
                     <Button className="px-8 py-4.75 bg-dark-base hover:bg-dark-alpha dark:bg-light-base dark:hover:bg-light-alpha font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-dark-base">
                         Explore premium
@@ -33,5 +44,5 @@ export default function PremiumPageMain(): JSX.Element {
                 </section>
             </div>
         </section>
-    )
+    );
 }
