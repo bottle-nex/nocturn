@@ -19,7 +19,7 @@ import { PiMagnifyingGlass, PiTrashSimple } from 'react-icons/pi';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import Image from 'next/image';
-import { MdDeleteSweep } from 'react-icons/md';
+import { MdCheckBox, MdCheckBoxOutlineBlank, MdDeleteSweep } from 'react-icons/md';
 import CanvasSkeletonCard from '@/components/skeletons/CanvasSkeleton';
 import { Loader } from 'lucide-react';
 
@@ -34,9 +34,19 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
     const [quizActionLoading, setQuizActionLoading] = useState<
         Record<string, 'restore' | 'delete' | null>
     >({});
+    const [selectedQuizzes, setSelectedQuizzes] = useState<Set<string>>(new Set());
 
     function startQuizAction(id: string, type: 'restore' | 'delete') {
         setQuizActionLoading((prev) => ({ ...prev, [id]: type }));
+    }
+
+    function toggleSelectQuiz(id: string) {
+        setSelectedQuizzes((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
     }
 
     function stopQuizAction(id: string) {
@@ -55,13 +65,28 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
 
     async function handleDeleteAllTrashedQuizzes() {
         if (!session?.user.token || clearingTrash) return;
+        if (trashedQuizzes.length === 0) {
+            toast.error('trash is already cleared');
+            return;
+        }
+
+        const hasSelected = selectedQuizzes.size > 0;
         setClearingTrash(true);
         try {
-            await QuizActions.delete_all_trashed_quizzes(session.user.token);
-            resetTrashQuizStore();
-            toast.success('Cleared trash successfully');
+            if (hasSelected) {
+                const ids = Array.from(selectedQuizzes);
+
+                await QuizActions.delete_selected_trashed_quizzes(session.user.token, ids);
+                ids.forEach((id) => removeTrashedQuizById(id));
+                setSelectedQuizzes(new Set());
+                toast.success('Selected quizzes deleted');
+            } else {
+                await QuizActions.delete_all_trashed_quizzes(session.user.token);
+                resetTrashQuizStore();
+                toast.success('Cleared trash successfully');
+            }
         } catch {
-            toast.error('Failed to clear trash');
+            toast.error('Failed to delete quizzes');
         } finally {
             setClearingTrash(false);
         }
@@ -115,6 +140,8 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
         }
     }
 
+    const hasSelected = selectedQuizzes.size > 0;
+
     return (
         <AnimatePresence>
             <OpacityBackground className="bg-black/10 dark:bg-white/10" onBackgroundClick={onClose}>
@@ -144,18 +171,30 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                     />
                                 </div>
 
-                                <ToolTipComponent content="Empty Trash">
+                                <ToolTipComponent
+                                    content={hasSelected ? 'Delete selected' : 'Empty Trash'}
+                                >
                                     <Button
                                         variant={'outline'}
-                                        size={'icon'}
+                                        size={hasSelected ? 'default' : 'icon'}
                                         onClick={handleDeleteAllTrashedQuizzes}
                                         disabled={clearingTrash}
-                                        className="rounded-alpha bg-red-700/60! hover:bg-red-700/40! tracking-wide text-light-base flex items-center text-[13px] shadow-sm aspect-square"
+                                        className={cn(
+                                            'rounded-alpha bg-red-700 dark:bg-red-700/60! hover:bg-red-700/90 hover:dark:bg-red-700/40! tracking-wide text-light-base flex items-center gap-2 text-[13px] shadow-sm',
+                                            !hasSelected && 'aspect-square',
+                                        )}
                                     >
                                         {clearingTrash ? (
                                             <Loader className="animate-spin size-4" />
                                         ) : (
-                                            <MdDeleteSweep className="mb-px size-4" />
+                                            <>
+                                                <MdDeleteSweep className="mb-px size-4 text-light-base" />
+                                                {hasSelected && (
+                                                    <span className="text-light-base">
+                                                        Delete Selected
+                                                    </span>
+                                                )}
+                                            </>
                                         )}
                                     </Button>
                                 </ToolTipComponent>
@@ -179,6 +218,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                             ? moment(quiz.deletedAt).format('MMM D, YYYY')
                                             : '';
                                         const isOperating = !!quizActionLoading[quiz.id];
+                                        const isSelected = selectedQuizzes.has(quiz.id);
 
                                         return (
                                             <div
@@ -187,12 +227,35 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                             >
                                                 <div
                                                     className={cn(
-                                                        'absolute top-5 z-50 right-5 flex justify-end gap-x-2 w-full transition-all duration-100',
+                                                        'absolute top-5 z-50 px-5 flex justify-between w-full transition-all duration-100',
                                                         isOperating
                                                             ? 'opacity-100'
                                                             : 'opacity-0 group-hover:opacity-100',
                                                     )}
                                                 >
+                                                    <div>
+                                                        <ToolTipComponent
+                                                            content={
+                                                                isSelected ? 'unselect' : 'select'
+                                                            }
+                                                        >
+                                                            <div
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    toggleSelectQuiz(quiz.id);
+                                                                }}
+                                                                className={cn(
+                                                                    'bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha shadow-xs cursor-pointer',
+                                                                )}
+                                                            >
+                                                                {isSelected ? (
+                                                                    <MdCheckBox className="size-6 text-indigo-700" />
+                                                                ) : (
+                                                                    <MdCheckBoxOutlineBlank className="size-6 text-indigo-700" />
+                                                                )}
+                                                            </div>
+                                                        </ToolTipComponent>
+                                                    </div>
                                                     <div className="flex gap-x-2.5 items-center">
                                                         <ToolTipComponent content="restore">
                                                             <div
@@ -254,8 +317,11 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                                 <EmptyCanvas
                                                     question={quiz.questions?.[0]?.question}
                                                     options={quiz.questions?.[0]?.options}
-                                                    className="w-full aspect-video rounded-[8px] outline-2 select-none cursor-default outline-black/40 dark:outline-white/40"
+                                                    className="w-full aspect-video rounded-[8px] outline-2 select-none cursor-pointer outline-black/40 dark:outline-white/40"
                                                     template={quiz.template}
+                                                    onClick={() => {
+                                                        toggleSelectQuiz(quiz.id);
+                                                    }}
                                                 />
 
                                                 <div className="flex items-center gap-x-2.5 mt-3 w-full overflow-hidden">

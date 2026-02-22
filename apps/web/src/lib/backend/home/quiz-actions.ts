@@ -13,6 +13,7 @@ import {
     GET_SHARED_QUIZ_URL,
     GET_TRASHED_QUIZZES_URL,
     PERMANENTLY_DELETE_QUIZ_URL,
+    PERMANENTLY_DELETE_SELECTED_QUIZ_URL,
     RESTORE_TRASHED_QUIZ_URL,
     TOGGLE_FAVOURITE_QUIZ_URL,
 } from 'routes/api_routes';
@@ -156,6 +157,28 @@ export default class QuizActions {
             }
         } catch (err) {
             console.error('Error in fetching recently viewed quizzes: ', err);
+            return;
+        }
+    }
+
+    static async delete_selected_trashed_quizzes(token: string, quizIds: string[]) {
+        if (quizIds.length === 0) return;
+
+        try {
+            await axios.post(
+                PERMANENTLY_DELETE_SELECTED_QUIZ_URL,
+                {
+                    quizIds: quizIds,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+            return;
+        } catch (error) {
+            console.error('Failed to delete selected quiz: ', error);
             return;
         }
     }
