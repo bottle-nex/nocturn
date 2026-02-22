@@ -11,6 +11,7 @@ const envSchema = z.object({
         .transform((val) => parseInt(val, 10)),
     SERVER_NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     SERVER_JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters'),
+    SERVER_JWT_REFRESH_SECRET: z.string().min(32, 'JWT refresh secret must be at least 32 characters'),
     SERVER_AWS_ACCESS_KEY_ID: z.string().min(1, 'AWS Access Key ID is required'),
     SERVER_AWS_SECRET_ACCESS_KEY: z.string().min(1, 'AWS Secret Access Key is required'),
     SERVER_AWS_REGION: z.string().default('eu-north-1'),

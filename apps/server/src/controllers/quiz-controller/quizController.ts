@@ -75,8 +75,6 @@ export default class QuizController {
         await QuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
     }
 
-    // ─── Private: Core Logic ──────────────────────────────────────────────────
-
     private static async handle_save(
         res: Response,
         quizId: string,
@@ -88,7 +86,6 @@ export default class QuizController {
             const existing = await QuizController.findQuiz(quizId);
 
             if (!existing) {
-                // Brand new — create directly with DRAFT status
                 const quiz = await QuizController.createQuiz(
                     quizId,
                     hostId,
@@ -167,7 +164,6 @@ export default class QuizController {
                 );
 
             if (!existing) {
-                // Brand new — create directly with PUBLISHED status, no intermediate steps
                 const quiz = await QuizController.createQuiz(
                     quizId,
                     hostId,
@@ -178,7 +174,6 @@ export default class QuizController {
                 return ResponseWriter.success(res, { quiz }, 'Quiz published successfully', 200);
             }
 
-            // Exists and is editable — validate owner, update + set PUBLISHED in one transaction
             if (!(await QuizController.validateOwner(res, hostId, quizId))) return;
 
             const quiz = await QuizController.updateQuizDataWithStatus(
@@ -316,13 +311,6 @@ export default class QuizController {
                                 : undefined,
                             questions: { create: questions },
                         },
-                        // select: {
-                        //     id: true, title: true, description: true, template: true, status: true,
-                        //     questionTimeLimit: true, breakBetweenQuestions: true, eliminationThreshold: true,
-                        //     timeBonus: true, liveChat: true, spectatorMode: true, basePointsPerQuestion: true,
-                        //     pointsMultiplier: true, prizePool: true, currency: true,
-                        //     _count: { select: { questions: true, participants: true } },
-                        // },
                         include: {
                             questions: true,
                             template: true,
