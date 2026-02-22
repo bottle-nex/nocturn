@@ -2,12 +2,14 @@
 import { JSX } from 'react';
 import { motion, Variants } from 'framer-motion';
 import UnclickableTicker from '../tickers/UnClickableTicker';
+import { cn } from '@/lib/utils';
 
 interface SectionHeadingProps {
     title?: string;
     description?: string;
     ticker?: string;
     icon?: JSX.Element;
+    className?: string;
 }
 
 const container: Variants = {
@@ -40,6 +42,7 @@ export default function SectionHeading({
     description,
     ticker,
     icon,
+    className,
 }: SectionHeadingProps): JSX.Element {
     return (
         <motion.section
@@ -47,7 +50,7 @@ export default function SectionHeading({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.4 }}
-            className="w-full flex flex-col items-center gap-y-2 max-w-3xl"
+            className={cn("w-full flex flex-col items-center gap-y-2 max-w-5xl", className)}
         >
             <motion.div variants={child}>
                 <UnclickableTicker>

@@ -5,10 +5,10 @@ import { SplitText } from 'gsap/SplitText';
 import JoinQuizButton from './JoinQuizButton';
 import { RiVipCrown2Line } from 'react-icons/ri';
 import { motion } from 'framer-motion';
+import Shuffle from '../animation/ShuffleText';
 import LandingSectionLeftCard from './LandingSectionCards/LandingSectionLeftCard';
 import LandingSectionMidCard from './LandingSectionCards/LandingSectionMidCard';
 import LandingSectionRightCard from './LandingSectionCards/LandingSectionRightCard';
-import Image from 'next/image';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(TextPlugin, SplitText);
@@ -42,27 +42,12 @@ export default function LandingSection() {
                     <div
                         className="leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative max-w-220 text-center"
                     >
-                        <motion.div
-                            className='text-[12.5rem] italic font-semibold'
-                            initial={{
-                                scale: 0.8,
-                                opacity: 0,
-                                y: 20,
-                            }}
-                            animate={{
-                                scale: 1,
-                                opacity: 1,
-                                y: 0,
-                            }}
-                            transition={{
-                                type: 'spring',
-                                stiffness: 260,
-                                damping: 20,
-                                delay: 0.1,
-                            }}
-                        >
-                            Nocturn
-                        </motion.div>
+                        <Shuffle
+                            text="Nocturn"
+                            tag="h1"
+                            className="text-[12.5rem] italic font-semibold"
+                            shuffleDirection="up"
+                        />
                         <motion.div
                             className='text-[1.2rem] text-dark-base/60 tracking-wide'
                             initial={{

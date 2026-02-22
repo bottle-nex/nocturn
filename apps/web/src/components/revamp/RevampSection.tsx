@@ -70,17 +70,6 @@ export default function RevampSection() {
                     </div>
                 </div>
 
-                {/* <div className="absolute top-88 right-[32%]">
-                    <div className="w-30 h-15 overflow-hidden relative scale-x-[-1] rotate-8">
-                        <Image
-                            src="/illustrations/arrow_in.png"
-                            alt=""
-                            fill
-                            className="object-cover"
-                        />
-                    </div>
-                </div> */}
-
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 16 }}
                     animate={{ opacity: 1, scale: [0.9, 1.06, 1], y: [16, -6, 0] }}

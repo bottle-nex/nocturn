@@ -31,7 +31,12 @@ import { toast } from '@/lib/toast';
 import axios from 'axios';
 import SectionHeading from '../ui/SectionHeading';
 
-export default function PricingComponent(): JSX.Element {
+interface PricingComponentProps {
+    showHeading: boolean;
+    className?: string;
+}
+
+export default function PricingComponent({ className, showHeading = true }: PricingComponentProps): JSX.Element {
     const [loadingTier, setLoadingTier] = useState<string | null>(null);
     const [tiers, setTiers] = useState<SubscriptionTierDTO[] | null>(null);
     const [tiersLoading, setTiersLoading] = useState<boolean>(true);
@@ -135,15 +140,18 @@ export default function PricingComponent(): JSX.Element {
     }
 
     return (
-        <main className="max-w-7xl mx-auto w-full pt-25 flex flex-col justify-center items-center mt-10">
-            <SectionHeading
-                title="Choose Your Plan"
-                description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
-                icon={<RiServiceFill className="size-4" />}
-                ticker="pricing plans"
-            />
+        <main className={cn("max-w-7xl mx-auto w-full", className)}>
+            {showHeading && (
+                <SectionHeading
+                className='pb-16'
+                    title="Choose your Nocturn subscription"
+                    description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
+                    icon={<RiServiceFill className="size-4" />}
+                    ticker="pricing plans"
+                />
+            )}
 
-            <section className="w-full grid md:grid-cols-2 gap-8 py-20 max-w-3xl mx-auto items-end">
+            <section className="w-full grid md:grid-cols-2 gap-8 max-w-3xl mx-auto items-end">
                 {premium_features.map((feature) => {
                     const isLoading = loadingTier === feature.id;
 
@@ -153,7 +161,7 @@ export default function PricingComponent(): JSX.Element {
                             className={cn(
                                 'rounded-2xl relative hover:shadow-sm flex flex-col overflow-hidden transform-gpu',
                                 feature.id === 'pro'
-                                    ? 'border border-nprimary bg-nprimary/5 h-150'
+                                    ? 'border border-nprimary bg-[#ededf4] h-150'
                                     : 'border border-neutral-200 bg-white h-144',
                                 tiersLoading && 'overflow-hidden',
                             )}
