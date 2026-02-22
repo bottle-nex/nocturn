@@ -5,6 +5,7 @@ import { GiGamepad } from 'react-icons/gi';
 import gsap from 'gsap';
 import { SiSolana } from 'react-icons/si';
 import { RiTrophyFill, RiGogglesFill } from 'react-icons/ri';
+import Image from 'next/image';
 
 const COLORS = ['#05a552', '#7a78ff', '#ff6d38', '#ffc413', '#e53e40'];
 type ContentType = string | React.ReactElement;
@@ -86,8 +87,23 @@ export default function BigAnimatedText() {
     }, [cycleIndex, colorOrder]);
 
     return (
-        <div className="w-full flex justify-center items-center h-[50vh] mx-auto  text-dark-alpha relative z-30 shadow-3xl">
-            <div className="flex flex-col items-center">
+        <div className="w-full min-h-dvh flex flex-col gap-y-40 justify-center items-center mx-auto text-dark-alpha relative z-30 shadow-3xl py-40">
+            {/* <Image
+                src={"/illustrations/cat.png"}
+                width={200}
+                height={200}
+                alt='sd'
+                className='absolute left-32 -bottom-3'
+            /> */}
+            <section className='w-full max-w-7xl relative mx-auto h-140'>
+                <Image
+                    src={"/illustrations/animated-text.jpeg"}
+                    fill
+                    alt='sd'
+                    className='object-cover rounded-lg'
+                />
+            </section>
+            <div className="flex flex-col items-center gap-y-8">
                 <div className="relative max-w-3xl">
                     <h1 className="text-center text-7xl font-bold text-nprime-darker">
                         Knowledge Is Power. Power Pays.

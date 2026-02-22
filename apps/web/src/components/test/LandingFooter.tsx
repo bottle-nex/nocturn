@@ -11,17 +11,17 @@ const audio = Audiowide({
 
 export default function LandingFooter() {
     return (
-        <footer className="h-[70vh] w-screen relative bg-dark-base text-[#F3ECE7]">
+        <footer className="h-[60vh] w-screen relative bg-dark-base text-[#F3ECE7]">
             <div className="h-full w-full flex justify-between pt-20 px-30">
                 <div className="flex flex-col gap-y-3">
                     <div className="flex gap-x-4">
-                        <div className="h-12 w-12 rounded-full bg-[#53354A] ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-[#E84545] transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaXTwitter className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full bg-[#53354A] ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-[#E84545] transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaGithub className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full bg-[#53354A] ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-[#E84545] transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaLinkedin className="size-5.5" />
                         </div>
                     </div>
@@ -102,6 +102,7 @@ export default function LandingFooter() {
                 className={cn(
                     'text-[13.1rem] font-semibold text-light-base/20 tracking-wider',
                     'absolute left-1/2 -translate-x-1/2 -bottom-8 leading-none',
+                    'bg-clip-text text-transparent bg-linear-to-b from-light-base/20 to-dark-base',
                     audio.className,
                     // montserrat.className,
                 )}

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import LandingSectionLeftCard from './LandingSectionCards/LandingSectionLeftCard';
 import LandingSectionMidCard from './LandingSectionCards/LandingSectionMidCard';
 import LandingSectionRightCard from './LandingSectionCards/LandingSectionRightCard';
+import Image from 'next/image';
 
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(TextPlugin, SplitText);
@@ -15,7 +16,7 @@ if (typeof window !== 'undefined') {
 
 export default function LandingSection() {
     return (
-        <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none">
+        <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none relative">
             <div className="flex flex-col items-center justify-between h-full">
                 <div className="flex flex-col gap-y-5 items-center">
                     <motion.div
@@ -39,10 +40,10 @@ export default function LandingSection() {
                         Mom was right, studying pays
                     </motion.div>
                     <div
-                        style={{ fontWeight: 900 }}
-                        className="text-[6.5rem] leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relativez"
+                        className="leading-none text-dark-base flex flex-col tracking-tight items-center mb-2 relative max-w-220 text-center"
                     >
                         <motion.div
+                            className='text-[12.5rem] italic font-semibold'
                             initial={{
                                 scale: 0.8,
                                 opacity: 0,
@@ -60,9 +61,10 @@ export default function LandingSection() {
                                 delay: 0.1,
                             }}
                         >
-                            The ultimate fun
+                            Nocturn
                         </motion.div>
                         <motion.div
+                            className='text-[1.2rem] text-dark-base/60 tracking-wide'
                             initial={{
                                 scale: 0.8,
                                 opacity: 0,
@@ -80,7 +82,7 @@ export default function LandingSection() {
                                 delay: 0.1,
                             }}
                         >
-                            knowledge matters
+                            Host live quizzes, compete in real time, and win crypto rewards. where knowledge meets the blockchain.
                         </motion.div>
                     </div>
                     <JoinQuizButton />
