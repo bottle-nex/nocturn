@@ -162,17 +162,19 @@ export default class QuizActions {
     }
 
     static async delete_selected_trashed_quizzes(token: string, quizIds: string[]) {
-
         if (quizIds.length === 0) return;
 
         try {
-            await axios.post(PERMANENTLY_DELETE_SELECTED_QUIZ_URL, {
-                quizIds: quizIds,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+            await axios.post(
+                PERMANENTLY_DELETE_SELECTED_QUIZ_URL,
+                {
+                    quizIds: quizIds,
                 },
-            }
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
             );
             return;
         } catch (error) {
