@@ -28,7 +28,7 @@ export interface CustomSession {
 function getTokenExpiry(token: string): number | null {
     try {
         const payload = JSON.parse(Buffer.from(token.split('.')[1]!, 'base64').toString());
-        return payload.exp ? payload.exp * 1000 : null; // convert to ms
+        return payload.exp ? payload.exp * 1000 : null; // converting to ms
     } catch {
         return null;
     }
