@@ -11,6 +11,9 @@ const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
 export class RefreshTokenController {
     static async refreshToken(req: Request, res: Response) {
+
+        console.log('asking to refresh the access token');
+
         const token = req.cookies?.[NOCTURN_REFRESH_COOKIE_NAME];
 
         if (!token) {
