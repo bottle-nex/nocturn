@@ -88,7 +88,7 @@ export default function QuizzesUpperSection({
                         className={cn(
                             'h-full w-full pl-10 rounded-beta',
                             'placeholder:text-dark-base/60 dark:placeholder:text-neutral-500',
-                            'dark:bg-dark-base! bg-light-base! border-neutral-800',
+                            'dark:bg-dark-base! bg-light-base! dark:border-neutral-800 border-neutral-300 ',
                         )}
                     />
                     <PiMagnifyingGlass

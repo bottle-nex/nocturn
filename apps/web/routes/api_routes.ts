@@ -42,6 +42,7 @@ export const CHANGE_QUIZ_TITLE_URL = QUIZ_URL + '/update-title';
 export const DELETE_SELECTED_QUIZZES_URL = QUIZ_URL + '/move-quizzes-to-trash';
 export const GET_TRASHED_QUIZZES_URL = QUIZ_URL + '/get-user-trashed-quiz';
 export const CLEAR_TRASH_URL = QUIZ_URL + '/clear-trash';
+export const PERMANENTLY_DELETE_SELECTED_QUIZ_URL = QUIZ_URL + '/permanently-delete-selected-quiz';
 export const PERMANENTLY_DELETE_QUIZ_URL = QUIZ_URL + '/delete-quiz';
 export const GET_QUIZ_QUESTIONS = QUIZ_URL + '/get-quiz-questions';
 

@@ -23,6 +23,7 @@ import getSharedQuizController from '../controllers/quiz-controller/get_shared_q
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
 import QuizController from '../controllers/quiz-controller/quizController';
+import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
@@ -46,6 +47,7 @@ router.put('/quiz/move-quizzes-to-trash', authMiddleware, delete_selected_quizze
 router.get('/quiz/get-user-trashed-quiz', authMiddleware, get_trashed_quizzes_controller);
 router.delete('/quiz/clear-trash', authMiddleware, delete_trashed_quizzes_controller);
 router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_quiz_controller);
+router.post('/quiz/permanently-delete-selected-quiz', authMiddleware, permanentDeleteSelectedQuiz);
 
 router.post(
     '/quiz/publish-quiz/:quizId',
