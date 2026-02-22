@@ -13,7 +13,12 @@ const REFRESH_TOKEN_EXPIRY = '7d';
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
 export class SigninController {
-    private static generateTokens(user: { id: string; name: string; email: string; image: string | null }) {
+    private static generateTokens(user: {
+        id: string;
+        name: string;
+        email: string;
+        image: string | null;
+    }) {
         const accessToken = jwt.sign(
             { name: user.name, email: user.email, id: user.id, image: user.image },
             env.SERVER_JWT_SECRET,
@@ -76,7 +81,11 @@ export class SigninController {
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
-            ResponseWriter.success(res, { user: myUser, token: accessToken }, 'Authentication successful');
+            ResponseWriter.success(
+                res,
+                { user: myUser, token: accessToken },
+                'Authentication successful',
+            );
         } catch (err) {
             console.error(err);
             ResponseWriter.custom(
@@ -152,7 +161,11 @@ export class SigninController {
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
-            ResponseWriter.success(res, { user: myUser, token: accessToken }, 'Authentication successful');
+            ResponseWriter.success(
+                res,
+                { user: myUser, token: accessToken },
+                'Authentication successful',
+            );
         } catch (err) {
             console.error(err);
             ResponseWriter.custom(

@@ -58,8 +58,9 @@ export class RefreshTokenController {
             });
 
             ResponseWriter.success(res, { token: accessToken }, 'Token refreshed successfully');
-        } catch (err) {
+        } catch (error) {
             // Token expired or invalid — clear the cookie
+            console.error('error in refreshing the token: ', error);
             res.clearCookie(NOCTURN_REFRESH_COOKIE_NAME, { path: '/' });
             res.status(401).json({ message: 'Invalid or expired refresh token' });
         }
