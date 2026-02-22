@@ -17,6 +17,53 @@ if (typeof window !== 'undefined') {
 export default function LandingSection() {
     return (
         <div className="h-screen w-screen flex flex-col items-center justify-between pt-30 gap-y-8 select-none relative">
+            <div
+                className="absolute inset-0 z-0"
+                style={{
+                    backgroundImage: `
+        linear-gradient(to right, #e7e5e4 1px, transparent 1px),
+        linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
+      `,
+                    backgroundSize: "20px 20px",
+                    backgroundPosition: "0 0, 0 0",
+                    maskImage: `
+          repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            radial-gradient(ellipse 80% 80% at 100% 0%, #000 50%, transparent 90%)
+      `,
+                    WebkitMaskImage: `
+    repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 3px,
+              transparent 3px,
+              transparent 8px
+            ),
+            radial-gradient(ellipse 80% 80% at 100% 0%, #000 50%, transparent 90%)
+      `,
+                    maskComposite: "intersect",
+                    WebkitMaskComposite: "source-in",
+                }}
+            />
             <div className="flex flex-col items-center justify-between h-full">
                 <div className="flex flex-col gap-y-5 items-center">
                     <motion.div
@@ -43,7 +90,7 @@ export default function LandingSection() {
                         <Shuffle
                             text="Nocturn"
                             tag="h1"
-                            className="text-[12.5rem] italic font-semibold"
+                            className="text-[12.5rem] italic font-semibold z-9999"
                             shuffleDirection="up"
                         />
                         <motion.div
