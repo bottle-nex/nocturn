@@ -1,13 +1,49 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { env } from '../../configs/env';
+import { env, isProduction } from '../../configs/env';
 import { prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
 import crypto from 'crypto';
+import { NOCTURN_REFRESH_COOKIE_NAME } from '@nocturn/types';
+
+const ACCESS_TOKEN_EXPIRY = '15m';
+const REFRESH_TOKEN_EXPIRY = '7d';
+const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
 export class SigninController {
+    private static generateTokens(user: {
+        id: string;
+        name: string;
+        email: string;
+        image: string | null;
+    }) {
+        const accessToken = jwt.sign(
+            { name: user.name, email: user.email, id: user.id, image: user.image },
+            env.SERVER_JWT_SECRET,
+            { expiresIn: ACCESS_TOKEN_EXPIRY },
+        );
+
+        const refreshToken = jwt.sign(
+            { id: user.id, email: user.email },
+            env.SERVER_JWT_REFRESH_SECRET,
+            { expiresIn: REFRESH_TOKEN_EXPIRY },
+        );
+
+        return { accessToken, refreshToken };
+    }
+
+    private static setRefreshCookie(res: Response, refreshToken: string) {
+        res.cookie(NOCTURN_REFRESH_COOKIE_NAME, refreshToken, {
+            httpOnly: true,
+            secure: isProduction(),
+            sameSite: 'strict',
+            maxAge: REFRESH_COOKIE_MAX_AGE,
+            path: '/',
+        });
+    }
+
     static async oauth_signin(req: Request, res: Response) {
         const { user } = req.body;
 
@@ -40,21 +76,16 @@ export class SigninController {
                 });
             }
 
-            const secret = env.SERVER_JWT_SECRET;
-            if (!secret) {
-                ResponseWriter.system_error(res);
-                return;
-            }
-
-            const token = jwt.sign(
-                { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
-                secret,
-                { expiresIn: '7d' },
-            );
+            const { accessToken, refreshToken } = SigninController.generateTokens(myUser);
+            SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
-            ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
+            ResponseWriter.success(
+                res,
+                { user: myUser, token: accessToken },
+                'Authentication successful',
+            );
         } catch (err) {
             console.error(err);
             ResponseWriter.custom(
@@ -125,21 +156,16 @@ export class SigninController {
                 });
             }
 
-            const secret = env.SERVER_JWT_SECRET;
-            if (!secret) {
-                ResponseWriter.system_error(res);
-                return;
-            }
-
-            const token = jwt.sign(
-                { name: myUser.name, email: myUser.email, id: myUser.id, image: myUser.image },
-                secret,
-                { expiresIn: '7d' },
-            );
+            const { accessToken, refreshToken } = SigninController.generateTokens(myUser);
+            SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
-            ResponseWriter.success(res, { user: myUser, token }, 'Authentication successful');
+            ResponseWriter.success(
+                res,
+                { user: myUser, token: accessToken },
+                'Authentication successful',
+            );
         } catch (err) {
             console.error(err);
             ResponseWriter.custom(
