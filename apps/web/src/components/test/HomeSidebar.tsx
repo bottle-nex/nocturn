@@ -14,6 +14,7 @@ import { RiSettings6Line } from 'react-icons/ri';
 import { FaRegHeart } from 'react-icons/fa6';
 import { useDragQuizStore } from '@/store/home/useDragQuizStore';
 import { RiVipCrownLine } from 'react-icons/ri';
+import AppLogo from '../app/AppLogo';
 
 export interface SidebarItem {
     tab: SidebarTab;
@@ -124,6 +125,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             data-lenis-prevent
         >
             <div>
+                <AppLogo className='h-20 w-20' />
                 <section className="ml-4 mt-8">
                     <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
