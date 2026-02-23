@@ -1,10 +1,8 @@
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AppLogo({
     className,
-    withText,
 }: {
     className?: string;
     withText?: boolean;

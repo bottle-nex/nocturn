@@ -1,5 +1,4 @@
 'use client';
-import Spinner from '@/components/ui/Spinner';
 import Rive from '@rive-app/react-webgl2';
 
 export default function TestPage() {
