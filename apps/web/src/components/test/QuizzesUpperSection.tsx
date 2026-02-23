@@ -18,6 +18,8 @@ import { Loader } from 'lucide-react';
 import { QuizType } from '@nocturn/types';
 
 interface QuizzesUpperSectionData {
+    searchQuery: string;
+    setSearchQuery: (val: string) => void;
     quizzes: QuizType[];
     onDeleteSelected?: () => Promise<void> | void;
     onCancelSelection?: () => void;
@@ -30,6 +32,8 @@ interface QuizzesUpperSectionData {
 }
 
 export default function QuizzesUpperSection({
+    searchQuery,
+    setSearchQuery,
     quizzes,
     isAllSelected,
     selectedQuizes,
@@ -43,8 +47,8 @@ export default function QuizzesUpperSection({
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { updateQuiz } = useNewQuizStore();
-    const [creating, setCreating] = useState(false);
-    const [deleting, setDeleting] = useState(false);
+    const [creating, setCreating] = useState<boolean>(false);
+    const [deleting, setDeleting] = useState<boolean>(false);
 
     async function handleCreateQuiz() {
         if (!session?.user.token || creating || deleting || isBulkDeleting) return;
@@ -84,6 +88,8 @@ export default function QuizzesUpperSection({
                     )}
                 >
                     <Input
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="search quizzes"
                         className={cn(
                             'h-full w-full pl-10 rounded-beta',

@@ -7,6 +7,13 @@ import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizSt
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import GetToKnowUs from '../base/GetToKnowUs';
 import HomeFeatures from '../base/HomeFeatures';
+import { Button } from '../ui/button';
+import BackendActions from '@/lib/backend/new/quiz-backend-actions';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import LoaderButton from './LoaderButton';
+import { FiPlus } from 'react-icons/fi';
 
 export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
@@ -14,6 +21,10 @@ export default function HomePanel() {
     const { recentlyViewed, setQuizs, setRecentlyViewed } = useRecentlyViewedQuizStore();
     const [loading, setLoading] = useState<boolean>(true);
     const fetchedRef = useRef<boolean>(false);
+    const [creating, setCreating] = useState<boolean>(false);
+    const { session } = useUserSessionStore();
+    const { updateQuiz } = useNewQuizStore();
+    const router = useRouter();
 
     useEffect(() => {
         if (!token) {
@@ -48,14 +59,39 @@ export default function HomePanel() {
         get_quiz_data();
     }, [token, quizs.length, setAllQuizs, setQuizs, setRecentlyViewed]);
 
+    async function handleCreateQuiz() {
+        if (!session?.user.token || creating) return;
+        setCreating(true);
+        try {
+            const quiz = await BackendActions.createQuiz(session.user.token);
+            if (!quiz) {
+                toast.error('Failed to create quiz');
+                return;
+            }
+            updateQuiz(quiz);
+            router.push(`/new/${quiz.id}`);
+        } finally {
+            setCreating(false);
+        }
+    }
+
     return (
         <div
             className="bg-light-alpha dark:bg-neutral-950 w-full h-full px-12 pt-18 pb-28 overflow-y-auto max-h-screen"
             data-lenis-prevent
         >
             <section className="flex flex-col gap-y-8">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
+                    <Button
+                        size="sm"
+                        onClick={handleCreateQuiz}
+                        disabled={creating}
+                        className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                        {creating ? <LoaderButton /> : <FiPlus />}
+                        <span>{creating ? 'Creating...' : 'New Quiz'}</span>
+                    </Button>
                 </div>
 
                 {(loading || recentlyViewed.length > 0) && (

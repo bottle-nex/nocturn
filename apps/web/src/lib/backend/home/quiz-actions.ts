@@ -44,7 +44,10 @@ export default class QuizActions {
         }
     }
 
-    static async delete_quiz(token: string, quizId: string): Promise<string | null> {
+    static async delete_quiz(
+        token: string,
+        quizId: string,
+    ): Promise<{ success: boolean; data: string; message: string } | null> {
         try {
             const { data } = await axios.put(
                 `${DELETE_QUIZ_URL}/${quizId}`,

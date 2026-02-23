@@ -21,7 +21,7 @@ export default function SharedQuizPanel() {
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const selectionMode = selectedQuizIds.size > 0;
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
-    const [searchQuery, _setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         async function get_shared_quiz_data() {
@@ -86,6 +86,8 @@ export default function SharedQuizPanel() {
             <div className="text-4xl text-dark-base dark:text-light-base">Shared Quizzes</div>
 
             <QuizzesUpperSection
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 quizzes={sharedQuizs}
                 selectedQuizes={selectedQuizIds.size}
                 onDeleteSelected={handleDeleteSelected}
