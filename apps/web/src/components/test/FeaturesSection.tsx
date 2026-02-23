@@ -323,7 +323,7 @@ export default function FeaturesSection() {
                                                             <motion.div className="absolute -right-70 -top-24 h-20 w-50 rounded-xl flex justify-end items-end px-3">
                                                                 <div className="flex gap-x-3 w-full h-full px-1.5 items-end relative mt-5">
                                                                     <motion.div
-                                                                        className="w-full border border-dark-faded -rotate-1 rounded-t-alpha bg-[#E2C275]"
+                                                                        className="w-full border border-dark-faded rounded-t-alpha bg-[#E2C275]"
                                                                         animate={{
                                                                             height: `${audienceBarHeights[0] || 5}%`,
                                                                         }}
@@ -334,7 +334,7 @@ export default function FeaturesSection() {
                                                                     />
 
                                                                     <motion.div
-                                                                        className="w-full border border-dark-faded rotate-2 rounded-t-alpha bg-[#6886C5]"
+                                                                        className="w-full border border-dark-faded rounded-t-alpha bg-[#6886C5]"
                                                                         animate={{
                                                                             height: `${audienceBarHeights[1] || 5}%`,
                                                                         }}
