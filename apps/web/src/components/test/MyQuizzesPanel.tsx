@@ -138,7 +138,7 @@ export default function MyQuizzesPanel() {
                                 ))}
                             </div>
                         ) : (
-                            <div className='h-full w-full text-light-base/80 flex justify-center items-center pb-40'>
+                            <div className="h-full w-full text-light-base/80 flex justify-center items-center pb-40">
                                 No quizzes found
                             </div>
                         )}
@@ -160,7 +160,7 @@ export default function MyQuizzesPanel() {
                                 ))}
                             </div>
                         ) : (
-                            <div className='h-full w-full text-light-base/80 flex justify-center items-center pb-40'>
+                            <div className="h-full w-full text-light-base/80 flex justify-center items-center pb-40">
                                 No quizzes found
                             </div>
                         )}

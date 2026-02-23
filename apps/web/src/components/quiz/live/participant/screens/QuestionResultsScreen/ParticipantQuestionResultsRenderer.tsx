@@ -1,9 +1,6 @@
 'use client';
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import Leaderboard from '../../../common/Leaderboard/Leaderboard';
-import { cn } from '@/lib/utils';
-import NotchCard from '@/components/ui/NotchCard';
 import LeaderboardTest from '../../../common/Leaderboard/LeaderboardTest';
 
 export default function ParticipantQuestionResultsRenderer() {
@@ -22,7 +19,7 @@ export default function ParticipantQuestionResultsRenderer() {
 
     return (
         <div className="w-full h-full flex justify-between items-center ">
-            <LeaderboardTest/>
+            <LeaderboardTest />
 
             {/* <Leaderboard
                 participant

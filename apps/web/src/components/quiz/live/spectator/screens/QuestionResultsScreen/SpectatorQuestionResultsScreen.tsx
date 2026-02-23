@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import Leaderboard from '../../../common/Leaderboard/Leaderboard';
+// import Leaderboard from '../../../common/Leaderboard/Leaderboard';
 import { cn } from '@/lib/utils';
 import NotchCard from '@/components/ui/NotchCard';
 
@@ -21,11 +21,11 @@ export default function SpectatorQuestionResultsRenderer() {
 
     return (
         <div className="w-full flex justify-between items-center ">
-            <Leaderboard
+            {/* <Leaderboard
                 spectator
                 explanation={currentQuestion.explanation || ''}
                 className="relative z-10 "
-            />
+            /> */}
             <div className="text-dark-alpha p-2 flex flex-col items-start w-full gap-y-4 ">
                 <div className="text-3xl w-full flex justify-start ">
                     {currentQuestion.question}
