@@ -9,6 +9,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
 import SigninModal from '../utility/SigninModal';
+import AppLogo from '../app/AppLogo';
 
 const springTransition = {
     type: 'spring' as const,
@@ -104,16 +105,7 @@ export default function LandingNavbar() {
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
-            <div className="h-11 w-11 bg-dark-base rounded-full flex justify-center items-center overflow-hidden">
-                <Image
-                    src="/images/cat.png"
-                    alt="Cat logo"
-                    width={60}
-                    height={60}
-                    priority
-                    className="mt-1.5 ml-1"
-                />
-            </div>
+            <AppLogo size={48} />
 
             <div className="flex gap-x-2.5 items-center">
                 <div
