@@ -42,7 +42,7 @@ export default function Leaderboard({
 
     return (
         <div className={cn('flex justify-end items-center p-2 text-dark-alpha h-full', className)}>
-            <div
+            {/* <div
                 className={cn(
                     'h-full w-210 border border-dark-base rounded-2xl bg-light-alpha/10 backdrop-blur-[2px] shadow-md',
                     'grid grid-cols-4 grid-rows-8',
@@ -78,7 +78,9 @@ export default function Leaderboard({
                 </NotchCard>
 
                 <Rank className="col-span-4 row-span-4 border border-dark-base rounded-[10px] overflow-hidden" />
-            </div>
+            </div> */}
+
+
         </div>
     );
 }
