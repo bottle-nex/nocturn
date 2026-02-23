@@ -96,6 +96,7 @@ export default function MyQuizzesListView({
                 <div>
                     {editingTitle ? (
                         <input
+                            aria-label='Edit quiz title'
                             value={quiz.title}
                             onChange={handleEditTitle}
                             onBlur={handleSaveTitle}
