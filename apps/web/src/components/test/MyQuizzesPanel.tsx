@@ -16,7 +16,7 @@ export enum Layouts {
 
 export default function MyQuizzesPanel() {
     const { session } = useUserSessionStore();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const selectionMode = selectedQuizIds.size > 0;
@@ -112,7 +112,7 @@ export default function MyQuizzesPanel() {
             />
 
             <div
-                className="w-full mt-6 overflow-y-auto overflow-x-hidden custom-scrollbar"
+                className="w-full h-full mt-6 overflow-y-auto overflow-x-hidden custom-scrollbar"
                 data-lenis-prevent
             >
                 {loading ? (
@@ -122,33 +122,49 @@ export default function MyQuizzesPanel() {
                         ))}
                     </div>
                 ) : activeLayoutTab === Layouts.GRID ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredQuizzes.map((quiz) => (
-                            <MyQuizzesGridView
-                                key={quiz.id}
-                                quiz={quiz}
-                                isSelected={selectedQuizIds.has(quiz.id)}
-                                selectionMode={selectionMode}
-                                toggleQuizSelection={toggleQuizSelection}
-                                formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
-                                bulkDeleting={bulkDeleting}
-                            />
-                        ))}
-                    </div>
+                    <>
+                        {filteredQuizzes && filteredQuizzes.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {filteredQuizzes.map((quiz) => (
+                                    <MyQuizzesGridView
+                                        key={quiz.id}
+                                        quiz={quiz}
+                                        isSelected={selectedQuizIds.has(quiz.id)}
+                                        selectionMode={selectionMode}
+                                        toggleQuizSelection={toggleQuizSelection}
+                                        formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                                        bulkDeleting={bulkDeleting}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="h-full w-full text-light-base/80 flex justify-center items-center pb-40">
+                                No quizzes found
+                            </div>
+                        )}
+                    </>
                 ) : (
-                    <div className="flex flex-col gap-4">
-                        {filteredQuizzes.map((quiz) => (
-                            <MyQuizzesListView
-                                key={quiz.id}
-                                quiz={quiz}
-                                isSelected={selectedQuizIds.has(quiz.id)}
-                                selectionMode={selectionMode}
-                                toggleQuizSelection={toggleQuizSelection}
-                                formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
-                                bulkDeleting={bulkDeleting}
-                            />
-                        ))}
-                    </div>
+                    <>
+                        {filteredQuizzes && filteredQuizzes.length > 0 ? (
+                            <div className="flex flex-col gap-4">
+                                {filteredQuizzes.map((quiz) => (
+                                    <MyQuizzesListView
+                                        key={quiz.id}
+                                        quiz={quiz}
+                                        isSelected={selectedQuizIds.has(quiz.id)}
+                                        selectionMode={selectionMode}
+                                        toggleQuizSelection={toggleQuizSelection}
+                                        formattedTime={moment(quiz.createdAt).format('MMM D, YYYY')}
+                                        bulkDeleting={bulkDeleting}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="h-full w-full text-light-base/80 flex justify-center items-center pb-40">
+                                No quizzes found
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

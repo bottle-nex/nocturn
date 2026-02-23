@@ -12,19 +12,21 @@ export default function AppLogo({
     size?: number;
 }) {
     return (
-        <Link
-            href={'/'}
-            className={cn(
-                className,
-            )}
-        >
+        <Link href={'/'} className={cn('relative', className)}>
             <div
-                className='flex items-center justify-center rounded-full bg-black overflow-hidden'
+                className={cn(
+                    'flex items-center justify-center rounded-full',
+                    withText && '-space-x-9',
+                )}
                 style={{ width: size, height: size }}
             >
-                <CatRive useDevicePixelRatio={true} size={80} />
+                <CatRive useDevicePixelRatio={true} />
+                {withText && (
+                    <span className="bg-nprimary text-light-alpha text-[18px] h-10 px-4 flex items-center justify-center rounded-full shadow-xs shadow-black/5 mb-2">
+                        Nocturn
+                    </span>
+                )}
             </div>
-            {withText && <span className='text-4xl'>Nocturn</span>}
         </Link>
     );
 }

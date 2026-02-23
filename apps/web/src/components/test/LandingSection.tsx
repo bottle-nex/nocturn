@@ -24,8 +24,8 @@ export default function LandingSection() {
         linear-gradient(to right, #e7e5e4 1px, transparent 1px),
         linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
       `,
-                    backgroundSize: "20px 20px",
-                    backgroundPosition: "0 0, 0 0",
+                    backgroundSize: '20px 20px',
+                    backgroundPosition: '0 0, 0 0',
                     maskImage: `
           repeating-linear-gradient(
               to right,
@@ -60,8 +60,8 @@ export default function LandingSection() {
             ),
             radial-gradient(ellipse 80% 80% at 100% 0%, #000 50%, transparent 90%)
       `,
-                    maskComposite: "intersect",
-                    WebkitMaskComposite: "source-in",
+                    maskComposite: 'intersect',
+                    WebkitMaskComposite: 'source-in',
                 }}
             />
             <div className="flex flex-col items-center justify-between h-full">

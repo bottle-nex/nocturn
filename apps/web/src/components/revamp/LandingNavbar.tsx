@@ -105,7 +105,18 @@ export default function LandingNavbar() {
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
-            <AppLogo size={48} />
+            <div></div>
+            <div className="fixed -top-8 -left-6">
+                <AppLogo size={170} />
+            </div>
+            {/* <Image
+                    src={'/images/cat.png'}
+                    alt=''
+                    unoptimized
+                    className='object-contain pt-1 pl-1 blur-(1px)'
+                    height={50}
+                    width={50}
+                /> */}
 
             <div className="flex gap-x-2.5 items-center">
                 <div

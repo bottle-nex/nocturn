@@ -125,7 +125,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             data-lenis-prevent
         >
             <div>
-                <AppLogo className='h-20 w-20' />
+                <AppLogo className="h-20 w-20" />
                 <section className="ml-4 mt-8">
                     <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
