@@ -25,12 +25,11 @@ export default function RecentlyViewedCard({
     const router = useRouter();
     const quizId = quiz?.quiz?.id;
     const formattedTime = quiz?.viewedAt ? moment(quiz.viewedAt).format('MMM D, YYYY') : '';
-
-    const { cardRef, originRect, isThisCardDragging, suppressClickRef, handlers } =
+    const { cardRef, originRect, isThisCardDragging, suppressClickRef, handlers, isDeleting } =
         useDraggableQuizCard({ quizId });
 
     function handleCardClick(e: React.MouseEvent) {
-        if (loading) return;
+        if (loading || isDeleting) return;
         if (suppressClickRef.current) {
             e.preventDefault();
             e.stopPropagation();
@@ -45,14 +44,23 @@ export default function RecentlyViewedCard({
                 <div style={{ width: originRect.width, height: originRect.height }} />
             )}
 
-            <div ref={cardRef} className={cn('w-88 rounded-sm', className)}>
+            <div
+                ref={cardRef}
+                className={cn(
+                    'w-88 rounded-sm',
+                    className,
+                    isDeleting && 'animate-pulse animation-duration-[2s] pointer-events-none',
+                )}
+            >
                 {loading ? (
                     <CanvasSkeletonCard />
                 ) : (
                     quiz?.quiz?.template && (
                         <div className="relative group">
                             <EmptyCanvas
-                                className="w-full aspect-video rounded-[6px] outline-2 outline-black/40 dark:outline-white/40"
+                                className={cn(
+                                    'w-full aspect-video rounded-[6px] outline-2 outline-black/40 dark:outline-white/40',
+                                )}
                                 template={quiz.quiz.template}
                             />
 
@@ -65,6 +73,7 @@ export default function RecentlyViewedCard({
                                     onPointerDown={handlers.onHandlePointerDown}
                                     onPointerUp={handlers.onPointerUp}
                                     onPointerLeave={handlers.onPointerUp}
+                                    onPointerMove={handlers.onPointerMove}
                                 >
                                     <GoGrabber className="size-7 text-light-base" />
                                 </div>

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { LEARNING_JOURNEY_URL } from 'routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import GetToKnowNocturnSkeleton from '../skeletons/GetToKnowNocturnSkeleton';
 
 interface ParagraphSection {
     title: string;
@@ -142,6 +143,7 @@ const cards: GetToKnowUsCardProps[] = [
 export default function GetToKnowUs(): JSX.Element {
     const [openCard, setOpenCard] = useState<number | null>(null);
     const [learntCards, setLearntCards] = useState<Set<number>>(new Set());
+    const [readyCards, setReadyCards] = useState<Set<number>>(new Set());
     const { session } = useUserSessionStore();
     const selectedFeature = cards.find((f) => f.id === openCard);
     const timeout = useRef<NodeJS.Timeout | null>(null);
@@ -152,32 +154,19 @@ export default function GetToKnowUs(): JSX.Element {
         return (learntCards.size / cards.length) * 100;
     }, [learntCards]);
 
-    const hasViewed = useCallback(
-        (id: number) => {
-            return learntCards.has(id);
-        },
-        [learntCards],
-    );
+    const hasViewed = useCallback((id: number) => learntCards.has(id), [learntCards]);
 
-    function handleCardClick(id: number) {
-        if (openCard === id) {
-            setOpenCard(null);
-            setLearntCards((prev) => new Set(prev).add(id));
-        } else {
-            setOpenCard(id);
-            setLearntCards((prev) => new Set(prev).add(id));
-        }
-        if (timeout.current) {
-            clearTimeout(timeout.current);
-        }
-        timeout.current = setTimeout(() => {
-            timeout.current = null;
-            makeBackendCall();
-        }, 5000);
-    }
+    useEffect(() => {
+        cards.forEach((card, i) => {
+            setTimeout(() => {
+                setReadyCards((prev) => new Set(prev).add(card.id));
+            }, i * 80);
+        });
+    }, []);
 
     useEffect(() => {
         if (!session?.user.token) return;
+
         async function fetchLearningJourney() {
             try {
                 const res = await axios.get(LEARNING_JOURNEY_URL, {
@@ -193,8 +182,26 @@ export default function GetToKnowUs(): JSX.Element {
                 console.error('Error fetching learning journey', err);
             }
         }
+
         fetchLearningJourney();
     }, [session?.user.token]);
+
+    function handleCardClick(id: number) {
+        if (openCard === id) {
+            setOpenCard(null);
+            setLearntCards((prev) => new Set(prev).add(id));
+        } else {
+            setOpenCard(id);
+            setLearntCards((prev) => new Set(prev).add(id));
+        }
+
+        if (timeout.current) clearTimeout(timeout.current);
+
+        timeout.current = setTimeout(() => {
+            timeout.current = null;
+            makeBackendCall();
+        }, 5000);
+    }
 
     async function makeBackendCall() {
         if (!session?.user.token) return;
@@ -223,48 +230,75 @@ export default function GetToKnowUs(): JSX.Element {
                     <span
                         className={cn(
                             'h-1.25 rounded-full block',
-                            width > 0 ? `bg-nprimary` : 'bg-transparent',
+                            width > 0 ? 'bg-nprimary' : 'bg-transparent',
                         )}
                         style={{ width: width ? `${width}%` : undefined }}
                     />
                 </span>
             </div>
+
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-                {cards.map((card) => (
-                    <UtilityCard
-                        onClick={() => handleCardClick(card.id)}
-                        layoutId={`get-to-know-us-card-${card.id}`}
-                        key={card.id}
-                        className={cn(
-                            'cursor-pointer shadow-none p-0 overflow-hidden',
-                            'w-49 h-32 flex flex-col items-start justify-center px-4',
-                            'border-2 border-transparent dark:border-transparent rounded-beta transition-colors duration-300',
-                            hasViewed(card.id)
-                                ? 'bg-green-100/60 dark:bg-green-950/30 hover:border-green-600 border-transparent'
-                                : 'bg-alpha/8 dark:bg-[#e1d8ff] hover:border-alpha border-transparent',
-                        )}
-                    >
-                        {hasViewed(card.id) ? (
-                            <IoMdCheckmark className="ml-2 size-5 text-green-600 dark:text-green-400" />
-                        ) : (
-                            <MdOutlineSegment className="rotate-180 ml-2 size-5 text-alpha" />
-                        )}
-                        <h4
-                            className={cn(
-                                'text-base text-center px-2',
-                                hasViewed(card.id)
-                                    ? 'text-green-700 dark:text-green-400'
-                                    : 'text-alpha',
-                            )}
-                        >
-                            {card.title}
-                        </h4>
-                        <p className="line-clamp-1 text-[13px] text-neutral-600 dark:text-neutral-400 ml-2">
-                            {card.description}
-                        </p>
-                    </UtilityCard>
-                ))}
+                {cards.map((card) => {
+                    const isReady = readyCards.has(card.id);
+
+                    return (
+                        <div key={card.id} className="relative">
+                            <AnimatePresence>
+                                {!isReady && (
+                                    <motion.div
+                                        key="skeleton"
+                                        className="absolute inset-0"
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.25 }}
+                                    >
+                                        <GetToKnowNocturnSkeleton />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: isReady ? 1 : 0 }}
+                                transition={{ duration: 0.25 }}
+                                style={{ pointerEvents: isReady ? 'auto' : 'none' }}
+                            >
+                                <UtilityCard
+                                    onClick={() => handleCardClick(card.id)}
+                                    layoutId={`get-to-know-us-card-${card.id}`}
+                                    className={cn(
+                                        'cursor-pointer shadow-none p-0 overflow-hidden',
+                                        'w-49 h-32 flex flex-col items-start justify-center px-4',
+                                        'border-2 border-transparent dark:border-transparent rounded-beta transition-colors duration-300',
+                                        hasViewed(card.id)
+                                            ? 'bg-green-100/60 dark:bg-green-950/30 hover:border-green-600 border-transparent'
+                                            : 'bg-alpha/8 dark:bg-[#e1d8ff] hover:border-alpha border-transparent',
+                                    )}
+                                >
+                                    {hasViewed(card.id) ? (
+                                        <IoMdCheckmark className="ml-2 size-5 text-green-600 dark:text-green-400" />
+                                    ) : (
+                                        <MdOutlineSegment className="rotate-180 ml-2 size-5 text-alpha" />
+                                    )}
+                                    <h4
+                                        className={cn(
+                                            'text-base text-center px-2',
+                                            hasViewed(card.id)
+                                                ? 'text-green-700 dark:text-green-400'
+                                                : 'text-alpha',
+                                        )}
+                                    >
+                                        {card.title}
+                                    </h4>
+                                    <p className="line-clamp-1 text-[13px] text-neutral-600 dark:text-neutral-400 ml-2">
+                                        {card.description}
+                                    </p>
+                                </UtilityCard>
+                            </motion.div>
+                        </div>
+                    );
+                })}
             </div>
+
             <KnowUsBigCard
                 handleCardClick={handleCardClick}
                 openCard={openCard}
@@ -314,7 +348,7 @@ function KnowUsBigCard({
                             className="relative w-full flex flex-col items-start justify-start gap-y-4 overflow-y-auto min-h-0 custom-scrollbar"
                         >
                             <h4 className="text-xl font mb-2">{selectedFeature.title}</h4>
-                            <section className="w-full h-80 shrink-0 rounded-lg relative bg-blue-500"></section>
+                            <section className="w-full h-80 shrink-0 rounded-lg relative bg-blue-500" />
                             <section className="space-y-6">
                                 {selectedFeature.paragraphs.map((section, index) => (
                                     <div key={index}>
@@ -328,6 +362,7 @@ function KnowUsBigCard({
                                 ))}
                             </section>
                         </section>
+
                         <section className="w-full flex justify-between shrink-0 pt-4">
                             <Button
                                 onClick={() => setOpenCard(null)}
@@ -343,7 +378,7 @@ function KnowUsBigCard({
                                 }
                                 className={cn(
                                     'rounded-full text-sm py-5 px-5! gap-x-1',
-                                    'bg-dark-base hover:bg-dark-alpha  dark:bg-light-base hover:dark:bg-light-alpha',
+                                    'bg-dark-base hover:bg-dark-alpha dark:bg-light-base hover:dark:bg-light-alpha',
                                 )}
                             >
                                 {selectedFeature.id >= cards.length ? 'Done' : 'Learn Next'}

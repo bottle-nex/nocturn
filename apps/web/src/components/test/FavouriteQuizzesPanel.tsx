@@ -8,6 +8,7 @@ import moment from 'moment';
 import QuizzesUpperSection from './QuizzesUpperSection';
 import MyQuizzesGridView from './MyQuizzesGridView';
 import MyQuizzesListView from './MyQuizzesListView';
+import CanvasSkeletonCard from '../skeletons/CanvasSkeleton';
 
 export enum Layouts {
     GRID = 'GRID',
@@ -24,21 +25,23 @@ export default function FavouriteQuizzesPanel() {
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
     const searchListenerAttached = useRef<boolean>(false);
     const hasFetched = useRef<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         async function fetchQuizzes() {
-            try {
-                const token = session?.user?.token;
-                if (!token) return;
-                if (quizs.length > 0) return;
-                if (hasFetched.current) return;
+            const token = session?.user?.token;
+            if (!token || quizs.length > 0 || hasFetched.current) return;
 
+            try {
+                setLoading(true);
                 hasFetched.current = true;
 
                 const response = await QuizActions.get_quizzes(token);
                 setAllQuizs(response || []);
             } catch (err) {
                 console.error('Error fetching quizzes:', err);
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -48,11 +51,13 @@ export default function FavouriteQuizzesPanel() {
 
     const favouriteQuizzes = useMemo(() => quizs.filter((q) => q.isFavourite), [quizs]);
 
-    const filteredQuizzes = useMemo(() => {
-        return favouriteQuizzes.filter((q) =>
-            q.title?.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
-    }, [favouriteQuizzes, searchQuery]);
+    const filteredQuizzes = useMemo(
+        () =>
+            favouriteQuizzes.filter((q) =>
+                q.title?.toLowerCase().includes(searchQuery.toLowerCase()),
+            ),
+        [favouriteQuizzes, searchQuery],
+    );
 
     useEffect(() => {
         if (searchListenerAttached.current) return;
@@ -81,9 +86,10 @@ export default function FavouriteQuizzesPanel() {
             const next = new Set(prev);
             if (next.has(quizId)) {
                 next.delete(quizId);
-            } else {
+            } else if (!next.has(quizId)) {
                 next.add(quizId);
             }
+            // next.has(quizId) ? next.delete(quizId) : next.add(quizId);
             return next;
         });
     }
@@ -130,6 +136,8 @@ export default function FavouriteQuizzesPanel() {
                 </div>
 
                 <QuizzesUpperSection
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
                     quizzes={quizs}
                     selectedQuizes={selectedQuizIds.size}
                     onDeleteSelected={handleDeleteSelectedQuizzes}
@@ -142,8 +150,14 @@ export default function FavouriteQuizzesPanel() {
             </div>
 
             <div className="w-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
-                {filteredQuizzes.length === 0 ? (
-                    <div className="text-dark-alpha/70 dark:text-light-base/70">
+                {loading ? (
+                    <div className="grid grid-cols-3 gap-6">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <CanvasSkeletonCard key={i} />
+                        ))}
+                    </div>
+                ) : filteredQuizzes.length === 0 ? (
+                    <div className="w-full mt-40 flex justify-center items-center text-light-base/70">
                         No favourite quizzes yet
                     </div>
                 ) : activeLayoutTab === Layouts.GRID ? (

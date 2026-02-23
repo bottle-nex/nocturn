@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { JSX, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import UtilityCard from '../utility/UtilityCard';
+import HomeFeatureSkeleton from '../skeletons/HomeFeaturesSkeleton';
 
 interface HomeFeaturesCard {
     id: number;
@@ -30,7 +31,12 @@ const feature_array: HomeFeaturesCard[] = [
         title: 'Winners get prizes',
         color: 'bg-[#36ff7930]',
     },
-    { id: 4, image: '/icons/know-us/know-5.png', title: 'Infinite Users', color: 'bg-[#ff20202f]' },
+    {
+        id: 4,
+        image: '/icons/know-us/know-5.png',
+        title: 'Infinite Users',
+        color: 'bg-[#ff20202f]',
+    },
     {
         id: 5,
         image: '/icons/know-us/know-3.png',
@@ -41,7 +47,12 @@ const feature_array: HomeFeaturesCard[] = [
 
 export default function HomeFeatures(): JSX.Element {
     const [openCard, setOpenCard] = useState<number | null>(null);
+    const [loadedIds, setLoadedIds] = useState<Set<number>>(new Set());
     const selectedFeature = feature_array.find((f) => f.id === openCard);
+
+    function handleImageLoad(id: number) {
+        setLoadedIds((prev) => new Set(prev).add(id));
+    }
 
     return (
         <section className="w-full ml-1">
@@ -50,26 +61,54 @@ export default function HomeFeatures(): JSX.Element {
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-                {feature_array.map((feature) => (
-                    <UtilityCard
-                        key={feature.id}
-                        layoutId={`feature-card-${feature.id}`}
-                        onClick={() => setOpenCard(feature.id)}
-                        className="cursor-pointer border-0 shadow-none p-0"
-                    >
-                        <div className={`p-4 rounded-lg ${feature.color}`}>
-                            <div className="relative w-full h-32 mb-2">
-                                <Image
-                                    fill
-                                    src={feature.image}
-                                    alt={feature.title}
-                                    className="w-full h-auto object-contain"
-                                />
-                            </div>
+                {feature_array.map((feature) => {
+                    const isLoaded = loadedIds.has(feature.id);
+
+                    return (
+                        <div key={feature.id} className="relative">
+                            <AnimatePresence>
+                                {!isLoaded && (
+                                    <motion.div
+                                        key="skeleton"
+                                        className="absolute inset-0"
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <HomeFeatureSkeleton />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: isLoaded ? 1 : 0 }}
+                                transition={{ duration: 0.3 }}
+                                style={{ pointerEvents: isLoaded ? 'auto' : 'none' }}
+                            >
+                                <UtilityCard
+                                    layoutId={`feature-card-${feature.id}`}
+                                    onClick={() => setOpenCard(feature.id)}
+                                    className="cursor-pointer border-0 shadow-none p-0"
+                                >
+                                    <div className={`p-4 rounded-lg ${feature.color}`}>
+                                        <div className="relative w-full h-32 mb-2">
+                                            <Image
+                                                fill
+                                                src={feature.image}
+                                                alt={feature.title}
+                                                className="w-full h-auto object-contain"
+                                                onLoad={() => handleImageLoad(feature.id)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <h4 className="font-normal text-sm mt-2 text-center">
+                                        {feature.title}
+                                    </h4>
+                                </UtilityCard>
+                            </motion.div>
                         </div>
-                        <h4 className="font-normal text-sm mt-2 text-center">{feature.title}</h4>
-                    </UtilityCard>
-                ))}
+                    );
+                })}
             </div>
 
             <AnimatePresence>

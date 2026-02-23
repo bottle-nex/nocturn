@@ -20,7 +20,7 @@ export default function MyQuizzesPanel() {
     const { quizs, setAllQuizs, deleteQuiz } = useAllQuizsStore();
     const [selectedQuizIds, setSelectedQuizIds] = useState<Set<string>>(new Set());
     const selectionMode = selectedQuizIds.size > 0;
-    const [searchQuery, _setSearchQuery] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [activeLayoutTab, setActiveLayoutTab] = useState<Layouts>(Layouts.GRID);
     const [bulkDeleting, setBulkDeleting] = useState<boolean>(false);
 
@@ -76,7 +76,6 @@ export default function MyQuizzesPanel() {
 
         try {
             const ids = Array.from(selectedQuizIds);
-
             for (const id of ids) {
                 try {
                     await QuizActions.delete_quiz(session.user.token, id);
@@ -100,6 +99,8 @@ export default function MyQuizzesPanel() {
             <div className="text-4xl text-dark-base dark:text-light-base">My Quizzes</div>
 
             <QuizzesUpperSection
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 quizzes={quizs}
                 selectedQuizes={selectedQuizIds.size}
                 onDeleteSelected={deleteSelected}

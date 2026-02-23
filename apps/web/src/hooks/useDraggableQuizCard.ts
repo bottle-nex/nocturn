@@ -12,20 +12,20 @@ interface UseDraggableQuizCardProps {
 
 export function useDraggableQuizCard({ quizId }: UseDraggableQuizCardProps) {
     const cardRef = useRef<HTMLDivElement>(null);
-
-    const dragActiveRef = useRef(false);
-    const handlePressedRef = useRef(false);
-    const suppressClickRef = useRef(false);
+    const dragActiveRef = useRef<boolean>(false);
+    const handlePressedRef = useRef<boolean>(false);
+    const suppressClickRef = useRef<boolean>(false);
     const longPressRef = useRef<NodeJS.Timeout | null>(null);
     const pointerIdRef = useRef<number | null>(null);
 
-    const targetPos = useRef({ x: 0, y: 0 });
-    const visualPos = useRef({ x: 0, y: 0 });
-    const velocity = useRef({ x: 0, y: 0 });
+    const targetPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const visualPos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const velocity = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-    const [isDraggingLocal, setIsDraggingLocal] = useState(false);
+    const [isDraggingLocal, setIsDraggingLocal] = useState<boolean>(false);
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [originRect, setOriginRect] = useState<DOMRect | null>(null);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const { session } = useUserSessionStore();
     const { deleteQuiz } = useRecentlyViewedQuizStore();
@@ -36,11 +36,16 @@ export function useDraggableQuizCard({ quizId }: UseDraggableQuizCardProps) {
     async function handleDeleteQuiz(id: string) {
         if (!session?.user.token) return;
         try {
-            await QuizActions.delete_quiz(session.user.token, id);
-            deleteQuiz(id);
-            toast.success('Quiz deleted successfully');
+            setIsDeleting(true);
+            const res = await QuizActions.delete_quiz(session.user.token, id);
+            if (res) {
+                deleteQuiz(id);
+                toast.success(res.message);
+            }
         } catch {
             toast.error('Failed to delete the quiz');
+        } finally {
+            setIsDeleting(false);
         }
     }
 
@@ -178,5 +183,6 @@ export function useDraggableQuizCard({ quizId }: UseDraggableQuizCardProps) {
             onPointerMove,
             onPointerUp,
         },
+        isDeleting,
     };
 }
