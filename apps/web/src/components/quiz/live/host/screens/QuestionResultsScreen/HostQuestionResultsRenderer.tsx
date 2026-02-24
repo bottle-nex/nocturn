@@ -29,7 +29,6 @@ export default function HostQuestionResultsRenderer() {
     const [quizEnded, setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults, handleUpdateCurrentQuestion } = useWebSocket();
     const { session } = useUserSessionStore();
-    console.log('quiz ended is : ', quizEnded);
     useEffect(() => {
         emptyLiveResponses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,7 +60,6 @@ export default function HostQuestionResultsRenderer() {
                     session.user.token,
                     quiz.id,
                 );
-                console.log('data is : ', data);
                 if (data?.end) {
                     setQuizEnded(true);
                     return;

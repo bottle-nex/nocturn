@@ -97,7 +97,6 @@ export class SubscribeEventHandlers {
 
     static handleIncomingQuizResultsPageChange(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
-        console.log('recieved the data here : ', payload);
     }
 
     // <---------------------- SPECTATOR-EVENTS ---------------------->
