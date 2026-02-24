@@ -1,19 +1,14 @@
 import Bull from 'bull';
 import { prisma, Prisma } from '@nocturn/database';
-import RedisCache from '../../cache/redis.cache';
-import { redisCacheInstance } from '../../services/init.services';
 import { ReactorType } from '@nocturn/types';
 import { env } from '../../configs/env';
 import { Interactions } from '@nocturn/database';
-import { DatabaseQueueProcessors } from './processor.database.queue';
 import { JobOption, QueueJobTypes } from '../../types/database-queue-types';
 
 const REDIS_URL = env.SERVER_REDIS_URL;
 
 export default class DatabaseQueue {
     private database_queue: Bull.Queue;
-    private redis_cache: RedisCache;
-    private processors: DatabaseQueueProcessors;
     private default_job_options: JobOption = {
         attempts: 3,
         delay: 1000,
@@ -22,51 +17,9 @@ export default class DatabaseQueue {
     };
 
     constructor() {
-        this.redis_cache = redisCacheInstance;
         this.database_queue = new Bull('database-operations', {
             redis: REDIS_URL,
         });
-        this.processors = new DatabaseQueueProcessors(this.redis_cache);
-        this.setupProcessors();
-    }
-
-    private setupProcessors() {
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_GAME_SESSION,
-            this.processors.update_game_session_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_QUIZ,
-            this.processors.update_quiz_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_PARTICIPANT,
-            this.processors.update_participant_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_SPECTATOR,
-            this.processors.update_spectator_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_CHAT_MESSAGE,
-            this.processors.create_chat_message_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_CHAT_REACTION,
-            this.processors.create_chat_reaction_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_PARTICIPANT_RESPONSE,
-            this.processors.create_participant_response_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.CREATE_LIFELINE_USAGE,
-            this.processors.create_lifeline_usage_processor.bind(this.processors),
-        );
-        this.database_queue.process(
-            QueueJobTypes.UPDATE_QUESTION,
-            this.processors.update_question_processor.bind(this.processors),
-        );
     }
 
     public async update_game_session(

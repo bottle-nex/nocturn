@@ -21,8 +21,8 @@ import {
     CreateChatReactionJobType,
     CreateParticipantResponseJobType,
     UpdateQuestionJobType,
-} from '../../types/job.database.types';
-import RedisCache from '../../cache/redis.cache';
+} from '../types/job.database.types';
+import RedisCache from '../cache/redis-cache';
 
 export class DatabaseQueueProcessors {
     constructor(private redis_cache: RedisCache) {}

@@ -35,10 +35,10 @@ export default async function deleteQuizController(req: Request, res: Response) 
             return;
         }
 
-        if (quiz.status === QuizStatus.LIVE) {
-            ResponseWriter.success(res, quiz.id, 'CANNOT_DELETE_ONGOING_QUIZ', 200);
-            return;
-        }
+        // if (quiz.status === QuizStatus.LIVE) {
+        //     ResponseWriter.success(res, quiz.id, 'CANNOT_DELETE_ONGOING_QUIZ', 200);
+        //     return;
+        // }
 
         await QuizAction.moveToTrash(quizId, String(userId));
         ResponseWriter.success(res, quiz.id, 'Quiz moved to trash successfully');

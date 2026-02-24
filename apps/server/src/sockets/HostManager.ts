@@ -254,18 +254,7 @@ export default class HostManager {
             game_session_id,
         );
 
-        this.database_queue.update_quiz(
-            quiz.id!,
-            {
-                questions: {
-                    update: {
-                        where: { id: questionId },
-                        data: { isAsked: true },
-                    },
-                },
-            },
-            game_session_id,
-        );
+        this.database_queue.update_question(game_session_id, questionId, { isAsked: true });
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_PARTICIPANT,
@@ -436,12 +425,13 @@ export default class HostManager {
 
     private async handle_quiz_results(ws: GameWebSocket) {
         const { gameSessionId: game_session_id, quizId: quiz_id } = ws.user;
+        console.log('request came to end the quiz');
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         if (!quiz) return;
-
+        console.log('quiz questions are : ', quiz.questions);
         const questions = quiz.questions?.filter((q) => !q.isAsked);
-
+        console.log('questions which are not asked yet : ', questions);
         if (!questions || questions.length !== 0) {
             // show messaage that quiz is not ended yet
             return;
@@ -454,6 +444,8 @@ export default class HostManager {
             'longestStreak',
             'totalScore',
         ]);
+
+        console.log('scores of participants are : ', scores);
 
         const final_scores = scores.filter((s) => !s.isKicked);
 
@@ -470,9 +462,9 @@ export default class HostManager {
                 screen: ParticipantScreen.QUIZ_RESULTS,
             },
         };
-        this.quizManager.publish_event_to_redis(game_session_id, event_data);
+        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        this.database_queue.update_game_session(
+        await this.database_queue.update_game_session(
             game_session_id,
             {
                 hostScreen: HostScreen.QUIZ_RESULTS,
