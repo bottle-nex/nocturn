@@ -201,7 +201,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             currentQuestion,
             role,
             response: participantResponse,
-            askedQuestionCount,
+            askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
         console.log('total time taken to get live quiz data is : ', Date.now() - now, 'ms');
