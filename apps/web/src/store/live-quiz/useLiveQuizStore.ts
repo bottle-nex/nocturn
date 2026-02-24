@@ -19,6 +19,8 @@ interface LiveQuizStore {
     gameSession: GameSessionType | null;
     currentQuestion: QuestionType | null;
     nextQuestion: QuestionType | null;
+    questionCount: number;
+    askedQuestionCount: number;
     alreadyResponded: boolean;
     isNextQuestionAvailable: boolean;
     liveResponses: LiveResponseData;
@@ -40,6 +42,8 @@ interface LiveQuizStore {
     updateGameSession: (updatedFields: Partial<GameSessionType>) => void;
     updateCurrentQuestion: (updatedFields: Partial<QuestionType>) => void;
     updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
+    setQuestionCount: (count: number) => void;
+    setAskedQuestionCount: (count: number) => void;
     setAlreadyResponded: (value: boolean) => void;
     setIsNextQuestonAvailable: (value: boolean) => void;
     updateLiveResponse: (selectedOption: number) => void;
@@ -139,6 +143,12 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
 
             return { nextQuestion: null };
         }),
+
+    questionCount: 0,
+    setQuestionCount: (count: number) => set({ questionCount: count }),
+
+    askedQuestionCount: 0,
+    setAskedQuestionCount: (count: number) => set({ askedQuestionCount: count }),
 
     alreadyResponded: false,
     setAlreadyResponded: (value) => set({ alreadyResponded: value }),
