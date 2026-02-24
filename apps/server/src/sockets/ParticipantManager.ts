@@ -551,7 +551,6 @@ export default class ParticipantManager {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
         const participants_key = this.redis_cache.get_participants_key(game_session_id);
-        // const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
 
         try {
             const new_warning_count = await this.redis_cache.redis_cache.hincrby(

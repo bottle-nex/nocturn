@@ -12,9 +12,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             return;
         }
 
-        console.log('params quizid: ', req.params.quizId);
-        console.log('query: ', req.query);
-
         const parsed_data = getUnAskedQuestionSchema.safeParse({
             quizId: req.params.quizId,
             after: req.query.after,

@@ -110,8 +110,8 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
     addQuestion: () => {
         const question: QuestionType = {
             id: '',
-            question: '',
-            options: ['', '', ''],
+            question: 'This is question',
+            options: ['One', 'Two ', 'Three'],
             correctAnswer: 0,
             explanation: '',
             difficulty: 1,

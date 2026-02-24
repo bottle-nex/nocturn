@@ -95,6 +95,11 @@ export class SubscribeEventHandlers {
         toast.error(message.error);
     }
 
+    static handleIncomingQuizResultsPageChange(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
+        console.log('recieved the data here : ', payload);
+    }
+
     // <---------------------- SPECTATOR-EVENTS ---------------------->
     static handleSpectatorNameChangeMessage(payload: unknown) {
         if (!isSpectator(payload)) return;
