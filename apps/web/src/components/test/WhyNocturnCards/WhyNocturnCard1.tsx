@@ -2,7 +2,7 @@ import { Iphone } from '@/components/ui/iphone';
 
 export default function WhyNocturnCard1() {
     return (
-        <div className="h-[60vh] w-full max-w-100 shadow-xs shadow-black/5 rounded-4xl bg-[#f2f1f3] flex flex-col py-15 px-12 gap-y-2 relative overflow-hidden">
+        <div className="h-[58vh] w-full max-w-93 shadow-xs shadow-black/5 rounded-4xl bg-[#f2f1f3] flex flex-col py-14 px-10 gap-y-2 relative overflow-hidden">
             <div className="bg-dark-base text-light-base w-fit px-2.5 text-base py-px rounded-xs">
                 Build with AI
             </div>

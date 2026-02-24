@@ -125,8 +125,10 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             data-lenis-prevent
         >
             <div>
-                <AppLogo className="h-20 w-20" />
-                <section className="ml-4 mt-8">
+                <div className="fixed -top-5 -left-4">
+                    <AppLogo size={130} withText textColor="dark:text-light-base text-dark-base" />
+                </div>
+                <section className="ml-4 mt-16">
                     <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
                     <section className="flex flex-col gap-y-2 mt-2 px-4">

@@ -15,7 +15,7 @@ import { MdPublish, MdRocketLaunch } from 'react-icons/md';
 import { SiSolana } from 'react-icons/si';
 import StakeSolanaCardContent from './InstructionSectionCards/StakeSolanaCardContent';
 
-export default function App(): JSX.Element {
+export default function InstructionSection(): JSX.Element {
     const controls = useAnimation();
     const [_expanded, setExpanded] = useState<boolean>(false);
     const [activeCard, setActiveCard] = useState<string | null>(null);

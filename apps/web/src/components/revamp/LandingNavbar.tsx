@@ -99,15 +99,15 @@ export default function LandingNavbar() {
                 delay: 0.5,
             }}
             className={cn(
-                'w-full h-21 px-8 fixed z-40 flex items-center justify-between transition-all duration-500 ease-in-out',
+                'w-full h-24 px-8 fixed z-40 flex items-center justify-between transition-all duration-500 ease-in-out',
                 isNavbarVisible
                     ? 'translate-y-0'
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
             <div></div>
-            <div className="fixed -top-8 -left-6">
-                <AppLogo size={170} />
+            <div className="fixed -top-4 -left-4">
+                <AppLogo size={120} />
             </div>
             {/* <Image
                     src={'/images/cat.png'}

@@ -77,7 +77,7 @@ export default function JoinQuizButton() {
                 delay: 0.5,
             }}
             onClick={() => !open && setOpen(true)}
-            className="cursor-pointer select-none"
+            className="cursor-pointer select-none scale-95"
         >
             <motion.div
                 variants={container}

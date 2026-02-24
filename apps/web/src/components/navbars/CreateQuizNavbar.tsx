@@ -22,7 +22,13 @@ export default function CreateQuizNavBar() {
                         className={`lg:hidden cursor-pointer `}
                         onClick={() => setAppearing(!appearing)}
                     />
-                    <AppLogo />
+                    <div className="-ml-22">
+                        <AppLogo
+                            withText
+                            size={120}
+                            textColor="text-dark-base dark:text-light-base"
+                        />
+                    </div>
                 </div>
                 <div className="flex items-center gap-x-5">
                     <UserStack />
