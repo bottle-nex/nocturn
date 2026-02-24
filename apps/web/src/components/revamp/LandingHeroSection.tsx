@@ -71,7 +71,7 @@ export default function LandingHeroSection() {
                     delay: 0.5,
                 }}
                 className={cn(
-                    'text-alpha/90 text-xl px-3 py-1 rounded-xs flex items-center gap-x-1 mt-[12%] z-10',
+                    'text-alpha/90 text-xl px-3 py-1 rounded-xs flex items-center gap-x-1 mt-[11%] z-10',
                     audio.className,
                 )}
             >

@@ -18,7 +18,7 @@ interface InformationHeadingSectionProps {
     className?: string;
 }
 
-export default function InformationHeadingSection({
+export default function InformationHeadingCenterSection({
     className,
     topText,
     topTextClassName,
@@ -32,12 +32,12 @@ export default function InformationHeadingSection({
     const { session } = useUserSessionStore();
 
     return (
-        <div className={cn('w-full flex flex-col items-start gap-y-6', className)}>
+        <div className={cn('w-full flex flex-col items-center gap-y-6 z-10', className)}>
             <div className={cn('text-xl tracking-normal', topTextClassName)}>{topText}</div>
 
             <div className="text-6xl text-dark-base/90 font-semibold max-w-md">{title}</div>
 
-            <div className="text-dark-base/50 text-[22px] max-w-xl leading-[1.3]">
+            <div className="text-dark-base/50 text-[22px] max-w-xl leading-[1.3] text-center">
                 {description}
             </div>
 
