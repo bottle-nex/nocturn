@@ -34,7 +34,7 @@ export default function ChatBoxCardSection(): JSX.Element {
             onViewportEnter={startSequence}
             className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-6xl"
         >
-            <AnimatePresence>
+            {/* <AnimatePresence>
                 {activeCard && (
                     <motion.div
                         initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
@@ -44,19 +44,19 @@ export default function ChatBoxCardSection(): JSX.Element {
                         className="absolute inset-0 bg-white/20 z-3"
                     />
                 )}
-            </AnimatePresence>
+            </AnimatePresence> */}
 
             <InformationHeadingSection
                 topText="Nocturn Features"
-                topTextClassName="text-[#51b4c3]"
+                topTextClassName="text-[#b59946]"
                 title="Built for a better quiz experience."
                 description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard, and secure your place."
                 buttonTitle="Explore"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#c2eff5] hover:bg-[#c2eff5]"
+                buttonClassName="bg-[#f2eee5] hover:bg-[#f2eee5] ring-1 ring-[#bfb49510] shadow-xs shadow-black/5 shrink-0 ml-px"
             />
 
-            <div className="h-[70vh] w-full bg-[#c2eff5] mt-10 rounded-3xl flex justify-center items-center">
+            <div className="h-[70vh] w-full bg-[#f2eee5] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}
                 <div className="relative w-full max-w-216 h-65 z-20 -top-18">
                     <div className="absolute left-0 -bottom-8 -rotate-2">
@@ -199,6 +199,11 @@ export default function ChatBoxCardSection(): JSX.Element {
             </div>
 
             <InstructionSectionChatBox />
+
+            <path
+                d="M760.335 158.683C754.02 112.579 687.535 114.159 682.951 160.079L682.005 160.193C668.623 120.58 610.275 127.504 606.52 169.127L605.575 169.241C596.911 140.422 555.522 133.425 537.908 157.8C518.712 180.987 535.838 219.339 565.882 220.479L565.975 221.248C525.679 234.478 532.884 293.908 575.141 297.172L575.234 297.941C546.254 306.117 538.659 347.453 562.851 365.402C585.764 384.915 624.347 368.173 625.752 338.108L626.697 337.994C640.065 377.49 698.758 370.943 702.191 328.88L703.136 328.766C711.394 356.464 750.845 364.775 769.298 341.888C790.239 318.76 773.775 279.189 742.614 277.733L742.521 276.965C782.817 263.734 775.612 204.304 733.355 201.04L733.262 200.272C750.815 195.244 762.825 176.823 760.339 158.712L760.335 158.683Z"
+                fill="var(--graphic-blue)"
+            ></path>
         </motion.section>
     );
 }

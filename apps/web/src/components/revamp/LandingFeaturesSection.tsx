@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
 import { SiSolana } from 'react-icons/si';
-import InformationHeadingSection from './InformationHeadingSection';
+import InformationHeadingCenterSection from './InformationHeadingCenterSection';
 
 export default function LandingFeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
@@ -106,17 +106,17 @@ export default function LandingFeaturesSection() {
 
     return (
         <div className="w-full flex flex-col items-center py-5 pt-15 max-w-6xl">
-            <InformationHeadingSection
-                topText="Nocturn Features"
-                topTextClassName="text-[#dd2d4a]"
-                title="Built for a better quiz experience."
-                description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard, and secure your place."
-                buttonTitle="Explore"
+            <InformationHeadingCenterSection
+                topText="Nocturn Perks"
+                topTextClassName="text-[#ff3232]"
+                title="Cherry on top."
+                description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard."
+                buttonTitle="Dive In"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#dd2d4a] hover:bg-[#dd2d4a] text-light-base"
+                buttonClassName="bg-[#ffcece] hover:bg-[#ffcece] text-dark-base shadow-xs shadow-black/5 w-30"
             />
-            <div className="w-screen h-screen bg-white flex flex-col justify-center items-center relative overflow-hidden pt-20 select-none">
-                <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30">
+            <div className="w-screen h-screen flex flex-col justify-center items-center relative pt-20 select-none -mt-10 overflow-hidden">
+                <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30 max-w-6xl">
                     <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs -mt-50 ">
                         <div className="w-290 h-290 aspect-square border border-dark-base/2 flex justify-center items-center rounded-[19rem] shadow-xs">
                             <div className="w-260 h-260 aspect-square border border-dark-base/3 flex justify-center items-center rounded-[17rem] shadow-xs">
@@ -264,7 +264,7 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowAIWords(false)
                                                             }
-                                                            className="absolute -left-107 top-60 text-dark-base ring-1 ring-black/10 shadow-md shadow-black/5 w-70 h-15 text-xl rounded-xl bg-light-alpha flex items-center justify-center gap-x-3 overflow-visible z-5 group select-none"
+                                                            className="absolute -left-104 top-60 text-dark-base ring-1 ring-black/10 shadow-md shadow-black/5 w-70 h-15 text-xl rounded-xl bg-light-alpha flex items-center justify-center gap-x-3 overflow-visible z-5 group select-none"
                                                         >
                                                             <div className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-black/10 shadow-md shadow-black/5">
                                                                 <VoiceIcon
@@ -432,7 +432,7 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowQuizTheme(false)
                                                             }
-                                                            className="absolute -right-110 top-30 w-57 h-15 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md flex items-center gap-x-3 px-6 select-none"
+                                                            className="absolute -right-98 top-30 w-57 h-15 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md flex items-center gap-x-3 px-6 select-none"
                                                         >
                                                             <div className="flex -space-x-1.5">
                                                                 {dots.map((dot) => (
