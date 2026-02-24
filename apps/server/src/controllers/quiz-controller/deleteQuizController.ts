@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma, QuizStatus } from '@nocturn/database';
+import { prisma } from '@nocturn/database';
 import QuizAction from '../../class/quizAction';
 
 export default async function deleteQuizController(req: Request, res: Response) {
