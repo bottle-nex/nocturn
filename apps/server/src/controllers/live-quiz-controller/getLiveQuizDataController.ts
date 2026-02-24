@@ -72,7 +72,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         let userData: Partial<UserType> | Partial<ParticipantType> | Partial<SpectatorType> | null =
             null;
         let participantResponse: Partial<ResponseType> | null = null;
-        const askedQuestionCount = questions.filter(q => q.isAsked).length;
+        const askedQuestionCount = questions.filter((q) => q.isAsked).length;
 
         switch (role) {
             case USER_TYPE.HOST: {
@@ -287,7 +287,7 @@ async function fallbackToDatabase(
                 quizId,
                 isAsked: true,
             },
-        })
+        });
 
         let question: Question | null = null;
         if (gameSession?.hostScreen === 'LOBBY') {
@@ -309,7 +309,7 @@ async function fallbackToDatabase(
                 nickname: true,
                 avatar: true,
                 totalScore: true,
-                finalRank: true
+                finalRank: true,
             },
             take: 20,
         });
