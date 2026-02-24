@@ -72,10 +72,11 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         let userData: Partial<UserType> | Partial<ParticipantType> | Partial<SpectatorType> | null =
             null;
         let participantResponse: Partial<ResponseType> | null = null;
+        const askedQuestionCount = questions.filter((q) => q.isAsked).length;
 
         switch (role) {
             case USER_TYPE.HOST: {
-                const host = await redisCacheInstance.get_host(gameSessionId, userId, [
+                userData = await redisCacheInstance.get_host(gameSessionId, userId, [
                     'id',
                     'name',
                     'email',
@@ -83,22 +84,19 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                     'walletAddress',
                     'isVerified',
                 ]);
-                if (!host) {
-                    ResponseWriter.not_found(res, 'unable to fetch host data.');
-                    return;
+                if (!userData) {
+                    userData = await prisma.user.findUnique({
+                        where: { id: userId },
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true,
+                            walletAddress: true,
+                            isVerified: true,
+                        },
+                    });
                 }
-                userData = host;
-                // userData = await prisma.user.findUnique({
-                //     where: { id: userId },
-                //     select: {
-                //         id: true,
-                //         name: true,
-                //         email: true,
-                //         image: true,
-                //         walletAddress: true,
-                //         isVerified: true,
-                //     },
-                // });
                 break;
             }
 
@@ -203,6 +201,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             currentQuestion,
             role,
             response: participantResponse,
+            askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
         console.log('total time taken to get live quiz data is : ', Date.now() - now, 'ms');
@@ -272,11 +271,21 @@ async function fallbackToDatabase(
                     participantCode: true,
                 }),
                 _count: {
-                    select: { questions: true, participants: true },
+                    select: {
+                        questions: true,
+                        participants: true,
+                    },
                 },
                 host: {
                     select: { name: true, image: true, email: true },
                 },
+            },
+        });
+
+        const askedQuestionCount = await tx.question.count({
+            where: {
+                quizId,
+                isAsked: true,
             },
         });
 
@@ -295,7 +304,13 @@ async function fallbackToDatabase(
 
         const participants = await tx.participant.findMany({
             where: { quizId, isKicked: false },
-            select: { id: true, nickname: true, avatar: true, totalScore: true, finalRank: true },
+            select: {
+                id: true,
+                nickname: true,
+                avatar: true,
+                totalScore: true,
+                finalRank: true,
+            },
             take: 20,
         });
 
@@ -373,6 +388,7 @@ async function fallbackToDatabase(
             spectators,
             userData,
             participantResponse,
+            askedQuestionCount,
         };
     });
 
@@ -407,6 +423,7 @@ async function fallbackToDatabase(
         currentQuestion,
         role,
         response: result.participantResponse,
+        askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
