@@ -24,11 +24,11 @@ export default function WhyNocturnCard3() {
         <div
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
-            className="h-[60vh] w-full max-w-100 shadow-xs shadow-black/5 rounded-4xl bg-[#b5a6ff] flex flex-col py-15 px-12 gap-y-2 relative overflow-hidden"
+            className="h-[58vh] w-full max-w-93 shadow-xs shadow-black/5 rounded-4xl bg-[#b5a6ff] flex flex-col py-14 px-10 gap-y-2 relative overflow-hidden"
         >
             <div
                 className={cn(
-                    'top-60 left-1/2 -translate-x-1/2 h-40 w-40',
+                    'top-59 left-1/2 -translate-x-1/2 h-40 w-40',
                     'bg-[#f0edff] shadow-md shadow-black/10 text-dark-base',
                     'absolute flex items-center justify-center rounded-3xl overflow-hidden',
                     'ring-4 ring-light-base/60',
@@ -66,7 +66,7 @@ export default function WhyNocturnCard3() {
                 </div>
             </div>
 
-            <div className="absolute left-1/2 -translate-x-1/2 top-105">
+            <div className="absolute left-1/2 -translate-x-1/2 top-104">
                 <motion.div
                     animate={open ? { scale: 0, rotate: 180 } : { scale: 1, rotate: 0 }}
                     transition={{ duration: 0.25 }}

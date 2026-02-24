@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineCopyright } from 'react-icons/md';
 
-const audio = Audiowide({
+export const audio = Audiowide({
     subsets: ['latin'],
     weight: ['400'],
 });
