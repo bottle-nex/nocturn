@@ -8,7 +8,7 @@ import { publisherInstance, email_service_queue_instance } from '../../services/
 import crypto from 'crypto';
 import { NOCTURN_REFRESH_COOKIE_NAME } from '@nocturn/types';
 
-const ACCESS_TOKEN_EXPIRY = '1m';
+const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
