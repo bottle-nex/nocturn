@@ -34,7 +34,6 @@ export default function FallingAvatars({
 
         const wallThickness = 50;
         const walls = [
-            // floor
             Matter.Bodies.rectangle(
                 width / 2,
                 height + wallThickness / 2,
@@ -42,7 +41,6 @@ export default function FallingAvatars({
                 wallThickness,
                 { isStatic: true }
             ),
-            // left wall
             Matter.Bodies.rectangle(
                 -wallThickness / 2,
                 height / 2,
@@ -50,7 +48,6 @@ export default function FallingAvatars({
                 height,
                 { isStatic: true }
             ),
-            // right wall
             Matter.Bodies.rectangle(
                 width + wallThickness / 2,
                 height / 2,

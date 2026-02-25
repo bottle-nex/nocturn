@@ -8,9 +8,9 @@ import RiveComponent from '../ui/Rives/RIveComponent';
 
 export default function LandingCTASection() {
     return (
-        <section className="h-160 w-full relative p-6">
-            <div className="relative h-full rounded-3xl overflow-hidden flex justify-between p-8 gap-8 ring-1 ring-black/10 shadow-xs shadow-black/5 bg-[#FFE65C]">
-                <div className="h-full w-full bg-light-alpha p-10 flex justify-between rounded-[10px]">
+        <section className="h-160 w-full relative">
+            <div className="relative h-full rounded-t-3xl overflow-hidden flex justify-between p-8 gap-8 ring-1 ring-black/10 shadow-xs shadow-black/5 bg-[#FFE65C]">
+                <div className="h-full w-full bg-[#FFE65C] p-10 flex justify-between rounded-[10px]">
                     <article className="w-[50%] h-full flex flex-col justify-between">
                         <div className="flex gap-x-2">
                             <div className="bg-dark-base text-light-base w-fit text-[26px] font-normal px-9 h-17 flex items-center rounded-full">

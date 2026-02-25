@@ -48,15 +48,15 @@ export default function ChatBoxCardSection(): JSX.Element {
 
             <InformationHeadingSection
                 topText="Nocturn Features"
-                topTextClassName="text-[#219ebc]"
+                topTextClassName="text-[#FF88BA]"
                 title="Built for a better quiz experience."
                 description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard, and secure your place."
                 buttonTitle="Explore"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#8ecae6] hover:bg-[#8ecae6] shadow-[inset_0px_1.5px_rgba(0,0,0,0.05)] shrink-0 ml-px"
+                buttonClassName="bg-[#FF88BA] hover:bg-[#fa77ae] shadow-[inset_0px_1.5px_rgba(0,0,0,0.05)] shrink-0 ml-px text-light-alpha"
             />
 
-            <div className="h-150 w-full bg-[#8ecae6] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
+            <div className="h-150 w-full bg-[#FF88BA] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}
                 <div className="relative w-full max-w-216 h-65 z-20 -top-18">
                     <div className="absolute left-0 -bottom-8 -rotate-2">

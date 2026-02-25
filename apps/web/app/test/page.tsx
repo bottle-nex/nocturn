@@ -1,7 +1,7 @@
 "use client";
 import AppLogo from "@/components/app/AppLogo";
 import FallingAvatars from "@/components/animation/FallingAvatars";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -39,6 +39,7 @@ const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-16.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-17.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
+    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-3.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-4.jpg' },
@@ -48,13 +49,6 @@ const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-8.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-9.jpg' },
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-11.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-12.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-13.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-14.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-15.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-16.jpg' },
-    { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-17.jpg' },
 ];
 
 enum QUIZ_RESULT_PHASES {
@@ -103,7 +97,7 @@ export default function Page(): JSX.Element {
                         textColor="text-dark-base dark:text-light-base"
                     />
                 </div>
-                <section className="flex-1 p-12 h-full">
+                <section className="flex-1 pt-12 px-12 h-full">
                     {phase === QUIZ_RESULT_PHASES.RESULT_READY && <ResultReadyScreen />}
                 </section>
             </section>
@@ -114,7 +108,7 @@ export default function Page(): JSX.Element {
 function ResultReadyScreen(): JSX.Element {
     return (
         <div className="w-full h-full relative">
-            <section className="flex flex-col items-center justify-center h-full z-10 relative">
+            <section className="flex flex-col items-center justify-center h-full z-10 relative -mt-8">
                 <h1 className="text-center text-7xl">Quiz has Ended</h1>
                 <p className="text-center text-3xl">The results are out</p>
             </section>
