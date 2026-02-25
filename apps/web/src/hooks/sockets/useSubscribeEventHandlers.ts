@@ -66,6 +66,9 @@ export function useSubscribeEventHandlers() {
                 SubscribeEventHandlers.handleSpectatorLifelineResponseConfirmation,
             [MESSAGE_TYPES.LIFELINE_LIVE_UPDATE]: SubscribeEventHandlers.handleLifelineLiveUpdate,
 
+            [MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS]:
+                SubscribeEventHandlers.handleIncomingQuizResultsPageChange,
+
             [COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE]:
                 CollaboratorsHandlers.handleIncomingQuestionTap,
             [COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE]:

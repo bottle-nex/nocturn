@@ -26,10 +26,9 @@ export default function HostQuestionResultsRenderer() {
         updateQuiz,
     } = useLiveQuizStore();
     const { emptyLiveResponses } = useLiveQuizHostStore();
-    const [quizEnded, _setQuizEnded] = useState<boolean>(false);
+    const [quizEnded, setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults, handleUpdateCurrentQuestion } = useWebSocket();
     const { session } = useUserSessionStore();
-
     useEffect(() => {
         emptyLiveResponses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,7 +61,7 @@ export default function HostQuestionResultsRenderer() {
                     quiz.id,
                 );
                 if (data?.end) {
-                    // quiz ended
+                    setQuizEnded(true);
                     return;
                 }
                 if (data?.question) {
@@ -87,7 +86,7 @@ export default function HostQuestionResultsRenderer() {
                 'relative',
             )}
         >
-            <div className="min-h-[32rem] w-[90%] flex flex-col justify-between">
+            <div className="min-h-128 w-[90%] flex flex-col justify-between">
                 <div
                     className={cn('w-full text-3xl text-center')}
                     dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
@@ -127,7 +126,7 @@ export default function HostQuestionResultsRenderer() {
                     className={cn(
                         'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
                         'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha text-xs',
-                        'px-3.5 !pl-4 py-1.5 text-xs rounded-md tracking-wider',
+                        'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
                         'hover:-translate-y-0.5 transition-all transform duration-150',
                     )}
                     onClick={handleOnNextQuestion}

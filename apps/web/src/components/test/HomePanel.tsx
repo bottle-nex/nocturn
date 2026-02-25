@@ -12,8 +12,8 @@ import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import LoaderButton from './LoaderButton';
 import { FiPlus } from 'react-icons/fi';
+import { Loader } from 'lucide-react';
 
 export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
@@ -84,13 +84,12 @@ export default function HomePanel() {
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
                     <Button
-                        size="sm"
                         onClick={handleCreateQuiz}
                         disabled={creating}
-                        className="rounded-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+                        className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
                     >
-                        {creating ? <LoaderButton /> : <FiPlus />}
-                        <span>{creating ? 'Creating...' : 'New Quiz'}</span>
+                        {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />}
+                        <span>{creating ? 'Creating' : 'New Quiz'}</span>
                     </Button>
                 </div>
 
