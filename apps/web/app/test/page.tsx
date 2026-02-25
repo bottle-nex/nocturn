@@ -1,7 +1,7 @@
-"use client";
-import AppLogo from "@/components/app/AppLogo";
-import FallingAvatars from "@/components/animation/FallingAvatars";
-import { JSX, useState } from "react";
+'use client';
+import AppLogo from '@/components/app/AppLogo';
+import FallingAvatars from '@/components/animation/FallingAvatars';
+import { JSX, useState } from 'react';
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -52,35 +52,35 @@ const users = [
 ];
 
 enum QUIZ_RESULT_PHASES {
-    RESULT_READY = "RESULT_READY",
-    READY_TO_ANNOUNCE = "READY_TO_ANNOUNCE",
-    ANNOUNCED = "ANNOUNCED"
+    RESULT_READY = 'RESULT_READY',
+    READY_TO_ANNOUNCE = 'READY_TO_ANNOUNCE',
+    ANNOUNCED = 'ANNOUNCED',
 }
 
-const PHASE_ORDER = [
-    QUIZ_RESULT_PHASES.RESULT_READY,
-    QUIZ_RESULT_PHASES.READY_TO_ANNOUNCE,
-    QUIZ_RESULT_PHASES.ANNOUNCED,
-] as const;
+// const PHASE_ORDER = [
+//     QUIZ_RESULT_PHASES.RESULT_READY,
+//     QUIZ_RESULT_PHASES.READY_TO_ANNOUNCE,
+//     QUIZ_RESULT_PHASES.ANNOUNCED,
+// ] as const;
 
-function simulatePhases(
-    setPhase: (phase: QUIZ_RESULT_PHASES) => void,
-    interval = 3000
-): () => void {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+// function simulatePhases(
+//     setPhase: (phase: QUIZ_RESULT_PHASES) => void,
+//     interval = 3000
+// ): () => void {
+//     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    PHASE_ORDER.forEach((phase, i) => {
-        if (i === 0) return;
-        timers.push(
-            setTimeout(() => setPhase(phase), interval * i)
-        );
-    });
+//     PHASE_ORDER.forEach((phase, i) => {
+//         if (i === 0) return;
+//         timers.push(
+//             setTimeout(() => setPhase(phase), interval * i)
+//         );
+//     });
 
-    return () => timers.forEach(clearTimeout);
-}
+//     return () => timers.forEach(clearTimeout);
+// }
 
 export default function Page(): JSX.Element {
-    const [phase, setPhase] = useState<QUIZ_RESULT_PHASES>(QUIZ_RESULT_PHASES.RESULT_READY);
+    const [phase, _setPhase] = useState<QUIZ_RESULT_PHASES>(QUIZ_RESULT_PHASES.RESULT_READY);
 
     // useEffect(() => {
     //     const cleanup = simulatePhases(setPhase);
@@ -91,18 +91,14 @@ export default function Page(): JSX.Element {
         <main className="max-h-screen min-h-screen bg-black flex items-center justify-center">
             <section className="max-w-7xl mx-auto h-[80dvh] w-full bg-light-alpha rounded-xl relative">
                 <div className="absolute -top-2 -left-2">
-                    <AppLogo
-                        withText
-                        size={120}
-                        textColor="text-dark-base dark:text-light-base"
-                    />
+                    <AppLogo withText size={120} textColor="text-dark-base dark:text-light-base" />
                 </div>
                 <section className="flex-1 pt-12 px-12 h-full">
                     {phase === QUIZ_RESULT_PHASES.RESULT_READY && <ResultReadyScreen />}
                 </section>
             </section>
         </main>
-    )
+    );
 }
 
 function ResultReadyScreen(): JSX.Element {
@@ -116,5 +112,5 @@ function ResultReadyScreen(): JSX.Element {
                 <FallingAvatars users={users} ballRadius={44} />
             </section>
         </div>
-    )
+    );
 }

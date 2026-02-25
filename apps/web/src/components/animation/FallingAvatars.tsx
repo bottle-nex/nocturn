@@ -1,25 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import Matter from "matter-js";
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import Matter from 'matter-js';
 
 interface FallingAvatarsProps {
     users: { avatar: string }[];
     ballRadius?: number;
 }
 
-export default function FallingAvatars({
-    users,
-    ballRadius = 28,
-}: FallingAvatarsProps) {
+export default function FallingAvatars({ users, ballRadius = 28 }: FallingAvatarsProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const engineRef = useRef<Matter.Engine | null>(null);
     const bodiesRef = useRef<Matter.Body[]>([]);
     const rafRef = useRef<number>(0);
-    const [positions, setPositions] = useState<
-        { x: number; y: number; angle: number }[]
-    >([]);
+    const [positions, setPositions] = useState<{ x: number; y: number; angle: number }[]>([]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -34,27 +29,15 @@ export default function FallingAvatars({
 
         const wallThickness = 50;
         const walls = [
-            Matter.Bodies.rectangle(
-                width / 2,
-                height + wallThickness / 2,
-                width,
-                wallThickness,
-                { isStatic: true }
-            ),
-            Matter.Bodies.rectangle(
-                -wallThickness / 2,
-                height / 2,
-                wallThickness,
-                height,
-                { isStatic: true }
-            ),
-            Matter.Bodies.rectangle(
-                width + wallThickness / 2,
-                height / 2,
-                wallThickness,
-                height,
-                { isStatic: true }
-            ),
+            Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
+                isStatic: true,
+            }),
+            Matter.Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height, {
+                isStatic: true,
+            }),
+            Matter.Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height, {
+                isStatic: true,
+            }),
         ];
         Matter.Composite.add(engine.world, walls);
 
@@ -114,7 +97,7 @@ export default function FallingAvatars({
                             left: pos.x - ballRadius,
                             top: pos.y - ballRadius,
                             transform: `rotate(${pos.angle}rad)`,
-                            willChange: "transform, left, top",
+                            willChange: 'transform, left, top',
                         }}
                     >
                         <Image
