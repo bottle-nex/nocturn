@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import AnimatedIcons from '../revamp/AnimatedIcons';
 import AnimatedClock from '../ui/animated-icons/AnimatedClock';
 import { SiSolana } from 'react-icons/si';
-import InformationHeadingCenterSection from './InformationHeadingCenterSection';
+import InformationHeadingSection from './InformationHeadingSection';
 
 export default function LandingFeaturesSection() {
     const [showCollabPanel, setShowCollabPanel] = useState<boolean>(false);
@@ -106,14 +106,14 @@ export default function LandingFeaturesSection() {
 
     return (
         <div className="w-full flex flex-col items-center py-5 pt-15 max-w-6xl">
-            <InformationHeadingCenterSection
+            <InformationHeadingSection
                 topText="Nocturn Perks"
-                topTextClassName="text-[#ff3232]"
+                topTextClassName="text-[#f48c06]"
                 title="Cherry on top."
                 description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard."
                 buttonTitle="Dive In"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#ffcece] hover:bg-[#ffcece] text-dark-base shadow-xs shadow-black/5 w-30"
+                buttonClassName="bg-[#fcbf49] hover:bg-[#fcbf49] z-10 text-dark-base tracking-wide w-30 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
             />
             <div className="w-screen h-screen flex flex-col justify-center items-center relative pt-20 select-none -mt-10 overflow-hidden">
                 <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30 max-w-6xl">

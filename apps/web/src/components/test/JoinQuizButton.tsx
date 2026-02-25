@@ -74,7 +74,6 @@ export default function JoinQuizButton() {
                 type: 'spring',
                 stiffness: 260,
                 damping: 20,
-                delay: 0.5,
             }}
             onClick={() => !open && setOpen(true)}
             className="cursor-pointer select-none scale-95"

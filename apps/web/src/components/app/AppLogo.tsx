@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import CatRive from '../ui/CatRive';
+import CatRive from '../ui/Rives/CatRive';
 
 export default function AppLogo({
     className,
