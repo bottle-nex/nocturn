@@ -46,7 +46,7 @@ export default function WhyNocturnCard2() {
     );
 }
 
-function AvatarWithName({
+export function AvatarWithName({
     src,
     name,
     className,

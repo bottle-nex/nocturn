@@ -3,7 +3,6 @@ import { premium_features, BILLING_INTERVAL, SubscriptionTierDTO } from '@noctur
 import { JSX, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { IoStar } from 'react-icons/io5';
-import { RiServiceFill } from 'react-icons/ri';
 import {
     LuUsers,
     LuCalendarCheck,
@@ -29,7 +28,7 @@ import { CREATE_CHECKOUT_URL, GET_TIERS_URL } from '../../../routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
 import axios from 'axios';
-import SectionHeading from '../ui/SectionHeading';
+import InformationHeadingSection from './InformationHeadingSection';
 
 interface PricingComponentProps {
     showHeading: boolean;
@@ -143,14 +142,23 @@ export default function PricingComponent({
     }
 
     return (
-        <main className={cn('max-w-7xl mx-auto w-full', className)}>
+        <main className={cn('max-w-6xl mx-auto w-full', className)}>
             {showHeading && (
-                <SectionHeading
-                    className="pb-16"
-                    title="Choose your Nocturn subscription"
-                    description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
-                    icon={<RiServiceFill className="size-4" />}
-                    ticker="pricing plans"
+                // <SectionHeading
+                //     className="pb-16"
+                //     title="Choose your Nocturn subscription"
+                //     description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
+                //     icon={<RiServiceFill className="size-4" />}
+                //     ticker="pricing plans"
+                // />
+                <InformationHeadingSection
+                    topText="Nocturn Pricing"
+                    topTextClassName="text-[#38b000]"
+                    title="Choose your subscription."
+                    description="Learning doesn't have to be hard. With jitter, learning becomes easy, and on top of that you can make money from your knowledge. Can't ask for more, can you.."
+                    buttonTitle="Buy Premium"
+                    buttonRedirectUrl="/home"
+                    buttonClassName="bg-[#9ef01a] hover:bg-[#9ef01a] text-dark-base w-45 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
                 />
             )}
 

@@ -68,7 +68,6 @@ export default function LandingHeroSection() {
                     type: 'spring',
                     stiffness: 260,
                     damping: 20,
-                    delay: 0.5,
                 }}
                 className={cn(
                     'text-alpha/90 text-xl px-3 py-1 rounded-xs flex items-center gap-x-1 mt-[11%] z-10',
@@ -78,21 +77,69 @@ export default function LandingHeroSection() {
                 {/* <RiVipCrown2Line className="size-3.5" /> */}
                 NOCTURN
             </motion.div>
-            <div className="flex flex-col items-center text-dark-base text-6xl gap-y-1 font-semibold -mt-1 z-10">
+            <motion.div
+                initial={{
+                    scale: 0.8,
+                    opacity: 0,
+                }}
+                animate={{
+                    scale: 1,
+                    opacity: 1,
+                }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 260,
+                    damping: 20,
+                }}
+                className="flex flex-col items-center text-dark-base text-6xl gap-y-1 font-semibold -mt-1 z-10"
+            >
                 <div>The only quizzing platform</div>
                 <div>where knowledge pays</div>
-            </div>
+            </motion.div>
 
-            <div className="text-xl text-dark-base/60 max-w-[37rem] text-center">
+            <motion.div
+                initial={{
+                    scale: 0.8,
+                    opacity: 0,
+                }}
+                animate={{
+                    scale: 1,
+                    opacity: 1,
+                }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 260,
+                    damping: 20,
+                }}
+                className="text-xl text-dark-base/60 max-w-[37rem] text-center"
+            >
                 Nocturn is a live competitive quiz app designed for curious minds. Hosts launch
                 challenges, players battle it out, and the top three win.
-            </div>
+            </motion.div>
 
             <div className="flex gap-x-10 mt-1">
                 <JoinQuizButton />
             </div>
 
-            <div className="h-[95vh] w-screen p-6">
+            <motion.div
+                initial={{
+                    scale: 0.8,
+                    opacity: 0,
+                    y: 100,
+                    filter: 'blur(10px)',
+                }}
+                animate={{
+                    scale: 1,
+                    opacity: 1,
+                    y: 0,
+                    filter: 'blur(0px)',
+                }}
+                transition={{
+                    duration: 0.3,
+                    delay: 1,
+                }}
+                className="h-[95vh] w-screen p-6"
+            >
                 <div className="w-full h-full rounded-3xl bg-[#dddbff] overflow-hidden flex justify-center items-end shadow-xs shadow-black/5">
                     <div className="h-[90%] w-[76%] border border-white rounded-2xl relative overflow-hidden -mb-6">
                         <Image
@@ -104,7 +151,7 @@ export default function LandingHeroSection() {
                         />
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

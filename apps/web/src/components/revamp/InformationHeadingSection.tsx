@@ -49,7 +49,7 @@ export default function InformationHeadingSection({
                 className={cn(
                     'text-dark-base/80',
                     'rounded-full',
-                    'w-30 h-11',
+                    'w-30 h-12',
                     'pt-1.5',
                     'text-xl font-normal',
                     'flex justify-center items-center',
