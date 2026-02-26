@@ -1,5 +1,5 @@
 import { SubscriptionEnum } from "@nocturn/types";
-import { FeatureKey, FEATURES } from "./features";
+import { FeatureKey, FeatureLimit, FEATURES } from "./features";
 
 class PlanManager {
     /** Raw limit object for a feature on a given tier */
@@ -35,9 +35,11 @@ class PlanManager {
 
     /** Full feature map for a tier — useful for seeding context */
     getPlan(tier: SubscriptionEnum): Record<FeatureKey, FeatureLimit> {
-        return Object.fromEntries(
-            Object.entries(FEATURES).map(([key, def]) => [key, def[tier]])
-        ) as Record<FeatureKey, FeatureLimit>;
+        const plan: Record<FeatureKey, FeatureLimit> = {} as Record<FeatureKey, FeatureLimit>;
+        Object.entries(FEATURES).forEach(([key, def]) => {
+            plan[key as FeatureKey] = def[tier];
+        });
+        return plan;
     }
 }
 
