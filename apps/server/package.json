@@ -23,6 +23,7 @@
     "@langchain/openai": "^1.2.2",
     "@nocturn/database": "workspace:*",
     "@nocturn/typescript-config": "workspace:*",
+    "@nocturn/premium": "workspace:*",
     "@prisma/instrumentation": "^7.1.0",
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",

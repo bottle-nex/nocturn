@@ -165,6 +165,9 @@ importers:
       '@nocturn/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@nocturn/premium':
+        specifier: workspace:*
+        version: link:../../packages/premium
       '@nocturn/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config

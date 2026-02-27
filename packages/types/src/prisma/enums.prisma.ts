@@ -1,31 +1,31 @@
 export enum QuizStatusEnum {
-    CREATED = "CREATED",
-    PUBLISHED = "PUBLISHED",
-    SCHEDULED = "SCHEDULED",
-    LIVE = "LIVE",
-    COMPLETED = "COMPLETED",
-    CANCELLED = "CANCELLED",
-    PAYOUT_PENDING = "PAYOUT_PENDING",
-    PAYOUT_COMPLETED = "PAYOUT_COMPLETED",
-    NULL = "NULL",
+  CREATED = "CREATED",
+  PUBLISHED = "PUBLISHED",
+  SCHEDULED = "SCHEDULED",
+  LIVE = "LIVE",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  PAYOUT_PENDING = "PAYOUT_PENDING",
+  PAYOUT_COMPLETED = "PAYOUT_COMPLETED",
+  NULL = "NULL",
 }
 
 export enum InteractionEnum {
-    THUMBS_UP = "THUMBS_UP",
-    DOLLAR = "DOLLAR",
-    BULB = "BULB",
-    HEART = "HEART",
-    SMILE = "SMILE",
+  THUMBS_UP = "THUMBS_UP",
+  DOLLAR = "DOLLAR",
+  BULB = "BULB",
+  HEART = "HEART",
+  SMILE = "SMILE",
 }
 
 export enum SessionStatusEnum {
-    WAITING = "WAITING",
-    STARTING = "STARTING",
-    QUESTION_ACTIVE = "QUESTION_ACTIVE",
-    QUESTION_ENDED = "QUESTION_ENDED",
-    ELIMINATING = "ELIMINATING",
-    COMPLETED = "COMPLETED",
-    PAUSED = "PAUSED",
+  WAITING = "WAITING",
+  STARTING = "STARTING",
+  QUESTION_ACTIVE = "QUESTION_ACTIVE",
+  QUESTION_ENDED = "QUESTION_ENDED",
+  ELIMINATING = "ELIMINATING",
+  COMPLETED = "COMPLETED",
+  PAUSED = "PAUSED",
 }
 
 export enum ParticipantScreenEnum {
@@ -60,44 +60,44 @@ export enum HostScreenEnum {
 }
 
 export enum USER_TYPE {
-    HOST = "HOST",
-    PARTICIPANT = "PARTICIPANT",
-    SPECTATOR = "SPECTATOR",
+  HOST = "HOST",
+  PARTICIPANT = "PARTICIPANT",
+  SPECTATOR = "SPECTATOR",
 }
 
 export enum QuizPhaseEnum {
-    QUESTION_READING = "QUESTION_READING",
-    QUESTION_ACTIVE = "QUESTION_ACTIVE",
-    SHOW_RESULTS = "SHOW_RESULTS",
-    WAITING_NEXT = "WAITING_NEXT",
+  QUESTION_READING = "QUESTION_READING",
+  QUESTION_ACTIVE = "QUESTION_ACTIVE",
+  SHOW_RESULTS = "SHOW_RESULTS",
+  WAITING_NEXT = "WAITING_NEXT",
 }
 
 export enum CollabRole {
-    HOST = "HOST",
-    EDITOR = "EDITOR",
-    VIEWER = "VIEWER",
+  HOST = "HOST",
+  EDITOR = "EDITOR",
+  VIEWER = "VIEWER",
 }
 
 export enum AgentStep {
-    START = "START",
-    ASK_DIFFICULTY = "ASK_DIFFICULTY",
-    WAIT_DIFFICULTY = "WAIT_DIFFICULTY",
-    PLANNING = "PLANNING",
-    GENERATE = "GENERATE",
-    REVISE = "REVISE",
-    DONE = "DONE",
+  START = "START",
+  ASK_DIFFICULTY = "ASK_DIFFICULTY",
+  WAIT_DIFFICULTY = "WAIT_DIFFICULTY",
+  PLANNING = "PLANNING",
+  GENERATE = "GENERATE",
+  REVISE = "REVISE",
+  DONE = "DONE",
 }
 
 export enum AiQuizChatRole {
-    SYSTEM = "SYSTEM",
-    AGENT = "AGENT",
-    USER = "USER",
+  SYSTEM = "SYSTEM",
+  AGENT = "AGENT",
+  USER = "USER",
 }
 
 export enum AiMessageElement {
-    DIFFICULTY = "DIFFICULTY",
-    TITLE = "TITLE",
-    QUIZ = "QUIZ",
+  DIFFICULTY = "DIFFICULTY",
+  TITLE = "TITLE",
+  QUIZ = "QUIZ",
 }
 
 export enum QuizEndScreen {
@@ -107,16 +107,16 @@ export enum QuizEndScreen {
 }
 
 export enum TemplateEnum {
-    CLASSIC = "CLASSIC",
-    MODERN = "MODERN",
-    NEON = "NEON",
-    YELLOW = "YELLOW",
-    GREEN = "GREEN",
-    PASTEL = "PASTEL",
-    BLUE = "BLUE",
+  CLASSIC = "CLASSIC",
+  MODERN = "MODERN",
+  NEON = "NEON",
+  YELLOW = "YELLOW",
+  GREEN = "GREEN",
+  PASTEL = "PASTEL",
+  BLUE = "BLUE",
 }
 
 export enum SubscriptionEnum {
-    FREE = "FREE",
-    PRO = "PRO",
+  FREE = "FREE",
+  PRO = "PRO",
 }
