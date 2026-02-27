@@ -26,7 +26,7 @@ export const premium_features = [
   {
     id: "free",
     name: "Free",
-    description: "Easiest way to try Mentimeter.",
+    description: "Easiest way to try Nocturn.",
     price: {
       amount: 0,
       currency: "EUR",

@@ -1,5 +1,4 @@
-import HostQuizResultsScreensRenderer from "./HostQuizResultsScreensRenderer";
-
+import HostQuizResultsScreensRenderer from './HostQuizResultsScreensRenderer';
 
 export default function HostQuizResultsScreen() {
     return (
