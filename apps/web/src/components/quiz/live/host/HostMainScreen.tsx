@@ -9,6 +9,7 @@ import HostQuestionResultsScreen from './screens/QuestionResultsScreen/HostQuest
 import HostQuestionActiveScreen from './screens/QuestionActiveScreen/HostQuestionActiveScreen';
 import HostQuestionReadingScreen from './screens/QuestionReadingScreen/HostQuestionReadingScreen';
 import FinalResultsScreen from '../common/FinalResultsScreen';
+import HostQuizResultsScreen from './screens/QuizResultsScreen/HostQuizResultsScreensRenderer';
 
 export default function HostMainScreen() {
     const { gameSession } = useLiveQuizStore();
@@ -32,6 +33,8 @@ export default function HostMainScreen() {
 
             case HostScreenEnum.FINAL_RESULTS:
                 return <FinalResultsScreen />;
+            case HostScreenEnum.QUIZ_RESULTS:
+                return <HostQuizResultsScreen />;
         }
     }
 
