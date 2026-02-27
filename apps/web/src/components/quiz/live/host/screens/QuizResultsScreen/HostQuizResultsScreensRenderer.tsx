@@ -89,7 +89,7 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
 
     return (
         <main className="w-full flex items-center justify-center">
-            <section className='fixed -top-4 right-2 flex items-center justify-center rounded-full h-24 z-20'>
+            <section className="fixed -top-4 right-2 flex items-center justify-center rounded-full h-24 z-20">
                 <div className="flex items-center gap-x-1.5 bg-neutral-100 w-fit px-4 py-2.5 rounded-full shadow-md z-10 translate-x-4">
                     <div className="text-xs text-neutral-700 font-light tracking-wide">Press</div>
                     <ToolTipComponent content="Pressing enter will reveal the quiz results">
@@ -97,9 +97,11 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
                             ENTER
                         </span>
                     </ToolTipComponent>
-                    <div className="text-xs text-neutral-700 font-light tracking-wide">to complete the quiz</div>
+                    <div className="text-xs text-neutral-700 font-light tracking-wide">
+                        to complete the quiz
+                    </div>
                 </div>
-                <AppLogo size={120} className='' />
+                <AppLogo size={120} className="" />
             </section>
 
             <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10">
@@ -137,7 +139,13 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
     );
 }
 
-function ResultReadyScreen({ isExiting, showAvatars }: { isExiting: boolean; showAvatars: boolean }): JSX.Element {
+function ResultReadyScreen({
+    isExiting,
+    showAvatars,
+}: {
+    isExiting: boolean;
+    showAvatars: boolean;
+}): JSX.Element {
     return (
         <div className="w-full h-full relative">
             <section className="flex flex-col items-center justify-center h-full z-10 relative -mt-8">

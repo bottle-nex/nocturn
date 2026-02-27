@@ -10,7 +10,11 @@ interface FallingAvatarsProps {
     isExiting?: boolean;
 }
 
-export default function FallingAvatars({ users, ballRadius = 28, isExiting = false }: FallingAvatarsProps) {
+export default function FallingAvatars({
+    users,
+    ballRadius = 28,
+    isExiting = false,
+}: FallingAvatarsProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const engineRef = useRef<Matter.Engine | null>(null);
     const bodiesRef = useRef<Matter.Body[]>([]);
@@ -30,9 +34,15 @@ export default function FallingAvatars({ users, ballRadius = 28, isExiting = fal
         engineRef.current = engine;
 
         const wallThickness = 50;
-        const bottomWall = Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
-            isStatic: true,
-        });
+        const bottomWall = Matter.Bodies.rectangle(
+            width / 2,
+            height + wallThickness / 2,
+            width,
+            wallThickness,
+            {
+                isStatic: true,
+            },
+        );
         bottomWallRef.current = bottomWall;
         const walls = [
             bottomWall,

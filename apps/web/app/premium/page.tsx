@@ -1,3 +1,4 @@
+import PremiumComponent from '@/components/premium/PremiumComponent';
 import PremiumPageMain from '@/components/premium/PremiumPageMain';
 import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
@@ -18,6 +19,7 @@ export default function PremiumPage(): JSX.Element {
             <main className="min-h-screen w-full bg-light-base dark:bg-dark-base text-dark-base dark:text-light-base relative z-10 mb-[60vh] flex flex-col gap-y-15">
                 <LandingNavbar />
                 <PremiumPageMain />
+                <PremiumComponent />
                 <PremiumPricingCardComponent />
                 {/* <PricingComponent className="pb-32" showHeading={false} /> */}
 

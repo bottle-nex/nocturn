@@ -34,7 +34,7 @@ export default function PremiumPricingCardComponent() {
                 {/* left card */}
                 <div
                     className={cn(
-                        'w-[40%] h-full bg-light-alpha rounded-2xl flex flex-col justify-end relative p-8',
+                        'w-[40%] h-full bg-light-base rounded-2xl flex flex-col justify-end relative p-8 shadow-xs shadow-black/5',
                     )}
                 >
                     {/* floating cared */}

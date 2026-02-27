@@ -5,7 +5,7 @@ import ChatBoxCardSection from '@/components/revamp/ChatBoxCardSection';
 import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 import LandingCardsSection from '@/components/revamp/LandingCardsSection';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
-import LandingPricingComponent from '@/components/revamp/LandingPricingComponent';
+import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
 
 export default function Page() {
     return (
@@ -18,7 +18,8 @@ export default function Page() {
                 <ChatBoxCardSection />
                 <LandingFeaturesSection />
                 <LandingCardsSection />
-                <LandingPricingComponent showHeading />
+                {/* <LandingPricingComponent showHeading /> */}
+                <PremiumPricingCardComponent />
                 {/* <InstructionsSection /> */}
                 {/* <FeaturesSection /> */}
                 {/* <WhyNocturn /> */}
