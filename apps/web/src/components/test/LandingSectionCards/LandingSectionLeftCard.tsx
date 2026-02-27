@@ -80,7 +80,7 @@ export default function LandingSectionLeftCard() {
             }}
             onMouseEnter={() => setShowNewQuizOptions(true)}
             onMouseLeave={() => setShowNewQuizOptions(false)}
-            className="h-80 w-78 rounded-4xl ring-4 ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 shadow-xl absolute top-2 left-[11%] p-6 flex flex-col justify-between overflow-hidden"
+            className="h-80 w-78 rounded-4xl ring-4 ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 shadow-xl absolute top-4 left-[11%] p-6 flex flex-col justify-between overflow-hidden scale-115"
         >
             <div className="h-50 w-full relative">
                 <AnimatePresence>

@@ -1,10 +1,10 @@
 'use client';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import RiveComponent from '../ui/Rives/RIveComponent';
+import AppLogo from '../app/AppLogo';
 
 export default function LandingCTASection() {
     return (
@@ -16,15 +16,8 @@ export default function LandingCTASection() {
                             <div className="bg-dark-base text-light-base w-fit text-[26px] font-normal px-9 h-17 flex items-center rounded-full">
                                 Start creating your first noc
                             </div>
-
-                            <div className="relative h-18 w-18 rounded-full overflow-hidden">
-                                <Image
-                                    src="/images/landing/smilingCat.png"
-                                    alt=""
-                                    fill
-                                    unoptimized
-                                    className="object-contain"
-                                />
+                            <div className="absolute left-103 top-6 z-10">
+                                <AppLogo size={190} />
                             </div>
                         </div>
 
@@ -41,8 +34,8 @@ export default function LandingCTASection() {
                         </div>
                     </article>
 
-                    <aside className="relative h-full w-[50%] bg-light-alpha flex flex-col p-10 gap-y-3">
-                        <div className="absolute -bottom-101 left-1/2 -translate-x-1/2 h-300 w-300">
+                    <aside className="relative h-full w-[50%] flex flex-col p-10 gap-y-3">
+                        <div className="absolute -bottom-110 left-1/2 -translate-x-1/2 h-300 w-300">
                             <RiveComponent
                                 url="/rive/meeples.riv"
                                 animationName={['Clouds', 'Meeples']}

@@ -23,7 +23,7 @@ export default function LandingSectionMidCard() {
                 damping: 20,
                 delay: 0.5,
             }}
-            className="h-82 w-80 rounded-4xl ring-4 ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 shadow-xl absolute -top-1 left-1/2 -translate-x-1/2 p-6 flex flex-col justify-between overflow-hidden group"
+            className="h-82 w-80 rounded-4xl ring-4 ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 shadow-xl absolute -top-1 left-1/2 -translate-x-1/2 p-6 flex flex-col justify-between overflow-hidden group scale-115"
         >
             <div className="h-50 w-full relative">
                 <div className="absolute h-12 w-41 bg-[#f8f8f8] rounded-xl ring-1 ring-black/5 shadow-xs shadow-black/10 top-2 right-0 z-2 flex gap-x-1 items-center px-3 rotate-3 group-hover:blur-[1px] transition-all transform duration-200">

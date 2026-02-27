@@ -3,6 +3,9 @@ import { JSX } from 'react';
 import { Button } from '../ui/button';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { useMotionValue } from 'framer-motion';
+import LandingSectionLeftCard from '../test/LandingSectionCards/LandingSectionLeftCard';
+import LandingSectionMidCard from '../test/LandingSectionCards/LandingSectionMidCard';
+import LandingSectionRightCard from '../test/LandingSectionCards/LandingSectionRightCard';
 
 export default function PremiumPageMain(): JSX.Element {
     const mouseX = useMotionValue(0);
@@ -19,9 +22,9 @@ export default function PremiumPageMain(): JSX.Element {
     return (
         <section
             onMouseMove={handleMouseMove}
-            className="w-full z-10 relative h-screen flex items-center justify-center overflow-hidden"
+            className="w-full z-10 relative min-h-screen flex flex-col items-center justify-center"
         >
-            <div className="flex flex-col items-center px-6 text-center -mt-20 relative z-10">
+            <div className="flex flex-col items-center px-6 text-center z-10 w-full h-full mt-40">
                 <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">
                     Unlock premium quizzes
                 </h1>
@@ -43,6 +46,14 @@ export default function PremiumPageMain(): JSX.Element {
                     </Button>
                 </section>
             </div>
+            <div className="w-full flex justify-center items-center mt-20 relative">
+                <div className="flex items-center justify-center gap-8 flex-wrap ">
+                    <LandingSectionLeftCard />
+                    <LandingSectionMidCard />
+                    <LandingSectionRightCard />
+                </div>
+            </div>
+            <div className="h-100"></div>
         </section>
     );
 }

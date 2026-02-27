@@ -154,19 +154,20 @@ export default function LandingPricingComponent({
                 />
             )}
 
+            {/* free card */}
             <section className="w-full grid md:grid-cols-2 gap-8 mt-6">
-                <div className="rounded-2xl ring-1 ring-black/10 shadow-xs shadow-black/5 bg-light-alpha p-8 flex flex-col justify-between">
+                <div className="rounded-2xl ring-1 ring-black/10 shadow-xs shadow-black/5 bg-light-base/20 p-8 flex flex-col justify-between">
                     <div className="space-y-4">
-                        <span className="text-sm font-medium text-neutral-500 tracking-wide">
+                        <span className="text-sm font-medium text-dark-base/70 tracking-wide">
                             Free Plan
                         </span>
 
                         <div className="flex items-baseline gap-2">
-                            <h2 className="text-5xl font-semibold text-neutral-900">$0</h2>
-                            <span className="text-neutral-500 text-lg">/ month</span>
+                            <h2 className="text-5xl font-semibold text-dark-base">$0</h2>
+                            <span className="text-dark-base/60 text-lg">/ month</span>
                         </div>
 
-                        <p className="text-neutral-600 text-lg leading-relaxed">
+                        <p className="text-dark-base/70 text-lg leading-relaxed">
                             Play smart, practice free, and build your winning edge.
                         </p>
                     </div>
@@ -189,31 +190,38 @@ export default function LandingPricingComponent({
                     </div>
 
                     <Button
-                        variant="outline"
-                        className="mt-10 h-12 rounded-lg border-neutral-300 text-neutral-800 hover:bg-neutral-50"
+                        className={cn(
+                            'mt-10 h-12 rounded-lg',
+                            'bg-[#E8E8E8] text-dark-base shadow-xs shadow-black/5',
+                            'ring-1 ring-black/10 ',
+                            'hover:bg-light-base hover:-translate-y-0.5 hover:text-[14px]',
+                            'transition-all transform duration-250',
+                            'text-[14px] font-semibold',
+                        )}
                     >
                         Get Started
                     </Button>
                 </div>
 
-                <div className="rounded-2xl border border-black/10 bg-neutral-950 text-white p-8 flex flex-col justify-between shadow-xl relative">
+                {/* premium card */}
+                <div className="rounded-2xl ring-1 ring-alpha bg-[#EDEDF4] text-white p-8 flex flex-col justify-between shadow-xl relative">
                     <div className="absolute top-6 right-6">
-                        <span className="text-xs font-medium bg-white/10 px-3 py-1 rounded-full">
+                        <span className="text-xs font-medium bg-alpha px-3 py-1 rounded-full">
                             Most Popular
                         </span>
                     </div>
 
                     <div className="space-y-4">
-                        <span className="text-sm font-medium text-neutral-400 tracking-wide">
+                        <span className="text-sm font-medium text-dark-base/70 tracking-wide">
                             Premium Plan
                         </span>
 
                         <div className="flex items-baseline gap-2">
-                            <h2 className="text-5xl font-semibold">$19</h2>
-                            <span className="text-neutral-400 text-lg">/ month</span>
+                            <h2 className="text-5xl font-semibold text-dark-base">$19</h2>
+                            <span className="text-dark-base/60 text-lg">/ month</span>
                         </div>
 
-                        <p className="text-neutral-300 text-lg leading-relaxed">
+                        <p className="text-dark-base/70 text-lg leading-relaxed">
                             Unlock premium battles and maximize your winnings.
                         </p>
                     </div>
@@ -228,9 +236,9 @@ export default function LandingPricingComponent({
                                 return (
                                     <div key={index} className="flex items-start gap-3">
                                         {IconComponent && (
-                                            <IconComponent className="w-5 h-5 mt-1 text-neutral-400" />
+                                            <IconComponent className="w-5 h-5 mt-1 text-alpha" />
                                         )}
-                                        <span className="text-neutral-200">{feature.label}</span>
+                                        <span className="text-dark-base/90">{feature.label}</span>
                                     </div>
                                 );
                             })}
@@ -240,7 +248,13 @@ export default function LandingPricingComponent({
                     <Button
                         onClick={() => handleUpgrade('PRO', 'upgrade')}
                         disabled={loadingTier === 'PRO'}
-                        className="mt-10 h-12 rounded-lg bg-white text-neutral-900 hover:bg-neutral-200 font-medium"
+                        className={cn(
+                            'mt-10 h-12 rounded-lg',
+                            'bg-alpha text-light-base shadow-[inset_0px_3px_1px_rgba(255,255,255,0.10)]',
+                            'hover:bg-alpha hover:-translate-y-0.5 hover:text-[14px]',
+                            'transition-all transform duration-250',
+                            'text-[14px] font-semibold',
+                        )}
                     >
                         {loadingTier === 'PRO' ? 'Processing...' : 'Upgrade to Premium'}
                     </Button>
