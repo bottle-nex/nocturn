@@ -7,12 +7,14 @@ import Matter from 'matter-js';
 interface FallingAvatarsProps {
     users: { avatar: string }[];
     ballRadius?: number;
+    isExiting?: boolean;
 }
 
-export default function FallingAvatars({ users, ballRadius = 28 }: FallingAvatarsProps) {
+export default function FallingAvatars({ users, ballRadius = 28, isExiting = false }: FallingAvatarsProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const engineRef = useRef<Matter.Engine | null>(null);
     const bodiesRef = useRef<Matter.Body[]>([]);
+    const bottomWallRef = useRef<Matter.Body | null>(null);
     const rafRef = useRef<number>(0);
     const [positions, setPositions] = useState<{ x: number; y: number; angle: number }[]>([]);
 
@@ -28,10 +30,12 @@ export default function FallingAvatars({ users, ballRadius = 28 }: FallingAvatar
         engineRef.current = engine;
 
         const wallThickness = 50;
+        const bottomWall = Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
+            isStatic: true,
+        });
+        bottomWallRef.current = bottomWall;
         const walls = [
-            Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width, wallThickness, {
-                isStatic: true,
-            }),
+            bottomWall,
             Matter.Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height, {
                 isStatic: true,
             }),
@@ -79,6 +83,13 @@ export default function FallingAvatars({ users, ballRadius = 28 }: FallingAvatar
             Matter.Composite.clear(engine.world, false);
         };
     }, [users, ballRadius]);
+
+    useEffect(() => {
+        if (isExiting && engineRef.current && bottomWallRef.current) {
+            Matter.Composite.remove(engineRef.current.world, bottomWallRef.current);
+            bottomWallRef.current = null;
+        }
+    }, [isExiting]);
 
     const diameter = ballRadius * 2;
 
