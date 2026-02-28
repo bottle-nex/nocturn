@@ -12,7 +12,7 @@ export default class EmailServiceProcessor {
     private email_queue: Bull.Queue;
 
     constructor(queue_name: string) {
-        this.email_queue = new Bull<EmailJob>(queue_name, Env.ORCH_REDIS_URL);
+        this.email_queue = new Bull<EmailJob>(queue_name, Env.ORCH_REDIS_QUEUE_URL);
         this.setup_processor();
     }
 

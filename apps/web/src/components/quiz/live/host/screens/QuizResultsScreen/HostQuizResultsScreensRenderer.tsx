@@ -89,21 +89,6 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
 
     return (
         <main className="w-full flex items-center justify-center">
-            <section className="fixed -top-4 right-2 flex items-center justify-center rounded-full h-24 z-20">
-                <div className="flex items-center gap-x-1.5 bg-neutral-100 w-fit px-4 py-2.5 rounded-full shadow-md z-10 translate-x-4">
-                    <div className="text-xs text-neutral-700 font-light tracking-wide">Press</div>
-                    <ToolTipComponent content="Pressing enter will reveal the quiz results">
-                        <span className="bg-neutral-900 text-neutral-100 text-xs font-light tracking-wider px-3 py-1 rounded-lg flex items-center justify-center gap-x-2 cursor-pointer">
-                            ENTER
-                        </span>
-                    </ToolTipComponent>
-                    <div className="text-xs text-neutral-700 font-light tracking-wide">
-                        to complete the quiz
-                    </div>
-                </div>
-                <AppLogo size={120} className="" />
-            </section>
-
             <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10">
                 <div className="absolute -top-2 -left-2 z-10">
                     <AppLogo withText size={120} textColor="text-dark-base" />

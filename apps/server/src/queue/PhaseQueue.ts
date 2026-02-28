@@ -4,7 +4,7 @@ import { redisCacheInstance } from '../services/init.services';
 import QuizManager from '../sockets/QuizManager';
 import { PhaseTransitionJob } from '../types/web-socket-types';
 import { env } from '../configs/env';
-const REDIS_URL = env.SERVER_REDIS_URL;
+const REDIS_URL = env.SERVER_REDIS_QUEUE_URL;
 
 export default class PhaseQueue {
     private phase_queue: Bull.Queue;

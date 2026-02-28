@@ -5,7 +5,7 @@ import { env } from '../../configs/env';
 import { Interactions } from '@nocturn/database';
 import { JobOption, QueueJobTypes } from '../../types/database-queue-types';
 
-const REDIS_URL = env.SERVER_REDIS_URL;
+const REDIS_URL = env.SERVER_REDIS_QUEUE_URL;
 
 export default class DatabaseQueue {
     private database_queue: Bull.Queue;

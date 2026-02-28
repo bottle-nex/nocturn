@@ -10,7 +10,7 @@ export default class PhaseQueueProcessor {
 
     constructor() {
         this.phase_queue = new Bull('phase-transitions', {
-            redis: Env.ORCH_REDIS_URL,
+            redis: Env.ORCH_REDIS_QUEUE_URL,
         });
         this.transition_worker = transitionWorkerInstance;
         this.start_consuming();
