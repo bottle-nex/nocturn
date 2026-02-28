@@ -17,6 +17,7 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { cleanWebSocketClient } from '@/lib/singleton-socket';
 import { useRouter } from 'next/navigation';
 import { useParticipantWarning } from '@/hooks/quiz/useParticipantWarning';
+import { ParticipantQuizResultScreen } from './screens/QuizResultsScreen/ParticipantQuizResultScreen';
 
 export default function ParticipantMainScreen() {
     const { currentUserType } = useUserRoleStore();
@@ -122,6 +123,8 @@ export default function ParticipantMainScreen() {
 
             case ParticipantScreenEnum.QUESTION_RESULTS:
                 return <ParticipantQuestionResultsScreen />;
+            case ParticipantScreenEnum.QUIZ_RESULTS:
+                return <ParticipantQuizResultScreen />;
         }
     }
     return (

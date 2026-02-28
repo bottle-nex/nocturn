@@ -14,6 +14,7 @@ import {
     HostScreenEnum,
     ParticipantScreenEnum,
     ParticipantType,
+    QuizEndScreen,
     QuizPhaseEnum,
     QuizType,
     SpectatorScreenEnum,
@@ -96,6 +97,24 @@ export class SubscribeEventHandlers {
 
     static handleIncomingQuizResultsPageChange(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
+
+        const message = payload as {
+            scores: unknown[];
+            rankers: unknown[];
+            participantScreen: ParticipantScreenEnum;
+            hostScreen: HostScreenEnum;
+            spectatorScreen: SpectatorScreenEnum;
+            currentPhase: QuizPhaseEnum;
+            quizEndScreen: QuizEndScreen;
+        };
+        const { updateGameSession } = useLiveQuizStore.getState();
+        updateGameSession({
+            quizEndScreen: message.quizEndScreen,
+            hostScreen: message.hostScreen,
+            spectatorScreen: message.spectatorScreen,
+            participantScreen: message.participantScreen,
+            currentPhase: message.currentPhase,
+        });
     }
 
     // <---------------------- SPECTATOR-EVENTS ---------------------->

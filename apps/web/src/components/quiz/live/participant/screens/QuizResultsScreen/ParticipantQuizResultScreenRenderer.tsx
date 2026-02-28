@@ -6,7 +6,6 @@ import FallingAvatars from '@/components/animation/FallingAvatars';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { QuizEndScreen } from '@nocturn/types';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -56,25 +55,14 @@ const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg' },
 ];
 
-export default function HostQuizResultsScreensRenderer(): JSX.Element {
+export default function ParticipantQuizResultScreenRenderer(): JSX.Element {
     const { gameSession } = useLiveQuizStore();
+    const isExiting = false;
     const [showAvatars, setShowAvatars] = useState(false);
-    const { handleAdvanceQuizEndScreen } = useWebSocket();
 
     useEffect(() => {
         const timer = setTimeout(() => setShowAvatars(true), 1000);
         return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === 'Enter') {
-                handleAdvanceQuizEndScreen();
-            }
-        }
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -94,7 +82,7 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
                 <AppLogo size={120} className="" />
             </section>
 
-            <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10">
+            <section className="max-w-7xl mx-auto h-[80dvh] w-full bg-light-alpha rounded-xl relative overflow-hidden">
                 <div className="absolute -top-2 -left-2 z-10">
                     <AppLogo withText size={120} textColor="text-dark-base" />
                 </div>
@@ -109,7 +97,7 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
                                 transition: { duration: 0.7, ease: [0.4, 0, 1, 1] },
                             }}
                         >
-                            <ResultReadyScreen isExiting={false} showAvatars={showAvatars} />
+                            <ResultReadyScreen isExiting={isExiting} showAvatars={showAvatars} />
                         </motion.section>
                     )}
                     {gameSession?.quizEndScreen === QuizEndScreen.READY_TO_ANNOUNCE && (
@@ -148,12 +136,12 @@ function ResultReadyScreen({
                     Quiz has Ended
                 </motion.h1>
                 <motion.p
-                    className="mt-6 text-xl text-center text-dark-base/60 tracking-widest uppercase"
+                    className="mt-6 text-xl text-center text-dark-base/80 tracking-widest uppercase"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
                 >
-                    Press Enter to reveal results
+                    Have you given your best shot?
                 </motion.p>
             </section>
             {showAvatars && (
@@ -175,7 +163,7 @@ function ReadyToAnnounceScreen(): JSX.Element {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
                 >
-                    Should we announce the winners ?
+                    The winners are about to be announced
                 </motion.h1>
                 <motion.p
                     className="mt-6 text-xl text-center text-dark-base/60 tracking-widest uppercase"
@@ -183,7 +171,7 @@ function ReadyToAnnounceScreen(): JSX.Element {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
                 >
-                    Press Enter to reveal
+                    Hold your breath
                 </motion.p>
             </div>
         </div>

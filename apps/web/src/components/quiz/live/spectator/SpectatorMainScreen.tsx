@@ -7,6 +7,7 @@ import SpectatorMotivationScreen from './screens/QuestionMotivationScreen/Specta
 import SpectatorQuestionReadingScreen from './screens/QuestionReadingScreen/SpectatorQuestionReadingScreen';
 import SpectatorQuestionActiveScreen from './screens/QuestionActiveScreen/SpectatorQuestionActiveScreen';
 import SpectatorQuestionResultsScreen from './screens/QuestionResultsScreen/SpectatorQuestionResultsScreen';
+import { SpectatorQuizResultScreen } from './screens/QuizResultsScreen/SpectatorQuizResultScreen';
 
 export default function SpectatorMainScreen() {
     const { gameSession } = useLiveQuizStore();
@@ -27,6 +28,9 @@ export default function SpectatorMainScreen() {
 
             case SpectatorScreenEnum.QUESTION_RESULTS:
                 return <SpectatorQuestionResultsScreen />;
+
+            case SpectatorScreenEnum.QUIZ_RESULTS:
+                return <SpectatorQuizResultScreen />;
         }
     }
     return (

@@ -1,9 +1,10 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { JSX, useEffect, useRef, useState } from 'react';
+import { JSX } from 'react';
 import AppLogo from '@/components/app/AppLogo';
 import FallingAvatars from '@/components/animation/FallingAvatars';
-import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { QuizEndScreen } from '@nocturn/types';
+import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -53,63 +54,19 @@ const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg' },
 ];
 
-enum QUIZ_RESULT_PHASES {
-    RESULT_READY = 'RESULT_READY',
-    READY_TO_ANNOUNCE = 'READY_TO_ANNOUNCE',
-    ANNOUNCED = 'ANNOUNCED',
-}
-
-export default function Page(): JSX.Element {
-    const [phase, setPhase] = useState<QUIZ_RESULT_PHASES>(QUIZ_RESULT_PHASES.RESULT_READY);
-    const [isExiting, setIsExiting] = useState(false);
-    const [showAvatars, setShowAvatars] = useState(false);
-    const enterFiredRef = useRef(false);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setShowAvatars(true), 1000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
-            if (
-                e.key === 'Enter' &&
-                !enterFiredRef.current &&
-                showAvatars &&
-                phase === QUIZ_RESULT_PHASES.RESULT_READY
-            ) {
-                enterFiredRef.current = true;
-                setIsExiting(true);
-                setTimeout(() => setPhase(QUIZ_RESULT_PHASES.READY_TO_ANNOUNCE), 750);
-            }
-        };
-        window.addEventListener('keydown', handler);
-        return () => window.removeEventListener('keydown', handler);
-    }, [showAvatars, phase]);
+export default function SpectatorQuizResultScreenRenderer(): JSX.Element {
+    const { gameSession } = useLiveQuizStore();
+    const isExiting = false;
+    const showAvatars = true;
 
     return (
-        <main className="max-h-screen min-h-screen bg-black flex items-center justify-center relative">
-            <section className="fixed -top-4 right-2 flex items-center justify-center rounded-full h-24 z-20">
-                <div className="flex items-center gap-x-1.5 bg-neutral-100 w-fit px-4 py-2.5 rounded-full shadow-md z-10 translate-x-4">
-                    <div className="text-xs text-neutral-700 font-light tracking-wide">Press</div>
-                    <ToolTipComponent content="Pressing enter will reveal the quiz results">
-                        <span className="bg-neutral-900 text-neutral-100 text-xs font-light tracking-wider px-3 py-1 rounded-lg flex items-center justify-center gap-x-2 cursor-pointer">
-                            ENTER
-                        </span>
-                    </ToolTipComponent>
-                    <div className="text-xs text-neutral-700 font-light tracking-wide">
-                        to complete the quiz
-                    </div>
-                </div>
-                <AppLogo size={120} className="" />
-            </section>
-
+        <main className="w-full flex items-center justify-center">
             <section className="max-w-7xl mx-auto h-[80dvh] w-full bg-light-alpha rounded-xl relative overflow-hidden">
                 <div className="absolute -top-2 -left-2 z-10">
                     <AppLogo withText size={120} textColor="text-dark-base" />
                 </div>
                 <AnimatePresence mode="wait">
-                    {phase === QUIZ_RESULT_PHASES.RESULT_READY && (
+                    {gameSession?.quizEndScreen === QuizEndScreen.ARE_YOU_UP && (
                         <motion.section
                             key="result-ready"
                             className="pt-12 px-12 h-full"
@@ -122,7 +79,7 @@ export default function Page(): JSX.Element {
                             <ResultReadyScreen isExiting={isExiting} showAvatars={showAvatars} />
                         </motion.section>
                     )}
-                    {phase === QUIZ_RESULT_PHASES.READY_TO_ANNOUNCE && (
+                    {gameSession?.quizEndScreen === QuizEndScreen.READY_TO_ANNOUNCE && (
                         <motion.section
                             key="ready-to-announce"
                             className="h-full w-full"
@@ -158,12 +115,12 @@ function ResultReadyScreen({
                     Quiz has Ended
                 </motion.h1>
                 <motion.p
-                    className="mt-6 text-xl text-center text-dark-base/60 tracking-widest uppercase"
+                    className="mt-6 text-xl text-center text-dark-base/80 tracking-widest uppercase"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
                 >
-                    Press Enter to reveal results
+                    Are you excited to know are the winners?
                 </motion.p>
             </section>
             {showAvatars && (
@@ -185,7 +142,7 @@ function ReadyToAnnounceScreen(): JSX.Element {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
                 >
-                    Should we announce the winners ?
+                    The winners are about to be announced
                 </motion.h1>
                 <motion.p
                     className="mt-6 text-xl text-center text-dark-base/60 tracking-widest uppercase"
@@ -193,7 +150,7 @@ function ReadyToAnnounceScreen(): JSX.Element {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
                 >
-                    Press Enter to reveal
+                    Hold your breath
                 </motion.p>
             </div>
         </div>

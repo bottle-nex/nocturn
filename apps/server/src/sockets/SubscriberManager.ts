@@ -214,6 +214,13 @@ export default class SubscriberManager {
                     USER_TYPE.HOST,
                 ]);
                 break;
+            case MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN:
+                this.broadcast_to_session(session_id, message, [
+                    USER_TYPE.PARTICIPANT,
+                    USER_TYPE.SPECTATOR,
+                    USER_TYPE.HOST,
+                ]);
+                break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
                 this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
                 break;

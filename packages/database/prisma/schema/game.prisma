@@ -1,4 +1,3 @@
-
 model GameSession {
     id                   String        @id @default(cuid())
     currentQuestionIndex Int           @default(0)
@@ -26,6 +25,7 @@ model GameSession {
     updatedAt DateTime @updatedAt
 
     currentPhase   QuizPhase? // e.g. QUESTION_READING, QUESTION_ACTIVE, SHOW_RESULTS
+    quizEndScreen  QuizEndScreen? // e.g. RESULT_READY, READY_TO_ANNOUNCE, ANNOUNCED
     phaseStartTime DateTime? // when current phase started (absolute time from server)
     phaseEndTime   DateTime?
 

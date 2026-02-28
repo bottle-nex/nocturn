@@ -54,6 +54,16 @@
         "src/**/*.{ts,tsx,js,jsx}",
         "**/*.{ts,tsx,js,jsx}"
       ]
+    },
+    "test": {
+      "dependsOn": ["^generate"],
+      "inputs": [
+        "src/**/*.ts",
+        ".env.test",
+        "vitest.config.ts"
+      ],
+      "outputs": ["coverage/**"],
+      "cache": false
     }
   }
 }

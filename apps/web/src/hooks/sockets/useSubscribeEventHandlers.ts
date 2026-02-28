@@ -68,6 +68,8 @@ export function useSubscribeEventHandlers() {
 
             [MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS]:
                 SubscribeEventHandlers.handleIncomingQuizResultsPageChange,
+            [MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN]:
+                SubscribeEventHandlers.handleIncomingQuizResultsPageChange,
 
             [COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE]:
                 CollaboratorsHandlers.handleIncomingQuestionTap,

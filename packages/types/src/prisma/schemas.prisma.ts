@@ -6,6 +6,7 @@ import {
   HostScreenEnum,
   InteractionEnum,
   ParticipantScreenEnum,
+  QuizEndScreen,
   QuizPhaseEnum,
   QuizStatusEnum,
   SessionStatusEnum,
@@ -180,6 +181,7 @@ export interface GameSessionType {
   updatedAt: Date;
 
   currentPhase?: QuizPhaseEnum;
+  quizEndScreen?: QuizEndScreen;
   phaseStartTime: number;
   phaseEndTime?: number;
 

@@ -100,6 +100,12 @@ export enum AiMessageElement {
   QUIZ = "QUIZ",
 }
 
+export enum QuizEndScreen {
+  ARE_YOU_UP = "ARE_YOU_UP",
+  READY_TO_ANNOUNCE = "READY_TO_ANNOUNCE",
+  ANNOUNCED = "ANNOUNCED",
+}
+
 export enum TemplateEnum {
   CLASSIC = "CLASSIC",
   MODERN = "MODERN",
