@@ -5,7 +5,6 @@ dotenv.config({ path: '../../.env' });
 
 const envSchema = z.object({
     ORCH_REDIS_URL: z.url(),
-    ORCH_REDIS_QUEUE_URL: z.url(),
     ORCH_RESEND_KEY: z.string(),
 });
 

@@ -7,7 +7,7 @@ import RedisCache from '../cache/redis-cache';
 import { JobOption, QueueJobTypes } from '../types/database-queue-types';
 import { DatabaseQueueProcessors } from './processor.database.queue';
 import { Env } from '../configs/env';
-const REDIS_URL = Env.ORCH_REDIS_QUEUE_URL;
+const REDIS_URL = Env.ORCH_REDIS_URL;
 
 export default class DatabaseQueue {
     private database_queue: Bull.Queue;
