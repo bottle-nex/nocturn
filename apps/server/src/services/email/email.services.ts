@@ -21,7 +21,7 @@ export default class EmailServiceQueue {
     };
 
     constructor(queue_name: string) {
-        this.email_queue = new Bull<EmailJob>(queue_name, env.SERVER_REDIS_QUEUE_URL, {
+        this.email_queue = new Bull<EmailJob>(queue_name, env.SERVER_REDIS_URL, {
             defaultJobOptions: this.job_options,
         });
     }
