@@ -1,4 +1,3 @@
-
 enum QuizStatus {
     CREATED
     SCHEDULED
@@ -71,6 +70,12 @@ enum QuizPhase {
     WAITING_NEXT
     QUIZ_RESULTS
     TEST
+}
+
+enum QuizEndScreen {
+    ARE_YOU_UP
+    READY_TO_ANNOUNCE
+    ANNOUNCED
 }
 
 enum ReactorType {

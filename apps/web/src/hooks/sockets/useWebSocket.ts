@@ -244,6 +244,16 @@ export const useWebSocket = () => {
         }
     }
 
+    function handleAdvanceQuizEndScreen() {
+        const message: MessagePayload = {
+            type: MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN,
+            payload: {},
+        };
+        if (socket.current) {
+            socket.current.send_message(message);
+        }
+    }
+
     return {
         socket: socket.current,
         isConnected: socket.current?.is_connected || false,
@@ -265,7 +275,7 @@ export const useWebSocket = () => {
         handleParticipantRequestLifeline,
         handleSpectatorLifelineResponse,
         handleHostQuizResults,
-
+        handleAdvanceQuizEndScreen,
         handleCollaboratorsQuestionChange,
         handleCollaboratorQuestionUpdate,
         handleCollaboratorQuizUpdate,

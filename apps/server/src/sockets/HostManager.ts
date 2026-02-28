@@ -5,6 +5,7 @@ import {
     LiveGameTokenPayload,
     MESSAGE_TYPES,
     PubSubMessageTypes,
+    QuizEndScreen,
     SECONDS,
     USER_TYPE,
 } from '@nocturn/types';
@@ -16,7 +17,6 @@ import {
     ParticipantScreen,
     SpectatorScreen,
     QuizPhase,
-    SessionStatus,
     QuizStatus,
 } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
@@ -150,6 +150,10 @@ export default class HostManager {
 
             case MESSAGE_TYPES.UPDATE_CURRENT_QUESTION:
                 this.handle_update_current_question(ws, payload);
+                break;
+
+            case MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN:
+                this.handle_advance_quiz_end_screen(ws);
                 break;
 
             default:
@@ -459,10 +463,13 @@ export default class HostManager {
             payload: {
                 scores: final_scores,
                 rankers: rankers,
-                screen: ParticipantScreen.QUIZ_RESULTS,
+                participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                currentPhase: QuizPhase.QUIZ_RESULTS,
+                hostScreen: HostScreen.QUIZ_RESULTS,
+                spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                quizEndScreen: QuizEndScreen.ARE_YOU_UP,
             },
         };
-        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
         await this.database_queue.update_game_session(
             game_session_id,
@@ -471,11 +478,13 @@ export default class HostManager {
                 spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
                 participantScreen: ParticipantScreen.QUIZ_RESULTS,
                 currentPhase: QuizPhase.QUIZ_RESULTS,
+                quizEndScreen: QuizEndScreen.ARE_YOU_UP,
                 // this is setting the quiz completed if the quiz has no prize
-                status: quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
+                // status: quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
             },
             game_session_id,
         );
+        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
         this.database_queue.update_quiz(
             quiz_id,
@@ -487,7 +496,7 @@ export default class HostManager {
 
         // here call another function for processing the transaction of the winner if prize exists
 
-        this.quiz_settings.cleanup_session(game_session_id);
+        // this.quiz_settings.cleanup_session(game_session_id);
 
         if (!quiz.prizePool) {
             // const rankers = Array.from(final_scores).sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
@@ -498,6 +507,43 @@ export default class HostManager {
             //     rankers[1],
             //     rankers[2],
             // );
+        }
+    }
+
+    private async handle_advance_quiz_end_screen(ws: GameWebSocket) {
+        const { gameSessionId: game_session_id } = ws.user;
+        const gameSession = await this.redis_cache.get_game_session(game_session_id);
+        if (!gameSession?.quizEndScreen) return;
+
+        const commonPayload = {
+            participantScreen: ParticipantScreen.QUIZ_RESULTS,
+            currentPhase: QuizPhase.QUIZ_RESULTS,
+            hostScreen: HostScreen.QUIZ_RESULTS,
+            spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+        };
+
+        if (gameSession.quizEndScreen === QuizEndScreen.ARE_YOU_UP) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN,
+                payload: { ...commonPayload, quizEndScreen: QuizEndScreen.READY_TO_ANNOUNCE },
+            };
+            await this.database_queue.update_game_session(
+                game_session_id,
+                { ...commonPayload, quizEndScreen: QuizEndScreen.READY_TO_ANNOUNCE },
+                game_session_id,
+            );
+            await this.quizManager.publish_event_to_redis(game_session_id, event_data);
+        } else if (gameSession.quizEndScreen === QuizEndScreen.READY_TO_ANNOUNCE) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN,
+                payload: { ...commonPayload, quizEndScreen: QuizEndScreen.ANNOUNCED },
+            };
+            await this.database_queue.update_game_session(
+                game_session_id,
+                { ...commonPayload, quizEndScreen: QuizEndScreen.ANNOUNCED },
+                game_session_id,
+            );
+            await this.quizManager.publish_event_to_redis(game_session_id, event_data);
         }
     }
 

@@ -5,7 +5,6 @@ import { TemplateEnum } from '../../schemas/createQuizSchema';
 import { getRandomSampleQuiz } from '../../data/sampleQuizData';
 
 export default async function createQuizController(req: Request, res: Response) {
-    const now = Date.now();
     if (!req.user?.id) {
         ResponseWriter.not_authorized(res);
         return;
@@ -44,7 +43,6 @@ export default async function createQuizController(req: Request, res: Response) 
                 questions: true,
             },
         });
-        console.log('quiz creation time taken is : ', Date.now() - now);
 
         ResponseWriter.created(res, quiz);
         return;

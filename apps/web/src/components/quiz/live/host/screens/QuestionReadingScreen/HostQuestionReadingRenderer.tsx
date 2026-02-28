@@ -1,5 +1,6 @@
 'use client';
 import CountDownClock from '@/components/ui/CountDownClock';
+import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
@@ -10,6 +11,21 @@ export default function HostQuestionReadingRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
     const canvasWidth = useWidth(canvasRef);
     const { currentQuestion, gameSession, quiz, removeQuestionFromQuiz } = useLiveQuizStore();
+    const { handleAdvanceQuizEndScreen } = useWebSocket();
+
+    useEffect(() => {
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === 'Enter') {
+                handleAdvanceQuizEndScreen();
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (!currentQuestion || !quiz || !gameSession) return;
@@ -18,25 +34,6 @@ export default function HostQuestionReadingRenderer() {
         removeQuestionFromQuiz(currentQuestion.id);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQuestion]);
-
-    // update it: remove the question from the quiz after it reaches reading phase
-    // useEffect(() => {
-    //     if (!currentQuestion || !quiz || !gameSession) return;
-
-    //     // Only filter out the current question after it's been launched
-    //     // Use a more robust filtering approach that maintains array structure
-    //     const updatedQuestions = quiz.questions.map((q) => {
-    //         if (q && q.id === currentQuestion.id) {
-    //             return { ...q, isAsked: true }; // Mark as asked instead of removing
-    //         }
-    //         return q;
-    //     });
-    //     currentQuestion.isAsked = true;
-    //     updateQuiz({
-    //         questions: updatedQuestions,
-    //     });
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [currentQuestion?.id]);
 
     if (!currentQuestion || !gameSession) {
         return (
