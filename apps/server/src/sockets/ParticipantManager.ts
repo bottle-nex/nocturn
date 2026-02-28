@@ -178,15 +178,24 @@ export default class ParticipantManager {
 
         const gameSession = await this.redis_cache.get_game_session(gameSessionId);
         if (!gameSession || gameSession.currentPhase !== QuizPhase.QUESTION_ACTIVE) {
-            const error_message = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: {
-                    error: 'Lifeline can only be used during active questions',
-                },
-            };
-            ws.send(JSON.stringify(error_message));
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { error: 'Lifeline can only be used during active questions' },
+                }),
+            );
             return;
         }
+
+        const quiz = await this.redis_cache.get_quiz(gameSessionId);
+
+        if (!quiz) {
+            console.error('Quiz not found');
+            return;
+        }
+
+        const currentQuestion = quiz.questions?.find((question) => question.id === questionId);
+        const options = currentQuestion?.options;
 
         let hasUsedLifeline = await this.redis_cache.get_cached_lifeline_usage(
             gameSessionId,
@@ -200,11 +209,12 @@ export default class ParticipantManager {
         }
 
         if (hasUsedLifeline) {
-            const error_message = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: { hasUsedLifeline: true, error: 'Lifeline already used' },
-            };
-            ws.send(JSON.stringify(error_message));
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { hasUsedLifeline: true, error: 'Lifeline already used' },
+                }),
+            );
             return;
         }
 
@@ -220,35 +230,48 @@ export default class ParticipantManager {
                 questionId,
             );
             if (currentSession) {
-                const confirmation = {
-                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                    payload: {
-                        status: 'already_requested',
-                        expiresAt: currentSession.expiresAt,
-                        currentResponses: this.format_lifeline_responses_for_frontend(
-                            currentSession.responses,
-                        ),
-                    },
-                };
-                ws.send(JSON.stringify(confirmation));
+                ws.send(
+                    JSON.stringify({
+                        type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                        payload: {
+                            status: 'already_requested',
+                            expiresAt: currentSession.expiresAt,
+                            currentResponses: this.format_lifeline_responses_for_frontend(
+                                currentSession.responses,
+                                options?.length!,
+                            ),
+                        },
+                    }),
+                );
             }
             return;
         }
 
         const spectatorSocketIds = this.session_spectators_mapping.get(gameSessionId);
         if (!spectatorSocketIds || spectatorSocketIds.size === 0) {
-            const error_message = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: { error: 'No spectators available' },
-            };
-            ws.send(JSON.stringify(error_message));
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { error: 'No spectators available' },
+                }),
+            );
             return;
         }
 
-        await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
-        this.database_queue.create_lifeline_usage(userId, gameSessionId).catch(console.error);
+        const phaseEndTime = new Date(gameSession.phaseEndTime!).getTime();
+        const remainingMs = phaseEndTime - Date.now();
 
-        const expirySeconds = 60;
+        if (remainingMs <= 0) {
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: { error: 'Question phase has already ended' },
+                }),
+            );
+            return;
+        }
+
+        const expirySeconds = Math.floor(remainingMs / 1000);
         const existingSession = await this.redis_cache.get_active_lifeline_session(
             gameSessionId,
             questionId,
@@ -263,27 +286,32 @@ export default class ParticipantManager {
             );
 
             if (!success) {
-                const error_message = {
-                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                    payload: { error: 'Failed to join lifeline session' },
-                };
-                ws.send(JSON.stringify(error_message));
+                ws.send(
+                    JSON.stringify({
+                        type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                        payload: { error: 'Failed to join lifeline session' },
+                    }),
+                );
                 return;
             }
 
-            // send current voting state to this participant
-            const confirmation = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: {
-                    status: 'joined_existing',
-                    expiresAt: existingSession.expiresAt,
-                    currentResponses: this.format_lifeline_responses_for_frontend(
-                        existingSession.responses,
-                    ),
-                    hasUsedLifeline: true,
-                },
-            };
-            ws.send(JSON.stringify(confirmation));
+            await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
+            this.database_queue.create_lifeline_usage(userId, gameSessionId).catch(console.error);
+
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: {
+                        status: 'joined_existing',
+                        expiresAt: existingSession.expiresAt,
+                        currentResponses: this.format_lifeline_responses_for_frontend(
+                            existingSession.responses,
+                            options?.length!,
+                        ),
+                        hasUsedLifeline: true,
+                    },
+                }),
+            );
         } else {
             const success = await this.redis_cache.set_active_lifeline_session(
                 gameSessionId,
@@ -293,48 +321,60 @@ export default class ParticipantManager {
             );
 
             if (!success) {
-                const error_message = {
-                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                    payload: { error: 'Failed to create lifeline session' },
-                };
-                ws.send(JSON.stringify(error_message));
+                ws.send(
+                    JSON.stringify({
+                        type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                        payload: { error: 'Failed to create lifeline session' },
+                    }),
+                );
                 return;
             }
 
-            const invitation_message: PubSubMessageTypes = {
+            await this.redis_cache.cache_participant_lifeline_used(gameSessionId, userId);
+            this.database_queue.create_lifeline_usage(userId, gameSessionId).catch(console.error);
+
+            await this.quizManager.publish_event_to_redis(gameSessionId, {
                 type: MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION,
                 payload: {
                     questionId,
                     status: 'active',
-                    expiresAt: Date.now() + expirySeconds * 1000,
+                    expiresAt: phaseEndTime,
                 },
-            };
-            this.quizManager.publish_event_to_redis(gameSessionId, invitation_message);
+            } as PubSubMessageTypes);
 
-            const confirmation = {
-                type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
-                payload: {
-                    status: 'requested',
-                    expiresAt: Date.now() + expirySeconds * 1000,
-                    currentResponses: { 0: 0, 1: 0, 2: 0, 3: 0 },
-                    hasUsedLifeline: true,
-                },
-            };
-            ws.send(JSON.stringify(confirmation));
-            // sending to only requesting participants
-            await this.send_lifeline_results_to_all_requesting_participants(
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_REQUEST_LIFELINE,
+                    payload: {
+                        status: 'requested',
+                        expiresAt: phaseEndTime,
+                        currentResponses: this.format_lifeline_responses_for_frontend(
+                            {},
+                            options?.length!,
+                        ),
+                        hasUsedLifeline: true,
+                    },
+                }),
+            );
+
+            await this.database_queue.schedule_lifeline_expiry(
                 gameSessionId,
                 questionId,
+                remainingMs,
             );
         }
     }
 
     private format_lifeline_responses_for_frontend(
         responses: Record<string, number>,
+        optionCount: number,
     ): Record<number, number> {
-        const counts: any = { 0: 0, 1: 0, 2: 0, 3: 0 };
+        const counts: Record<number, number> = {};
+        for (let i = 0; i < optionCount; i++) {
+            counts[i] = 0;
+        }
         Object.values(responses).forEach((option) => {
-            if (option >= 0 && option <= 3) {
+            if (option >= 0 && option < optionCount) {
                 counts[option]++;
             }
         });

@@ -23,9 +23,37 @@ import {
     UpdateQuestionJobType,
 } from '../types/job.database.types';
 import RedisCache from '../cache/redis-cache';
+import { MESSAGE_TYPES } from '@nocturn/types';
+import Publisher from '../client/publisher';
+import { PubSubMessageTypes } from '../types/types';
 
 export class DatabaseQueueProcessors {
-    constructor(private redis_cache: RedisCache) {}
+    constructor(
+        private redis_cache: RedisCache,
+        private publisher: Publisher,
+    ) {}
+
+    async lifeline_expiry_processor(job: Bull.Job): Promise<{ success: boolean }> {
+        const { game_session_id, question_id } = job.data;
+
+        const results = await this.redis_cache.get_lifeline_results(game_session_id, question_id);
+
+        if (results) {
+            await this.redis_cache.delete_active_lifeline_session(game_session_id, question_id);
+            this.publisher.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                payload: {
+                    questionId: question_id,
+                    mostPopularOption: results.mostPopularOption,
+                    totalResponses: results.totalResponses,
+                    wasSuccessful: results.wasSuccessful,
+                    optionBreakdown: results.optionCounts,
+                },
+            } as PubSubMessageTypes);
+        }
+
+        return { success: true };
+    }
 
     async create_lifeline_usage_processor(
         job: Bull.Job,

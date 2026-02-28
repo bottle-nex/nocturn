@@ -34,18 +34,6 @@ export default function ChatBoxCardSection(): JSX.Element {
             onViewportEnter={startSequence}
             className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-6xl"
         >
-            {/* <AnimatePresence>
-                {activeCard && (
-                    <motion.div
-                        initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                        animate={{ opacity: 1, backdropFilter: 'blur(2px)' }}
-                        exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                        transition={{ duration: 0.25 }}
-                        className="absolute inset-0 bg-white/20 z-3"
-                    />
-                )}
-            </AnimatePresence> */}
-
             <InformationHeadingSection
                 topText="Nocturn Features"
                 topTextClassName="text-[#FF88BA]"
@@ -53,10 +41,10 @@ export default function ChatBoxCardSection(): JSX.Element {
                 description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard, and secure your place."
                 buttonTitle="Explore"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#FF88BA] hover:bg-[#fa77ae] shadow-[inset_0px_1.5px_rgba(0,0,0,0.05)] shrink-0 ml-px text-light-alpha"
+                buttonClassName="bg-[#FF88BA] hover:bg-[#FF88BA] shadow-[inset_0px_1.5px_rgba(0,0,0,0.05)] shrink-0 ml-px text-light-alpha"
             />
 
-            <div className="h-150 w-full bg-[#FF88BA] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
+            <div className="h-150 w-full bg-[#ffa4c5] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}
                 <div className="relative w-full max-w-216 h-65 z-20 -top-18">
                     <div className="absolute left-0 -bottom-8 -rotate-2">

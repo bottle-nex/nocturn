@@ -191,4 +191,25 @@ export default class DatabaseQueue {
             return;
         }
     }
+
+    public async schedule_lifeline_expiry(
+        game_session_id: string,
+        question_id: string,
+        delay_ms: number,
+    ) {
+        try {
+            return await this.database_queue.add(
+                QueueJobTypes.LIFELINE_EXPIRY,
+                { game_session_id, question_id },
+                {
+                    delay: delay_ms,
+                    attempts: 1,
+                    jobId: `lifeline_expiry:${game_session_id}:${question_id}`,
+                },
+            );
+        } catch (err) {
+            console.error('Failed to schedule lideline expiry: ', err);
+            return;
+        }
+    }
 }

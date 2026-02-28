@@ -21,7 +21,6 @@ import {
 } from '@nocturn/types';
 import { toast } from '@/lib/toast';
 
-// FIX: Type guards for better type safety
 const isParticipant = (payload: unknown): payload is ParticipantType => {
     return typeof payload === 'object' && payload !== null && 'id' in payload;
 };
@@ -554,22 +553,25 @@ export class SubscribeEventHandlers {
             hasUsedLifeline?: boolean;
             status?: string;
             expiresAt?: number;
+            currentResponses?: Record<number, number>;
             error?: string;
         };
-
         if (message.error) {
             toast.error(message.error);
             return;
         }
-
-        const { setLifelineRequested } = useLiveQuizStore.getState();
-
+        const { setLifelineRequested, updateLifelineLiveVotes } = useLiveQuizStore.getState();
         if (message.status === 'requested' && message.expiresAt) {
             setLifelineRequested(true, message.expiresAt);
-            toast.success('Lifeline requested! Spectators are being asked to help...');
+            if (message.currentResponses) {
+                const votes = Object.keys(message.currentResponses)
+                    .sort((a, b) => Number(a) - Number(b))
+                    .map((k) => message.currentResponses![Number(k)]);
+                updateLifelineLiveVotes(votes);
+            }
+            toast.success('Lifeline requested! Spectators are being asked to help.');
         }
     }
-
     static handleLifelineLiveUpdate(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
         const message = payload as {

@@ -194,6 +194,9 @@ export default class SubscriberManager {
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION:
                 this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
+            case MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT:
+                this.broadcast_to_session(session_id, message, [USER_TYPE.PARTICIPANT]);
+                break;
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
                 this.broadcast_to_session(
                     session_id,
