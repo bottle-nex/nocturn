@@ -20,6 +20,7 @@ const envSchema = z.object({
     SERVER_AWS_BUCKET_NAME: z.string().min(1, 'AWS Bucket name is required'),
     SERVER_AWS_CLOUDFRONT_DOMAIN: z.string().min(1, 'CloudFront domain is required'),
     SERVER_REDIS_URL: z.url('Invalid Redis URL'),
+    SERVER_REDIS_QUEUE_URL: z.url('Invalid Redis Queue URL'),
     SERVER_WEB_URL: z.string().min(1, 'Web URL is required'),
     DATABASE_URL: z.string().min(1, 'Database URL is required'),
     SERVER_GEMINI_API_KEY: z.string().min(1, 'Gemini API Key is required'),

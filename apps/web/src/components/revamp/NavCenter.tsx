@@ -1,10 +1,13 @@
 'use client';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function NavCenter() {
-    const [active, setActive] = useState<string | null>(null);
+type NavItem = 'home' | 'features' | 'about' | 'premium';
 
+export default function NavCenter() {
+    const [active, setActive] = useState<NavItem | null>(null);
+    const router = useRouter();
     return (
         <div
             className="relative flex items-center bg-[#f6f6f7] ring-1 ring-black/5 text-dark-base h-11 rounded-full shadow-xs shadow-black/5 p-1 gap-x-1"
@@ -69,9 +72,9 @@ export default function NavCenter() {
 
             <div className="w-[1.5px] rounded-xs h-3 bg-[#ceceee]" />
 
-            {/* FAQ */}
-            <div className="relative" onMouseEnter={() => setActive('faq')}>
-                {active === 'faq' && (
+            {/* PREMIUM */}
+            <div className="relative" onMouseEnter={() => setActive('premium')}>
+                {active === 'premium' && (
                     <motion.div
                         layoutId="nav-pill"
                         transition={{
@@ -82,8 +85,8 @@ export default function NavCenter() {
                         className="absolute inset-0 bg-[#ddddf7] rounded-full"
                     />
                 )}
-                <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
-                    Faq
+                <button onClick={() => router.push("/premium")} className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
+                    Premium
                 </button>
             </div>
         </div>
