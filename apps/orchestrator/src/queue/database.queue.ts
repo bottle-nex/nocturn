@@ -1,7 +1,7 @@
 import Bull, { JobOptions } from 'bull';
 import { Prisma, Interactions } from '@nocturn/database';
 
-import { redisCacheInstance } from '../services/init-services';
+import { publisherInstnace, redisCacheInstance } from '../services/init-services';
 import { ReactorType } from '../types/types';
 import RedisCache from '../cache/redis-cache';
 import { JobOption, QueueJobTypes } from '../types/database-queue-types';
@@ -25,7 +25,7 @@ export default class DatabaseQueue {
         this.database_queue = new Bull('database-operations', {
             redis: REDIS_URL,
         });
-        this.processors = new DatabaseQueueProcessors(this.redis_cache);
+        this.processors = new DatabaseQueueProcessors(this.redis_cache, publisherInstnace);
         this.setupProcessors();
     }
 
@@ -65,6 +65,10 @@ export default class DatabaseQueue {
         this.database_queue.process(
             QueueJobTypes.UPDATE_QUESTION,
             this.processors.update_question_processor.bind(this.processors),
+        );
+        this.database_queue.process(
+            QueueJobTypes.LIFELINE_EXPIRY,
+            this.processors.lifeline_expiry_processor.bind(this.processors),
         );
     }
 

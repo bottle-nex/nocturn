@@ -202,7 +202,7 @@ export default class SpectatorManager {
         const { gameSessionId } = ws.user;
         const { questionId, selectedOption } = payload;
 
-        if (typeof selectedOption !== 'number' || selectedOption < 0 || selectedOption > 3) {
+        if (typeof selectedOption !== 'number' || selectedOption < 0 || selectedOption > 6) {
             console.error('Invalid option selected');
             return;
         }
@@ -241,6 +241,22 @@ export default class SpectatorManager {
             return;
         }
 
+        const quiz = await this.redis_cache.get_quiz(gameSessionId);
+        const currentQuestion = quiz?.questions?.find((q) => q.id === questionId);
+        if (!currentQuestion || currentQuestion?.options.length === 0) {
+            console.error('no options found for the current question');
+            const error_msg = {
+                type: MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE,
+                payload: {
+                    status: 'quiz_error',
+                    error: 'No options found for current question',
+                },
+            };
+            ws.send(JSON.stringify(error_msg));
+            return;
+        }
+        const optionCount = currentQuestion.options.length;
+
         const success = await this.redis_cache.add_spectator_lifeline_response(
             gameSessionId,
             questionId,
@@ -269,6 +285,7 @@ export default class SpectatorManager {
         if (updatedSession) {
             const optionCounts = this.format_lifeline_responses_for_frontend(
                 updatedSession.responses,
+                optionCount,
             );
 
             for (const participantId of updatedSession.requestingParticipants) {
@@ -291,10 +308,13 @@ export default class SpectatorManager {
         }
     }
 
-    private format_lifeline_responses_for_frontend(responses: Record<string, number>): number[] {
-        const counts: number[] = [0, 0, 0, 0];
+    private format_lifeline_responses_for_frontend(
+        responses: Record<string, number>,
+        optionCount: number,
+    ): number[] {
+        const counts: number[] = Array(optionCount).fill(0);
         Object.values(responses).forEach((option) => {
-            if (typeof option === 'number' && option >= 0 && option <= 3) {
+            if (typeof option === 'number' && option >= 0 && option < optionCount) {
                 counts[option]!++;
             }
         });

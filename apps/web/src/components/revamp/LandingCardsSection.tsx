@@ -16,7 +16,7 @@ export default function LandingCardsSection() {
                 description="Learning doesn't have to be hard. With jitter, learning becomes easy, and on top of that you can make money from your knowledge. Can't ask for more, can you.."
                 buttonTitle="Connect Wallet"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#B2D4FF] hover:bg-[#90e0ef] text-dark-base w-45 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
+                buttonClassName="bg-[#B2D4FF] hover:bg-[#B2D4FF] text-dark-base w-45 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
             />
 
             <div className="w-full flex flex-col items-center justify-between mt-15 gap-y-10">

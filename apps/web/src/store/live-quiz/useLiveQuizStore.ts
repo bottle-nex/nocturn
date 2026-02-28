@@ -198,8 +198,7 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
         set({
             lifelineRequested: requested,
             lifelineExpiresAt: expiresAt ?? null,
-            // Initialize live votes when requesting
-            lifelineLiveVotes: requested ? [0, 0, 0, 0] : [],
+            lifelineLiveVotes: requested ? [] : [],
         }),
 
     lifelineResult: null,
@@ -209,7 +208,6 @@ export const useLiveQuizStore = create<LiveQuizStore>((set, get) => ({
             lifelineRequested: false,
         }),
 
-    // NEW: Live vote tracking
     lifelineLiveVotes: [],
     updateLifelineLiveVotes: (voteCounts) => set({ lifelineLiveVotes: voteCounts }),
 

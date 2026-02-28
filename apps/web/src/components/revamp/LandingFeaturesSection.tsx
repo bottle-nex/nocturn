@@ -113,7 +113,7 @@ export default function LandingFeaturesSection() {
                 description="Nocturn is where quick thinking meets real competition. Join live quiz challenges, climb the leaderboard."
                 buttonTitle="Dive In"
                 buttonRedirectUrl="/home"
-                buttonClassName="bg-[#fcbf49] hover:bg-[#fcbf49] z-10 text-dark-base tracking-wide w-30 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
+                buttonClassName="bg-eta hover:bg-eta z-10 text-light-alpha tracking-wide w-30 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
             />
             <div className="w-screen h-screen flex flex-col justify-center items-center relative pt-20 select-none -mt-10 overflow-hidden">
                 <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30 max-w-6xl">
