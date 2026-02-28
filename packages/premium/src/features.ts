@@ -5,7 +5,8 @@ export const FEATURES = {
   maxParticipantPerSession: numeric(10, null),
   maxSpectatorPerSession: numeric(0, 50),
 
-  imageQuestionsEnabled: gate(true, true),
+  liveChat: gate(false, true),
+  collaboration: gate(false, true),
 
   sessionsPerDay: rate(ONE_DAY, 3, null), // pro = unlimited
   // apiRequestsPerMinute: rate(ONE_MINUTE, 30, 300),

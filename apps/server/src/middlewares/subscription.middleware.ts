@@ -5,7 +5,6 @@ import { SubscriptionEnum } from '@nocturn/types';
 import { prisma } from '@nocturn/database';
 
 export default class Subscription {
-
     static async spectator_limit_via_code(req: Request, res: Response, next: NextFunction) {
         const code = req.body?.code as string | undefined;
 
@@ -141,7 +140,7 @@ export default class Subscription {
         });
     }
 
-    static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
+    private static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
         try {
             const userData = await prisma.user.findUnique({
                 where: { id: user_id },
