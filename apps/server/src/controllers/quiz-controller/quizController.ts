@@ -18,7 +18,6 @@ const NON_EDITABLE_STATUSES: QuizStatus[] = [
 ];
 
 export default class QuizController {
-
     public static async save(req: Request, res: Response) {
         const userId = req.user?.id;
         const quizId = req.params.quizId;
@@ -197,7 +196,6 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-
             const [existing, participantCode, specCode, host, subscription] = await Promise.all([
                 QuizController.findQuiz(quizId),
                 QuizAction.generateUniqueCode('participant'),

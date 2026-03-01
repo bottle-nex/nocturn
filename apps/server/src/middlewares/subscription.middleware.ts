@@ -127,7 +127,6 @@ export default class Subscription {
         }
     }
 
-
     private static async check_spectator_limit(
         quiz: { id: string; hostId: string } | null,
         res: Response,

@@ -139,11 +139,11 @@ export default function MyQuizzesPanel() {
                                 ))}
                             </div>
                         ) : (
-                            <div className='h-full flex items-center justify-center'>
+                            <div className="h-full flex items-center justify-center">
                                 <NoContent
                                     title="No quizzes yet"
                                     description="Create your first quiz to get started."
-                                    className='-mt-52'
+                                    className="-mt-52"
                                 />
                             </div>
                         )}
