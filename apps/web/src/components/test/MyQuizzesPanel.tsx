@@ -8,6 +8,7 @@ import QuizzesUpperSection from './QuizzesUpperSection';
 import MyQuizzesGridView from './MyQuizzesGridView';
 import MyQuizzesListView from './MyQuizzesListView';
 import CanvasSkeletonCard from '@/components/skeletons/CanvasSkeleton';
+import NoContent from '../ui/NoContent';
 
 export enum Layouts {
     GRID = 'GRID',
@@ -138,8 +139,12 @@ export default function MyQuizzesPanel() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="h-full w-full text-light-base/80 flex justify-center items-center pb-40">
-                                No quizzes found
+                            <div className='h-full flex items-center justify-center'>
+                                <NoContent
+                                    title="No quizzes yet"
+                                    description="Create your first quiz to get started."
+                                    className='-mt-52'
+                                />
                             </div>
                         )}
                     </>

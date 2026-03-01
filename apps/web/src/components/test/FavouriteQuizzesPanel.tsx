@@ -9,6 +9,7 @@ import QuizzesUpperSection from './QuizzesUpperSection';
 import MyQuizzesGridView from './MyQuizzesGridView';
 import MyQuizzesListView from './MyQuizzesListView';
 import CanvasSkeletonCard from '../skeletons/CanvasSkeleton';
+import NoContent from '../ui/NoContent';
 
 export enum Layouts {
     GRID = 'GRID',
@@ -132,7 +133,7 @@ export default function FavouriteQuizzesPanel() {
         <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">
             <div className="w-full flex justify-start flex-col">
                 <div className="flex justify-between">
-                    <div className="text-4xl text-light-base">Favourites</div>
+                    <div className="text-4xl dark:text-light-base text-dark-base">Favourites</div>
                 </div>
 
                 <QuizzesUpperSection
@@ -149,7 +150,7 @@ export default function FavouriteQuizzesPanel() {
                 />
             </div>
 
-            <div className="w-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
+            <div className="w-full h-full mt-6 overflow-y-auto overflow-x-hidden text-light-base">
                 {loading ? (
                     <div className="grid grid-cols-3 gap-6">
                         {Array.from({ length: 3 }).map((_, i) => (
@@ -157,8 +158,12 @@ export default function FavouriteQuizzesPanel() {
                         ))}
                     </div>
                 ) : filteredQuizzes.length === 0 ? (
-                    <div className="w-full mt-40 flex justify-center items-center text-light-base/70">
-                        No favourite quizzes yet
+                    <div className='h-full flex items-center justify-center'>
+                        <NoContent
+                            title="No favourites yet"
+                            description="Mark quizzes as favourite to see them here."
+                            className='-mt-52'
+                        />
                     </div>
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
