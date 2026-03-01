@@ -17,7 +17,7 @@ export default function NoContent({ title, description, className }: NoContentPr
 
     return (
         <div className={cn("flex flex-col items-center justify-center gap-6 py-16 text-center", className)}>
-            <div className="h-56 w-56 sm:h-64 sm:w-64 md:h-120 md:w-120">
+            <div className="h-56 w-56 sm:h-64 sm:w-64 md:h-100 md:w-100">
                 <RiveComponent />
             </div>
             <div className="flex flex-col gap-2 -mt-32">
