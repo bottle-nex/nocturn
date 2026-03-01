@@ -205,6 +205,7 @@ export default class QuizController {
             ]);
 
             const spectatorCode = subscription === SubscriptionEnum.PRO ? specCode : undefined;
+            const spectatorLink = subscription === SubscriptionEnum.PRO ? QuizAction.createSpectatorLink(quizId) : undefined;
 
             if (!host) return; // response already sent inside get_host_details
 
@@ -239,6 +240,7 @@ export default class QuizController {
                         startedAt: new Date(),
                         participantCode,
                         spectatorCode,
+                        spectatorLink,
                         scheduledAt: quiz_data.scheduledAt
                             ? new Date(quiz_data.scheduledAt)
                             : undefined,
@@ -275,6 +277,7 @@ export default class QuizController {
                             startedAt: new Date(),
                             participantCode,
                             spectatorCode,
+                            spectatorLink,
                         },
                         include: {
                             questions: true,
@@ -308,6 +311,7 @@ export default class QuizController {
                             startedAt: new Date(),
                             participantCode,
                             spectatorCode,
+                            spectatorLink,
                             scheduledAt: quiz_data.scheduledAt
                                 ? new Date(quiz_data.scheduledAt)
                                 : undefined,

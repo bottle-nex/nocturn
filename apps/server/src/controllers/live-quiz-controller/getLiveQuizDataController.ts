@@ -150,7 +150,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         }
 
         const sanitizedGameSession = QuizAction.sanitizeGameSession(gameSession, role);
-        const spectatorLink = QuizAction.createSpectatorLink(quizId);
 
         let currentQuestion: Partial<QuestionType> | null = null;
         if (question) {
@@ -184,7 +183,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                 participants: cachedParticipants.length,
             },
             host: quiz.host ?? null,
-            spectatorLink,
+            spectatorLink: quiz.spectatorLink ?? null,
         };
 
         if (role === USER_TYPE.HOST) {
@@ -269,6 +268,7 @@ async function fallbackToDatabase(
                 ...(role === USER_TYPE.HOST && {
                     spectatorCode: true,
                     participantCode: true,
+                    spectatorLink: true,
                 }),
                 _count: {
                     select: {
@@ -403,7 +403,6 @@ async function fallbackToDatabase(
     }
 
     const sanitizedGameSession = QuizAction.sanitizeGameSession(result.gameSession, role);
-    const spectatorLink = QuizAction.createSpectatorLink(quizId);
     let currentQuestion: Partial<QuestionType> | null = null;
     if (result.question) {
         currentQuestion = QuizAction.sanitizeCurrentQuestion(
@@ -415,7 +414,7 @@ async function fallbackToDatabase(
 
     const chatData = await getChatsController(role, gameSessionId, quizId);
     const responseData = {
-        quiz: { ...result.quiz, spectatorLink },
+        quiz: result.quiz,
         gameSession: sanitizedGameSession,
         userData: result.userData,
         participants: result.participants,

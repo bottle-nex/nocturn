@@ -1,5 +1,5 @@
 import { SubscriptionEnum } from "@nocturn/types";
-import { gate, numeric, ONE_DAY, ONE_MINUTE, rate } from "./types";
+import { gate, numeric, ONE_DAY, rate } from "./types";
 
 export const FEATURES = {
     maxParticipantPerSession: numeric(10, null),

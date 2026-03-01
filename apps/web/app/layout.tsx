@@ -30,7 +30,7 @@ export default async function RootLayout({
                         disableTransitionOnChange
                     >
                         <ToasterProvider />
-                        <SubscriptionProvider>
+                        <SubscriptionProvider initialTier={session?.user.subscription}>
                             {children}
                         </SubscriptionProvider>
                         <SessionSetter session={session} />
