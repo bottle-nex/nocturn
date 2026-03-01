@@ -14,6 +14,7 @@ import { TbPlus } from 'react-icons/tb';
 import gsap from 'gsap';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
+import { useSubscription } from '@/hooks/subscription/useSubscription';
 
 export default function QuestionPallete() {
     const {
@@ -26,6 +27,7 @@ export default function QuestionPallete() {
     } = useNewQuizStore();
     const { setCurrentOn } = useCanvasSelectionStore();
     const { handleCollaboratorsQuestionChange } = useWebSocket();
+    const { getNumericLimit } = useSubscription();
 
     function handleQuestionChange(orderIndex: number) {
         setCurrentOn(SELECTION_MODE.CANVAS);
@@ -37,6 +39,7 @@ export default function QuestionPallete() {
         <>
             <BigQuestionPallete
                 quiz={quiz}
+                maxQuestions={getNumericLimit('maxQuestions')}
                 currentQuestionIndex={currentQuestionIndex}
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
@@ -45,6 +48,7 @@ export default function QuestionPallete() {
             />
             <SmallQuestionPallete
                 quiz={quiz}
+                maxQuestions={getNumericLimit('maxQuestions')}
                 currentQuestionIndex={currentQuestionIndex}
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
@@ -57,6 +61,7 @@ export default function QuestionPallete() {
 
 interface QuestionPallete {
     quiz: QuizType;
+    maxQuestions: number | null;
     currentQuestionIndex: number;
     handleQuestionChange: (index: number) => void;
     addQuestion: () => void;
@@ -66,12 +71,15 @@ interface QuestionPallete {
 
 function BigQuestionPallete({
     quiz,
+    maxQuestions,
     currentQuestionIndex,
     handleQuestionChange,
     addQuestion,
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
+    const canAddQuestions = maxQuestions ? maxQuestions >= quiz.questions.length : true;
+
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
             <Button
@@ -80,6 +88,7 @@ function BigQuestionPallete({
                     'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
                     'rounded-full m-0 mt-4 px-20 text-xs font-light flex items-center justify-center gap-x-2',
                 )}
+                disabled={!canAddQuestions}
             >
                 <TbPlus />
                 <span>Add Question</span>
@@ -111,6 +120,7 @@ function BigQuestionPallete({
 
 function SmallQuestionPallete({
     quiz,
+    maxQuestions,
     currentQuestionIndex,
     handleQuestionChange,
     addQuestion,
@@ -150,6 +160,8 @@ function SmallQuestionPallete({
         );
     };
 
+    const canAddQuestions = maxQuestions ? maxQuestions >= quiz.questions.length : true;
+
     return (
         <UtilityCard
             ref={sidebarRef}
@@ -165,6 +177,7 @@ function SmallQuestionPallete({
                         'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
                         'rounded-full m-0 px-20 text-xs font-light flex items-center justify-center gap-x-2',
                     )}
+                    disabled={!canAddQuestions}
                 >
                     <TbPlus />
                     <span>Add Question</span>

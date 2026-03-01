@@ -17,11 +17,24 @@ import authMiddleware from '../middlewares/auth.middleware';
 import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMiddleware';
 import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
+import Subscription from '../middlewares/subscription.middleware';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->
-router.post('/quiz/participant-join-quiz', participantJoinController);
-router.get('/quiz/spectator-join-quiz-via-link', spectatorJoinQuizViaURLController);
-router.post('/quiz/spectator-join-quiz', spectatorJoinController);
+router.post(
+    '/quiz/participant-join-quiz',
+    Subscription.participant_limit_via_code,
+    participantJoinController,
+);
+router.get(
+    '/quiz/spectator-join-quiz-via-link',
+    Subscription.spectator_limit_via_url,
+    spectatorJoinQuizViaURLController,
+);
+router.post(
+    '/quiz/spectator-join-quiz',
+    Subscription.spectator_limit_via_code,
+    spectatorJoinController,
+);
 
 router.get('/quiz/get-live-quiz-data/:quizId', getLiveQuizDataController);
 

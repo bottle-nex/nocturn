@@ -158,11 +158,11 @@ export default function FavouriteQuizzesPanel() {
                         ))}
                     </div>
                 ) : filteredQuizzes.length === 0 ? (
-                    <div className='h-full flex items-center justify-center'>
+                    <div className="h-full flex items-center justify-center">
                         <NoContent
                             title="No favourites yet"
                             description="Mark quizzes as favourite to see them here."
-                            className='-mt-52'
+                            className="-mt-52"
                         />
                     </div>
                 ) : activeLayoutTab === Layouts.GRID ? (

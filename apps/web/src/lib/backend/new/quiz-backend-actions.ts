@@ -1,6 +1,7 @@
 import { QuizType } from '@nocturn/types';
 import axios from 'axios';
 import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
+import { toast } from 'sonner';
 
 export default class BackendActions {
     static async createQuiz(token: string): Promise<QuizType | null> {
@@ -84,7 +85,16 @@ export default class BackendActions {
             }
             return false;
         } catch (err) {
-            console.error('[LAUNCH_QUIZ_ERROR]', err);
+            let message = "unknown error";
+
+            if (axios.isAxiosError(err)) {
+                message = err.response?.data?.message ?? message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
+
+            toast.error(message);
+            console.error("[LAUNCH_QUIZ_ERROR]", err);
             return false;
         }
     }

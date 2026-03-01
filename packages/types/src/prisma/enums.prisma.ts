@@ -115,3 +115,8 @@ export enum TemplateEnum {
   PASTEL = "PASTEL",
   BLUE = "BLUE",
 }
+
+export enum SubscriptionEnum {
+  FREE = "FREE",
+  PRO = "PRO",
+}

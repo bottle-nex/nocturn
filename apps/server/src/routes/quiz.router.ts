@@ -24,13 +24,13 @@ import getRecentlyViewedController from '../controllers/quiz-controller/get_rece
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
 import QuizController from '../controllers/quiz-controller/quizController';
 import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
+import Subscription from '../middlewares/subscription.middleware';
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
 router.get('/quiz/get-favourite-quizzes', authMiddleware, get_favourite_quizzes_controller);
 
 // <---------------------- QUIZ-ROUTES ---------------------->
-router.post('/quiz/create-quiz/:quizId', authMiddleware, QuizController.save);
 router.post('/quiz/create-quiz', authMiddleware, createQuizController);
 router.post('/quiz/duplicate-quiz/:quizId', authMiddleware, duplicateQuizController);
 
@@ -50,15 +50,22 @@ router.delete('/quiz/delete-quiz/:quizId', authMiddleware, permanently_delete_qu
 router.post('/quiz/permanently-delete-selected-quiz', authMiddleware, permanentDeleteSelectedQuiz);
 
 router.post(
+    '/quiz/create-quiz/:quizId',
+    authMiddleware,
+    Subscription.question_limit,
+    QuizController.save,
+);
+router.post(
     '/quiz/publish-quiz/:quizId',
     authMiddleware,
-    // verifyQuizOwnershipMiddleware,
+    Subscription.question_limit,
     QuizController.publish,
 );
 router.post(
     '/quiz/launch-quiz/:quizId',
     authMiddleware,
-    // verifyQuizOwnershipMiddleware,
+    Subscription.question_limit,
+    Subscription.launch_quiz_limit,
     QuizController.launch,
 );
 

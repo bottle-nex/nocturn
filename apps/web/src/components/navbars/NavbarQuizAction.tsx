@@ -113,7 +113,6 @@ export default function NavbarQuizAction() {
                 router.push(`/live/${quiz.id}`);
                 return;
             }
-            toast.error('Failed to launch quiz');
         } catch (error) {
             console.error('Failed to launch quiz:', error);
         } finally {

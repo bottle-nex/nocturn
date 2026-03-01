@@ -6,9 +6,9 @@ import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
 import crypto from 'crypto';
-import { NOCTURN_REFRESH_COOKIE_NAME } from '@nocturn/types';
+import { NOCTURN_REFRESH_COOKIE_NAME, SubscriptionEnum } from '@nocturn/types';
 
-const ACCESS_TOKEN_EXPIRY = '1m';
+const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
@@ -18,9 +18,16 @@ export class SigninController {
         name: string;
         email: string;
         image: string | null;
+        subscription: SubscriptionEnum;
     }) {
         const accessToken = jwt.sign(
-            { name: user.name, email: user.email, id: user.id, image: user.image },
+            {
+                name: user.name,
+                email: user.email,
+                id: user.id,
+                image: user.image,
+                subscription: user.subscription,
+            },
             env.SERVER_JWT_SECRET,
             { expiresIn: ACCESS_TOKEN_EXPIRY },
         );
@@ -65,6 +72,25 @@ export class SigninController {
                         email: user.email,
                         image: user.image,
                     },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        subscriptions: {
+                            select: {
+                                tier: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                            take: 1,
+                        },
+                    },
                 });
             } else {
                 myUser = await prisma.user.create({
@@ -73,17 +99,42 @@ export class SigninController {
                         email: user.email,
                         image: user.image,
                     },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        subscriptions: {
+                            select: {
+                                tier: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                            take: 1,
+                        },
+                    },
                 });
             }
 
-            const { accessToken, refreshToken } = SigninController.generateTokens(myUser);
+            const subscription =
+                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+
+            const { accessToken, refreshToken } = SigninController.generateTokens({
+                ...myUser,
+                subscription,
+            });
             SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
             ResponseWriter.success(
                 res,
-                { user: myUser, token: accessToken },
+                { user: { ...myUser, subscription }, token: accessToken },
                 'Authentication successful',
             );
         } catch (err) {
@@ -144,6 +195,25 @@ export class SigninController {
                 myUser = await prisma.user.update({
                     where: { email },
                     data: { isVerified: true },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        subscriptions: {
+                            select: {
+                                tier: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                            take: 1,
+                        },
+                    },
                 });
             } else {
                 myUser = await prisma.user.create({
@@ -153,17 +223,42 @@ export class SigninController {
                         isVerified: true,
                         image: GenerateUser.getRandomAvatar(),
                     },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                        subscriptions: {
+                            select: {
+                                tier: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                            orderBy: {
+                                createdAt: 'desc',
+                            },
+                            take: 1,
+                        },
+                    },
                 });
             }
 
-            const { accessToken, refreshToken } = SigninController.generateTokens(myUser);
+            const subscription =
+                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+
+            const { accessToken, refreshToken } = SigninController.generateTokens({
+                ...myUser,
+                subscription,
+            });
             SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
 
             ResponseWriter.success(
                 res,
-                { user: myUser, token: accessToken },
+                { user: { ...myUser, subscription }, token: accessToken },
                 'Authentication successful',
             );
         } catch (err) {

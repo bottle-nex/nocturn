@@ -112,14 +112,13 @@ export default function SharedQuizPanel() {
                         ))}
                     </div>
                 ) : filteredQuizzes.length === 0 ? (
-                    <div className='h-full flex items-center justify-center'>
+                    <div className="h-full flex items-center justify-center">
                         <NoContent
                             title="No shared quizzes yet"
                             description="Quizzes shared with you will appear here."
-                            className='-mt-52'
+                            className="-mt-52"
                         />
                     </div>
-
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => (
