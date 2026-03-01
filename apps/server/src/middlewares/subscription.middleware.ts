@@ -39,6 +39,18 @@ export default class Subscription {
         await Subscription.check_participant_limit(quiz, res, next);
     }
 
+    static async launch_quiz_limit(req: Request, res: Response, next: NextFunction) {
+        try {
+
+
+            
+        } catch (error) {
+            console.error('error in launching quiz limit: ', error);
+            ResponseWriter.system_error(res);
+            return;
+        }
+    }
+
     private static async check_spectator_limit(
         quiz: { id: string; hostId: string } | null,
         res: Response,
@@ -69,7 +81,7 @@ export default class Subscription {
                     res,
                     false,
                     'SPECTATOR_LIMIT_REACHED',
-                    `This quiz has reached its spectator limit of ${ceiling}.`,
+                    `The quiz has reached its spectator limit.`,
                     403,
                 );
                 return;
@@ -140,7 +152,7 @@ export default class Subscription {
         });
     }
 
-    private static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
+    static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
         try {
             const userData = await prisma.user.findUnique({
                 where: { id: user_id },

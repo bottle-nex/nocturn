@@ -5,8 +5,9 @@ import ResponseWriter from '../../class/response_writer';
 import { env } from '../../configs/env';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
-import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
+import Subscription from '../../middlewares/subscription.middleware';
 
 const NON_EDITABLE_STATUSES: QuizStatus[] = [
     'LIVE',
@@ -17,7 +18,6 @@ const NON_EDITABLE_STATUSES: QuizStatus[] = [
 ];
 
 export default class QuizController {
-    // ─── Public Route Handlers ────────────────────────────────────────────────
 
     public static async save(req: Request, res: Response) {
         const userId = req.user?.id;
@@ -197,12 +197,16 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-            const [existing, participantCode, spectatorCode, host] = await Promise.all([
+
+            const [existing, participantCode, specCode, host, subscription] = await Promise.all([
                 QuizController.findQuiz(quizId),
                 QuizAction.generateUniqueCode('participant'),
                 QuizAction.generateUniqueCode('spectator'),
                 QuizController.get_host_details(res, hostId),
+                Subscription.get_user_subscription(hostId),
             ]);
+
+            const spectatorCode = subscription === SubscriptionEnum.PRO ? specCode : undefined;
 
             if (!host) return; // response already sent inside get_host_details
 
