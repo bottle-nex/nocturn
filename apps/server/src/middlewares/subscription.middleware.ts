@@ -41,15 +41,50 @@ export default class Subscription {
 
     static async launch_quiz_limit(req: Request, res: Response, next: NextFunction) {
         try {
+            const user = req.user;
+            if (!user) {
+                ResponseWriter.not_authorized(res);
+                return;
+            }
 
+            const tier =
+                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
+            const { limit, windowMs } = planManager.getRateLimit(tier, 'sessionsPerDay');
 
-            
+            // null = unlimited (Pro)
+            if (limit === null) {
+                next();
+                return;
+            }
+
+            const window_start = new Date(Date.now() - windowMs);
+
+            const sessions_in_window = await prisma.quiz.count({
+                where: {
+                    hostId: user.id,
+                    startedAt: { gte: window_start },
+                    status: { in: ['LIVE'] },
+                },
+            });
+
+            if (sessions_in_window >= limit) {
+                ResponseWriter.custom(
+                    res,
+                    false,
+                    'SESSION_LAUNCH_LIMIT_REACHED',
+                    `You have reached your daily quiz launch limit. Upgrade to Pro for unlimited launches.`,
+                    403,
+                );
+                return;
+            }
+
+            next();
         } catch (error) {
-            console.error('error in launching quiz limit: ', error);
+            console.error('Error in launch quiz limit:', error);
             ResponseWriter.system_error(res);
-            return;
         }
     }
+
 
     private static async check_spectator_limit(
         quiz: { id: string; hostId: string } | null,
