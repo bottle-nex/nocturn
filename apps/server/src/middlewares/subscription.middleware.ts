@@ -85,6 +85,48 @@ export default class Subscription {
         }
     }
 
+    static async question_limit(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = req.user;
+            if (!user) {
+                ResponseWriter.not_authorized(res);
+                return;
+            }
+
+            const questions = req.body?.questions;
+
+            if (!Array.isArray(questions)) {
+                next();
+                return;
+            }
+
+            const tier =
+                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
+            const ceiling = planManager.getNumericLimit(tier, 'maxQuestions');
+
+            if (ceiling === null) {
+                next();
+                return;
+            }
+
+            if (questions.length > ceiling) {
+                ResponseWriter.custom(
+                    res,
+                    false,
+                    'QUESTION_LIMIT_EXCEEDED',
+                    `Your plan allows a maximum of ${ceiling} questions per quiz. Upgrade to Pro for unlimited questions.`,
+                    403,
+                );
+                return;
+            }
+
+            next();
+        } catch (error) {
+            console.error('Error in question limit check:', error);
+            ResponseWriter.system_error(res);
+        }
+    }
+
 
     private static async check_spectator_limit(
         quiz: { id: string; hostId: string } | null,

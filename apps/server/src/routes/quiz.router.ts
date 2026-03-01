@@ -24,6 +24,7 @@ import getRecentlyViewedController from '../controllers/quiz-controller/get_rece
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
 import QuizController from '../controllers/quiz-controller/quizController';
 import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
+import Subscription from '../middlewares/subscription.middleware';
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);
@@ -58,6 +59,7 @@ router.post(
 router.post(
     '/quiz/launch-quiz/:quizId',
     authMiddleware,
+    Subscription.launch_quiz_limit,
     // verifyQuizOwnershipMiddleware,
     QuizController.launch,
 );
