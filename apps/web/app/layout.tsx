@@ -6,6 +6,7 @@ import SessionSetter from '@/components/utility/SessionSetter';
 import { ThemeProvider } from 'next-themes';
 import ToasterProvider from '../src/providers/ToasterProvider';
 import LenisProvider from '@/providers/LenisProvider';
+import SubscriptionProvider from '@/providers/SubscriptionProvider';
 
 export const metadata: Metadata = {
     title: 'Nocturn',
@@ -29,7 +30,9 @@ export default async function RootLayout({
                         disableTransitionOnChange
                     >
                         <ToasterProvider />
-                        {children}
+                        <SubscriptionProvider>
+                            {children}
+                        </SubscriptionProvider>
                         <SessionSetter session={session} />
                     </ThemeProvider>
                 </LenisProvider>

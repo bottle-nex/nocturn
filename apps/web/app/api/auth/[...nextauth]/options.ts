@@ -6,12 +6,14 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
 import { SIGNIN_URL, VERIFY_OTP_URL } from 'routes/api_routes';
+import { SubscriptionEnum } from '@nocturn/types';
 
 export interface UserType {
     id?: string | null;
     name?: string | null;
     email?: string | null;
     image?: string | null;
+    subscription?: SubscriptionEnum;
     provider?: string | null;
     token?: string | null;
 }
@@ -43,6 +45,7 @@ export const authOption: AuthOptions = {
                     if (result?.success) {
                         user.id = result.data.user.id.toString();
                         user.token = result.data.token;
+                        user.subscription = result.data.user.subscription ?? SubscriptionEnum.FREE;
                         return true;
                     }
                 }
@@ -113,6 +116,7 @@ export const authOption: AuthOptions = {
                             name: user.name,
                             email: user.email,
                             image: user.image ?? null,
+                            subscription: user.subscription ?? SubscriptionEnum.FREE,
                             token,
                         };
                     }
