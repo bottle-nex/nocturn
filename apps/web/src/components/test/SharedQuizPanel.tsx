@@ -8,6 +8,7 @@ import MyQuizzesListView from './MyQuizzesListView';
 import { QuizType } from '@nocturn/types';
 import CanvasSkeletonCard from '../skeletons/CanvasSkeleton';
 import QuizzesUpperSection from './QuizzesUpperSection';
+import NoContent from '../ui/NoContent';
 
 export enum Layouts {
     GRID = 'GRID',
@@ -101,7 +102,7 @@ export default function SharedQuizPanel() {
             />
 
             <div
-                className="w-full mt-6 overflow-y-auto overflow-x-hidden custom-scrollbar"
+                className="w-full h-full mt-6 overflow-y-auto overflow-x-hidden custom-scrollbar"
                 data-lenis-prevent
             >
                 {loading ? (
@@ -111,9 +112,14 @@ export default function SharedQuizPanel() {
                         ))}
                     </div>
                 ) : filteredQuizzes.length === 0 ? (
-                    <div className="w-full h-[55vh] flex items-center justify-center text-neutral-500 dark:text-neutral-400 text-lg">
-                        No shared quizzes found
+                    <div className='h-full flex items-center justify-center'>
+                        <NoContent
+                            title="No shared quizzes yet"
+                            description="Quizzes shared with you will appear here."
+                            className='-mt-52'
+                        />
                     </div>
+
                 ) : activeLayoutTab === Layouts.GRID ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredQuizzes.map((quiz) => (

@@ -27,8 +27,8 @@ export default function AppLogo({
                             textColor,
                         )}
                     >
-                        <div className="font-semibold text-base">Nocturn</div>
-                        <div className={cn('text-[13px]', `${textColor}/80`)}>Play Bold</div>
+                        <div className="font-semibold text-base dark:text-light-alpha text-dark-alpha">Nocturn</div>
+                        <div className={cn('text-[13px] dark:text-light-base/80 text-dark-base/80')}>Play Bold</div>
                     </div>
                 )}
                 {/* <span className="text-dark-base text-2xl h-10 px-4 flex items-center justify-center font-semibold mb-1">
