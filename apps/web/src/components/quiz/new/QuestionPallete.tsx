@@ -78,7 +78,6 @@ function BigQuestionPallete({
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
-
     const canAddQuestions = maxQuestions ? maxQuestions >= quiz.questions.length : true;
 
     return (

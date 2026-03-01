@@ -85,9 +85,16 @@ export default class BackendActions {
             }
             return false;
         } catch (err) {
-            const message = (err as any)?.response?.data?.message ?? 'unknown error';
+            let message = "unknown error";
+
+            if (axios.isAxiosError(err)) {
+                message = err.response?.data?.message ?? message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
+
             toast.error(message);
-            console.error('[LAUNCH_QUIZ_ERROR]', err);
+            console.error("[LAUNCH_QUIZ_ERROR]", err);
             return false;
         }
     }

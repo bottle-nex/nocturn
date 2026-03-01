@@ -205,7 +205,10 @@ export default class QuizController {
             ]);
 
             const spectatorCode = subscription === SubscriptionEnum.PRO ? specCode : undefined;
-            const spectatorLink = subscription === SubscriptionEnum.PRO ? QuizAction.createSpectatorLink(quizId) : undefined;
+            const spectatorLink =
+                subscription === SubscriptionEnum.PRO
+                    ? QuizAction.createSpectatorLink(quizId)
+                    : undefined;
 
             if (!host) return; // response already sent inside get_host_details
 

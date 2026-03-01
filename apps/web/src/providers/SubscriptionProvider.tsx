@@ -23,9 +23,7 @@ interface SubscriptionProviderProps {
 }
 
 export default function SubscriptionProvider({ children, initialTier }: SubscriptionProviderProps) {
-    const [tier, setTierState] = useState<SubscriptionEnum>(
-        initialTier ?? SubscriptionEnum.FREE,
-    );
+    const [tier, setTierState] = useState<SubscriptionEnum>(initialTier ?? SubscriptionEnum.FREE);
     const [isLoaded, setIsLoaded] = useState(!!initialTier);
 
     const setTier = useCallback((newTier: SubscriptionEnum) => {
@@ -33,10 +31,7 @@ export default function SubscriptionProvider({ children, initialTier }: Subscrip
         setIsLoaded(true);
     }, []);
 
-    const isEnabled = useCallback(
-        (feature: FeatureKey) => Plans.isEnabled(tier, feature),
-        [tier],
-    );
+    const isEnabled = useCallback((feature: FeatureKey) => Plans.isEnabled(tier, feature), [tier]);
 
     const getNumericLimit = useCallback(
         (feature: FeatureKey) => Plans.getNumericLimit(tier, feature),

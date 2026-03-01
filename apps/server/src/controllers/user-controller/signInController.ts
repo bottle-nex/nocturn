@@ -26,7 +26,7 @@ export class SigninController {
                 email: user.email,
                 id: user.id,
                 image: user.image,
-                subscription: user.subscription
+                subscription: user.subscription,
             },
             env.SERVER_JWT_SECRET,
             { expiresIn: ACCESS_TOKEN_EXPIRY },
@@ -121,7 +121,8 @@ export class SigninController {
                 });
             }
 
-            const subscription = (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+            const subscription =
+                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
 
             const { accessToken, refreshToken } = SigninController.generateTokens({
                 ...myUser,
@@ -244,7 +245,8 @@ export class SigninController {
                 });
             }
 
-            const subscription = (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+            const subscription =
+                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
 
             const { accessToken, refreshToken } = SigninController.generateTokens({
                 ...myUser,
