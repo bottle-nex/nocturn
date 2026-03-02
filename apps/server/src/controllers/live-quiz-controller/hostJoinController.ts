@@ -16,10 +16,6 @@ export default async function HostJoinController(req: Request, res: Response) {
         }
 
         const quizId = req.body.quizId;
-
-        console.log("quizid: ", quizId);
-        console.log("type of quiz id: ", typeof quizId);
-
         if (!quizId) {
             ResponseWriter.invalid_data(res, 'quiz id not provided');
             return;
