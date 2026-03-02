@@ -20,10 +20,7 @@ export enum InteractionEnum {
 
 export enum SessionStatusEnum {
   WAITING = "WAITING",
-  STARTING = "STARTING",
-  QUESTION_ACTIVE = "QUESTION_ACTIVE",
-  QUESTION_ENDED = "QUESTION_ENDED",
-  ELIMINATING = "ELIMINATING",
+  LIVE = "LIVE",
   COMPLETED = "COMPLETED",
   PAUSED = "PAUSED",
 }

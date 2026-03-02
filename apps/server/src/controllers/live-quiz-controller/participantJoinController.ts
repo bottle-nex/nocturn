@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
-import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, SessionStatusEnum, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
@@ -67,14 +67,16 @@ export default async function participantJoinController(req: Request, res: Respo
             );
             return;
         }
-
-        if (!['WAITING', 'STARTING'].includes(gameSession.status)) {
+        console.log('game session status', gameSession.status);
+        if (
+            [SessionStatusEnum.LIVE, SessionStatusEnum.COMPLETED].includes(
+                gameSession.status as SessionStatusEnum,
+            )
+        ) {
             ResponseWriter.error(
                 res,
                 'QUIZ_STARTED',
-                'Quiz has already started. New participants cannot join.',
-                undefined,
-                403,
+                'Quiz is live. New participants cannot join.',
             );
             return;
         }

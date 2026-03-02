@@ -20,24 +20,18 @@ export default async function HostJoinController(req: Request, res: Response) {
             return;
         }
 
-        const { quiz, gameSession } = await prisma.$transaction(async (tx) => {
-            const quiz = await tx.quiz.findUnique({
+        const [quiz, gameSession] = await Promise.all([
+            prisma.quiz.findUnique({
                 where: {
                     id: quizId,
                 },
-            });
-
-            const gameSession = await tx.gameSession.findUnique({
+            }),
+            prisma.gameSession.findUnique({
                 where: {
                     quizId: quizId,
                 },
-            });
-
-            return {
-                quiz,
-                gameSession,
-            };
-        });
+            }),
+        ]);
 
         if (!quiz) {
             ResponseWriter.not_found(res, 'quiz not found');
@@ -57,7 +51,7 @@ export default async function HostJoinController(req: Request, res: Response) {
         const token = QuizAction.generateLiveGameToken(
             String(user.id),
             quizId,
-            gameSession.id!,
+            gameSession.id,
             USER_TYPE.HOST,
             req.user?.name,
         );

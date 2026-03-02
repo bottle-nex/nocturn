@@ -7,6 +7,7 @@ import {
     PubSubMessageTypes,
     QuizEndScreen,
     SECONDS,
+    SessionStatusEnum,
     USER_TYPE,
 } from '@nocturn/types';
 import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
@@ -327,6 +328,7 @@ export default class HostManager {
                 hostScreen: HostScreen.QUESTION_PREVIEW,
                 spectatorScreen: SpectatorScreen.QUESTION_MOTIVATION,
                 participantScreen: ParticipantScreen.QUESTION_MOTIVATION,
+                status: SessionStatusEnum.LIVE,
             },
             game_session_id,
         );
