@@ -7,8 +7,9 @@ import {
     redisCacheInstance,
 } from '../services/init.services';
 import QuizManager from '../sockets/QuizManager';
-import { MESSAGE_TYPES, PubSubMessageTypes } from '@nocturn/types';
+import { MESSAGE_TYPES, PubSubMessageTypes, SubscriptionEnum } from '@nocturn/types';
 import DatabaseQueue from '../queue/database/database.queue';
+import { planManager } from '@nocturn/premium';
 
 export default class QuizSettings {
     public quiz_settings_mapping: Map<string, QuizSetting> = new Map();
@@ -23,22 +24,40 @@ export default class QuizSettings {
         this.fill_settings_on_boot();
     }
 
-    public update_quiz_settings_on_db_and_cache(
+    public async update_quiz_settings_on_db_and_cache(
         game_session_id: string,
         quiz_id: string,
+        host_id: string,
         payload: any,
     ) {
-        const parsed_payload = quizSettingsSchema.safeParse(payload);
-        if (!parsed_payload.success) {
-            return;
-        }
-
-        const quiz: Prisma.QuizUpdateInput = {
-            liveChat: parsed_payload.data.liveChat,
-            allowNewSpectator: parsed_payload.data.allowNewSpectator,
-        };
-
         try {
+            const parsed_payload = quizSettingsSchema.safeParse(payload);
+            if (!parsed_payload.success) {
+                return;
+            }
+
+            const { liveChat, allowNewSpectator } = parsed_payload.data;
+
+            const subscription = await redisCacheInstance.get_host(game_session_id, host_id, ['subscription']);
+
+            const liveChatAllowed = planManager.isEnabled(subscription as unknown as SubscriptionEnum ?? SubscriptionEnum.FREE, 'liveChat');
+            const spectatorsAllowed = planManager.isEnabled(subscription as unknown as SubscriptionEnum ?? SubscriptionEnum.FREE, 'maxSpectatorPerSession');
+
+            if (liveChat && !liveChatAllowed) {
+                // send a reponse that you're not a pro user
+                return;
+            }
+
+            if (allowNewSpectator && !spectatorsAllowed) {
+                // send a response that you're not a pro user
+                return;
+            }
+
+            const quiz: Prisma.QuizUpdateInput = {
+                liveChat,
+                allowNewSpectator,
+            };
+
             this.database_queue.update_quiz(quiz_id, quiz, game_session_id);
             const pubsubEvent: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.SETTINGS_CHANGE,
@@ -112,5 +131,5 @@ export default class QuizSettings {
         this.quiz_settings_mapping.delete(game_session_id);
     }
 
-    private fill_settings_on_boot() {}
+    private fill_settings_on_boot() { }
 }

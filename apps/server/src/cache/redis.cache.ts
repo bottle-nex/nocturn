@@ -2,6 +2,7 @@ import { GameSession, Question, Response, Spectator, Template, User } from '@noc
 import Redis from 'ioredis';
 import { Participant, Quiz } from '@nocturn/database';
 import { env } from '../configs/env';
+import { SubscriptionEnum } from '@nocturn/types';
 
 const SECONDS = 60;
 const MINUTES = 60;
@@ -99,7 +100,7 @@ export default class RedisCache {
 
     //  <------------------ HOST ------------------>
 
-    public async set_host(game_session_id: string, host_id: string, host: Partial<User>) {
+    public async set_host(game_session_id: string, host_id: string, host: (Partial<User> & {subscription: SubscriptionEnum})) {
         try {
             const host_key = this.get_host_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
@@ -120,8 +121,8 @@ export default class RedisCache {
     public async get_host(
         game_session_id: string,
         host_id: string,
-        fields?: (keyof User)[],
-    ): Promise<Partial<User> | null> {
+        fields?: (keyof User | 'subscription')[],
+    ): Promise<(Partial<User> & { subscription?: SubscriptionEnum }) | null> {
         const host_key = this.get_host_key(game_session_id);
 
         try {

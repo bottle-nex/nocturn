@@ -355,7 +355,10 @@ export default class QuizController {
             }
 
             // host data now passed into set_host
-            redisCacheInstance.set_host(gameSession.id as string, hostId, host);
+            redisCacheInstance.set_host(gameSession.id as string, hostId, {
+                ...host,
+                subscription: subscription ?? SubscriptionEnum.FREE,
+            });
             redisCacheInstance.set_game_session(gameSession.id as string, gameSession);
             redisCacheInstance.set_quiz(gameSession.id as string, quiz);
 
