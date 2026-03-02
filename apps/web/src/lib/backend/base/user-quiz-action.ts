@@ -70,7 +70,6 @@ class UserQuizAction {
                 { code },
                 { withCredentials: true },
             );
-
             if (data.success) {
                 toast.success(data.message);
                 return data.data;
@@ -78,7 +77,13 @@ class UserQuizAction {
             toast.error(data.message);
             return null;
         } catch (err) {
-            console.error('Error while joining quiz', err);
+            let message = 'unknown error';
+            if (axios.isAxiosError(err)) {
+                message = err.response?.data.message;
+            } else if (err instanceof Error) {
+                message = err.message;
+            }
+            toast.error(message);
             return null;
         }
     }
