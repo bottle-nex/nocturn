@@ -1,10 +1,8 @@
 'use client';
-
 import { useRef } from 'react';
-import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import ParticipantQuestionActiveOptions from './ParticipantQuestionActiveOptions';
-import TimerBar from '@/components/ui/TimerBar';
+import TopTimerBarCompoment from '@/components/ui/TopTimerBarComponent';
 
 export default function ParticipantQuestionActiveRenderer() {
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -19,25 +17,17 @@ export default function ParticipantQuestionActiveRenderer() {
     }
 
     return (
-        <div
-            ref={canvasRef}
-            className={cn(
-                'w-full h-full overflow-hidden flex flex-col items-center justify-center space-y-10',
-                'relative p-8',
-            )}
-        >
-            <div className="min-h-[32rem] w-[90%] flex flex-col items-center justify-between">
-                <div>
-                    <div className="w-full text-3xl text-center">{currentQuestion?.question}</div>
-                    <div className="mt-8 flex items-center justify-center z-50">
-                        <TimerBar
-                            startTime={gameSession.phaseStartTime!}
-                            endTime={gameSession.phaseEndTime!}
-                        />
-                    </div>
+        <div ref={canvasRef} className="w-full h-full flex justify-center items-center">
+            <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10 flex flex-col items-center p-18 gap-y-10">
+                <TopTimerBarCompoment
+                    startTime={gameSession.phaseStartTime!}
+                    endTime={gameSession.phaseEndTime!}
+                />
+                <div className="text-dark-base text-3xl">Q. {currentQuestion.question}</div>
+                <div className="flex-1 h-full w-full flex flex-col items-center gap-y-5 text-[18px]">
+                    <ParticipantQuestionActiveOptions />
                 </div>
-                <ParticipantQuestionActiveOptions />
-            </div>
+            </section>
         </div>
     );
 }

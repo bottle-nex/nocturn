@@ -66,7 +66,10 @@ export default function TriangleTimerBar({
 
     return (
         <div
-            className={cn('w-full h-[100px] flex items-center justify-center z-[9999]', className)}
+            className={cn(
+                'w-full h-[100px] flex items-center justify-center z-[9999] text-dark-base',
+                className,
+            )}
         >
             <div className="w-[70%] relative">
                 <svg viewBox="0 0 1000 140" width="100%" height="100%">
