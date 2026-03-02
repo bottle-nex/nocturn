@@ -7,8 +7,8 @@ import { planManager as Plans, type FeatureKey } from '@nocturn/premium';
 export interface SubscriptionContextValue {
     tier: SubscriptionEnum;
     isLoaded: boolean;
+    
     setTier: (tier: SubscriptionEnum) => void;
-
     isEnabled: (feature: FeatureKey) => boolean;
     getNumericLimit: (feature: FeatureKey) => number | null;
     getRateLimit: (feature: FeatureKey) => { limit: number | null; windowMs: number };
