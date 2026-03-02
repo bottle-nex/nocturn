@@ -18,8 +18,14 @@ import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMid
 import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import Subscription from '../middlewares/subscription.middleware';
+import HostJoinController from '../controllers/live-quiz-controller/hostJoinController';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->
+router.post(
+    '/quiz/host-join-quiz',
+    authMiddleware,
+    HostJoinController,
+);
 router.post(
     '/quiz/participant-join-quiz',
     Subscription.participant_limit_via_code,

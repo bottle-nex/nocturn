@@ -2,14 +2,14 @@ import { Request, Response } from 'express';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
-import { participantJoinSchema } from '../../schemas/participantJoinSchema';
 import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
+import { quizJoinSchema } from '../../schemas/quizJoinSchema';
 
 export default async function participantJoinController(req: Request, res: Response) {
-    const parseResult = participantJoinSchema.safeParse(req.body);
+    const parseResult = quizJoinSchema.safeParse(req.body);
     const redis_cache = redisCacheInstance;
     if (!parseResult.success) {
         ResponseWriter.invalid_data(res);

@@ -21,6 +21,7 @@ export const GET_SHARED_QUIZ_URL = QUIZ_URL + '/get-shared-quiz';
 export const GET_RECENTLY_VIEWED_URL = QUIZ_URL + '/get-recently-viewed';
 export const PUBLISH_QUIZ_URL = QUIZ_URL + '/publish-quiz';
 export const LAUNCH_QUIZ_URL = QUIZ_URL + '/launch-quiz';
+export const HOST_JOIN_QUIZ_URL = QUIZ_URL + '/host-join-quiz';
 export const PARTICIPANT_JOIN_QUIZ_URL = QUIZ_URL + '/participant-join-quiz';
 export const SPECTATOR_JOIN_QUIZ_URL = QUIZ_URL + '/spectator-join-quiz';
 export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';

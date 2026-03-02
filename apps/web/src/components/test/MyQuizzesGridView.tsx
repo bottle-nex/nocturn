@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { QuizType } from '@nocturn/types';
+import { QuizStatusEnum, QuizType } from '@nocturn/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
@@ -10,6 +10,7 @@ import EmptyCanvas from '../canvas/EmptyCanvas';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import HeartButton from '../ui/HeartButton';
 import QuizOptionsPanel, { LoadingAction } from './QuizOptionsPanel';
+import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
 interface MyQuizzesGridViewProps {
     formattedTime: string;
@@ -34,10 +35,21 @@ export default function MyQuizzesGridView({
     const [quizAction, setQuizAction] = useState<LoadingAction>(null);
     const isLocked = bulkDeleting || quizAction !== null;
 
-    function handleCardClick() {
+    async function handleCardClick() {
         if (isLocked) return;
         if (selectionMode) return toggleQuizSelection?.(quiz.id);
-        router.push(`/new/${quiz.id}`);
+        switch (quiz.status) {
+            case QuizStatusEnum.LIVE:
+                await userQuizAction.hostJoinQuiz(quiz.id, session?.user.token);
+                router.push(`/live/${quiz.id}`);
+                break;
+
+            case QuizStatusEnum.CREATED:
+            case QuizStatusEnum.PUBLISHED:
+            default:
+                router.push(`/new/${quiz.id}`);
+                break;
+        }
     }
 
     async function handleFavouriteToggle(quizId: string, isFavourite: boolean) {
