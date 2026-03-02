@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
+import { useSubscription } from '@/hooks/subscription/useSubscription';
 
 enum SettingsView {
     HOST = 'HOST',
@@ -32,6 +33,7 @@ export default function HostSettingsPanel() {
         liveChat: quiz.liveChat,
         allowNewSpectator: quiz.allowNewSpectator,
     });
+    const { isEnabled } = useSubscription();
 
     function handleSettingsChange<K extends keyof QuizSetting>(key: K, value: QuizSetting[K]) {
         setSettings((prev: QuizSetting) => {
@@ -90,8 +92,9 @@ export default function HostSettingsPanel() {
                             title="Chats"
                             description="Chat for spectators"
                             tooltip="Enable/Disable chat-option for spectators"
-                            value={settings.liveChat}
+                            value={isEnabled('liveChat') ? settings.liveChat : false}
                             onChange={(val) => handleSettingsChange('liveChat', val)}
+                            disabled={!isEnabled('liveChat')}
                         />
                         <SettingRow
                             title="Leaderboard"
@@ -104,8 +107,9 @@ export default function HostSettingsPanel() {
                             title="Allow new spectators"
                             description="Join quiz for spectators"
                             tooltip="Enable/Disable join for new spectators"
-                            value={settings.allowNewSpectator}
+                            value={isEnabled('maxSpectatorPerSession') ? settings.allowNewSpectator : false}
                             onChange={(val) => handleSettingsChange('allowNewSpectator', val)}
+                            disabled={!isEnabled('maxSpectatorPerSession')}
                         />
                     </div>
                 )}
@@ -132,6 +136,7 @@ interface SettingsRowProps {
     tooltip: string;
     value?: boolean;
     onChange: (val: boolean) => void;
+    disabled?: boolean;
 }
 
 export function SettingRow({
@@ -140,6 +145,7 @@ export function SettingRow({
     tooltip,
     value = false,
     onChange,
+    disabled,
 }: SettingsRowProps) {
     return (
         <div className="flex justify-between items-center">
@@ -157,7 +163,11 @@ export function SettingRow({
                 </span>
             </div>
 
-            <OnOffToggle value={value} onChange={onChange} />
+            <OnOffToggle
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+            />
         </div>
     );
 }

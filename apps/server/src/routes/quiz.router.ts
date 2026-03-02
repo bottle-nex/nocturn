@@ -65,7 +65,7 @@ router.post(
     '/quiz/launch-quiz/:quizId',
     authMiddleware,
     Subscription.question_limit,
-    Subscription.launch_quiz_limit,
+    // Subscription.launch_quiz_limit,
     QuizController.process(QuizControllerAction.LAUNCH),
 );
 
