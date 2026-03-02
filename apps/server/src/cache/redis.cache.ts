@@ -100,7 +100,11 @@ export default class RedisCache {
 
     //  <------------------ HOST ------------------>
 
-    public async set_host(game_session_id: string, host_id: string, host: (Partial<User> & {subscription: SubscriptionEnum})) {
+    public async set_host(
+        game_session_id: string,
+        host_id: string,
+        host: Partial<User> & { subscription: SubscriptionEnum },
+    ) {
         try {
             const host_key = this.get_host_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();

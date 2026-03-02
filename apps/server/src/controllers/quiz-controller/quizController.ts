@@ -19,14 +19,13 @@ const NON_EDITABLE_STATUSES: QuizStatus[] = [
 ];
 
 export enum QuizControllerAction {
-    SAVE = "SAVE",
-    UPDATE = "UPDATE",
-    PUBLISH = "PUBLISH",
-    LAUNCH = "LAUNCH",
+    SAVE = 'SAVE',
+    UPDATE = 'UPDATE',
+    PUBLISH = 'PUBLISH',
+    LAUNCH = 'LAUNCH',
 }
 
 export default class QuizController {
-
     public static process<T extends QuizControllerAction>(action: T) {
         return async (req: Request, res: Response) => {
             const user = req.user;
@@ -36,30 +35,58 @@ export default class QuizController {
             }
 
             const quizId = req.params.quizId;
-            if (!quizId)
-                return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+            if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
 
             const parsed = createQuizSchema.safeParse(req.body);
 
-            if (!parsed.success)
-                return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+            if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
             const { questions, ...quiz_data } = parsed.data;
             const user_subscription = await Subscription.get_user_subscription(user.id);
-            quiz_data.liveChat = planManager.isEnabled(user_subscription ?? SubscriptionEnum.FREE, 'liveChat') ? quiz_data.liveChat : false;
+            quiz_data.liveChat = planManager.isEnabled(
+                user_subscription ?? SubscriptionEnum.FREE,
+                'liveChat',
+            )
+                ? quiz_data.liveChat
+                : false;
 
             switch (action) {
                 case QuizControllerAction.SAVE:
-                    return QuizController.handle_save(res, quizId, user.id, quiz_data, questions || []);
+                    return QuizController.handle_save(
+                        res,
+                        quizId,
+                        user.id,
+                        quiz_data,
+                        questions || [],
+                    );
 
                 case QuizControllerAction.UPDATE:
-                    return QuizController.handle_update(res, quizId, user.id, quiz_data, questions || []);
+                    return QuizController.handle_update(
+                        res,
+                        quizId,
+                        user.id,
+                        quiz_data,
+                        questions || [],
+                    );
 
                 case QuizControllerAction.PUBLISH:
-                    return QuizController.handle_publish(res, quizId, user.id, quiz_data, questions || []);
+                    return QuizController.handle_publish(
+                        res,
+                        quizId,
+                        user.id,
+                        quiz_data,
+                        questions || [],
+                    );
 
                 case QuizControllerAction.LAUNCH:
-                    return QuizController.handle_launch(req, res, quizId, user.id, quiz_data, questions || []);
+                    return QuizController.handle_launch(
+                        req,
+                        res,
+                        quizId,
+                        user.id,
+                        quiz_data,
+                        questions || [],
+                    );
             }
         };
     }
@@ -72,7 +99,6 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-
             const [existing, validateOwner, subscription] = await Promise.all([
                 QuizController.findQuiz(quizId),
                 QuizController.validateOwner(res, hostId, quizId),
@@ -93,7 +119,12 @@ export default class QuizController {
             if (!validateOwner) return;
             if (!QuizController.validateEditable(res, existing.status)) return;
 
-            quiz_data.liveChat = planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'liveChat') ? quiz_data.liveChat : false;
+            quiz_data.liveChat = planManager.isEnabled(
+                subscription ?? SubscriptionEnum.FREE,
+                'liveChat',
+            )
+                ? quiz_data.liveChat
+                : false;
 
             const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
             return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
@@ -110,7 +141,6 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-
             const [existing, validateOwner, subscription] = await Promise.all([
                 QuizController.findQuiz(quizId),
                 QuizController.validateOwner(res, hostId, quizId),
@@ -129,7 +159,12 @@ export default class QuizController {
             if (!validateOwner) return;
             if (!QuizController.validateEditable(res, existing.status)) return;
 
-            quiz_data.liveChat = planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'liveChat') ? quiz_data.liveChat : false;
+            quiz_data.liveChat = planManager.isEnabled(
+                subscription ?? SubscriptionEnum.FREE,
+                'liveChat',
+            )
+                ? quiz_data.liveChat
+                : false;
 
             const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
             return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);
@@ -170,7 +205,12 @@ export default class QuizController {
                     400,
                 );
 
-            quiz_data.liveChat = planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'liveChat') ? quiz_data.liveChat : false;
+            quiz_data.liveChat = planManager.isEnabled(
+                subscription ?? SubscriptionEnum.FREE,
+                'liveChat',
+            )
+                ? quiz_data.liveChat
+                : false;
 
             if (!existing) {
                 const quiz = await QuizController.createQuiz(
@@ -217,12 +257,22 @@ export default class QuizController {
             let spectatorCode: string | undefined = undefined;
             let spectatorLink: string | undefined = undefined;
 
-            if (planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'maxSpectatorPerSession')) {
+            if (
+                planManager.isEnabled(
+                    subscription ?? SubscriptionEnum.FREE,
+                    'maxSpectatorPerSession',
+                )
+            ) {
                 spectatorCode = specCode;
                 spectatorLink = QuizAction.createSpectatorLink(quizId);
             }
 
-            quiz_data.liveChat = planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'liveChat') ? quiz_data.liveChat : false;
+            quiz_data.liveChat = planManager.isEnabled(
+                subscription ?? SubscriptionEnum.FREE,
+                'liveChat',
+            )
+                ? quiz_data.liveChat
+                : false;
 
             if (!host) return; // response already sent inside get_host_details
 

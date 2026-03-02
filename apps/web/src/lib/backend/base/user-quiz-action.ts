@@ -48,7 +48,6 @@ class UserQuizAction {
             }
             toast.error(data.message);
             return null;
-
         } catch (error) {
             console.error('Error while joining quiz', error);
             return null;

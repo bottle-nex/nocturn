@@ -107,7 +107,11 @@ export default function HostSettingsPanel() {
                             title="Allow new spectators"
                             description="Join quiz for spectators"
                             tooltip="Enable/Disable join for new spectators"
-                            value={isEnabled('maxSpectatorPerSession') ? settings.allowNewSpectator : false}
+                            value={
+                                isEnabled('maxSpectatorPerSession')
+                                    ? settings.allowNewSpectator
+                                    : false
+                            }
                             onChange={(val) => handleSettingsChange('allowNewSpectator', val)}
                             disabled={!isEnabled('maxSpectatorPerSession')}
                         />
@@ -163,11 +167,7 @@ export function SettingRow({
                 </span>
             </div>
 
-            <OnOffToggle
-                value={value}
-                onChange={onChange}
-                disabled={disabled}
-            />
+            <OnOffToggle value={value} onChange={onChange} disabled={disabled} />
         </div>
     );
 }

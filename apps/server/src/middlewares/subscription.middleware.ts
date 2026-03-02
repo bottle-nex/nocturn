@@ -39,11 +39,7 @@ export default class Subscription {
         await Subscription.check_participant_limit(quiz, res, next);
     }
 
-    static async launch_quiz_limit(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+    static async launch_quiz_limit(req: Request, res: Response, next: NextFunction) {
         try {
             const user = req.user;
 
@@ -52,11 +48,9 @@ export default class Subscription {
             }
 
             const tier =
-                (await Subscription.get_user_subscription(user.id)) ??
-                SubscriptionEnum.FREE;
+                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
-            const { limit, windowMs } =
-                planManager.getRateLimit(tier, 'sessionsPerDay');
+            const { limit, windowMs } = planManager.getRateLimit(tier, 'sessionsPerDay');
 
             // Unlimited plan
             if (limit === null) {
@@ -65,32 +59,30 @@ export default class Subscription {
 
             const window_start = new Date(Date.now() - windowMs);
 
-            const { sessions_in_window, oldest_session } =
-                await prisma.$transaction(async (tx) => {
-
-                    const sessions_in_window = await tx.quiz.count({
-                        where: {
-                            hostId: user.id,
-                            startedAt: { gte: window_start },
-                            status: { in: ['LIVE'] },
-                        },
-                    });
-
-                    const oldest_session = await tx.quiz.findFirst({
-                        where: {
-                            hostId: user.id,
-                            startedAt: { gte: window_start },
-                            status: { in: ['LIVE'] },
-                        },
-                        orderBy: { startedAt: 'asc' },
-                        select: { startedAt: true },
-                    });
-
-                    return {
-                        sessions_in_window,
-                        oldest_session,
-                    };
+            const { sessions_in_window, oldest_session } = await prisma.$transaction(async (tx) => {
+                const sessions_in_window = await tx.quiz.count({
+                    where: {
+                        hostId: user.id,
+                        startedAt: { gte: window_start },
+                        status: { in: ['LIVE'] },
+                    },
                 });
+
+                const oldest_session = await tx.quiz.findFirst({
+                    where: {
+                        hostId: user.id,
+                        startedAt: { gte: window_start },
+                        status: { in: ['LIVE'] },
+                    },
+                    orderBy: { startedAt: 'asc' },
+                    select: { startedAt: true },
+                });
+
+                return {
+                    sessions_in_window,
+                    oldest_session,
+                };
+            });
 
             if (sessions_in_window >= limit && oldest_session?.startedAt) {
                 const expiresAt = new Date(oldest_session.startedAt).getTime() + windowMs;
@@ -109,12 +101,11 @@ export default class Subscription {
                     {
                         title: 'Daily limit reached',
                         description: `Next launch available in ${formattedTTL}`,
-                    }
+                    },
                 );
             }
 
             return next();
-
         } catch (error) {
             console.error('Error in launch quiz limit:', error);
             return ResponseWriter.system_error(res);
@@ -305,5 +296,4 @@ export default class Subscription {
 
         return `${seconds}s`;
     }
-
 }

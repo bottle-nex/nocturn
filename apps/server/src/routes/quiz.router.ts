@@ -22,7 +22,9 @@ import authMiddleware from '../middlewares/auth.middleware';
 import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
-import QuizController, { QuizControllerAction } from '../controllers/quiz-controller/quizController';
+import QuizController, {
+    QuizControllerAction,
+} from '../controllers/quiz-controller/quizController';
 import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
 import Subscription from '../middlewares/subscription.middleware';
 

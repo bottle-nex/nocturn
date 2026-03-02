@@ -69,7 +69,11 @@ export default class BackendActions {
         }
     }
 
-    static async launchQuiz(quiz: QuizType, token: string, router: ReturnType<typeof useRouter>): Promise<boolean> {
+    static async launchQuiz(
+        quiz: QuizType,
+        token: string,
+        router: ReturnType<typeof useRouter>,
+    ): Promise<boolean> {
         if (!token || !quiz) {
             return false;
         }
@@ -86,7 +90,7 @@ export default class BackendActions {
             }
             return false;
         } catch (err) {
-            let message = "unknown error";
+            let message = 'unknown error';
 
             if (axios.isAxiosError(err)) {
                 const data = err.response?.data.data;
@@ -104,7 +108,7 @@ export default class BackendActions {
                         color: 'black',
                         borderRadius: '3px',
                         cursor: 'pointer',
-                    }
+                    },
                 });
             } else if (err instanceof Error) {
                 message = err.message;
@@ -112,7 +116,7 @@ export default class BackendActions {
             } else {
                 toast.error(message);
             }
-            console.error("[LAUNCH_QUIZ_ERROR]", err);
+            console.error('[LAUNCH_QUIZ_ERROR]', err);
             return false;
         }
     }

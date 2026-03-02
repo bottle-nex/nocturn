@@ -8,7 +8,6 @@ import QuizAction from '../../class/quizAction';
 // this should only be called when the quiz is already launched
 export default async function HostJoinController(req: Request, res: Response) {
     try {
-
         const user = req.user;
         if (!user || !user.id) {
             ResponseWriter.not_authorized(res);
@@ -22,7 +21,6 @@ export default async function HostJoinController(req: Request, res: Response) {
         }
 
         const { quiz, gameSession } = await prisma.$transaction(async (tx) => {
-
             const quiz = await tx.quiz.findUnique({
                 where: {
                     id: quizId,
@@ -39,7 +37,7 @@ export default async function HostJoinController(req: Request, res: Response) {
                 quiz,
                 gameSession,
             };
-        })
+        });
 
         if (!quiz) {
             ResponseWriter.not_found(res, 'quiz not found');
@@ -52,13 +50,7 @@ export default async function HostJoinController(req: Request, res: Response) {
         }
 
         if (!gameSession || quiz.status !== QuizStatusEnum.LIVE) {
-            ResponseWriter.error(
-                res,
-                'QUIZ_NOT_LIVE',
-                'quiz is not live',
-                undefined,
-                422,
-            );
+            ResponseWriter.error(res, 'QUIZ_NOT_LIVE', 'quiz is not live', undefined, 422);
             return;
         }
 
@@ -83,7 +75,6 @@ export default async function HostJoinController(req: Request, res: Response) {
             'Quiz launched successfully',
             200,
         );
-
     } catch (error) {
         console.error('error in host join controller: ', error);
         ResponseWriter.system_error(res);

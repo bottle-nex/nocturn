@@ -78,9 +78,10 @@ export default function InteractionsDraft() {
                                 className={`border p-2 rounded-md cursor-pointer transition-all duration-200 ease-in-out
                                     dark:border-neutral-600 border-neutral-300
                                     hover:shadow-sm
-                                    ${isSelected
-                                        ? 'scale-110 shadow-md bg-neutral-800/40'
-                                        : 'hover:scale-105'
+                                    ${
+                                        isSelected
+                                            ? 'scale-110 shadow-md bg-neutral-800/40'
+                                            : 'hover:scale-105'
                                     }`}
                             >
                                 <span style={{ color: displayColor }}>{cloneElement(icon)}</span>

@@ -38,10 +38,18 @@ export default class QuizSettings {
 
             const { liveChat, allowNewSpectator } = parsed_payload.data;
 
-            const subscription = await redisCacheInstance.get_host(game_session_id, host_id, ['subscription']);
+            const subscription = await redisCacheInstance.get_host(game_session_id, host_id, [
+                'subscription',
+            ]);
 
-            const liveChatAllowed = planManager.isEnabled(subscription as unknown as SubscriptionEnum ?? SubscriptionEnum.FREE, 'liveChat');
-            const spectatorsAllowed = planManager.isEnabled(subscription as unknown as SubscriptionEnum ?? SubscriptionEnum.FREE, 'maxSpectatorPerSession');
+            const liveChatAllowed = planManager.isEnabled(
+                (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
+                'liveChat',
+            );
+            const spectatorsAllowed = planManager.isEnabled(
+                (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
+                'maxSpectatorPerSession',
+            );
 
             if (liveChat && !liveChatAllowed) {
                 // send a reponse that you're not a pro user
@@ -131,5 +139,5 @@ export default class QuizSettings {
         this.quiz_settings_mapping.delete(game_session_id);
     }
 
-    private fill_settings_on_boot() { }
+    private fill_settings_on_boot() {}
 }

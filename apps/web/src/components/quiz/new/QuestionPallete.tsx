@@ -82,8 +82,14 @@ function BigQuestionPallete({
 
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
-            <ToolTipComponent content={canAddQuestions ? '' : 'you cannot add more questions, need to be a premium user.'} >
-                <div className='inline-block '>
+            <ToolTipComponent
+                content={
+                    canAddQuestions
+                        ? ''
+                        : 'you cannot add more questions, need to be a premium user.'
+                }
+            >
+                <div className="inline-block ">
                     <Button
                         onClick={addQuestion}
                         className={cn(
@@ -176,8 +182,14 @@ function SmallQuestionPallete({
             )}
         >
             <div className="w-full flex justify-center items-center gap-x-2 mt-4">
-                <ToolTipComponent content={canAddQuestions ? '' : 'you cannot add more questions, need to be a premium user.'} >
-                    <div className='inline-block '>
+                <ToolTipComponent
+                    content={
+                        canAddQuestions
+                            ? ''
+                            : 'you cannot add more questions, need to be a premium user.'
+                    }
+                >
+                    <div className="inline-block ">
                         <Button
                             onClick={addQuestion}
                             className={cn(
