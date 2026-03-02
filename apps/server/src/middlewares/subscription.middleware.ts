@@ -127,6 +127,28 @@ export default class Subscription {
         }
     }
 
+    static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
+        try {
+            const userData = await prisma.user.findUnique({
+                where: { id: user_id },
+                select: {
+                    subscriptions: {
+                        select: { tier: { select: { name: true } } },
+                        orderBy: { createdAt: 'desc' },
+                        take: 1,
+                    },
+                },
+            });
+
+            if (!userData || userData.subscriptions.length === 0) return null;
+
+            return userData.subscriptions[0].tier.name as SubscriptionEnum;
+        } catch (error) {
+            console.error('Error fetching user subscription:', error);
+            return null;
+        }
+    }
+
     private static async check_spectator_limit(
         quiz: { id: string; hostId: string } | null,
         res: Response,
@@ -228,25 +250,4 @@ export default class Subscription {
         });
     }
 
-    static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
-        try {
-            const userData = await prisma.user.findUnique({
-                where: { id: user_id },
-                select: {
-                    subscriptions: {
-                        select: { tier: { select: { name: true } } },
-                        orderBy: { createdAt: 'desc' },
-                        take: 1,
-                    },
-                },
-            });
-
-            if (!userData || userData.subscriptions.length === 0) return null;
-
-            return userData.subscriptions[0].tier.name as SubscriptionEnum;
-        } catch (error) {
-            console.error('Error fetching user subscription:', error);
-            return null;
-        }
-    }
 }
