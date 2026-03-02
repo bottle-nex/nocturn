@@ -1,7 +1,8 @@
+import { toast } from '@/lib/toast';
 import { QuizType } from '@nocturn/types';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
-import { toast } from 'sonner';
 
 export default class BackendActions {
     static async createQuiz(token: string): Promise<QuizType | null> {
@@ -68,7 +69,7 @@ export default class BackendActions {
         }
     }
 
-    static async launchQuiz(quiz: QuizType, token: string): Promise<boolean> {
+    static async launchQuiz(quiz: QuizType, token: string, router: ReturnType<typeof useRouter>): Promise<boolean> {
         if (!token || !quiz) {
             return false;
         }
@@ -88,12 +89,29 @@ export default class BackendActions {
             let message = "unknown error";
 
             if (axios.isAxiosError(err)) {
-                message = err.response?.data?.message ?? message;
+                const data = err.response?.data.data;
+                toast(data.title, {
+                    description: data.description,
+                    descriptionClassName: 'text-xs ',
+                    action: {
+                        label: 'Upgrade to Pro',
+                        onClick: () => {
+                            router.push('/premium');
+                        },
+                    },
+                    actionButtonStyle: {
+                        background: 'white',
+                        color: 'black',
+                        borderRadius: '3px',
+                        cursor: 'pointer',
+                    }
+                });
             } else if (err instanceof Error) {
                 message = err.message;
+                toast.error(message);
+            } else {
+                toast.error(message);
             }
-
-            toast.error(message);
             console.error("[LAUNCH_QUIZ_ERROR]", err);
             return false;
         }

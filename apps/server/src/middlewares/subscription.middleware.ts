@@ -39,49 +39,85 @@ export default class Subscription {
         await Subscription.check_participant_limit(quiz, res, next);
     }
 
-    static async launch_quiz_limit(req: Request, res: Response, next: NextFunction) {
+    static async launch_quiz_limit(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
         try {
             const user = req.user;
+
             if (!user) {
-                ResponseWriter.not_authorized(res);
-                return;
+                return ResponseWriter.not_authorized(res);
             }
 
             const tier =
-                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
-            const { limit, windowMs } = planManager.getRateLimit(tier, 'sessionsPerDay');
+                (await Subscription.get_user_subscription(user.id)) ??
+                SubscriptionEnum.FREE;
 
-            // null = unlimited (Pro)
+            const { limit, windowMs } =
+                planManager.getRateLimit(tier, 'sessionsPerDay');
+
+            // Unlimited plan
             if (limit === null) {
-                next();
-                return;
+                return next();
             }
 
             const window_start = new Date(Date.now() - windowMs);
 
-            const sessions_in_window = await prisma.quiz.count({
-                where: {
-                    hostId: user.id,
-                    startedAt: { gte: window_start },
-                    status: { in: ['LIVE'] },
-                },
-            });
+            const { sessions_in_window, oldest_session } =
+                await prisma.$transaction(async (tx) => {
 
-            if (sessions_in_window >= limit) {
-                ResponseWriter.custom(
+                    const sessions_in_window = await tx.quiz.count({
+                        where: {
+                            hostId: user.id,
+                            startedAt: { gte: window_start },
+                            status: { in: ['LIVE'] },
+                        },
+                    });
+
+                    const oldest_session = await tx.quiz.findFirst({
+                        where: {
+                            hostId: user.id,
+                            startedAt: { gte: window_start },
+                            status: { in: ['LIVE'] },
+                        },
+                        orderBy: { startedAt: 'asc' },
+                        select: { startedAt: true },
+                    });
+
+                    return {
+                        sessions_in_window,
+                        oldest_session,
+                    };
+                });
+
+            if (sessions_in_window >= limit && oldest_session?.startedAt) {
+                const expiresAt = new Date(oldest_session.startedAt).getTime() + windowMs;
+
+                const ttlMs = expiresAt - Date.now();
+                const formattedTTL = Subscription.formatTTL(ttlMs);
+
+                res.setHeader('Retry-After', Math.ceil(ttlMs / 1000));
+
+                return ResponseWriter.custom(
                     res,
                     false,
                     'SESSION_LAUNCH_LIMIT_REACHED',
-                    `You have reached your daily quiz launch limit. Upgrade to Pro for unlimited launches.`,
+                    `Next launch available in ${formattedTTL}`,
                     403,
+                    {
+                        title: 'Daily limit reached',
+                        description: `Next launch available in ${formattedTTL}`,
+                    }
                 );
-                return;
             }
 
-            next();
+            return next();
+
         } catch (error) {
             console.error('Error in launch quiz limit:', error);
-            ResponseWriter.system_error(res);
+            return ResponseWriter.system_error(res);
         }
     }
 
@@ -248,6 +284,26 @@ export default class Subscription {
             where: { id: quizId },
             select: { id: true, hostId: true },
         });
+    }
+
+    private static formatTTL(ms: number): string {
+        if (ms <= 0) return 'a few seconds';
+
+        const totalSeconds = Math.ceil(ms / 1000);
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        if (hours > 0) {
+            return `${hours}h ${minutes}m`;
+        }
+
+        if (minutes > 0) {
+            return `${minutes}m ${seconds}s`;
+        }
+
+        return `${seconds}s`;
     }
 
 }
