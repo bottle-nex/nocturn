@@ -8,6 +8,7 @@ import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
 import { NOCTURN_COOKIE_NAME, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
+import { planManager } from '@nocturn/premium';
 
 const NON_EDITABLE_STATUSES: QuizStatus[] = [
     'LIVE',
@@ -17,61 +18,47 @@ const NON_EDITABLE_STATUSES: QuizStatus[] = [
     'PAYOUT_COMPLETED',
 ];
 
+export enum QuizControllerAction {
+    SAVE = "SAVE",
+    UPDATE = "UPDATE",
+    PUBLISH = "PUBLISH",
+    LAUNCH = "LAUNCH",
+}
+
 export default class QuizController {
-    public static async save(req: Request, res: Response) {
-        const userId = req.user?.id;
-        const quizId = req.params.quizId;
 
-        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
-        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+    public static process<T extends QuizControllerAction>(action: T) {
+        return async (req: Request, res: Response) => {
+            const userId = req.user?.id;
+            const quizId = req.params.quizId;
 
-        const parsed = createQuizSchema.safeParse(req.body);
-        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+            if (!userId)
+                return ResponseWriter.not_authorized(res, 'User authentication required');
 
-        const { questions, ...quiz_data } = parsed.data;
-        await QuizController.handle_save(res, quizId, userId, quiz_data, questions || []);
-    }
+            if (!quizId)
+                return ResponseWriter.invalid_data(res, 'Quiz ID is required');
 
-    public static async update(req: Request, res: Response) {
-        const userId = req.user?.id;
-        const quizId = req.params.quizId;
+            const parsed = createQuizSchema.safeParse(req.body);
 
-        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
-        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+            if (!parsed.success)
+                return ResponseWriter.invalid_data(res, 'Invalid quiz format');
 
-        const parsed = createQuizSchema.safeParse(req.body);
-        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+            const { questions, ...quiz_data } = parsed.data;
 
-        const { questions, ...quiz_data } = parsed.data;
-        await QuizController.handle_update(res, quizId, userId, quiz_data, questions || []);
-    }
+            switch (action) {
+                case QuizControllerAction.SAVE:
+                    return QuizController.handle_save(res, quizId, userId, quiz_data, questions || []);
 
-    public static async publish(req: Request, res: Response) {
-        const userId = req.user?.id;
-        const quizId = req.params.quizId;
+                case QuizControllerAction.UPDATE:
+                    return QuizController.handle_update(res, quizId, userId, quiz_data, questions || []);
 
-        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
-        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
+                case QuizControllerAction.PUBLISH:
+                    return QuizController.handle_publish(res, quizId, userId, quiz_data, questions || []);
 
-        const parsed = createQuizSchema.safeParse(req.body);
-        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
-
-        const { questions, ...quiz_data } = parsed.data;
-        await QuizController.handle_publish(res, quizId, userId, quiz_data, questions || []);
-    }
-
-    public static async launch(req: Request, res: Response) {
-        const userId = req.user?.id;
-        const quizId = req.params.quizId;
-
-        if (!userId) return ResponseWriter.not_authorized(res, 'User authentication required');
-        if (!quizId) return ResponseWriter.invalid_data(res, 'Quiz ID is required');
-
-        const parsed = createQuizSchema.safeParse(req.body);
-        if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
-
-        const { questions, ...quiz_data } = parsed.data;
-        await QuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
+                case QuizControllerAction.LAUNCH:
+                    return QuizController.handle_launch(req, res, quizId, userId, quiz_data, questions || []);
+            }
+        };
     }
 
     private static async handle_save(
@@ -204,11 +191,13 @@ export default class QuizController {
                 Subscription.get_user_subscription(hostId),
             ]);
 
-            const spectatorCode = subscription === SubscriptionEnum.PRO ? specCode : undefined;
-            const spectatorLink =
-                subscription === SubscriptionEnum.PRO
-                    ? QuizAction.createSpectatorLink(quizId)
-                    : undefined;
+            let spectatorCode: string | undefined = undefined;
+            let spectatorLink: string | undefined = undefined;
+
+            if (planManager.isEnabled(subscription ?? SubscriptionEnum.FREE, 'maxSpectatorPerSession')) {
+                spectatorCode = specCode;
+                spectatorLink = QuizAction.createSpectatorLink(quizId);
+            }
 
             if (!host) return; // response already sent inside get_host_details
 

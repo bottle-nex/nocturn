@@ -13,6 +13,7 @@ import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftR
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { InteractionEnum } from '@nocturn/types';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
+import { useSubscription } from '@/hooks/subscription/useSubscription';
 
 interface InteractionIconProps {
     icon: ReactElement;
@@ -20,39 +21,40 @@ interface InteractionIconProps {
     color: string;
 }
 
+const interactionIcons: InteractionIconProps[] = [
+    {
+        icon: <FaHeart size={20} />,
+        type: InteractionEnum.HEART,
+        color: '#E53E3E',
+    },
+    {
+        icon: <PiCurrencyCircleDollarFill size={20} />,
+        type: InteractionEnum.DOLLAR,
+        color: '#38A169',
+    },
+    {
+        icon: <FaLightbulb size={20} />,
+        type: InteractionEnum.BULB,
+        color: '#F6E05E',
+    },
+    {
+        icon: <BsFillHandThumbsUpFill size={20} />,
+        type: InteractionEnum.THUMBS_UP,
+        color: '#3182CE',
+    },
+    {
+        icon: <MdEmojiEmotions size={20} />,
+        type: InteractionEnum.SMILE,
+        color: '#F6AD55',
+    },
+];
+
 export default function InteractionsDraft() {
     const { setState } = useDraftRendererStore();
     const { quiz, toggleInteraction } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const [hoveredType, setHoveredType] = useState<InteractionEnum | null>(null);
-
-    const interactionIcons: InteractionIconProps[] = [
-        {
-            icon: <FaHeart size={20} />,
-            type: InteractionEnum.HEART,
-            color: '#E53E3E',
-        },
-        {
-            icon: <PiCurrencyCircleDollarFill size={20} />,
-            type: InteractionEnum.DOLLAR,
-            color: '#38A169',
-        },
-        {
-            icon: <FaLightbulb size={20} />,
-            type: InteractionEnum.BULB,
-            color: '#F6E05E',
-        },
-        {
-            icon: <BsFillHandThumbsUpFill size={20} />,
-            type: InteractionEnum.THUMBS_UP,
-            color: '#3182CE',
-        },
-        {
-            icon: <MdEmojiEmotions size={20} />,
-            type: InteractionEnum.SMILE,
-            color: '#F6AD55',
-        },
-    ];
+    const { isEnabled } = useSubscription();
 
     return (
         <div className="text-neutral-900 dark:text-neutral-100">
@@ -76,10 +78,9 @@ export default function InteractionsDraft() {
                                 className={`border p-2 rounded-md cursor-pointer transition-all duration-200 ease-in-out
                                     dark:border-neutral-600 border-neutral-300
                                     hover:shadow-sm
-                                    ${
-                                        isSelected
-                                            ? 'scale-110 shadow-md bg-neutral-800/40'
-                                            : 'hover:scale-105'
+                                    ${isSelected
+                                        ? 'scale-110 shadow-md bg-neutral-800/40'
+                                        : 'hover:scale-105'
                                     }`}
                             >
                                 <span style={{ color: displayColor }}>{cloneElement(icon)}</span>
@@ -106,6 +107,7 @@ export default function InteractionsDraft() {
                         className="cursor-pointer"
                         checked={quiz.liveChat}
                         onCheckedChange={(checked) => updateQuizAndBroadcast({ liveChat: checked })}
+                        disabled={!isEnabled('liveChat')}
                     />
                 </div>
             </div>
@@ -129,6 +131,7 @@ export default function InteractionsDraft() {
                         onCheckedChange={(checked) =>
                             updateQuizAndBroadcast({ spectatorMode: checked })
                         }
+                        disabled={!isEnabled('maxSpectatorPerSession')}
                     />
                 </div>
             </div>
