@@ -4,8 +4,8 @@ import { gate, numeric, ONE_DAY, rate } from "./types";
 export const FEATURES = {
   maxParticipantPerSession: numeric(10, null),
   maxSpectatorPerSession: numeric(0, 50),
-  maxQuestions: numeric(20, null),
   maxCollaborators: numeric(0, 4),
+  maxQuestions: numeric(20, null),
 
   liveChat: gate(false, true),
 

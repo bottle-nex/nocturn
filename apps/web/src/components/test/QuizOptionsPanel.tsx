@@ -90,7 +90,9 @@ export default function QuizOptionsPanel({
                 locked && 'pointer-events-none opacity-60',
             )}
         >
-            {quiz.status === QuizStatusEnum.LIVE && (
+            {(quiz.status === QuizStatusEnum.LIVE ||
+                quiz.status === QuizStatusEnum.PUBLISHED ||
+                quiz.status === QuizStatusEnum.COMPLETED) && (
                 <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
             )}
 

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { spectatorJoinSchema } from '../../schemas/spectatorJoinSchema';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
@@ -7,9 +6,10 @@ import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
+import { quizJoinSchema } from '../../schemas/quizJoinSchema';
 
 export default async function spectatorJoinController(req: Request, res: Response) {
-    const parsedData = spectatorJoinSchema.safeParse(req.body);
+    const parsedData = quizJoinSchema.safeParse(req.body);
     const redisCache = redisCacheInstance;
 
     if (!parsedData.success) {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+    HOST_JOIN_QUIZ_URL,
     PARTICIPANT_JOIN_QUIZ_URL,
     SPECTATOR_JOIN_QUIZ_URL,
     SPECTATOR_JOIN_QUIZ_URL_VIA_LINK,
@@ -20,6 +21,36 @@ class UserQuizAction {
             default:
                 toast.error('Please enter a valid code');
                 return null;
+        }
+    }
+
+    public async hostJoinQuiz(quizId: string, token: string) {
+        try {
+            if (!quizId) {
+                toast.error('Invalid quiz id');
+                return null;
+            }
+
+            const { data } = await axios.post(
+                HOST_JOIN_QUIZ_URL,
+                { quizId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    withCredentials: true,
+                },
+            );
+
+            if (data.success) {
+                toast.success(data.message);
+                return data.data;
+            }
+            toast.error(data.message);
+            return null;
+        } catch (error) {
+            console.error('Error while joining quiz', error);
+            return null;
         }
     }
 

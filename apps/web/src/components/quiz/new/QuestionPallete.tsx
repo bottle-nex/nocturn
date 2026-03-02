@@ -78,21 +78,32 @@ function BigQuestionPallete({
     removeQuestion,
     currentQTemplate,
 }: QuestionPallete) {
-    const canAddQuestions = maxQuestions ? maxQuestions >= quiz.questions.length : true;
+    const canAddQuestions = maxQuestions ? maxQuestions > quiz.questions.length : true;
 
     return (
         <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
-            <Button
-                onClick={addQuestion}
-                className={cn(
-                    'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
-                    'rounded-full m-0 mt-4 px-20 text-xs font-light flex items-center justify-center gap-x-2',
-                )}
-                disabled={!canAddQuestions}
+            <ToolTipComponent
+                content={
+                    canAddQuestions
+                        ? ''
+                        : 'you cannot add more questions, need to be a premium user.'
+                }
             >
-                <TbPlus />
-                <span>Add Question</span>
-            </Button>
+                <div className="inline-block ">
+                    <Button
+                        onClick={addQuestion}
+                        className={cn(
+                            'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
+                            'rounded-full m-0 mt-4 px-20 text-xs font-light flex items-center justify-center gap-x-2',
+                            'disabled:bg-neutral-300 disabled:cursor-not-allowed',
+                        )}
+                        disabled={!canAddQuestions}
+                    >
+                        <TbPlus />
+                        <span>Add Question</span>
+                    </Button>
+                </div>
+            </ToolTipComponent>
 
             <div
                 className="flex flex-col gap-y-1.5 mt-4 pt-4 w-full flex-1 overflow-y-auto custom-scrollbar pr-1 relative"
@@ -171,17 +182,28 @@ function SmallQuestionPallete({
             )}
         >
             <div className="w-full flex justify-center items-center gap-x-2 mt-4">
-                <Button
-                    onClick={addQuestion}
-                    className={cn(
-                        'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
-                        'rounded-full m-0 px-20 text-xs font-light flex items-center justify-center gap-x-2',
-                    )}
-                    disabled={!canAddQuestions}
+                <ToolTipComponent
+                    content={
+                        canAddQuestions
+                            ? ''
+                            : 'you cannot add more questions, need to be a premium user.'
+                    }
                 >
-                    <TbPlus />
-                    <span>Add Question</span>
-                </Button>
+                    <div className="inline-block ">
+                        <Button
+                            onClick={addQuestion}
+                            className={cn(
+                                'bg-dark-base dark:bg-neutral-200 dark:hover:bg-light-base hover:bg-dark-alpha ',
+                                'rounded-full m-0 px-20 text-xs font-light flex items-center justify-center gap-x-2',
+                                'disabled:bg-neutral-300 disabled:cursor-not-allowed ',
+                            )}
+                            disabled={!canAddQuestions}
+                        >
+                            <TbPlus />
+                            <span>Add Question</span>
+                        </Button>
+                    </div>
+                </ToolTipComponent>
                 <FiX size={20} onClick={handleClose} className="cursor-pointer" />
             </div>
 

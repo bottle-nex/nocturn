@@ -191,6 +191,7 @@ export default class HostManager {
         this.quiz_settings.update_quiz_settings_on_db_and_cache(
             ws.user.gameSessionId,
             ws.user.quizId,
+            ws.user.userId,
             payload,
         );
     }

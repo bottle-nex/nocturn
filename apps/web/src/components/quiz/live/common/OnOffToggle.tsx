@@ -3,13 +3,28 @@
 interface ToggleSwitchProps {
     value?: boolean;
     onChange?: (val: boolean) => void;
+    disabled?: boolean;
 }
 
-export default function OnOffToggle({ value, onChange }: ToggleSwitchProps) {
+export default function OnOffToggle({
+    value = false,
+    onChange,
+    disabled = false,
+}: ToggleSwitchProps) {
     return (
         <div
-            className="relative flex w-28 h-8 bg-neutral-200 dark:bg-transparent border rounded-full p-1 cursor-pointer transition-colors duration-300"
-            onClick={() => onChange?.(!value)}
+            className={`
+                relative flex w-28 h-8 border rounded-full p-1 transition-colors duration-300
+                ${
+                    disabled
+                        ? 'bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed opacity-50'
+                        : 'bg-neutral-200 dark:bg-transparent cursor-pointer'
+                }
+            `}
+            onClick={() => {
+                if (disabled) return;
+                onChange?.(!value);
+            }}
         >
             <div
                 className={`absolute top-1 left-1 h-6 w-12 rounded-full bg-neutral-800 dark:bg-white transition-all duration-300 ${

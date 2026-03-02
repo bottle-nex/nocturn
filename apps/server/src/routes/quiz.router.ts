@@ -22,7 +22,9 @@ import authMiddleware from '../middlewares/auth.middleware';
 import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
-import QuizController from '../controllers/quiz-controller/quizController';
+import QuizController, {
+    QuizControllerAction,
+} from '../controllers/quiz-controller/quizController';
 import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
 import Subscription from '../middlewares/subscription.middleware';
 
@@ -53,20 +55,20 @@ router.post(
     '/quiz/create-quiz/:quizId',
     authMiddleware,
     Subscription.question_limit,
-    QuizController.save,
+    QuizController.process(QuizControllerAction.SAVE),
 );
 router.post(
     '/quiz/publish-quiz/:quizId',
     authMiddleware,
     Subscription.question_limit,
-    QuizController.publish,
+    QuizController.process(QuizControllerAction.PUBLISH),
 );
 router.post(
     '/quiz/launch-quiz/:quizId',
     authMiddleware,
     Subscription.question_limit,
-    Subscription.launch_quiz_limit,
-    QuizController.launch,
+    // Subscription.launch_quiz_limit,
+    QuizController.process(QuizControllerAction.LAUNCH),
 );
 
 router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsController);
