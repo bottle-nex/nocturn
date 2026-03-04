@@ -40,8 +40,6 @@ export default async function permanentDeleteSelectedQuiz(req: Request, res: Res
             return;
         }
 
-        console.log({ allValidStrings });
-
         const result = await prisma.quiz.deleteMany({
             where: {
                 id: { in: quizIds },

@@ -186,7 +186,6 @@ export default class CollaborationManager {
 
     private async handle_question_tap(ws: CollabWebSocket, payload: any) {
         try {
-            console.log('payload is : ', payload);
             const { orderIndex } = payload;
             if (!ws.collabUser.collabSessionId) {
                 ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');

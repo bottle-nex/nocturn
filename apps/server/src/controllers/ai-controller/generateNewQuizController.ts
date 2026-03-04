@@ -13,7 +13,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             return;
         }
         const parsed_data = generateNewQuizSchema.safeParse(req.body);
-        console.log('parsed data is : ', parsed_data);
+
         if (!parsed_data.success) {
             ResponseWriter.invalid_data(res, 'invalid data provided');
             return;
@@ -39,7 +39,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
                 },
             });
         }
-        console.log('session is : ', session);
+
         await prisma.aiQuizMessage.create({
             data: {
                 aiQuizChatSessionId: session.id,

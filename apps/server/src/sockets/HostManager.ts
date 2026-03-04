@@ -432,13 +432,12 @@ export default class HostManager {
 
     private async handle_quiz_results(ws: GameWebSocket) {
         const { gameSessionId: game_session_id, quizId: quiz_id } = ws.user;
-        console.log('request came to end the quiz');
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         if (!quiz) return;
-        console.log('quiz questions are : ', quiz.questions);
+
         const questions = quiz.questions?.filter((q) => !q.isAsked);
-        console.log('questions which are not asked yet : ', questions);
+
         if (!questions || questions.length !== 0) {
             // show messaage that quiz is not ended yet
             return;
@@ -451,8 +450,6 @@ export default class HostManager {
             'longestStreak',
             'totalScore',
         ]);
-
-        console.log('scores of participants are : ', scores);
 
         const final_scores = scores.filter((s) => !s.isKicked);
 
