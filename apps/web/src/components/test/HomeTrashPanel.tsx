@@ -5,7 +5,6 @@ import UtilityCard from '../utility/UtilityCard';
 import { Button } from '../ui/button';
 import Lottie from 'lottie-react';
 import EmptyCanvas from '../canvas/EmptyCanvas';
-import moment from 'moment';
 import emptyTrashAnimation from '../../assets/lottie/empty-trash.json';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
@@ -13,28 +12,32 @@ import { toast } from '@/lib/toast';
 import { useAllTrashedQuizzesStore } from '@/store/user/useAllTrashedQuizzesStore';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { IoMdRefresh } from 'react-icons/io';
 import { Input } from '../ui/input';
-import { PiMagnifyingGlass, PiTrashSimple } from 'react-icons/pi';
+import { PiMagnifyingGlass } from 'react-icons/pi';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
-import Image from 'next/image';
-import { MdCheckBox, MdCheckBoxOutlineBlank, MdDeleteSweep } from 'react-icons/md';
+import { MdDeleteSweep } from 'react-icons/md';
 import CanvasSkeletonCard from '@/components/skeletons/CanvasSkeleton';
 import { Loader } from 'lucide-react';
+import TrashPanelQuizActionsComponent from './TrashPanelComponents/TrashPanelQuizActionsComponent';
+import TrashPanelDeleteConfirmationComponent from './TrashPanelComponents/TrashPanelDeleteConfimrationComponent';
+import TrashPanelQuizImageAndTitleComponent from './TrashPanelComponents/TrashPanelQuizImageAndTitleComponent';
+
+type PendingDeleteAction = { type: 'single'; quizId: string } | { type: 'bulk' };
 
 export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
+    const [clearingTrash, setClearingTrash] = useState<boolean>(false);
     const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
         useAllTrashedQuizzesStore();
     const { addQuiz } = useAllQuizsStore();
     const { session } = useUserSessionStore();
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [loading, setLoading] = useState(true);
-    const [clearingTrash, setClearingTrash] = useState(false);
     const [quizActionLoading, setQuizActionLoading] = useState<
         Record<string, 'restore' | 'delete' | null>
     >({});
     const [selectedQuizzes, setSelectedQuizzes] = useState<Set<string>>(new Set());
+    const [pendingDelete, setPendingDelete] = useState<PendingDeleteAction | null>(null);
 
     function startQuizAction(id: string, type: 'restore' | 'delete') {
         setQuizActionLoading((prev) => ({ ...prev, [id]: type }));
@@ -63,32 +66,64 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
           )
         : [];
 
-    async function handleDeleteAllTrashedQuizzes() {
+    function requestDeleteAllOrSelected() {
         if (!session?.user.token || clearingTrash) return;
         if (trashedQuizzes.length === 0) {
             toast.error('trash is already cleared');
             return;
         }
+        setPendingDelete({ type: 'bulk' });
+    }
 
-        const hasSelected = selectedQuizzes.size > 0;
-        setClearingTrash(true);
-        try {
-            if (hasSelected) {
-                const ids = Array.from(selectedQuizzes);
+    function requestPermanentlyDeleteQuiz(quizId: string) {
+        if (!session?.user.token || quizActionLoading[quizId]) return;
+        setPendingDelete({ type: 'single', quizId });
+    }
 
-                await QuizActions.delete_selected_trashed_quizzes(session.user.token, ids);
-                ids.forEach((id) => removeTrashedQuizById(id));
-                setSelectedQuizzes(new Set());
-                toast.success('Selected quizzes deleted');
-            } else {
-                await QuizActions.delete_all_trashed_quizzes(session.user.token);
-                resetTrashQuizStore();
-                toast.success('Cleared trash successfully');
+    function cancelDelete() {
+        setPendingDelete(null);
+    }
+
+    async function confirmDelete() {
+        if (!pendingDelete) return;
+        if (pendingDelete.type === 'bulk') {
+            const hasSelected = selectedQuizzes.size > 0;
+            setClearingTrash(true);
+            setPendingDelete(null);
+            try {
+                if (hasSelected) {
+                    const ids = Array.from(selectedQuizzes);
+                    await QuizActions.delete_selected_trashed_quizzes(session!.user.token, ids);
+                    ids.forEach((id) => removeTrashedQuizById(id));
+                    setSelectedQuizzes(new Set());
+                    toast.success('Selected quizzes deleted');
+                } else {
+                    await QuizActions.delete_all_trashed_quizzes(session!.user.token);
+                    resetTrashQuizStore();
+                    toast.success('Cleared trash successfully');
+                }
+            } catch {
+                toast.error('Failed to delete quizzes');
+            } finally {
+                setClearingTrash(false);
             }
-        } catch {
-            toast.error('Failed to delete quizzes');
-        } finally {
-            setClearingTrash(false);
+        } else {
+            const { quizId } = pendingDelete;
+            setPendingDelete(null);
+            startQuizAction(quizId, 'delete');
+            try {
+                const deletedQuiz = await QuizActions.permanently_delete_quiz(
+                    session!.user.token,
+                    quizId,
+                );
+                if (!deletedQuiz) return;
+                removeTrashedQuizById(deletedQuiz.id);
+                toast.success('Quiz permanently deleted');
+            } catch {
+                console.error('Failed to permanently delete quiz');
+            } finally {
+                stopQuizAction(quizId);
+            }
         }
     }
 
@@ -116,25 +151,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
             addQuiz(restoredQuiz);
             toast.success('Quiz restored');
         } catch {
-            console.error('Failed to restpre quiz');
-        } finally {
-            stopQuizAction(quizId);
-        }
-    }
-
-    async function handlePermanentlyDeleteQuiz(quizId: string) {
-        if (!session?.user.token || quizActionLoading[quizId]) return;
-        startQuizAction(quizId, 'delete');
-        try {
-            const deletedQuiz = await QuizActions.permanently_delete_quiz(
-                session.user.token,
-                quizId,
-            );
-            if (!deletedQuiz) return;
-            removeTrashedQuizById(deletedQuiz.id);
-            toast.success('Quiz permanently deleted');
-        } catch {
-            console.error('Failed to premanently delete quiz');
+            console.error('Failed to restore quiz');
         } finally {
             stopQuizAction(quizId);
         }
@@ -156,7 +173,6 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                     Items in trash are permanently deleted after 30 days
                                 </div>
                             </div>
-
                             <div className="flex gap-x-2 items-center">
                                 <div className="relative w-md h-10 rounded-beta border-dark-base dark:border-neutral-700 dark:bg-zinc-800 dark:text-white">
                                     <Input
@@ -170,14 +186,13 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                         className="absolute top-1/2 left-3 -translate-y-1/2 text-neutral-500 dark:text-neutral-400"
                                     />
                                 </div>
-
                                 <ToolTipComponent
                                     content={hasSelected ? 'Delete selected' : 'Empty Trash'}
                                 >
                                     <Button
                                         variant={'outline'}
                                         size={hasSelected ? 'default' : 'icon'}
-                                        onClick={handleDeleteAllTrashedQuizzes}
+                                        onClick={requestDeleteAllOrSelected}
                                         disabled={clearingTrash}
                                         className={cn(
                                             'rounded-alpha bg-red-700 dark:bg-red-700/60! hover:bg-red-700/90 hover:dark:bg-red-700/40! tracking-wide text-light-base flex items-center gap-2 text-[13px] shadow-sm',
@@ -200,7 +215,6 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                 </ToolTipComponent>
                             </div>
                         </div>
-
                         <div
                             className="w-full h-full overflow-y-auto custom-scrollbar mt-2"
                             data-lenis-prevent
@@ -214,162 +228,35 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                             ) : filteredQuizzes.length > 0 ? (
                                 <div className="grid grid-cols-3 gap-4 pb-4">
                                     {filteredQuizzes.map((quiz) => {
-                                        const formattedTime = quiz.deletedAt
-                                            ? moment(quiz.deletedAt).format('MMM D, YYYY')
-                                            : '';
                                         const isOperating = !!quizActionLoading[quiz.id];
                                         const isSelected = selectedQuizzes.has(quiz.id);
-
                                         return (
                                             <div
                                                 key={quiz.id}
                                                 className="max-w-100 w-full p-1 flex flex-col relative group"
                                             >
-                                                <div
-                                                    className={cn(
-                                                        'absolute top-5 z-50 px-5 flex justify-between w-full transition-all duration-100',
-                                                        isOperating
-                                                            ? 'opacity-100'
-                                                            : 'opacity-0 group-hover:opacity-100',
-                                                    )}
-                                                >
-                                                    <div>
-                                                        <ToolTipComponent
-                                                            content={
-                                                                isSelected ? 'unselect' : 'select'
-                                                            }
-                                                        >
-                                                            <div
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    toggleSelectQuiz(quiz.id);
-                                                                }}
-                                                                className={cn(
-                                                                    'bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha shadow-xs cursor-pointer',
-                                                                )}
-                                                            >
-                                                                {isSelected ? (
-                                                                    <MdCheckBox className="size-6 text-indigo-700" />
-                                                                ) : (
-                                                                    <MdCheckBoxOutlineBlank className="size-6 text-indigo-700" />
-                                                                )}
-                                                            </div>
-                                                        </ToolTipComponent>
-                                                    </div>
-                                                    <div className="flex gap-x-2.5 items-center">
-                                                        <ToolTipComponent content="restore">
-                                                            <div
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleRestoreQuiz(quiz.id);
-                                                                }}
-                                                                className={cn(
-                                                                    'bg-light-base/70 backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer',
-                                                                    isOperating &&
-                                                                        quizActionLoading[
-                                                                            quiz.id
-                                                                        ] !== 'restore' &&
-                                                                        'pointer-events-none',
-                                                                )}
-                                                            >
-                                                                {quizActionLoading[quiz.id] ===
-                                                                'restore' ? (
-                                                                    <Loader className="size-3.5 animate-spin" />
-                                                                ) : (
-                                                                    <IoMdRefresh
-                                                                        style={{
-                                                                            transform: 'scaleX(-1)',
-                                                                        }}
-                                                                        className="size-3.5"
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        </ToolTipComponent>
-
-                                                        <ToolTipComponent content="delete permanently">
-                                                            <div
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handlePermanentlyDeleteQuiz(
-                                                                        quiz.id,
-                                                                    );
-                                                                }}
-                                                                className={cn(
-                                                                    'bg-light-base/70 backdrop-blur-sm text-red-600 h-6 w-6 flex justify-center items-center rounded-alpha ring-1 ring-dark-base/10 shadow-xs cursor-pointer',
-                                                                    isOperating &&
-                                                                        quizActionLoading[
-                                                                            quiz.id
-                                                                        ] !== 'delete' &&
-                                                                        'pointer-events-none',
-                                                                )}
-                                                            >
-                                                                {quizActionLoading[quiz.id] ===
-                                                                'delete' ? (
-                                                                    <Loader className="size-3.5 animate-spin" />
-                                                                ) : (
-                                                                    <PiTrashSimple className="size-3.5 stroke-2" />
-                                                                )}
-                                                            </div>
-                                                        </ToolTipComponent>
-                                                    </div>
-                                                </div>
-
+                                                {/* actions-panel */}
+                                                <TrashPanelQuizActionsComponent
+                                                    quizId={quiz.id}
+                                                    isOperating={isOperating}
+                                                    isSelected={isSelected}
+                                                    quizActionLoading={quizActionLoading}
+                                                    toggleSelectQuiz={toggleSelectQuiz}
+                                                    handleRestoreQuiz={handleRestoreQuiz}
+                                                    handlePermanentlyDeleteQuiz={
+                                                        requestPermanentlyDeleteQuiz
+                                                    }
+                                                />
+                                                {/* quiz-canvas */}
                                                 <EmptyCanvas
                                                     question={quiz.questions?.[0]?.question}
                                                     options={quiz.questions?.[0]?.options}
                                                     className="w-full aspect-video rounded-[8px] outline-2 select-none cursor-pointer outline-black/40 dark:outline-white/40"
                                                     template={quiz.template}
-                                                    onClick={() => {
-                                                        toggleSelectQuiz(quiz.id);
-                                                    }}
+                                                    onClick={() => toggleSelectQuiz(quiz.id)}
                                                 />
-
-                                                <div className="flex items-center gap-x-2.5 mt-3 w-full overflow-hidden">
-                                                    {quiz.host?.image && (
-                                                        <Image
-                                                            src={quiz.host.image}
-                                                            width={32}
-                                                            height={32}
-                                                            alt="user-logo"
-                                                            className="rounded-full"
-                                                        />
-                                                    )}
-                                                    <div className="flex flex-col h-full">
-                                                        <span className="block text-normal text-dark-base dark:text-light-base truncate w-[50%]">
-                                                            {quiz.title}
-                                                        </span>
-                                                        <div className="flex items-center gap-x-2">
-                                                            <span className="block dark:text-white/60 text-black/60 text-[13px]">
-                                                                Deleted {formattedTime}
-                                                            </span>
-                                                            {quiz.daysLeftUntilPermanentDeletion !=
-                                                                null && (
-                                                                <>
-                                                                    <span className="h-3 w-px bg-black/30 dark:bg-white/30" />
-                                                                    <span
-                                                                        className={cn(
-                                                                            'text-[13px] font-medium',
-                                                                            quiz.daysLeftUntilPermanentDeletion <=
-                                                                                3
-                                                                                ? 'text-red-500 dark:text-red-400'
-                                                                                : 'dark:text-light-base/60 text-dark-base/80',
-                                                                        )}
-                                                                    >
-                                                                        {
-                                                                            quiz.daysLeftUntilPermanentDeletion
-                                                                        }{' '}
-                                                                        day
-                                                                        {quiz.daysLeftUntilPermanentDeletion !==
-                                                                        1
-                                                                            ? 's'
-                                                                            : ''}{' '}
-                                                                        left
-                                                                    </span>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                {/* image and details */}
+                                                <TrashPanelQuizImageAndTitleComponent quiz={quiz} />
                                             </div>
                                         );
                                     })}
@@ -388,6 +275,11 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                             )}
                         </div>
                     </div>
+                    <TrashPanelDeleteConfirmationComponent
+                        isOpen={!!pendingDelete}
+                        onCancel={cancelDelete}
+                        onConfirm={confirmDelete}
+                    />
                 </UtilityCard>
             </OpacityBackground>
         </AnimatePresence>

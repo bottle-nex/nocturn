@@ -92,17 +92,21 @@ export default function MyQuizzesGridView({
                 )}
             </div>
 
-            <EmptyCanvas
-                onClick={handleCardClick}
-                question={quiz.questions[0]?.question}
-                options={quiz.questions[0]?.options}
-                className={cn(
-                    'w-full aspect-video rounded-[8px] outline select-none transition-all duration-200',
-                    isSelected ? 'outline-indigo-600' : 'outline-black/40 dark:outline-white/40',
-                    isLocked && 'pointer-events-none opacity-80',
-                )}
-                template={quiz.template}
-            />
+            {quiz.questions?.length > 0 && (
+                <EmptyCanvas
+                    onClick={handleCardClick}
+                    question={quiz.questions[0].question}
+                    options={quiz.questions[0].options}
+                    className={cn(
+                        'w-full aspect-video rounded-[8px] outline select-none transition-all duration-200',
+                        isSelected
+                            ? 'outline-indigo-600'
+                            : 'outline-black/40 dark:outline-white/40',
+                        isLocked && 'pointer-events-none opacity-80',
+                    )}
+                    template={quiz.template}
+                />
+            )}
 
             <div className="flex items-center gap-x-2.5 pt-2">
                 {quiz.host?.image && (
