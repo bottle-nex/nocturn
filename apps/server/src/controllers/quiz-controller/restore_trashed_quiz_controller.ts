@@ -23,6 +23,17 @@ export default async function restore_trashed_quiz_controller(req: Request, res:
                 id: quizId,
                 hostId: String(userId),
             },
+            include: {
+                questions: {
+                    take: 1,
+                    select: {
+                        id: true,
+                        question: true,
+                        options: true,
+                    },
+                },
+                template: true,
+            },
         });
 
         if (!quiz) {
