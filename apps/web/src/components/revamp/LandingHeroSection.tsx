@@ -111,7 +111,7 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="text-xl text-dark-base/60 max-w-[37rem] text-center"
+                className="text-xl text-dark-base/60 max-w-148 text-center"
             >
                 Nocturn is a live competitive quiz app designed for curious minds. Hosts launch
                 challenges, players battle it out, and the top three win.

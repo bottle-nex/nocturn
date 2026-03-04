@@ -45,7 +45,6 @@ export default function LandingTestNav() {
         } else {
             setOpenSigninModal(true);
         }
-        // isLoggedIn ? setOpenLogoutModal(true) : setOpenSigninModal(true);
     }
 
     return (

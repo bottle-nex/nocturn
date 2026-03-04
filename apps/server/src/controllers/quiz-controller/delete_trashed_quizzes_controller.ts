@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma, QuizStatus } from '@nocturn/database';
+import { prisma } from '@nocturn/database';
 
 export default async function delete_trashed_quizzes_controller(req: Request, res: Response) {
     const user = req.user;
@@ -15,9 +15,6 @@ export default async function delete_trashed_quizzes_controller(req: Request, re
             where: {
                 hostId: user.id,
                 isDeleted: true,
-                status: {
-                    not: QuizStatus.LIVE,
-                },
             },
         });
 
