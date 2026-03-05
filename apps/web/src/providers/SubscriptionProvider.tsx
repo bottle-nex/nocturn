@@ -2,16 +2,16 @@
 
 import { createContext, useState, useCallback, ReactNode } from 'react';
 import { SubscriptionEnum } from '@nocturn/types';
-import { planManager as Plans, type FeatureKey } from '@nocturn/premium';
+import { FEATURE, planManager as Plans } from '@nocturn/premium';
 
 export interface SubscriptionContextValue {
     tier: SubscriptionEnum;
     isLoaded: boolean;
 
     setTier: (tier: SubscriptionEnum) => void;
-    isEnabled: (feature: FeatureKey) => boolean;
-    getNumericLimit: (feature: FeatureKey) => number | null;
-    getRateLimit: (feature: FeatureKey) => { limit: number | null; windowMs: number };
+    isEnabled: (feature: FEATURE) => boolean;
+    getNumericLimit: (feature: FEATURE) => number | null;
+    getRateLimit: (feature: FEATURE) => { limit: number | null; windowMs: number };
     isPro: () => boolean;
 }
 
@@ -31,15 +31,15 @@ export default function SubscriptionProvider({ children, initialTier }: Subscrip
         setIsLoaded(true);
     }, []);
 
-    const isEnabled = useCallback((feature: FeatureKey) => Plans.isEnabled(tier, feature), [tier]);
+    const isEnabled = useCallback((feature: FEATURE) => Plans.isEnabled(tier, feature), [tier]);
 
     const getNumericLimit = useCallback(
-        (feature: FeatureKey) => Plans.getNumericLimit(tier, feature),
+        (feature: FEATURE) => Plans.getNumericLimit(tier, feature),
         [tier],
     );
 
     const getRateLimit = useCallback(
-        (feature: FeatureKey) => Plans.getRateLimit(tier, feature),
+        (feature: FEATURE) => Plans.getRateLimit(tier, feature),
         [tier],
     );
 
