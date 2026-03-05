@@ -67,7 +67,7 @@ export default async function participantJoinController(req: Request, res: Respo
             );
             return;
         }
-        console.log('game session status', gameSession.status);
+
         if (
             [SessionStatusEnum.LIVE, SessionStatusEnum.COMPLETED].includes(
                 gameSession.status as SessionStatusEnum,

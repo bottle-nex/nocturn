@@ -14,6 +14,7 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { InteractionEnum } from '@nocturn/types';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { useSubscription } from '@/hooks/subscription/useSubscription';
+import { FEATURE } from '@nocturn/premium';
 
 interface InteractionIconProps {
     icon: ReactElement;
@@ -108,7 +109,7 @@ export default function InteractionsDraft() {
                         className="cursor-pointer"
                         checked={quiz.liveChat}
                         onCheckedChange={(checked) => updateQuizAndBroadcast({ liveChat: checked })}
-                        disabled={!isEnabled('liveChat')}
+                        disabled={!isEnabled(FEATURE.LIVE_CHAT)}
                     />
                 </div>
             </div>
@@ -132,7 +133,7 @@ export default function InteractionsDraft() {
                         onCheckedChange={(checked) =>
                             updateQuizAndBroadcast({ spectatorMode: checked })
                         }
-                        disabled={!isEnabled('maxSpectatorPerSession')}
+                        disabled={!isEnabled(FEATURE.MAX_SPECTATORS_PER_SESSION)}
                     />
                 </div>
             </div>

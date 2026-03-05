@@ -7,7 +7,6 @@ export default async function delete_selected_quizzes_controller(req: Request, r
         ResponseWriter.not_authorized(res);
         return;
     }
-    console.log('request looks like : ', req.body);
 
     const { quizIds } = req.body;
 

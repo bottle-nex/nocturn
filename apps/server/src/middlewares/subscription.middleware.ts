@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import ResponseWriter from '../class/response_writer';
-import { planManager } from '@nocturn/premium';
+import { FEATURE, planManager } from '@nocturn/premium';
 import { SubscriptionEnum } from '@nocturn/types';
 import { prisma } from '@nocturn/database';
 
@@ -50,7 +50,7 @@ export default class Subscription {
             const tier =
                 (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
-            const { limit, windowMs } = planManager.getRateLimit(tier, 'sessionsPerDay');
+            const { limit, windowMs } = planManager.getRateLimit(tier, FEATURE.SESSIONS_PER_DAY);
 
             // Unlimited plan
             if (limit === null) {
@@ -129,7 +129,7 @@ export default class Subscription {
 
             const tier =
                 (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
-            const ceiling = planManager.getNumericLimit(tier, 'maxQuestions');
+            const ceiling = planManager.getNumericLimit(tier, FEATURE.MAX_SLIDES_PER_PRESENTATION);
 
             if (ceiling === null) {
                 next();
@@ -190,7 +190,7 @@ export default class Subscription {
             const owner_tier = await Subscription.get_user_subscription(quiz.hostId);
             const tier = owner_tier ?? SubscriptionEnum.FREE;
 
-            const ceiling = planManager.getNumericLimit(tier, 'maxSpectatorPerSession');
+            const ceiling = planManager.getNumericLimit(tier, FEATURE.MAX_SPECTATORS_PER_SESSION);
 
             if (ceiling === null) {
                 next();
@@ -231,7 +231,7 @@ export default class Subscription {
             }
             const owner_tier = await Subscription.get_user_subscription(quiz.hostId);
             const tier = owner_tier ?? SubscriptionEnum.FREE;
-            const ceiling = planManager.getNumericLimit(tier, 'maxParticipantPerSession');
+            const ceiling = planManager.getNumericLimit(tier, FEATURE.MAX_PARTICIPANTS_PER_SESSION);
             if (ceiling === null) {
                 next();
                 return;

@@ -9,7 +9,7 @@ import {
 import QuizManager from '../sockets/QuizManager';
 import { MESSAGE_TYPES, PubSubMessageTypes, SubscriptionEnum } from '@nocturn/types';
 import DatabaseQueue from '../queue/database/database.queue';
-import { planManager } from '@nocturn/premium';
+import { FEATURE, planManager } from '@nocturn/premium';
 
 export default class QuizSettings {
     public quiz_settings_mapping: Map<string, QuizSetting> = new Map();
@@ -44,11 +44,11 @@ export default class QuizSettings {
 
             const liveChatAllowed = planManager.isEnabled(
                 (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             );
             const spectatorsAllowed = planManager.isEnabled(
                 (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
-                'maxSpectatorPerSession',
+                FEATURE.MAX_SPECTATORS_PER_SESSION,
             );
 
             if (liveChat && !liveChatAllowed) {

@@ -8,7 +8,7 @@ import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
 import { NOCTURN_COOKIE_NAME, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
-import { planManager } from '@nocturn/premium';
+import { FEATURE, planManager } from '@nocturn/premium';
 
 const NON_EDITABLE_STATUSES: QuizStatus[] = [
     'LIVE',
@@ -45,7 +45,7 @@ export default class QuizController {
             const user_subscription = await Subscription.get_user_subscription(user.id);
             quiz_data.liveChat = planManager.isEnabled(
                 user_subscription ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             )
                 ? quiz_data.liveChat
                 : false;
@@ -121,7 +121,7 @@ export default class QuizController {
 
             quiz_data.liveChat = planManager.isEnabled(
                 subscription ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             )
                 ? quiz_data.liveChat
                 : false;
@@ -161,7 +161,7 @@ export default class QuizController {
 
             quiz_data.liveChat = planManager.isEnabled(
                 subscription ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             )
                 ? quiz_data.liveChat
                 : false;
@@ -207,7 +207,7 @@ export default class QuizController {
 
             quiz_data.liveChat = planManager.isEnabled(
                 subscription ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             )
                 ? quiz_data.liveChat
                 : false;
@@ -260,7 +260,7 @@ export default class QuizController {
             if (
                 planManager.isEnabled(
                     subscription ?? SubscriptionEnum.FREE,
-                    'maxSpectatorPerSession',
+                    FEATURE.MAX_SPECTATORS_PER_SESSION,
                 )
             ) {
                 spectatorCode = specCode;
@@ -269,7 +269,7 @@ export default class QuizController {
 
             quiz_data.liveChat = planManager.isEnabled(
                 subscription ?? SubscriptionEnum.FREE,
-                'liveChat',
+                FEATURE.LIVE_CHAT,
             )
                 ? quiz_data.liveChat
                 : false;

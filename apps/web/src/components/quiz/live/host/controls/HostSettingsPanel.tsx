@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useSubscription } from '@/hooks/subscription/useSubscription';
+import { FEATURE } from '@nocturn/premium';
 
 enum SettingsView {
     HOST = 'HOST',
@@ -92,9 +93,9 @@ export default function HostSettingsPanel() {
                             title="Chats"
                             description="Chat for spectators"
                             tooltip="Enable/Disable chat-option for spectators"
-                            value={isEnabled('liveChat') ? settings.liveChat : false}
+                            value={isEnabled(FEATURE.LIVE_CHAT) ? settings.liveChat : false}
                             onChange={(val) => handleSettingsChange('liveChat', val)}
-                            disabled={!isEnabled('liveChat')}
+                            disabled={!isEnabled(FEATURE.LIVE_CHAT)}
                         />
                         <SettingRow
                             title="Leaderboard"
@@ -108,12 +109,12 @@ export default function HostSettingsPanel() {
                             description="Join quiz for spectators"
                             tooltip="Enable/Disable join for new spectators"
                             value={
-                                isEnabled('maxSpectatorPerSession')
+                                isEnabled(FEATURE.MAX_SPECTATORS_PER_SESSION)
                                     ? settings.allowNewSpectator
                                     : false
                             }
                             onChange={(val) => handleSettingsChange('allowNewSpectator', val)}
-                            disabled={!isEnabled('maxSpectatorPerSession')}
+                            disabled={!isEnabled(FEATURE.MAX_SPECTATORS_PER_SESSION)}
                         />
                     </div>
                 )}

@@ -15,6 +15,7 @@ import gsap from 'gsap';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { SELECTION_MODE, useCanvasSelectionStore } from '@/store/new-quiz/useCanvasSelectionStore';
 import { useSubscription } from '@/hooks/subscription/useSubscription';
+import { FEATURE } from '@nocturn/premium';
 
 export default function QuestionPallete() {
     const {
@@ -39,7 +40,7 @@ export default function QuestionPallete() {
         <>
             <BigQuestionPallete
                 quiz={quiz}
-                maxQuestions={getNumericLimit('maxQuestions')}
+                maxQuestions={getNumericLimit(FEATURE.MAX_SLIDES_PER_PRESENTATION)}
                 currentQuestionIndex={currentQuestionIndex}
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}
@@ -48,7 +49,7 @@ export default function QuestionPallete() {
             />
             <SmallQuestionPallete
                 quiz={quiz}
-                maxQuestions={getNumericLimit('maxQuestions')}
+                maxQuestions={getNumericLimit(FEATURE.MAX_SLIDES_PER_PRESENTATION)}
                 currentQuestionIndex={currentQuestionIndex}
                 handleQuestionChange={handleQuestionChange}
                 addQuestion={addQuestion}

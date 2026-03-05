@@ -19,7 +19,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         });
 
         if (!parsed_data.success) {
-            console.log({ parsed_data });
             ResponseWriter.invalid_data(res, 'quiz id not found');
             return;
         }
@@ -29,8 +28,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
             after: questionAfterIndex,
             before: questionBeforeIndex,
         } = parsed_data.data;
-
-        console.log({ quiz_id });
 
         const quiz = await prisma.quiz.findUnique({
             where: {
@@ -55,7 +52,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
         const question = await prisma.$transaction(async (tx) => {
             if (questionAfterIndex || questionAfterIndex === 0) {
                 if (quiz._count.questions < questionAfterIndex) return null;
-                console.log('after: ', questionAfterIndex);
+
                 const raw_question = await tx.question.findFirst({
                     where: {
                         quizId: quiz_id,
@@ -94,7 +91,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
 
             if (questionBeforeIndex) {
                 if (questionBeforeIndex <= 0) return null;
-                console.log('before: ', questionBeforeIndex);
+
                 const raw_question = await tx.question.findFirst({
                     where: {
                         quizId: quiz_id,
@@ -119,7 +116,6 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                         orderIndex: 'desc',
                     },
                 });
-                console.log('found quesion index: ', raw_question);
 
                 const question: Partial<QuestionType> | null = raw_question
                     ? {
@@ -151,7 +147,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     isAsked: true,
                 },
             });
-            console.log('question is found and after is not provided: ', question);
+
             return question;
         });
 
