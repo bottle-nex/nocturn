@@ -1,47 +1,47 @@
 import { SubscriptionEnum } from "@nocturn/types";
+import { LIMIT_TYPE } from "./enums";
 
 export const ONE_MINUTE = 60_000;
 export const ONE_DAY = 86_400_000;
 
-// shape limits
-export interface NumericDef {
-  type: "numeric";
-  value: number | null;
+export interface NumericLimitType {
+    type: LIMIT_TYPE.NUMERIC;
+    value: number | null;
 } // null = unlimited
-export interface BooleanDef {
-  type: "boolean";
-  enabled: boolean;
+export interface BooleanLimitType {
+    type: LIMIT_TYPE.BOOLEAN;
+    enabled: boolean;
 }
-export interface RateDef {
-  type: "rate";
-  limit: number | null;
-  windowMs: number;
+export interface RateLimitType {
+    type: LIMIT_TYPE.RATE;
+    limit: number | null;
+    windowMs: number;
 }
 
-export type LimitDef = NumericDef | BooleanDef | RateDef;
+export type LimitDefinition = NumericLimitType | BooleanLimitType | RateLimitType;
 
 // feature defination
-type FeatureDef<T extends LimitDef> = { [K in SubscriptionEnum]: T };
+type FeatureDefinition<T extends LimitDefinition> = { [K in SubscriptionEnum]: T };
 
 // feature builders
 export const numeric = (
-  free: number | null,
-  pro: number | null,
-): FeatureDef<NumericDef> => ({
-  [SubscriptionEnum.FREE]: { type: "numeric", value: free },
-  [SubscriptionEnum.PRO]: { type: "numeric", value: pro },
+    free: number | null,
+    pro: number | null,
+): FeatureDefinition<NumericLimitType> => ({
+    [SubscriptionEnum.FREE]: { type: LIMIT_TYPE.NUMERIC, value: free },
+    [SubscriptionEnum.PRO]: { type: LIMIT_TYPE.NUMERIC, value: pro },
 });
 
-export const gate = (free: boolean, pro: boolean): FeatureDef<BooleanDef> => ({
-  [SubscriptionEnum.FREE]: { type: "boolean", enabled: free },
-  [SubscriptionEnum.PRO]: { type: "boolean", enabled: pro },
+export const gate = (free: boolean, pro: boolean): FeatureDefinition<BooleanLimitType> => ({
+    [SubscriptionEnum.FREE]: { type: LIMIT_TYPE.BOOLEAN, enabled: free },
+    [SubscriptionEnum.PRO]: { type: LIMIT_TYPE.BOOLEAN, enabled: pro },
 });
 
 export const rate = (
-  windowMs: number,
-  free: number | null,
-  pro: number | null,
-): FeatureDef<RateDef> => ({
-  [SubscriptionEnum.FREE]: { type: "rate", limit: free, windowMs },
-  [SubscriptionEnum.PRO]: { type: "rate", limit: pro, windowMs },
+    windowMs: number,
+    free: number | null,
+    pro: number | null,
+): FeatureDefinition<RateLimitType> => ({
+    [SubscriptionEnum.FREE]: { type: LIMIT_TYPE.RATE, limit: free, windowMs },
+    [SubscriptionEnum.PRO]: { type: LIMIT_TYPE.RATE, limit: pro, windowMs },
 });
