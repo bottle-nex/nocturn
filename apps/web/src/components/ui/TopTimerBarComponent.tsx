@@ -51,11 +51,11 @@ export default function TopTimerBarCompoment({ startTime, endTime, className }: 
     return (
         <div
             className={cn(
-                'absolute bottom-0 left-0 w-full h-4 bg-blue-200 overflow-hidden',
+                'absolute top-0 left-0 w-full h-1 bg-indigo-200 overflow-hidden',
                 className,
             )}
         >
-            <div className="h-full bg-blue-500 transition-none" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-alpha transition-none" style={{ width: `${pct}%` }} />
         </div>
     );
 }

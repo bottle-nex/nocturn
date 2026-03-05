@@ -1,9 +1,11 @@
 'use client';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function NavCenter() {
     const [active, setActive] = useState<string | null>(null);
+    const router = useRouter();
 
     return (
         <div
@@ -49,6 +51,29 @@ export default function NavCenter() {
 
             <div className="w-[1.5px] rounded-xs h-3 bg-[#ceceee]" />
 
+            {/* PRICING */}
+            <div className="relative" onMouseEnter={() => setActive('faq')}>
+                {active === 'faq' && (
+                    <motion.div
+                        layoutId="nav-pill"
+                        transition={{
+                            type: 'spring',
+                            stiffness: 300,
+                            damping: 35,
+                        }}
+                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
+                    />
+                )}
+                <button
+                    onClick={() => router.push('/premium')}
+                    className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer"
+                >
+                    Pricing
+                </button>
+            </div>
+
+            <div className="w-[1.5px] rounded-xs h-3 bg-[#ceceee]" />
+
             {/* ABOUT */}
             <div className="relative" onMouseEnter={() => setActive('about')}>
                 {active === 'about' && (
@@ -64,26 +89,6 @@ export default function NavCenter() {
                 )}
                 <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
                     About
-                </button>
-            </div>
-
-            <div className="w-[1.5px] rounded-xs h-3 bg-[#ceceee]" />
-
-            {/* FAQ */}
-            <div className="relative" onMouseEnter={() => setActive('faq')}>
-                {active === 'faq' && (
-                    <motion.div
-                        layoutId="nav-pill"
-                        transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 35,
-                        }}
-                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
-                    />
-                )}
-                <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
-                    Faq
                 </button>
             </div>
         </div>

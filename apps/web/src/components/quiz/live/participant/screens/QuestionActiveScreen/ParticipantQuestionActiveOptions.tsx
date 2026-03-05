@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { cn } from '@/lib/utils';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
-import { QuizPhaseEnum } from '@nocturn/types';
-import { Button } from '@/components/ui/button';
-import { IoPeopleOutline } from 'react-icons/io5';
 
 const LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const LABEL_COLORS = ['#6366f1', '#e11d48', '#0891b2', '#d97706', '#16a34a', '#9333ea'];
+
+function getAccent(idx: number) {
+    const hex = LABEL_COLORS[idx % LABEL_COLORS.length];
+    return {
+        label: hex,
+        labelBg: `${hex}1a`,
+        labelBgSelected: `${hex}33`,
+        cardBg: `${hex}0f`,
+        ring: `${hex}66`,
+    };
+}
 
 export default function ParticipantQuestionActiveOptions() {
     const {
         currentQuestion,
-        quiz: liveQuiz,
-        gameSession,
         alreadyResponded,
         setAlreadyResponded,
         lifelineRequested,
@@ -22,7 +28,7 @@ export default function ParticipantQuestionActiveOptions() {
         hasUsedLifeline,
         lifelineLiveVotes,
     } = useLiveQuizStore();
-    const { handleParticipantResponseMessage, handleParticipantRequestLifeline } = useWebSocket();
+    const { handleParticipantResponseMessage } = useWebSocket();
     const { setResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
     const [selected, setSelected] = useState<number | null>(null);
@@ -35,21 +41,15 @@ export default function ParticipantQuestionActiveOptions() {
 
     if (!currentQuestion) return null;
 
-    const barColors = liveQuiz.template?.bars ?? ['#3b82f6'];
     const barData =
         lifelineResult?.optionBreakdown ??
         (lifelineLiveVotes.length > 0 ? lifelineLiveVotes : null);
-    const totalVotes = barData?.reduce((a, b) => a + b, 0) ?? 0;
-    const showBars = (lifelineRequested || lifelineResult) && !hasUsedLifeline;
-    const canRequestLifeline =
-        gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
-        !hasUsedLifeline &&
-        !alreadyResponded &&
-        !lifelineRequested;
 
-    const getColor = (idx: number) => barColors[idx % barColors.length];
+    const totalVotes = barData?.reduce((a, b) => a + b, 0) ?? 0;
     const getPct = (idx: number) =>
         barData && totalVotes > 0 ? Math.round(((barData[idx] ?? 0) / totalVotes) * 100) : 0;
+
+    const showBars = (lifelineRequested || lifelineResult) && !hasUsedLifeline;
 
     function handleSelectOption(index: number) {
         if (selected !== null || alreadyResponded) return;
@@ -63,11 +63,6 @@ export default function ParticipantQuestionActiveOptions() {
         handleParticipantResponseMessage({ selectedAnswer: index });
     }
 
-    function handleRequestLifeline() {
-        if (!canRequestLifeline || !currentQuestion) return;
-        handleParticipantRequestLifeline({ questionId: currentQuestion.id });
-    }
-
     const cells = [
         ...currentQuestion.options,
         ...(currentQuestion.options.length % 2 !== 0 ? [null] : []),
@@ -75,37 +70,40 @@ export default function ParticipantQuestionActiveOptions() {
 
     return (
         <>
-            {/* Spectator votes overlay */}
             {showBars && barData && (
                 <div
-                    className="fixed top-5 right-5 z-50 w-40 sm:w-48 rounded-2xl p-3 sm:p-4 space-y-3"
+                    className="fixed top-16 right-4 z-50 w-44 rounded-2xl p-4 space-y-2.5"
                     style={{
-                        background: 'rgba(0,0,0,0.55)',
-                        backdropFilter: 'blur(16px)',
-                        border: '1px solid rgba(255,255,255,0.15)',
+                        background: 'rgba(10,10,15,0.85)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     }}
                 >
-                    <p className="text-[10px] uppercase tracking-widest font-semibold text-white/50">
+                    <p
+                        className="text-[9px] uppercase tracking-[0.2em] font-bold mb-3"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}
+                    >
                         Spectator Votes
                     </p>
                     {barData.map((_: number, idx: number) => {
-                        const color = getColor(idx);
+                        const { label } = getAccent(idx);
                         const pct = getPct(idx);
                         return (
-                            <div key={idx} className="flex items-center gap-2.5">
-                                <span className="font-mono text-xs w-3 shrink-0 font-medium text-white/50">
+                            <div key={idx} className="flex items-center gap-2">
+                                <span
+                                    className="font-mono text-[11px] w-3.5 shrink-0 font-bold"
+                                    style={{ color: label }}
+                                >
                                     {LABELS[idx]}
                                 </span>
-                                <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-white/10">
+                                <div className="flex-1 h-1 rounded-full overflow-hidden bg-white/10">
                                     <div
                                         className="h-full rounded-full transition-all duration-700"
-                                        style={{
-                                            width: `${pct}%`,
-                                            background: `linear-gradient(to right, ${color}, ${color}40)`,
-                                        }}
+                                        style={{ width: `${pct}%`, background: label }}
                                     />
                                 </div>
-                                <span className="font-mono text-xs w-7 text-right shrink-0 font-bold text-white">
+                                <span className="font-mono text-[11px] w-7 text-right shrink-0 font-bold text-white">
                                     {pct}%
                                 </span>
                             </div>
@@ -114,8 +112,7 @@ export default function ParticipantQuestionActiveOptions() {
                 </div>
             )}
 
-            {/* Scrollable options + button container */}
-            <div className="w-full min-h-0 flex-1 overflow-y-auto flex flex-col items-center gap-y-3 sm:gap-y-4 py-2">
+            <div className="w-full min-h-0 flex-1 overflow-y-auto flex flex-col gap-y-4 py-1 px-0.5">
                 {cells.map((option, idx) => {
                     if (option === null) return <div key={idx} className="w-full" />;
                     const isSelected = selected === idx;
@@ -123,61 +120,83 @@ export default function ParticipantQuestionActiveOptions() {
                     const isLifelineSuggestion =
                         lifelineResult?.wasSuccessful && lifelineResult.mostPopularOption === idx;
                     const pct = getPct(idx);
+                    const { label, labelBg, labelBgSelected, cardBg, ring } = getAccent(idx);
 
                     return (
                         <div
                             key={idx}
                             onClick={() => !isDisabled && handleSelectOption(idx)}
-                            className={cn(
-                                'w-full max-w-2xl shrink-0 min-h-14 sm:min-h-16 ring-1 rounded-xl flex text-dark-base items-center overflow-hidden transition-all duration-150',
-                                isDisabled ? 'opacity-50 cursor-default' : 'cursor-pointer',
-                                isSelected
-                                    ? 'ring-blue-400 bg-blue-50'
+                            className="w-full rounded-lg flex items-stretch overflow-hidden ring-1 ring-black/10 transition-all duration-150"
+                            style={{
+                                background: isSelected
+                                    ? cardBg
                                     : isLifelineSuggestion && !hasUsedLifeline
-                                      ? 'ring-emerald-400 hover:bg-gray-50'
-                                      : 'ring-dark-base/20 bg-white hover:bg-gray-50',
-                            )}
+                                      ? '#14b8a614'
+                                      : '#ffffff',
+                                border: `1px solid ${isSelected ? ring : isLifelineSuggestion && !hasUsedLifeline ? '#14b8a666' : 'transparent'}`,
+                                opacity: isDisabled ? 0.4 : 1,
+                                cursor: isDisabled ? 'default' : 'pointer',
+                            }}
                         >
                             <div
-                                className={cn(
-                                    'w-14 sm:w-16 shrink-0 self-stretch flex justify-center items-center font-semibold text-base sm:text-lg',
-                                    isSelected ? 'text-blue-500' : 'text-dark-base',
-                                )}
+                                className="flex items-center justify-center shrink-0 transition-colors duration-150"
+                                style={{
+                                    minWidth: '3.25rem',
+                                    background: isSelected ? labelBgSelected : labelBg,
+                                    borderRight: `1px solid ${ring}30`,
+                                }}
                             >
-                                {LABELS[idx]}
+                                <span
+                                    className="font-bold text-sm tracking-wide"
+                                    style={{ color: label }}
+                                >
+                                    {LABELS[idx]}
+                                </span>
                             </div>
-                            <div className="flex-1 flex items-center py-3 pr-3 gap-x-2 min-w-0">
-                                <span className="flex-1 text-sm sm:text-base leading-snug">
+                            <div className="flex-1 flex items-center px-4 py-3.5 gap-x-3 min-w-0">
+                                <span
+                                    className="flex-1 leading-snug text-sm sm:text-base text-dark-base"
+                                    style={{ fontWeight: isSelected ? 500 : 400 }}
+                                >
                                     {option}
                                 </span>
-                                {pct > 0 && (
-                                    <span className="text-sm text-gray-400 font-mono shrink-0">
-                                        {pct}%
-                                    </span>
-                                )}
-                                {isLifelineSuggestion && !hasUsedLifeline && (
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 shrink-0">
-                                        Pick
-                                    </span>
-                                )}
+                                <div className="flex items-center gap-x-2 shrink-0">
+                                    {pct > 0 && (
+                                        <span
+                                            className="font-mono text-xs"
+                                            style={{ color: label }}
+                                        >
+                                            {pct}%
+                                        </span>
+                                    )}
+                                    {isLifelineSuggestion && !hasUsedLifeline && (
+                                        <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-500 border border-teal-500/30">
+                                            Pick
+                                        </span>
+                                    )}
+                                    {isSelected && (
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <circle
+                                                cx="8"
+                                                cy="8"
+                                                r="7.5"
+                                                stroke={label}
+                                                strokeOpacity="0.6"
+                                            />
+                                            <path
+                                                d="M4.5 8.5L6.5 10.5L11.5 5.5"
+                                                stroke={label}
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     );
                 })}
-
-                {/* Lifeline button */}
-                <Button
-                    onClick={handleRequestLifeline}
-                    disabled={!canRequestLifeline}
-                    className="shrink-0 mt-1 bg-alpha hover:bg-[#423ae2] text-light-base flex items-center h-11 sm:h-12 px-5 text-[14px] rounded-[8px]! transition-colors transform duration-200 gap-x-2"
-                >
-                    <IoPeopleOutline className="size-4.5" />
-                    {hasUsedLifeline
-                        ? 'Lifeline used'
-                        : lifelineRequested
-                          ? 'Waiting…'
-                          : 'Ask spectators'}
-                </Button>
             </div>
         </>
     );

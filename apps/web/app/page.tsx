@@ -13,15 +13,12 @@ export default function Page() {
             <div className="min-h-screen w-full bg-white relative z-10 flex flex-col items-center mb-[60vh] gap-y-30">
                 {/* <LandingNavbar /> */}
                 <LandingTestNav />
-                {/* <LandingSection /> */}
                 <LandingHeroSection />
                 <ChatBoxCardSection />
                 <LandingFeaturesSection />
                 <LandingCardsSection />
                 {/* <LandingPricingComponent showHeading /> */}
                 <PremiumPricingCardComponent />
-                {/* <InstructionsSection /> */}
-                {/* <FeaturesSection /> */}
                 {/* <WhyNocturn /> */}
                 {/* <PricingComponent
                     className="flex flex-col items-center justify-center pt-48"

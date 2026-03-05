@@ -5,11 +5,15 @@ import { IoPeopleOutline } from 'react-icons/io5';
 
 export default function Test() {
     return (
-        <div className="h-screen w-screen bg-dark-alpha flex justify-center items-center">
-            <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10 flex flex-col items-center p-18 gap-y-15">
+        <div className="h-screen w-screen bg-[#F6F5F2] flex justify-center items-center">
+            <section className="max-w-6xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10 flex flex-col items-center p-18 gap-y-15">
                 <div className="absolute bottom-0 h-5 bg-blue-400 w-full"></div>
-                <div className="absolute top-2 left-3">
-                    <AppLogo withText size={100} textColor="-right-6" />
+                <div className="absolute top-2 left-2">
+                    <AppLogo
+                        size={100}
+                        textColor="dark:text-dark-base text-dark-base -right-8"
+                        withText
+                    />
                 </div>
                 <div className="text-dark-base text-3xl">Q. This is the question</div>
 
