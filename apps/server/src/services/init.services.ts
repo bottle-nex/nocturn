@@ -51,7 +51,7 @@ export default async function initServices() {
     phaseQueueInstance.set_quiz_manager(quizManagerInstance);
     quizManagerInstance.set_phase_queue(phaseQueueInstance);
 
-    await subscriberInstance.subscribe("__keyevent@0__:expired");
+    await subscriberInstance.subscribe('__keyevent@0__:expired');
 
     chain = new Chain();
     model = new Model();

@@ -50,23 +50,25 @@ export default class Subscription {
             const tier =
                 (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
-            const { limit, windowMs } = planManager.getRateLimit(
-                tier,
-                FEATURE.SESSIONS_PER_DAY
+            const { limit, windowMs } = planManager.getRateLimit(tier, FEATURE.SESSIONS_PER_DAY);
+            const { limit: daily_free_sessions_limit } = planManager.getRateLimit(
+                SubscriptionEnum.FREE,
+                FEATURE.SESSIONS_PER_DAY,
             );
-            const { limit: daily_free_sessions_limit } = planManager.getRateLimit(SubscriptionEnum.FREE, FEATURE.SESSIONS_PER_DAY);
 
             const total_concurrent_sessions = planManager.getNumericLimit(
                 tier,
-                FEATURE.MAX_CONCURRENT_SESSIONS
+                FEATURE.MAX_CONCURRENT_SESSIONS,
             );
-            const total_free_concurrent_sessions = planManager.getNumericLimit(SubscriptionEnum.FREE, FEATURE.MAX_CONCURRENT_SESSIONS);
+            const total_free_concurrent_sessions = planManager.getNumericLimit(
+                SubscriptionEnum.FREE,
+                FEATURE.MAX_CONCURRENT_SESSIONS,
+            );
 
             const window_start = new Date(Date.now() - windowMs);
 
-            const { sessions_today, oldest_session, live_sessions } =
-                await prisma.$transaction(async (tx) => {
-
+            const { sessions_today, oldest_session, live_sessions } = await prisma.$transaction(
+                async (tx) => {
                     // sessions launched within window
                     const sessions_today = await tx.quiz.count({
                         where: {
@@ -86,7 +88,7 @@ export default class Subscription {
                             },
                         },
                         orderBy: {
-                            startedAt: "asc",
+                            startedAt: 'asc',
                         },
                         select: {
                             startedAt: true,
@@ -97,7 +99,7 @@ export default class Subscription {
                     const live_sessions = await tx.quiz.count({
                         where: {
                             hostId: user.id,
-                            status: "LIVE",
+                            status: 'LIVE',
                         },
                     });
 
@@ -106,58 +108,64 @@ export default class Subscription {
                         oldest_session,
                         live_sessions,
                     };
-                });
+                },
+            );
 
             // daily session limit
             if (limit !== null && sessions_today >= limit && oldest_session?.startedAt) {
                 console.log('daily sessoin limit');
-                const expiresAt =
-                    new Date(oldest_session.startedAt).getTime() + windowMs;
+                const expiresAt = new Date(oldest_session.startedAt).getTime() + windowMs;
 
                 const ttlMs = expiresAt - Date.now();
                 const formattedTTL = Subscription.formatTTL(ttlMs);
 
-                res.setHeader("Retry-After", Math.ceil(ttlMs / 1000));
+                res.setHeader('Retry-After', Math.ceil(ttlMs / 1000));
 
                 return ResponseWriter.custom(
                     res,
                     false,
-                    "SESSION_LAUNCH_LIMIT_REACHED",
+                    'SESSION_LAUNCH_LIMIT_REACHED',
                     `Next launch available in ${formattedTTL}`,
                     403,
                     {
-                        title: "Daily limit reached",
+                        title: 'Daily limit reached',
                         description: `Next launch available in ${formattedTTL}`,
-                        buttonLabel: limit === daily_free_sessions_limit ? 'Upgrade to Pro' : 'Save it for now',
+                        buttonLabel:
+                            limit === daily_free_sessions_limit
+                                ? 'Upgrade to Pro'
+                                : 'Save it for now',
                         buttonAction: limit === daily_free_sessions_limit ? 'redirect' : 'save',
                     },
                 );
             }
 
             // concurrent sessions limit
-            if (
-                total_concurrent_sessions !== null &&
-                live_sessions >= total_concurrent_sessions
-            ) {
+            if (total_concurrent_sessions !== null && live_sessions >= total_concurrent_sessions) {
                 console.log('concurrent sessions limit');
                 return ResponseWriter.custom(
                     res,
                     false,
-                    "CONCURRENT_SESSION_LIMIT_REACHED",
-                    "Wait until a session ends to create more",
+                    'CONCURRENT_SESSION_LIMIT_REACHED',
+                    'Wait until a session ends to create more',
                     403,
                     {
-                        title: "Concurrent Session limit reached",
-                        description: "Wait until a session ends to create more",
-                        buttonLabel: total_concurrent_sessions === total_free_concurrent_sessions ? 'Upgrade to Pro' : 'Save it for now',
-                        buttonAction: total_concurrent_sessions === total_free_concurrent_sessions ? 'redirect' : 'save',
+                        title: 'Concurrent Session limit reached',
+                        description: 'Wait until a session ends to create more',
+                        buttonLabel:
+                            total_concurrent_sessions === total_free_concurrent_sessions
+                                ? 'Upgrade to Pro'
+                                : 'Save it for now',
+                        buttonAction:
+                            total_concurrent_sessions === total_free_concurrent_sessions
+                                ? 'redirect'
+                                : 'save',
                     },
                 );
             }
 
             return next();
         } catch (error) {
-            console.error("Error in launch quiz limit:", error);
+            console.error('Error in launch quiz limit:', error);
             return ResponseWriter.system_error(res);
         }
     }

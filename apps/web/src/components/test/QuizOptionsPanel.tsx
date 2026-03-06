@@ -90,14 +90,12 @@ export default function QuizOptionsPanel({
                 locked && 'pointer-events-none opacity-60',
             )}
         >
-            {(
-                quiz.status === QuizStatusEnum.LIVE ||
+            {(quiz.status === QuizStatusEnum.LIVE ||
                 quiz.status === QuizStatusEnum.PUBLISHED ||
                 quiz.status === QuizStatusEnum.COMPLETED ||
-                quiz.status === QuizStatusEnum.TIMED_OUT
-            ) && (
-                    <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
-                )}
+                quiz.status === QuizStatusEnum.TIMED_OUT) && (
+                <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
+            )}
 
             {quiz.status === QuizStatusEnum.COMPLETED && (
                 <ToolTipComponent content="results">

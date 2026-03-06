@@ -5,7 +5,13 @@ import ResponseWriter from '../../class/response_writer';
 import { env } from '../../configs/env';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
-import { NOCTURN_COOKIE_NAME, QuizStatusEnum, SessionStatusEnum, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
+import {
+    NOCTURN_COOKIE_NAME,
+    QuizStatusEnum,
+    SessionStatusEnum,
+    SubscriptionEnum,
+    USER_TYPE,
+} from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
 import { FEATURE, planManager } from '@nocturn/premium';
@@ -441,7 +447,6 @@ export default class QuizController {
     // this will be called from redis after the time limit passes
     public static async handle_end(game_session_id: string) {
         try {
-
             const [game_session, quiz] = await Promise.all([
                 prisma.gameSession.findUnique({
                     where: {
@@ -474,7 +479,10 @@ export default class QuizController {
                 return;
             }
 
-            if (game_session.status === SessionStatusEnum.COMPLETED || quiz.status === QuizStatusEnum.COMPLETED) {
+            if (
+                game_session.status === SessionStatusEnum.COMPLETED ||
+                quiz.status === QuizStatusEnum.COMPLETED
+            ) {
                 // means the session is manually ended no need to proceed
                 return;
             }
@@ -497,7 +505,6 @@ export default class QuizController {
                     },
                 }),
             ]);
-
         } catch (error) {
             console.error('error in ending quiz: ', error);
             return;

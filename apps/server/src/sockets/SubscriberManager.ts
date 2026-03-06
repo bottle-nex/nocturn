@@ -35,12 +35,12 @@ export default class SubscriberManager {
     }
 
     public listen_to_publishers() {
-        this.subscriber.on("message", async (channel, message) => {
+        this.subscriber.on('message', async (channel, message) => {
             // this will handle event that come after a key expires
-            if (channel === "__keyevent@0__:expired") {
-                if (message.startsWith("game_session:")) {
-                    const session_id = message.split(":")[1];
-                    console.log("Game session expired:", session_id);
+            if (channel === '__keyevent@0__:expired') {
+                if (message.startsWith('game_session:')) {
+                    const session_id = message.split(':')[1];
+                    console.log('Game session expired:', session_id);
                     await QuizController.handle_end(session_id);
                 }
                 return;
@@ -48,10 +48,9 @@ export default class SubscriberManager {
             try {
                 const parsed = JSON.parse(message);
                 this.handle_incoming_message_from_subscriber(channel, parsed);
-            } catch (err) {
-                console.error("Invalid JSON message:", message);
+            } catch {
+                console.error('Invalid JSON message:', message);
             }
-
         });
     }
 
