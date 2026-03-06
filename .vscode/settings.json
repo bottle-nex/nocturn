@@ -38,5 +38,8 @@
     ],
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "[dockercompose]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

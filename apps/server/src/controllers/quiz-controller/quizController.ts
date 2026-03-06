@@ -1,11 +1,11 @@
-import { GameSession, Quiz, QuizStatus, prisma } from '@nocturn/database';
+import { GameSession, Quiz, QuizStatus, SessionStatus, prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
 import { env } from '../../configs/env';
 import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
-import { NOCTURN_COOKIE_NAME, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
+import { NOCTURN_COOKIE_NAME, QuizStatusEnum, SessionStatusEnum, SubscriptionEnum, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
 import { FEATURE, planManager } from '@nocturn/premium';
@@ -435,6 +435,72 @@ export default class QuizController {
             );
         } catch (error) {
             QuizController.internalError(res, error);
+        }
+    }
+
+    // this will be called from redis after the time limit passes
+    public static async handle_end(game_session_id: string) {
+        try {
+
+            const [game_session, quiz] = await Promise.all([
+                prisma.gameSession.findUnique({
+                    where: {
+                        id: game_session_id,
+                    },
+                    select: {
+                        status: true,
+                    },
+                }),
+                prisma.quiz.findFirst({
+                    where: {
+                        GameSession: {
+                            id: game_session_id,
+                        },
+                    },
+                    select: {
+                        id: true,
+                        status: true,
+                    },
+                }),
+            ]);
+
+            if (!game_session) {
+                console.log('no game session found');
+                return;
+            }
+
+            if (!quiz) {
+                console.log('no quiz found');
+                return;
+            }
+
+            if (game_session.status === SessionStatusEnum.COMPLETED || quiz.status === QuizStatusEnum.COMPLETED) {
+                // means the session is manually ended no need to proceed
+                return;
+            }
+
+            await Promise.all([
+                prisma.gameSession.update({
+                    where: {
+                        id: game_session_id,
+                    },
+                    data: {
+                        status: SessionStatus.TIMED_OUT,
+                    },
+                }),
+                prisma.quiz.update({
+                    where: {
+                        id: quiz.id,
+                    },
+                    data: {
+                        status: QuizStatus.TIMED_OUT,
+                    },
+                }),
+            ]);
+
+        } catch (error) {
+            console.error('error in ending quiz: ', error);
+            return;
         }
     }
 

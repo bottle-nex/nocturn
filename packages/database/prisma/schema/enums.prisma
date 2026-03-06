@@ -4,6 +4,7 @@ enum QuizStatus {
     PUBLISHED
     LIVE
     COMPLETED
+    TIMED_OUT
     CANCELLED
     PAYOUT_PENDING
     PAYOUT_COMPLETED
@@ -33,6 +34,7 @@ enum SessionStatus {
     LIVE
     COMPLETED
     PAUSED
+    TIMED_OUT
 }
 
 enum ParticipantScreen {

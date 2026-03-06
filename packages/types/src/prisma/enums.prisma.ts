@@ -4,6 +4,7 @@ export enum QuizStatusEnum {
   SCHEDULED = "SCHEDULED",
   LIVE = "LIVE",
   COMPLETED = "COMPLETED",
+  TIMED_OUT = "TIMED_OUT",
   CANCELLED = "CANCELLED",
   PAYOUT_PENDING = "PAYOUT_PENDING",
   PAYOUT_COMPLETED = "PAYOUT_COMPLETED",
@@ -23,6 +24,7 @@ export enum SessionStatusEnum {
   LIVE = "LIVE",
   COMPLETED = "COMPLETED",
   PAUSED = "PAUSED",
+  TIMED_OUT = "TIMED_OUT",
 }
 
 export enum ParticipantScreenEnum {

@@ -3,6 +3,7 @@ import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, USER_TYPE } from '@nocturn/t
 import { CustomWebSocket } from '../types/web-socket-types';
 import QuizSettings from '../class/quizSettings';
 import Redis from 'ioredis';
+import QuizController from '../controllers/quiz-controller/quizController';
 
 interface SubscriberManagerProps {
     subscriber: Redis;
@@ -34,13 +35,23 @@ export default class SubscriberManager {
     }
 
     public listen_to_publishers() {
-        this.subscriber.on('message', (channel: string, message: string) => {
-            try {
-                const parsed_subscriber_message = JSON.parse(message);
-                this.handle_incoming_message_from_subscriber(channel, parsed_subscriber_message);
-            } catch (err) {
-                console.error('Error while handling redis message', err);
+        this.subscriber.on("message", async (channel, message) => {
+            // this will handle event that come after a key expires
+            if (channel === "__keyevent@0__:expired") {
+                if (message.startsWith("game_session:")) {
+                    const session_id = message.split(":")[1];
+                    console.log("Game session expired:", session_id);
+                    await QuizController.handle_end(session_id);
+                }
+                return;
             }
+            try {
+                const parsed = JSON.parse(message);
+                this.handle_incoming_message_from_subscriber(channel, parsed);
+            } catch (err) {
+                console.error("Invalid JSON message:", message);
+            }
+
         });
     }
 
