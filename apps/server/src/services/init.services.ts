@@ -27,7 +27,7 @@ export let dodo_webhook_service: DodoWebhookService;
 export let chain: Chain;
 export let model: Model;
 
-export default function initServices() {
+export default async function initServices() {
     publisherInstance = new Redis(env.SERVER_REDIS_URL);
     subscriberInstance = new Redis(env.SERVER_REDIS_URL);
     redisCacheInstance = new RedisCache();
@@ -50,6 +50,8 @@ export default function initServices() {
 
     phaseQueueInstance.set_quiz_manager(quizManagerInstance);
     quizManagerInstance.set_phase_queue(phaseQueueInstance);
+
+    await subscriberInstance.subscribe("__keyevent@0__:expired");
 
     chain = new Chain();
     model = new Model();
