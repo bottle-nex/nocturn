@@ -92,7 +92,8 @@ export default function QuizOptionsPanel({
         >
             {(quiz.status === QuizStatusEnum.LIVE ||
                 quiz.status === QuizStatusEnum.PUBLISHED ||
-                quiz.status === QuizStatusEnum.COMPLETED) && (
+                quiz.status === QuizStatusEnum.COMPLETED ||
+                quiz.status === QuizStatusEnum.TIMED_OUT) && (
                 <QuizStatusTicker className="rounded-[px]!" status={quiz.status} />
             )}
 

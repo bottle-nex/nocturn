@@ -62,6 +62,12 @@ const statusConfig = {
         bgColor: 'bg-cyan-900/90 dark:bg-cyan-100/90',
         textColor: 'text-cyan-100 dark:text-cyan-900',
     },
+    [QuizStatusEnum.TIMED_OUT]: {
+        label: 'Timed Out',
+        stripColor: 'bg-[#ff403d] ',
+        bgColor: 'bg-[#ff403d] dark:bg-[#ff403d] ',
+        textColor: 'text-slate-100 dark:text-slate-100 ',
+    },
 };
 
 export default function QuizStatusTicker({ status, className = '' }: QuizStatusTickerProps) {
@@ -70,7 +76,10 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
     if (!config) {
         return (
             <span
-                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500 text-white ${className}`}
+                className={cn(
+                    `inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500 text-white `,
+                    className,
+                )}
             >
                 Unknown
             </span>
@@ -80,7 +89,9 @@ export default function QuizStatusTicker({ status, className = '' }: QuizStatusT
     return (
         <span
             className={cn(
-                `inline-flex items-center px-2.5 py-1 rounded-alpha text-xs font-medium ${config.stripColor} text-white', ${className}`,
+                `inline-flex items-center px-2.5 py-1 rounded-alpha text-xs font-medium text-white `,
+                config.stripColor,
+                className,
             )}
         >
             {config.label}

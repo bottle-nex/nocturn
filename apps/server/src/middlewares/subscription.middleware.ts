@@ -51,40 +51,69 @@ export default class Subscription {
                 (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
             const { limit, windowMs } = planManager.getRateLimit(tier, FEATURE.SESSIONS_PER_DAY);
+            const { limit: daily_free_sessions_limit } = planManager.getRateLimit(
+                SubscriptionEnum.FREE,
+                FEATURE.SESSIONS_PER_DAY,
+            );
 
-            // Unlimited plan
-            if (limit === null) {
-                return next();
-            }
+            const total_concurrent_sessions = planManager.getNumericLimit(
+                tier,
+                FEATURE.MAX_CONCURRENT_SESSIONS,
+            );
+            const total_free_concurrent_sessions = planManager.getNumericLimit(
+                SubscriptionEnum.FREE,
+                FEATURE.MAX_CONCURRENT_SESSIONS,
+            );
 
             const window_start = new Date(Date.now() - windowMs);
 
-            const { sessions_in_window, oldest_session } = await prisma.$transaction(async (tx) => {
-                const sessions_in_window = await tx.quiz.count({
-                    where: {
-                        hostId: user.id,
-                        startedAt: { gte: window_start },
-                        status: { in: ['LIVE'] },
-                    },
-                });
+            const { sessions_today, oldest_session, live_sessions } = await prisma.$transaction(
+                async (tx) => {
+                    // sessions launched within window
+                    const sessions_today = await tx.quiz.count({
+                        where: {
+                            hostId: user.id,
+                            startedAt: {
+                                gte: window_start,
+                            },
+                        },
+                    });
 
-                const oldest_session = await tx.quiz.findFirst({
-                    where: {
-                        hostId: user.id,
-                        startedAt: { gte: window_start },
-                        status: { in: ['LIVE'] },
-                    },
-                    orderBy: { startedAt: 'asc' },
-                    select: { startedAt: true },
-                });
+                    // oldest session within window
+                    const oldest_session = await tx.quiz.findFirst({
+                        where: {
+                            hostId: user.id,
+                            startedAt: {
+                                gte: window_start,
+                            },
+                        },
+                        orderBy: {
+                            startedAt: 'asc',
+                        },
+                        select: {
+                            startedAt: true,
+                        },
+                    });
 
-                return {
-                    sessions_in_window,
-                    oldest_session,
-                };
-            });
+                    // currently live sessions
+                    const live_sessions = await tx.quiz.count({
+                        where: {
+                            hostId: user.id,
+                            status: 'LIVE',
+                        },
+                    });
 
-            if (sessions_in_window >= limit && oldest_session?.startedAt) {
+                    return {
+                        sessions_today,
+                        oldest_session,
+                        live_sessions,
+                    };
+                },
+            );
+
+            // daily session limit
+            if (limit !== null && sessions_today >= limit && oldest_session?.startedAt) {
+                console.log('daily sessoin limit');
                 const expiresAt = new Date(oldest_session.startedAt).getTime() + windowMs;
 
                 const ttlMs = expiresAt - Date.now();
@@ -101,6 +130,35 @@ export default class Subscription {
                     {
                         title: 'Daily limit reached',
                         description: `Next launch available in ${formattedTTL}`,
+                        buttonLabel:
+                            limit === daily_free_sessions_limit
+                                ? 'Upgrade to Pro'
+                                : 'Save it for now',
+                        buttonAction: limit === daily_free_sessions_limit ? 'redirect' : 'save',
+                    },
+                );
+            }
+
+            // concurrent sessions limit
+            if (total_concurrent_sessions !== null && live_sessions >= total_concurrent_sessions) {
+                console.log('concurrent sessions limit');
+                return ResponseWriter.custom(
+                    res,
+                    false,
+                    'CONCURRENT_SESSION_LIMIT_REACHED',
+                    'Wait until a session ends to create more',
+                    403,
+                    {
+                        title: 'Concurrent Session limit reached',
+                        description: 'Wait until a session ends to create more',
+                        buttonLabel:
+                            total_concurrent_sessions === total_free_concurrent_sessions
+                                ? 'Upgrade to Pro'
+                                : 'Save it for now',
+                        buttonAction:
+                            total_concurrent_sessions === total_free_concurrent_sessions
+                                ? 'redirect'
+                                : 'save',
                     },
                 );
             }
@@ -112,7 +170,7 @@ export default class Subscription {
         }
     }
 
-    static async question_limit(req: Request, res: Response, next: NextFunction) {
+    static async slides_limit(req: Request, res: Response, next: NextFunction) {
         try {
             const user = req.user;
             if (!user) {

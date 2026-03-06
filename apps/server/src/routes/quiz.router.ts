@@ -54,20 +54,20 @@ router.post('/quiz/permanently-delete-selected-quiz', authMiddleware, permanentD
 router.post(
     '/quiz/create-quiz/:quizId',
     authMiddleware,
-    Subscription.question_limit,
+    Subscription.slides_limit,
     QuizController.process(QuizControllerAction.SAVE),
 );
 router.post(
     '/quiz/publish-quiz/:quizId',
     authMiddleware,
-    Subscription.question_limit,
+    Subscription.slides_limit,
     QuizController.process(QuizControllerAction.PUBLISH),
 );
 router.post(
     '/quiz/launch-quiz/:quizId',
     authMiddleware,
-    Subscription.question_limit,
-    Subscription.launch_quiz_limit,
+    Subscription.slides_limit,
+    // Subscription.launch_quiz_limit,
     QuizController.process(QuizControllerAction.LAUNCH),
 );
 
