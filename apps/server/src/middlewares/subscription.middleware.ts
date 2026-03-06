@@ -50,69 +50,113 @@ export default class Subscription {
             const tier =
                 (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
-            const { limit, windowMs } = planManager.getRateLimit(tier, FEATURE.SESSIONS_PER_DAY);
+            const { limit, windowMs } = planManager.getRateLimit(
+                tier,
+                FEATURE.SESSIONS_PER_DAY
+            );
 
-            // Unlimited plan
-            if (limit === null) {
-                return next();
-            }
+            const total_concurrent_sessions = planManager.getNumericLimit(
+                tier,
+                FEATURE.MAX_CONCURRENT_SESSIONS
+            );
 
             const window_start = new Date(Date.now() - windowMs);
 
-            const { sessions_in_window, oldest_session } = await prisma.$transaction(async (tx) => {
-                const sessions_in_window = await tx.quiz.count({
-                    where: {
-                        hostId: user.id,
-                        startedAt: { gte: window_start },
-                        status: { in: ['LIVE'] },
-                    },
+            const { sessions_today, oldest_session, live_sessions } =
+                await prisma.$transaction(async (tx) => {
+
+                    // sessions launched within window
+                    const sessions_today = await tx.quiz.count({
+                        where: {
+                            hostId: user.id,
+                            startedAt: {
+                                gte: window_start,
+                            },
+                        },
+                    });
+
+                    // oldest session within window
+                    const oldest_session = await tx.quiz.findFirst({
+                        where: {
+                            hostId: user.id,
+                            startedAt: {
+                                gte: window_start,
+                            },
+                        },
+                        orderBy: {
+                            startedAt: "asc",
+                        },
+                        select: {
+                            startedAt: true,
+                        },
+                    });
+
+                    // currently live sessions
+                    const live_sessions = await tx.quiz.count({
+                        where: {
+                            hostId: user.id,
+                            status: "LIVE",
+                        },
+                    });
+
+                    return {
+                        sessions_today,
+                        oldest_session,
+                        live_sessions,
+                    };
                 });
 
-                const oldest_session = await tx.quiz.findFirst({
-                    where: {
-                        hostId: user.id,
-                        startedAt: { gte: window_start },
-                        status: { in: ['LIVE'] },
-                    },
-                    orderBy: { startedAt: 'asc' },
-                    select: { startedAt: true },
-                });
-
-                return {
-                    sessions_in_window,
-                    oldest_session,
-                };
-            });
-
-            if (sessions_in_window >= limit && oldest_session?.startedAt) {
-                const expiresAt = new Date(oldest_session.startedAt).getTime() + windowMs;
+            // daily session limit
+            if (limit !== null && sessions_today >= limit && oldest_session?.startedAt) {
+                console.log('daily sessoin limit');
+                const expiresAt =
+                    new Date(oldest_session.startedAt).getTime() + windowMs;
 
                 const ttlMs = expiresAt - Date.now();
                 const formattedTTL = Subscription.formatTTL(ttlMs);
 
-                res.setHeader('Retry-After', Math.ceil(ttlMs / 1000));
+                res.setHeader("Retry-After", Math.ceil(ttlMs / 1000));
 
                 return ResponseWriter.custom(
                     res,
                     false,
-                    'SESSION_LAUNCH_LIMIT_REACHED',
+                    "SESSION_LAUNCH_LIMIT_REACHED",
                     `Next launch available in ${formattedTTL}`,
                     403,
                     {
-                        title: 'Daily limit reached',
+                        title: "Daily limit reached",
                         description: `Next launch available in ${formattedTTL}`,
-                    },
+                    }
+                );
+            }
+
+            // concurrent sessions limit
+            if (
+                total_concurrent_sessions !== null &&
+                live_sessions >= total_concurrent_sessions
+            ) {
+                console.log('concurrent sessions limit');
+                return ResponseWriter.custom(
+                    res,
+                    false,
+                    "CONCURRENT_SESSION_LIMIT_REACHED",
+                    "Wait until a session ends to create more",
+                    403,
+                    {
+                        title: "Concurrent Session limit reached",
+                        description: "Wait until a session ends to create more",
+                    }
                 );
             }
 
             return next();
         } catch (error) {
-            console.error('Error in launch quiz limit:', error);
+            console.error("Error in launch quiz limit:", error);
             return ResponseWriter.system_error(res);
         }
     }
 
-    static async question_limit(req: Request, res: Response, next: NextFunction) {
+    static async slides_limit(req: Request, res: Response, next: NextFunction) {
         try {
             const user = req.user;
             if (!user) {
