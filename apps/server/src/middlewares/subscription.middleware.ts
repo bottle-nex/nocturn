@@ -54,11 +54,13 @@ export default class Subscription {
                 tier,
                 FEATURE.SESSIONS_PER_DAY
             );
+            const { limit: daily_free_sessions_limit } = planManager.getRateLimit(SubscriptionEnum.FREE, FEATURE.SESSIONS_PER_DAY);
 
             const total_concurrent_sessions = planManager.getNumericLimit(
                 tier,
                 FEATURE.MAX_CONCURRENT_SESSIONS
             );
+            const total_free_concurrent_sessions = planManager.getNumericLimit(SubscriptionEnum.FREE, FEATURE.MAX_CONCURRENT_SESSIONS);
 
             const window_start = new Date(Date.now() - windowMs);
 
@@ -126,7 +128,9 @@ export default class Subscription {
                     {
                         title: "Daily limit reached",
                         description: `Next launch available in ${formattedTTL}`,
-                    }
+                        buttonLabel: limit === daily_free_sessions_limit ? 'Upgrade to Pro' : 'Save it for now',
+                        buttonAction: limit === daily_free_sessions_limit ? 'redirect' : 'save',
+                    },
                 );
             }
 
@@ -145,7 +149,9 @@ export default class Subscription {
                     {
                         title: "Concurrent Session limit reached",
                         description: "Wait until a session ends to create more",
-                    }
+                        buttonLabel: total_concurrent_sessions === total_free_concurrent_sessions ? 'Upgrade to Pro' : 'Save it for now',
+                        buttonAction: total_concurrent_sessions === total_free_concurrent_sessions ? 'redirect' : 'save',
+                    },
                 );
             }
 

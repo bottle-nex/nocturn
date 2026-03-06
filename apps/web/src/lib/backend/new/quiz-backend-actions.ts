@@ -94,14 +94,24 @@ export default class BackendActions {
 
             if (axios.isAxiosError(err)) {
                 const data = err.response?.data.data;
+                const isSaveAction = data.buttonAction === 'save';
                 toast(data.title, {
                     description: data.description,
                     descriptionClassName: 'text-xs ',
                     action: {
-                        label: 'Upgrade to Pro',
-                        onClick: () => {
-                            router.push('/premium');
+                        label: data.buttonLabel,
+                        onClick: async () => {
+                            switch (data.buttonAction) {
+                                case 'redirect':
+                                    router.push('/premium');
+                                    return;
+                                case 'save':
+                                    await this.upsertQuizAction(quiz, token);
+                                    return;
+                            }
                         },
+                        loading: isSaveAction,
+                        disabled: isSaveAction,
                     },
                     actionButtonStyle: {
                         background: 'white',
