@@ -12,12 +12,12 @@ interface JoinQuizResponse {
 }
 
 class UserQuizAction {
-    public async joinQuiz(code: string): Promise<JoinQuizResponse | null> {
+    public async joinQuiz(code: string, email?: string): Promise<JoinQuizResponse | null> {
         switch (code.length) {
             case 6:
                 return await this.spectatorJoinQuiz(code);
             case 12:
-                return await this.participantJoinQuiz(code);
+                return await this.participantJoinQuiz(code, email!);
             default:
                 toast.error('Please enter a valid code');
                 return null;
@@ -54,7 +54,10 @@ class UserQuizAction {
         }
     }
 
-    private async participantJoinQuiz(code: string): Promise<JoinQuizResponse | null> {
+    private async participantJoinQuiz(
+        code: string,
+        email: string,
+    ): Promise<JoinQuizResponse | null> {
         try {
             if (!code) {
                 toast.error('Please enter a code');
@@ -67,7 +70,7 @@ class UserQuizAction {
 
             const { data } = await axios.post(
                 PARTICIPANT_JOIN_QUIZ_URL,
-                { code },
+                { code, email },
                 { withCredentials: true },
             );
             if (data.success) {

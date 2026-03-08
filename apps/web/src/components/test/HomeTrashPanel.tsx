@@ -3,9 +3,8 @@ import { AnimatePresence } from 'framer-motion';
 import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
 import { Button } from '../ui/button';
-import Lottie from 'lottie-react';
 import EmptyCanvas from '../canvas/EmptyCanvas';
-import emptyTrashAnimation from '../../assets/lottie/empty-trash.json';
+import NoContent from '../ui/NoContent';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
@@ -262,16 +261,15 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                     })}
                                 </div>
                             ) : (
-                                <div className="col-span-full w-full h-full min-h-[50vh] flex flex-col items-center justify-center">
-                                    <Lottie
-                                        animationData={emptyTrashAnimation}
-                                        loop
-                                        className="w-50 h-50"
-                                    />
-                                    <div className="text-black/60 dark:text-light-base/60 text-lg tracking-wide">
-                                        {searchQuery ? 'No quizzes found' : 'Trash is empty'}
-                                    </div>
-                                </div>
+                                <NoContent
+                                    title={searchQuery ? 'No quizzes found' : 'Trash is empty'}
+                                    description={
+                                        searchQuery
+                                            ? 'Try a different search term'
+                                            : 'Items in trash are permanently deleted after 30 days'
+                                    }
+                                    className="col-span-full w-full h-full min-h-[50vh]"
+                                />
                             )}
                         </div>
                     </div>

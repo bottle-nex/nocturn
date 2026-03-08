@@ -41,7 +41,7 @@ export default class RedisCache {
                 ([key, value]) => [key, JSON.stringify(value)],
             );
             await this.redis_cache.hset(key, ...entries.flat());
-            await this.redis_cache.expire(key, 10);
+            await this.redis_cache.expire(key, SECONDS * MINUTES * HOURS);
         } catch (err) {
             console.error('Error in session management while creating session', err);
         }
@@ -116,7 +116,7 @@ export default class RedisCache {
             });
 
             await pipeline.exec();
-            await this.redis_cache.expire(host_key, 60 * 60 * 24);
+            await this.redis_cache.expire(host_key, SECONDS * MINUTES * HOURS);
         } catch (err) {
             console.error('Error while setting participant in cache : ', err);
         }

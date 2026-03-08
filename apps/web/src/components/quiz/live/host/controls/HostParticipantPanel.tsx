@@ -1,5 +1,4 @@
 'use client';
-
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';

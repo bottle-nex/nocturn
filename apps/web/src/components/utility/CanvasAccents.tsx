@@ -174,19 +174,19 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
                             <path
                                 fill={accentColor}
                                 opacity="0.06"
-                                d="M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 V 200 H 0 Z"
+                                d="M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 T 250 160 T 300 160 T 350 160 T 400 160 V 200 H 0 Z"
                             >
                                 <animate
                                     attributeName="d"
-                                    values="M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 V 200 H 0 Z;
-                                           M 0 158 Q 25 135 50 155 T 100 165 T 150 155 T 200 158 V 200 H 0 Z;
-                                           M 0 155 Q 25 140 50 150 T 100 170 T 150 150 T 200 155 V 200 H 0 Z;
-                                           M 0 158 Q 25 135 50 155 T 100 165 T 150 155 T 200 158 V 200 H 0 Z;
-                                           M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 V 200 H 0 Z;
-                                           M 0 162 Q 25 125 50 165 T 100 155 T 150 165 T 200 162 V 200 H 0 Z;
-                                           M 0 165 Q 25 120 50 170 T 100 150 T 150 170 T 200 165 V 200 H 0 Z;
-                                           M 0 162 Q 25 125 50 165 T 100 155 T 150 165 T 200 162 V 200 H 0 Z;
-                                           M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 V 200 H 0 Z"
+                                    values="M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 T 250 160 T 300 160 T 350 160 T 400 160 V 200 H 0 Z;
+                                           M 0 158 Q 25 135 50 155 T 100 165 T 150 155 T 200 158 T 250 165 T 300 155 T 350 165 T 400 158 V 200 H 0 Z;
+                                           M 0 155 Q 25 140 50 150 T 100 170 T 150 150 T 200 155 T 250 170 T 300 150 T 350 170 T 400 155 V 200 H 0 Z;
+                                           M 0 158 Q 25 135 50 155 T 100 165 T 150 155 T 200 158 T 250 165 T 300 155 T 350 165 T 400 158 V 200 H 0 Z;
+                                           M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 T 250 160 T 300 160 T 350 160 T 400 160 V 200 H 0 Z;
+                                           M 0 162 Q 25 125 50 165 T 100 155 T 150 165 T 200 162 T 250 155 T 300 165 T 350 155 T 400 162 V 200 H 0 Z;
+                                           M 0 165 Q 25 120 50 170 T 100 150 T 150 170 T 200 165 T 250 150 T 300 170 T 350 150 T 400 165 V 200 H 0 Z;
+                                           M 0 162 Q 25 125 50 165 T 100 155 T 150 165 T 200 162 T 250 155 T 300 165 T 350 155 T 400 162 V 200 H 0 Z;
+                                           M 0 160 Q 25 130 50 160 T 100 160 T 150 160 T 200 160 T 250 160 T 300 160 T 350 160 T 400 160 V 200 H 0 Z"
                                     dur="12s"
                                     repeatCount="indefinite"
                                     calcMode="spline"
@@ -200,10 +200,7 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'mountains':
                 return (
                     <div
-                        className={cn(
-                            'absolute inset-0 overflow-hidden z-0 rounded-alpha',
-                            className,
-                        )}
+                        className={cn('absolute inset-0 overflow-hidden rounded-alpha', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg

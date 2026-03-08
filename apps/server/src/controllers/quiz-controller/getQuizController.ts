@@ -67,6 +67,8 @@ export default async function getQuizController(req: Request, res: Response): Pr
             return;
         }
 
+        QuizAction.record_quiz_view(quizId, String(user.id));
+
         const is_owner = quiz.hostId === user.id;
         const hasCollabSession = !!quiz.CollabSession;
 

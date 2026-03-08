@@ -279,7 +279,7 @@ export default function LandingNavbar() {
                                 if (!session.user.token) return;
                                 router.push('/home');
                             }}
-                            className="bg-nprimary text-light-alpha text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out active:scale-102"
+                            className="bg-dark-base text-light-base text-[18px] h-12 w-33 rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out active:scale-102"
                         >
                             Go to Home
                         </motion.button>

@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Matter from 'matter-js';
+import { ParticipantType } from '@nocturn/types';
 
 interface FallingAvatarsProps {
-    users: { avatar: string }[];
+    participants: ParticipantType[];
     ballRadius?: number;
     isExiting?: boolean;
 }
 
 export default function FallingAvatars({
-    users,
+    participants = [],
     ballRadius = 28,
     isExiting = false,
 }: FallingAvatarsProps) {
@@ -55,7 +56,7 @@ export default function FallingAvatars({
         ];
         Matter.Composite.add(engine.world, walls);
 
-        const balls = users.map((_, i) => {
+        const balls = participants.map((_, i) => {
             const x = ballRadius + Math.random() * (width - ballRadius * 2);
             const y = -(i * 60) - ballRadius;
             return Matter.Bodies.circle(x, y, ballRadius, {
@@ -92,7 +93,7 @@ export default function FallingAvatars({
             Matter.Engine.clear(engine);
             Matter.Composite.clear(engine.world, false);
         };
-    }, [users, ballRadius]);
+    }, [participants, ballRadius]);
 
     useEffect(() => {
         if (isExiting && engineRef.current && bottomWallRef.current) {
@@ -105,7 +106,7 @@ export default function FallingAvatars({
 
     return (
         <div ref={containerRef} className="w-full h-full relative overflow-hidden">
-            {users.map((user, i) => {
+            {participants.map((participant, i) => {
                 const pos = positions[i];
                 if (!pos) return null;
                 return (
@@ -122,7 +123,7 @@ export default function FallingAvatars({
                         }}
                     >
                         <Image
-                            src={user.avatar}
+                            src={participant.avatar!}
                             alt="avatar"
                             fill
                             className="object-cover"

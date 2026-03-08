@@ -447,7 +447,7 @@ export default class QuizController {
     // this will be called from redis after the time limit passes
     public static async handle_end(game_session_id: string) {
         try {
-            const [game_session, quiz] = await Promise.all([
+            const [game_session_data, quiz_data] = await Promise.allSettled([
                 prisma.gameSession.findUnique({
                     where: {
                         id: game_session_id,
@@ -469,13 +469,23 @@ export default class QuizController {
                 }),
             ]);
 
-            if (!game_session) {
+            console.log('game session data: ', game_session_data);
+            console.log('quiz data: ', quiz_data);
+
+            if (!game_session_data || game_session_data.status !== 'fulfilled') {
                 console.log('no game session found');
                 return;
             }
 
-            if (!quiz) {
+            if (!quiz_data || quiz_data.status !== 'fulfilled') {
                 console.log('no quiz found');
+                return;
+            }
+            const game_session = game_session_data.value;
+            const quiz = quiz_data.value;
+
+            if (!game_session || !quiz) {
+                console.log('no game session or quiz found');
                 return;
             }
 
@@ -487,7 +497,7 @@ export default class QuizController {
                 return;
             }
 
-            await Promise.all([
+            await Promise.allSettled([
                 prisma.gameSession.update({
                     where: {
                         id: game_session_id,
