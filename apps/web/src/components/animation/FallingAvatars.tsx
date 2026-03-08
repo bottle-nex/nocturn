@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Matter from 'matter-js';
-import { ParticipantType } from '@/types/prisma-types';
+import { ParticipantType } from '@nocturn/types';
 
 interface FallingAvatarsProps {
     participants: ParticipantType[];

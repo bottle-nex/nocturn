@@ -21,7 +21,7 @@ export default async function RootLayout({
     const session = await getServerSession(authOption);
     return (
         <html lang="en" suppressHydrationWarning>
-            <body>
+            <body className='custom-scrollbar'>
                 <LenisProvider>
                     <ThemeProvider
                         attribute="class"

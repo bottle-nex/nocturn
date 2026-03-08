@@ -5,6 +5,8 @@ interface UserSessionStoreType {
     session: Session | null;
     openSigninModal: boolean;
     openLogoutModal: boolean;
+
+    
     setOpenLogoutModal: (open: boolean) => void;
     setSession: (data: Session | null) => void;
     setOpenSigninModal: (open: boolean) => void;

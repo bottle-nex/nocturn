@@ -34,5 +34,5 @@ new WebsocketServer(server);
 
 server.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
-    await prisma.$queryRawUnsafe('SELECT 1').catch(() => {});
+    await prisma.$queryRawUnsafe('SELECT 1').catch(() => { });
 });

@@ -50,7 +50,6 @@ function Button({
             className={cn(
                 'cursor-pointer',
                 buttonVariants({ variant, size, className }),
-                'cursor-pointer',
             )}
             {...props}
         />

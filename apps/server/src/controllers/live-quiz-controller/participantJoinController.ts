@@ -16,7 +16,7 @@ export default async function participantJoinController(req: Request, res: Respo
         return;
     }
 
-    const { code } = parseResult.data;
+    const { code, email } = parseResult.data;
 
     try {
         const quiz = await prisma.quiz.findUnique({
@@ -88,6 +88,7 @@ export default async function participantJoinController(req: Request, res: Respo
                     nickname: GenerateUser.getRandomName(),
                     avatar: GenerateUser.getRandomAvatar(),
                     ipAddress: req.ip || 'unknown',
+                    email: email as string,
                 },
             });
 
