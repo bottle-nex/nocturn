@@ -2,7 +2,7 @@
 import { motion, Variants, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
-import { IoCloseOutline, IoTrophyOutline } from 'react-icons/io5';
+import { IoCloseOutline } from 'react-icons/io5';
 import clsx from 'clsx';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
@@ -40,7 +40,15 @@ const closeBtn: Variants = {
     },
 };
 
-function JoinQuizOverlay({ onClose, onJoin, name, setName, email, setEmail, loading }: {
+function JoinQuizOverlay({
+    onClose,
+    onJoin,
+    name,
+    setName,
+    email,
+    setEmail,
+    loading,
+}: {
     name: string;
     email: string | null;
     loading: boolean;
@@ -69,45 +77,50 @@ function JoinQuizOverlay({ onClose, onJoin, name, setName, email, setEmail, load
             setValidation(
                 parsed.success
                     ? { message: 'Looks good!', valid: true }
-                    : { message: 'Please enter a valid email address.', valid: false }
+                    : { message: 'Please enter a valid email address.', valid: false },
             );
         }, 800);
     }
 
     return (
-        <OpacityBackground onBackgroundClick={onClose} className='bg-dark-alpha/20 z-20'>
-            <main className='relative max-w-7xl w-full rounded-xl mx-auto h-[80dvh] bg-light-alpha z-20 overflow-hidden flex flex-col'>
-                <CanvasAccents accentColor='#000000' design='staircase' />
-                <AppLogo withText size={120} className='absolute top-0 left-0' />
-                <section className='flex flex-1 items-center justify-center w-full z-20'>
-                    <div className='max-w-xs w-full flex flex-col gap-y-6'>
+        <OpacityBackground onBackgroundClick={onClose} className="bg-dark-alpha/20 z-20">
+            <main className="relative max-w-7xl w-full rounded-xl mx-auto h-[80dvh] bg-light-alpha z-20 overflow-hidden flex flex-col">
+                <CanvasAccents accentColor="#000000" design="staircase" />
+                <AppLogo withText size={120} className="absolute top-0 left-0" />
+                <section className="flex flex-1 items-center justify-center w-full z-20">
+                    <div className="max-w-xs w-full flex flex-col gap-y-6">
                         <div>
-                            <Label htmlFor='participant-name' className='text-xs text-dark-base/70 ml-1 mb-1 block'>
-                                Name <span className='text-neutral-400'>(optional)</span>
+                            <Label
+                                htmlFor="participant-name"
+                                className="text-xs text-dark-base/70 ml-1 mb-1 block"
+                            >
+                                Name <span className="text-neutral-400">(optional)</span>
                             </Label>
                             <Input
-                                id='participant-name'
+                                id="participant-name"
                                 placeholder="What should we call you?"
                                 disabled={loading}
-                                className='border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! w-full placeholder:text-dark-base/70 text-dark-base/70'
+                                className="border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! w-full placeholder:text-dark-base/70 text-dark-base/70"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </div>
                         <div>
-                            <Label htmlFor='participant-email' className='text-xs text-dark-base/70 ml-1 mb-1 flex items-center gap-x-1'>
-                                Email <span className='text-red-500'>*</span>
+                            <Label
+                                htmlFor="participant-email"
+                                className="text-xs text-dark-base/70 ml-1 mb-1 flex items-center gap-x-1"
+                            >
+                                Email <span className="text-red-500">*</span>
                             </Label>
-                            <div className='flex items-center justify-center gap-x-2'>
+                            <div className="flex items-center justify-center gap-x-2">
                                 <Input
-                                    id='participant-email'
+                                    id="participant-email"
                                     disabled={loading}
                                     placeholder="Enter your email to join the quiz"
-                                    className='border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! max-w-2xl w-full placeholder:text-dark-base/70 text-dark-base/70'
+                                    className="border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! max-w-2xl w-full placeholder:text-dark-base/70 text-dark-base/70"
                                     value={email ?? ''}
                                     onChange={handleEmailChange}
                                 />
-
                             </div>
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -121,12 +134,22 @@ function JoinQuizOverlay({ onClose, onJoin, name, setName, email, setEmail, load
                                 </span>
                             </motion.div>
                             {validation && email && (
-                                <span className={`text-xs ml-1 block mt-2 text-right ${validation.valid ? 'text-green-500' : 'text-red-500'}`}>
+                                <span
+                                    className={`text-xs ml-1 block mt-2 text-right ${validation.valid ? 'text-green-500' : 'text-red-500'}`}
+                                >
                                     {validation.message}
                                 </span>
                             )}
                         </div>
-                        <Button disabled={!validation?.valid || !email || loading} onClick={() => email && validation?.valid && onJoin(email, name.trim() || undefined)} className='bg-dark-alpha text-light-alpha hover:bg-dark-base cursor-pointer disabled:bg-dark-base disabled:opacity-100'>
+                        <Button
+                            disabled={!validation?.valid || !email || loading}
+                            onClick={() =>
+                                email &&
+                                validation?.valid &&
+                                onJoin(email, name.trim() || undefined)
+                            }
+                            className="bg-dark-alpha text-light-alpha hover:bg-dark-base cursor-pointer disabled:bg-dark-base disabled:opacity-100"
+                        >
                             {loading ? <span>Joining...</span> : <span>Join quiz</span>}
                             <MdOutlineChevronRight />
                         </Button>
@@ -167,7 +190,10 @@ function JoinQuizPill({
         >
             <motion.div
                 variants={closeBtn}
-                onClick={(e) => { e.stopPropagation(); onClose(); }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClose();
+                }}
                 className="absolute right-4 h-6 w-6 rounded-full bg-black text-light-base flex items-center justify-center hover:opacity-70 z-10 cursor-pointer"
             >
                 <IoCloseOutline size={17} />
@@ -181,7 +207,14 @@ function JoinQuizPill({
                 <motion.div
                     animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f46e5' : '#f5f5f5' }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    onClick={isOpen ? (e) => { e.stopPropagation(); onJoin(); } : undefined}
+                    onClick={
+                        isOpen
+                            ? (e) => {
+                                  e.stopPropagation();
+                                  onJoin();
+                              }
+                            : undefined
+                    }
                     className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
                     style={{ color: isOpen ? '#f5f5f5' : '#0a0a0a' }}
                 >
@@ -235,7 +268,12 @@ export default function JoinQuizButton() {
     function handleJoinQuiz() {
         if (!code.trim()) return;
 
-        const type = code.trim().length === 12 ? 'participant' : code.trim().length === 6 ? 'spectator' : null;
+        const type =
+            code.trim().length === 12
+                ? 'participant'
+                : code.trim().length === 6
+                  ? 'spectator'
+                  : null;
         if (!type) return;
 
         if (type === 'participant') {
@@ -261,7 +299,6 @@ export default function JoinQuizButton() {
         }
     }
 
-
     return (
         <motion.div
             initial={{ scale: 0.7, opacity: 0, filter: 'blur(6px)' }}
@@ -272,7 +309,10 @@ export default function JoinQuizButton() {
             {step === 2 ? (
                 <JoinQuizOverlay
                     onJoin={(email, name) => makeBackendCall(email, name)}
-                    onClose={() => { setStep(0); setCode(''); }}
+                    onClose={() => {
+                        setStep(0);
+                        setCode('');
+                    }}
                     name={name}
                     setName={setName}
                     loading={loading}
@@ -285,7 +325,10 @@ export default function JoinQuizButton() {
                     code={code}
                     loading={loading}
                     onOpen={() => setStep(1)}
-                    onClose={() => { setStep(0); setCode(''); }}
+                    onClose={() => {
+                        setStep(0);
+                        setCode('');
+                    }}
                     onCodeChange={setCode}
                     onJoin={handleJoinQuiz}
                 />

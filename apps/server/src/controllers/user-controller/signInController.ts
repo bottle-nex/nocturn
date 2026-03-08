@@ -180,7 +180,7 @@ export class SigninController {
 
         try {
             const stored = await publisherInstance.get(`otp:${email}`);
-            console.log("stored otp is : ", stored, " and user entered otp is : ", otp);
+            console.log('stored otp is : ', stored, ' and user entered otp is : ', otp);
             if (!stored || stored !== otp) {
                 ResponseWriter.invalid_data(res, 'Invalid or expired OTP');
                 return;
@@ -192,7 +192,7 @@ export class SigninController {
                 where: { email },
             });
 
-            console.log("existing user is : ", existingUser);
+            console.log('existing user is : ', existingUser);
 
             let myUser;
             if (existingUser) {

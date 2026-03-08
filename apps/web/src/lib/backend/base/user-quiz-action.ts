@@ -54,7 +54,10 @@ class UserQuizAction {
         }
     }
 
-    private async participantJoinQuiz(code: string, email: string): Promise<JoinQuizResponse | null> {
+    private async participantJoinQuiz(
+        code: string,
+        email: string,
+    ): Promise<JoinQuizResponse | null> {
         try {
             if (!code) {
                 toast.error('Please enter a code');

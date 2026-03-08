@@ -38,7 +38,7 @@ export default class SubscriberManager {
         this.subscriber.on('message', async (channel, message) => {
             // this will handle event that come after a key expires
             if (channel === '__keyevent@0__:expired') {
-                console.log("message is received on expired channel:", message);
+                console.log('message is received on expired channel:', message);
                 if (message.startsWith('game_session:')) {
                     const session_id = message.split(':')[1];
                     console.log('Game session expired:', session_id);

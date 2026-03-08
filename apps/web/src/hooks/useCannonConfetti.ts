@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import confetti from "canvas-confetti";
+import { useEffect } from 'react';
+import confetti from 'canvas-confetti';
 
 interface UseCannonConfettiOptions {
     duration?: number;
@@ -11,7 +11,7 @@ interface UseCannonConfettiOptions {
 
 export function useCannonConfetti({
     duration = 5000,
-    colors = ["#ff0505", "#ffe100", "#22ff00", "#0011ff"],
+    colors = ['#ff0505', '#ffe100', '#22ff00', '#0011ff'],
     particleCount = 4,
     spread = 55,
     startVelocity = 60,

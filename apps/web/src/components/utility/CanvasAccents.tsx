@@ -200,10 +200,7 @@ export default function CanvasAccents({ design, accentColor, className }: Canvas
             case 'mountains':
                 return (
                     <div
-                        className={cn(
-                            'absolute inset-0 overflow-hidden rounded-alpha',
-                            className,
-                        )}
+                        className={cn('absolute inset-0 overflow-hidden rounded-alpha', className)}
                         style={{ pointerEvents: 'none', zIndex: 10 }}
                     >
                         <svg

@@ -13,11 +13,11 @@ export default async function createQuizController(req: Request, res: Response) 
     const sample = getRandomSampleQuiz();
     const templates = Object.values(TemplateEnum);
     const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
-    console.log("randomTemplate", randomTemplate);
+    console.log('randomTemplate', randomTemplate);
 
     try {
         const template = await prisma.template.findUnique({ where: { name: randomTemplate } });
-        console.log("template found is : ", template);
+        console.log('template found is : ', template);
         if (!template) {
             ResponseWriter.system_error(res);
             return;
@@ -52,7 +52,7 @@ export default async function createQuizController(req: Request, res: Response) 
             },
         });
 
-        console.log("quiz created is : ", quiz);
+        console.log('quiz created is : ', quiz);
 
         ResponseWriter.created(res, quiz);
         return;

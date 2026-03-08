@@ -263,7 +263,11 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                             ) : (
                                 <NoContent
                                     title={searchQuery ? 'No quizzes found' : 'Trash is empty'}
-                                    description={searchQuery ? 'Try a different search term' : 'Items in trash are permanently deleted after 30 days'}
+                                    description={
+                                        searchQuery
+                                            ? 'Try a different search term'
+                                            : 'Items in trash are permanently deleted after 30 days'
+                                    }
                                     className="col-span-full w-full h-full min-h-[50vh]"
                                 />
                             )}
