@@ -3,17 +3,17 @@ import { motion, Variants, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
+import { RxCross2 } from 'react-icons/rx';
 import clsx from 'clsx';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
-import AppLogo from '../app/AppLogo';
+import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import z from 'zod';
 import { MdOutlineChevronRight } from 'react-icons/md';
 import OpacityBackground from '../utility/OpacityBackground';
 import { Button } from '../ui/button';
-import CanvasAccents from '../utility/CanvasAccents';
 
 const container: Variants = {
     closed: {
@@ -83,79 +83,98 @@ function JoinQuizOverlay({
     }
 
     return (
-        <OpacityBackground onBackgroundClick={onClose} className="bg-dark-alpha/20 z-20">
-            <main className="relative max-w-7xl w-full rounded-xl mx-auto h-[80dvh] bg-light-alpha z-20 overflow-hidden flex flex-col">
-                <CanvasAccents accentColor="#000000" design="staircase" />
-                <AppLogo withText size={120} className="absolute top-0 left-0" />
-                <section className="flex flex-1 items-center justify-center w-full z-20">
-                    <div className="max-w-xs w-full flex flex-col gap-y-6">
-                        <div>
-                            <Label
-                                htmlFor="participant-name"
-                                className="text-xs text-dark-base/70 ml-1 mb-1 block"
-                            >
-                                Name <span className="text-neutral-400">(optional)</span>
-                            </Label>
-                            <Input
-                                id="participant-name"
-                                placeholder="What should we call you?"
-                                disabled={loading}
-                                className="border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! w-full placeholder:text-dark-base/70 text-dark-base/70"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
+        <OpacityBackground onBackgroundClick={onClose} className="bg-neutral-900/20">
+            <motion.section
+                initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="relative bg-light-alpha dark:bg-dark-base border-2 border-black w-100 max-w-[90vw] rounded-md overflow-hidden shadow-sm"
+            >
+                <div className="bg-ndarkest border-b-2 border-black relative h-40 w-full">
+                    <Image
+                        src="/images/landing/buttonPressGreen.png"
+                        alt="join quiz"
+                        className="object-cover"
+                        fill
+                        unoptimized
+                    />
+                    <motion.button
+                        type="button"
+                        aria-label="Close modal"
+                        onClick={onClose}
+                        className="text-ndarkest cursor-pointer absolute right-3 top-3 bg-nlighter rounded-full p-1 hover:bg-ndarkest hover:text-nlighter shadow-xs transition-colors duration-250 z-10"
+                    >
+                        <RxCross2 size={15} strokeWidth={0.8} />
+                    </motion.button>
+                </div>
+
+                <section className="p-6 flex flex-col gap-y-5 text-dark-alpha dark:text-light-base">
+                    <div>
+                        <div className="text-xl font-bold text-dark-alpha/80 dark:text-light-base/80">
+                            Join the quiz
                         </div>
-                        <div>
-                            <Label
-                                htmlFor="participant-email"
-                                className="text-xs text-dark-base/70 ml-1 mb-1 flex items-center gap-x-1"
-                            >
-                                Email <span className="text-red-500">*</span>
-                            </Label>
-                            <div className="flex items-center justify-center gap-x-2">
-                                <Input
-                                    id="participant-email"
-                                    disabled={loading}
-                                    placeholder="Enter your email to join the quiz"
-                                    className="border-t-0 border-x-0 shadow-none rounded-none placeholder:text-base text-base! max-w-2xl w-full placeholder:text-dark-base/70 text-dark-base/70"
-                                    value={email ?? ''}
-                                    onChange={handleEmailChange}
-                                />
-                            </div>
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.5 }}
-                                className="flex items-center gap-x-1.5 mt-3 ml-1"
-                            >
-                                {/* <IoTrophyOutline size={10} className="text-alpha shrink-0" /> */}
-                                <span className="text-[10px] tracking-wide text-dark-base/35 leading-none">
-                                    shared with host only · used for prize distribution
-                                </span>
-                            </motion.div>
-                            {validation && email && (
-                                <span
-                                    className={`text-xs ml-1 block mt-2 text-right ${validation.valid ? 'text-green-500' : 'text-red-500'}`}
-                                >
-                                    {validation.message}
-                                </span>
-                            )}
-                        </div>
-                        <Button
-                            disabled={!validation?.valid || !email || loading}
-                            onClick={() =>
-                                email &&
-                                validation?.valid &&
-                                onJoin(email, name.trim() || undefined)
-                            }
-                            className="bg-dark-alpha text-light-alpha hover:bg-dark-base cursor-pointer disabled:bg-dark-base disabled:opacity-100"
-                        >
-                            {loading ? <span>Joining...</span> : <span>Join quiz</span>}
-                            <MdOutlineChevronRight />
-                        </Button>
+                        <p className="text-xs text-dark-alpha/50 dark:text-light-base/50 mt-0.5">
+                            Enter your details to participate
+                        </p>
                     </div>
+
+                    <div className="flex flex-col gap-y-1">
+                        <Label
+                            htmlFor="participant-name"
+                            className="text-sm font-semibold ml-0.5"
+                        >
+                            Name <span className="text-neutral-400 font-normal">(optional)</span>
+                        </Label>
+                        <Input
+                            id="participant-name"
+                            placeholder="What should we call you?"
+                            disabled={loading}
+                            className="bg-light-base border-none p-5 mt-1"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-y-1">
+                        <Label
+                            htmlFor="participant-email"
+                            className="text-sm font-semibold ml-0.5 flex items-center gap-x-1"
+                        >
+                            Email <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="participant-email"
+                            disabled={loading}
+                            placeholder="youremail@example.com"
+                            className="bg-light-base border-none p-5 mt-1"
+                            value={email ?? ''}
+                            onChange={handleEmailChange}
+                        />
+                        <span className="text-[10px] tracking-wide text-dark-base/35 mt-1 ml-0.5">
+                            shared with host only · used for prize distribution
+                        </span>
+                        {validation && email && (
+                            <span
+                                className={`text-xs ml-0.5 mt-1 text-right ${validation.valid ? 'text-green-500' : 'text-red-500'}`}
+                            >
+                                {validation.message}
+                            </span>
+                        )}
+                    </div>
+
+                    <Button
+                        disabled={!validation?.valid || !email || loading}
+                        onClick={() =>
+                            email && validation?.valid && onJoin(email, name.trim() || undefined)
+                        }
+                        className="bg-dark-alpha text-light-alpha hover:bg-dark-base cursor-pointer disabled:bg-neutral-700 disabled:opacity-100! w-full p-5"
+                    >
+                        {loading ? 'Joining...' : 'Join quiz'}
+                        <MdOutlineChevronRight />
+                    </Button>
                 </section>
-            </main>
+            </motion.section>
         </OpacityBackground>
     );
 }
@@ -210,9 +229,9 @@ function JoinQuizPill({
                     onClick={
                         isOpen
                             ? (e) => {
-                                  e.stopPropagation();
-                                  onJoin();
-                              }
+                                e.stopPropagation();
+                                onJoin();
+                            }
                             : undefined
                     }
                     className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
@@ -272,8 +291,8 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                  ? 'spectator'
-                  : null;
+                    ? 'spectator'
+                    : null;
         if (!type) return;
 
         if (type === 'participant') {
@@ -287,7 +306,7 @@ export default function JoinQuizButton() {
         if (!code.trim()) return;
         setLoading(true);
         try {
-            const quizId = await userQuizAction.joinQuiz(code.trim(), email);
+            const quizId = await userQuizAction.joinQuiz(code.trim(), email, name);
             setCode('');
 
             if (!quizId) return;

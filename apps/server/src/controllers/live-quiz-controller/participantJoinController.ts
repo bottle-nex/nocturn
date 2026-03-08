@@ -16,7 +16,7 @@ export default async function participantJoinController(req: Request, res: Respo
         return;
     }
 
-    const { code, email } = parseResult.data;
+    const { code, email, name } = parseResult.data;
 
     try {
         const quiz = await prisma.quiz.findUnique({
@@ -85,7 +85,7 @@ export default async function participantJoinController(req: Request, res: Respo
             const participant = await tx.participant.create({
                 data: {
                     quizId: quiz.id,
-                    nickname: GenerateUser.getRandomName(),
+                    nickname: name ?? GenerateUser.getRandomName(),
                     avatar: GenerateUser.getRandomAvatar(),
                     ipAddress: req.ip || 'unknown',
                     email: email as string,
