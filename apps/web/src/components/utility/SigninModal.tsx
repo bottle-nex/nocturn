@@ -223,7 +223,7 @@ export default function SigninModal() {
                                 </InputOTP>
                             </div>
                             <Button
-                                className="dark:bg-dark-alpha hover:bg-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100!"
+                                className="dark:bg-light-alpha! hover:bg-light-base dark:text-dark-base w-full mt-6 p-5 disabled:bg-neutral-700! disabled:opacity-100! inset-shadow-2xs inset-shadow-dark-alpha/10"
                                 onClick={handleVerifyOtp}
                                 disabled={loading || otp.length !== 6}
                             >

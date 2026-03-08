@@ -16,8 +16,9 @@ export default async function createCheckoutController(req: Request, res: Respon
             ResponseWriter.not_authorized(res);
             return;
         }
-
+        console.log('Received create checkout request for user:', req.user.id);
         const { data: parsed_data, success } = createCheckoutSchema.safeParse(req.body);
+        console.log("data is : ", parsed_data);
         if (!success) {
             ResponseWriter.invalid_data(res, 'Invalid request data');
             return;

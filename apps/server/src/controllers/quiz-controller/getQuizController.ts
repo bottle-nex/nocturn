@@ -67,6 +67,8 @@ export default async function getQuizController(req: Request, res: Response): Pr
             return;
         }
 
+        QuizAction.record_quiz_view(quizId, String(user.id));
+
         const is_owner = quiz.hostId === user.id;
         const hasCollabSession = !!quiz.CollabSession;
 
@@ -89,9 +91,9 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 userCollabRole,
                 req?.user.name,
                 '#' +
-                    Math.floor(Math.random() * 16777215)
-                        .toString(16)
-                        .padStart(6, '0'),
+                Math.floor(Math.random() * 16777215)
+                    .toString(16)
+                    .padStart(6, '0'),
                 collabSessionId,
             );
 

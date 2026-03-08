@@ -159,6 +159,7 @@ export class SigninController {
 
         try {
             const otp = crypto.randomInt(100000, 999999).toString();
+            console.log(`Generated OTP for ${email}: ${otp}`);
             await publisherInstance.set(`otp:${email}`, otp, 'EX', 100);
             await email_service_queue_instance.email_send_otp({ email, otp });
 
@@ -179,6 +180,7 @@ export class SigninController {
 
         try {
             const stored = await publisherInstance.get(`otp:${email}`);
+            console.log("stored otp is : ", stored, " and user entered otp is : ", otp);
             if (!stored || stored !== otp) {
                 ResponseWriter.invalid_data(res, 'Invalid or expired OTP');
                 return;
@@ -189,6 +191,8 @@ export class SigninController {
             const existingUser = await prisma.user.findUnique({
                 where: { email },
             });
+
+            console.log("existing user is : ", existingUser);
 
             let myUser;
             if (existingUser) {
