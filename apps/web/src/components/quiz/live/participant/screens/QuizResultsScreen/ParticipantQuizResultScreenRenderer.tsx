@@ -100,7 +100,11 @@ function ResultReadyScreen({
             </section>
             {showAvatars && (
                 <section className="inset-0 absolute">
-                    <FallingAvatars participants={participants} ballRadius={44} isExiting={isExiting} />
+                    <FallingAvatars
+                        participants={participants}
+                        ballRadius={44}
+                        isExiting={isExiting}
+                    />
                 </section>
             )}
         </div>
