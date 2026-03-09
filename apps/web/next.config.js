@@ -11,6 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 const nextConfig = {
     reactStrictMode: false,
     images: {
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',

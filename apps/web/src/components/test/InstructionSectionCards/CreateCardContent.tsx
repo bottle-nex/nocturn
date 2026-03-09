@@ -69,7 +69,7 @@ export function CreateCardContent(): JSX.Element {
         <motion.div
             initial="rest"
             whileHover="hover"
-            className="w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha shrink-0 flex justify-center items-center relative"
+            className="w-55 h-55 ring-1 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha dark:bg-dark-alpha shrink-0 flex justify-center items-center relative"
         >
             {/* <div className='w-45 h-45 rounded-full ring-1 ring-black/20 absolute' /> */}
 
@@ -87,7 +87,7 @@ export function CreateCardContent(): JSX.Element {
                 );
             })}
 
-            <div className="h-24 w-24 bg-light-base rounded-full flex justify-center items-center relative overflow-hidden z-10 ring-1 ring-black/10 shadow-sm shadow-black/5">
+            <div className="h-24 w-24 bg-light-base dark:bg-dark-base rounded-full flex justify-center items-center relative overflow-hidden z-10 ring-1 ring-black/10 dark:ring-white/10 shadow-sm shadow-black/5">
                 <Image
                     src="/illustrations/coffee_guy.png"
                     alt=""

@@ -10,7 +10,7 @@ import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCard
 export default function Page() {
     return (
         <div className="overflow-x-hidden w-full relative custom-scrollbar">
-            <div className="min-h-screen w-full bg-white relative z-10 flex flex-col items-center mb-[60vh] gap-y-30 custom-scrollbar">
+            <div className="min-h-screen w-full bg-light-alpha dark:bg-dark-alpha relative z-10 flex flex-col items-center mb-[60vh] gap-y-30 custom-scrollbar">
                 {/* <LandingNavbar /> */}
                 <LandingTestNav />
                 <LandingHeroSection />

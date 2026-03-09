@@ -108,8 +108,8 @@ export function PublishCardContent(): React.JSX.Element {
             initial="initial"
             whileHover="hover"
             className={cn(
-                'w-55 h-55 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-2xl',
-                'bg-light-alpha shrink-0 flex flex-col items-center gap-y-2',
+                'w-55 h-55 ring-1 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 rounded-2xl',
+                'bg-light-alpha dark:bg-dark-alpha shrink-0 flex flex-col items-center gap-y-2',
                 'relative overflow-hidden p-5 group select-none',
                 // 'transition-all duration-300 hover:-translate-y-1.5 hover:scale-105 hover:-rotate-2',
             )}
@@ -117,60 +117,72 @@ export function PublishCardContent(): React.JSX.Element {
             <div
                 className={cn(
                     'absolute h-13 w-44 top-6 select-none',
-                    'ring-1 ring-black/10 shadow-sm shadow-black/5',
+                    'ring-1 ring-black/10 dark:ring-white/10 shadow-sm shadow-black/5',
                     'rounded-[10px] flex items-center gap-x-2.5 px-2',
-                    'bg-light-alpha z-1 blur-[1px]',
+                    'bg-light-alpha dark:bg-dark-alpha z-1 blur-[1px]',
                     'transition-all transform duration-300 blur-none',
                     'group-hover:-translate-y- group-hover:z-0 group-hover:blur-[1px] group-hover:scale-75',
                 )}
             >
-                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 shadow-xs shadow-black/5 bg-light-base flex justify-center items-center text-neutral-500">
+                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 bg-light-base dark:bg-dark-base flex justify-center items-center text-neutral-500">
                     <MdOutlineRocketLaunch className="size-5" />
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80">LAUNCH QUIZ</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        LAUNCH QUIZ
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60">Live Action</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Live Action
+                    </div>
                 </div>
             </div>
 
             <div
                 className={cn(
                     'absolute h-13 w-44 top-20.5 select-none',
-                    'ring-1 ring-black/10 shadow-sm shadow-black/5 rounded-[10px]',
-                    'flex items-center gap-x-2.5 px-2 bg-light-alpha z-1',
+                    'ring-1 ring-black/10 dark:ring-white/10 shadow-sm shadow-black/5 rounded-[10px]',
+                    'flex items-center gap-x-2.5 px-2 bg-light-alpha dark:bg-dark-alpha z-1',
                     'group-hover:-translate-y-6 group-hover:scale-85',
                     'transition-all transform duration-250',
                 )}
             >
-                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 shadow-xs shadow-black/5 bg-light-base flex justify-center items-center text-neutral-500">
+                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 bg-light-base dark:bg-dark-base flex justify-center items-center text-neutral-500">
                     <MdPublish className="size-5" />
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80">PUBLISH QUIZ</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        PUBLISH QUIZ
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60">Final Quiz</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Final Quiz
+                    </div>
                 </div>
             </div>
 
             <div
                 className={cn(
                     'absolute h-13 w-44 top-35',
-                    'ring-1 ring-black/10 shadow-sm shadow-black/5 rounded-[10px]',
-                    'flex items-center gap-x-2.5 px-2 bg-light-alpha z-2',
+                    'ring-1 ring-black/10 dark:ring-white/10 shadow-sm shadow-black/5 rounded-[10px]',
+                    'flex items-center gap-x-2.5 px-2 bg-light-alpha dark:bg-dark-alpha z-2',
                     'group-hover:-translate-y-11.5 group-hover:scale-95 transition-all transform duration-300',
                 )}
             >
-                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 shadow-xs shadow-black/5 bg-light-base flex justify-center items-center text-neutral-500">
+                <div className="h-10 w-10 rounded-lg ring-1 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 bg-light-base dark:bg-dark-base flex justify-center items-center text-neutral-500">
                     <LuSave className="size-5" />
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80">SAVE DRAFT</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        SAVE DRAFT
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60">Update changes</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Update changes
+                    </div>
                 </div>
             </div>
 
