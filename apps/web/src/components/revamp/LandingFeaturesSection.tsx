@@ -117,15 +117,15 @@ export default function LandingFeaturesSection() {
             />
             <div className="w-screen h-screen flex flex-col justify-center items-center relative pt-20 select-none -mt-10 overflow-hidden">
                 <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30 max-w-6xl">
-                    <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs -mt-50 ">
-                        <div className="w-290 h-290 aspect-square border border-dark-base/2 flex justify-center items-center rounded-[19rem] shadow-xs">
-                            <div className="w-260 h-260 aspect-square border border-dark-base/3 flex justify-center items-center rounded-[17rem] shadow-xs">
-                                <div className="w-230 h-230 aspect-square border border-dark-base/4 flex justify-center items-center rounded-[15rem] shadow-xs">
-                                    <div className="w-200 h-200 aspect-square border border-dark-base/5 flex justify-center items-center rounded-[13rem] shadow-xs">
-                                        <div className="w-170 h-170 aspect-square border border-dark-base/10 flex justify-center items-center rounded-[11rem] shadow-xs">
-                                            <div className="w-140 h-140 aspect-square border border-dark-base/15 flex justify-center items-center rounded-[9rem] shadow-xs">
-                                                <div className="w-110 h-110 aspect-square border border-dark-base/20 flex justify-center items-center rounded-[7rem] shadow-xs">
-                                                    <div className="w-80 h-80 aspect-square border border-dark-base/25 flex justify-center items-center rounded-[5rem] relative shadow-xs">
+                    <div className="w-320 h-320 aspect-square border border-dark-base/1 dark:border-light-base/1 flex justify-center items-center rounded-[21rem] shadow-xs -mt-50 ">
+                        <div className="w-290 h-290 aspect-square border border-dark-base/2 dark:border-light-base/2 flex justify-center items-center rounded-[19rem] shadow-xs">
+                            <div className="w-260 h-260 aspect-square border border-dark-base/3 dark:border-light-base/3 flex justify-center items-center rounded-[17rem] shadow-xs">
+                                <div className="w-230 h-230 aspect-square border border-dark-base/4 dark:border-light-base/4 flex justify-center items-center rounded-[15rem] shadow-xs">
+                                    <div className="w-200 h-200 aspect-square border border-dark-base/5 dark:border-light-base/5 flex justify-center items-center rounded-[13rem] shadow-xs">
+                                        <div className="w-170 h-170 aspect-square border border-dark-base/10 dark:border-light-base/10 flex justify-center items-center rounded-[11rem] shadow-xs">
+                                            <div className="w-140 h-140 aspect-square border border-dark-base/15 dark:border-light-base/15 flex justify-center items-center rounded-[9rem] shadow-xs">
+                                                <div className="w-110 h-110 aspect-square border border-dark-base/20 dark:border-light-base/20 flex justify-center items-center rounded-[7rem] shadow-xs">
+                                                    <div className="w-80 h-80 aspect-square border border-dark-base/25 dark:border-light-base/25 flex justify-center items-center rounded-[5rem] relative shadow-xs">
                                                         <div className="-left-74 -top-12 absolute select-none">
                                                             <AnimatePresence>
                                                                 {isHovered &&
@@ -191,7 +191,7 @@ export default function LandingFeaturesSection() {
                                                                                             p.color,
                                                                                         borderRadius:
                                                                                             Math.random() >
-                                                                                            0.5
+                                                                                                0.5
                                                                                                 ? 2
                                                                                                 : 999,
                                                                                     }}
@@ -219,7 +219,7 @@ export default function LandingFeaturesSection() {
                                                                     stiffness: 380,
                                                                     damping: 14,
                                                                 }}
-                                                                className="relative h-15 w-53 rounded-xl bg-white ring-1 ring-black/10 shadow-md flex items-center justify-center gap-x-3 z-10"
+                                                                className="relative h-15 w-53 rounded-xl bg-white dark:bg-dark-alpha ring-1 ring-black/10 dark:ring-white/10 shadow-md flex items-center justify-center gap-x-3 z-10"
                                                             >
                                                                 <motion.div
                                                                     className="w-8.5 h-8.5 rounded-full relative overflow-hidden ring-1 ring-black/10 bg-black flex items-center justify-center z-10"
@@ -248,9 +248,9 @@ export default function LandingFeaturesSection() {
                                                                     />
                                                                 </motion.div>
 
-                                                                <div className="flex flex-col -space-y-1 text-dark-base text-xl z-10">
+                                                                <div className="flex flex-col -space-y-1 text-dark-base dark:text-light-base text-xl z-10">
                                                                     <div>Solana staking</div>
-                                                                    <div className="text-xs text-black/50 tracking-wide">
+                                                                    <div className="text-xs text-black/50 dark:text-white/50 tracking-wide">
                                                                         EASY MONEY
                                                                     </div>
                                                                 </div>
@@ -264,7 +264,7 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowAIWords(false)
                                                             }
-                                                            className="absolute -left-104 top-60 text-dark-base ring-1 ring-black/10 shadow-md shadow-black/5 w-70 h-15 text-xl rounded-xl bg-light-alpha flex items-center justify-center gap-x-3 overflow-visible z-5 group select-none"
+                                                            className="absolute -left-104 top-60 text-dark-base dark:text-light-base ring-1 ring-black/10 dark:ring-white/10 shadow-md shadow-black/5 w-70 h-15 text-xl rounded-xl bg-light-alpha dark:bg-dark-alpha flex items-center justify-center gap-x-3 overflow-visible z-5 group select-none"
                                                         >
                                                             <div className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-black/10 shadow-md shadow-black/5">
                                                                 <VoiceIcon
@@ -275,7 +275,7 @@ export default function LandingFeaturesSection() {
                                                             </div>
                                                             <div className="flex flex-col -space-y-[2px]">
                                                                 <div>AI-powered generation</div>
-                                                                <div className="text-xs text-dark-base/50 tracking-wide">
+                                                                <div className="text-xs text-dark-base/50 dark:text-light-base/50 tracking-wide">
                                                                     YOU CAN PROCASTINATE
                                                                 </div>
                                                             </div>
@@ -286,7 +286,7 @@ export default function LandingFeaturesSection() {
                                                                     {aiWords.map((word, i) => (
                                                                         <motion.span
                                                                             key={word}
-                                                                            className="text-base font-medium text-dark-base whitespace-nowrap"
+                                                                            className="text-base font-medium text-dark-base dark:text-light-base whitespace-nowrap"
                                                                             initial={{
                                                                                 opacity: 0,
                                                                                 y: 30,
@@ -378,7 +378,7 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowAudiencePoll(false)
                                                             }
-                                                            className="absolute -right-70 -top-5 text-dark-base ring-1 ring-black/10 shadow-md shadow-black/5 rounded-xl w-50 h-14 text-xl bg-light-alpha flex items-center justify-center gap-x-3 hover:scale-105 transition-all transform duration-200 select-none"
+                                                            className="absolute -right-70 -top-5 text-dark-base dark:text-light-base ring-1 ring-black/10 dark:ring-white/10 shadow-md shadow-black/5 rounded-xl w-50 h-14 text-xl bg-light-alpha dark:bg-dark-alpha flex items-center justify-center gap-x-3 hover:scale-105 transition-all transform duration-200 select-none"
                                                         >
                                                             <div className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-[#DD3123] shadow-md shadow-black/5 bg-[#DD312330]">
                                                                 <AnimatedClock
@@ -390,7 +390,7 @@ export default function LandingFeaturesSection() {
                                                             </div>
                                                             <div className="flex flex-col -space-y-1.5">
                                                                 <div>Audience Poll</div>
-                                                                <div className="text-xs text-dark-base/50 tracking-wide">
+                                                                <div className="text-xs text-dark-base/50 dark:text-light-base/50 tracking-wide">
                                                                     LIFE SAVERS
                                                                 </div>
                                                             </div>
@@ -432,7 +432,7 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowQuizTheme(false)
                                                             }
-                                                            className="absolute -right-98 top-30 w-57 h-15 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md flex items-center gap-x-3 px-6 select-none"
+                                                            className="absolute -right-98 top-30 w-57 h-15 rounded-xl bg-light-alpha dark:bg-dark-alpha ring-1 ring-black/10 dark:ring-white/10 shadow-md flex items-center gap-x-3 px-6 select-none"
                                                         >
                                                             <div className="flex -space-x-1.5">
                                                                 {dots.map((dot) => (
@@ -453,9 +453,9 @@ export default function LandingFeaturesSection() {
                                                                 ))}
                                                             </div>
 
-                                                            <div className="flex flex-col -space-y-1.5 text-dark-base text-xl">
+                                                            <div className="flex flex-col -space-y-1.5 text-dark-base dark:text-light-base text-xl">
                                                                 <div>Quiz Themes</div>
-                                                                <div className="text-xs text-dark-base/50 tracking-wide">
+                                                                <div className="text-xs text-dark-base/50 dark:text-light-base/50 tracking-wide">
                                                                     CHOOSE YOUR VIBE
                                                                 </div>
                                                             </div>
@@ -487,7 +487,7 @@ export default function LandingFeaturesSection() {
                                                                 }}
                                                             >
                                                                 <div
-                                                                    className="absolute inset-0 backface-hidden text-dark-base ring-1 ring-black/10 shadow-md shadow-black/5 rounded-xl bg-light-alpha flex items-center justify-center gap-x-3"
+                                                                    className="absolute inset-0 backface-hidden text-dark-base dark:text-light-base ring-1 ring-black/10 dark:ring-white/10 shadow-md shadow-black/5 rounded-xl bg-light-alpha dark:bg-dark-alpha flex items-center justify-center gap-x-3"
                                                                     style={{
                                                                         backfaceVisibility:
                                                                             'hidden',
@@ -498,14 +498,14 @@ export default function LandingFeaturesSection() {
                                                                     </div>
                                                                     <div className="flex flex-col -space-y-1.5">
                                                                         <div>Interactions</div>
-                                                                        <div className="text-xs text-dark-base/50 tracking-wide">
+                                                                        <div className="text-xs text-dark-base/50 dark:text-light-base/50 tracking-wide">
                                                                             KEEP IT FUN
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <div
-                                                                    className="absolute inset-0 backface-hidden rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md flex items-center justify-center"
+                                                                    className="absolute inset-0 backface-hidden rounded-xl bg-light-alpha dark:bg-dark-alpha ring-1 ring-black/10 dark:ring-white/10 shadow-md flex items-center justify-center"
                                                                     style={{
                                                                         transform:
                                                                             'rotateX(180deg)',
@@ -574,15 +574,15 @@ export default function LandingFeaturesSection() {
                                                             onMouseLeave={() =>
                                                                 setShowCollabPanel(false)
                                                             }
-                                                            className="absolute left-1/2 -translate-x-1/2 -top-37 w-50 h-15 rounded-xl bg-light-alpha ring-1 ring-black/10 shadow-md shadow-black/5 flex items-center justify-center gap-x-3 text-xl select-none"
+                                                            className="absolute left-1/2 -translate-x-1/2 -top-37 w-50 h-15 rounded-xl bg-light-alpha dark:bg-dark-alpha ring-1 ring-black/10 dark:ring-white/10 shadow-md shadow-black/5 flex items-center justify-center gap-x-3 text-xl select-none"
                                                         >
                                                             <div className="w-8.5 h-8.5 rounded-full flex items-center justify-center bg-alpha/30 ring-1 ring-alpha">
                                                                 <IoIosPeople className="text-alpha size-5.5" />
                                                             </div>
 
-                                                            <div className="flex flex-col -space-y-1.5 text-dark-base">
+                                                            <div className="flex flex-col -space-y-1.5 text-dark-base dark:text-light-base">
                                                                 <div>Collaborators</div>
-                                                                <div className="text-xs text-dark-base/50 tracking-wide">
+                                                                <div className="text-xs text-dark-base/50 dark:text-light-base/50 tracking-wide">
                                                                     BUILD IN TEAM
                                                                 </div>
                                                             </div>

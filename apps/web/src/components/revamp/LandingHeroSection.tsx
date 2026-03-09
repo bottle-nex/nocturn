@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 export default function LandingHeroSection() {
     return (
         <div className="min-h-screen h-full w-screen flex flex-col items-center mx-auto gap-y-5 relative">
-            <div
+            {/* <div
                 className="absolute inset-0 z-0"
                 style={{
                     backgroundImage: `
@@ -54,7 +54,7 @@ export default function LandingHeroSection() {
                     maskComposite: 'intersect',
                     WebkitMaskComposite: 'source-in',
                 }}
-            />
+            /> */}
             <motion.div
                 initial={{
                     scale: 0.8,
@@ -91,7 +91,7 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="flex flex-col items-center text-dark-base text-6xl gap-y-1 font-semibold -mt-1 z-10"
+                className="flex flex-col items-center text-dark-alpha dark:text-light-alpha text-6xl gap-y-1 font-semibold -mt-1 z-10"
             >
                 <div>The only quizzing platform</div>
                 <div>where knowledge pays</div>
@@ -111,7 +111,7 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="text-xl text-dark-base/60 max-w-148 text-center"
+                className="text-xl text-dark-base/60 dark:text-light-base/80 max-w-148 text-center"
             >
                 Nocturn is a live competitive quiz app designed for curious minds. Hosts launch
                 challenges, players battle it out, and the top three win.

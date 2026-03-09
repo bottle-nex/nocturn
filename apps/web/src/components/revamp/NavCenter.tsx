@@ -9,7 +9,7 @@ export default function NavCenter() {
 
     return (
         <div
-            className="relative flex items-center bg-[#f6f6f7] ring-1 ring-black/5 text-dark-base h-11 rounded-full shadow-xs shadow-black/5 p-1 gap-x-1"
+            className="relative flex items-center bg-light-base dark:bg-dark-base ring-1 ring-black/5 text-dark-base dark:text-light-base h-11 rounded-full shadow-xs shadow-black/5 p-1 gap-x-1"
             onMouseLeave={() => setActive(null)}
         >
             <div className="relative" onMouseEnter={() => setActive('home')}>
@@ -21,7 +21,7 @@ export default function NavCenter() {
                             stiffness: 300,
                             damping: 35,
                         }}
-                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
+                        className="absolute inset-0 bg-nprimary/30 rounded-full"
                     />
                 )}
                 <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
@@ -41,7 +41,7 @@ export default function NavCenter() {
                             stiffness: 300,
                             damping: 35,
                         }}
-                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
+                        className="absolute inset-0 bg-nprimary/30 rounded-full"
                     />
                 )}
                 <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
@@ -61,7 +61,7 @@ export default function NavCenter() {
                             stiffness: 300,
                             damping: 35,
                         }}
-                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
+                        className="absolute inset-0 bg-nprimary/30 rounded-full"
                     />
                 )}
                 <button
@@ -84,7 +84,7 @@ export default function NavCenter() {
                             stiffness: 300,
                             damping: 35,
                         }}
-                        className="absolute inset-0 bg-[#ddddf7] rounded-full"
+                        className="absolute inset-0 bg-nprimary/30 rounded-full"
                     />
                 )}
                 <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
