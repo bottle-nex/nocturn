@@ -148,13 +148,18 @@ function LeaderRow({
             </div>
             <div className="flex-1 flex flex-col justify-between">
                 <div className="flex justify-between text-[11px]">
-                    <motion.span className="text-dark-base/80 dark:text-light-base/80">{displayPts}</motion.span>
+                    <motion.span className="text-dark-base/80 dark:text-light-base/80">
+                        {displayPts}
+                    </motion.span>
                 </div>
                 <div className="w-full h-3 rounded-full bg-dark-base/10 dark:bg-light-base/10 overflow-hidden ring-1 ring-black/10 dark:ring-white/5">
                     <motion.div
                         style={{ width: widthPercent }}
-                        className={`h-full rounded-full ${active ? 'bg-dark-base dark:bg-light-base' : 'bg-dark-base/40 dark:bg-light-base/40'
-                            }`}
+                        className={`h-full rounded-full ${
+                            active
+                                ? 'bg-dark-base dark:bg-light-base'
+                                : 'bg-dark-base/40 dark:bg-light-base/40'
+                        }`}
                     />
                 </div>
             </div>

@@ -129,9 +129,13 @@ export function PublishCardContent(): React.JSX.Element {
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">LAUNCH QUIZ</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        LAUNCH QUIZ
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">Live Action</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Live Action
+                    </div>
                 </div>
             </div>
 
@@ -149,9 +153,13 @@ export function PublishCardContent(): React.JSX.Element {
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">PUBLISH QUIZ</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        PUBLISH QUIZ
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">Final Quiz</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Final Quiz
+                    </div>
                 </div>
             </div>
 
@@ -168,9 +176,13 @@ export function PublishCardContent(): React.JSX.Element {
                 </div>
 
                 <div className="flex flex-col justify-between h-10">
-                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">SAVE DRAFT</div>
+                    <div className="text-sm text-dark-base/80 dark:text-light-base/80">
+                        SAVE DRAFT
+                    </div>
 
-                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">Update changes</div>
+                    <div className="text-[12px] text-dark-base/60 dark:text-light-base/60">
+                        Update changes
+                    </div>
                 </div>
             </div>
 

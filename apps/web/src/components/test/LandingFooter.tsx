@@ -50,39 +50,125 @@ export default function LandingFooter() {
 
                 <div className="flex space-x-20">
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">Features</div>
+                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
+                            Features
+                        </div>
                         <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
-                            <LinkWrapper href="" label="Overview" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="AI Generation" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Quiz" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Presentations" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
+                            <LinkWrapper
+                                href=""
+                                label="Overview"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="AI Generation"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Quiz"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Presentations"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">Resources</div>
+                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
+                            Resources
+                        </div>
                         <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
-                            <LinkWrapper href="" label="How to" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Templates" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Stories" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
+                            <LinkWrapper
+                                href=""
+                                label="How to"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Templates"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Stories"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">Details</div>
+                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
+                            Details
+                        </div>
                         <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
-                            <LinkWrapper href="" label="Legal" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Policies" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Accessibility" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Legal" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
+                            <LinkWrapper
+                                href=""
+                                label="Legal"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Policies"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Accessibility"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Legal"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">About Us</div>
+                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
+                            About Us
+                        </div>
                         <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
-                            <LinkWrapper href="" label="The team" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
-                            <LinkWrapper href="" label="Contact Us" tinted={tinted} onEnter={handleLinkEnter} onLeave={handleLinkLeave} />
+                            <LinkWrapper
+                                href=""
+                                label="The team"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
+                            <LinkWrapper
+                                href=""
+                                label="Contact Us"
+                                tinted={tinted}
+                                onEnter={handleLinkEnter}
+                                onLeave={handleLinkLeave}
+                            />
                         </div>
                     </div>
                 </div>
@@ -119,16 +205,23 @@ function LinkWrapper({ href, label, tinted, onEnter, onLeave }: LinkWrapperProps
                 'flex items-center gap-x-1 cursor-pointer transition-all duration-100 dark:hover:text-dark-alpha/80 hover:text-light-alpha/80',
                 tinted && !hovered ? 'opacity-40' : 'opacity-100',
             )}
-            onMouseEnter={() => { setHovered(true); onEnter(); }}
-            onMouseLeave={() => { setHovered(false); onLeave(); }}
+            onMouseEnter={() => {
+                setHovered(true);
+                onEnter();
+            }}
+            onMouseLeave={() => {
+                setHovered(false);
+                onLeave();
+            }}
         >
-            <Link href={href}>
-                {label}
-            </Link>
-            <IoMdArrowUp className={cn("size-3.5 rotate-45",
-                hovered ? 'opacity-100 translate-x-1 -translate-y-1' : 'opacity-0',
-                'transition-all transform duration-250',
-            )} />
+            <Link href={href}>{label}</Link>
+            <IoMdArrowUp
+                className={cn(
+                    'size-3.5 rotate-45',
+                    hovered ? 'opacity-100 translate-x-1 -translate-y-1' : 'opacity-0',
+                    'transition-all transform duration-250',
+                )}
+            />
         </span>
     );
 }

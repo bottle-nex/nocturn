@@ -120,10 +120,7 @@ function JoinQuizOverlay({
                     </div>
 
                     <div className="flex flex-col gap-y-1">
-                        <Label
-                            htmlFor="participant-name"
-                            className="text-sm font-semibold ml-0.5"
-                        >
+                        <Label htmlFor="participant-name" className="text-sm font-semibold ml-0.5">
                             Name <span className="text-neutral-400 font-normal">(optional)</span>
                         </Label>
                         <Input
@@ -229,9 +226,9 @@ function JoinQuizPill({
                     onClick={
                         isOpen
                             ? (e) => {
-                                e.stopPropagation();
-                                onJoin();
-                            }
+                                  e.stopPropagation();
+                                  onJoin();
+                              }
                             : undefined
                     }
                     className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
@@ -291,8 +288,8 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                    ? 'spectator'
-                    : null;
+                  ? 'spectator'
+                  : null;
         if (!type) return;
 
         if (type === 'participant') {

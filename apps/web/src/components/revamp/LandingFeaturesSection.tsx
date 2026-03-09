@@ -191,7 +191,7 @@ export default function LandingFeaturesSection() {
                                                                                             p.color,
                                                                                         borderRadius:
                                                                                             Math.random() >
-                                                                                                0.5
+                                                                                            0.5
                                                                                                 ? 2
                                                                                                 : 999,
                                                                                     }}

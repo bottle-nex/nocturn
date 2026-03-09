@@ -61,7 +61,9 @@ export default function InstructionSectionHoverCard({
                                 className="h-2 w-2 rounded-full"
                                 style={{ backgroundColor: point.color }}
                             />
-                            <div className="text-[14px] text-black/60 dark:text-white/60">{point.point_title}</div>
+                            <div className="text-[14px] text-black/60 dark:text-white/60">
+                                {point.point_title}
+                            </div>
                         </div>
 
                         {i !== points.length - 1 && (

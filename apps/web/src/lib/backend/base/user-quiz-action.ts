@@ -12,7 +12,11 @@ interface JoinQuizResponse {
 }
 
 class UserQuizAction {
-    public async joinQuiz(code: string, email?: string, name?: string): Promise<JoinQuizResponse | null> {
+    public async joinQuiz(
+        code: string,
+        email?: string,
+        name?: string,
+    ): Promise<JoinQuizResponse | null> {
         switch (code.length) {
             case 6:
                 return await this.spectatorJoinQuiz(code);
