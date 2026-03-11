@@ -134,7 +134,7 @@ export default function ParticipantQuestionActiveOptions() {
                                       ? '#14b8a614'
                                       : '#ffffff',
                                 border: `1px solid ${isSelected ? ring : isLifelineSuggestion && !hasUsedLifeline ? '#14b8a666' : 'transparent'}`,
-                                opacity: isDisabled ? 0.4 : 1,
+                                opacity: 1,
                                 cursor: isDisabled ? 'default' : 'pointer',
                             }}
                         >
@@ -153,7 +153,7 @@ export default function ParticipantQuestionActiveOptions() {
                                     {LABELS[idx]}
                                 </span>
                             </div>
-                            <div className="flex-1 flex items-center px-4 py-3.5 gap-x-3 min-w-0">
+                            <div className="flex-1 flex items-center px-4 py-4 gap-x-3 min-w-0">
                                 <span
                                     className="flex-1 leading-snug text-sm sm:text-base text-dark-base"
                                     style={{ fontWeight: isSelected ? 500 : 400 }}

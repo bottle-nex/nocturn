@@ -71,15 +71,12 @@ export default function ParticipantQuestionActiveRenderer() {
                 </div>
 
                 <div className="flex flex-col items-center w-2xl gap-y-4">
-                    <div className="px-6 pt-0 pb-5 shrink-0 w-full">
+                    <div className="px-6 pt-0 pb-5 shrink-0 w-full flex flex-col justify-center items-center">
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dark-base/40 mb-2">
-                            Question
+                            {/* Question */}
                         </p>
-                        <p
-                            className="text-dark-base leading-relaxed font-medium"
-                            style={{ fontSize: 'clamp(1.05rem, 2.5vw, 1.25rem)' }}
-                        >
-                            {currentQuestion.question}
+                        <p className="text-dark-base leading-relaxed font-medium text-[32px]">
+                            Q. {currentQuestion.question}
                         </p>
                     </div>
                     <div className="flex-1 min-h-0 px-6 pb-6 flex flex-col w-full">
