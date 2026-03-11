@@ -269,7 +269,7 @@ export default function LandingFeaturesSection() {
                                                             <div className="w-8.5 h-8.5 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden ring-1 ring-black/10 shadow-md shadow-black/5">
                                                                 <VoiceIcon
                                                                     size={25}
-                                                                    className="text-dark-base group-hover:text-red-500 pr-px transition-colors transform duration-300"
+                                                                    className="text-dark-base dark:text-light-base group-hover:dark:text-red-500 group-hover:text-red-500 pr-px transition-colors transform duration-300"
                                                                     animate
                                                                 />
                                                             </div>
