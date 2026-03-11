@@ -13,22 +13,22 @@ import { PiPlus } from 'react-icons/pi';
 
 const elements = [
     {
-        name: "Create",
+        name: 'Create',
         icon: { element: MdOutlineCreateNewFolder, size: 14 },
         position: { top: 5, right: 12 },
     },
     {
-        name: "Save",
+        name: 'Save',
         icon: { element: FaRegSave, size: 12 },
         position: { top: 15, right: 9 },
     },
     {
-        name: "Publish",
+        name: 'Publish',
         icon: { element: HiOutlineUpload, size: 14 },
         position: { top: 25, right: 6.5 },
     },
     {
-        name: "Launch",
+        name: 'Launch',
         icon: { element: GrSend, size: 12 },
         position: { top: 35, right: 12 },
     },
@@ -105,10 +105,10 @@ export default function LandingSectionLeftCard() {
             onMouseEnter={() => setShowNewQuizOptions(true)}
             onMouseLeave={() => setShowNewQuizOptions(false)}
             className={cn(
-                "h-80 w-78 rounded-4xl ring-4 ",
-                "shadow-xl absolute top-4 left-[11%] p-6 flex flex-col justify-between overflow-hidden scale-115",
-                "ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ",
-                "dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ",
+                'h-80 w-78 rounded-4xl ring-4 ',
+                'shadow-xl absolute top-4 left-[11%] p-6 flex flex-col justify-between overflow-hidden scale-115',
+                'ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ',
+                'dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ',
             )}
         >
             <div className="h-50 w-full relative">
@@ -121,13 +121,12 @@ export default function LandingSectionLeftCard() {
                             exit="exit"
                             className="absolute h-50 w-full pointer-events-none"
                         >
-
                             {elements.map((e, i) => (
                                 <motion.div
                                     key={i}
                                     variants={item}
                                     className={cn(
-                                        "px-2 py-1 flex items-center ring-1 ring-black/10 shadow-xs shadow-black/5 gap-x-1 text-dark-base/80 dark:text-light-base/80 bg-light-alpha dark:bg-dark-alpha w-fit rounded-sm text-xs tracking-wide rotate-4",
+                                        'px-2 py-1 flex items-center ring-1 ring-black/10 shadow-xs shadow-black/5 gap-x-1 text-dark-base/80 dark:text-light-base/80 bg-light-alpha dark:bg-dark-alpha w-fit rounded-sm text-xs tracking-wide rotate-4',
                                         `absolute top-${e.position.top} right-${e.position.right}`,
                                     )}
                                 >
@@ -135,7 +134,6 @@ export default function LandingSectionLeftCard() {
                                     {e.name}
                                 </motion.div>
                             ))}
-
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -157,14 +155,10 @@ export default function LandingSectionLeftCard() {
             </div>
 
             <div className="w-full flex flex-col gap-y-2">
-                <div className="text-dark-base/70 dark:text-light-base/70 ">
-                    STEP 1
-                </div>
+                <div className="text-dark-base/70 dark:text-light-base/70 ">STEP 1</div>
                 <div className="text-dark-base/50 dark:text-light-base/50 ">
                     Head over to the home page, then click on{' '}
-                    <span className="text-dark-base dark:text-light-base ">
-                        New Quiz {" "}
-                    </span> 
+                    <span className="text-dark-base dark:text-light-base ">New Quiz </span>
                     to start creating a quiz.
                 </div>
             </div>

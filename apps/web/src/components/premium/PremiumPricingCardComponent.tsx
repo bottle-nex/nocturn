@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { cn } from '@/lib/utils';
 import AppLogo from '../app/AppLogo';
@@ -19,7 +19,6 @@ import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 
 export default function PremiumPricingCardComponent() {
-
     const router = useRouter();
 
     return (
@@ -86,7 +85,7 @@ export default function PremiumPricingCardComponent() {
                                 'bg-dark-base w-fit text-light-base px-4 h-10 rounded-full',
                                 'flex items-center gap-x-2 text-sm',
                                 'shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)]',
-                                "cursor-pointer",
+                                'cursor-pointer',
                             )}
                             onClick={() => router.push('/premium')}
                         >

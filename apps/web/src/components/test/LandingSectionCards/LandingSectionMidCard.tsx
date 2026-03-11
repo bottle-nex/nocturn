@@ -25,10 +25,10 @@ export default function LandingSectionMidCard() {
                 delay: 0.5,
             }}
             className={cn(
-                "h-82 w-80 rounded-4xl ring-4 ",
-                "shadow-xl absolute -top-1 left-1/2 -translate-x-1/2 p-6 flex flex-col justify-between overflow-hidden group scale-115",
-                "ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ",
-                "dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ",
+                'h-82 w-80 rounded-4xl ring-4 ',
+                'shadow-xl absolute -top-1 left-1/2 -translate-x-1/2 p-6 flex flex-col justify-between overflow-hidden group scale-115',
+                'ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ',
+                'dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ',
             )}
         >
             <div className="h-50 w-full relative">
@@ -82,9 +82,7 @@ export default function LandingSectionMidCard() {
             </div>
 
             <div className="w-full flex flex-col gap-y-2">
-                <div className="text-dark-base/70 dark:text-light-base/70 ">
-                    STEP 2
-                </div>
+                <div className="text-dark-base/70 dark:text-light-base/70 ">STEP 2</div>
                 <div className="text-dark-base/50 dark:text-light-base/50 ">
                     Build your quiz, customize the design, collaborate with others, set scoring
                     rules, and put your SOL on the line.

@@ -32,10 +32,10 @@ export default function LandingSectionRightCard() {
             onMouseEnter={() => setHoverBars(true)}
             onMouseLeave={() => setHoverBars(false)}
             className={cn(
-                "h-80 w-78 rounded-4xl ring-4",
-                "shadow-xl absolute top-4 right-[11%] p-6 flex flex-col justify-between overflow-hidden scale-115",
-                "ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ",
-                "dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ",
+                'h-80 w-78 rounded-4xl ring-4',
+                'shadow-xl absolute top-4 right-[11%] p-6 flex flex-col justify-between overflow-hidden scale-115',
+                'ring-white bg-linear-to-b from-neutral-300/50 via-neutral-200/50 to-neutral-100/50 ',
+                'dark:ring-dark-base dark:bg-linear-to-b dark:from-neutral-700/50 via-neutral-800/50 to-neutral-900/50 ',
             )}
         >
             <div className="relative h-50 w-full flex justify-between items-end px-4 top-4 mt-2">
@@ -68,20 +68,11 @@ export default function LandingSectionRightCard() {
                 </motion.div>
 
                 {Array.from([25, 15, 40, 23]).map((h, i) => (
-                    <div
-                        key={i}
-                        className={cn(
-                            barGlow,
-                            `h-${h}`,
-                        )}
-                    />
+                    <div key={i} className={cn(barGlow, `h-${h}`)} />
                 ))}
-
             </div>
             <div className="w-full flex flex-col gap-y-2 mt-1">
-                <div className="text-dark-base/70 dark:text-light-base/70 ">
-                    STEP 3
-                </div>
+                <div className="text-dark-base/70 dark:text-light-base/70 ">STEP 3</div>
                 <div className="text-dark-base/50 dark:text-light-base/50 ">
                     Launch the quiz and see votes roll in, leaderboards change, and spectators
                     engage in real time
