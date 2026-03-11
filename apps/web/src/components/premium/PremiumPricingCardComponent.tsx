@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from '@/lib/utils';
 import AppLogo from '../app/AppLogo';
 import {
@@ -14,8 +16,12 @@ import { FaCat } from 'react-icons/fa';
 import { premium_features } from '@nocturn/types';
 import Image from 'next/image';
 import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function PremiumPricingCardComponent() {
+
+    const router = useRouter();
+
     return (
         <div className={cn('w-screen min-h-screen max-w-6xl mx-auto mb-30 flex flex-col gap-y-15')}>
             <InformationHeadingSection
@@ -80,7 +86,9 @@ export default function PremiumPricingCardComponent() {
                                 'bg-dark-base w-fit text-light-base px-4 h-10 rounded-full',
                                 'flex items-center gap-x-2 text-sm',
                                 'shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)]',
+                                "cursor-pointer",
                             )}
+                            onClick={() => router.push('/premium')}
                         >
                             <FaCat />
                             <span>Get Premium</span>
@@ -180,7 +188,10 @@ export default function PremiumPricingCardComponent() {
                         </div>
                     </div>
 
-                    <Button className="text-[20px] text-light-base bg-light-base/5 hover:bg-light-base/5 hover:-translate-y-0.5 shadow-[inset_0px_1.5px_2px_rgba(255,255,255,0.10)] h-15 w-42 rounded-[8px]!">
+                    <Button
+                        className="text-[20px] text-light-base bg-light-base/5 hover:bg-light-base/5 hover:-translate-y-0.5 shadow-[inset_0px_1.5px_2px_rgba(255,255,255,0.10)] h-15 w-42 rounded-[8px]! cursor-pointer"
+                        onClick={() => router.push('/premium')}
+                    >
                         Buy Premium
                     </Button>
                     {/* <div className='gap-x-3 h-full w-fit flex justify-between items-center px-8 rounded-md bg-light-base/5 shadow-[inset_0px_1.5px_2px_rgba(255,255,255,0.10)] overflow-hidden'>

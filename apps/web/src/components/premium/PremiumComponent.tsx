@@ -1,5 +1,6 @@
 import { Check, Star } from 'lucide-react';
 import InformationHeadingSection from '../revamp/InformationHeadingSection';
+import { SubscriptionEnum } from '@nocturn/types';
 
 export default function PremiumComponent() {
     return (
@@ -16,91 +17,109 @@ export default function PremiumComponent() {
                 />
 
                 <section className="grid md:grid-cols-2 gap-8 items-stretch">
-                    {/* Free Plan */}
-                    <div className="relative rounded-2xl border border-neutral-200 bg-white shadow-sm p-10 flex flex-col justify-between">
-                        <div>
-                            <h3 className="text-xl font-semibold text-neutral-900">Free</h3>
 
-                            <p className="text-sm text-neutral-500 mt-2">
-                                Easiest way to try Nocturn.
-                            </p>
+                    <DetailedCard
+                        subscription={SubscriptionEnum.FREE}
+                    />
+                    <DetailedCard
+                        subscription={SubscriptionEnum.PRO}
+                        recommended
+                    />
 
-                            <div className="mt-8">
-                                <span className="text-4xl font-bold text-neutral-900">€0</span>
-                                <span className="text-neutral-500 ml-2">/ forever</span>
-                            </div>
-
-                            <ul className="mt-10 space-y-4">
-                                {[
-                                    '50 participants per month',
-                                    'Unlimited participants once per month',
-                                    'Multiple question types (Word Clouds, Polls, Quizzes & more)',
-                                    'Session insights & feedback',
-                                ].map((feature, index) => (
-                                    <li
-                                        key={index}
-                                        className="flex items-start gap-3 text-sm text-neutral-600"
-                                    >
-                                        <Check className="w-4 h-4 mt-0.5 text-neutral-500" />
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <button
-                            disabled
-                            className="mt-10 w-full rounded-lg bg-neutral-100 text-neutral-400 py-3 text-sm font-medium cursor-not-allowed"
-                        >
-                            Current plan
-                        </button>
-                    </div>
-
-                    {/* Pro Plan */}
-                    <div className="relative rounded-2xl border border-neutral-300 bg-white shadow-md p-10 flex flex-col justify-between">
-                        <div className="absolute top-6 right-6 flex items-center gap-1 rounded-full bg-neutral-900 text-white text-xs px-3 py-1">
-                            <Star className="w-3 h-3" />
-                            Recommended
-                        </div>
-
-                        <div>
-                            <h3 className="text-xl font-semibold text-neutral-900">Pro</h3>
-
-                            <p className="text-sm text-neutral-500 mt-2">
-                                Powerful tools for customization.
-                            </p>
-
-                            <div className="mt-8">
-                                <span className="text-4xl font-bold text-neutral-900">€16</span>
-                                <span className="text-neutral-500 ml-2">
-                                    / month (billed yearly)
-                                </span>
-                            </div>
-
-                            <ul className="mt-10 space-y-4">
-                                {[
-                                    'Advanced design capabilities (Match your brand or preferences)',
-                                    'Workspace collaboration (Share themes and templates)',
-                                    'Co-create slides (Edit and present together)',
-                                    'Live presentation control (Moderate Q&A and view live results)',
-                                ].map((feature, index) => (
-                                    <li
-                                        key={index}
-                                        className="flex items-start gap-3 text-sm text-neutral-700"
-                                    >
-                                        <Check className="w-4 h-4 mt-0.5 text-neutral-700" />
-                                        {feature}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <button className="mt-10 w-full rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white py-3 text-sm font-medium transition-colors">
-                            Upgrade to Pro
-                        </button>
-                    </div>
                 </section>
             </div>
         </div>
+    );
+}
+
+const data = {
+    [SubscriptionEnum.FREE]: {
+        title: "Free",
+        description: "Easiest way to try Nocturn.",
+        price: "€0",
+        time: "/ forever",
+        features: [
+            "50 participants per month",
+            "Unlimited participants once per month",
+            "Multiple question types (Word Clouds, Polls, Quizzes & more)",
+            "Session insights & feedback",
+        ],
+        buttonLabel: "Current plan",
+        disabled: true,
+    },
+
+    [SubscriptionEnum.PRO]: {
+        title: "Pro",
+        description: "Powerful tools for customization.",
+        price: "€16",
+        time: "/ month (billed yearly)",
+        features: [
+            "Advanced design capabilities (Match your brand or preferences)",
+            "Workspace collaboration (Share themes and templates)",
+            "Co-create slides (Edit and present together)",
+            "Live presentation control (Moderate Q&A and view live results)",
+        ],
+        buttonLabel: "Upgrade to Pro",
+        disabled: false,
+    },
+};
+
+interface DetailedCardProps {
+    subscription: SubscriptionEnum;
+    recommended?: boolean;
+}
+
+function DetailedCard({ subscription, recommended = false }: DetailedCardProps) {
+
+    const plan = data[subscription];
+
+    return (
+        <div className="relative rounded-2xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-dark-alpha shadow-md p-10 flex flex-col justify-between">
+            {recommended && (
+                <div className="absolute top-6 right-6 flex items-center gap-1 rounded-full bg-neutral-900 text-white text-xs px-3 py-1">
+                    <Star className="w-3 h-3" />
+                    Recommended
+                </div>
+            )}
+
+            <div>
+                <h3 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+                    {plan.title}
+                </h3>
+
+                <p className="text-sm text-neutral-500 mt-2">
+                    {plan.description}
+                </p>
+
+                <div className="mt-8">
+                    <span className="text-4xl font-bold text-neutral-900 dark:text-neutral-100">
+                        {plan.price}
+                    </span>
+                    <span className="text-neutral-500 ml-2">
+                        {plan.time}
+                    </span>
+                </div>
+
+                <ul className="mt-10 space-y-4">
+                    {plan.features.map((feature, index) => (
+                        <li
+                            key={index}
+                            className="flex items-start gap-3 text-sm text-neutral-600 dark:text-neutral-400"
+                        >
+                            <Check className="w-4 h-4 mt-0.5 text-neutral-500" />
+                            {feature}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <button
+                disabled={plan.disabled}
+                className="mt-10 w-full rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white py-3 text-sm font-medium transition-colors"
+            >
+                {plan.buttonLabel}
+            </button>
+        </div>
+
     );
 }

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function PremiumPage(): JSX.Element {
     return (
         <div className="overflow-x-hidden w-full relative">
-            <main className="min-h-screen w-full bg-light-base dark:bg-dark-base text-dark-base dark:text-light-base relative z-10 mb-[60vh] flex flex-col gap-y-15">
+            <main className="min-h-screen w-full bg-light-base dark:bg-dark-alpha text-dark-base dark:text-light-base relative z-10 mb-[60vh] flex flex-col gap-y-15">
                 <LandingTestNav />
                 <PremiumPageMain />
                 <PremiumComponent />

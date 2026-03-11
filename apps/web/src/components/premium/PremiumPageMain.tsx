@@ -37,10 +37,10 @@ export default function PremiumPageMain(): JSX.Element {
                     to make every quiz unforgettable.
                 </p>
                 <section className="mt-8 flex items-center justify-center">
-                    <Button className="px-8 py-4.75 bg-dark-base hover:bg-dark-alpha dark:bg-light-base dark:hover:bg-light-alpha font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-dark-base">
+                    <Button className="px-8 py-4.75 bg-dark-base hover:bg-dark-alpha dark:bg-light-base dark:hover:bg-light-alpha font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-all cursor-pointer flex items-center gap-3 border border-dark-base">
                         Explore premium
                     </Button>
-                    <Button className="px-8 py-5 bg-white hover:bg-light-alpha dark:bg-dark-base dark:hover:bg-dark-alpha text-dark-base dark:text-light-base font-medium rounded-xl transition-shadow cursor-pointer flex items-center gap-3 ml-4">
+                    <Button className="px-8 py-5 bg-white hover:bg-light-alpha dark:bg-dark-base text-dark-base dark:text-light-base font-medium rounded-xl transition-all cursor-pointer flex items-center gap-3 ml-4">
                         Start creating quiz
                         <MdKeyboardArrowRight className="text-neutral-500 text-xl" />
                     </Button>
