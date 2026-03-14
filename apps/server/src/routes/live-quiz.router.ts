@@ -2,9 +2,6 @@ import { Router } from 'express';
 const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
-import participantJoinController from '../controllers/live-quiz-controller/participantJoinController';
-// import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
-import spectatorJoinController from '../controllers/live-quiz-controller/spectatorJoinController';
 import getLiveQuizSummarizedData from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
 import getSelectedQuestionDetails from '../controllers/live-quiz-controller/getSelectedQuestionDetails';
 import getSpectatorOnCall from '../controllers/live-quiz-controller/getSpectatorOnCall';
@@ -18,14 +15,14 @@ import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMid
 import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import Subscription from '../middlewares/subscription.middleware';
-import HostJoinController from '../controllers/live-quiz-controller/hostJoinController';
+import JoinQuizController from '../controllers/live-quiz-controller/joinQuizController';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->
-router.post('/quiz/host-join-quiz', authMiddleware, HostJoinController);
+router.post('/quiz/host-join-quiz', authMiddleware, JoinQuizController.host);
 router.post(
     '/quiz/participant-join-quiz',
     Subscription.participant_limit_via_code,
-    participantJoinController,
+    JoinQuizController.participant,
 );
 router.get(
     '/quiz/spectator-join-quiz-via-link',
@@ -35,7 +32,7 @@ router.get(
 router.post(
     '/quiz/spectator-join-quiz',
     Subscription.spectator_limit_via_code,
-    spectatorJoinController,
+    JoinQuizController.spectator,
 );
 
 router.get('/quiz/get-live-quiz-data/:quizId', getLiveQuizDataController);

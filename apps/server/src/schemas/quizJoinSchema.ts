@@ -8,4 +8,5 @@ export const quizJoinSchema = z.object({
         .min(1, 'Name is required')
         .max(16, 'Name must be at most 16 characters')
         .optional(),
+    force: z.boolean().optional(),
 });

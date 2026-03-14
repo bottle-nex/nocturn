@@ -66,10 +66,6 @@ export class RefreshTokenController {
         }
     }
 
-    /**
-     * Called by the browser after NextAuth sign-in to set the refresh cookie.
-     * Requires auth middleware (Bearer access token).
-     */
     static async initRefresh(req: Request, res: Response) {
         try {
             const user = req.user;

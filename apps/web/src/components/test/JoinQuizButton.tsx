@@ -14,6 +14,8 @@ import z from 'zod';
 import { MdOutlineChevronRight } from 'react-icons/md';
 import OpacityBackground from '../utility/OpacityBackground';
 import { Button } from '../ui/button';
+import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
+import RejoinDetectedPanel from '../ui/RejoinDetectedPanel';
 
 const container: Variants = {
     closed: {
@@ -280,6 +282,7 @@ export default function JoinQuizButton() {
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
+    const { active, setActive, setData, setJoinData } = useRejoinPanelStore();
 
     function handleJoinQuiz() {
         if (!code.trim()) return;
@@ -313,6 +316,12 @@ export default function JoinQuizButton() {
         } finally {
             setLoading(false);
         }
+    }
+
+    function handleDeny() {
+        setActive(false);
+        setData(null, null, null);
+        setJoinData(null, null, null);
     }
 
     return (
@@ -349,6 +358,7 @@ export default function JoinQuizButton() {
                     onJoin={handleJoinQuiz}
                 />
             )}
+            {active && <RejoinDetectedPanel deny={handleDeny} />}
         </motion.div>
     );
 }
