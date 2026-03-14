@@ -7,7 +7,7 @@ import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { quizJoinSchema } from '../../schemas/quizJoinSchema';
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export default async function spectatorJoinController(req: Request, res: Response) {
     const parsedData = quizJoinSchema.safeParse(req.body);
@@ -62,7 +62,10 @@ export default async function spectatorJoinController(req: Request, res: Respons
 
         const joining_token = req.cookies?.[NOCTURN_COOKIE_NAME];
         if (joining_token) {
-            const decoded = jwt.verify(joining_token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
+            const decoded = jwt.verify(
+                joining_token,
+                env.SERVER_JWT_SECRET,
+            ) as LiveGameTokenPayload;
             if (decoded.quizId === quiz.id) {
                 switch (decoded.role) {
                     case USER_TYPE.PARTICIPANT: {
@@ -80,7 +83,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
                             },
                         );
                         return;
-                    };
+                    }
                     case USER_TYPE.SPECTATOR: {
                         ResponseWriter.custom(
                             res,
@@ -94,8 +97,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
                             },
                         );
                         return;
-                    };
-
+                    }
                 }
             }
         }

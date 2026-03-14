@@ -2,12 +2,17 @@ import { Request, Response } from 'express';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
-import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME, SessionStatusEnum, USER_TYPE } from '@nocturn/types';
+import {
+    LiveGameTokenPayload,
+    NOCTURN_COOKIE_NAME,
+    SessionStatusEnum,
+    USER_TYPE,
+} from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { quizJoinSchema } from '../../schemas/quizJoinSchema';
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export default async function participantJoinController(req: Request, res: Response) {
     const parseResult = quizJoinSchema.safeParse(req.body);
@@ -52,7 +57,10 @@ export default async function participantJoinController(req: Request, res: Respo
 
         const joining_token = req.cookies?.[NOCTURN_COOKIE_NAME];
         if (joining_token) {
-            const decoded = jwt.verify(joining_token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
+            const decoded = jwt.verify(
+                joining_token,
+                env.SERVER_JWT_SECRET,
+            ) as LiveGameTokenPayload;
             if (decoded.quizId === quiz.id) {
                 switch (decoded.role) {
                     case USER_TYPE.PARTICIPANT: {
@@ -70,7 +78,7 @@ export default async function participantJoinController(req: Request, res: Respo
                             },
                         );
                         return;
-                    };
+                    }
                     case USER_TYPE.SPECTATOR: {
                         ResponseWriter.custom(
                             res,
@@ -85,8 +93,7 @@ export default async function participantJoinController(req: Request, res: Respo
                             },
                         );
                         return;
-                    };
-
+                    }
                 }
             }
         }

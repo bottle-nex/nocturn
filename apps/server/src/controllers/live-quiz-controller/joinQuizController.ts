@@ -2,7 +2,13 @@ import { Request, Response } from 'express';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
-import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME, QuizStatusEnum, SessionStatusEnum, USER_TYPE } from '@nocturn/types';
+import {
+    LiveGameTokenPayload,
+    NOCTURN_COOKIE_NAME,
+    QuizStatusEnum,
+    SessionStatusEnum,
+    USER_TYPE,
+} from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
@@ -10,7 +16,6 @@ import { quizJoinSchema } from '../../schemas/quizJoinSchema';
 import jwt from 'jsonwebtoken';
 
 export default class JoinQuizController {
-
     static async participant(req: Request, res: Response) {
         const parseResult = quizJoinSchema.safeParse(req.body);
         const redisCache = redisCacheInstance;
@@ -29,16 +34,34 @@ export default class JoinQuizController {
             });
 
             if (!quiz) {
-                ResponseWriter.error(res, 'INVALID_QUIZ_CODE', 'Invalid quiz code. Please check and try again.', undefined, 404);
+                ResponseWriter.error(
+                    res,
+                    'INVALID_QUIZ_CODE',
+                    'Invalid quiz code. Please check and try again.',
+                    undefined,
+                    404,
+                );
                 return;
             }
 
             if (!['LIVE'].includes(quiz.status)) {
-                ResponseWriter.error(res, 'QUIZ_NOT_LIVE', 'Quiz is not available for joining at this time.', undefined, 403);
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_NOT_LIVE',
+                    'Quiz is not available for joining at this time.',
+                    undefined,
+                    403,
+                );
                 return;
             }
 
-            const can_join_again = JoinQuizController.can_join_again(req, res, USER_TYPE.PARTICIPANT, quiz.id, force || false);
+            const can_join_again = JoinQuizController.can_join_again(
+                req,
+                res,
+                USER_TYPE.PARTICIPANT,
+                quiz.id,
+                force || false,
+            );
             if (!can_join_again) return;
 
             const gameSession = await prisma.gameSession.findUnique({
@@ -47,12 +70,26 @@ export default class JoinQuizController {
             });
 
             if (!gameSession) {
-                ResponseWriter.error(res, 'QUIZ_SESSION_NOT_ACTIVE', 'Quiz session is not available yet. Please try again later.', undefined, 500);
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_SESSION_NOT_ACTIVE',
+                    'Quiz session is not available yet. Please try again later.',
+                    undefined,
+                    500,
+                );
                 return;
             }
 
-            if ([SessionStatusEnum.LIVE, SessionStatusEnum.COMPLETED].includes(gameSession.status as SessionStatusEnum)) {
-                ResponseWriter.error(res, 'QUIZ_STARTED', 'Quiz is live. New participants cannot join.');
+            if (
+                [SessionStatusEnum.LIVE, SessionStatusEnum.COMPLETED].includes(
+                    gameSession.status as SessionStatusEnum,
+                )
+            ) {
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_STARTED',
+                    'Quiz is live. New participants cannot join.',
+                );
                 return;
             }
 
@@ -92,18 +129,28 @@ export default class JoinQuizController {
                 await JoinQuizController.set_auth_cookie(res, token);
             } catch (cookieErr) {
                 console.error('Cookie setting error:', cookieErr);
-                await prisma.$transaction(async (tx) => {
-                    await tx.participant.delete({ where: { id: result.participant.id } });
-                    await tx.gameSession.update({
-                        where: { id: gameSession.id },
-                        data: {
-                            totalParticipants: { decrement: 1 },
-                            activeParticipants: { decrement: 1 },
-                        },
-                    });
-                }).catch((cleanupErr) => console.error('Failed to cleanup after cookie error:', cleanupErr));
+                await prisma
+                    .$transaction(async (tx) => {
+                        await tx.participant.delete({ where: { id: result.participant.id } });
+                        await tx.gameSession.update({
+                            where: { id: gameSession.id },
+                            data: {
+                                totalParticipants: { decrement: 1 },
+                                activeParticipants: { decrement: 1 },
+                            },
+                        });
+                    })
+                    .catch((cleanupErr) =>
+                        console.error('Failed to cleanup after cookie error:', cleanupErr),
+                    );
 
-                ResponseWriter.error(res, 'FAILED_WHILE_SETTING_COOKIE', 'Could not set authentication cookie. Please try again.', undefined, 500);
+                ResponseWriter.error(
+                    res,
+                    'FAILED_WHILE_SETTING_COOKIE',
+                    'Could not set authentication cookie. Please try again.',
+                    undefined,
+                    500,
+                );
                 return;
             }
 
@@ -137,16 +184,34 @@ export default class JoinQuizController {
             }
 
             if (!quiz.allowNewSpectator) {
-                ResponseWriter.custom(res, false, 'NOT_ALLOWED', 'No new spectators are allowed for this quiz.', 200);
+                ResponseWriter.custom(
+                    res,
+                    false,
+                    'NOT_ALLOWED',
+                    'No new spectators are allowed for this quiz.',
+                    200,
+                );
                 return;
             }
 
             if (!['LIVE'].includes(quiz.status)) {
-                ResponseWriter.error(res, 'QUIZ_NOT_LIVE', 'Quiz is not available for joining at this time.', undefined, 403);
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_NOT_LIVE',
+                    'Quiz is not available for joining at this time.',
+                    undefined,
+                    403,
+                );
                 return;
             }
 
-            const can_join_again = JoinQuizController.can_join_again(req, res, USER_TYPE.SPECTATOR, quiz.id, force);
+            const can_join_again = JoinQuizController.can_join_again(
+                req,
+                res,
+                USER_TYPE.SPECTATOR,
+                quiz.id,
+                force,
+            );
             if (!can_join_again) return;
 
             const gameSession = await prisma.gameSession.findUnique({
@@ -155,7 +220,13 @@ export default class JoinQuizController {
             });
 
             if (!gameSession) {
-                ResponseWriter.error(res, 'QUIZ_SESSION_NOT_ACTIVE', 'Quiz session is not available yet. Please try again later.', undefined, 500);
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_SESSION_NOT_ACTIVE',
+                    'Quiz session is not available yet. Please try again later.',
+                    undefined,
+                    500,
+                );
                 return;
             }
 
@@ -191,15 +262,25 @@ export default class JoinQuizController {
                 await JoinQuizController.set_auth_cookie(res, token);
             } catch (cookieErr) {
                 console.error('Cookie setting error:', cookieErr);
-                await prisma.$transaction(async (tx) => {
-                    await tx.spectator.delete({ where: { id: result.spectator.id } });
-                    await tx.gameSession.update({
-                        where: { id: gameSession.id },
-                        data: { totalSpectators: { decrement: 1 } },
-                    });
-                }).catch((cleanupErr) => console.error('Failed to cleanup after cookie error:', cleanupErr));
+                await prisma
+                    .$transaction(async (tx) => {
+                        await tx.spectator.delete({ where: { id: result.spectator.id } });
+                        await tx.gameSession.update({
+                            where: { id: gameSession.id },
+                            data: { totalSpectators: { decrement: 1 } },
+                        });
+                    })
+                    .catch((cleanupErr) =>
+                        console.error('Failed to cleanup after cookie error:', cleanupErr),
+                    );
 
-                ResponseWriter.error(res, 'FAILED_WHILE_SETTING_COOKIE', 'Could not set authentication cookie. Please try again.', undefined, 500);
+                ResponseWriter.error(
+                    res,
+                    'FAILED_WHILE_SETTING_COOKIE',
+                    'Could not set authentication cookie. Please try again.',
+                    undefined,
+                    500,
+                );
                 return;
             }
 
@@ -276,7 +357,6 @@ export default class JoinQuizController {
         quiz_id: string,
         force: boolean,
     ): boolean {
-
         const token = req.cookies?.[NOCTURN_COOKIE_NAME];
         if (!token) return true;
 
@@ -313,6 +393,5 @@ export default class JoinQuizController {
             );
             return false;
         }
-
     }
 }

@@ -82,7 +82,7 @@ class UserQuizAction {
                 { code, email, name, force },
                 { withCredentials: true },
             );
-            if (data.success && data.code === "ALREADY_A_MEMBER") {
+            if (data.success && data.code === 'ALREADY_A_MEMBER') {
                 setData(data.message, data.join_back, data.join_as || null);
                 setJoinData(name || null, email, code);
                 return null;

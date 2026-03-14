@@ -20,8 +20,8 @@ const points = [
 ];
 
 export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) {
-
-    const { description, joinAs, joinBack, joinData, setData, setJoinData, setActive } = useRejoinPanelStore();
+    const { description, joinAs, joinBack, joinData, setData, setJoinData, setActive } =
+        useRejoinPanelStore();
     const router = useRouter();
 
     function handleJoinBack() {
@@ -30,7 +30,12 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
 
     async function handleJoinAs() {
         if (!joinData.code) return;
-        const quizId = await userQuizAction.joinQuiz(joinData.code.trim(), joinData.email || undefined, joinData.name || undefined, true);
+        const quizId = await userQuizAction.joinQuiz(
+            joinData.code.trim(),
+            joinData.email || undefined,
+            joinData.name || undefined,
+            true,
+        );
         setJoinData(null, null, null);
         setData(null, null, null);
         setActive(false);
@@ -54,12 +59,8 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
                         <AlertTriangle className="w-8 h-8 text-red-500" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-semibold text-neutral-100">
-                            Rejoin Detected
-                        </h2>
-                        <p className="text-sm text-neutral-400 mt-1">
-                            {description}
-                        </p>
+                        <h2 className="text-xl font-semibold text-neutral-100">Rejoin Detected</h2>
+                        <p className="text-sm text-neutral-400 mt-1">{description}</p>
                     </div>
                 </div>
 
@@ -81,7 +82,7 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
                             className="bg-transparent border-neutral-600 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-100 px-6"
                             onClick={handleJoinAs}
                         >
-                            {"Join as " + joinAs.toLowerCase()}
+                            {'Join as ' + joinAs.toLowerCase()}
                         </Button>
                     ) : (
                         <Button
