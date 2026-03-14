@@ -2,8 +2,6 @@ import { Router } from 'express';
 const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
-import participantJoinController from '../controllers/live-quiz-controller/participantJoinController';
-import spectatorJoinController from '../controllers/live-quiz-controller/spectatorJoinController';
 import getLiveQuizSummarizedData from '../controllers/live-quiz-controller/getLiveQuizSummarizedData';
 import getSelectedQuestionDetails from '../controllers/live-quiz-controller/getSelectedQuestionDetails';
 import getSpectatorOnCall from '../controllers/live-quiz-controller/getSpectatorOnCall';
@@ -17,7 +15,6 @@ import verifyQuizOwnershipMiddleware from '../middlewares/verifyQuizOwnershipMid
 import getUnAskedQuestionController from '../controllers/live-quiz-controller/getUnAskedQuestionController';
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import Subscription from '../middlewares/subscription.middleware';
-import HostJoinController from '../controllers/live-quiz-controller/hostJoinController';
 import JoinQuizController from '../controllers/live-quiz-controller/joinQuizController';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->

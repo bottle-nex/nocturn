@@ -43,7 +43,6 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
         setData(null, null, null);
         setActive(false);
 
-        console.log('quiz-id: ', quizId);
         if (!quizId) return;
         router.push(`/live/${quizId}`);
     }

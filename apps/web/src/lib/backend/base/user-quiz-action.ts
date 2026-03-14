@@ -83,13 +83,11 @@ class UserQuizAction {
                 { withCredentials: true },
             );
             if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
-                console.log({ data });
                 setActive(true);
                 setData(data.data.message, data.data.join_back, data.data.join_as || null);
                 setJoinData(name || null, email, code);
                 return null;
             } else if (data.success) {
-                console.log('data.message: ', data);
                 toast.success(data.message);
                 return data.data;
             }
@@ -125,10 +123,7 @@ class UserQuizAction {
                 { withCredentials: true },
             );
 
-            console.log("data is: ", data);
-
             if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
-                console.log({ data });
                 setActive(true);
                 setData(data.data.message, data.data.join_back, data.data.join_as || null);
                 setJoinData(null, null, code);
