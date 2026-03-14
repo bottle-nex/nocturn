@@ -146,7 +146,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                                 )}
 
                                 <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[13px] dark:text-white/80 text-black/90 text-nowrap">
+                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
                                     {item.label}
                                 </span>
                             </div>
@@ -172,7 +172,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                                 )}
 
                                 <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[13px] dark:text-white/80 text-black/90 text-nowrap">
+                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
                                     {item.label}
                                 </span>
                             </div>
@@ -197,7 +197,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             )}
 
                             <span className="p-1 rounded">{item.icon}</span>
-                            <span className="text-sm dark:text-white/80 text-black/90">
+                            <span className="text-[14px] dark:text-white/80 text-black/90">
                                 {item.label}
                             </span>
                         </div>

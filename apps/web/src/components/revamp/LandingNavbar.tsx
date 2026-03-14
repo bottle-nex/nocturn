@@ -10,6 +10,7 @@ import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
 import SigninModal from '../utility/SigninModal';
 import AppLogo from '../app/AppLogo';
+import DarkModeToggle from '../base/DarkModeToggle';
 
 const springTransition = {
     type: 'spring' as const,
@@ -264,7 +265,6 @@ export default function LandingNavbar() {
                         </motion.span>
                     </Button>
                 </div>
-
                 {session?.user.token ? (
                     <div className="flex gap-x-2.5">
                         <motion.button

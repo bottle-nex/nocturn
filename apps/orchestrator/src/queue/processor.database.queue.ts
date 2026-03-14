@@ -113,6 +113,7 @@ export class DatabaseQueueProcessors {
         { success: boolean; participant: Participant } | { success: boolean; error: string }
     > {
         const { id, game_session_id, participant }: UpdateParticipantJobType = job.data;
+        console.log('<---------------- recieved data is : ', { id, game_session_id, participant });
         try {
             const updatedParticipant = await prisma.participant.update({
                 where: {

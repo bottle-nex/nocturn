@@ -245,8 +245,31 @@ export default class QuizManager {
         const response_of_all_participants = await this.redis_cache.get_all_question_responses(
             data.gameSessionId,
             data.questionId,
-            ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+            ['isCorrect', 'selectedAnswer', 'pointsEarned', 'timeToAnswer'],
         );
+
+        // Compute per-question stats
+        if (response_of_all_participants.length > 0) {
+            const totalResponses = response_of_all_participants.length;
+            const correctCount = response_of_all_participants.filter((r) => r.isCorrect).length;
+            const totalTime = response_of_all_participants.reduce(
+                (sum, r) => sum + (Number(r.timeToAnswer) || 0),
+                0,
+            );
+
+            this.database_queue
+                .update_game_session(
+                    data.gameSessionId,
+                    {
+                        avgResponseTime: Math.round(totalTime / totalResponses),
+                        correctAnswerRate: parseFloat((correctCount / totalResponses).toFixed(4)),
+                    },
+                    data.gameSessionId,
+                )
+                .catch((err) => {
+                    console.error('Failed to update game session stats:', err);
+                });
+        }
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_PARTICIPANT,

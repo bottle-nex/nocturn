@@ -443,6 +443,34 @@ export default class HostManager {
             return;
         }
 
+        // Compute finalRank for all non-kicked participants before reading scores
+        const allParticipants = await this.redis_cache.get_all_participants(game_session_id, [
+            'totalScore',
+            'isKicked',
+        ]);
+
+        const rankable = allParticipants
+            .filter((p) => !p.isKicked)
+            .sort((a, b) => (b.totalScore as number) - (a.totalScore as number));
+
+        let currentRank = 1;
+        for (let i = 0; i < rankable.length; i++) {
+            if (
+                i > 0 &&
+                (rankable[i].totalScore as number) < (rankable[i - 1].totalScore as number)
+            ) {
+                currentRank = i + 1;
+            }
+            await this.redis_cache.set_participant(game_session_id, rankable[i].id as string, {
+                finalRank: currentRank,
+            });
+            this.database_queue.update_participant(
+                rankable[i].id as string,
+                { finalRank: currentRank },
+                game_session_id,
+            );
+        }
+
         const scores = await this.redis_cache.get_all_participants(game_session_id, [
             'correctAnswers',
             'finalRank',

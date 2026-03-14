@@ -51,6 +51,7 @@ model Participant {
     totalScore           Int             @default(0)
     correctAnswers       Int             @default(0)
     longestStreak        Int             @default(0)
+    currentStreak        Int             @default(0)
     walletAddress        String?
     quizId               String
     quiz                 Quiz            @relation(fields: [quizId], references: [id], onDelete: Cascade)
