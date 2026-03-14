@@ -6,6 +6,7 @@ import {
     SPECTATOR_JOIN_QUIZ_URL_VIA_LINK,
 } from 'routes/api_routes';
 import { toast } from '@/lib/toast';
+import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
 
 interface JoinQuizResponse {
     quizId: string;
@@ -16,12 +17,13 @@ class UserQuizAction {
         code: string,
         email?: string,
         name?: string,
+        force = false,
     ): Promise<JoinQuizResponse | null> {
         switch (code.length) {
             case 6:
-                return await this.spectatorJoinQuiz(code);
+                return await this.spectatorJoinQuiz(code, force);
             case 12:
-                return await this.participantJoinQuiz(code, email!, name);
+                return await this.participantJoinQuiz(code, email!, name, force);
             default:
                 toast.error('Please enter a valid code');
                 return null;
@@ -62,8 +64,10 @@ class UserQuizAction {
         code: string,
         email: string,
         name?: string,
+        force = false,
     ): Promise<JoinQuizResponse | null> {
         try {
+            const { setData, setJoinData } = useRejoinPanelStore.getState();
             if (!code || !email.trim()) {
                 toast.error('Please enter a code and email');
                 return null;
@@ -75,10 +79,14 @@ class UserQuizAction {
 
             const { data } = await axios.post(
                 PARTICIPANT_JOIN_QUIZ_URL,
-                { code, email, name },
+                { code, email, name, force },
                 { withCredentials: true },
             );
-            if (data.success) {
+            if (data.success && data.code === "ALREADY_A_MEMBER") {
+                setData(data.message, data.join_back, data.join_as || null);
+                setJoinData(name || null, email, code);
+                return null;
+            } else if (data.success) {
                 toast.success(data.message);
                 return data.data;
             }
@@ -96,7 +104,7 @@ class UserQuizAction {
         }
     }
 
-    private async spectatorJoinQuiz(code: string): Promise<JoinQuizResponse | null> {
+    private async spectatorJoinQuiz(code: string, force = false): Promise<JoinQuizResponse | null> {
         try {
             if (!code) {
                 toast.error('Please enter a code');
@@ -109,7 +117,7 @@ class UserQuizAction {
 
             const { data } = await axios.post(
                 SPECTATOR_JOIN_QUIZ_URL,
-                { code },
+                { code, force },
                 { withCredentials: true },
             );
 

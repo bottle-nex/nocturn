@@ -38,7 +38,7 @@ export default class JoinQuizController {
                 return;
             }
 
-            const can_join_again = this.can_join_again(req, res, USER_TYPE.PARTICIPANT, quiz.id, force || false);
+            const can_join_again = JoinQuizController.can_join_again(req, res, USER_TYPE.PARTICIPANT, quiz.id, force || false);
             if (!can_join_again) return;
 
             const gameSession = await prisma.gameSession.findUnique({
@@ -146,7 +146,7 @@ export default class JoinQuizController {
                 return;
             }
 
-            const can_join_again = this.can_join_again(req, res, USER_TYPE.SPECTATOR, quiz.id, force);
+            const can_join_again = JoinQuizController.can_join_again(req, res, USER_TYPE.SPECTATOR, quiz.id, force);
             if (!can_join_again) return;
 
             const gameSession = await prisma.gameSession.findUnique({
@@ -288,11 +288,11 @@ export default class JoinQuizController {
             ResponseWriter.custom(
                 res,
                 true,
-                `ALREADY_A_${decoded.role}`,
-                "You're already a participant",
+                `ALREADY_A_MEMBER`,
+                `You're already a ${decoded.role.toLowerCase()}`,
                 200,
                 {
-                    message: "You're already a participant of this quiz",
+                    message: `You're already a ${decoded.role.toLowerCase()} of this quiz`,
                     join_back: `${env.SERVER_WEB_URL}/new/${quiz_id}`,
                 },
             );
@@ -302,11 +302,11 @@ export default class JoinQuizController {
             ResponseWriter.custom(
                 res,
                 true,
-                `ALREADY_A_${current_user_type}`,
+                `ALREADY_A_MEMBER`,
                 `You were a ${decoded.role?.toLowerCase()} before!`,
                 200,
                 {
-                    message: "You're already a participant of this quiz",
+                    message: `You were a ${decoded.role?.toLowerCase()} before!`,
                     join_back: `${env.SERVER_WEB_URL}/new/${quiz_id}`,
                     join_as: `${current_user_type.toLowerCase()}`,
                 },

@@ -306,6 +306,7 @@ export default function JoinQuizButton() {
             const quizId = await userQuizAction.joinQuiz(code.trim(), email, name);
             setCode('');
 
+            console.log('quiz-id: ', quizId);
             if (!quizId) return;
             router.push(`/live/${quizId}`);
         } catch (err) {
