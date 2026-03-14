@@ -20,7 +20,7 @@ export default async function authMiddleware(req: Request, res: Response, next: 
         next();
         return;
     } catch {
-        // Access token is expired or invalid — try the refresh cookie
+        // Access token is expired or invalid, try the refresh cookie
     }
 
     // Fallback: use the refresh token cookie to auto-recover

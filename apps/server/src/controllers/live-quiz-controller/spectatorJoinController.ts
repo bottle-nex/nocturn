@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { prisma } from '@nocturn/database';
 import GenerateUser from '../../class/generateUser';
 import QuizAction from '../../class/quizAction';
-import { NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
+import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME, USER_TYPE } from '@nocturn/types';
 import { redisCacheInstance } from '../../services/init.services';
 import { env } from '../../configs/env';
 import ResponseWriter from '../../class/response_writer';
 import { quizJoinSchema } from '../../schemas/quizJoinSchema';
+import jwt from "jsonwebtoken";
 
 export default async function spectatorJoinController(req: Request, res: Response) {
     const parsedData = quizJoinSchema.safeParse(req.body);
@@ -18,6 +19,7 @@ export default async function spectatorJoinController(req: Request, res: Respons
     }
 
     const code = parsedData.data.code;
+    const force = parsedData.data.force ?? false;
 
     try {
         const quiz = await prisma.quiz.findUnique({
@@ -56,6 +58,41 @@ export default async function spectatorJoinController(req: Request, res: Respons
                 403,
             );
             return;
+        }
+
+        const joining_token = req.cookies?.[NOCTURN_COOKIE_NAME];
+        if (joining_token) {
+            const decoded = jwt.verify(joining_token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
+            if (decoded.quizId === quiz.id) {
+                if (decoded.role === USER_TYPE.PARTICIPANT && !force) {
+                    ResponseWriter.custom(
+                        res,
+                        true,
+                        'ALREADY_A_PARTICIPANT',
+                        "You're already a participant",
+                        200,
+                        {
+                            message: "You're already a participant of this quiz",
+                            link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
+                        },
+                    );
+                    return;
+                }
+                if (decoded.role === USER_TYPE.SPECTATOR) {
+                    ResponseWriter.custom(
+                        res,
+                        true,
+                        'ALREADY_A_PARTICIPANT',
+                        "You're already a participant",
+                        200,
+                        {
+                            message: "You're already a participant of this quiz",
+                            link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
+                        },
+                    );
+                    return;
+                }
+            }
         }
 
         const gameSession = await prisma.gameSession.findUnique({
