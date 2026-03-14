@@ -13,11 +13,11 @@ interface RejoinDetectedPanelProps {
     deny: () => void;
 }
 
-const points = [
-    'Do not exit full-screen mode during the session.',
-    'Avoid using the TAB or ESC keys.',
-    'You are allowed a maximum of three attempts; further violations will restrict access.',
-];
+// const points = [
+//     'Do not exit full-screen mode during the session.',
+//     'Avoid using the TAB or ESC keys.',
+//     'You are allowed a maximum of three attempts; further violations will restrict access.',
+// ];
 
 export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) {
     const { description, joinAs, joinBack, joinData, setData, setJoinData, setActive } =
@@ -25,7 +25,10 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
     const router = useRouter();
 
     function handleJoinBack() {
-        router.push(`${joinBack}`);
+        router.push(`/live/${joinBack}`);
+        setJoinData(null, null, null);
+        setData(null, null, null);
+        setActive(false);
     }
 
     async function handleJoinAs() {
@@ -50,7 +53,7 @@ export default function RejoinDetectedPanel({ deny }: RejoinDetectedPanelProps) 
             <UtilityCard
                 className={cn(
                     'bg-neutral-900 border border-neutral-700 shadow-2xl',
-                    'rounded-2xl p-8 max-w-2xl w-full mx-auto',
+                    'rounded-2xl p-8 w-fit mx-auto',
                     'flex flex-col items-start gap-y-6',
                 )}
             >

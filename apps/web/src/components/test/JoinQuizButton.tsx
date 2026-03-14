@@ -14,6 +14,8 @@ import z from 'zod';
 import { MdOutlineChevronRight } from 'react-icons/md';
 import OpacityBackground from '../utility/OpacityBackground';
 import { Button } from '../ui/button';
+import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
+import RejoinDetectedPanel from '../ui/RejoinDetectedPanel';
 
 const container: Variants = {
     closed: {
@@ -226,9 +228,9 @@ function JoinQuizPill({
                     onClick={
                         isOpen
                             ? (e) => {
-                                  e.stopPropagation();
-                                  onJoin();
-                              }
+                                e.stopPropagation();
+                                onJoin();
+                            }
                             : undefined
                     }
                     className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
@@ -280,6 +282,7 @@ export default function JoinQuizButton() {
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
+    const { active, setActive, setData, setJoinData } = useRejoinPanelStore();
 
     function handleJoinQuiz() {
         if (!code.trim()) return;
@@ -288,8 +291,8 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                  ? 'spectator'
-                  : null;
+                    ? 'spectator'
+                    : null;
         if (!type) return;
 
         if (type === 'participant') {
@@ -314,6 +317,12 @@ export default function JoinQuizButton() {
         } finally {
             setLoading(false);
         }
+    }
+
+    function handleDeny() {
+        setActive(false);
+        setData(null, null, null);
+        setJoinData(null, null, null);
     }
 
     return (
@@ -348,6 +357,11 @@ export default function JoinQuizButton() {
                     }}
                     onCodeChange={setCode}
                     onJoin={handleJoinQuiz}
+                />
+            )}
+            {active && (
+                <RejoinDetectedPanel
+                    deny={handleDeny}
                 />
             )}
         </motion.div>

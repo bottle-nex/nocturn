@@ -67,7 +67,7 @@ class UserQuizAction {
         force = false,
     ): Promise<JoinQuizResponse | null> {
         try {
-            const { setData, setJoinData } = useRejoinPanelStore.getState();
+            const { setData, setJoinData, setActive } = useRejoinPanelStore.getState();
             if (!code || !email.trim()) {
                 toast.error('Please enter a code and email');
                 return null;
@@ -82,11 +82,14 @@ class UserQuizAction {
                 { code, email, name, force },
                 { withCredentials: true },
             );
-            if (data.success && data.code === 'ALREADY_A_MEMBER') {
-                setData(data.message, data.join_back, data.join_as || null);
+            if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
+                console.log({ data });
+                setActive(true);
+                setData(data.data.message, data.data.join_back, data.data.join_as || null);
                 setJoinData(name || null, email, code);
                 return null;
             } else if (data.success) {
+                console.log('data.message: ', data);
                 toast.success(data.message);
                 return data.data;
             }
@@ -106,6 +109,7 @@ class UserQuizAction {
 
     private async spectatorJoinQuiz(code: string, force = false): Promise<JoinQuizResponse | null> {
         try {
+            const { setData, setJoinData, setActive } = useRejoinPanelStore.getState();
             if (!code) {
                 toast.error('Please enter a code');
                 return null;
@@ -121,7 +125,15 @@ class UserQuizAction {
                 { withCredentials: true },
             );
 
-            if (data.success) {
+            console.log("data is: ", data);
+
+            if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
+                console.log({ data });
+                setActive(true);
+                setData(data.data.message, data.data.join_back, data.data.join_as || null);
+                setJoinData(null, null, code);
+                return null;
+            } else if (data.success) {
                 toast.success(data.message);
                 return data.data;
             }

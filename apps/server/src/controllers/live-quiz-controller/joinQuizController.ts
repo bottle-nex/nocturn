@@ -373,7 +373,7 @@ export default class JoinQuizController {
                 200,
                 {
                     message: `You're already a ${decoded.role.toLowerCase()} of this quiz`,
-                    join_back: `${env.SERVER_WEB_URL}/new/${quiz_id}`,
+                    join_back: quiz_id,
                 },
             );
             return false;
@@ -387,7 +387,7 @@ export default class JoinQuizController {
                 200,
                 {
                     message: `You were a ${decoded.role?.toLowerCase()} before!`,
-                    join_back: `${env.SERVER_WEB_URL}/new/${quiz_id}`,
+                    join_back: quiz_id,
                     join_as: `${current_user_type.toLowerCase()}`,
                 },
             );
