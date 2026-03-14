@@ -64,33 +64,38 @@ export default async function spectatorJoinController(req: Request, res: Respons
         if (joining_token) {
             const decoded = jwt.verify(joining_token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
             if (decoded.quizId === quiz.id) {
-                if (decoded.role === USER_TYPE.PARTICIPANT && !force) {
-                    ResponseWriter.custom(
-                        res,
-                        true,
-                        'ALREADY_A_PARTICIPANT',
-                        "You're already a participant",
-                        200,
-                        {
-                            message: "You're already a participant of this quiz",
-                            link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
-                        },
-                    );
-                    return;
-                }
-                if (decoded.role === USER_TYPE.SPECTATOR) {
-                    ResponseWriter.custom(
-                        res,
-                        true,
-                        'ALREADY_A_PARTICIPANT',
-                        "You're already a participant",
-                        200,
-                        {
-                            message: "You're already a participant of this quiz",
-                            link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
-                        },
-                    );
-                    return;
+                switch (decoded.role) {
+                    case USER_TYPE.PARTICIPANT: {
+                        if (force) break;
+
+                        ResponseWriter.custom(
+                            res,
+                            true,
+                            'ALREADY_A_PARTICIPANT',
+                            "You're already a participant",
+                            200,
+                            {
+                                message: "You're already a participant of this quiz",
+                                link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
+                            },
+                        );
+                        return;
+                    };
+                    case USER_TYPE.SPECTATOR: {
+                        ResponseWriter.custom(
+                            res,
+                            true,
+                            'ALREADY_A_SPECTATOR',
+                            "You're already a spectator",
+                            200,
+                            {
+                                message: "You're already a spectator of this quiz",
+                                link: `${env.SERVER_WEB_URL}/new/${quiz.id}`,
+                            },
+                        );
+                        return;
+                    };
+
                 }
             }
         }
