@@ -901,4 +901,203 @@ export default class RedisCache {
             return false;
         }
     }
+
+    //  <------------------ LEADERBOARDS ------------------>
+    public async init_leaderboard_entry(game_session_id: string, participant_id: string) {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+            pipeline.zadd(leaderboard_key, 0, participant_id);
+            pipeline.expire(leaderboard_key, 60 * 60 * 24);
+            await pipeline.exec();
+        } catch (err) {
+            console.error('Error in init_leaderboard_entry:', err);
+        }
+    }
+
+    private async update_leaderboard_score(
+        game_session_id: string,
+        participant_id: string,
+        score_earned: number,
+    ) {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const new_score = await this.redis_cache.zincrby(
+                leaderboard_key,
+                score_earned,
+                participant_id,
+            );
+            return Number(new_score);
+        } catch (err) {
+            console.error('Error in update_leaderboard_score:', err);
+        }
+    }
+
+    public async set_participant_score(
+        game_session_id: string,
+        participant_id: string,
+        score: number,
+    ) {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+            pipeline.zadd(leaderboard_key, score, participant_id);
+            pipeline.expire(leaderboard_key, 60 * 60 * 24);
+            await pipeline.exec();
+        } catch (err) {
+            console.error('Error in set_participant_score:', err);
+        }
+    }
+
+    public async get_top_leaderboards(
+        game_session_id: string,
+        top_n: number = 10,
+    ): Promise<
+        { id: string; totalScore: number; rank: number; nickname: string; avatar: string | null }[]
+    > {
+        try {
+            const leaader_board_key = this.get_leaderboard_key(game_session_id);
+            const results = await this.redis_cache.zrevrange(
+                leaader_board_key,
+                0,
+                top_n - 1,
+                'WITHSCORES',
+            );
+            if (!results || results.length === 0) return [];
+
+            const entries: { id: string; totalScore: number; rank: number }[] = [];
+            for (let i = 0; i < results.length; i += 2) {
+                entries.push({
+                    id: results[i],
+                    totalScore: Number(results[i + 1]),
+                    rank: i / 2 + 1,
+                });
+            }
+            const participants_key = this.get_participants_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+
+            for (const entry of entries) {
+                pipeline.hget(participants_key, `${entry.id}:nickname`);
+                pipeline.hget(participants_key, `${entry.id}:avatar`);
+            }
+            const nick_name_results = await pipeline.exec();
+
+            return entries.map((entry, index) => {
+                const nickname_raw = nick_name_results?.[index * 2]?.[1] as string | null;
+                const avatar_raw = nick_name_results?.[index * 2 + 1]?.[1] as string | null;
+
+                let nickname = nickname_raw ?? 'Unknown';
+                let avatar: string | null = avatar_raw ?? null;
+
+                try {
+                    nickname = JSON.parse(nickname) ?? nickname;
+                } catch {
+                    // ignore JSON parse errors
+                }
+                try {
+                    avatar = avatar_raw ? JSON.parse(avatar_raw) : null;
+                } catch {
+                    // ignore JSON parse errors
+                }
+                return {
+                    id: entry.id,
+                    totalScore: entry.totalScore,
+                    rank: entry.rank,
+                    nickname,
+                    avatar,
+                };
+            });
+        } catch (err) {
+            console.error('Error in get_top_leaderboard:', err);
+            return [];
+        }
+    }
+
+    public async get_participant_rank(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<number | null> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const rank = await this.redis_cache.zrevrank(leaderboard_key, participant_id);
+            return rank !== null ? Number(rank + 1) : null;
+        } catch (err) {
+            console.error('Error in get_participant_rank:', err);
+            return null;
+        }
+    }
+
+    public async get_participant_score(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<number | null> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const score = await this.redis_cache.zscore(leaderboard_key, participant_id);
+            return score !== null ? Number(score) : null;
+        } catch (err) {
+            console.error('Error in get_participant_score:', err);
+            return null;
+        }
+    }
+
+    public async get_leaderboard_count(game_session_id: string): Promise<number> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const count = await this.redis_cache.zcard(leaderboard_key);
+            return count;
+        } catch (err) {
+            console.error('Error in get_leaderboard_count:', err);
+            return 0;
+        }
+    }
+
+    public async get_full_leaderboard(
+        game_session_id: string,
+    ): Promise<{ id: string; totalScore: number }[]> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const results = await this.redis_cache.zrevrange(leaderboard_key, 0, -1, 'WITHSCORES');
+            const entries: { id: string; totalScore: number }[] = [];
+            for (let i = 0; i < results.length; i += 2) {
+                entries.push({
+                    id: results[i],
+                    totalScore: Number(results[i + 1]),
+                });
+            }
+            return entries;
+        } catch (err) {
+            console.error('Error in get_full_leaderboard:', err);
+            return [];
+        }
+    }
+
+    public async remove_from_leaderboard(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<boolean> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            await this.redis_cache.zrem(leaderboard_key, participant_id);
+            return true;
+        } catch (err) {
+            console.error('Error in remove_from_leaderboard:', err);
+            return false;
+        }
+    }
+
+    public async delete_leaderboard(game_session_id: string): Promise<boolean> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            await this.redis_cache.del(leaderboard_key);
+            return true;
+        } catch (err) {
+            console.error('Error in delete_leaderboard:', err);
+            return false;
+        }
+    }
+
+    public get_leaderboard_key(game_session_id: string): string {
+        return `game_session:${game_session_id}:leaderboard`;
+    }
 }

@@ -93,8 +93,12 @@ export default function LandingHeroSection() {
                 }}
                 className="flex flex-col items-center text-dark-alpha dark:text-light-alpha text-6xl gap-y-1 font-semibold -mt-1 z-10"
             >
-                <div>The only quizzing platform</div>
-                <div>where knowledge pays</div>
+                <div className="bg-clip-text text-transparent bg-linear-to-b dark:from-light-alpha dark:via-light-base dark:to-light-alpha/40 from-dark-alpha via-dark-base to-dark-alpha/70 dark:text-shadow-2xs">
+                    The only quizzing platform
+                </div>
+                <div className="bg-clip-text text-transparent bg-linear-to-b dark:from-light-alpha dark:via-light-base dark:to-light-alpha/40 from-dark-alpha via-dark-base to-dark-alpha/70 dark:text-shadow-2xs">
+                    where knowledge pays
+                </div>
             </motion.div>
 
             <motion.div

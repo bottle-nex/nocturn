@@ -491,6 +491,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (Date.now() > new Date(game_session.phaseEndTime as any).getTime()) {
+            console.error('question time has expired');
+            return;
+        }
+
         const old_response = await this.redis_cache.get_participant_response(
             game_session_id,
             game_session.currentQuestionId!,
@@ -517,6 +522,7 @@ export default class ParticipantManager {
         }
 
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
+        console.log('question is : ', question);
 
         if (!question) {
             console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
@@ -524,32 +530,69 @@ export default class ParticipantManager {
         }
 
         const answeredAt = Date.now();
-        const question_active_time = Number(game_session.phaseStartTime!);
+        const question_active_time = new Date(game_session.phaseStartTime!).getTime();
+        console.log('question active time is : ', question_active_time);
+        const timeToAnswer = answeredAt - question_active_time;
 
         const isCorrectAnswer = selectedAnswer === question.correctAnswer;
 
-        this.database_queue.create_participant_response(participant_id, game_session_id, {
-            selectedAnswer: selectedAnswer,
+        // Streak
+        const newCurrentStreak = isCorrectAnswer ? (participant.currentStreak ?? 0) + 1 : 0;
+        const newLongestStreak = Math.max(participant.longestStreak ?? 0, newCurrentStreak);
+
+        // Time bonus: up to 50% of basePoints for instant answer, 0 at deadline
+        let timeBonus = 0;
+        if (isCorrectAnswer && quiz.timeBonus) {
+            const totalTimeMs = question.timeLimit * 1000;
+            const remainingTime = Math.max(totalTimeMs - timeToAnswer, 0);
+            timeBonus = Math.round(
+                (question.basePoints ?? 0) * (remainingTime / totalTimeMs) * 0.5,
+            );
+        }
+
+        // Streak bonus: 10 pts per streak, capped at 50
+        const streakBonus = isCorrectAnswer ? Math.min(newCurrentStreak * 10, 50) : 0;
+
+        const pointsEarned = isCorrectAnswer
+            ? (question.basePoints ?? 0) + timeBonus + streakBonus
+            : 0;
+        console.log('new response creation ------------------ >', {
+            selectedAnswer,
             isCorrect: isCorrectAnswer,
-            timeToAnswer: question_active_time - answeredAt,
-            pointsEarned: isCorrectAnswer ? question.basePoints : 0,
-            timeBonus: 0,
-            streakBonus: 0,
+            timeToAnswer,
+            pointsEarned,
+            timeBonus,
+            streakBonus,
             answeredAt: new Date(answeredAt),
             questionId: game_session.currentQuestionId!,
         });
-
+        this.database_queue.create_participant_response(participant_id, game_session_id, {
+            selectedAnswer,
+            isCorrect: isCorrectAnswer,
+            timeToAnswer,
+            pointsEarned,
+            timeBonus,
+            streakBonus,
+            answeredAt: new Date(answeredAt),
+            questionId: game_session.currentQuestionId!,
+        });
+        console.log('updating participant score and streak ------------------ >', {
+            totalScore: (participant.totalScore ?? 0) + pointsEarned,
+            correctAnswers: isCorrectAnswer
+                ? (participant.correctAnswers ?? 0) + 1
+                : (participant.correctAnswers ?? 0),
+            currentStreak: newCurrentStreak,
+            longestStreak: newLongestStreak,
+        });
         this.database_queue.update_participant(
             participant_id,
             {
-                totalScore: isCorrectAnswer
-                    ? participant.totalScore + question.basePoints
-                    : participant.totalScore,
-                longestStreak: isCorrectAnswer
-                    ? participant.longestStreak
-                        ? participant.longestStreak + 1
-                        : 1
-                    : 0,
+                totalScore: (participant.totalScore ?? 0) + pointsEarned,
+                correctAnswers: isCorrectAnswer
+                    ? (participant.correctAnswers ?? 0) + 1
+                    : (participant.correctAnswers ?? 0),
+                currentStreak: newCurrentStreak,
+                longestStreak: newLongestStreak,
             },
             game_session_id,
         );

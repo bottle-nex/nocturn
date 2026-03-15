@@ -264,7 +264,6 @@ export default function LandingNavbar() {
                         </motion.span>
                     </Button>
                 </div>
-
                 {session?.user.token ? (
                     <div className="flex gap-x-2.5">
                         <motion.button

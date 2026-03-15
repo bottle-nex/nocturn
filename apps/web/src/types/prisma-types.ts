@@ -112,6 +112,7 @@ export interface ParticipantType {
     totalScore: number;
     correctAnswers: number;
     longestStreak: number;
+    currentStreak: number;
     walletAddress?: string | null;
     quizId: string;
     quiz?: QuizType;

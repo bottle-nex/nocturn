@@ -44,7 +44,7 @@ export default function ChatBoxCardSection(): JSX.Element {
                 buttonClassName="bg-[#FF88BA] hover:bg-[#FF88BA] shadow-[inset_0px_1.5px_rgba(0,0,0,0.05)] shrink-0 ml-px text-light-alpha"
             />
 
-            <div className="h-150 w-full bg-[#f7f7f7] dark:bg-white/5 mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
+            <div className="h-150 w-full bg-[#f7f7f7] dark:bg-dark-base/60 mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}
                 <div className="relative w-full max-w-216 h-65 z-20 -top-18">
                     <div className="absolute left-0 -bottom-8 -rotate-2">

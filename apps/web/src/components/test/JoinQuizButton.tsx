@@ -302,7 +302,7 @@ export default function JoinQuizButton() {
         }
     }
 
-    async function makeBackendCall(email?: string, _name?: string) {
+    async function makeBackendCall(email?: string, name?: string) {
         if (!code.trim()) return;
         setLoading(true);
         try {

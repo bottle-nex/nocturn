@@ -11,7 +11,7 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useCannonConfetti } from '@/hooks/useCannonConfetti';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 
-const barColors = [
+export const barColors = [
     '#841836',
     '#a4133c',
     '#c9184a',
