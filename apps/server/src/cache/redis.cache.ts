@@ -965,7 +965,7 @@ export default class RedisCache {
             );
             if (!results || results.length === 0) return [];
 
-            let entries: { id: string; totalScore: number; rank: number }[] = [];
+            const entries: { id: string; totalScore: number; rank: number }[] = [];
             for (let i = 0; i < results.length; i += 2) {
                 entries.push({
                     id: results[i],
@@ -991,10 +991,14 @@ export default class RedisCache {
 
                 try {
                     nickname = JSON.parse(nickname) ?? nickname;
-                } catch { }
+                } catch {
+                    // ignore JSON parse errors
+                }
                 try {
                     avatar = avatar_raw ? JSON.parse(avatar_raw) : null;
-                } catch { }
+                } catch {
+                    // ignore JSON parse errors
+                }
                 return {
                     id: entry.id,
                     totalScore: entry.totalScore,

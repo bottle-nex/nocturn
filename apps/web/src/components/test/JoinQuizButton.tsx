@@ -306,7 +306,6 @@ export default function JoinQuizButton() {
         if (!code.trim()) return;
         setLoading(true);
         try {
-            console.log('code is :', code.trim(), 'email is :', email, 'name is :', name);
             const quizId = await userQuizAction.joinQuiz(code.trim(), email, name);
             setCode('');
 

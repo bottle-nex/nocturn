@@ -2,7 +2,6 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import DarkModeToggle from '../base/DarkModeToggle';
 
 export default function NavCenter() {
     const [active, setActive] = useState<string | null>(null);

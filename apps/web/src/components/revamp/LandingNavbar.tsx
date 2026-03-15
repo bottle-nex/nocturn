@@ -10,7 +10,6 @@ import LogoutModal from '../utility/LogoutModal';
 import { useRouter } from 'next/navigation';
 import SigninModal from '../utility/SigninModal';
 import AppLogo from '../app/AppLogo';
-import DarkModeToggle from '../base/DarkModeToggle';
 
 const springTransition = {
     type: 'spring' as const,
