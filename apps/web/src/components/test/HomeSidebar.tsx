@@ -129,7 +129,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             data-lenis-prevent
         >
             <div>
-                <div className="fixed -top-2 -left-4">
+                <div className="fixed top-10 -left-4">
                     <AppLogo size={130} withText textColor="dark:text-light-base text-dark-base" />
                 </div>
                 <section className="ml-4 mt-24">
