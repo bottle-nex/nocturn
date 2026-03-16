@@ -4,6 +4,8 @@ export const API_URL = BACKEND_URL + '/api/v1';
 
 export const SIGNIN_URL = API_URL + '/sign-in';
 export const LEARNING_JOURNEY_URL = API_URL + '/learning-journey';
+export const COMPLETE_TUTORIAL_URL = API_URL + '/tutorial-complete';
+export const GET_TUTORIAL_STATUS_URL = API_URL + '/get-tutorial-status';
 export const SEND_OTP_URL = API_URL + '/send-otp';
 export const VERIFY_OTP_URL = API_URL + '/verify-otp';
 export const REFRESH_TOKEN_URL = API_URL + '/refresh-token';
