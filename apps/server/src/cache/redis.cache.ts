@@ -903,6 +903,7 @@ export default class RedisCache {
     }
 
     //  <------------------ LEADERBOARDS ------------------>
+
     public async init_leaderboard_entry(game_session_id: string, participant_id: string) {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
@@ -915,7 +916,7 @@ export default class RedisCache {
         }
     }
 
-    private async update_leaderboard_score(
+    public async update_leaderboard_score(
         game_session_id: string,
         participant_id: string,
         score_earned: number,
@@ -933,7 +934,7 @@ export default class RedisCache {
         }
     }
 
-    public async set_participant_score(
+    public async set_leaderboard_score(
         game_session_id: string,
         participant_id: string,
         score: number,
@@ -945,7 +946,7 @@ export default class RedisCache {
             pipeline.expire(leaderboard_key, 60 * 60 * 24);
             await pipeline.exec();
         } catch (err) {
-            console.error('Error in set_participant_score:', err);
+            console.error('Error in set_leaderboard_score:', err);
         }
     }
 

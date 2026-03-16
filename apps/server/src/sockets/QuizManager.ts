@@ -40,6 +40,10 @@ export default class QuizManager {
         if (!particicpant_cache) {
             return;
         }
+        await this.redis_cache.init_leaderboard_entry(
+            decoded_cookie_payload.gameSessionId,
+            particpant_id,
+        );
         const participant: Partial<Participant> = {
             id: particicpant_cache.id,
             avatar: particicpant_cache.avatar,

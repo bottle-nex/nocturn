@@ -531,7 +531,6 @@ export default class ParticipantManager {
 
         const answeredAt = Date.now();
         const question_active_time = new Date(game_session.phaseStartTime!).getTime();
-        console.log('question active time is : ', question_active_time);
         const timeToAnswer = answeredAt - question_active_time;
 
         const isCorrectAnswer = selectedAnswer === question.correctAnswer;
@@ -556,7 +555,7 @@ export default class ParticipantManager {
         const pointsEarned = isCorrectAnswer
             ? (question.basePoints ?? 0) + timeBonus + streakBonus
             : 0;
-        console.log('new response creation ------------------ >', {
+        await this.database_queue.create_participant_response(participant_id, game_session_id, {
             selectedAnswer,
             isCorrect: isCorrectAnswer,
             timeToAnswer,
@@ -566,25 +565,8 @@ export default class ParticipantManager {
             answeredAt: new Date(answeredAt),
             questionId: game_session.currentQuestionId!,
         });
-        this.database_queue.create_participant_response(participant_id, game_session_id, {
-            selectedAnswer,
-            isCorrect: isCorrectAnswer,
-            timeToAnswer,
-            pointsEarned,
-            timeBonus,
-            streakBonus,
-            answeredAt: new Date(answeredAt),
-            questionId: game_session.currentQuestionId!,
-        });
-        console.log('updating participant score and streak ------------------ >', {
-            totalScore: (participant.totalScore ?? 0) + pointsEarned,
-            correctAnswers: isCorrectAnswer
-                ? (participant.correctAnswers ?? 0) + 1
-                : (participant.correctAnswers ?? 0),
-            currentStreak: newCurrentStreak,
-            longestStreak: newLongestStreak,
-        });
-        this.database_queue.update_participant(
+
+        await this.database_queue.update_participant(
             participant_id,
             {
                 totalScore: (participant.totalScore ?? 0) + pointsEarned,
@@ -595,6 +577,11 @@ export default class ParticipantManager {
                 longestStreak: newLongestStreak,
             },
             game_session_id,
+        );
+        await this.redis_cache.update_leaderboard_score(
+            game_session_id,
+            participant_id,
+            pointsEarned,
         );
 
         const event_data: PubSubMessageTypes = {
@@ -654,6 +641,7 @@ export default class ParticipantManager {
                     { isKicked: true },
                     game_session_id,
                 );
+                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
                 return;
             }
 

@@ -888,4 +888,26 @@ export default class RedisCache {
             return false;
         }
     }
+
+    //  <------------------ LEADERBOARDS ------------------>a
+
+    public async set_leaderboard_score(
+        game_session_id: string,
+        participant_id: string,
+        score: number,
+    ) {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+            pipeline.zadd(leaderboard_key, score, participant_id);
+            pipeline.expire(leaderboard_key, 60 * 60 * 24);
+            await pipeline.exec();
+        } catch (err) {
+            console.error('Error in set_leaderboard_score:', err);
+        }
+    }
+
+    public get_leaderboard_key(game_session_id: string): string {
+        return `game_session:${game_session_id}:leaderboard`;
+    }
 }
