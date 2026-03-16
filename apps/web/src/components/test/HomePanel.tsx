@@ -84,6 +84,7 @@ export default function HomePanel() {
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
                     <Button
+                        id="tour-new-quiz"
                         onClick={handleCreateQuiz}
                         disabled={creating}
                         className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"

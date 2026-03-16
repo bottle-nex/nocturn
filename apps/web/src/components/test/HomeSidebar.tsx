@@ -17,6 +17,7 @@ import { RiVipCrownLine } from 'react-icons/ri';
 import AppLogo from '../app/AppLogo';
 
 export interface SidebarItem {
+    id?: string;
     tab: SidebarTab;
     label: string;
     icon?: React.ReactNode;
@@ -82,18 +83,21 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             onClick: () => handleTabChange(SidebarTab.HOME),
         },
         {
+            id: 'tour-my-quizzes',
             tab: SidebarTab.MY_QUIZZES,
             label: 'My Quizzes',
             icon: <GoPeople size={18} />,
             onClick: () => handleTabChange(SidebarTab.MY_QUIZZES),
         },
         {
+            id: 'tour-shared-with-me',
             tab: SidebarTab.SHARED_WITH_ME,
             label: 'Shared with me',
             icon: <MdOutlineFolderShared size={18} />,
             onClick: () => handleTabChange(SidebarTab.SHARED_WITH_ME),
         },
         {
+            id: 'tour-favourites',
             tab: SidebarTab.FAVORITES,
             label: 'Favorites',
             icon: <FaRegHeart size={17} />,
@@ -134,6 +138,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                     <section className="flex flex-col gap-y-2 mt-2 px-4">
                         {sidebarItems.slice(0, 3).map((item) => (
                             <div
+                                id={item.id}
                                 key={item.tab}
                                 onClick={item.onClick}
                                 className={cn(
@@ -160,6 +165,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                     <section className="flex flex-col gap-y-2 mt-2 px-4">
                         {sidebarItems.slice(3, 6).map((item) => (
                             <div
+                                id={item.id}
                                 key={item.tab}
                                 onClick={item.onClick}
                                 className={cn(
@@ -185,6 +191,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                 <section className="flex flex-col gap-y-2 mt-2 px-4">
                     {sidebarItems.slice(6).map((item) => (
                         <div
+                            id={item.id}
                             key={item.tab}
                             onClick={item.onClick}
                             className={cn(
@@ -226,6 +233,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         </span>
 
                         <span
+                            id="tour-trash"
                             className={cn(
                                 'text-sm dark:text-white/80 text-black/90 transition-colors',
                                 isOverTrash &&

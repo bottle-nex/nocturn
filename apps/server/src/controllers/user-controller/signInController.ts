@@ -58,12 +58,14 @@ export class SigninController {
             ResponseWriter.not_found(res, 'Insufficient data');
             return;
         }
+
         try {
             const existingUser = await prisma.user.findUnique({
                 where: { email: user.email },
             });
 
             let myUser;
+
             if (existingUser) {
                 myUser = await prisma.user.update({
                     where: { email: user.email },
@@ -77,6 +79,7 @@ export class SigninController {
                         name: true,
                         email: true,
                         image: true,
+                        isTutorialCompleted: true,
                         subscriptions: {
                             select: {
                                 tier: {
@@ -104,6 +107,7 @@ export class SigninController {
                         name: true,
                         email: true,
                         image: true,
+                        isTutorialCompleted: true,
                         subscriptions: {
                             select: {
                                 tier: {
@@ -128,6 +132,7 @@ export class SigninController {
                 ...myUser,
                 subscription,
             });
+
             SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
@@ -159,8 +164,11 @@ export class SigninController {
 
         try {
             const otp = crypto.randomInt(100000, 999999).toString();
+
             console.log(`Generated OTP for ${email}: ${otp}`);
+
             await publisherInstance.set(`otp:${email}`, otp, 'EX', 100);
+
             await email_service_queue_instance.email_send_otp({ email, otp });
 
             ResponseWriter.success(res, null, 'OTP sent to your email');
@@ -180,7 +188,9 @@ export class SigninController {
 
         try {
             const stored = await publisherInstance.get(`otp:${email}`);
+
             console.log('stored otp is : ', stored, ' and user entered otp is : ', otp);
+
             if (!stored || stored !== otp) {
                 ResponseWriter.invalid_data(res, 'Invalid or expired OTP');
                 return;
@@ -195,6 +205,7 @@ export class SigninController {
             console.log('existing user is : ', existingUser);
 
             let myUser;
+
             if (existingUser) {
                 myUser = await prisma.user.update({
                     where: { email },
@@ -204,6 +215,7 @@ export class SigninController {
                         name: true,
                         email: true,
                         image: true,
+                        isTutorialCompleted: true,
                         subscriptions: {
                             select: {
                                 tier: {
@@ -232,6 +244,7 @@ export class SigninController {
                         name: true,
                         email: true,
                         image: true,
+                        isTutorialCompleted: true,
                         subscriptions: {
                             select: {
                                 tier: {
@@ -256,6 +269,7 @@ export class SigninController {
                 ...myUser,
                 subscription,
             });
+
             SigninController.setRefreshCookie(res, refreshToken);
 
             await SigninController.process_collaborator_invitations(myUser.id, myUser.email);
@@ -293,6 +307,7 @@ export class SigninController {
                     })),
                     skipDuplicates: true,
                 });
+
                 await tx.collaboratorInvitation.updateMany({
                     where: { email },
                     data: {

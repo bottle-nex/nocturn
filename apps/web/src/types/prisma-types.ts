@@ -5,6 +5,8 @@ export interface UserType {
     image?: string | null;
     walletAddress?: string | null;
 
+    isTutorialCompleted: boolean;
+
     isVerified: boolean;
     isActive: boolean;
 
