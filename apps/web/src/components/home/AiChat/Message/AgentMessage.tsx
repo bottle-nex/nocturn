@@ -14,8 +14,8 @@ export default function AgentMessage({ content, createdAt }: AgentMessageProps) 
                     <div
                         className={cn(
                             'px-4 py-2 rounded-tr-xl rounded-b-xl text-sm font-normal',
-                            'text-dark-alpha dark:text-dark-alpha',
-                            'bg-white border border-dark-base/10 dark:border-light-base/10',
+                            'text-dark-alpha dark:text-light-alpha',
+                            'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
                             'text-left tracking-wider mt-2.5',
                             'max-w-full min-w-0',
                         )}

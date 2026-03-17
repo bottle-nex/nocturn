@@ -1,60 +1,37 @@
 import { Annotation } from '@langchain/langgraph';
 import { AgentStep } from '@nocturn/types';
-import { Response } from 'express';
-
-// export const QUIZ_STEP = {
-//     START: 'START',
-//     ASK_DIFFICULTY: 'ASK_DIFFICULTY',
-//     WAIT_DIFFICULTY: 'WAIT_DIFFICULTY',
-//     PLANNING: 'PLANNING',
-//     GENERATE: 'GENERATE',
-//     REVISE: 'REVISE',
-//     DONE: 'DONE',
-// } as const;
-
-// export type QUIZ_STEP = (typeof QUIZ_STEP)[keyof typeof QUIZ_STEP];
-export interface QuizAgentGraphState {
-    res: Response;
-    sessionId: string;
-    userId: string;
-
-    step: AgentStep;
-
-    instruction: string;
-    difficulty?: number;
-
-    quizId?: string;
-}
-
-export const QuizAgentGraphAnnotation = Annotation.Root({
-    res: Annotation<Response>,
-    sessionId: Annotation<string>,
-    userId: Annotation<string>,
-    step: Annotation<AgentStep>,
-    instruction: Annotation<string>,
-    difficulty: Annotation<number | undefined>,
-    quizId: Annotation<string | undefined>,
-});
+import { stream } from '@nocturn/types';
 
 export const QuizAgentStateAnnotation = Annotation.Root({
-    step: Annotation<AgentStep>,
+    // Input — set by controller before invoking graph
+    sessionId: Annotation<string>,
     userId: Annotation<string>,
-    instruction: Annotation<string | undefined>,
+    instruction: Annotation<string>,
+    conversationHistory: Annotation<string>,
+    currentStep: Annotation<AgentStep>,
+    existingQuizId: Annotation<string | undefined>,
+    originalTopic: Annotation<string | undefined>,
+
+    // Set by top_level_agent
+    intent: Annotation<string | undefined>,
+    agentResponse: Annotation<string | undefined>,
+
+    // Set by compute_difficulty
     difficulty: Annotation<number | undefined>,
+
+    // Set by planner
+    plan: Annotation<string | undefined>,
+    quizTitle: Annotation<string | undefined>,
+    plannerResponse: Annotation<string | undefined>,
+
+    // Set by executor
     quizId: Annotation<string | undefined>,
-    quizData: Annotation<any>,
-    revisionFeedback: Annotation<string | undefined>,
-    streamingMessage: Annotation<string | undefined>,
+
+    // SSE messages to stream back to client
+    sseMessages: Annotation<stream[]>({
+        default: () => [],
+        reducer: (current, update) => [...current, ...update],
+    }),
 });
 
 export type QuizAgentState = typeof QuizAgentStateAnnotation.State;
-
-export const quiz_agent_state_for_graph = {
-    step: null,
-    userId: null,
-    instruction: null,
-    streamingMessage: null,
-    quizId: null,
-    quizData: null,
-    revisionFeedback: null,
-};

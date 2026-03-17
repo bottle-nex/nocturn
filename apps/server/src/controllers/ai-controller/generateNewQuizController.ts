@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { AiQuizChatRole, prisma } from '@nocturn/database';
-import { chain } from '../../services/init.services';
-import { AgentStep } from '@nocturn/types';
+import { AgentStep, STREAM } from '@nocturn/types';
 import { generateNewQuizSchema } from '../../schemas/generateNewQuizSchema';
+import { quizAgentGraph } from '../../services/init.services';
+import { stream } from '@nocturn/types';
 
 export default async function generateNewQuizController(req: Request, res: Response) {
     try {
@@ -12,8 +13,8 @@ export default async function generateNewQuizController(req: Request, res: Respo
             ResponseWriter.not_authorized(res, 'not authorized');
             return;
         }
-        const parsed_data = generateNewQuizSchema.safeParse(req.body);
 
+        const parsed_data = generateNewQuizSchema.safeParse(req.body);
         if (!parsed_data.success) {
             ResponseWriter.invalid_data(res, 'invalid data provided');
             return;
@@ -21,16 +22,15 @@ export default async function generateNewQuizController(req: Request, res: Respo
 
         const { instruction, sessionId } = parsed_data.data;
 
+        // ── Load or create session ────────────────────────────────────
         let session;
         if (sessionId) {
             session = await prisma.aiQuizChatSession.findUnique({
-                where: {
-                    id: sessionId,
-                },
+                where: { id: sessionId },
             });
         }
 
-        if (!session || session?.userId !== user.id) {
+        if (!session || session.userId !== user.id) {
             session = await prisma.aiQuizChatSession.create({
                 data: {
                     userId: user.id.toString(),
@@ -40,6 +40,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             });
         }
 
+        // ── Save user message ─────────────────────────────────────────
         await prisma.aiQuizMessage.create({
             data: {
                 aiQuizChatSessionId: session.id,
@@ -48,74 +49,66 @@ export default async function generateNewQuizController(req: Request, res: Respo
             },
         });
 
-        // the extra steps are for future
-        // these can be used to handle any unwanted errors, to regenerate
-        switch (session.step) {
-            case AgentStep.START:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {
-                        user_instruction: instruction,
-                    },
-                });
-                break;
+        // ── Load conversation history ─────────────────────────────────
+        const messages = await prisma.aiQuizMessage.findMany({
+            where: { aiQuizChatSessionId: session.id },
+            orderBy: { createdAt: 'asc' },
+            select: { role: true, content: true },
+        });
 
-            case AgentStep.ASK_DIFFICULTY:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {},
-                });
-                break;
+        const conversationHistory = messages
+            .map((m) => `${m.role}: ${m.content}`)
+            .join('\n');
 
-            case AgentStep.WAIT_DIFFICULTY:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {
-                        root_instruction: session.instruction || '',
-                        difficulty_instruction: instruction,
-                        user_id: user.id,
-                    },
-                });
-                break;
+        // ── Set up SSE stream ─────────────────────────────────────────
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+        res.flushHeaders();
 
-            case AgentStep.PLANNING:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {},
-                });
-                break;
+        // Send session ID first
+        ResponseWriter.stream.write(res, {
+            type: STREAM.ID,
+            data: session.id,
+        });
 
-            case AgentStep.GENERATE:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {},
-                });
-                break;
+        // ── Invoke the LangGraph agent and stream updates ─────────────
+        const streamResponse = await quizAgentGraph.stream(
+            {
+                sessionId: session.id,
+                userId: user.id,
+                instruction,
+                conversationHistory,
+                currentStep: session.step,
+                existingQuizId: session.quizId || undefined,
+                originalTopic: session.instruction || undefined,
+                sseMessages: [],
+            },
+            { streamMode: 'updates' },
+        );
 
-            case AgentStep.REVISE:
-                await chain.start(res, session.id, {
-                    step: session.step,
-                    data: {
-                        user_instruction: instruction,
-                        quiz_id: '',
-                        questions: [],
-                    },
-                });
-                break;
-
-            default:
-                ResponseWriter.error(
-                    res,
-                    'INVALID_AGENT_STEP',
-                    'agent felt into unknown step',
-                    undefined,
-                    400,
-                );
-                break;
+        // LangGraph's 'updates' mode yields the exact partial state returned by each node.
+        for await (const chunk of streamResponse) {
+            for (const nodeName in chunk) {
+                const nodeUpdate = chunk[nodeName];
+                if (nodeUpdate.sseMessages && Array.isArray(nodeUpdate.sseMessages)) {
+                    for (const msg of nodeUpdate.sseMessages) {
+                        ResponseWriter.stream.write(res, msg as stream);
+                    }
+                }
+            }
         }
+
+        ResponseWriter.stream.end(res);
     } catch (error) {
-        console.error('error in chat with ai controller: ', error);
-        ResponseWriter.system_error(res);
-        return;
+        console.error('error in generate new quiz controller: ', error);
+
+        // If headers were already sent (SSE mode), just end the stream
+        if (res.headersSent) {
+            ResponseWriter.stream.end(res);
+        } else {
+            ResponseWriter.system_error(res);
+        }
     }
 }

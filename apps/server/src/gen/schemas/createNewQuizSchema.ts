@@ -1,5 +1,18 @@
 import z from 'zod';
 
+export const top_level_agent_schema = z.object({
+    intent: z
+        .enum(['TOPIC_PROVIDED', 'DIFFICULTY_RESPONSE', 'CHANGE_REQUEST', 'IRRELEVANT'])
+        .describe('The classified intent of the user message'),
+    response: z
+        .string()
+        .min(1)
+        .max(300)
+        .describe(
+            'A friendly response to the user. For irrelevant messages, this is the main reply. For other intents, a brief acknowledgment.',
+        ),
+});
+
 export const question_schema = z.object({
     question: z.string().min(5).max(150).describe('a one liner question'),
     options: z.array(z.string().min(1).max(60)).length(4),
@@ -45,13 +58,4 @@ export const difficulty_asker_schema = z.object({
         .string()
         .min(5)
         .describe('give a good response to the user, and ask for difficulty of the quiz'),
-});
-
-export const reviser_schema = z.object({
-    userResponse: z
-        .string()
-        .min(5)
-        .max(200)
-        .describe('give a user response like you are doing the job'),
-    questions: z.array(question_schema).min(1).max(25),
 });
