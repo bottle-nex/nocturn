@@ -2,11 +2,9 @@ import LandingFooter from '@/components/test/LandingFooter';
 import LandingHeroSection from '@/components/revamp/LandingHeroSection';
 import LandingTestNav from '@/components/revamp/LandingTestNav';
 import ChatBoxCardSection from '@/components/revamp/ChatBoxCardSection';
-import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
-import LandingCardsSection from '@/components/revamp/LandingCardsSection';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
-import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
-import SolanaPrizePool from '@/components/revamp/SolanaPrizePool';
+import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
+import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 
 export default function Page() {
     return (
@@ -16,20 +14,15 @@ export default function Page() {
                 <LandingTestNav />
                 <LandingHeroSection />
                 <ChatBoxCardSection />
-                <LandingFeaturesSection />
-                <LandingCardsSection />
+                <LandingPenguinSection />
+                {/* <LandingCardsSection /> */}
                 {/* <LandingPricingComponent showHeading /> */}
-                <PremiumPricingCardComponent />
-                {/* <WhyNocturn /> */}
-                {/* <PricingComponent
-                    className="flex flex-col items-center justify-center pt-48"
-                    showHeading
-                /> */}
-                {/* <BigAnimatedText /> */}
-                <SolanaPrizePool />
+                {/* <PremiumPricingCardComponent /> */}
+                <LandingFeaturesSection />
+                {/* <SolanaPrizePool /> */}
                 <LandingCTASection />
             </div>
-            <footer className="fixed bottom-0 left-0 w-full z-0">
+            <footer className="fixed bottom-0 left-0 w-full z-1">
                 <LandingFooter />
             </footer>
         </div>

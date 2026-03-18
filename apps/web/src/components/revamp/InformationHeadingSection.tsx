@@ -35,11 +35,9 @@ export default function InformationHeadingSection({
         <div className={cn('w-full flex flex-col items-start gap-y-6', className)}>
             <div className={cn('text-xl tracking-normal', topTextClassName)}>{topText}</div>
 
-            <div className="text-6xl text-dark-base/90 dark:text-light-base/90 font-semibold max-w-md">
-                {title}
-            </div>
+            <div className="text-6xl text-dark-base/90 font-semibold max-w-md">{title}</div>
 
-            <div className="text-dark-base/50 dark:text-light-base/60 text-[22px] max-w-xl leading-[1.3]">
+            <div className="text-dark-base/50 text-[22px] max-w-xl leading-[1.3]">
                 {description}
             </div>
 

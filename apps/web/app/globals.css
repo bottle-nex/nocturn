@@ -14,23 +14,23 @@
 }
 
 :root {
-  --tour-bg: #ffffff;
-  --tour-text: #0a0a0a;
-  --tour-title: #0a0a0a;
-  --tour-border: rgba(0,0,0,0.08);
+    --tour-bg: #ffffff;
+    --tour-text: #0a0a0a;
+    --tour-title: #0a0a0a;
+    --tour-border: rgba(0, 0, 0, 0.08);
 
-  --tour-button-bg: #0a0a0a;
-  --tour-button-text: #ffffff;
+    --tour-button-bg: #0a0a0a;
+    --tour-button-text: #ffffff;
 }
 
 .dark {
-  --tour-bg: #0a0a0a;
-  --tour-text: #fafafa;
-  --tour-title: #fafafa;
-  --tour-border: rgba(255,255,255,0.08);
+    --tour-bg: #0a0a0a;
+    --tour-text: #fafafa;
+    --tour-title: #fafafa;
+    --tour-border: rgba(255, 255, 255, 0.08);
 
-  --tour-button-bg: #fafafa;
-  --tour-button-text: #0a0a0a;
+    --tour-button-bg: #fafafa;
+    --tour-button-text: #0a0a0a;
 }
 
 @theme inline {

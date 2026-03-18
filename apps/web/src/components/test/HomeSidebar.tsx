@@ -5,7 +5,6 @@ import { MdOutlineFolderShared, MdOutlineHomeMax } from 'react-icons/md';
 import { cn } from '@/lib/utils';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
-import DarkModeToggle from '../base/DarkModeToggle';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
 import { GoPeople } from 'react-icons/go';
@@ -214,7 +213,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         ref={trashRef}
                         onClick={openTrash}
                         className={cn(
-                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-3/5 transition-all duration-200',
+                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5 transition-all duration-200',
                             'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
                             isDragging &&
                                 'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
@@ -247,21 +246,21 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                 </section>
 
                 {session?.user.email && (
-                    <div className="flex justify-between items-center my-3 mr-4">
+                    <div className="flex justify-between items-center my-3">
                         <section className="flex items-center justify-start gap-x-3 text-black dark:text-white px-4 py-2">
                             <Image
                                 src={session.user.image}
                                 width={28}
                                 height={28}
                                 alt="user-logo"
-                                className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
+                                className="rounded-full"
                             />
                             <span className="text-base font">{session.user.name}</span>
                         </section>
 
-                        <section>
+                        {/* <section>
                             <DarkModeToggle />
-                        </section>
+                        </section> */}
                     </div>
                 )}
             </section>

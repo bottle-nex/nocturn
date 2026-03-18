@@ -420,143 +420,143 @@ svg {
 
 /* remove arrow */
 .vercel-tour .driver-popover-arrow {
-  display: none;
+    display: none;
 }
 
 /* card */
 .vercel-tour {
-  border-radius: 10px !important;
-  padding: 18px !important;
-  max-width: 240px !important;
-  z-index: 10001;
+    border-radius: 10px !important;
+    padding: 18px !important;
+    max-width: 240px !important;
+    z-index: 10001;
 
-  background: var(--tour-bg) !important;
-  color: var(--tour-text) !important;
+    background: var(--tour-bg) !important;
+    color: var(--tour-text) !important;
 
-  border: 1px solid var(--tour-border) !important;
+    border: 1px solid var(--tour-border) !important;
 
-  box-shadow:
-    0 4px 10px rgba(0,0,0,0.05),
-    0 20px 40px rgba(0,0,0,0.08) !important;
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.05),
+        0 20px 40px rgba(0, 0, 0, 0.08) !important;
 
-  font-size: 13px !important;
+    font-size: 13px !important;
 }
 
 /* title */
 .vercel-tour .driver-popover-title {
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  margin-bottom: 4px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    margin-bottom: 4px !important;
 }
 
 /* description */
 .vercel-tour .driver-popover-description {
-  font-size: 12px !important;
-  opacity: 0.85;
-  line-height: 1.5;
+    font-size: 12px !important;
+    opacity: 0.85;
+    line-height: 1.5;
 }
 
 /* footer layout */
 .vercel-tour .driver-popover-footer {
-  margin-top: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* button group */
 .vercel-tour .driver-popover-navigation-btns {
-  display: flex;
-  gap: 6px;
+    display: flex;
+    gap: 6px;
 }
 
 /* buttons */
 .vercel-tour button {
-  font-size: 12px !important;
-  padding: 4px 10px !important;
-  border-radius: 4px !important;
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
 
-  border: 1px solid var(--tour-border);
-  cursor: pointer;
+    border: 1px solid var(--tour-border);
+    cursor: pointer;
 }
 
 /* back button */
 .vercel-tour .driver-popover-btn-prev {
-  background: transparent;
-  color: var(--tour-text);
-  opacity: 0.7;
+    background: transparent;
+    color: var(--tour-text);
+    opacity: 0.7;
 }
 
 .vercel-tour .driver-popover-btn-prev:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 /* next button */
 .vercel-tour .driver-popover-btn-next {
-  background: var(--tour-button-bg);
-  color: var(--tour-button-text);
+    background: var(--tour-button-bg);
+    color: var(--tour-button-text);
 }
 
 /* skip text */
 .tour-skip-text {
-  font-size: 12px;
-  opacity: 0.6;
-  cursor: pointer;
-  user-select: none;
+    font-size: 12px;
+    opacity: 0.6;
+    cursor: pointer;
+    user-select: none;
 }
 
 .tour-skip-text:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 /* spotlight area */
 .driver-stage {
-  border-radius: 8px !important;
-  box-shadow:
-    0 0 0 2px rgba(255,255,255,0.18),
-    0 0 22px rgba(255,255,255,0.12) !important;
+    border-radius: 8px !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.18),
+        0 0 22px rgba(255, 255, 255, 0.12) !important;
 }
 .driver-overlay {
-  backdrop-filter: blur(0.4px);
-  background: rgba(0,0,0,0.28) !important;
+    backdrop-filter: blur(0.4px);
+    background: rgba(0, 0, 0, 0.28) !important;
 }
 
 .dark .driver-overlay {
-  background: rgba(0,0,0,0.55) !important;
+    background: rgba(0, 0, 0, 0.55) !important;
 }
 
 /* stronger highlight for dark mode */
 .dark .driver-stage {
-  box-shadow:
-    0 0 0 2px rgba(255,255,255,0.35),
-    0 0 28px rgba(255,255,255,0.18) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.35),
+        0 0 28px rgba(255, 255, 255, 0.18) !important;
 }
 
 /* ensure popover stays sharp */
 .driver-popover {
-  backdrop-filter: none !important;
+    backdrop-filter: none !important;
 }
 
 /* highlight ring (light mode) */
 .driver-highlighted-element {
-  box-shadow:
-    0 0 0 2px rgba(0,0,0,0.12),
-    0 0 16px rgba(0,0,0,0.08) !important;
-  border-radius: 6px;
+    box-shadow:
+        0 0 0 2px rgba(0, 0, 0, 0.12),
+        0 0 16px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 6px;
 }
 
 /* highlight ring (dark mode) */
 .dark .driver-highlighted-element {
-  box-shadow:
-    0 0 0 2px rgba(255,255,255,0.25),
-    0 0 18px rgba(255,255,255,0.12) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.25),
+        0 0 18px rgba(255, 255, 255, 0.12) !important;
 }
 
 body.driver-active * {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 body.driver-active .driver-popover,
 body.driver-active .driver-popover * {
-  pointer-events: auto;
+    pointer-events: auto;
 }

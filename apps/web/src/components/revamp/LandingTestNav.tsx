@@ -9,7 +9,6 @@ import SigninModal from '../utility/SigninModal';
 import AppLogo from '../app/AppLogo';
 import NavCenter from './NavCenter';
 import Image from 'next/image';
-import DarkModeToggle from '../base/DarkModeToggle';
 
 export default function LandingTestNav() {
     const { session, openSigninModal, openLogoutModal, setOpenSigninModal, setOpenLogoutModal } =
@@ -74,7 +73,6 @@ export default function LandingTestNav() {
                 <NavCenter />
             </div>
             <div className="flex gap-x-2.5 items-center">
-                <DarkModeToggle className="h-6 w-6 p-5 rounded-lg" />
                 {session?.user.token ? (
                     <div className="flex gap-x-2.5">
                         <motion.button
