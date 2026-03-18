@@ -9,7 +9,7 @@ import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 export default function Page() {
     return (
         <div className="overflow-x-hidden w-full relative custom-scrollbar">
-            <div className="min-h-screen w-full bg-light-alpha relative z-10 flex flex-col items-center mb-[60vh] gap-y-30 custom-scrollbar">
+            <div className="min-h-screen w-full bg-light-alpha relative z-10 flex flex-col items-center mb-[60vh] custom-scrollbar">
                 {/* <LandingNavbar /> */}
                 <LandingTestNav />
                 <LandingHeroSection />
@@ -18,8 +18,8 @@ export default function Page() {
                 {/* <LandingCardsSection /> */}
                 {/* <LandingPricingComponent showHeading /> */}
                 {/* <PremiumPricingCardComponent /> */}
-                <LandingFeaturesSection />
                 {/* <SolanaPrizePool /> */}
+                <LandingFeaturesSection />
                 <LandingCTASection />
             </div>
             <footer className="fixed bottom-0 left-0 w-full z-1">

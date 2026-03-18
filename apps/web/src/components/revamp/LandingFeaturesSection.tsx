@@ -18,7 +18,6 @@ export default function LandingFeaturesSection() {
 
     return (
         <>
-            {/* Fixed full-screen dark overlay — fades in/out smoothly with scroll */}
             <motion.div
                 className="fixed inset-0 pointer-events-none"
                 style={{
@@ -43,20 +42,20 @@ export default function LandingFeaturesSection() {
                     </section>
 
                     <section className="grid w-full grid-cols-2 h-full">
-                        <div className="bg-[#aa95ff] h-170 relative overflow-hidden">
+                        <div className="bg-[#f53d6b] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/addCollaborators.png"
                                 alt=""
                                 width={1100}
                                 height={800}
-                                className="absolute -bottom-[0rem] -left-100 w-[1050px] max-w-none h-auto rounded-t-xl"
+                                className="absolute bottom-0 -left-100 w-262 max-w-none h-auto rounded-t-xl"
                                 loading="lazy"
                                 unoptimized
                             />
                         </div>
                         <div className="h-170 flex justify-center items-center">
                             <div className="flex flex-col gap-y-8 items-start w-md">
-                                <div className="text-[#9071ff] text-xl tracking-wide">Syncify</div>
+                                <div className="text-[#f53d6b] text-xl tracking-wide">Syncify</div>
                                 <div className="flex flex-col gap-y-3">
                                     <div className="text-4xl text-light-base">
                                         Collaborate live and build quizzes together
@@ -67,7 +66,7 @@ export default function LandingFeaturesSection() {
                                         without version conflicts or back-and-forth delays.
                                     </div>
                                 </div>
-                                <Button className="flex gap-x-2 rounded-full bg-alpha text-light-alpha hover:bg-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
+                                <Button className="flex gap-x-2 rounded-full bg-[#f53d6b] text-light-alpha hover:bg-[#f53d6b] hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
                                     <div className="font-normal">Start creating quizzes</div>
                                     <IoIosArrowRoundForward className="size-6" />
                                 </Button>
@@ -78,7 +77,7 @@ export default function LandingFeaturesSection() {
                     <section className="grid w-full grid-cols-2 h-full">
                         <div className="h-170 flex justify-center items-center">
                             <div className="flex flex-col gap-y-8 items-start w-md">
-                                <div className="text-[#9071ff] text-xl">Genify</div>
+                                <div className="text-[#f53d6b] text-xl">Genify</div>
                                 <div className="flex flex-col gap-y-3">
                                     <div className="text-4xl text-light-base">
                                         Generate quiz questions instantly with AI
@@ -89,13 +88,13 @@ export default function LandingFeaturesSection() {
                                         structure to perfectly match your needs.
                                     </div>
                                 </div>
-                                <Button className="flex gap-x-2 rounded-full bg-alpha text-light-alpha hover:bg-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
+                                <Button className="flex gap-x-2 rounded-full bg-[#f53d6b] text-light-alpha hover:bg-[#f53d6b] hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
                                     <div className="font-normal">Generate with AI</div>
                                     <IoIosArrowRoundForward className="size-6" />
                                 </Button>
                             </div>
                         </div>
-                        <div className="bg-[#7752ff] h-170 relative overflow-hidden">
+                        <div className="bg-[#f37191] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/chatWithAi.png"
                                 alt=""
@@ -109,7 +108,7 @@ export default function LandingFeaturesSection() {
                     </section>
 
                     <section className="grid w-full grid-cols-2 h-full">
-                        <div className="bg-[#aa95ff] h-170 relative overflow-hidden">
+                        <div className="bg-[#f53d6b] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/stakeSolana.png"
                                 alt=""
@@ -122,7 +121,7 @@ export default function LandingFeaturesSection() {
                         </div>
                         <div className="h-170 flex justify-center items-center">
                             <div className="flex flex-col gap-y-8 items-start w-md">
-                                <div className="text-[#9071ff] text-xl">StakeX</div>
+                                <div className="text-[#f53d6b] text-xl">StakeX</div>
                                 <div className="flex flex-col gap-y-3">
                                     <div className="text-4xl">
                                         Add stakes and reward top performers
@@ -133,7 +132,7 @@ export default function LandingFeaturesSection() {
                                         more competitive, engaging, and rewarding.
                                     </div>
                                 </div>
-                                <Button className="flex gap-x-2 rounded-full bg-alpha text-light-alpha hover:bg-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
+                                <Button className="flex gap-x-2 rounded-full bg-[#f53d6b] hover:bg-[#f53d6b] text-light-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
                                     <div className="font-normal">Host a quiz now</div>
                                     <IoIosArrowRoundForward className="size-6" />
                                 </Button>

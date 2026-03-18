@@ -32,7 +32,7 @@ export default function ChatBoxCardSection(): JSX.Element {
             initial="hidden"
             viewport={{ once: true, amount: 0.35 }}
             onViewportEnter={startSequence}
-            className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-6xl"
+            className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-6xl mt-28"
         >
             <InformationHeadingSection
                 topText="Nocturn Features"

@@ -125,6 +125,7 @@ export default function Home() {
                                             </Button>
                                             <Link href={'/premium'}>
                                                 <Button className="rounded-full bg-light-alpha dark:bg-dark-alpha dark:hover:bg-dark-base hover:bg-light-base dark:text-light-alpha text-dark-alpha">
+                                                    <RiVipCrownFill />
                                                     Upgrade
                                                 </Button>
                                             </Link>
