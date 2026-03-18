@@ -3,7 +3,7 @@ import { AgentStep } from '@nocturn/types';
 import { stream } from '@nocturn/types';
 
 export const QuizAgentStateAnnotation = Annotation.Root({
-    // Input — set by controller before invoking graph
+    // Input -> set by controller before invoking graph
     sessionId: Annotation<string>,
     userId: Annotation<string>,
     instruction: Annotation<string>,

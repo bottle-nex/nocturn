@@ -49,6 +49,7 @@ export default class Model {
             model: 'gemini-2.5-flash',
             temperature: 0.2,
             apiKey: env.SERVER_GEMINI_API_KEY,
+            // maxOutputTokens: 2000,
         });
 
         this.top_level_agent = RunnableSequence.from([

@@ -6,17 +6,42 @@ import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/ty
 import { generated_question_type } from '../types/createNewQuizType';
 import { TemplateEnum } from '../../schemas/createQuizSchema';
 import { NODE, INTENT } from '../types/agentEnums';
+import { Response } from 'express';
 
 export default class Agent {
-    // ─── Node: Top-Level Agent (LLM Router) ───────────────────────────────────
 
-    /**
-     * LLM-based router. Classifies user intent from:
-     * - current message
-     * - conversation history
-     * - session state (step, has quiz, original topic)
-     */
-    static async topLevelNode(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
+    static create_graph() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const graph: any = new StateGraph(QuizAgentStateAnnotation);
+
+        // nodes of graph
+        graph.addNode(NODE.TOP_LEVEL_AGENT, Agent.top_level_node);
+        graph.addNode(NODE.DIFFICULTY_ASKER, Agent.difficulty_asker_node);
+        graph.addNode(NODE.COMPUTE_DIFFICULTY, Agent.compute_difficulty_node);
+        graph.addNode(NODE.PLANNER, Agent.planner_node);
+        graph.addNode(NODE.EXECUTOR, Agent.executor_node);
+
+        // entrypoint
+        graph.addEdge('__start__', NODE.TOP_LEVEL_AGENT);
+
+        // routing from top level agent
+        graph.addConditionalEdges(NODE.TOP_LEVEL_AGENT, Agent.route_from_top_level_agent, {
+            [NODE.DIFFICULTY_ASKER]: NODE.DIFFICULTY_ASKER,
+            [NODE.COMPUTE_DIFFICULTY]: NODE.COMPUTE_DIFFICULTY,
+            [NODE.PLANNER]: NODE.PLANNER,
+            '__end__': '__end__',
+        });
+
+        // other edges
+        graph.addEdge(NODE.DIFFICULTY_ASKER, '__end__');
+        graph.addEdge(NODE.COMPUTE_DIFFICULTY, NODE.PLANNER);
+        graph.addEdge(NODE.PLANNER, NODE.EXECUTOR);
+        graph.addEdge(NODE.EXECUTOR, '__end__');
+
+        return graph.compile();
+    }
+
+    static async top_level_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.top_level_agent.invoke({
             instruction: state.instruction,
             conversationHistory: state.conversationHistory || '',
@@ -25,7 +50,7 @@ export default class Agent {
             originalTopic: state.originalTopic || 'none',
         });
 
-        // If irrelevant, save agent's response to DB and push SSE message
+        // if irrelevant, save agent's response to db and send sse
         if (response.intent === INTENT.IRRELEVANT) {
             const agentMessage = await prisma.aiQuizMessage.create({
                 data: {
@@ -48,13 +73,7 @@ export default class Agent {
         };
     }
 
-    // ─── Node: Difficulty Asker ───────────────────────────────────────────────
-
-    /**
-     * Asks the user for quiz difficulty.
-     * Saves agent message + system difficulty element to DB.
-     */
-    static async difficultyAskerNode(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
+    static async difficulty_asker_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.difficulty_asker.invoke({
             instruction: state.instruction,
         });
@@ -92,13 +111,7 @@ export default class Agent {
         };
     }
 
-    // ─── Node: Compute Difficulty ─────────────────────────────────────────────
-
-    /**
-     * Converts user's text difficulty ("very hard", "easy", etc.) to numeric 1-5.
-     * Saves the difficulty to the session.
-     */
-    static async computeDifficultyNode(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
+    static async compute_difficulty_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const conversion = await model.text_to_number_difficulty.invoke({
             instruction: state.instruction,
         });
@@ -113,13 +126,7 @@ export default class Agent {
         };
     }
 
-    // ─── Node: Planner ────────────────────────────────────────────────────────
-
-    /**
-     * Creates a quiz plan: title + detailed description.
-     * Creates the Quiz record in DB and saves planner messages.
-     */
-    static async plannerNode(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
+    static async planner_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const topicInstruction = state.originalTopic || state.instruction;
         const difficulty = state.difficulty ?? 3;
 
@@ -161,21 +168,12 @@ export default class Agent {
                 where: { name: TemplateEnum.CLASSIC },
             });
 
-            if (!db_template) {
-                db_template = await tx.template.create({
-                    data: {
-                        name: TemplateEnum.CLASSIC,
-                        description: 'Classic quiz template with standard rules',
-                    },
-                });
-            }
-
             const quiz = await tx.quiz.create({
                 data: {
                     title: response.title,
                     hostId: state.userId,
                     prizePool: 0,
-                    templateId: db_template.id,
+                    templateId: db_template?.id!,
                 },
             });
 
@@ -211,13 +209,7 @@ export default class Agent {
         };
     }
 
-    // ─── Node: Executor ───────────────────────────────────────────────────────
-
-    /**
-     * Generates quiz questions from the planner's description.
-     * Creates Question records and finishes the quiz session.
-     */
-    static async executorNode(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
+    static async executor_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.executor.invoke({
             instruction: state.plan || state.instruction,
         });
@@ -297,9 +289,7 @@ export default class Agent {
         };
     }
 
-    // ─── Router ───────────────────────────────────────────────────────────────
-
-    private static routeFromTopLevelAgent(state: QuizAgentState): string {
+    private static route_from_top_level_agent(state: QuizAgentState): string {
         switch (state.intent) {
             case INTENT.TOPIC_PROVIDED:
                 return NODE.DIFFICULTY_ASKER;
@@ -313,36 +303,12 @@ export default class Agent {
         }
     }
 
-    // ─── Graph Builder ────────────────────────────────────────────────────────
-
-    static createGraph() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const graph: any = new StateGraph(QuizAgentStateAnnotation);
-
-        // Add nodes
-        graph.addNode(NODE.TOP_LEVEL_AGENT, Agent.topLevelNode);
-        graph.addNode(NODE.DIFFICULTY_ASKER, Agent.difficultyAskerNode);
-        graph.addNode(NODE.COMPUTE_DIFFICULTY, Agent.computeDifficultyNode);
-        graph.addNode(NODE.PLANNER, Agent.plannerNode);
-        graph.addNode(NODE.EXECUTOR, Agent.executorNode);
-
-        // Entry point
-        graph.addEdge('__start__', NODE.TOP_LEVEL_AGENT);
-
-        // Conditional routing from top-level agent
-        graph.addConditionalEdges(NODE.TOP_LEVEL_AGENT, Agent.routeFromTopLevelAgent, {
-            [NODE.DIFFICULTY_ASKER]: NODE.DIFFICULTY_ASKER,
-            [NODE.COMPUTE_DIFFICULTY]: NODE.COMPUTE_DIFFICULTY,
-            [NODE.PLANNER]: NODE.PLANNER,
-            '__end__': '__end__',
-        });
-
-        // Sequential edges
-        graph.addEdge(NODE.DIFFICULTY_ASKER, '__end__');
-        graph.addEdge(NODE.COMPUTE_DIFFICULTY, NODE.PLANNER);
-        graph.addEdge(NODE.PLANNER, NODE.EXECUTOR);
-        graph.addEdge(NODE.EXECUTOR, '__end__');
-
-        return graph.compile();
+    public static create_stream(res: Response): void {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+        res.flushHeaders();
     }
+
 }

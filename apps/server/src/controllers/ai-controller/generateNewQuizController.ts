@@ -5,6 +5,7 @@ import { AgentStep, STREAM } from '@nocturn/types';
 import { generateNewQuizSchema } from '../../schemas/generateNewQuizSchema';
 import { quizAgentGraph } from '../../services/init.services';
 import { stream } from '@nocturn/types';
+import Agent from '../../gen/agents/Agent';
 
 export default async function generateNewQuizController(req: Request, res: Response) {
     try {
@@ -22,7 +23,6 @@ export default async function generateNewQuizController(req: Request, res: Respo
 
         const { instruction, sessionId } = parsed_data.data;
 
-        // ── Load or create session ────────────────────────────────────
         let session;
         if (sessionId) {
             session = await prisma.aiQuizChatSession.findUnique({
@@ -40,7 +40,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             });
         }
 
-        // ── Save user message ─────────────────────────────────────────
+        // save user message
         await prisma.aiQuizMessage.create({
             data: {
                 aiQuizChatSessionId: session.id,
@@ -49,7 +49,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             },
         });
 
-        // ── Load conversation history ─────────────────────────────────
+        // get chat history
         const messages = await prisma.aiQuizMessage.findMany({
             where: { aiQuizChatSessionId: session.id },
             orderBy: { createdAt: 'asc' },
@@ -60,12 +60,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             .map((m) => `${m.role}: ${m.content}`)
             .join('\n');
 
-        // ── Set up SSE stream ─────────────────────────────────────────
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-        res.setHeader('X-Accel-Buffering', 'no');
-        res.flushHeaders();
+        Agent.create_stream(res);
 
         // Send session ID first
         ResponseWriter.stream.write(res, {

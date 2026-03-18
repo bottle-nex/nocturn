@@ -56,5 +56,5 @@ export default async function initServices() {
     await subscriberInstance.subscribe('__keyevent@0__:expired');
 
     model = new Model();
-    quizAgentGraph = Agent.createGraph();
+    quizAgentGraph = Agent.create_graph();
 }
