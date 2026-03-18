@@ -11,7 +11,7 @@ export default function InstructionSectionChatBox() {
                 variants={pill}
                 initial="hidden"
                 animate="show"
-                className="relative z-20 h-15 rounded-full bg-light-alpha dark:bg-dark-alpha ring-1 ring-black/10 dark:ring-white/10 shadow-sm flex items-center px-6 overflow-hidden"
+                className="relative z-20 h-15 rounded-full bg-light-alpha ring-1 ring-black/10 shadow-sm flex items-center px-6 overflow-hidden"
             >
                 <motion.div
                     variants={pillContent}

@@ -57,7 +57,7 @@ export function ManageCardContent(): JSX.Element {
                 whileHover="hover"
                 onHoverStart={() => setIsHovering(true)}
                 onHoverEnd={() => setIsHovering(false)}
-                className="w-55 h-55 ring-2 ring-black/10 dark:ring-white/10 shadow-xs shadow-black/5 rounded-2xl bg-light-alpha dark:bg-dark-alpha flex flex-col justify-center gap-y-4 px-4 select-none"
+                className="w-55 h-55 ring-2 ring-black/10  shadow-xs shadow-black/5 rounded-2xl bg-light-alpha flex flex-col justify-center gap-y-4 px-4 select-none"
             >
                 <LeaderRow
                     img="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg"
@@ -143,22 +143,18 @@ function LeaderRow({
 
     return (
         <motion.div variants={rowVariants} className="flex items-center gap-3 w-full">
-            <div className="h-9 w-9 ring-1 ring-black/10 dark:ring-white/10 shadow-xs rounded-full overflow-hidden relative shrink-0">
+            <div className="h-9 w-9 ring-1 ring-black/10 shadow-xs rounded-full overflow-hidden relative shrink-0">
                 <Image src={img} alt="" fill unoptimized className="object-cover" />
             </div>
             <div className="flex-1 flex flex-col justify-between">
                 <div className="flex justify-between text-[11px]">
-                    <motion.span className="text-dark-base/80 dark:text-light-base/80">
-                        {displayPts}
-                    </motion.span>
+                    <motion.span className="text-dark-base/80 ">{displayPts}</motion.span>
                 </div>
-                <div className="w-full h-3 rounded-full bg-dark-base/10 dark:bg-light-base/10 overflow-hidden ring-1 ring-black/10 dark:ring-white/5">
+                <div className="w-full h-3 rounded-full bg-dark-base/10 overflow-hidden ring-1 ring-black/10 ">
                     <motion.div
                         style={{ width: widthPercent }}
                         className={`h-full rounded-full ${
-                            active
-                                ? 'bg-dark-base dark:bg-light-base'
-                                : 'bg-dark-base/40 dark:bg-light-base/40'
+                            active ? 'bg-dark-base' : 'bg-dark-base/40'
                         }`}
                     />
                 </div>

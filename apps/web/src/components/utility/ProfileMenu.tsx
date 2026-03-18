@@ -82,10 +82,10 @@ export default function ProfileMenu() {
                     className="flex items-center justify-end gap-x-3 px-3 py-2 cursor-pointer dark:text-gamma text-dark-base"
                 >
                     <Image
-                        src={session?.user.image}
+                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-17.jpg'}
                         width={32}
-                        height={32}
                         alt="user-logo"
+                        height={32}
                         className="cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all rounded-full"
                     />
                 </div>
