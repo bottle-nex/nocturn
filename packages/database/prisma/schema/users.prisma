@@ -5,7 +5,7 @@ model User {
     image         String?
     walletAddress String? @unique
 
-    isTutorialCompleted Boolean    @default(false)
+    isTutorialCompleted Boolean @default(false)
 
     isVerified          Boolean @default(false)
     isActive            Boolean @default(true)

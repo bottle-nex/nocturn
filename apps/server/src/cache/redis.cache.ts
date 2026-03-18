@@ -26,7 +26,7 @@ export default class RedisCache {
     public redis_cache: Redis;
 
     constructor() {
-        this.redis_cache = new Redis(REDIS_URL!);
+        this.redis_cache = new Redis(REDIS_URL);
     }
 
     //  <------------------ GAME_SESSION ------------------>

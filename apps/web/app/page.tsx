@@ -6,11 +6,12 @@ import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 import LandingCardsSection from '@/components/revamp/LandingCardsSection';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
 import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
+import SolanaPrizePool from '@/components/revamp/SolanaPrizePool';
 
 export default function Page() {
     return (
         <div className="overflow-x-hidden w-full relative custom-scrollbar">
-            <div className="min-h-screen w-full bg-light-alpha dark:bg-dark-alpha relative z-10 flex flex-col items-center mb-[60vh] gap-y-30 custom-scrollbar">
+            <div className="min-h-screen w-full bg-light-alpha relative z-10 flex flex-col items-center mb-[60vh] gap-y-30 custom-scrollbar">
                 {/* <LandingNavbar /> */}
                 <LandingTestNav />
                 <LandingHeroSection />
@@ -25,6 +26,7 @@ export default function Page() {
                     showHeading
                 /> */}
                 {/* <BigAnimatedText /> */}
+                <SolanaPrizePool />
                 <LandingCTASection />
             </div>
             <footer className="fixed bottom-0 left-0 w-full z-0">
