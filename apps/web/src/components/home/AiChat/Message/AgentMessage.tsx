@@ -24,10 +24,12 @@ export default function AgentMessage({ content, createdAt }: AgentMessageProps) 
                             {content}
                         </div>
 
-                        <div className={cn(
-                            "w-full flex justify-end ",
-                            'text-dark-alpha dark:text-dark-alpha',
-                        )}>
+                        <div
+                            className={cn(
+                                'w-full flex justify-end ',
+                                'text-dark-alpha dark:text-dark-alpha',
+                            )}
+                        >
                             <TimeDisplay date={createdAt} />
                         </div>
                     </div>

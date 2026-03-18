@@ -9,7 +9,6 @@ import { NODE, INTENT } from '../types/agentEnums';
 import { Response } from 'express';
 
 export default class Agent {
-
     static create_graph() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const graph: any = new StateGraph(QuizAgentStateAnnotation);
@@ -29,7 +28,7 @@ export default class Agent {
             [NODE.DIFFICULTY_ASKER]: NODE.DIFFICULTY_ASKER,
             [NODE.COMPUTE_DIFFICULTY]: NODE.COMPUTE_DIFFICULTY,
             [NODE.PLANNER]: NODE.PLANNER,
-            '__end__': '__end__',
+            __end__: '__end__',
         });
 
         // other edges
@@ -105,9 +104,7 @@ export default class Agent {
         });
 
         return {
-            sseMessages: [
-                { type: STREAM.MESSAGES, data: [agentic_message, system_message] },
-            ],
+            sseMessages: [{ type: STREAM.MESSAGES, data: [agentic_message, system_message] }],
         };
     }
 
@@ -164,7 +161,7 @@ export default class Agent {
 
         // New quiz flow
         const { quiz, agentic_message, system_message } = await prisma.$transaction(async (tx) => {
-            let db_template = await tx.template.findFirst({
+            const db_template = await tx.template.findFirst({
                 where: { name: TemplateEnum.CLASSIC },
             });
 
@@ -310,5 +307,4 @@ export default class Agent {
         res.setHeader('X-Accel-Buffering', 'no');
         res.flushHeaders();
     }
-
 }

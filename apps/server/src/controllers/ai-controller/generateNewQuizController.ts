@@ -56,9 +56,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
             select: { role: true, content: true },
         });
 
-        const conversationHistory = messages
-            .map((m) => `${m.role}: ${m.content}`)
-            .join('\n');
+        const conversationHistory = messages.map((m) => `${m.role}: ${m.content}`).join('\n');
 
         Agent.create_stream(res);
 
@@ -68,7 +66,6 @@ export default async function generateNewQuizController(req: Request, res: Respo
             data: session.id,
         });
 
-        // ── Invoke the LangGraph agent and stream updates ─────────────
         const streamResponse = await quizAgentGraph.stream(
             {
                 sessionId: session.id,

@@ -12,8 +12,7 @@ import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { FiPlus } from 'react-icons/fi';
-import { ChevronDown, Loader } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
@@ -83,7 +82,7 @@ export default function HomePanel() {
             <section className="flex flex-col gap-y-8">
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
-                    <div className='flex '>
+                    <div className="flex ">
                         <Button
                             id="tour-new-quiz"
                             // onClick={handleCreateQuiz}
@@ -115,13 +114,13 @@ export default function HomePanel() {
                         <div className="gap-6 lg:grid-cols-3 grid">
                             {loading
                                 ? Array.from({ length: 3 }).map((_, i) => (
-                                    <RecentlyViewedCard key={i} loading />
-                                ))
+                                      <RecentlyViewedCard key={i} loading />
+                                  ))
                                 : recentlyViewed
-                                    .slice(0, 3)
-                                    .map((quiz) => (
-                                        <RecentlyViewedCard key={quiz.id} quiz={quiz} />
-                                    ))}
+                                      .slice(0, 3)
+                                      .map((quiz) => (
+                                          <RecentlyViewedCard key={quiz.id} quiz={quiz} />
+                                      ))}
                         </div>
                     </section>
                 )}
