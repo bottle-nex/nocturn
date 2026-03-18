@@ -3,6 +3,7 @@ import PremiumPageMain from '@/components/premium/PremiumPageMain';
 import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
 import LandingTestNav from '@/components/revamp/LandingTestNav';
+import PricingComponent from '@/components/revamp/PricingComponent';
 import LandingFooter from '@/components/test/LandingFooter';
 import { Metadata } from 'next';
 import { JSX } from 'react';
@@ -21,8 +22,7 @@ export default function PremiumPage(): JSX.Element {
                 <PremiumPageMain />
                 <PremiumComponent />
                 <PremiumPricingCardComponent />
-                {/* <PricingComponent className="pb-32" showHeading={false} /> */}
-
+                <PricingComponent className="pb-32" showHeading={false} />
                 <LandingCTASection />
             </main>
             <footer className="fixed bottom-0 left-0 w-full z-0">

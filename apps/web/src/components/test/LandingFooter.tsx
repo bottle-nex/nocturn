@@ -27,22 +27,22 @@ export default function LandingFooter() {
     };
 
     return (
-        <footer className="h-[60vh] w-screen relative bg-dark-base dark:bg-light-base text-[#F3ECE7] dark:text-dark-base overflow-hidden">
+        <footer className="h-[60vh] w-screen relative bg-dark-base text-[#F3ECE7] overflow-hidden">
             <div className="h-full w-full flex justify-between pt-20 px-30">
                 <div className="flex flex-col gap-y-3">
                     <div className="flex gap-x-4">
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 dark:ring-black/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 dark:text-dark-base/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaXTwitter className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 dark:ring-black/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 dark:text-dark-base/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaGithub className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 dark:ring-black/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 dark:text-dark-base/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
                             <FaLinkedin className="size-5.5" />
                         </div>
                     </div>
 
-                    <div className="text-[#F3ECE7] dark:text-dark-base flex items-center gap-x-1">
+                    <div className="text-[#F3ECE7] flex items-center gap-x-1">
                         <MdOutlineCopyright className="size-4.5" />
                         2026 All rights reserved
                     </div>
@@ -50,10 +50,8 @@ export default function LandingFooter() {
 
                 <div className="flex space-x-20">
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
-                            Features
-                        </div>
-                        <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
+                        <div className="flex flex-col text-[#F3ECE7] text-[18px]">Features</div>
+                        <div className="flex flex-col text-base text-[#F3ECE7]/70 gap-y-1">
                             <LinkWrapper
                                 href=""
                                 label="Overview"
@@ -86,10 +84,8 @@ export default function LandingFooter() {
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
-                            Resources
-                        </div>
-                        <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
+                        <div className="flex flex-col text-[#F3ECE7] text-[18px]">Resources</div>
+                        <div className="flex flex-col text-base text-[#F3ECE7]/70 gap-y-1">
                             <LinkWrapper
                                 href=""
                                 label="How to"
@@ -115,10 +111,8 @@ export default function LandingFooter() {
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
-                            Details
-                        </div>
-                        <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
+                        <div className="flex flex-col text-[#F3ECE7] text-[18px]">Details</div>
+                        <div className="flex flex-col text-base text-[#F3ECE7]/70 gap-y-1">
                             <LinkWrapper
                                 href=""
                                 label="Legal"
@@ -151,10 +145,8 @@ export default function LandingFooter() {
                     </div>
 
                     <div className="flex flex-col gap-y-1.5">
-                        <div className="flex flex-col text-[#F3ECE7] dark:text-dark-base text-[18px]">
-                            About Us
-                        </div>
-                        <div className="flex flex-col text-base text-[#F3ECE7]/70 dark:text-dark-base/70 gap-y-1">
+                        <div className="flex flex-col text-[#F3ECE7] text-[18px]">About Us</div>
+                        <div className="flex flex-col text-base text-[#F3ECE7]/70 gap-y-1">
                             <LinkWrapper
                                 href=""
                                 label="The team"
@@ -178,7 +170,7 @@ export default function LandingFooter() {
                 className={cn(
                     'text-[13.1rem] font-semibold text-light-base/20 tracking-wider',
                     'absolute left-1/2 -translate-x-1/2 -bottom-8 leading-none',
-                    'bg-clip-text text-transparent bg-linear-to-b from-light-base/20 to-dark-base dark:from-dark-base/20 dark:to-light-base',
+                    'bg-clip-text text-transparent bg-linear-to-b from-light-base/20 to-dark-base',
                     audio.className,
                     // montserrat.className,
                 )}
@@ -202,7 +194,7 @@ function LinkWrapper({ href, label, tinted, onEnter, onLeave }: LinkWrapperProps
     return (
         <span
             className={cn(
-                'flex items-center gap-x-1 cursor-pointer transition-all duration-100 dark:hover:text-dark-alpha/80 hover:text-light-alpha/80',
+                'flex items-center gap-x-1 cursor-pointer transition-all duration-100:text-dark-alpha/80 hover:text-light-alpha/80',
                 tinted && !hovered ? 'opacity-40' : 'opacity-100',
             )}
             onMouseEnter={() => {

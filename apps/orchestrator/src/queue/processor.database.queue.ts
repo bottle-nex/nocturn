@@ -28,10 +28,13 @@ import Publisher from '../client/publisher';
 import { PubSubMessageTypes } from '../types/types';
 
 export class DatabaseQueueProcessors {
-    constructor(
-        private redis_cache: RedisCache,
-        private publisher: Publisher,
-    ) {}
+    private redis_cache: RedisCache;
+    private publisher: Publisher;
+
+    constructor(redis_cache: RedisCache, publisher: Publisher) {
+        this.redis_cache = redis_cache;
+        this.publisher = publisher;
+    }
 
     async lifeline_expiry_processor(job: Bull.Job): Promise<{ success: boolean }> {
         const { game_session_id, question_id } = job.data;
@@ -113,7 +116,6 @@ export class DatabaseQueueProcessors {
         { success: boolean; participant: Participant } | { success: boolean; error: string }
     > {
         const { id, game_session_id, participant }: UpdateParticipantJobType = job.data;
-        console.log('<---------------- recieved data is : ', { id, game_session_id, participant });
         try {
             const updatedParticipant = await prisma.participant.update({
                 where: {
@@ -125,6 +127,12 @@ export class DatabaseQueueProcessors {
                 game_session_id,
                 updatedParticipant.id,
                 updatedParticipant,
+            );
+
+            await this.redis_cache.set_leaderboard_score(
+                game_session_id,
+                updatedParticipant.id,
+                updatedParticipant.totalScore,
             );
 
             return { success: true, participant: updatedParticipant };

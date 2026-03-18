@@ -91,12 +91,12 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="flex flex-col items-center text-dark-alpha dark:text-light-alpha text-6xl gap-y-1 font-semibold -mt-1 z-10"
+                className="flex flex-col items-center text-dark-alpha text-6xl gap-y-1 font-semibold -mt-1 z-10"
             >
-                <div className="bg-clip-text text-transparent bg-linear-to-b dark:from-light-alpha dark:via-light-base dark:to-light-alpha/40 from-dark-alpha via-dark-base to-dark-alpha/70 dark:text-shadow-2xs">
+                <div className="bg-clip-text text-transparent bg-linear-to-b from-dark-alpha via-dark-base to-dark-alpha/70">
                     The only quizzing platform
                 </div>
-                <div className="bg-clip-text text-transparent bg-linear-to-b dark:from-light-alpha dark:via-light-base dark:to-light-alpha/40 from-dark-alpha via-dark-base to-dark-alpha/70 dark:text-shadow-2xs">
+                <div className="bg-clip-text text-transparent bg-linear-to-b from-dark-alpha via-dark-base to-dark-alpha/70">
                     where knowledge pays
                 </div>
             </motion.div>
@@ -115,7 +115,7 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="text-xl text-dark-base/60 dark:text-light-base/80 max-w-148 text-center"
+                className="text-xl text-dark-base/60 max-w-148 text-center"
             >
                 Nocturn is a live competitive quiz app designed for curious minds. Hosts launch
                 challenges, players battle it out, and the top three win.
