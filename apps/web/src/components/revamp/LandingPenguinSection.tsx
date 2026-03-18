@@ -105,7 +105,7 @@ export default function LandingPenguinSection() {
     ];
 
     return (
-        <div className="w-full flex flex-col items-center py-5 pt-15 max-w-6xl">
+        <div className="w-full flex flex-col items-center py-5 pt-15 max-w-6xl mt-28">
             <InformationHeadingSection
                 topText="Nocturn Perks"
                 topTextClassName="text-[#ff758f]"
