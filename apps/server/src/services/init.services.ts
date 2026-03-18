@@ -5,12 +5,13 @@ import Redis from 'ioredis';
 import { env } from '../configs/env';
 import QuizSettings from '../class/quizSettings';
 import EmailServiceQueue from './email/email.services';
-import Chain from '../gen/agents/Chain';
 import Model from '../gen/agents/Model';
+import Agent from '../gen/agents/Agent';
 import CollabStateCache from '../cache/collab_state.cache';
 import DodoPaymentService from './premium/DodoPaymentService';
 import DodoWebhookService from './premium/DodoWebhookService';
 import DatabaseQueue from '../queue/database/database.queue';
+import { CompiledStateGraph } from '@langchain/langgraph';
 
 export let redisCacheInstance: RedisCache;
 export let databaseQueueInstance: DatabaseQueue;
@@ -24,7 +25,8 @@ export let collabStateCacheInstance: CollabStateCache;
 export let dodo_payment_service: DodoPaymentService;
 export let dodo_webhook_service: DodoWebhookService;
 
-export let chain: Chain;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export let quizAgentGraph: CompiledStateGraph<any, any, any>;
 export let model: Model;
 
 export default async function initServices() {
@@ -53,6 +55,6 @@ export default async function initServices() {
 
     await subscriberInstance.subscribe('__keyevent@0__:expired');
 
-    chain = new Chain();
     model = new Model();
+    quizAgentGraph = Agent.create_graph();
 }

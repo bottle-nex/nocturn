@@ -15,7 +15,7 @@ export default function AgentMessage({ content, createdAt }: AgentMessageProps) 
                         className={cn(
                             'px-4 py-2 rounded-tr-xl rounded-b-xl text-sm font-normal',
                             'text-dark-alpha dark:text-light-alpha',
-                            'bg-white border border-dark-base/10 dark:border-light-base/10',
+                            'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
                             'text-left tracking-wider mt-2.5',
                             'max-w-full min-w-0',
                         )}
@@ -24,7 +24,12 @@ export default function AgentMessage({ content, createdAt }: AgentMessageProps) 
                             {content}
                         </div>
 
-                        <div className="w-full flex justify-end ">
+                        <div
+                            className={cn(
+                                'w-full flex justify-end ',
+                                'text-dark-alpha dark:text-dark-alpha',
+                            )}
+                        >
                             <TimeDisplay date={createdAt} />
                         </div>
                     </div>

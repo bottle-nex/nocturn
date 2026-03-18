@@ -12,8 +12,7 @@ import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { FiPlus } from 'react-icons/fi';
-import { Loader } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
@@ -83,15 +82,25 @@ export default function HomePanel() {
             <section className="flex flex-col gap-y-8">
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
-                    <Button
-                        id="tour-new-quiz"
-                        onClick={handleCreateQuiz}
-                        disabled={creating}
-                        className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
-                    >
-                        {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />}
-                        <span>{creating ? 'Creating' : 'New Quiz'}</span>
-                    </Button>
+                    <div className="flex ">
+                        <Button
+                            id="tour-new-quiz"
+                            // onClick={handleCreateQuiz}
+                            disabled={creating}
+                            className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-l-lg rounded-r-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
+                        >
+                            <ChevronDown />
+                        </Button>
+                        <Button
+                            id="tour-new-quiz"
+                            onClick={handleCreateQuiz}
+                            disabled={creating}
+                            className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-r-lg rounded-l-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
+                        >
+                            {/* {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />} */}
+                            <span>{creating ? 'Creating' : 'New Quiz'}</span>
+                        </Button>
+                    </div>
                 </div>
 
                 {(loading || recentlyViewed.length > 0) && (
