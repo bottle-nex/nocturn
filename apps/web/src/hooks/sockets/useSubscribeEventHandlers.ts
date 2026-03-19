@@ -52,6 +52,8 @@ export function useSubscribeEventHandlers() {
             [MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE]:
                 SubscribeEventHandlers.handleParticipantIncomingRespondedMessage,
             [MESSAGE_TYPES.SETTINGS_CHANGE]: SubscribeEventHandlers.handleSettingschange,
+            [MESSAGE_TYPES.PARTICIPANT_INDIVIDUAL_RANK]:
+                SubscribeEventHandlers.handleParticipantIndividualRank,
             [MESSAGE_TYPES.SPECTATOR_LEAVE_GAME_SESSION]:
                 SubscribeEventHandlers.handleSpectatorLeaveGameSession,
             [MESSAGE_TYPES.SPECTATOR_LIFELINE_INVITATION]:

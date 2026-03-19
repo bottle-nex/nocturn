@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import { RxCross2 } from 'react-icons/rx';
-import clsx from 'clsx';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -16,6 +15,7 @@ import OpacityBackground from '../utility/OpacityBackground';
 import { Button } from '../ui/button';
 import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
 import RejoinDetectedPanel from '../ui/RejoinDetectedPanel';
+import { cn } from '@/lib/utils';
 
 const container: Variants = {
     closed: {
@@ -201,7 +201,7 @@ function JoinQuizPill({
             animate={isOpen ? 'open' : 'closed'}
             initial="closed"
             onClick={!isOpen ? onOpen : undefined}
-            className={clsx(
+            className={cn(
                 'relative flex items-center rounded-full h-13 px-2 overflow-hidden',
                 'ring-1 ring-black/10 shadow-sm backdrop-blur-sm',
             )}
@@ -223,7 +223,7 @@ function JoinQuizPill({
                 </div>
             ) : (
                 <motion.div
-                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f46e5' : '#f5f5f5' }}
+                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f47e6' : '#f5f5f5' }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     onClick={
                         isOpen

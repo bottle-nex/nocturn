@@ -2,21 +2,18 @@
 import { Button } from '@/components/ui/button';
 import CountDownClock from '@/components/ui/CountDownClock';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
-import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import LiveQuizBackendActions from '@/lib/backend/live/live-quiz-backend-actions';
 import { cn } from '@/lib/utils';
 import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { HostScreenEnum } from '@nocturn/types';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdNavigateNext } from 'react-icons/md';
+import QuestionLeaderboardDisplay from '../../../common/QuestionLeaderboardDisplay';
 
 export default function HostQuestionResultsRenderer() {
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
-    const canvasRef = useRef<HTMLDivElement>(null);
-    const canvasWidth = useWidth(canvasRef);
     const {
         currentQuestion,
         gameSession,
@@ -33,13 +30,6 @@ export default function HostQuestionResultsRenderer() {
         emptyLiveResponses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // useEffect(() => {
-    //     if (!isNextQuestionAvailable) {
-    //         setQuizEnded(true);
-    //         // alert(isNextQuestionAvailable);
-    //     }
-    // }, [isNextQuestionAvailable]);
 
     if (!currentQuestion || !gameSession) {
         return (
@@ -80,61 +70,35 @@ export default function HostQuestionResultsRenderer() {
     }
 
     return (
-        <div
-            className={cn(
-                'w-full h-full overflow-hidden flex flex-col items-center justify-center ',
-                'relative',
-            )}
-        >
-            <div className="min-h-128 w-[90%] flex flex-col justify-between">
-                <div
-                    className={cn('w-full text-3xl text-center')}
-                    dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
-                />
-                <div className="flex flex-row items-center justify-center">
-                    {currentQuestion.imageUrl && (
-                        <div
-                            className={cn(
-                                'h-full flex flex-col justify-end p-2 sm:p-4 relative mb-15',
-                                getImageContainerWidth(canvasWidth),
-                            )}
-                        >
-                            <div className="w-full overflow-hidden relative rounded-sm">
-                                <Image
-                                    src={currentQuestion.imageUrl}
-                                    alt="Question reference image"
-                                    className="object-contain w-full h-auto"
-                                    width={500}
-                                    height={500}
-                                    unoptimized
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className="flex flex-col items-center gap-y-3">
-                    <div className="flex">
-                        <CountDownClock
-                            startTime={gameSession.phaseStartTime!}
-                            endTime={gameSession.phaseEndTime!}
-                        />
-                    </div>
-                    <div>Participants and Spectators are now seeing results of this question</div>
-                </div>
+        <div className={cn('w-full h-full overflow-hidden flex flex-col', 'relative')}>
+            <div
+                className="w-full text-lg text-center pt-4 px-4 shrink-0"
+                dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
+            />
 
-                <Button
-                    className={cn(
-                        'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
-                        'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha text-xs',
-                        'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
-                        'hover:-translate-y-0.5 transition-all transform duration-150',
-                    )}
-                    onClick={handleOnNextQuestion}
-                >
-                    {quizEnded ? 'Final Results' : 'Next Question'}
-                    <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />
-                </Button>
+            <div className="flex-1 min-h-0">
+                <QuestionLeaderboardDisplay />
             </div>
+
+            <div className="shrink-0 flex items-center justify-center gap-x-4 pb-3">
+                <CountDownClock
+                    startTime={gameSession.phaseStartTime!}
+                    endTime={gameSession.phaseEndTime!}
+                />
+            </div>
+
+            <Button
+                className={cn(
+                    'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
+                    'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha text-xs',
+                    'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
+                    'hover:-translate-y-0.5 transition-all transform duration-150',
+                )}
+                onClick={handleOnNextQuestion}
+            >
+                {quizEnded ? 'Final Results' : 'Next Question'}
+                <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />
+            </Button>
         </div>
     );
 }

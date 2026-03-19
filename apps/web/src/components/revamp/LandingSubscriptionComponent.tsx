@@ -96,7 +96,7 @@ function PremiumFeatureRow({ label, iconKey, highlight }: PremiumFeatureRowProps
     );
 }
 
-const CARD_INNER = 'relative flex flex-col h-full min-h-[560px] rounded-[27px] p-8';
+const CARD_INNER = 'relative flex flex-col h-full min-h-[560px] rounded-xl p-8';
 
 export default function LandingSubscriptionComponent(): JSX.Element {
     const [loadingTier, setLoadingTier] = useState<string | null>(null);
@@ -194,11 +194,11 @@ export default function LandingSubscriptionComponent(): JSX.Element {
 
             <div className="w-full max-w-[60rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
                 {/* ── FREE CARD ── */}
-                <div className="group p-[1px] rounded-[28px] bg-neutral-200/60 hover:-translate-y-0.5 transition-transform duration-300 ease-out">
+                <section className="group p-[1px] rounded-xl bg-neutral-200/60 hover:-translate-y-0.5 transition-transform duration-300 ease-out">
                     <div className={`${CARD_INNER} bg-[#fafafa]`}>
                         <div className="flex flex-col gap-y-5">
                             <div className="flex items-start justify-between">
-                                <div className="w-11 h-11 rounded-2xl bg-white ring-1 ring-black/[0.07] shadow-[0_1px_4px_rgba(0,0,0,0.06)] flex items-center justify-center">
+                                <div className="w-11 h-11 rounded-xl bg-white ring-1 ring-black/[0.07] shadow-[0_1px_4px_rgba(0,0,0,0.06)] flex items-center justify-center">
                                     <CgTree className="size-5 text-neutral-400" />
                                 </div>
                                 <span className="text-[11px] text-neutral-400 font-medium tracking-widest uppercase mt-1">
@@ -251,17 +251,17 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 {/* ── PREMIUM CARD ── */}
-                <div
-                    className="group relative p-[1px] rounded-[28px] hover:-translate-y-0.5 transition-transform duration-300 ease-out"
+                <section
+                    className="group relative p-[1px] rounded-xl hover:-translate-y-0.5 transition-transform duration-300 ease-out"
                     style={{
                         boxShadow: `0 0 0 1px rgba(${ACCENT_RGB},0.1), 0 8px 40px rgba(${ACCENT_RGB},0.12), 0 2px 8px rgba(${ACCENT_RGB},0.08)`,
                     }}
                 >
                     <div
-                        className="pointer-events-none absolute inset-0 rounded-[28px]"
+                        className="pointer-events-none absolute inset-0 rounded-xl"
                         style={{
                             background: `radial-gradient(ellipse 70% 45% at 50% 0%, rgba(${ACCENT_RGB},0.13) 0%, transparent 70%)`,
                         }}
@@ -276,15 +276,15 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                     >
                         {/* Noise texture */}
                         <div
-                            className="pointer-events-none absolute inset-0 rounded-[27px] opacity-[0.022]"
+                            className="pointer-events-none absolute inset-0 rounded-xl opacity-[0.022]"
                             style={{
-                                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+                                // backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
                                 backgroundSize: '128px 128px',
                             }}
                         />
                         {/* Top inset highlight */}
                         <div
-                            className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-[27px]"
+                            className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-xl"
                             style={{
                                 background: `linear-gradient(90deg, transparent, rgba(${ACCENT_RGB},0.5), transparent)`,
                             }}
@@ -293,9 +293,8 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                         <div className="relative flex flex-col gap-y-5">
                             <div className="flex items-start justify-between">
                                 <div
-                                    className="w-11 h-11 rounded-2xl flex items-center justify-center"
+                                    className="w-11 h-11 rounded-xl flex items-center justify-center bg-alpha/5"
                                     style={{
-                                        background: `linear-gradient(135deg, rgba(${ACCENT_RGB},0.1) 0%, rgba(${ACCENT_RGB},0.04) 100%)`,
                                         border: `1px solid rgba(${ACCENT_RGB},0.18)`,
                                         boxShadow: `inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 3px rgba(${ACCENT_RGB},0.12)`,
                                     }}
@@ -305,7 +304,7 @@ export default function LandingSubscriptionComponent(): JSX.Element {
 
                                 {/* Badge */}
                                 <div
-                                    className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-lg"
+                                    className="flex items-center gap-x-1.5 px-2.5 py-1 rounded-xl"
                                     style={{
                                         background: ACCENT,
                                         boxShadow: `0 1px 0 rgba(255,255,255,0.15) inset, 0 2px 8px rgba(${ACCENT_RGB},0.3)`,
@@ -393,7 +392,7 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     );

@@ -30,7 +30,10 @@ export default function SettingsPanel() {
         }`;
 
     return (
-        <div className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col">
+        <div
+            className="bg-white dark:bg-neutral-950 w-full h-full px-12 pt-18 flex flex-col overflow-y-auto custom-scrollbar"
+            data-lenis-prevent
+        >
             <div className="text-4xl text-dark-base dark:text-light-base">Settings</div>
 
             <div className="h-10 w-fit rounded-md flex gap-x-1 ring-1 ring-black/10 items-center p-1 text-dark-base/70 text-[13px] bg-light-base/30 mt-5">
@@ -60,7 +63,12 @@ export default function SettingsPanel() {
                 </div>
             </div>
 
-            <div className="mt-10 w-full flex-1 min-h-0 overflow-y-auto">{renderContent()}</div>
+            <div
+                className="mt-10 w-full flex-1 min-h-0 overflow-y-auto custom-scrollbar"
+                data-lenis-prevent
+            >
+                {renderContent()}
+            </div>
         </div>
     );
 }

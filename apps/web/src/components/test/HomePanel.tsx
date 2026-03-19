@@ -13,6 +13,11 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
+import { HiSparkles, HiPlus } from 'react-icons/hi2';
+import { cn } from '@/lib/utils';
 
 export default function HomePanel() {
     const token = useUserSessionStore((s) => s.session?.user?.token);
@@ -24,6 +29,11 @@ export default function HomePanel() {
     const { session } = useUserSessionStore();
     const { updateQuiz } = useNewQuizStore();
     const router = useRouter();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const setAiExpanded = useAiChatStore((s) => s.setExpanded);
+
+    useHandleClickOutside([dropdownRef], setDropdownOpen);
 
     useEffect(() => {
         if (!token) {
@@ -82,24 +92,66 @@ export default function HomePanel() {
             <section className="flex flex-col gap-y-8">
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
-                    <div className="flex ">
-                        <Button
-                            id="tour-new-quiz"
-                            // onClick={handleCreateQuiz}
-                            disabled={creating}
-                            className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-l-lg rounded-r-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
-                        >
-                            <ChevronDown />
-                        </Button>
-                        <Button
-                            id="tour-new-quiz"
-                            onClick={handleCreateQuiz}
-                            disabled={creating}
-                            className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-r-lg rounded-l-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary"
-                        >
-                            {/* {creating ? <Loader className="animate-spin size-4" /> : <FiPlus />} */}
-                            <span>{creating ? 'Creating' : 'New Quiz'}</span>
-                        </Button>
+                    <div className="relative" ref={dropdownRef}>
+                        <div className="flex">
+                            <Button
+                                id="tour-new-quiz"
+                                onClick={handleCreateQuiz}
+                                disabled={creating}
+                                className="relative px-3! py-4.75 bg-nprimary dark:text-light-base font-medium rounded-l-lg rounded-r-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary border-r-0 after:absolute after:right-0 after:top-px after:bottom-px after:w-px after:bg-[rgba(255,255,255,0.15)]"
+                            >
+                                <span>{creating ? 'Creating' : 'New Quiz'}</span>
+                            </Button>
+                            <Button
+                                onClick={() => setDropdownOpen((prev) => !prev)}
+                                disabled={creating}
+                                className="px-8 py-4.75 bg-nprimary dark:text-light-base font-medium rounded-r-lg rounded-l-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary border-l-0"
+                            >
+                                <ChevronDown
+                                    className={cn(
+                                        'transition-transform duration-300',
+                                        dropdownOpen ? 'rotate-180' : 'rotate-0',
+                                    )}
+                                />
+                            </Button>
+                        </div>
+
+                        <AnimatePresence>
+                            {dropdownOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                                    transition={{ duration: 0.12, ease: [0.2, 0, 0, 1] }}
+                                    className="absolute right-0 top-full mt-2 w-52 rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.1)] overflow-hidden z-50 dark:bg-dark-alpha bg-light-alpha border dark:border-light-base/10 border-dark-base/10"
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setDropdownOpen(false);
+                                            setAiExpanded(true);
+                                        }}
+                                        className="w-full px-4 py-3 flex items-center gap-3 hover:dark:bg-light-base/5 hover:bg-dark-base/5 transition-colors cursor-pointer dark:text-light-base text-dark-base"
+                                    >
+                                        <HiSparkles className="text-lg" />
+                                        <span className="text-sm font-medium">Start from AI</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setDropdownOpen(false);
+                                            handleCreateQuiz();
+                                        }}
+                                        className="w-full px-4 py-3 flex items-center gap-3 hover:dark:bg-light-base/5 hover:bg-dark-base/5 transition-colors cursor-pointer dark:text-light-base text-dark-base"
+                                    >
+                                        <HiPlus className="text-lg" />
+                                        <span className="text-sm font-medium">
+                                            Start from scratch
+                                        </span>
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
 

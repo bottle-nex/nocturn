@@ -9,8 +9,8 @@ import AppLogo from '../app/AppLogo';
 export default function LandingCTASection() {
     return (
         <section className="h-130 w-full relative mt-30">
-            <div className="relative h-full overflow-hidden flex justify-between p-8 gap-8 ring-1 ring-black/10 shadow-xs shadow-black/5 bg-[#FFE65C]">
-                <div className="h-full w-full bg-[#FFE65C] p-10 flex justify-between rounded-[10px]">
+            <div className="relative h-full overflow-hidden flex justify-between p-8 gap-8 ring-1 ring-black/10 shadow-xs shadow-black/5 bg-[#FFD400]">
+                <div className="h-full w-full bg-[#FFD400] p-10 flex justify-between rounded-[10px]">
                     <article className="w-[50%] h-full flex flex-col justify-between">
                         <div className="flex gap-x-2">
                             <div className="bg-dark-base text-light-base w-fit text-[26px] font-normal px-9 h-17 flex items-center rounded-full">

@@ -910,4 +910,79 @@ export default class RedisCache {
     public get_leaderboard_key(game_session_id: string): string {
         return `game_session:${game_session_id}:leaderboard`;
     }
+
+    public async get_top_leaderboards(
+        game_session_id: string,
+        top_n: number = 10,
+    ): Promise<
+        { id: string; totalScore: number; rank: number; nickname: string; avatar: string | null }[]
+    > {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const results = await this.redis_cache.zrevrange(
+                leaderboard_key,
+                0,
+                top_n - 1,
+                'WITHSCORES',
+            );
+            if (!results || results.length === 0) return [];
+
+            const entries: { id: string; totalScore: number; rank: number }[] = [];
+            for (let i = 0; i < results.length; i += 2) {
+                entries.push({
+                    id: results[i],
+                    totalScore: Number(results[i + 1]),
+                    rank: i / 2 + 1,
+                });
+            }
+            const participants_key = this.get_participants_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+
+            for (const entry of entries) {
+                pipeline.hget(participants_key, `${entry.id}:nickname`);
+                pipeline.hget(participants_key, `${entry.id}:avatar`);
+            }
+            const nick_name_results = await pipeline.exec();
+
+            return entries.map((entry, index) => {
+                const nickname_raw = nick_name_results?.[index * 2]?.[1] as string | null;
+                const avatar_raw = nick_name_results?.[index * 2 + 1]?.[1] as string | null;
+
+                let nickname = nickname_raw ?? 'Unknown';
+                let avatar: string | null = avatar_raw ?? null;
+
+                try {
+                    nickname = JSON.parse(nickname) ?? nickname;
+                } catch {
+                    // ignore JSON parse errors
+                }
+                try {
+                    avatar = avatar_raw ? JSON.parse(avatar_raw) : null;
+                } catch {
+                    // ignore JSON parse errors
+                }
+                return {
+                    id: entry.id,
+                    totalScore: entry.totalScore,
+                    rank: entry.rank,
+                    nickname,
+                    avatar,
+                };
+            });
+        } catch (err) {
+            console.error('Error in get_top_leaderboards:', err);
+            return [];
+        }
+    }
+
+    public async get_leaderboard_count(game_session_id: string): Promise<number> {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            const count = await this.redis_cache.zcard(leaderboard_key);
+            return count;
+        } catch (err) {
+            console.error('Error in get_leaderboard_count:', err);
+            return 0;
+        }
+    }
 }
