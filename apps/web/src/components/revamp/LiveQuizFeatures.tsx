@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { IoIosArrowRoundForward } from 'react-icons/io';
 import Image from 'next/image';
 
-export default function SolanaPrizePool() {
+export default function LivePrizepoolFeatures() {
     const sectionRef = useRef<HTMLDivElement>(null);
 
     const { scrollYProgress } = useScroll({
@@ -42,7 +42,7 @@ export default function SolanaPrizePool() {
                     </section>
 
                     <section className="grid w-full grid-cols-2 h-full">
-                        <div className="bg-[#FFD400] h-170 relative overflow-hidden">
+                        <div className="bg-[#02c24b] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/stakeSolana.png"
                                 alt=""
@@ -55,7 +55,7 @@ export default function SolanaPrizePool() {
                         </div>
                         <div className="h-170 flex justify-center items-center">
                             <div className="flex flex-col gap-y-8 items-start w-md">
-                                <div className="text-[#FFD400] text-xl">StakeX</div>
+                                <div className="text-[#02c24b] text-xl">StakeX</div>
                                 <div className="flex flex-col gap-y-3">
                                     <div className="text-4xl">
                                         Add stakes and reward top performers
@@ -66,7 +66,7 @@ export default function SolanaPrizePool() {
                                         more competitive, engaging, and rewarding.
                                     </div>
                                 </div>
-                                <Button className="flex gap-x-2 rounded-full bg-[#FFD400] hover:bg-[#FFD400] text-dark-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
+                                <Button className="flex gap-x-2 rounded-full bg-[#02c24b] hover:bg-[#02c24b] text-dark-alpha hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
                                     <div className="font-normal">Host a quiz now</div>
                                     <IoIosArrowRoundForward className="size-6" />
                                 </Button>
@@ -77,7 +77,7 @@ export default function SolanaPrizePool() {
                     <section className="grid w-full grid-cols-2 h-full">
                         <div className="h-170 flex justify-center items-center">
                             <div className="flex flex-col gap-y-8 items-start w-md">
-                                <div className="text-[#FFD400] text-xl">Genify</div>
+                                <div className="text-[#02c24b] text-xl">Genify</div>
                                 <div className="flex flex-col gap-y-3">
                                     <div className="text-4xl text-light-base">
                                         Generate quiz questions instantly with AI
@@ -88,13 +88,13 @@ export default function SolanaPrizePool() {
                                         structure to perfectly match your needs.
                                     </div>
                                 </div>
-                                <Button className="flex gap-x-2 rounded-full bg-[#FFD400] text-dark-alpha hover:bg-[#FFD400] hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
+                                <Button className="flex gap-x-2 rounded-full bg-[#02c24b] text-dark-alpha hover:bg-[#02c24b] hover:-translate-y-0.5 transition-all transform duration-200 active:scale-[0.98] text-[18px] px-6! h-12 tracking-wide">
                                     <div className="font-normal">Generate with AI</div>
                                     <IoIosArrowRoundForward className="size-6" />
                                 </Button>
                             </div>
                         </div>
-                        <div className="bg-[#ffe979] h-170 relative overflow-hidden">
+                        <div className="bg-[#5dcb87] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/chatWithAi.png"
                                 alt=""

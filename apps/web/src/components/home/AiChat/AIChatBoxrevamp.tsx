@@ -29,7 +29,6 @@ export default function AIChatBoxRevamp() {
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
-    const [expanded, setExpanded] = useState(false);
     const { templates } = useQuizTemplatesStore();
 
     const {
@@ -41,6 +40,8 @@ export default function AIChatBoxRevamp() {
         appendMessage,
         resetChat,
         typingMessageIds,
+        expanded,
+        setExpanded,
     } = useAiChatStore();
 
     const randomValue = useMemo(
@@ -122,26 +123,7 @@ export default function AIChatBoxRevamp() {
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
     if (!expanded) {
-        return (
-            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 w-115 text-neutral-200">
-                <InputBox
-                    textareaRef={textareaRef}
-                    value={value}
-                    isFocused={isFocused}
-                    hasContent={hasContent}
-                    listening={listening}
-                    interimTranscript={interimTranscript}
-                    animatedPlaceholders={animatedPlaceholders}
-                    onChange={handleChange}
-                    onKeyDown={handleOnKeyDown}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    onToggleVoice={toggle}
-                    onSubmit={handleSubmit}
-                    onClick={handleOnClick}
-                />
-            </div>
-        );
+        return null;
     }
 
     return (
