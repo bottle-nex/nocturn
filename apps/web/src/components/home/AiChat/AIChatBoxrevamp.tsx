@@ -30,6 +30,7 @@ export default function AIChatBoxRevamp() {
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const { templates } = useQuizTemplatesStore();
+    const { expanded, setExpanded } = useAiChatStore();
 
     const {
         quiz,
