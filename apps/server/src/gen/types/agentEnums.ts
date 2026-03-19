@@ -14,6 +14,6 @@ export enum INTENT {
 }
 
 export enum OPERATION {
-    REPLACE = "REPLACE",
-    APPEND = "APPEND",
+    REPLACE = 'REPLACE',
+    APPEND = 'APPEND',
 }

@@ -3,8 +3,6 @@ import jwt from 'jsonwebtoken';
 import { env, isProduction } from '../configs/env';
 import { AuthUser } from '../types/express';
 import { NOCTURN_REFRESH_COOKIE_NAME } from '@nocturn/types';
-import ResponseWriter from '../class/response_writer';
-
 export default async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
     const accessToken = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;

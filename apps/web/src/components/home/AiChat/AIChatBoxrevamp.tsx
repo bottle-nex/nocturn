@@ -17,7 +17,6 @@ import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
-import Spinner from '@/components/ui/Spinner';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -31,11 +30,25 @@ export default function AIChatBoxRevamp() {
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const { templates } = useQuizTemplatesStore();
 
-    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat, typingMessageIds } =
-        useAiChatStore();
+    const {
+        quiz,
+        messages,
+        sessionId,
+        loading,
+        setLoading,
+        appendMessage,
+        resetChat,
+        typingMessageIds,
+    } = useAiChatStore();
 
-    const selectedTemplate = quiz?.template!;
+    const randomValue = useMemo(
+        () => Math.floor(Math.random() * templates.length),
+        [templates.length],
+    );
+
+    const selectedTemplate = quiz?.template ?? templates[randomValue];
     const router = useRouter();
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
@@ -46,8 +59,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     useEffect(() => {
@@ -152,14 +165,25 @@ export default function AIChatBoxRevamp() {
                             <div className="flex justify-start w-full">
                                 <div className="flex items-start gap-x-2 max-w-[70%]">
                                     <div className="flex flex-col">
-                                        <div className={cn(
-                                            'px-4 py-3 rounded-tr-xl rounded-b-xl text-sm font-normal',
-                                            'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
-                                            'mt-2.5 flex gap-1.5 items-center justify-center'
-                                        )}>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '0ms' }} />
-                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '150ms' }} />
-                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        <div
+                                            className={cn(
+                                                'px-4 py-3 rounded-tr-xl rounded-b-xl text-sm font-normal',
+                                                'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
+                                                'mt-2.5 flex gap-1.5 items-center justify-center',
+                                            )}
+                                        >
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '0ms' }}
+                                            />
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '150ms' }}
+                                            />
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '300ms' }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -169,7 +193,6 @@ export default function AIChatBoxRevamp() {
                     </section>
 
                     <div className="p-3 mb-2">
-
                         {messages.length < 1 && (
                             <div className="mb-3 space-y-1.5">
                                 <p className="px-1 text-[11px] font-medium uppercase tracking-widest dark:text-light-alpha/30 text-dark-alpha/30">

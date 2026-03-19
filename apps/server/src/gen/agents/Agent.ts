@@ -50,8 +50,8 @@ export default class Agent {
             originalTopic: state.originalTopic || 'none',
         });
 
-        console.log(chalk.red("top level node quiz state: "), state);
-        console.log(chalk.blue("top level node response: "), response);
+        console.log(chalk.red('top level node quiz state: '), state);
+        console.log(chalk.blue('top level node response: '), response);
 
         // if irrelevant, save agent's response to db and send sse
         if (response.intent === INTENT.IRRELEVANT) {
@@ -82,8 +82,8 @@ export default class Agent {
             instruction: state.instruction,
         });
 
-        console.log(chalk.red("difficulty node quiz state: "), state);
-        console.log(chalk.blue("difficulty node response: "), response);
+        console.log(chalk.red('difficulty node quiz state: '), state);
+        console.log(chalk.blue('difficulty node response: '), response);
 
         const { agentic_message, system_message } = await prisma.$transaction(async (tx) => {
             await tx.aiQuizChatSession.update({
@@ -124,8 +124,8 @@ export default class Agent {
             instruction: state.instruction,
         });
 
-        console.log(chalk.red("compute difficulty node quiz state: "), state);
-        console.log(chalk.blue("compute difficulty node response: "), conversion);
+        console.log(chalk.red('compute difficulty node quiz state: '), state);
+        console.log(chalk.blue('compute difficulty node response: '), conversion);
 
         await prisma.aiQuizChatSession.update({
             where: { id: state.sessionId },
@@ -161,9 +161,8 @@ export default class Agent {
             });
             existingQuestionsCount = existingQuiz?.questions.length ?? 0;
             existingQuestionsContext =
-                existingQuiz?.questions
-                    .map((q, i) => `Q${i + 1}: ${q.question}`)
-                    .join('\n') || 'none';
+                existingQuiz?.questions.map((q, i) => `Q${i + 1}: ${q.question}`).join('\n') ||
+                'none';
         }
 
         const plannerInstruction =
@@ -178,8 +177,8 @@ export default class Agent {
             existing_questions: existingQuestionsContext,
         });
 
-        console.log(chalk.red("planner node quiz state: "), state);
-        console.log(chalk.blue("planner node response: "), response);
+        console.log(chalk.red('planner node quiz state: '), state);
+        console.log(chalk.blue('planner node response: '), response);
 
         // ✅ Fix: only delete if it's a replace, not an append
         const operationType = response.operationType ?? 'replace';
@@ -208,7 +207,8 @@ export default class Agent {
                 quizId: state.existingQuizId,
                 difficulty,
                 operationType,
-                existingQuestionsCount: operationType === OPERATION.APPEND ? existingQuestionsCount : 0,
+                existingQuestionsCount:
+                    operationType === OPERATION.APPEND ? existingQuestionsCount : 0,
             };
         }
 
@@ -265,11 +265,11 @@ export default class Agent {
     static async executor_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.executor.invoke({
             instruction: state.plan || state.instruction,
-            difficulty: state.difficulty ?? 3,   // ✅ Fix: pass difficulty
+            difficulty: state.difficulty ?? 3, // ✅ Fix: pass difficulty
         });
 
-        console.log(chalk.red("executor node quiz state: "), state);
-        console.log(chalk.blue("executor node response: "), response);
+        console.log(chalk.red('executor node quiz state: '), state);
+        console.log(chalk.blue('executor node response: '), response);
 
         // ✅ Fix: offset orderIndex for appends so existing questions aren't displaced
         const startIndex = state.existingQuestionsCount ?? 0;

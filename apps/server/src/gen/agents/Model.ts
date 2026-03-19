@@ -28,7 +28,7 @@ export default class Model {
             hasQuiz: string;
             originalTopic: string;
         },
-        { intent: string; response: string, updatedInstruction: string }
+        { intent: string; response: string; updatedInstruction: string }
     >;
 
     public difficulty_asker: RunnableSequence<{ instruction: string }, { userResponse: string }>;
@@ -37,11 +37,22 @@ export default class Model {
         { difficulty: number }
     >;
     public planner: RunnableSequence<
-        { instruction: string; difficulty: number, is_change_request: string, existing_questions: string },
-        { userResponse: string; title: string; description: string; deleteAndGenerateNewQuestions: boolean; operationType: OPERATION }
+        {
+            instruction: string;
+            difficulty: number;
+            is_change_request: string;
+            existing_questions: string;
+        },
+        {
+            userResponse: string;
+            title: string;
+            description: string;
+            deleteAndGenerateNewQuestions: boolean;
+            operationType: OPERATION;
+        }
     >;
     public executor: RunnableSequence<
-        { instruction: string, difficulty: number },
+        { instruction: string; difficulty: number },
         { description: string; questions: any; userResponse: string }
     >;
 
@@ -72,8 +83,19 @@ export default class Model {
             planner_prompt,
             this.model.withStructuredOutput(planner_schema),
         ]) as RunnableSequence<
-            { instruction: string; difficulty: number, is_change_request: string, existing_questions: string },
-            { userResponse: string; title: string; description: string; deleteAndGenerateNewQuestions: boolean; operationType: OPERATION }
+            {
+                instruction: string;
+                difficulty: number;
+                is_change_request: string;
+                existing_questions: string;
+            },
+            {
+                userResponse: string;
+                title: string;
+                description: string;
+                deleteAndGenerateNewQuestions: boolean;
+                operationType: OPERATION;
+            }
         >;
 
         this.executor = RunnableSequence.from([

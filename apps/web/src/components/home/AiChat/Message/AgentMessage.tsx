@@ -10,7 +10,12 @@ interface AgentMessageProps {
     messageId?: string;
 }
 
-export default function AgentMessage({ content, createdAt, isTyping, messageId }: AgentMessageProps) {
+export default function AgentMessage({
+    content,
+    createdAt,
+    isTyping,
+    messageId,
+}: AgentMessageProps) {
     const [displayedContent, setDisplayedContent] = useState(isTyping ? '' : content);
     const removeTypingMessage = useAiChatStore((state) => state.removeTypingMessage);
 

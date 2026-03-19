@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { FaBrush } from 'react-icons/fa6';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { TemplateType } from '@nocturn/types';
-import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import { useRef, useState } from 'react';
 import React from 'react';
 
@@ -20,7 +19,7 @@ export default function AiSlidesPreviewArea({
     selectedTemplate,
 }: AiSlidesPreviewAreaProps) {
     const { quiz } = useAiChatStore();
-    const { templates } = useQuizTemplatesStore();
+    // const { templates } = useQuizTemplatesStore();
     const [showCancelPanel, setShowCancelPanel] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +31,6 @@ export default function AiSlidesPreviewArea({
 
     return (
         <div className="flex-1 h-full bg-light-alpha dark:bg-dark-alpha overflow-hidden flex flex-col items-center justify-center w-full relative">
-
             <section className="flex items-center justify-between w-full px-8 py-4">
                 <div className="flex items-center justify-center text-dark-base/90 dark:text-light-alpha/90 text-sm cursor-pointer">
                     <FaBrush className="mr-2 mt-0.75" />
@@ -90,7 +88,6 @@ export default function AiSlidesPreviewArea({
                     onDiscard={onClose}
                 />
             )}
-
         </div>
     );
 }
@@ -138,11 +135,7 @@ function CancelConfirmationPanel({
                     </Button>
                     <Button
                         onClick={onDiscard}
-                        className={cn(
-                            'rounded-full',
-                            'bg-red-500 hover:bg-red-600',
-                            'text-white',
-                        )}
+                        className={cn('rounded-full', 'bg-red-500 hover:bg-red-600', 'text-white')}
                     >
                         Discard
                     </Button>

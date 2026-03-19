@@ -24,7 +24,12 @@ export default function Message({ message, image, isTyping }: BuilderMessageProp
             )}
 
             {message.role === AiQuizChatRole.AGENT && (
-                <AgentMessage content={message.content} createdAt={message.createdAt} isTyping={isTyping} messageId={message.id} />
+                <AgentMessage
+                    content={message.content}
+                    createdAt={message.createdAt}
+                    isTyping={isTyping}
+                    messageId={message.id}
+                />
             )}
 
             {message.role === AiQuizChatRole.SYSTEM && (
