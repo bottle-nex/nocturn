@@ -48,17 +48,11 @@ export default function QuestionLeaderboardDisplay({
         <div className="h-full w-full overflow-y-auto custom-scrollbar pt-6" data-lenis-prevent>
             <div className="flex items-center justify-center gap-x-10 pt-10 pb-6">
                 {[...topThree]
-                    .sort(
-                        (a, b) =>
-                            (a.position % 2) - (b.position % 2) || a.position - b.position,
-                    )
+                    .sort((a, b) => (a.position % 2) - (b.position % 2) || a.position - b.position)
                     .map((item) => (
                         <div
                             key={item.position}
-                            className={cn(
-                                'relative',
-                                item.position === 1 && '-translate-y-6',
-                            )}
+                            className={cn('relative', item.position === 1 && '-translate-y-6')}
                         >
                             {item.position === 1 && (
                                 <Image
@@ -121,8 +115,7 @@ export default function QuestionLeaderboardDisplay({
                                     }}
                                     className="h-10 rounded-r-full shrink-0"
                                     style={{
-                                        backgroundColor:
-                                            barColors[index % barColors.length],
+                                        backgroundColor: barColors[index % barColors.length],
                                     }}
                                 />
                                 <div className="relative w-11 h-11 shrink-0 -translate-x-8 rounded-full bg-white border-2 border-white">

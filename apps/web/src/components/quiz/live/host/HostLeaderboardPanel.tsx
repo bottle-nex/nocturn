@@ -4,11 +4,8 @@ import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { QuizPhaseEnum } from '@nocturn/types';
 
 export default function HostLeaderboardPanel() {
-    const { topLeaderboard, myRank, myScore } = useLeaderboardStore();
+    const { topLeaderboard } = useLeaderboardStore();
     const { gameSession } = useLiveQuizStore();
-    console.log("top leaderboard is : ", topLeaderboard);
-    console.log("my rank is : ", myRank);
-    console.log("my score is : ", myScore);
     const emptyScoreBoard = topLeaderboard.length > 0 && topLeaderboard[0]?.totalScore === 0;
 
     const players: Player[] = topLeaderboard.map((entry) => ({

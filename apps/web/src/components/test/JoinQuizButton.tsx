@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import { RxCross2 } from 'react-icons/rx';
-import clsx from 'clsx';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';

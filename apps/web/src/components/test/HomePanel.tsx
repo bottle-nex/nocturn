@@ -145,7 +145,9 @@ export default function HomePanel() {
                                         className="w-full px-4 py-3 flex items-center gap-3 hover:dark:bg-light-base/5 hover:bg-dark-base/5 transition-colors cursor-pointer dark:text-light-base text-dark-base"
                                     >
                                         <HiPlus className="text-lg" />
-                                        <span className="text-sm font-medium">Start from scratch</span>
+                                        <span className="text-sm font-medium">
+                                            Start from scratch
+                                        </span>
                                     </button>
                                 </motion.div>
                             )}

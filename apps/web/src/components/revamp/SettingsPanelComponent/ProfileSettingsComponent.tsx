@@ -99,7 +99,10 @@ export default function ProfileSettingsComponent() {
         .toUpperCase();
 
     return (
-        <div className="w-full max-w-4xl mx-auto py-8 px-4 sm:px-8 flex flex-col gap-6 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-xl mt-1 custom-scrollbar" data-lenis-prevent>
+        <div
+            className="w-full max-w-4xl mx-auto py-8 px-4 sm:px-8 flex flex-col gap-6 ring-1 ring-black/10 shadow-xs shadow-black/5 rounded-xl mt-1 custom-scrollbar"
+            data-lenis-prevent
+        >
             <div className="flex flex-col gap-0.5">
                 <h1 className="text-lg font-semibold text-dark-base dark:text-white tracking-tight">
                     Profile

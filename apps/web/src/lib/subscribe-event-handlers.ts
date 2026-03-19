@@ -426,7 +426,6 @@ export class SubscribeEventHandlers {
 
     static handleParticipantIncomingResultsPhase(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
-        console.log("payload for participant incoming results phase is : ", payload);
         const resultsPhasePayload = payload as {
             topScores: {
                 id: string;

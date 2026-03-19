@@ -100,7 +100,7 @@ export default function LivePrizepoolFeatures() {
                                 alt=""
                                 width={1300}
                                 height={800}
-                                className="absolute -bottom-[8rem] -right-170 w-[1300px] max-w-none h-auto rounded-xl"
+                                className="absolute -bottom-32 -right-170 w-325 max-w-none h-auto rounded-xl"
                                 loading="lazy"
                                 unoptimized
                             />
