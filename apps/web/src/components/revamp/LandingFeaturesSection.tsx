@@ -107,7 +107,7 @@ export default function LandingFeaturesSection() {
                         </div>
                     </section>
 
-                    <section className="grid w-full grid-cols-2 h-full">
+                    {/* <section className="grid w-full grid-cols-2 h-full">
                         <div className="bg-[#f53d6b] h-170 relative overflow-hidden">
                             <Image
                                 src="/images/landing/stakeSolana.png"
@@ -138,7 +138,7 @@ export default function LandingFeaturesSection() {
                                 </Button>
                             </div>
                         </div>
-                    </section>
+                    </section> */}
                 </main>
             </motion.div>
         </>
