@@ -9,7 +9,7 @@ import { HiPlus, HiMicrophone, HiArrowUp, HiSparkles, HiArrowUpRight } from 'rea
 import { CgSpinner } from 'react-icons/cg';
 import { AiQuizChatRole, AiQuizMessage, dummyPrompts } from '@nocturn/types';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Message from './Message/Message';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
@@ -25,6 +25,7 @@ const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'ab
 
 export default function AIChatBoxRevamp() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
     const { session } = useUserSessionStore();
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
@@ -33,13 +34,8 @@ export default function AIChatBoxRevamp() {
 
     const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat, typingMessageIds } =
         useAiChatStore();
-    const { templates } = useQuizTemplatesStore();
-    const randomValue = useMemo(
-        () => Math.floor(Math.random() * templates.length),
-        [templates.length],
-    );
 
-    const selectedTemplate = templates[randomValue];
+    const selectedTemplate = quiz?.template!;
     const router = useRouter();
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
@@ -50,9 +46,13 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-              ? difficultyPlaceholders
-              : newChatPlaceholders,
+                ? difficultyPlaceholders
+                : newChatPlaceholders,
     );
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, loading]);
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setValue(e.target.value);
@@ -165,6 +165,7 @@ export default function AIChatBoxRevamp() {
                                 </div>
                             </div>
                         )}
+                        <div ref={bottomRef} />
                     </section>
 
                     <div className="p-3 mb-2">

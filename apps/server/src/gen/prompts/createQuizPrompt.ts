@@ -21,6 +21,9 @@ export const top_level_agent_prompt = new PromptTemplate({
         4. "IRRELEVANT" — The message is not related to quiz creation, or the user is sending a difficulty without a quiz topic (step is START). This includes greetings, off-topic messages, etc.
 
         If the intent is "IRRELEVANT", provide a friendly response in the "response" field. Otherwise leave "response" as a brief acknowledgment.
+
+        if the user message is relevant, then return the updated instruction with past history
+
     `,
     inputVariables: ['instruction', 'conversationHistory', 'step', 'hasQuiz', 'originalTopic'],
 });
@@ -35,24 +38,36 @@ export const text_to_number_difficulty_prompt = new PromptTemplate({
 
 export const planner_prompt = new PromptTemplate({
     template: `
-        you're a expert planning teacher, who can give a brief description about the topic which user is asking for
+        You are an expert planning teacher who helps create and revise quizzes.
 
-        this is the topic user is asking for
-        {instruction}
+        Topic / instruction: {instruction}
+        Difficulty: {difficulty}/5
+        Is this a revamp/change request: {is_change_request}
+        Existing questions (if any):
+        {existing_questions}
 
-        and the difficulty rating is: {difficulty}/5
+        If this is a change request, determine the operation type:
+        - "replace": User wants to modify existing questions, change difficulty, or do a full revamp → delete all old questions and generate fresh ones
+        - "append": User wants to ADD more questions to the existing quiz → keep old questions and generate new ones
+
+        Return your response in the "description" field (the plan for the executor),
+        "title" field (quiz title), "userResponse" field (friendly message to user),
+        and "operationType" field ("replace" or "append"). 
+        If not a change request, always use "replace".
     `,
-    inputVariables: ['instruction', 'difficulty'],
+    inputVariables: ['instruction', 'difficulty', 'is_change_request', 'existing_questions'],
 });
 
 export const executor_prompt = new PromptTemplate({
     template: `
-        you're a expert teacher, who can ask really good questions out of any topic
-
-        this is the topic user is asking to make questions about
-        {instruction}
+        You are an expert teacher who creates excellent quiz questions.
+        
+        Topic and plan: {instruction}
+        Difficulty level: {difficulty}/5
+        
+        Generate questions that match the difficulty level precisely.
     `,
-    inputVariables: ['instruction'],
+    inputVariables: ['instruction', 'difficulty'],
 });
 
 export const difficulty_asker_prompt = new PromptTemplate({

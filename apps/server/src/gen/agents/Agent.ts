@@ -5,8 +5,9 @@ import { StateGraph } from '@langchain/langgraph';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 import { generated_question_type } from '../types/createNewQuizType';
 import { TemplateEnum } from '../../schemas/createQuizSchema';
-import { NODE, INTENT } from '../types/agentEnums';
+import { NODE, INTENT, OPERATION } from '../types/agentEnums';
 import { Response } from 'express';
+import chalk from 'chalk';
 
 export default class Agent {
     static create_graph() {
@@ -49,6 +50,9 @@ export default class Agent {
             originalTopic: state.originalTopic || 'none',
         });
 
+        console.log(chalk.red("top level node quiz state: "), state);
+        console.log(chalk.blue("top level node response: "), response);
+
         // if irrelevant, save agent's response to db and send sse
         if (response.intent === INTENT.IRRELEVANT) {
             const agentMessage = await prisma.aiQuizMessage.create({
@@ -69,6 +73,7 @@ export default class Agent {
         return {
             intent: response.intent,
             agentResponse: response.response,
+            instruction: response.updatedInstruction,
         };
     }
 
@@ -77,10 +82,16 @@ export default class Agent {
             instruction: state.instruction,
         });
 
+        console.log(chalk.red("difficulty node quiz state: "), state);
+        console.log(chalk.blue("difficulty node response: "), response);
+
         const { agentic_message, system_message } = await prisma.$transaction(async (tx) => {
             await tx.aiQuizChatSession.update({
                 where: { id: state.sessionId },
-                data: { step: AgentStep.WAIT_DIFFICULTY },
+                data: {
+                    step: AgentStep.WAIT_DIFFICULTY,
+                    instruction: state.instruction,
+                },
             });
 
             const agentic_message = await tx.aiQuizMessage.create({
@@ -113,6 +124,9 @@ export default class Agent {
             instruction: state.instruction,
         });
 
+        console.log(chalk.red("compute difficulty node quiz state: "), state);
+        console.log(chalk.blue("compute difficulty node response: "), conversion);
+
         await prisma.aiQuizChatSession.update({
             where: { id: state.sessionId },
             data: { difficulty: conversion.difficulty },
@@ -125,22 +139,58 @@ export default class Agent {
 
     static async planner_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const topicInstruction = state.originalTopic || state.instruction;
-        const difficulty = state.difficulty ?? 3;
+
+        // ✅ Fix: load difficulty from DB if not in state (change requests skip compute_difficulty)
+        let difficulty = state.difficulty;
+        if (difficulty === undefined) {
+            const session = await prisma.aiQuizChatSession.findUnique({
+                where: { id: state.sessionId },
+                select: { difficulty: true },
+            });
+            difficulty = session?.difficulty ?? 3;
+        }
+
+        // ✅ Fix: fetch existing questions for context
+        let existingQuestionsContext = 'none';
+        let existingQuestionsCount = 0;
+
+        if (state.intent === INTENT.CHANGE_REQUEST && state.existingQuizId) {
+            const existingQuiz = await prisma.quiz.findUnique({
+                where: { id: state.existingQuizId },
+                include: { questions: { orderBy: { orderIndex: 'asc' } } },
+            });
+            existingQuestionsCount = existingQuiz?.questions.length ?? 0;
+            existingQuestionsContext =
+                existingQuiz?.questions
+                    .map((q, i) => `Q${i + 1}: ${q.question}`)
+                    .join('\n') || 'none';
+        }
+
+        const plannerInstruction =
+            state.intent === INTENT.CHANGE_REQUEST
+                ? `Original topic: ${topicInstruction}\n\nUser's revision request: ${state.instruction}`
+                : topicInstruction;
 
         const response = await model.planner.invoke({
-            instruction:
-                state.intent === INTENT.CHANGE_REQUEST
-                    ? `${topicInstruction}\n\nUser's revision request: ${state.instruction}`
-                    : topicInstruction,
+            instruction: plannerInstruction,
             difficulty,
+            is_change_request: state.intent === INTENT.CHANGE_REQUEST ? 'yes' : 'no',
+            existing_questions: existingQuestionsContext,
         });
 
-        // For change requests, delete old quiz questions
+        console.log(chalk.red("planner node quiz state: "), state);
+        console.log(chalk.blue("planner node response: "), response);
+
+        // ✅ Fix: only delete if it's a replace, not an append
+        const operationType = response.operationType ?? 'replace';
+
         if (state.intent === INTENT.CHANGE_REQUEST && state.existingQuizId) {
             await prisma.$transaction(async (tx) => {
-                await tx.question.deleteMany({
-                    where: { quizId: state.existingQuizId! },
-                });
+                if (operationType === OPERATION.REPLACE) {
+                    await tx.question.deleteMany({
+                        where: { quizId: state.existingQuizId! },
+                    });
+                }
 
                 await tx.aiQuizMessage.create({
                     data: {
@@ -156,10 +206,13 @@ export default class Agent {
                 quizTitle: response.title,
                 plannerResponse: response.userResponse,
                 quizId: state.existingQuizId,
+                difficulty,
+                operationType,
+                existingQuestionsCount: operationType === OPERATION.APPEND ? existingQuestionsCount : 0,
             };
         }
 
-        // New quiz flow
+        // New quiz flow (unchanged)
         const { quiz, agentic_message, system_message } = await prisma.$transaction(async (tx) => {
             const db_template = await tx.template.findFirst({
                 where: { name: TemplateEnum.CLASSIC },
@@ -199,6 +252,9 @@ export default class Agent {
             quizTitle: response.title,
             plannerResponse: response.userResponse,
             quizId: quiz.id,
+            difficulty,
+            operationType: OPERATION.REPLACE,
+            existingQuestionsCount: 0,
             sseMessages: [
                 { type: STREAM.MESSAGE, data: agentic_message },
                 { type: STREAM.MESSAGE, data: system_message },
@@ -209,7 +265,14 @@ export default class Agent {
     static async executor_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.executor.invoke({
             instruction: state.plan || state.instruction,
+            difficulty: state.difficulty ?? 3,   // ✅ Fix: pass difficulty
         });
+
+        console.log(chalk.red("executor node quiz state: "), state);
+        console.log(chalk.blue("executor node response: "), response);
+
+        // ✅ Fix: offset orderIndex for appends so existing questions aren't displaced
+        const startIndex = state.existingQuestionsCount ?? 0;
 
         const parsed_questions = response.questions.map(
             (q: generated_question_type, i: number) => ({
@@ -217,7 +280,7 @@ export default class Agent {
                 basePoints: 20,
                 timeLimit: 30,
                 readingTime: 7,
-                orderIndex: i,
+                orderIndex: startIndex + i,
                 isAsked: false,
             }),
         );

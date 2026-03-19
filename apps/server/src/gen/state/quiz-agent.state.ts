@@ -2,6 +2,7 @@ import { Annotation } from '@langchain/langgraph';
 import { Quiz } from '@nocturn/database';
 import { AgentStep } from '@nocturn/types';
 import { stream } from '@nocturn/types';
+import { OPERATION } from '../types/agentEnums';
 
 export const QuizAgentStateAnnotation = Annotation.Root({
     // Input -> set by controller before invoking graph
@@ -25,6 +26,8 @@ export const QuizAgentStateAnnotation = Annotation.Root({
     plan: Annotation<string | undefined>,
     quizTitle: Annotation<string | undefined>,
     plannerResponse: Annotation<string | undefined>,
+    operationType: Annotation<OPERATION | undefined>,
+    existingQuestionsCount: Annotation<number | undefined>,
 
     // Set by executor
     quizId: Annotation<string | undefined>,
