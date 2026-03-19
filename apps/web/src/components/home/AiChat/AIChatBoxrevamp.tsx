@@ -31,7 +31,7 @@ export default function AIChatBoxRevamp() {
     const [isFocused, setIsFocused] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
-    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat } =
+    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat, typingMessageIds } =
         useAiChatStore();
     const { templates } = useQuizTemplatesStore();
     const randomValue = useMemo(
@@ -102,6 +102,10 @@ export default function AIChatBoxRevamp() {
         setExpanded(false);
     }
 
+    function handleOnClick() {
+        setExpanded(expanded ? expanded : true);
+    }
+
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
     if (!expanded) {
@@ -121,6 +125,7 @@ export default function AIChatBoxRevamp() {
                     onBlur={() => setIsFocused(false)}
                     onToggleVoice={toggle}
                     onSubmit={handleSubmit}
+                    onClick={handleOnClick}
                 />
             </div>
         );
@@ -139,20 +144,31 @@ export default function AIChatBoxRevamp() {
                                 key={msg.id}
                                 message={msg}
                                 loading={false}
+                                isTyping={typingMessageIds.includes(msg.id)}
                                 image={session?.user.image}
                             />
                         ))}
+                        {loading && (
+                            <div className="flex justify-start w-full">
+                                <div className="flex items-start gap-x-2 max-w-[70%]">
+                                    <div className="flex flex-col">
+                                        <div className={cn(
+                                            'px-4 py-3 rounded-tr-xl rounded-b-xl text-sm font-normal',
+                                            'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
+                                            'mt-2.5 flex gap-1.5 items-center justify-center'
+                                        )}>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '0ms' }} />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '150ms' }} />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </section>
 
                     <div className="p-3 mb-2">
-                        {loading && (
-                            <div className="flex items-center justify-start gap-x-3 mb-2 ml-2">
-                                <Spinner />
-                                <span className="text-sm text-dark-alpha dark:text-light-alpha">
-                                    loading..
-                                </span>
-                            </div>
-                        )}
+
                         {messages.length < 1 && (
                             <div className="mb-3 space-y-1.5">
                                 <p className="px-1 text-[11px] font-medium uppercase tracking-widest dark:text-light-alpha/30 text-dark-alpha/30">
@@ -188,6 +204,7 @@ export default function AIChatBoxRevamp() {
                             onBlur={() => setIsFocused(false)}
                             onToggleVoice={toggle}
                             onSubmit={handleSubmit}
+                            onClick={handleOnClick}
                         />
                     </div>
                 </div>
@@ -218,6 +235,7 @@ interface InputBoxProps {
     onBlur: () => void;
     onToggleVoice: () => void;
     onSubmit: () => void;
+    onClick: () => void;
 }
 
 function InputBox({
@@ -234,6 +252,7 @@ function InputBox({
     onBlur,
     onToggleVoice,
     onSubmit,
+    onClick,
 }: InputBoxProps) {
     return (
         <div
@@ -251,6 +270,7 @@ function InputBox({
                     onKeyDown={onKeyDown}
                     onFocus={onFocus}
                     onBlur={onBlur}
+                    onClick={onClick}
                     placeholder={value ? '' : animatedPlaceholders}
                     className="w-full resize-none bg-transparent outline-none text-[15px] dark:text-light-base text-dark-base placeholder:text-neutral-500 max-h-30 overflow-y-auto"
                 />

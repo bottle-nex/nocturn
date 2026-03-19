@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env, isProduction } from '../configs/env';
 import { AuthUser } from '../types/express';
 import { NOCTURN_REFRESH_COOKIE_NAME } from '@nocturn/types';
+import ResponseWriter from '../class/response_writer';
 
 export default async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
@@ -25,10 +26,10 @@ export default async function authMiddleware(req: Request, res: Response, next: 
 
     // Fallback: use the refresh token cookie to auto-recover
     const refreshToken = req.cookies?.[NOCTURN_REFRESH_COOKIE_NAME];
-    if (!refreshToken) {
-        res.status(401).json({ message: 'Not authorized' });
-        return;
-    }
+    // if (!refreshToken) {
+    //     res.status(401).json({ message: 'Not authorized' });
+    //     return;
+    // }
 
     try {
         const decoded = jwt.verify(refreshToken, env.SERVER_JWT_REFRESH_SECRET) as {
@@ -63,7 +64,8 @@ export default async function authMiddleware(req: Request, res: Response, next: 
 
         req.user = decoded as AuthUser;
         next();
-    } catch {
+    } catch (error) {
+        console.error('error in auth middleware: ', error);
         res.status(401).json({ message: 'Not authorized' });
     }
 }

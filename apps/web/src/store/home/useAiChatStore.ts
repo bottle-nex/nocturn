@@ -19,6 +19,10 @@ interface AiChatStore {
     preview: boolean;
     setPreview: (preview: boolean) => void;
 
+    typingMessageIds: string[];
+    addTypingMessage: (id: string) => void;
+    removeTypingMessage: (id: string) => void;
+
     resetChat: () => void;
 }
 
@@ -44,6 +48,16 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
     preview: false,
     setPreview: (preview: boolean) => set({ preview }),
 
+    typingMessageIds: [],
+    addTypingMessage: (id: string) =>
+        set((state) => ({
+            typingMessageIds: [...state.typingMessageIds, id],
+        })),
+    removeTypingMessage: (id: string) =>
+        set((state) => ({
+            typingMessageIds: state.typingMessageIds.filter((msgId) => msgId !== id),
+        })),
+
     resetChat: () =>
         set({
             quiz: null,
@@ -51,5 +65,6 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
             messages: [],
             sessionId: null,
             preview: false,
+            typingMessageIds: [],
         }),
 }));

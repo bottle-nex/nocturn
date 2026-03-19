@@ -1,4 +1,5 @@
 import { Annotation } from '@langchain/langgraph';
+import { Quiz } from '@nocturn/database';
 import { AgentStep } from '@nocturn/types';
 import { stream } from '@nocturn/types';
 
@@ -10,6 +11,7 @@ export const QuizAgentStateAnnotation = Annotation.Root({
     conversationHistory: Annotation<string>,
     currentStep: Annotation<AgentStep>,
     existingQuizId: Annotation<string | undefined>,
+    existingQuiz: Annotation<Partial<Quiz> | undefined>,
     originalTopic: Annotation<string | undefined>,
 
     // Set by top_level_agent
