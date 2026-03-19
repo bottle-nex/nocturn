@@ -12,3 +12,8 @@ export enum INTENT {
     CHANGE_REQUEST = 'CHANGE_REQUEST',
     IRRELEVANT = 'IRRELEVANT',
 }
+
+export enum OPERATION {
+    REPLACE = 'REPLACE',
+    APPEND = 'APPEND',
+}

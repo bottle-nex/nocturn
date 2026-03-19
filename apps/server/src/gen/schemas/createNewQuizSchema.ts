@@ -11,6 +11,7 @@ export const top_level_agent_schema = z.object({
         .describe(
             'A friendly response to the user. For irrelevant messages, this is the main reply. For other intents, a brief acknowledgment.',
         ),
+    updatedInstruction: z.string().describe('updated instruction with combining past history'),
 });
 
 export const question_schema = z.object({
@@ -51,6 +52,10 @@ export const planner_schema = z.object({
         .describe(
             'a detailed description about the user instruction to send to another llm to create quiz ',
         ),
+    deleteAndGenerateNewQuestions: z.boolean(),
+    operationType: z
+        .enum(['REPLACE', 'APPEND'])
+        .describe('The classified intent of the user message'),
 });
 
 export const difficulty_asker_schema = z.object({

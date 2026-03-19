@@ -9,8 +9,10 @@ import Agent from '../../gen/agents/Agent';
 
 export default async function generateNewQuizController(req: Request, res: Response) {
     try {
+        console.log('generate quiz controller hit');
         const user = req.user;
         if (!user) {
+            console.log('user not found');
             ResponseWriter.not_authorized(res, 'not authorized');
             return;
         }

@@ -15,6 +15,7 @@ import {
 } from '../schemas/createNewQuizSchema';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { env } from '../../configs/env';
+import { OPERATION } from '../types/agentEnums';
 
 export default class Model {
     public model: ChatGoogleGenerativeAI;
@@ -27,7 +28,7 @@ export default class Model {
             hasQuiz: string;
             originalTopic: string;
         },
-        { intent: string; response: string }
+        { intent: string; response: string; updatedInstruction: string }
     >;
 
     public difficulty_asker: RunnableSequence<{ instruction: string }, { userResponse: string }>;
@@ -36,11 +37,22 @@ export default class Model {
         { difficulty: number }
     >;
     public planner: RunnableSequence<
-        { instruction: string; difficulty: number },
-        { userResponse: string; title: string; description: string }
+        {
+            instruction: string;
+            difficulty: number;
+            is_change_request: string;
+            existing_questions: string;
+        },
+        {
+            userResponse: string;
+            title: string;
+            description: string;
+            deleteAndGenerateNewQuestions: boolean;
+            operationType: OPERATION;
+        }
     >;
     public executor: RunnableSequence<
-        { instruction: string },
+        { instruction: string; difficulty: number },
         { description: string; questions: any; userResponse: string }
     >;
 
@@ -70,7 +82,21 @@ export default class Model {
         this.planner = RunnableSequence.from([
             planner_prompt,
             this.model.withStructuredOutput(planner_schema),
-        ]);
+        ]) as RunnableSequence<
+            {
+                instruction: string;
+                difficulty: number;
+                is_change_request: string;
+                existing_questions: string;
+            },
+            {
+                userResponse: string;
+                title: string;
+                description: string;
+                deleteAndGenerateNewQuestions: boolean;
+                operationType: OPERATION;
+            }
+        >;
 
         this.executor = RunnableSequence.from([
             executor_prompt,

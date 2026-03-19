@@ -1,12 +1,45 @@
 import { cn } from '@/lib/utils';
 import TimeDisplay from './TimeDisplay';
+import { useEffect, useState } from 'react';
+import { useAiChatStore } from '@/store/home/useAiChatStore';
 
 interface AgentMessageProps {
     content: string;
     createdAt: Date;
+    isTyping?: boolean;
+    messageId?: string;
 }
 
-export default function AgentMessage({ content, createdAt }: AgentMessageProps) {
+export default function AgentMessage({
+    content,
+    createdAt,
+    isTyping,
+    messageId,
+}: AgentMessageProps) {
+    const [displayedContent, setDisplayedContent] = useState(isTyping ? '' : content);
+    const removeTypingMessage = useAiChatStore((state) => state.removeTypingMessage);
+
+    useEffect(() => {
+        if (!isTyping) {
+            setDisplayedContent(content);
+            return;
+        }
+
+        let i = 0;
+        const interval = setInterval(() => {
+            setDisplayedContent(content.substring(0, i + 1));
+            i++;
+            if (i >= content.length) {
+                clearInterval(interval);
+                if (messageId) {
+                    removeTypingMessage(messageId);
+                }
+            }
+        }, 15);
+
+        return () => clearInterval(interval);
+    }, [content, isTyping, messageId, removeTypingMessage]);
+
     return (
         <div className="flex justify-start w-full">
             <div className="flex items-start gap-x-2 max-w-[70%]">
@@ -21,7 +54,7 @@ export default function AgentMessage({ content, createdAt }: AgentMessageProps) 
                         )}
                     >
                         <div className="w-full min-w-0 wrap-break-words whitespace-pre-wrap">
-                            {content}
+                            {displayedContent}
                         </div>
 
                         <div

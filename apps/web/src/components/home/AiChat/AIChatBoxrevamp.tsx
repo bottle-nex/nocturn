@@ -9,7 +9,7 @@ import { HiPlus, HiMicrophone, HiArrowUp, HiSparkles, HiArrowUpRight } from 'rea
 import { CgSpinner } from 'react-icons/cg';
 import { AiQuizChatRole, AiQuizMessage, dummyPrompts } from '@nocturn/types';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Message from './Message/Message';
 import useVoiceRecognition from '@/hooks/useVoiceRecognition';
 import AiSlidesPreviewArea from './AiSlidesPreviewArea';
@@ -17,7 +17,6 @@ import AiBackendAction from '@/lib/backend/home/start-with-ai-action';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
-import Spinner from '@/components/ui/Spinner';
 
 const newChatPlaceholders = ['Have an idea?', "Don't know where to start?", 'Use me!'];
 const difficultyPlaceholders = ['want it easy?', 'or challenging?', 'cast with toughness'];
@@ -25,21 +24,31 @@ const revampPlaceholders = ['not satisfied?', 'having more things in mind?', 'ab
 
 export default function AIChatBoxRevamp() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const bottomRef = useRef<HTMLDivElement>(null);
     const { session } = useUserSessionStore();
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [expanded, setExpanded] = useState(false);
-
-    const { quiz, messages, sessionId, loading, setLoading, appendMessage, resetChat } =
-        useAiChatStore();
     const { templates } = useQuizTemplatesStore();
+
+    const {
+        quiz,
+        messages,
+        sessionId,
+        loading,
+        setLoading,
+        appendMessage,
+        resetChat,
+        typingMessageIds,
+    } = useAiChatStore();
+
     const randomValue = useMemo(
         () => Math.floor(Math.random() * templates.length),
         [templates.length],
     );
 
-    const selectedTemplate = templates[randomValue];
+    const selectedTemplate = quiz?.template ?? templates[randomValue];
     const router = useRouter();
 
     const { listening, interimTranscript, toggle, stop } = useVoiceRecognition({
@@ -53,6 +62,10 @@ export default function AIChatBoxRevamp() {
               ? difficultyPlaceholders
               : newChatPlaceholders,
     );
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, loading]);
 
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setValue(e.target.value);
@@ -102,6 +115,10 @@ export default function AIChatBoxRevamp() {
         setExpanded(false);
     }
 
+    function handleOnClick() {
+        setExpanded(expanded ? expanded : true);
+    }
+
     const hasContent = value.trim().length > 0 || prompt.trim().length > 0;
 
     if (!expanded) {
@@ -121,6 +138,7 @@ export default function AIChatBoxRevamp() {
                     onBlur={() => setIsFocused(false)}
                     onToggleVoice={toggle}
                     onSubmit={handleSubmit}
+                    onClick={handleOnClick}
                 />
             </div>
         );
@@ -139,20 +157,42 @@ export default function AIChatBoxRevamp() {
                                 key={msg.id}
                                 message={msg}
                                 loading={false}
+                                isTyping={typingMessageIds.includes(msg.id)}
                                 image={session?.user.image}
                             />
                         ))}
+                        {loading && (
+                            <div className="flex justify-start w-full">
+                                <div className="flex items-start gap-x-2 max-w-[70%]">
+                                    <div className="flex flex-col">
+                                        <div
+                                            className={cn(
+                                                'px-4 py-3 rounded-tr-xl rounded-b-xl text-sm font-normal',
+                                                'bg-light-alpha dark:bg-dark-alpha border border-dark-base/10 dark:border-light-base/10',
+                                                'mt-2.5 flex gap-1.5 items-center justify-center',
+                                            )}
+                                        >
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '0ms' }}
+                                            />
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '150ms' }}
+                                            />
+                                            <div
+                                                className="w-1.5 h-1.5 rounded-full bg-dark-base/50 dark:bg-light-base/50 animate-bounce"
+                                                style={{ animationDelay: '300ms' }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={bottomRef} />
                     </section>
 
                     <div className="p-3 mb-2">
-                        {loading && (
-                            <div className="flex items-center justify-start gap-x-3 mb-2 ml-2">
-                                <Spinner />
-                                <span className="text-sm text-dark-alpha dark:text-light-alpha">
-                                    loading..
-                                </span>
-                            </div>
-                        )}
                         {messages.length < 1 && (
                             <div className="mb-3 space-y-1.5">
                                 <p className="px-1 text-[11px] font-medium uppercase tracking-widest dark:text-light-alpha/30 text-dark-alpha/30">
@@ -188,6 +228,7 @@ export default function AIChatBoxRevamp() {
                             onBlur={() => setIsFocused(false)}
                             onToggleVoice={toggle}
                             onSubmit={handleSubmit}
+                            onClick={handleOnClick}
                         />
                     </div>
                 </div>
@@ -218,6 +259,7 @@ interface InputBoxProps {
     onBlur: () => void;
     onToggleVoice: () => void;
     onSubmit: () => void;
+    onClick: () => void;
 }
 
 function InputBox({
@@ -234,6 +276,7 @@ function InputBox({
     onBlur,
     onToggleVoice,
     onSubmit,
+    onClick,
 }: InputBoxProps) {
     return (
         <div
@@ -251,6 +294,7 @@ function InputBox({
                     onKeyDown={onKeyDown}
                     onFocus={onFocus}
                     onBlur={onBlur}
+                    onClick={onClick}
                     placeholder={value ? '' : animatedPlaceholders}
                     className="w-full resize-none bg-transparent outline-none text-[15px] dark:text-light-base text-dark-base placeholder:text-neutral-500 max-h-30 overflow-y-auto"
                 />

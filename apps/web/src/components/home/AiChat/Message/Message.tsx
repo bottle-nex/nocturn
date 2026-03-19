@@ -9,9 +9,10 @@ interface BuilderMessageProps {
     message: AiQuizMessage;
     image: string;
     loading: boolean;
+    isTyping?: boolean;
 }
 
-export default function Message({ message, image }: BuilderMessageProps): JSX.Element {
+export default function Message({ message, image, isTyping }: BuilderMessageProps): JSX.Element {
     return (
         <div className="w-full shrink-0 tracking-wide ">
             {message.role === AiQuizChatRole.USER && (
@@ -23,7 +24,12 @@ export default function Message({ message, image }: BuilderMessageProps): JSX.El
             )}
 
             {message.role === AiQuizChatRole.AGENT && (
-                <AgentMessage content={message.content} createdAt={message.createdAt} />
+                <AgentMessage
+                    content={message.content}
+                    createdAt={message.createdAt}
+                    isTyping={isTyping}
+                    messageId={message.id}
+                />
             )}
 
             {message.role === AiQuizChatRole.SYSTEM && (
