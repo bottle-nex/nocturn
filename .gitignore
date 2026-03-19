@@ -40,5 +40,6 @@ pnpm-debug.log*
 # prisma
 generated
 CLAUDE.md
+.claude/
 PREMIUM.md
 LEADERBOARD_OPTIMIZATION.md

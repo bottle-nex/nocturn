@@ -16,6 +16,7 @@ import OpacityBackground from '../utility/OpacityBackground';
 import { Button } from '../ui/button';
 import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
 import RejoinDetectedPanel from '../ui/RejoinDetectedPanel';
+import { cn } from '@/lib/utils';
 
 const container: Variants = {
     closed: {
@@ -201,7 +202,7 @@ function JoinQuizPill({
             animate={isOpen ? 'open' : 'closed'}
             initial="closed"
             onClick={!isOpen ? onOpen : undefined}
-            className={clsx(
+            className={cn(
                 'relative flex items-center rounded-full h-13 px-2 overflow-hidden',
                 'ring-1 ring-black/10 shadow-sm backdrop-blur-sm',
             )}
@@ -223,14 +224,14 @@ function JoinQuizPill({
                 </div>
             ) : (
                 <motion.div
-                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f46e5' : '#f5f5f5' }}
+                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f47e6' : '#f5f5f5' }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     onClick={
                         isOpen
                             ? (e) => {
-                                  e.stopPropagation();
-                                  onJoin();
-                              }
+                                e.stopPropagation();
+                                onJoin();
+                            }
                             : undefined
                     }
                     className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
@@ -291,8 +292,8 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                  ? 'spectator'
-                  : null;
+                    ? 'spectator'
+                    : null;
         if (!type) return;
 
         if (type === 'participant') {
