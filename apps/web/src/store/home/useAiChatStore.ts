@@ -5,6 +5,9 @@ interface AiChatStore {
     sessionId: string | null;
     setSessionId: (sessionId: string) => void;
 
+    expanded: boolean;
+    setExpanded: (expanded: boolean) => void;
+
     messages: AiQuizMessage[];
     setMessages: (messages: AiQuizMessage[]) => void;
     appendMessage: (message: AiQuizMessage) => void;
@@ -32,6 +35,9 @@ interface AiChatStore {
 export const useAiChatStore = create<AiChatStore>((set, get) => ({
     sessionId: null,
     setSessionId: (sessionId: string) => set({ sessionId }),
+
+    expanded: false,
+    setExpanded: (expanded: boolean) => set({ expanded }),
 
     messages: [],
     setMessages: (messages: AiQuizMessage[]) => set({ messages }),
