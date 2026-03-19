@@ -6,6 +6,7 @@ import LandingCTASection from '@/components/revamp/LandingCTASection';
 import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
 import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 import LandingSubscriptionComponent from '@/components/revamp/LandingSubscriptionComponent';
+import SolanaPrizePool from '@/components/revamp/SolanaPrizePool';
 
 export default function Page() {
     return (
@@ -17,6 +18,7 @@ export default function Page() {
                 <LandingPenguinSection />
                 <LandingFeaturesSection />
                 <LandingSubscriptionComponent />
+                <SolanaPrizePool />
                 <LandingCTASection />
             </div>
             <footer className="fixed bottom-0 left-0 w-full z-1">
