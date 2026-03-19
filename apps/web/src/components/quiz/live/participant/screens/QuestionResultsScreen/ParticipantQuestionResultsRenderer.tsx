@@ -1,10 +1,12 @@
 'use client';
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
-import LeaderboardTest from '../../../common/Leaderboard/LeaderboardTest';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
+import QuestionLeaderboardDisplay from '../../../common/QuestionLeaderboardDisplay';
 
 export default function ParticipantQuestionResultsRenderer() {
     const { currentQuestion, setAlreadyResponded } = useLiveQuizStore();
+    const { myRank, myScore, totalParticipants } = useLeaderboardStore();
 
     useEffect(() => {
         setAlreadyResponded(false);
@@ -18,37 +20,13 @@ export default function ParticipantQuestionResultsRenderer() {
     }
 
     return (
-        <div className="w-full h-full flex justify-between items-center ">
-            <LeaderboardTest />
-
-            {/* <Leaderboard
-                participant
-                explanation={currentQuestion.explanation || ''}
-                className="relative z-10 "
-            /> */}
-            {/* <div className="text-dark-alpha p-2 flex flex-col items-start w-full gap-y-4 ">
-                <div className="text-3xl w-full flex justify-start ">
-                    {currentQuestion.question}
-                </div>
-                <div className="gap-y-2 w-full flex flex-col items-start ">
-                    {currentQuestion.options.map((option, i) => {
-                        const correct = i === currentQuestion.correctAnswer;
-                        return (
-                            <div key={i} className="w-fit">
-                                <NotchCard
-                                    label={correct ? 'correct answer' : ''}
-                                    className={cn(
-                                        correct ? 'border-[#00bd00] ' : '',
-                                        'rounded-beta ',
-                                    )}
-                                >
-                                    <div>{option}</div>
-                                </NotchCard>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div> */}
+        <div className="w-full h-full">
+            <QuestionLeaderboardDisplay
+                showMyRank
+                myRank={myRank}
+                myScore={myScore}
+                totalParticipants={totalParticipants}
+            />
         </div>
     );
 }

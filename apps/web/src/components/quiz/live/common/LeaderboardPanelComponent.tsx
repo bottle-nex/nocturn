@@ -112,9 +112,13 @@ function LeaderBoardPanel({ player }: { player: Player; scroll: boolean }) {
 export default function LeaderboardPanelComponent({
     players,
     participant,
+    myRank,
+    totalParticipants,
 }: {
     players: Player[];
     participant?: boolean;
+    myRank?: number | null;
+    totalParticipants?: number;
 }) {
     const { participantData } = useLiveParticipantStore();
     const youRef = useRef<HTMLDivElement | null>(null);
@@ -147,6 +151,8 @@ export default function LeaderboardPanelComponent({
         }
     };
 
+    const displayRank = myRank ?? you?.rank;
+
     return (
         <div className="h-full w-full pt-12 p-6 pb-8 overflow-hidden space-y-3">
             <div className="w-full h-[28%] flex justify-between items-end gap-6">
@@ -178,7 +184,7 @@ export default function LeaderboardPanelComponent({
                 ))}
             </div>
 
-            {participant && (
+            {participant && displayRank && (
                 <div
                     className={cn(
                         'absolute bottom-5 right-5 px-3.5 py-1.5 border border-neutral-500 rounded-full ',
@@ -188,7 +194,8 @@ export default function LeaderboardPanelComponent({
                     )}
                     onClick={handleScrollToYou}
                 >
-                    Your rank: <span className="font-semibold">#{you?.rank}</span>
+                    Your rank: <span className="font-semibold">#{displayRank}</span>
+                    {totalParticipants ? ` / ${totalParticipants}` : ''}
                 </div>
             )}
         </div>

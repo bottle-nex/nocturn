@@ -1098,6 +1098,41 @@ export default class RedisCache {
         }
     }
 
+    public async get_bulk_participant_ranks(
+        game_session_id: string,
+        participant_ids: string[],
+    ): Promise<Map<string, { rank: number; score: number }>> {
+        const result = new Map<string, { rank: number; score: number }>();
+        try {
+            const key = this.get_leaderboard_key(game_session_id);
+            const pipeline = this.redis_cache.pipeline();
+
+            for (const pid of participant_ids) {
+                pipeline.zrevrank(key, pid);
+                pipeline.zscore(key, pid);
+            }
+
+            const results = await pipeline.exec();
+            if (!results) return result;
+
+            for (let i = 0; i < participant_ids.length; i++) {
+                const rank = results[i * 2]?.[1] as number | null;
+                const score_str = results[i * 2 + 1]?.[1] as string | null;
+
+                if (rank !== null && score_str !== null) {
+                    result.set(participant_ids[i]!, {
+                        rank: rank + 1,
+                        score: parseFloat(score_str),
+                    });
+                }
+            }
+            return result;
+        } catch (err) {
+            console.error('Error in get_bulk_participant_ranks:', err);
+            return result;
+        }
+    }
+
     public get_leaderboard_key(game_session_id: string): string {
         return `game_session:${game_session_id}:leaderboard`;
     }

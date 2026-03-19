@@ -1,19 +1,25 @@
 'use client';
-import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import { useEffect, useRef, useState } from 'react';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { Button } from '@/components/ui/button';
 import { GoShareAndroid } from 'react-icons/go';
 import { DotPattern } from '@/components/magicui/dot-pattern';
-import { ParticipantType } from '@nocturn/types';
 import LeaderboardParticipantBar from '../participant/screens/QuestionResultsScreen/LeaderboardParticipantBars';
 
 export default function FinalResultsScreen() {
-    const { participants, responses, getResponse } = useLiveParticipantsStore();
+    const { topLeaderboard } = useLeaderboardStore();
     const { participantData } = useLiveParticipantStore();
 
-    const sortedParticipants = [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
+    // topLeaderboard is already sorted by score desc from the server
+    const sortedParticipants = topLeaderboard.map((entry) => ({
+        id: entry.id,
+        nickname: entry.nickname,
+        avatar: entry.avatar,
+        totalScore: entry.totalScore,
+        longestStreak: 0,
+    }));
     const [dateTime, setDateTime] = useState<string>('');
     const colorMapRef = useRef<Map<string, string>>(new Map());
 
@@ -48,27 +54,6 @@ export default function FinalResultsScreen() {
 
         return colorMapRef.current.get(id)!;
     });
-
-    const [_currentUser, setCurrentUser] = useState<ParticipantType | null>(null);
-    const [_yourRank, setYourRank] = useState<number>(1);
-    const [_yourStreak, setYourStreak] = useState<number>(0);
-    const [_yourAnswer, setYourAnswer] = useState<number | undefined>();
-
-    useEffect(() => {
-        if (!participantData) return;
-
-        const user = sortedParticipants.find((p) => p.id === participantData.id);
-        // take participant data if not found
-        setCurrentUser(user ?? participantData);
-
-        if (!user) return;
-
-        const index = sortedParticipants.findIndex((p) => p.id === user.id);
-        setYourRank(index >= 0 ? index + 1 : 1);
-
-        setYourStreak(user?.longestStreak ?? 0);
-        setYourAnswer(getResponse(user.id)?.selectedAnswer);
-    }, [participantData, sortedParticipants, responses, getResponse]);
 
     const visibleBars = sortedParticipants.slice(0, 10);
 

@@ -1,23 +1,22 @@
-import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import LeaderboardPanelComponent, { Player } from '../common/LeaderboardPanelComponent';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { QuizPhaseEnum } from '@nocturn/types';
 
 export default function HostLeaderboardPanel() {
-    const { participants } = useLiveParticipantsStore();
+    const { topLeaderboard, myRank, myScore } = useLeaderboardStore();
     const { gameSession } = useLiveQuizStore();
+    console.log("top leaderboard is : ", topLeaderboard);
+    console.log("my rank is : ", myRank);
+    console.log("my score is : ", myScore);
+    const emptyScoreBoard = topLeaderboard.length > 0 && topLeaderboard[0]?.totalScore === 0;
 
-    const sortedParticipants = [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
-
-    const emptyScoreBoard =
-        sortedParticipants.length > 0 && sortedParticipants[0]?.totalScore === 0;
-
-    const players: Player[] = sortedParticipants.map((p, index) => ({
-        id: p.id,
-        imageUrl: p.avatar!,
-        name: p.nickname,
-        rank: index + 1,
-        score: p.totalScore,
+    const players: Player[] = topLeaderboard.map((entry) => ({
+        id: entry.id,
+        imageUrl: entry.avatar ?? '/default-avatar.png',
+        name: entry.nickname,
+        rank: entry.rank,
+        score: entry.totalScore,
     }));
 
     return (

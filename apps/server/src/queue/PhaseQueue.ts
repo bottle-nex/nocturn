@@ -42,40 +42,40 @@ export default class PhaseQueue {
         });
     }
 
-    private async elect_queue_processor() {
-        if (this.electionIntervalId) {
-            console.warn(`[${this.server_id}] Election already running, skipping...`);
-            return;
-        }
+    // private async elect_queue_processor() {
+    //     if (this.electionIntervalId) {
+    //         console.warn(`[${this.server_id}] Election already running, skipping...`);
+    //         return;
+    //     }
 
-        const lock_key = `phase_queue_processor_lock`;
-        const ttl = 60;
+    //     const lock_key = `phase_queue_processor_lock`;
+    //     const ttl = 60;
 
-        this.electionIntervalId = setInterval(
-            async () => {
-                if (this.is_queue_processor) {
-                    const renewed = await this.redis_cache.renew_lock(lock_key, ttl);
-                    if (!renewed) {
-                        console.warn(`[${this.server_id}] Lost leadership`);
-                        this.is_queue_processor = false;
-                    }
-                } else {
-                    const lock_value = `${this.server_id}_${Date.now()}`;
-                    const acquired = await this.redis_cache.try_acquire_lock(
-                        lock_key,
-                        lock_value,
-                        ttl,
-                    );
-                    if (acquired) {
-                        console.warn('Became the leader of the fleet');
-                        this.is_queue_processor = true;
-                        this.start_processing_jobs();
-                    }
-                }
-            },
-            5000 + Math.floor(Math.random() * 2000),
-        );
-    }
+    //     this.electionIntervalId = setInterval(
+    //         async () => {
+    //             if (this.is_queue_processor) {
+    //                 const renewed = await this.redis_cache.renew_lock(lock_key, ttl);
+    //                 if (!renewed) {
+    //                     console.warn(`[${this.server_id}] Lost leadership`);
+    //                     this.is_queue_processor = false;
+    //                 }
+    //             } else {
+    //                 const lock_value = `${this.server_id}_${Date.now()}`;
+    //                 const acquired = await this.redis_cache.try_acquire_lock(
+    //                     lock_key,
+    //                     lock_value,
+    //                     ttl,
+    //                 );
+    //                 if (acquired) {
+    //                     console.warn('Became the leader of the fleet');
+    //                     this.is_queue_processor = true;
+    //                     this.start_processing_jobs();
+    //                 }
+    //             }
+    //         },
+    //         5000 + Math.floor(Math.random() * 2000),
+    //     );
+    // }
 
     private setup_shutdown_hooks() {
         const cleanup = async () => {
@@ -96,11 +96,11 @@ export default class PhaseQueue {
         process.on('SIGTERM', cleanup);
     }
 
-    public async start_processing_jobs() {
-        this.phase_queue.process('phase_transition', async (job) => {
-            this.quiz_manager.handle_transition_phase(job.data);
-        });
-    }
+    // public async start_processing_jobs() {
+    //     this.phase_queue.process('phase_transition', async (job) => {
+    //         this.quiz_manager.handle_transition_phase(job.data);
+    //     });
+    // }
 
     public async schedule_phase_transition(data: PhaseTransitionJob): Promise<void> {
         const delay = Math.max(0, data.executeAt - Date.now());

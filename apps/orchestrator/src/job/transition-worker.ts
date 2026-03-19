@@ -158,11 +158,10 @@ export default class TransitionWorker {
                 console.error('Failed to enqueue show result phase:', err);
             });
 
-        const score_of_all_participants = await this.redis_cache.get_all_participants(
-            data.gameSessionId,
-            ['totalScore', 'finalRank', 'longestStreak'],
-        );
-
+        const top_scores = await this.redis_cache.get_top_leaderboards(data.gameSessionId, 10);
+        const total_participants = await this.redis_cache.get_leaderboard_count(data.gameSessionId);
+        console.log('Total participants for question:', total_participants);
+        console.log('Top scores for question:', top_scores);
         const response_of_all_participants = await this.redis_cache.get_all_question_responses(
             data.gameSessionId,
             data.questionId,
@@ -172,7 +171,8 @@ export default class TransitionWorker {
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_PARTICIPANT,
             payload: {
-                scores: score_of_all_participants,
+                topScores: top_scores,
+                totalParticipants: total_participants,
                 responses: response_of_all_participants,
                 correctAnswer: question.correctAnswer,
                 explanation: question.explanation,
@@ -186,7 +186,8 @@ export default class TransitionWorker {
         const pub_sub_message_to_host: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_HOST,
             payload: {
-                scores: score_of_all_participants,
+                topScores: top_scores,
+                totalParticipants: total_participants,
                 correctAnswer: question.correctAnswer,
                 explanation: question.explanation,
                 hostScreen: HostScreen.QUESTION_RESULTS,
@@ -198,7 +199,8 @@ export default class TransitionWorker {
         const pub_sub_message_to_spectator: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_SPECTATOR,
             payload: {
-                scores: score_of_all_participants,
+                topScores: top_scores,
+                totalParticipants: total_participants,
                 correctAnswer: question.correctAnswer,
                 explanation: question.explanation,
                 spectatorScreen: SpectatorScreen.QUESTION_RESULTS,

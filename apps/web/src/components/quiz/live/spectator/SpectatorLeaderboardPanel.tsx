@@ -1,20 +1,17 @@
-import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import LeaderboardPanelComponent, { Player } from '../common/LeaderboardPanelComponent';
 
 export default function SpectatorLeaderboardPanel() {
-    const { participants } = useLiveParticipantsStore();
+    const { topLeaderboard } = useLeaderboardStore();
 
-    const sortedParticipants = [...participants].sort((p1, p2) => p2.totalScore - p1.totalScore);
+    const emptyScoreBoard = topLeaderboard.length > 0 && topLeaderboard[0]?.totalScore === 0;
 
-    const emptyScoreBoard =
-        sortedParticipants.length > 0 && sortedParticipants[0]?.totalScore === 0;
-
-    const players: Player[] = sortedParticipants.map((p, index) => ({
-        id: p.id,
-        imageUrl: p.avatar!,
-        name: p.nickname,
-        rank: index + 1,
-        score: p.totalScore,
+    const players: Player[] = topLeaderboard.map((entry) => ({
+        id: entry.id,
+        imageUrl: entry.avatar ?? '/default-avatar.png',
+        name: entry.nickname,
+        rank: entry.rank,
+        score: entry.totalScore,
     }));
 
     return (

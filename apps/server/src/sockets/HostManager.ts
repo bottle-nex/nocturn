@@ -443,53 +443,62 @@ export default class HostManager {
             return;
         }
 
-        // Compute finalRank for all non-kicked participants before reading scores
-        const allParticipants = await this.redis_cache.get_all_participants(game_session_id, [
-            'totalScore',
-            'isKicked',
-        ]);
+        // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
+        const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
 
-        const rankable = allParticipants
-            .filter((p) => !p.isKicked)
-            .sort((a, b) => (b.totalScore as number) - (a.totalScore as number));
+        // Check isKicked for each participant via pipeline
+        const participants_key = this.redis_cache.get_participants_key(game_session_id);
+        const kicked_pipeline = this.redis_cache.redis_cache.pipeline();
+        for (const entry of sorted_leaderboard) {
+            kicked_pipeline.hget(participants_key, `${entry.id}:isKicked`);
+        }
+        const kicked_results = await kicked_pipeline.exec();
 
+        // Filter out kicked participants
+        const rankable = sorted_leaderboard.filter((_, index) => {
+            const kicked_val = kicked_results?.[index]?.[1] as string | null;
+            let isKicked = false;
+            try {
+                isKicked = kicked_val ? JSON.parse(kicked_val) : false;
+            } catch {
+                // ignore parse errors
+            }
+            return !isKicked;
+        });
+
+        // Assign final ranks with tie handling (same score = same rank)
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
-            if (
-                i > 0 &&
-                (rankable[i].totalScore as number) < (rankable[i - 1].totalScore as number)
-            ) {
+            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
-            await this.redis_cache.set_participant(game_session_id, rankable[i].id as string, {
+            await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
             this.database_queue.update_participant(
-                rankable[i].id as string,
+                rankable[i]!.id,
                 { finalRank: currentRank },
                 game_session_id,
             );
         }
 
-        const scores = await this.redis_cache.get_all_participants(game_session_id, [
-            'correctAnswers',
-            'finalRank',
-            'isKicked',
-            'longestStreak',
-            'totalScore',
-        ]);
+        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
+        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
+        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
 
-        const final_scores = scores.filter((s) => !s.isKicked);
-
-        const rankers = scores
-            .filter((p): p is typeof p & { finalRank: number } => typeof p.finalRank === 'number')
-            .sort((a, b) => a.finalRank - b.finalRank)
-            .slice(0, 3);
+        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
+            id: entry.id,
+            totalScore: entry.totalScore,
+            finalRank: index + 1,
+            nickname: entry.nickname,
+            avatar: entry.avatar,
+        }));
 
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
             payload: {
-                scores: final_scores,
+                topScores: top_scores,
+                totalParticipants: total_participants,
                 rankers: rankers,
                 participantScreen: ParticipantScreen.QUIZ_RESULTS,
                 currentPhase: QuizPhase.QUIZ_RESULTS,

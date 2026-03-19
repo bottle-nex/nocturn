@@ -1,4 +1,5 @@
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import { useLiveQuizGlobalChatStore } from '@/store/live-quiz/useLiveQuizGlobalChatStore';
 import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
@@ -99,7 +100,14 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null) return;
 
         const message = payload as {
-            scores: unknown[];
+            topScores: {
+                id: string;
+                totalScore: number;
+                rank: number;
+                nickname: string;
+                avatar: string | null;
+            }[];
+            totalParticipants: number;
             rankers: unknown[];
             participantScreen: ParticipantScreenEnum;
             hostScreen: HostScreenEnum;
@@ -108,6 +116,10 @@ export class SubscribeEventHandlers {
             quizEndScreen: QuizEndScreen;
         };
         const { updateGameSession } = useLiveQuizStore.getState();
+        const { setTopLeaderboard } = useLeaderboardStore.getState();
+
+        setTopLeaderboard(message.topScores);
+
         updateGameSession({
             quizEndScreen: message.quizEndScreen,
             hostScreen: message.hostScreen,
@@ -205,12 +217,14 @@ export class SubscribeEventHandlers {
     static handleSpectatorIncomingResultsPhase(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
         const resultsPhasePayload = payload as {
-            scores: {
+            topScores: {
                 id: string;
                 totalScore: number;
-                finalRank: number;
-                longestStreak: number;
+                rank: number;
+                nickname: string;
+                avatar: string | null;
             }[];
+            totalParticipants: number;
             responses: {
                 id: string;
                 participantId: string;
@@ -225,9 +239,10 @@ export class SubscribeEventHandlers {
         };
 
         const { updateGameSession, updateCurrentQuestion } = useLiveQuizStore.getState();
-        const { updateParticipants, setResponses } = useLiveParticipantsStore.getState();
+        const { setTopLeaderboard } = useLeaderboardStore.getState();
+        const { setResponses } = useLiveParticipantsStore.getState();
 
-        updateParticipants(resultsPhasePayload.scores);
+        setTopLeaderboard(resultsPhasePayload.topScores);
         setResponses(resultsPhasePayload.responses);
 
         updateCurrentQuestion({
@@ -328,16 +343,23 @@ export class SubscribeEventHandlers {
     static handleHostIncomingResultsPhase(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
         const resultsPhasePayload = payload as {
-            scores: { id: string; totalScore: number }[];
+            topScores: {
+                id: string;
+                totalScore: number;
+                rank: number;
+                nickname: string;
+                avatar: string | null;
+            }[];
+            totalParticipants: number;
             correctAnswer: number;
             hostScreen: HostScreenEnum;
             startTime: number;
         };
 
-        const { updateParticipants } = useLiveParticipantsStore.getState();
+        const { setTopLeaderboard } = useLeaderboardStore.getState();
         const { updateGameSession } = useLiveQuizStore.getState();
 
-        updateParticipants(resultsPhasePayload.scores);
+        setTopLeaderboard(resultsPhasePayload.topScores);
 
         updateGameSession({
             hostScreen: resultsPhasePayload.hostScreen,
@@ -404,13 +426,16 @@ export class SubscribeEventHandlers {
 
     static handleParticipantIncomingResultsPhase(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
+        console.log("payload for participant incoming results phase is : ", payload);
         const resultsPhasePayload = payload as {
-            scores: {
+            topScores: {
                 id: string;
                 totalScore: number;
-                finalRank: number;
-                longestStreak: number;
+                rank: number;
+                nickname: string;
+                avatar: string | null;
             }[];
+            totalParticipants: number;
             responses: {
                 id: string;
                 participantId: string;
@@ -425,9 +450,10 @@ export class SubscribeEventHandlers {
         };
 
         const { updateGameSession, updateCurrentQuestion } = useLiveQuizStore.getState();
-        const { updateParticipants, setResponses } = useLiveParticipantsStore.getState();
+        const { setTopLeaderboard } = useLeaderboardStore.getState();
+        const { setResponses } = useLiveParticipantsStore.getState();
 
-        updateParticipants(resultsPhasePayload.scores);
+        setTopLeaderboard(resultsPhasePayload.topScores);
         setResponses(resultsPhasePayload.responses);
 
         updateCurrentQuestion({
@@ -440,6 +466,17 @@ export class SubscribeEventHandlers {
             currentPhase: QuizPhaseEnum.SHOW_RESULTS,
             phaseStartTime: resultsPhasePayload.startTime,
         });
+    }
+
+    static handleParticipantIndividualRank(payload: unknown) {
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as {
+            myRank: number;
+            myScore: number;
+            totalParticipants: number;
+        };
+        const { setMyRank } = useLeaderboardStore.getState();
+        setMyRank(message.myRank, message.myScore, message.totalParticipants);
     }
 
     static handleHostLaunchQuestion() {
