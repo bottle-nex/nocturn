@@ -22,9 +22,6 @@ interface AiChatStore {
     preview: boolean;
     setPreview: (preview: boolean) => void;
 
-    expanded: boolean;
-    setExpanded: (value: boolean) => void;
-
     typingMessageIds: string[];
     addTypingMessage: (id: string) => void;
     removeTypingMessage: (id: string) => void;
@@ -56,9 +53,6 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
 
     preview: false,
     setPreview: (preview: boolean) => set({ preview }),
-
-    expanded: false,
-    setExpanded: (value: boolean) => set({ expanded: value }),
 
     typingMessageIds: [],
     addTypingMessage: (id: string) =>
