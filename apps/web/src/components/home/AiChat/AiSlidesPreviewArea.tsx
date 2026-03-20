@@ -18,7 +18,7 @@ export default function AiSlidesPreviewArea({
     onClose,
     selectedTemplate,
 }: AiSlidesPreviewAreaProps) {
-    const { quiz } = useAiChatStore();
+    const { quiz, messages } = useAiChatStore();
     // const { templates } = useQuizTemplatesStore();
     const [showCancelPanel, setShowCancelPanel] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,9 @@ export default function AiSlidesPreviewArea({
                 <h1 className="dark:text-light-alpha text-dark-alpha">{quiz?.title}</h1>
                 <div className="flex items-center gap-x-2">
                     <Button
-                        onClick={() => setShowCancelPanel(true)}
+                        onClick={() => {
+                            messages.length > 0 ? setShowCancelPanel(true) : onClose();
+                        }}
                         className={cn(
                             'rounded-full',
                             'bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-200/80 dark:hover:bg-neutral-800/80',
@@ -80,7 +82,7 @@ export default function AiSlidesPreviewArea({
                     ))}
             </div>
 
-            {showCancelPanel && (
+            {showCancelPanel && messages.length > 0 && (
                 <CancelConfirmationPanel
                     panelRef={panelRef}
                     onBackdropClick={handleBackdropClick}

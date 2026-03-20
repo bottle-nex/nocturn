@@ -30,7 +30,6 @@ export default function AIChatBoxRevamp() {
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const { templates } = useQuizTemplatesStore();
-    const { expanded, setExpanded } = useAiChatStore();
 
     const {
         quiz,
@@ -106,6 +105,9 @@ export default function AIChatBoxRevamp() {
     }
 
     function handleOnContinue() {
+
+        if(!quiz) return;
+
         if (selectedTemplate) {
             useNewQuizStore.getState().setPendingTemplate(selectedTemplate);
         }
