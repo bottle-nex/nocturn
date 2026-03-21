@@ -12,7 +12,7 @@ import { TemplateType } from '@/types/prisma-types';
 import { CustomResponse } from '@nocturn/types';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { GET_QUIZ_TEMPLATES, GET_TUTORIAL_STATUS_URL } from 'routes/api_routes';
+import { GET_LAST_AI_CHAT, GET_QUIZ_TEMPLATES, GET_TUTORIAL_STATUS_URL } from 'routes/api_routes';
 import { RiVipCrownFill } from 'react-icons/ri';
 import Link from 'next/link';
 import { RxCross1 } from 'react-icons/rx';
@@ -22,7 +22,7 @@ export default function Home() {
     const [showBanner, setShowBanner] = useState<boolean>(true);
     const { session, tutorialComplete, setTutorialComplete } = useUserSessionStore();
     const { setTemplates } = useQuizTemplatesStore();
-    const { quiz, preview, setPreview } = useAiChatStore();
+    const { quiz, preview, setPreview, setQuiz, setMessages, setSessionId } = useAiChatStore();
     const [trashOpen, setTrashOpen] = useState<boolean>(false);
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(true);
 
@@ -72,6 +72,30 @@ export default function Home() {
             fetchTemplates();
         }
     }, [session?.user?.token, setTemplates]);
+
+    useEffect(() => {
+        async function getLastAIChat() {
+            try {
+                const { data } = await axios.get(GET_LAST_AI_CHAT,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.user.token}`
+                        },
+                    },
+                );
+
+                if (!data.success) return;
+
+                setQuiz(data.data.quiz || null);
+                setMessages(data.data.messages);
+                setSessionId(data.data.id);
+
+            } catch {}
+        }
+        if (session?.user?.token) {
+            getLastAIChat();
+        }
+    }, []);
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {

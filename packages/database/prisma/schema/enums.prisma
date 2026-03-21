@@ -117,6 +117,8 @@ enum AgentStep {
     GENERATE
     REVISE
     DONE
+    CANCELLED
+    ACCEPTED
 }
 
 enum AiQuizChatRole {

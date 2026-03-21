@@ -11,12 +11,14 @@ interface AiSlidesPreviewAreaProps {
     onContinue: () => void;
     onClose: () => void;
     selectedTemplate: TemplateType;
+    disableButtons: boolean;
 }
 
 export default function AiSlidesPreviewArea({
     onContinue,
     onClose,
     selectedTemplate,
+    disableButtons = false,
 }: AiSlidesPreviewAreaProps) {
     const { quiz, messages } = useAiChatStore();
     // const { templates } = useQuizTemplatesStore();
@@ -42,6 +44,7 @@ export default function AiSlidesPreviewArea({
                         onClick={() => {
                             messages.length > 0 ? setShowCancelPanel(true) : onClose();
                         }}
+                        disabled={disableButtons}
                         className={cn(
                             'rounded-full',
                             'bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-200/80 dark:hover:bg-neutral-800/80',
@@ -52,6 +55,7 @@ export default function AiSlidesPreviewArea({
                     </Button>
                     <Button
                         onClick={onContinue}
+                        disabled={disableButtons}
                         className={cn(
                             'rounded-full',
                             'bg-dark-alpha/90 dark:bg-light-base hover:bg-dark-alpha dark:hover:bg-light-base/80',

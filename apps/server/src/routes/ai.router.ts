@@ -6,8 +6,12 @@ import generateNewQuizController from '../controllers/ai-controller/generateNewQ
 
 // <---------------------- MIDDLEWARES ---------------------->
 import authMiddleware from '../middlewares/auth.middleware';
+import acceptOrDeclineQuiz from '../controllers/ai-controller/acceptOrDeclineQuiz';
+import getLastAIChatController from '../controllers/ai-controller/getLastAIChatController';
 
 // <---------------------- AI-ROUTES ---------------------->
 router.post('/ai/generate-new-quiz', authMiddleware, generateNewQuizController);
+router.post('/ai/accept-or-decline-generated-quiz', authMiddleware, acceptOrDeclineQuiz);
+router.get('/ai/get-last-ai-chat', authMiddleware, getLastAIChatController);
 
 export default router;
