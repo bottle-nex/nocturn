@@ -82,7 +82,12 @@ class UserQuizAction {
                 { code, email, name, force },
                 { withCredentials: true },
             );
+
             if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
+                if (force) {
+                    toast.error('Could not join as new participant. Please try again.');
+                    return null;
+                }
                 setActive(true);
                 setData(data.data.message, data.data.join_back, data.data.join_as || null);
                 setJoinData(name || null, email, code);
@@ -124,6 +129,10 @@ class UserQuizAction {
             );
 
             if (data.success && data.error?.code === 'ALREADY_A_MEMBER') {
+                if (force) {
+                    toast.error('Could not join as new participant. Please try again.');
+                    return null;
+                }
                 setActive(true);
                 setData(data.data.message, data.data.join_back, data.data.join_as || null);
                 setJoinData(null, null, code);
@@ -150,18 +159,12 @@ class UserQuizAction {
         try {
             if (!quizId) {
                 toast.error('Quiz ID is missing');
-                return {
-                    quizId: '',
-                    success: false,
-                };
+                return { quizId: '', success: false };
             }
 
             if (!spectatorToken) {
                 toast.error('Spectator token is missing');
-                return {
-                    quizId: '',
-                    success: false,
-                };
+                return { quizId: '', success: false };
             }
 
             const { data } = await axios.get(
@@ -171,25 +174,15 @@ class UserQuizAction {
 
             if (data.success) {
                 toast.success(data.message);
-                return {
-                    quizId: data.quizId,
-                    success: data.success,
-                };
+                return { quizId: data.quizId, success: data.success };
             }
 
             toast.error(data.message);
-            return {
-                quizId: '',
-                success: false,
-            };
+            return { quizId: '', success: false };
         } catch (err) {
             console.error('Error while joining quiz via URL', err);
             toast.error('Failed to join quiz. Please try again.');
-
-            return {
-                quizId: '',
-                success: false,
-            };
+            return { quizId: '', success: false };
         }
     }
 }

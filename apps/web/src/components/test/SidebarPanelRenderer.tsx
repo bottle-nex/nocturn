@@ -21,7 +21,7 @@ function renderPanel(activeTab: SidebarTab) {
         case SidebarTab.FAVORITES:
             return <FavouriteQuizzesPanel />;
         default:
-            return;
+            return <div></div>;
     }
 }
 

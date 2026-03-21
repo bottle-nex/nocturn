@@ -110,7 +110,6 @@ function JoinQuizOverlay({
                         <RxCross2 size={15} strokeWidth={0.8} />
                     </motion.button>
                 </div>
-
                 <section className="p-6 flex flex-col gap-y-5 text-dark-alpha dark:text-light-base">
                     <div>
                         <div className="text-xl font-bold text-dark-alpha/80 dark:text-light-base/80">
@@ -120,7 +119,6 @@ function JoinQuizOverlay({
                             Enter your details to participate
                         </p>
                     </div>
-
                     <div className="flex flex-col gap-y-1">
                         <Label htmlFor="participant-name" className="text-sm font-semibold ml-0.5">
                             Name <span className="text-neutral-400 font-normal">(optional)</span>
@@ -134,7 +132,6 @@ function JoinQuizOverlay({
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
-
                     <div className="flex flex-col gap-y-1">
                         <Label
                             htmlFor="participant-email"
@@ -161,13 +158,12 @@ function JoinQuizOverlay({
                             </span>
                         )}
                     </div>
-
                     <Button
                         disabled={!validation?.valid || !email || loading}
                         onClick={() =>
                             email && validation?.valid && onJoin(email, name.trim() || undefined)
                         }
-                        className="bg-dark-alpha text-light-alpha hover:bg-dark-base cursor-pointer disabled:bg-neutral-700 disabled:opacity-100! w-full p-5"
+                        className="bg-light-base text-dark-alpha hover:bg-light-alpha cursor-pointer disabled:bg-neutral-700 disabled:opacity-100! w-full p-5 inset-shadow-xs inset-shadow-black/20"
                     >
                         {loading ? 'Joining...' : 'Join quiz'}
                         <MdOutlineChevronRight />
@@ -216,7 +212,6 @@ function JoinQuizPill({
             >
                 <IoCloseOutline size={17} />
             </motion.div>
-
             {loading ? (
                 <div className="h-10 w-10 flex items-center justify-center shrink-0">
                     <div className="h-5 w-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -239,7 +234,6 @@ function JoinQuizPill({
                     <IoIosArrowForward size={18} />
                 </motion.div>
             )}
-
             <div className="flex-1 pl-3.5 overflow-hidden">
                 <AnimatePresence mode="wait" initial={false}>
                     {isOpen ? (
@@ -281,12 +275,12 @@ export default function JoinQuizButton() {
     const [step, setStep] = useState<0 | 1 | 2>(0);
     const [code, setCode] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const [isForceJoin, setIsForceJoin] = useState<boolean>(false);
     const router = useRouter();
     const { active, setActive, setData, setJoinData } = useRejoinPanelStore();
 
     function handleJoinQuiz() {
         if (!code.trim()) return;
-
         const type =
             code.trim().length === 12
                 ? 'participant'
@@ -294,7 +288,6 @@ export default function JoinQuizButton() {
                   ? 'spectator'
                   : null;
         if (!type) return;
-
         if (type === 'participant') {
             setStep(2);
         } else if (type === 'spectator') {
@@ -302,14 +295,14 @@ export default function JoinQuizButton() {
         }
     }
 
-    async function makeBackendCall(email?: string, name?: string) {
+    async function makeBackendCall(email?: string, name?: string, force?: boolean) {
         if (!code.trim()) return;
         setLoading(true);
+        setStep(0);
         try {
-            const quizId = await userQuizAction.joinQuiz(code.trim(), email, name);
-            setCode('');
-
+            const quizId = await userQuizAction.joinQuiz(code.trim(), email, name, force);
             if (!quizId) return;
+            setCode('');
             router.push(`/live/${quizId}`);
         } catch (err) {
             console.error('Failed to join quiz', err);
@@ -322,6 +315,17 @@ export default function JoinQuizButton() {
         setActive(false);
         setData(null, null, null);
         setJoinData(null, null, null);
+        setStep(0);
+        setCode('');
+        setIsForceJoin(false);
+    }
+
+    function handleJoinAsNew(savedCode: string) {
+        setName('');
+        setEmail(null);
+        setCode(savedCode);
+        setIsForceJoin(true);
+        setStep(2);
     }
 
     return (
@@ -331,34 +335,43 @@ export default function JoinQuizButton() {
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className="cursor-pointer select-none scale-95"
         >
-            {step === 2 ? (
-                <JoinQuizOverlay
-                    onJoin={(email, name) => makeBackendCall(email, name)}
-                    onClose={() => {
-                        setStep(0);
-                        setCode('');
-                    }}
-                    name={name}
-                    setName={setName}
-                    loading={loading}
-                    email={email}
-                    setEmail={setEmail}
-                />
-            ) : (
-                <JoinQuizPill
-                    isOpen={step === 1}
-                    code={code}
-                    loading={loading}
-                    onOpen={() => setStep(1)}
-                    onClose={() => {
-                        setStep(0);
-                        setCode('');
-                    }}
-                    onCodeChange={setCode}
-                    onJoin={handleJoinQuiz}
-                />
+            {!active && (
+                <>
+                    {step === 2 ? (
+                        <JoinQuizOverlay
+                            onJoin={(email, name) => {
+                                makeBackendCall(email, name, isForceJoin);
+                                setIsForceJoin(false);
+                            }}
+                            onClose={() => {
+                                setStep(0);
+                                setCode('');
+                                setIsForceJoin(false);
+                            }}
+                            name={name}
+                            setName={setName}
+                            loading={loading}
+                            email={email}
+                            setEmail={setEmail}
+                        />
+                    ) : (
+                        <JoinQuizPill
+                            isOpen={step === 1}
+                            code={code}
+                            loading={loading}
+                            onOpen={() => setStep(1)}
+                            onClose={() => {
+                                setStep(0);
+                                setCode('');
+                            }}
+                            onCodeChange={setCode}
+                            onJoin={handleJoinQuiz}
+                        />
+                    )}
+                </>
             )}
-            {active && <RejoinDetectedPanel deny={handleDeny} />}
+
+            {active && <RejoinDetectedPanel deny={handleDeny} onJoinAsNew={handleJoinAsNew} />}
         </motion.div>
     );
 }
