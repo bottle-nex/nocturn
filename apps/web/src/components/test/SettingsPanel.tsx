@@ -1,10 +1,8 @@
 'use client';
-
 import { useSettingsStore, SETTINGS_TAB } from '@/store/home/useSettingsStore';
 import ProfileSettingsComponent from '../revamp/SettingsPanelComponent/ProfileSettingsComponent';
 import ThemeSettingsComponent from '../revamp/SettingsPanelComponent/ThemeSettingsComponent';
 import { cn } from '@/lib/utils';
-import GameSettingsComponent from '../revamp/SettingsPanelComponent/GameSettingsComponent';
 import WalletSettingsComponent from '../revamp/SettingsPanelComponent/WalletSettingsComponent';
 
 export default function SettingsPanel() {
@@ -16,12 +14,10 @@ export default function SettingsPanel() {
                 return <ProfileSettingsComponent />;
             case SETTINGS_TAB.THEME:
                 return <ThemeSettingsComponent />;
-            case SETTINGS_TAB.GAME:
-                return <GameSettingsComponent />;
             case SETTINGS_TAB.WALLET:
                 return <WalletSettingsComponent />;
             default:
-                return null;
+                return <div></div>;
         }
     };
     const tabClass = (tab: SETTINGS_TAB) =>
@@ -60,12 +56,6 @@ export default function SettingsPanel() {
                     className={tabClass(SETTINGS_TAB.THEME)}
                 >
                     Theme
-                </div>
-                <div
-                    onClick={() => setActiveSettingsTab(SETTINGS_TAB.GAME)}
-                    className={tabClass(SETTINGS_TAB.GAME)}
-                >
-                    Game
                 </div>
                 <div
                     onClick={() => setActiveSettingsTab(SETTINGS_TAB.WALLET)}
