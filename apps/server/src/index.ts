@@ -30,9 +30,38 @@ app.get('/health', (_req, res) => {
 });
 app.use('/api/v1', router);
 
-new WebsocketServer(server);
+const wsServer = new WebsocketServer(server);
 
 server.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
     await prisma.$queryRawUnsafe('SELECT 1').catch(() => {});
 });
+
+function gracefulShutdown(signal: string) {
+    console.log(`${signal} received. Starting graceful shutdown...`);
+
+    server.close();
+
+    wsServer.wss.clients.forEach((ws) => {
+        if (ws.readyState === ws.OPEN) {
+            ws.send(
+                JSON.stringify({
+                    type: 'SERVER_RESTARTING',
+                    payload: {
+                        message: 'Server is restarting, you will be reconnected automatically.',
+                    },
+                }),
+            );
+        }
+    });
+
+    setTimeout(() => {
+        wsServer.wss.clients.forEach((ws) => {
+            ws.close(1012, 'Service restart');
+        });
+        process.exit(0);
+    }, 2000);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

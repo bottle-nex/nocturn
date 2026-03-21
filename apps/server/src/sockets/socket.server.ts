@@ -35,7 +35,7 @@ import { env } from '../configs/env';
 import CollaboratorsStateManager from './CollaboratorsStateManager';
 
 export default class WebsocketServer {
-    private wss: WebSocketServer;
+    public wss: WebSocketServer;
     private socket_mapping: Map<string, CustomWebSocket> = new Map(); // Map<ws.id, ws>
     private session_participants_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_spectators_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>

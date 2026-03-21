@@ -107,7 +107,7 @@ export default function ThemeSettingsComponent() {
                             height={0}
                             sizes="100vw"
                             className={cn(
-                                'w-auto h-auto max-w-full rounded-xl transition-all duration-200 shadow-xs shadow-black/5',
+                                'w-auto h-auto max-w-full rounded-lg transition-all duration-200 shadow-xs shadow-black/5',
                                 activeTheme === key
                                     ? 'ring-2 ring-alpha'
                                     : 'hover:ring-1 hover:ring-alpha',

@@ -3,6 +3,15 @@ import WebSocketClient from '@/socket/socket.client';
 let client: WebSocketClient | null = null;
 let currentQuizId: string | null = null;
 
+function getWsUrl(quizId: string): string {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+    const url = new URL(backendUrl);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    url.pathname = '/ws';
+    url.searchParams.set('quizId', quizId);
+    return url.toString();
+}
+
 export function getWebSocketClient(quizId: string) {
     if (client && currentQuizId === quizId) {
         return client;
@@ -12,7 +21,7 @@ export function getWebSocketClient(quizId: string) {
         client.close();
         client = null;
     }
-    client = new WebSocketClient(`ws://localhost:8080/ws?quizId=${quizId}`);
+    client = new WebSocketClient(getWsUrl(quizId));
     currentQuizId = quizId;
     return client;
 }
