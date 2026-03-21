@@ -53,6 +53,8 @@ export const GET_SELECTED_QUESTION_DATA = QUIZ_URL + '/get-selected-question-dat
 export const SPECTATOR_JOIN_QUIZ_URL_VIA_LINK = QUIZ_URL + '/spectator-join-quiz-via-link';
 
 export const GENERATE_NEW_QUIZ = AI_URL + '/generate-new-quiz';
+export const ACCEPT_OR_DECLINE_GENERATED_QUIZ = AI_URL + '/accept-or-decline-generated-quiz';
+export const GET_LAST_AI_CHAT = AI_URL + '/get-last-ai-chat';
 
 export const SPECTATOR_URL = QUIZ_URL + '/spectators';
 export const PARTICIPANT_URL = QUIZ_URL + '/participants';

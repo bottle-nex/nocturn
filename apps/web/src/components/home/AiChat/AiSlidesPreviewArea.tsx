@@ -11,14 +11,16 @@ interface AiSlidesPreviewAreaProps {
     onContinue: () => void;
     onClose: () => void;
     selectedTemplate: TemplateType;
+    disableButtons: boolean;
 }
 
 export default function AiSlidesPreviewArea({
     onContinue,
     onClose,
     selectedTemplate,
+    disableButtons = false,
 }: AiSlidesPreviewAreaProps) {
-    const { quiz } = useAiChatStore();
+    const { quiz, messages } = useAiChatStore();
     // const { templates } = useQuizTemplatesStore();
     const [showCancelPanel, setShowCancelPanel] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
@@ -39,7 +41,14 @@ export default function AiSlidesPreviewArea({
                 <h1 className="dark:text-light-alpha text-dark-alpha">{quiz?.title}</h1>
                 <div className="flex items-center gap-x-2">
                     <Button
-                        onClick={() => setShowCancelPanel(true)}
+                        onClick={() => {
+                            if (messages.length > 0) {
+                                setShowCancelPanel(true);
+                            } else {
+                                onClose();
+                            }
+                        }}
+                        disabled={disableButtons}
                         className={cn(
                             'rounded-full',
                             'bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-200/80 dark:hover:bg-neutral-800/80',
@@ -50,6 +59,7 @@ export default function AiSlidesPreviewArea({
                     </Button>
                     <Button
                         onClick={onContinue}
+                        disabled={disableButtons}
                         className={cn(
                             'rounded-full',
                             'bg-dark-alpha/90 dark:bg-light-base hover:bg-dark-alpha dark:hover:bg-light-base/80',
@@ -80,7 +90,7 @@ export default function AiSlidesPreviewArea({
                     ))}
             </div>
 
-            {showCancelPanel && (
+            {showCancelPanel && messages.length > 0 && (
                 <CancelConfirmationPanel
                     panelRef={panelRef}
                     onBackdropClick={handleBackdropClick}

@@ -29,6 +29,7 @@ export default function AIChatBoxRevamp() {
     const [value, setValue] = useState('');
     const [prompt, setPrompt] = useState('');
     const [isFocused, setIsFocused] = useState(false);
+    const [disabled, setDisabled] = useState<boolean>(false);
     const { templates } = useQuizTemplatesStore();
 
     const {
@@ -104,16 +105,34 @@ export default function AIChatBoxRevamp() {
         }
     }
 
-    function handleOnContinue() {
+    async function handleOnContinue() {
+        if (!quiz) return;
+
         if (selectedTemplate) {
             useNewQuizStore.getState().setPendingTemplate(selectedTemplate);
         }
+        setDisabled(true);
+        await AiBackendAction.handle_quiz_accept_or_decline(
+            session?.user.token,
+            sessionId || '',
+            false,
+        );
+        setDisabled(true);
+        resetChat();
+        setExpanded(false);
         router.push(`/new/${quiz?.id}`);
     }
 
-    function handleOnClose() {
+    async function handleOnClose() {
         resetChat();
         setExpanded(false);
+        setDisabled(true);
+        await AiBackendAction.handle_quiz_accept_or_decline(
+            session?.user.token,
+            sessionId || '',
+            true,
+        );
+        setDisabled(false);
     }
 
     function handleOnClick() {
@@ -219,6 +238,7 @@ export default function AIChatBoxRevamp() {
                     onClose={handleOnClose}
                     onContinue={handleOnContinue}
                     selectedTemplate={selectedTemplate}
+                    disableButtons={disabled}
                 />
             </div>
         </OpacityBackground>

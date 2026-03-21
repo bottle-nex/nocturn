@@ -85,6 +85,8 @@ export enum AgentStep {
   GENERATE = "GENERATE",
   REVISE = "REVISE",
   DONE = "DONE",
+  CANCELLED = "CANCELLED",
+  ACCEPTED = "ACCEPTED",
 }
 
 export enum AiQuizChatRole {

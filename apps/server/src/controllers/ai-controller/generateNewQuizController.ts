@@ -28,14 +28,17 @@ export default async function generateNewQuizController(req: Request, res: Respo
         let session;
         if (sessionId) {
             session = await prisma.aiQuizChatSession.findUnique({
-                where: { id: sessionId },
+                where: {
+                    id: sessionId,
+                    userId: user.id,
+                },
             });
         }
 
         if (!session || session.userId !== user.id) {
             session = await prisma.aiQuizChatSession.create({
                 data: {
-                    userId: user.id.toString(),
+                    userId: user.id,
                     step: AgentStep.START,
                     instruction: instruction,
                 },
