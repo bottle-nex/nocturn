@@ -166,13 +166,13 @@ export default function HomePanel() {
                         <div className="gap-6 lg:grid-cols-3 grid">
                             {loading
                                 ? Array.from({ length: 3 }).map((_, i) => (
-                                    <RecentlyViewedCard key={i} loading />
-                                ))
+                                      <RecentlyViewedCard key={i} loading />
+                                  ))
                                 : recentlyViewed
-                                    .slice(0, 3)
-                                    .map((quiz) => (
-                                        <RecentlyViewedCard key={quiz.id} quiz={quiz} />
-                                    ))}
+                                      .slice(0, 3)
+                                      .map((quiz) => (
+                                          <RecentlyViewedCard key={quiz.id} quiz={quiz} />
+                                      ))}
                         </div>
                     </section>
                 )}
