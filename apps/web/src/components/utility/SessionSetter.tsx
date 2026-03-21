@@ -45,6 +45,25 @@ export default function SessionSetter({ session }: SessionSetterProps) {
         setSession(session);
     }, [session, setSession]);
 
+    // Pick up X-Access-Token from any axios response (set by auth middleware when
+    // the access token has expired and the server auto-recovered via the refresh cookie)
+    useEffect(() => {
+        const interceptorId = axios.interceptors.response.use((response) => {
+            const newToken = response.headers['x-access-token'];
+            if (newToken) {
+                const { session: current, setSession: set } = useUserSessionStore.getState();
+                if (current?.user) {
+                    set({ ...current, user: { ...current.user, token: newToken } });
+                }
+            }
+            return response;
+        });
+
+        return () => {
+            axios.interceptors.response.eject(interceptorId);
+        };
+    }, []);
+
     // On mount: set refresh cookie + immediately get a fresh access token
     useEffect(() => {
         if (!session?.user?.token || hasInitialized.current) return;

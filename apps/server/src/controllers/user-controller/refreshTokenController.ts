@@ -18,13 +18,22 @@ export class RefreshTokenController {
             return;
         }
 
+        // Verify the JWT first — only clear the cookie if the token itself is bad
+        let decoded: { id: string; email: string };
         try {
-            const decoded = jwt.verify(token, env.SERVER_JWT_REFRESH_SECRET) as {
+            decoded = jwt.verify(token, env.SERVER_JWT_REFRESH_SECRET) as {
                 id: string;
                 email: string;
             };
+        } catch (error) {
+            console.error('error in refreshing the token: ', error);
+            res.clearCookie(NOCTURN_REFRESH_COOKIE_NAME, { path: '/' });
+            res.status(401).json({ message: 'Invalid or expired refresh token' });
+            return;
+        }
 
-            // Ensure the user still exists
+        // DB lookup and token generation — don't clear the cookie on transient errors
+        try {
             const user = await prisma.user.findUnique({
                 where: { id: decoded.id },
             });
@@ -59,10 +68,8 @@ export class RefreshTokenController {
 
             ResponseWriter.success(res, { token: accessToken }, 'Token refreshed successfully');
         } catch (error) {
-            // Token expired or invalid — clear the cookie
             console.error('error in refreshing the token: ', error);
-            res.clearCookie(NOCTURN_REFRESH_COOKIE_NAME, { path: '/' });
-            res.status(401).json({ message: 'Invalid or expired refresh token' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     }
 
@@ -94,7 +101,7 @@ export class RefreshTokenController {
         }
     }
 
-    static async logout(req: Request, res: Response) {
+    static async logout(_req: Request, res: Response) {
         res.clearCookie(NOCTURN_REFRESH_COOKIE_NAME, {
             httpOnly: true,
             secure: isProduction(),
