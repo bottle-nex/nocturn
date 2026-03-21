@@ -360,11 +360,17 @@ export default class JoinQuizController {
         const token = req.cookies?.[NOCTURN_COOKIE_NAME];
         if (!token) return true;
 
-        const decoded = jwt.verify(token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
+        let decoded: LiveGameTokenPayload;
+        try {
+            decoded = jwt.verify(token, env.SERVER_JWT_SECRET) as LiveGameTokenPayload;
+        } catch {
+            return true;
+        }
 
         if (quiz_id !== decoded.quizId) return true;
 
         if (decoded.role === current_user_type) {
+            if (force) return true;
             ResponseWriter.custom(
                 res,
                 true,

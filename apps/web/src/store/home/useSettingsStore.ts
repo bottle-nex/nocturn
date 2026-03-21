@@ -4,7 +4,6 @@ export enum SETTINGS_TAB {
     PROFILE = 'PROFILE',
     THEME = 'THEME',
     WALLET = 'WALLET',
-    GAME = 'GAME',
 }
 
 interface SettingsStoreData {
