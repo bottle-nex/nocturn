@@ -14,7 +14,7 @@ interface AiChatStore {
     appendMultipleMessages: (messages: AiQuizMessage[]) => void;
 
     quiz: QuizType | null;
-    setQuiz: (quiz: QuizType) => void;
+    setQuiz: (quiz: QuizType | null) => void;
 
     loading: boolean;
     setLoading: (loading: boolean) => void;
@@ -46,7 +46,7 @@ export const useAiChatStore = create<AiChatStore>((set, get) => ({
     },
 
     quiz: null,
-    setQuiz: (quiz: QuizType) => set({ quiz }),
+    setQuiz: (quiz: QuizType | null) => set({ quiz }),
 
     loading: false,
     setLoading: (loading: boolean) => set({ loading }),

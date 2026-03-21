@@ -1,6 +1,7 @@
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { AiQuizMessage, QuizType, STREAM, stream } from '@nocturn/types';
-import { GENERATE_NEW_QUIZ } from 'routes/api_routes';
+import axios from 'axios';
+import { ACCEPT_OR_DECLINE_GENERATED_QUIZ, GENERATE_NEW_QUIZ } from 'routes/api_routes';
 
 export default class AiBackendAction {
     static async create_new_quiz(token: string, sessionId: string | null, instruction: string) {
@@ -98,4 +99,25 @@ export default class AiBackendAction {
             }
         }
     }
+
+    static async handle_quiz_accept_or_decline(token: string, sessionId: string, decline: false) {
+        try {
+
+            await axios.post(ACCEPT_OR_DECLINE_GENERATED_QUIZ,
+                {
+                    sessionId,
+                    decline: false,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+        } catch (error) {
+            console.error('error in continuing to this quiz');
+        }
+    }
+
 }

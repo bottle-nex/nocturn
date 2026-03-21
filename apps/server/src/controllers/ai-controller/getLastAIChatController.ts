@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import ResponseWriter from "../../class/response_writer";
-import { prisma } from "@nocturn/database";
+import { AgentStep, prisma } from "@nocturn/database";
 
 export default async function getLastAIChatController(req: Request, res: Response) {
     try {
-
         const user = req.user;
         if(!user) {
             ResponseWriter.not_authorized(res);
@@ -30,10 +29,11 @@ export default async function getLastAIChatController(req: Request, res: Respons
                     }
                 },
                 quiz: true,
+                step: true,
             },
         });
         
-        if(!session) {
+        if(!session || session.step === AgentStep.ACCEPTED || session.step === AgentStep.CANCELLED) {
             ResponseWriter.custom(
                 res,
                 true,
@@ -44,9 +44,11 @@ export default async function getLastAIChatController(req: Request, res: Respons
             return;
         }
 
+        const { step, ...sessionWithoutStep } = session;
+
         ResponseWriter.success(
             res,
-            session,
+            sessionWithoutStep,
             'session fetched successfully',
         );
         return;
