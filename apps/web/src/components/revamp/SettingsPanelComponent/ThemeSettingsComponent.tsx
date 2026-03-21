@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { Divider } from './ProfileSettingsComponent';
+import SettingsHeaderComponent from './SettingsUtility/SettingsHeaderComponent';
 
 type Theme = 'system' | 'light' | 'dark';
 
@@ -85,14 +86,10 @@ export default function ThemeSettingsComponent() {
             ref={containerRef}
             className="w-full mx-auto py-6 flex flex-col gap-6 rounded-xl mt-1 custom-scrollbar ring-1 ring-black/10 dark:ring-light-base/10 bg-light-base dark:bg-[#0F0F0F]"
         >
-            <div className="flex flex-col px-8 -space-y-0.5">
-                <h2 className="text-[17px] text-dark-base/80 dark:text-light-base/70 tracking-normal">
-                    Theme Settings
-                </h2>
-                <p className="text-[13px] text-dark-base/60 dark:text-white/35 tracking-wide">
-                    This only applies to your logged in dashboard
-                </p>
-            </div>
+            <SettingsHeaderComponent
+                title="Theme Settings"
+                description="This only applies to your logged in dashboard"
+            />
 
             <Divider />
 

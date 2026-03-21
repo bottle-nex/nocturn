@@ -128,10 +128,10 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             data-lenis-prevent
         >
             <div>
-                <div className="fixed top-10 -left-4">
+                <div className="-mt-9 -ml-4">
                     <AppLogo size={130} withText textColor="dark:text-light-base text-dark-base" />
                 </div>
-                <section className="ml-4 mt-24">
+                <section className="ml-4 -mt-10">
                     <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
                     <section className="flex flex-col gap-y-2 mt-2 px-4">
@@ -257,10 +257,6 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             />
                             <span className="text-base font">{session.user.name}</span>
                         </section>
-
-                        {/* <section>
-                            <DarkModeToggle />
-                        </section> */}
                     </div>
                 )}
             </section>
