@@ -76,26 +76,27 @@ export default function Home() {
     useEffect(() => {
         async function getLastAIChat() {
             try {
-                const { data } = await axios.get(GET_LAST_AI_CHAT,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${session?.user.token}`
-                        },
+                const { data } = await axios.get(GET_LAST_AI_CHAT, {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.token}`,
                     },
-                );
+                });
 
                 if (!data.success) return;
 
                 setQuiz(data.data.quiz || null);
                 setMessages(data.data.messages);
                 setSessionId(data.data.id);
-
-            } catch {}
+            } catch {
+                console.error('cannot find any active chat');
+            }
         }
         if (session?.user?.token) {
             getLastAIChat();
         }
-    }, []);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session?.user.token]);
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {

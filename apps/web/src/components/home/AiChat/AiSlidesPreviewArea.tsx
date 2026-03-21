@@ -42,7 +42,11 @@ export default function AiSlidesPreviewArea({
                 <div className="flex items-center gap-x-2">
                     <Button
                         onClick={() => {
-                            messages.length > 0 ? setShowCancelPanel(true) : onClose();
+                            if (messages.length > 0) {
+                                setShowCancelPanel(true);
+                            } else {
+                                onClose();
+                            }
                         }}
                         disabled={disableButtons}
                         className={cn(

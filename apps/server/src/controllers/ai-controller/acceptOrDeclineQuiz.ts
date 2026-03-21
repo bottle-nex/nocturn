@@ -1,11 +1,9 @@
-import { Request, Response } from "express";
-import ResponseWriter from "../../class/response_writer";
-import { AgentStep , prisma } from "@nocturn/database";
-
+import { Request, Response } from 'express';
+import ResponseWriter from '../../class/response_writer';
+import { AgentStep, prisma } from '@nocturn/database';
 
 export default async function acceptOrDeclineQuiz(req: Request, res: Response) {
     try {
-
         const user = req.user;
         if (!user) {
             ResponseWriter.not_authorized(res);
@@ -18,10 +16,10 @@ export default async function acceptOrDeclineQuiz(req: Request, res: Response) {
             return;
         }
 
-	if(!decline || typeof decline !== 'boolean') {
-	    ResponseWriter.invalid_data(res, 'no command for declination found');
-	    return;
-	}
+        if (!decline || typeof decline !== 'boolean') {
+            ResponseWriter.invalid_data(res, 'no command for declination found');
+            return;
+        }
 
         await prisma.aiQuizChatSession.update({
             where: {
@@ -35,7 +33,6 @@ export default async function acceptOrDeclineQuiz(req: Request, res: Response) {
 
         ResponseWriter.success(res, {}, 'session completed');
         return;
-
     } catch (error) {
         console.error('error in setting quiz generation done: ', error);
         ResponseWriter.system_error(res);

@@ -61,8 +61,8 @@ export default function AIChatBoxRevamp() {
         quiz
             ? revampPlaceholders
             : messages.length > 0
-                ? difficultyPlaceholders
-                : newChatPlaceholders,
+              ? difficultyPlaceholders
+              : newChatPlaceholders,
     );
 
     useEffect(() => {
@@ -106,21 +106,33 @@ export default function AIChatBoxRevamp() {
     }
 
     async function handleOnContinue() {
-
         if (!quiz) return;
 
         if (selectedTemplate) {
             useNewQuizStore.getState().setPendingTemplate(selectedTemplate);
         }
-        await AiBackendAction.handle_quiz_accept_or_decline(session?.user.token, sessionId || '', false);
+        setDisabled(true);
+        await AiBackendAction.handle_quiz_accept_or_decline(
+            session?.user.token,
+            sessionId || '',
+            false,
+        );
+        setDisabled(true);
         resetChat();
         setExpanded(false);
         router.push(`/new/${quiz?.id}`);
     }
 
-    function handleOnClose() {
+    async function handleOnClose() {
         resetChat();
         setExpanded(false);
+        setDisabled(true);
+        await AiBackendAction.handle_quiz_accept_or_decline(
+            session?.user.token,
+            sessionId || '',
+            true,
+        );
+        setDisabled(false);
     }
 
     function handleOnClick() {

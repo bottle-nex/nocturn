@@ -100,24 +100,22 @@ export default class AiBackendAction {
         }
     }
 
-    static async handle_quiz_accept_or_decline(token: string, sessionId: string, decline: false) {
+    static async handle_quiz_accept_or_decline(token: string, sessionId: string, decline: boolean) {
         try {
-
-            await axios.post(ACCEPT_OR_DECLINE_GENERATED_QUIZ,
+            await axios.post(
+                ACCEPT_OR_DECLINE_GENERATED_QUIZ,
                 {
                     sessionId,
-                    decline: false,
+                    decline,
                 },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
-
-        } catch (error) {
+        } catch {
             console.error('error in continuing to this quiz');
         }
     }
-
 }
