@@ -250,7 +250,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                                 <EmptyCanvas
                                                     question={quiz.questions?.[0]?.question}
                                                     options={quiz.questions?.[0]?.options}
-                                                    className="w-full aspect-video rounded-[8px] outline-2 select-none cursor-pointer outline-black/40 dark:outline-white/40"
+                                                    className="w-full aspect-video rounded-lg outline-2 select-none cursor-pointer outline-black/40 dark:outline-white/40"
                                                     template={quiz.template}
                                                     onClick={() => toggleSelectQuiz(quiz.id)}
                                                 />

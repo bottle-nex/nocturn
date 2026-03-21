@@ -4,6 +4,8 @@ import { useSettingsStore, SETTINGS_TAB } from '@/store/home/useSettingsStore';
 import ProfileSettingsComponent from '../revamp/SettingsPanelComponent/ProfileSettingsComponent';
 import ThemeSettingsComponent from '../revamp/SettingsPanelComponent/ThemeSettingsComponent';
 import { cn } from '@/lib/utils';
+import GameSettingsComponent from '../revamp/SettingsPanelComponent/GameSettingsComponent';
+import WalletSettingsComponent from '../revamp/SettingsPanelComponent/WalletSettingsComponent';
 
 export default function SettingsPanel() {
     const { activeSettingsTab, setActiveSettingsTab } = useSettingsStore();
@@ -15,9 +17,9 @@ export default function SettingsPanel() {
             case SETTINGS_TAB.THEME:
                 return <ThemeSettingsComponent />;
             case SETTINGS_TAB.GAME:
-                return <div>Game Component</div>;
+                return <GameSettingsComponent />;
             case SETTINGS_TAB.WALLET:
-                return <div>Wallet Component</div>;
+                return <WalletSettingsComponent />;
             default:
                 return null;
         }

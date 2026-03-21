@@ -10,7 +10,7 @@ export default function NavCenter() {
     return (
         <section className="flex items-center gap-x-2">
             <div
-                className="relative flex items-center bg-light-base dark:bg-dark-base ring-1 ring-black/5 text-dark-base dark:text-light-base h-11 rounded-full shadow-xs shadow-black/5 p-1 gap-x-1"
+                className="relative flex items-center bg-light-base ring-1 ring-black/5 text-dark-base h-11 rounded-full shadow-xs shadow-black/5 p-1 gap-x-1"
                 onMouseLeave={() => setActive(null)}
             >
                 <div className="relative" onMouseEnter={() => setActive('home')}>

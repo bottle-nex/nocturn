@@ -112,7 +112,7 @@ function CancelConfirmationPanel({
         >
             <div
                 ref={panelRef}
-                className="bg-light-base dark:bg-dark-alpha border border-dark-alpha/10 dark:border-light-base/10 rounded-2xl shadow-2xl p-6 w-80 flex flex-col gap-y-4"
+                className="bg-light-base dark:bg-dark-alpha border border-dark-alpha/10 dark:border-light-base/10 rounded-[8px] shadow-2xl p-6 w-80 flex flex-col gap-y-4"
             >
                 <div className="flex flex-col gap-y-1">
                     <h2 className="text-dark-base dark:text-light-base font-semibold text-base">
@@ -126,7 +126,7 @@ function CancelConfirmationPanel({
                     <Button
                         onClick={onGoBack}
                         className={cn(
-                            'rounded-full',
+                            'rounded-sm',
                             'bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-200/80 dark:hover:bg-neutral-800/80',
                             'text-dark-alpha dark:text-light-alpha',
                         )}
@@ -135,7 +135,7 @@ function CancelConfirmationPanel({
                     </Button>
                     <Button
                         onClick={onDiscard}
-                        className={cn('rounded-full', 'bg-red-500 hover:bg-red-600', 'text-white')}
+                        className={cn('rounded-sm', 'bg-red-500 hover:bg-red-600', 'text-white')}
                     >
                         Discard
                     </Button>

@@ -39,7 +39,7 @@ export default function TrashPanelQuizActionsComponent({
                             toggleSelectQuiz(quizId);
                         }}
                         className={cn(
-                            'backdrop-blur-sm text-dark-base h-6 w-6 flex justify-center items-center cursor-pointer',
+                            'text-dark-base h-6 w-6 flex justify-center items-center cursor-pointer',
                         )}
                     >
                         {isSelected ? (
