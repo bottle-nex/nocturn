@@ -24,10 +24,10 @@ export default async function authMiddleware(req: Request, res: Response, next: 
 
     // Fallback: use the refresh token cookie to auto-recover
     const refreshToken = req.cookies?.[NOCTURN_REFRESH_COOKIE_NAME];
-    // if (!refreshToken) {
-    //     res.status(401).json({ message: 'Not authorized' });
-    //     return;
-    // }
+    if (!refreshToken) {
+        res.status(401).json({ message: 'Not authorized' });
+        return;
+    }
 
     try {
         const decoded = jwt.verify(refreshToken, env.SERVER_JWT_REFRESH_SECRET) as {
