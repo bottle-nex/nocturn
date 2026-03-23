@@ -214,16 +214,18 @@ export default class Subscription {
 
     static async collaborator_limit(req: Request, res: Response, next: NextFunction) {
         try {
-
             const user = req.user;
             if (!user) {
                 ResponseWriter.not_authorized(res);
                 return;
             }
 
-            const tier = await this.get_user_subscription(user.id) ?? SubscriptionEnum.FREE;
+            const tier = (await this.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
-            const is_collaborator_allowed = planManager.isEnabled(tier, FEATURE.MAX_COLLABORATORS_PER_SESSION);
+            const is_collaborator_allowed = planManager.isEnabled(
+                tier,
+                FEATURE.MAX_COLLABORATORS_PER_SESSION,
+            );
 
             if (!is_collaborator_allowed) {
                 ResponseWriter.error(
@@ -234,7 +236,10 @@ export default class Subscription {
                 return;
             }
 
-            const ceiling = planManager.getNumericLimit(tier, FEATURE.MAX_COLLABORATORS_PER_SESSION);
+            const ceiling = planManager.getNumericLimit(
+                tier,
+                FEATURE.MAX_COLLABORATORS_PER_SESSION,
+            );
 
             if (!ceiling) {
                 next();
@@ -257,7 +262,6 @@ export default class Subscription {
             }
 
             next();
-
         } catch (error) {
             console.error('error in collaborator limit: ', error);
             return;
