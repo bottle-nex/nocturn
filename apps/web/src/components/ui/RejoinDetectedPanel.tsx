@@ -9,7 +9,6 @@ import { ArrowRight, X, RefreshCw, UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { IoWarningOutline } from 'react-icons/io5';
 
-
 interface RejoinDetectedPanelProps {
     deny: () => void;
     onJoinAsNew: (code: string) => void;

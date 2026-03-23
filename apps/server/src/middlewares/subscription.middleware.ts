@@ -212,6 +212,62 @@ export default class Subscription {
         }
     }
 
+    static async collaborator_limit(req: Request, res: Response, next: NextFunction) {
+        try {
+            const user = req.user;
+            if (!user) {
+                ResponseWriter.not_authorized(res);
+                return;
+            }
+
+            const tier = (await this.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
+
+            const is_collaborator_allowed = planManager.isEnabled(
+                tier,
+                FEATURE.MAX_COLLABORATORS_PER_SESSION,
+            );
+
+            if (!is_collaborator_allowed) {
+                ResponseWriter.error(
+                    res,
+                    'COLLABORATORS_NOT_ALLOWED',
+                    'collaborators are not allowed in free tier',
+                );
+                return;
+            }
+
+            const ceiling = planManager.getNumericLimit(
+                tier,
+                FEATURE.MAX_COLLABORATORS_PER_SESSION,
+            );
+
+            if (!ceiling) {
+                next();
+                return;
+            }
+
+            const current_collaborator_count = await prisma.collaboratorInvitation.count({
+                where: {
+                    quizId: req.params.quizId,
+                },
+            });
+
+            if (current_collaborator_count >= ceiling) {
+                ResponseWriter.error(
+                    res,
+                    'COLLABORATOR_LIMIT_REACHED',
+                    'collaborators limit reached',
+                );
+                return;
+            }
+
+            next();
+        } catch (error) {
+            console.error('error in collaborator limit: ', error);
+            return;
+        }
+    }
+
     static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
         try {
             const userData = await prisma.user.findUnique({
