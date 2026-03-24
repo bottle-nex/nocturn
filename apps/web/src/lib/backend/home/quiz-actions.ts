@@ -346,4 +346,22 @@ export default class QuizActions {
             return;
         }
     }
+
+    static async rename_quiz(token: string, quizId: string) {
+        try {
+            const { data } = await axios.post(`${CHANGE_QUIZ_TITLE_URL}/${quizId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!data.success) {
+                return;
+            }
+
+            return data.data;
+        } catch (error) {
+            console.error('Error in updating quiz title: ', error);
+        }
+    }
 }

@@ -52,6 +52,16 @@ export default function QuizOptionsPanel({
         setEditingTitle?.(true);
     }
 
+    // async function handleRenameQuiz(quizId: string) {
+    //     if (!session?.user.token) return;
+
+    //     try {
+    //         const res = await QuizActions.rename_quiz(session.user.token, quizId);
+    //     } catch (error) {
+
+    //     }
+    // }
+
     async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token || loadingAction || disabled) return;
         try {

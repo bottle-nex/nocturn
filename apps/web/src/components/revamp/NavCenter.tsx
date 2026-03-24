@@ -22,7 +22,7 @@ export default function NavCenter() {
                                 stiffness: 300,
                                 damping: 35,
                             }}
-                            className="absolute inset-0 bg-nprimary/30 rounded-full"
+                            className="absolute inset-0 bg-nprimary/20 rounded-full"
                         />
                     )}
                     <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
@@ -42,7 +42,7 @@ export default function NavCenter() {
                                 stiffness: 300,
                                 damping: 35,
                             }}
-                            className="absolute inset-0 bg-nprimary/30 rounded-full"
+                            className="absolute inset-0 bg-nprimary/20 rounded-full"
                         />
                     )}
                     <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
@@ -62,7 +62,7 @@ export default function NavCenter() {
                                 stiffness: 300,
                                 damping: 35,
                             }}
-                            className="absolute inset-0 bg-nprimary/30 rounded-full"
+                            className="absolute inset-0 bg-nprimary/20 rounded-full"
                         />
                     )}
                     <button
@@ -85,7 +85,7 @@ export default function NavCenter() {
                                 stiffness: 300,
                                 damping: 35,
                             }}
-                            className="absolute inset-0 bg-nprimary/30 rounded-full"
+                            className="absolute inset-0 bg-nprimary/20 rounded-full"
                         />
                     )}
                     <button className="relative z-10 text-[15px] font-medium px-7 h-9 rounded-full cursor-pointer">
