@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import NavItems from './NavItems';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
@@ -11,17 +10,17 @@ import NavInputBox from './NavInputBox';
 import { useEffect, useState } from 'react';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
-interface NavItem {
-    label: string;
-    link: string;
-}
+// interface NavItem {
+//     label: string;
+//     link: string;
+// }
 
-const navItems: NavItem[] = [
-    { label: 'Home', link: '/home' },
-    { label: 'Roles', link: '/roles' },
-    { label: 'Features', link: '/features' },
-    { label: 'About', link: '/about' },
-];
+// const navItems: NavItem[] = [
+//     { label: 'Home', link: '/home' },
+//     { label: 'Roles', link: '/roles' },
+//     { label: 'Features', link: '/features' },
+//     { label: 'About', link: '/about' },
+// ];
 
 export default function NavbarTest() {
     const { session, setOpenSigninModal, setOpenLogoutModal } = useUserSessionStore();
@@ -79,8 +78,6 @@ export default function NavbarTest() {
             )}
         >
             <div className="text-black text-2xl font-semibold">Nocturn</div>
-
-            <NavItems items={navItems} className="absolute left-1/2 top-4.5 -translate-x-1/2" />
 
             <div className="flex gap-x-3 items-center">
                 <div className="relative flex items-center">
