@@ -6,12 +6,12 @@ import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import QuizTitleChangePanel from './QuizTitleChangePanel';
 import QuizOptionsPanel, { LoadingAction } from './QuizOptionsPanel';
-import PreviewQuiz from '../home/AiChat/PreviewQuiz';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
 import QuizActions from '@/lib/backend/home/quiz-actions';
+
+const TITLE_MAX_LENGTH = 50;
 
 interface MyQuizzesListViewProps {
     formattedTime: string;
@@ -33,15 +33,22 @@ export default function MyQuizzesListView({
     const router = useRouter();
     const { session } = useUserSessionStore();
     const { updateQuiz } = useAllQuizsStore();
-    const [showQuizTitleChangePanel, setShowQuizTitleChangePanel] = useState<boolean>(false);
-    const [showPreview, setShowPreview] = useState<boolean>(false);
     const [editingTitle, setEditingTitle] = useState<boolean>(false);
+    const [originalTitle, setOriginalTitle] = useState<string>('');
     const [quizAction, setQuizAction] = useState<LoadingAction>(null);
 
     const isLocked = bulkDeleting || quizAction !== null;
+    const titleLength = quiz.title?.length ?? 0;
+    const isTitleEmpty = !quiz.title?.trim();
+    const isTitleOverLimit = titleLength > TITLE_MAX_LENGTH;
+    const isTitleInvalid = isTitleEmpty || isTitleOverLimit;
+
+    function handleStartEditing() {
+        setOriginalTitle(quiz.title ?? '');
+    }
 
     function handleClick() {
-        if (isLocked) return;
+        if (isLocked || editingTitle) return;
         if (selectionMode) return toggleQuizSelection(quiz.id);
         router.push(`/new/${quiz.id}`);
     }
@@ -49,15 +56,20 @@ export default function MyQuizzesListView({
     function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
         if (isLocked) return;
         e.stopPropagation();
+        if (e.target.value.length > 60) return;
         updateQuiz(quiz.id, { title: e.target.value });
     }
 
     async function handleSaveTitle() {
-        if (isLocked) return;
-        if (!session?.user.token || !quiz.title?.trim()) return;
-
+        if (isLocked || isTitleInvalid) return;
+        if (!session?.user.token) return;
         setEditingTitle(false);
         await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
+    }
+
+    function handleCancelEditing() {
+        updateQuiz(quiz.id, { title: originalTitle });
+        setEditingTitle(false);
     }
 
     return (
@@ -92,19 +104,34 @@ export default function MyQuizzesListView({
                 </div>
             </div>
 
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full items-center">
                 <div>
                     {editingTitle ? (
-                        <input
-                            aria-label="Edit quiz title"
-                            value={quiz.title}
-                            onChange={handleEditTitle}
-                            onBlur={handleSaveTitle}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
-                            onClick={(e) => e.stopPropagation()}
-                            autoFocus
-                            className="border-none outline-none w-60 truncate bg-transparent"
-                        />
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <input
+                                aria-label="Edit quiz title"
+                                value={quiz.title}
+                                onChange={handleEditTitle}
+                                onBlur={handleSaveTitle}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleSaveTitle();
+                                    if (e.key === 'Escape') handleCancelEditing();
+                                }}
+                                autoFocus
+                                className={cn(
+                                    'border-none outline-none w-60 bg-transparent',
+                                    isTitleOverLimit && 'text-red-500',
+                                )}
+                            />
+                            {isTitleOverLimit && (
+                                <p className="text-red-500 text-xs mt-0.5">
+                                    Max {TITLE_MAX_LENGTH} characters
+                                </p>
+                            )}
+                            {isTitleEmpty && (
+                                <p className="text-red-500 text-xs mt-0.5">Title cannot be empty</p>
+                            )}
+                        </div>
                     ) : (
                         <div className="truncate">{quiz.title}</div>
                     )}
@@ -116,25 +143,12 @@ export default function MyQuizzesListView({
                     <QuizOptionsPanel
                         disabled={isLocked}
                         setQuizAction={setQuizAction}
+                        setEditingTitle={setEditingTitle}
+                        onStartEditing={handleStartEditing}
                         quiz={quiz}
                     />
                 )}
             </div>
-
-            {showQuizTitleChangePanel && (
-                <QuizTitleChangePanel
-                    quizId={quiz.id}
-                    setShowQuizTitleChangePanel={setShowQuizTitleChangePanel}
-                />
-            )}
-
-            {showPreview && (
-                <PreviewQuiz
-                    onPreviewClose={() => setShowPreview(false)}
-                    quizId={quiz.id}
-                    fetchFromServer
-                />
-            )}
         </div>
     );
 }
