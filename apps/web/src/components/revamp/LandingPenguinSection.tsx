@@ -398,7 +398,7 @@ export default function LandingPenguinSection() {
 
                                                         <AnimatePresence>
                                                             {showQuizTheme && (
-                                                                <div className="absolute -right-110 top-20 flex gap-x-2 pointer-events-none z-10">
+                                                                <div className="absolute -right-99 top-20 flex gap-x-2 pointer-events-none z-10">
                                                                     {dots.map((dot, i) => (
                                                                         <motion.div
                                                                             key={dot.id}

@@ -69,7 +69,7 @@ function PremiumFeatureRow({ label, iconKey, highlight }: PremiumFeatureRowProps
         >
             <div className="flex items-center gap-x-2.5">
                 <span
-                    className="w-[5px] h-[5px] rounded-full flex-shrink-0"
+                    className="w-1.25 h-1.25 rounded-full flex-shrink-0"
                     style={{
                         background: highlight ? ACCENT : `rgba(${ACCENT_RGB},0.25)`,
                     }}
@@ -86,7 +86,7 @@ function PremiumFeatureRow({ label, iconKey, highlight }: PremiumFeatureRowProps
             </div>
             {IconComponent && (
                 <IconComponent
-                    className="w-3.5 h-3.5 flex-shrink-0"
+                    className="w-3.5 h-3.5 shrink-0"
                     style={{
                         color: highlight ? `rgba(${ACCENT_RGB},0.5)` : `rgba(${ACCENT_RGB},0.2)`,
                     }}
@@ -178,7 +178,7 @@ export default function LandingSubscriptionComponent(): JSX.Element {
     const proPlan = premium_features.find((plan) => plan.id === 'pro');
 
     const proPriceTier = tiers?.find((t) => t.name === 'PRO');
-    const priceDisplay = proPriceTier ? `₹${proPriceTier.priceMonthly ?? 299}` : '₹299';
+    const priceDisplay = proPriceTier ? `₹${proPriceTier.priceMonthly}` : '₹999';
 
     return (
         <div className="w-full flex flex-col items-center max-w-7xl mx-auto px-4 gap-y-15 mt-30">
@@ -192,9 +192,9 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                 buttonClassName="bg-[#4f46ec] hover:bg-[#4f46ec] text-light-base w-42 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.07)]"
             />
 
-            <div className="w-full max-w-[60rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="w-full max-w-240 mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
                 {/* ── FREE CARD ── */}
-                <section className="group p-[1px] rounded-xl bg-neutral-200/60 hover:-translate-y-0.5 transition-transform duration-300 ease-out">
+                <section className="group p-px rounded-xl bg-neutral-200/60 hover:-translate-y-0.5 transition-transform duration-300 ease-out">
                     <div className={`${CARD_INNER} bg-[#fafafa]`}>
                         <div className="flex flex-col gap-y-5">
                             <div className="flex items-start justify-between">
@@ -215,7 +215,7 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                                 </p>
                             </div>
 
-                            <div className="pt-1 pb-5 border-b border-black/[0.05]">
+                            <div className="pt-1 pb-5 border-b border-black/5">
                                 <div className="flex items-end gap-x-1.5">
                                     <span className="text-[44px] font-bold text-neutral-900 tracking-[-0.04em] leading-none">
                                         ₹0
@@ -231,7 +231,7 @@ export default function LandingSubscriptionComponent(): JSX.Element {
                         </div>
 
                         <div className="flex-1 mt-5 flex flex-col">
-                            <p className="text-[11px] uppercase tracking-[0.1em] text-neutral-400 font-medium mb-1">
+                            <p className="text-[11px] uppercase tracking-widest text-neutral-400 font-medium mb-1">
                                 Includes
                             </p>
                             <div className="flex-1">

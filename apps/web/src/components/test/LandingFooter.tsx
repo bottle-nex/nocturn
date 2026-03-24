@@ -31,13 +31,13 @@ export default function LandingFooter() {
             <div className="h-full w-full flex justify-between pt-20 px-30">
                 <div className="flex flex-col gap-y-3">
                     <div className="flex gap-x-4">
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-light-alpha transition-colors transform duration-250">
                             <FaXTwitter className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-light-alpha transition-colors transform duration-250">
                             <FaGithub className="size-5.5" />
                         </div>
-                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-nprimary transition-colors transform duration-250">
+                        <div className="h-12 w-12 rounded-full ring-1 ring-white/10 shadow-xs shadow-black/10 flex justify-center items-center cursor-pointer text-[#F3ECE7]/80 hover:text-light-alpha transition-colors transform duration-250">
                             <FaLinkedin className="size-5.5" />
                         </div>
                     </div>
