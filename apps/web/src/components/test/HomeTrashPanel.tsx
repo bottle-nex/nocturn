@@ -178,7 +178,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                                         placeholder="search trashed quizzes"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="h-full w-full pl-10 rounded-beta placeholder:text-dark-base/60 dark:placeholder:text-neutral-500 dark:bg-dark-base! bg-light-base! dark:border-neutral-800 border-neutral-200"
+                                        className="h-full w-full pl-10 rounded-beta placeholder:text-dark-base/60 dark:placeholder:text-neutral-500 dark:bg-dark-base! bg-light-base! dark:border-neutral-800 border-neutral-200 shadow-none"
                                     />
                                     <PiMagnifyingGlass
                                         size={20}
