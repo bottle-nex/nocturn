@@ -21,10 +21,8 @@ export type LoadingAction = null | 'duplicate' | 'delete';
 interface QuizOptionsPanelProps {
     setQuizAction: (val: LoadingAction) => void;
     quiz: QuizType;
-    setEditingTitle?: Dispatch<SetStateAction<boolean>>;
-    setShowQuizTitleChangePanel?: (val: boolean) => void;
-    setShowPreview?: (val: boolean) => void;
-
+    setEditingTitle: Dispatch<SetStateAction<boolean>>;
+    onStartEditing: () => void;
     disabled?: boolean;
 }
 
@@ -32,6 +30,7 @@ export default function QuizOptionsPanel({
     setQuizAction,
     quiz,
     setEditingTitle,
+    onStartEditing,
     disabled,
 }: QuizOptionsPanelProps) {
     const router = useRouter();
@@ -49,18 +48,9 @@ export default function QuizOptionsPanel({
 
     function safeRename() {
         if (locked) return;
-        setEditingTitle?.(true);
+        onStartEditing();
+        setEditingTitle(true);
     }
-
-    // async function handleRenameQuiz(quizId: string) {
-    //     if (!session?.user.token) return;
-
-    //     try {
-    //         const res = await QuizActions.rename_quiz(session.user.token, quizId);
-    //     } catch (error) {
-
-    //     }
-    // }
 
     async function handleDeleteQuiz(quizId: string) {
         if (!session?.user.token || loadingAction || disabled) return;

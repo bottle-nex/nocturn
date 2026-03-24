@@ -12,6 +12,8 @@ import HeartButton from '../ui/HeartButton';
 import QuizOptionsPanel, { LoadingAction } from './QuizOptionsPanel';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 
+const TITLE_MAX_LENGTH = 50;
+
 interface MyQuizzesGridViewProps {
     formattedTime: string;
     quiz: QuizType;
@@ -31,19 +33,29 @@ export default function MyQuizzesGridView({
 }: MyQuizzesGridViewProps) {
     const router = useRouter();
     const { session } = useUserSessionStore();
-    const { updateQuizFavourite } = useAllQuizsStore();
+    const { updateQuizFavourite, updateQuiz } = useAllQuizsStore();
     const [quizAction, setQuizAction] = useState<LoadingAction>(null);
+    const [editingTitle, setEditingTitle] = useState<boolean>(false);
+    const [originalTitle, setOriginalTitle] = useState<string>('');
+
     const isLocked = bulkDeleting || quizAction !== null;
+    const titleLength = quiz.title?.length ?? 0;
+    const isTitleEmpty = !quiz.title?.trim();
+    const isTitleOverLimit = titleLength > TITLE_MAX_LENGTH;
+    const isTitleInvalid = isTitleEmpty || isTitleOverLimit;
+
+    function handleStartEditing() {
+        setOriginalTitle(quiz.title ?? '');
+    }
 
     async function handleCardClick() {
-        if (isLocked) return;
+        if (isLocked || editingTitle) return;
         if (selectionMode) return toggleQuizSelection?.(quiz.id);
         switch (quiz.status) {
             case QuizStatusEnum.LIVE:
                 await userQuizAction.hostJoinQuiz(quiz.id, session?.user.token);
                 router.push(`/live/${quiz.id}`);
                 break;
-
             case QuizStatusEnum.CREATED:
             case QuizStatusEnum.PUBLISHED:
             default:
@@ -58,7 +70,26 @@ export default function MyQuizzesGridView({
         updateQuizFavourite(quizId, isFavourite);
     }
 
-    const showOptions = selectionMode || quizAction !== null;
+    function handleEditTitle(e: React.ChangeEvent<HTMLInputElement>) {
+        if (isLocked) return;
+        e.stopPropagation();
+        if (e.target.value.length > 60) return;
+        updateQuiz(quiz.id, { title: e.target.value });
+    }
+
+    async function handleSaveTitle() {
+        if (isLocked || isTitleInvalid) return;
+        if (!session?.user.token) return;
+        setEditingTitle(false);
+        await QuizActions.change_quiz_title(session.user.token, quiz.id, quiz.title.trim());
+    }
+
+    function handleCancelEditing() {
+        updateQuiz(quiz.id, { title: originalTitle });
+        setEditingTitle(false);
+    }
+
+    const showOptions = selectionMode || quizAction !== null || editingTitle;
 
     return (
         <div className="max-w-100 w-full p-1 flex flex-col relative group">
@@ -87,6 +118,8 @@ export default function MyQuizzesGridView({
                     <QuizOptionsPanel
                         disabled={isLocked}
                         setQuizAction={setQuizAction}
+                        setEditingTitle={setEditingTitle}
+                        onStartEditing={handleStartEditing}
                         quiz={quiz}
                     />
                 )}
@@ -120,9 +153,39 @@ export default function MyQuizzesGridView({
                 )}
 
                 <div className="flex items-center justify-between w-full mt-0.5">
-                    <div className="flex flex-col">
-                        <span className="block text-base">{quiz.title?.slice(0, 28)}…</span>
-                        <span className="block text-xs dark:text-light-base/70 text-dark-alpha/70 ">
+                    <div className="flex flex-col min-w-0">
+                        {editingTitle ? (
+                            <div onClick={(e) => e.stopPropagation()}>
+                                <input
+                                    aria-label="Edit quiz title"
+                                    value={quiz.title}
+                                    onChange={handleEditTitle}
+                                    onBlur={handleSaveTitle}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleSaveTitle();
+                                        if (e.key === 'Escape') handleCancelEditing();
+                                    }}
+                                    autoFocus
+                                    className={cn(
+                                        'border-none outline-none w-full bg-transparent text-base',
+                                        isTitleOverLimit && 'text-red-500',
+                                    )}
+                                />
+                                {isTitleOverLimit && (
+                                    <p className="text-red-500 text-xs mt-0.5">
+                                        Max {TITLE_MAX_LENGTH} characters
+                                    </p>
+                                )}
+                                {isTitleEmpty && (
+                                    <p className="text-red-500 text-xs mt-0.5">
+                                        Title cannot be empty
+                                    </p>
+                                )}
+                            </div>
+                        ) : (
+                            <span className="block text-base">{quiz.title?.slice(0, 28)}…</span>
+                        )}
+                        <span className="block text-xs dark:text-light-base/70 text-dark-alpha/70">
                             Created at {formattedTime}
                         </span>
                     </div>
