@@ -114,12 +114,6 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             icon: <RiVipCrownLine size={18} />,
             onClick: () => router.push('/premium'),
         },
-        {
-            tab: SidebarTab.CHATS,
-            label: 'Chats',
-            icon: <PiChats size={18} />,
-            onClick: () => handleTabChange(SidebarTab.CHATS),
-        },
     ];
 
     return (
@@ -162,7 +156,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                     <span className="block text-xs font-normal mt-2 px-8.25">utility</span>
 
                     <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(3, 6).map((item) => (
+                        {sidebarItems.slice(3, 5).map((item) => (
                             <div
                                 id={item.id}
                                 key={item.tab}
@@ -188,7 +182,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
 
             <section className="ml-4 mt-8">
                 <section className="flex flex-col gap-y-2 mt-2 px-4">
-                    {sidebarItems.slice(6).map((item) => (
+                    {sidebarItems.slice(5).map((item) => (
                         <div
                             id={item.id}
                             key={item.tab}

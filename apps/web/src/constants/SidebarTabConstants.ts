@@ -6,6 +6,4 @@ export enum SidebarTab {
     FAVORITES = 'favorites',
     SETTINGS = 'settings',
     PREMIUM = 'premium',
-
-    CHATS = 'chats',
 }

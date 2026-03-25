@@ -18,6 +18,9 @@ import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { Button } from '../ui/button';
+import OpacityBackground from '../utility/OpacityBackground';
+import UtilityCard from '../utility/UtilityCard';
+import AppLogo from '../app/AppLogo';
 
 interface Option {
     name: string;
@@ -30,6 +33,7 @@ export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [_currentAction, setCurrentAction] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [finalLaunchCard, setFinalLaunchCard] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
     const { session } = useUserSessionStore();
     const { quiz } = useNewQuizStore();
@@ -170,10 +174,27 @@ export default function NavbarQuizAction() {
             {actionsPanel && (
                 <CreateQuizActionPanel
                     setCurrentAction={setCurrentAction}
+                    setFinalLaunchCard={setFinalLaunchCard}
                     actions={options}
                     setActionsPanel={setActionsPanel}
                 />
             )}
-        </div>
+            {finalLaunchCard && (
+                <OpacityBackground onBackgroundClick={() => setFinalLaunchCard(false)}>
+                    <UtilityCard className='max-w-2xl w-full bg-light-alpha dark:bg-dark-alpha rounded-lg px-8 py-6'>
+                        {/* <div className="-mt-4 -ml-4">
+                            <AppLogo
+                                withText
+                                size={120}
+                                textColor="text-dark-base dark:text-light-base"
+                            />
+                        </div> */}
+                        <h1 className='text-3xl'>Are you ready to launch your quiz?</h1>
+
+                    </UtilityCard>
+                </OpacityBackground>
+            )
+            }
+        </div >
     );
 }

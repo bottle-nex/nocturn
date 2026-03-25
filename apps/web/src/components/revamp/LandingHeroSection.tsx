@@ -91,7 +91,7 @@ export default function LandingHeroSection() {
                     stiffness: 260,
                     damping: 20,
                 }}
-                className="flex flex-col items-center text-dark-alpha text-6xl gap-y-1 font-semibold -mt-1 z-10"
+                className="flex flex-col items-center text-dark-alpha text-8xl gap-y-1 font-semibold -mt-1 z-10"
             >
                 <div className="bg-clip-text text-transparent bg-linear-to-b from-dark-alpha via-dark-base to-dark-alpha/70">
                     The only quizzing platform
