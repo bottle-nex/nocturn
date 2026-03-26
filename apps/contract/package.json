@@ -2,7 +2,9 @@
   "license": "ISC",
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
+    "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
+    "sync": "node -e \"const idl=require('./target/idl/contract.json');const fs=require('fs');fs.writeFileSync('../../packages/contract/src/idl.ts','export const IDL = '+JSON.stringify(idl,null,2)+' as const;\\n')\" && cp target/types/contract.ts ../../packages/contract/src/contract.ts",
+    "build:sync": "anchor build && pnpm sync"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1"

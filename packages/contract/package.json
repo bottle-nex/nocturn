@@ -1,0 +1,17 @@
+{
+  "name": "@nocturn/contract",
+  "version": "1.0.0",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.98.4"
+  },
+  "devDependencies": {
+    "@nocturn/typescript-config": "workspace:*"
+  }
+}

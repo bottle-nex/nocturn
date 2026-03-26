@@ -16,6 +16,9 @@
     "generate": {
       "cache": false
     },
+    "sync": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build",
