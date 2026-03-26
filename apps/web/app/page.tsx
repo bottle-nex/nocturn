@@ -6,8 +6,6 @@ import LandingCTASection from '@/components/revamp/LandingCTASection';
 import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
 import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
 import LandingSubscriptionComponent from '@/components/revamp/LandingSubscriptionComponent';
-import SolanaPrizePool from '@/components/revamp/SolanaPrizePool';
-import LivePrizepoolFeatures from '@/components/revamp/LiveQuizFeatures';
 
 export default function Page() {
     return (
@@ -18,8 +16,6 @@ export default function Page() {
                 <ChatBoxCardSection />
                 <LandingPenguinSection />
                 <LandingFeaturesSection />
-                <SolanaPrizePool />
-                <LivePrizepoolFeatures />
                 <LandingSubscriptionComponent />
                 <LandingCTASection />
             </div>
