@@ -121,3 +121,10 @@ export enum SubscriptionEnum {
   FREE = "FREE",
   PRO = "PRO",
 }
+
+export enum ClaimStatusEnum {
+  PENDING = "PENDING",
+  CLAIMED = "CLAIMED",
+  EXPIRED = "EXPIRED",
+  REFUNDED = "REFUNDED",
+}

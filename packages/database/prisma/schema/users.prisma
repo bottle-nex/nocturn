@@ -61,6 +61,7 @@ model Participant {
     lifelineUsage        LifelineUsage[]
     cdoBets              CDOBets[]
     email                String
+    prizeClaims          PrizeClaim[]
 
     @@map("participants")
 }

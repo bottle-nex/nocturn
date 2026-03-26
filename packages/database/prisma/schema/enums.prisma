@@ -181,3 +181,10 @@ enum CheckoutSessionStatus {
     ABANDONED
     FAILED
 }
+
+enum ClaimStatus {
+    PENDING
+    CLAIMED
+    EXPIRED
+    REFUNDED
+}

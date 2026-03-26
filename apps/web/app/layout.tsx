@@ -7,6 +7,7 @@ import { ThemeProvider } from 'next-themes';
 import ToasterProvider from '../src/providers/ToasterProvider';
 import LenisProvider from '@/providers/LenisProvider';
 import SubscriptionProvider from '@/providers/SubscriptionProvider';
+import SolanaWalletProvider from '@/providers/SolanaWalletProvider';
 
 export const metadata: Metadata = {
     title: 'Nocturn | Quiz platform',
@@ -30,9 +31,11 @@ export default async function RootLayout({
                         disableTransitionOnChange
                     >
                         <ToasterProvider />
-                        <SubscriptionProvider initialTier={session?.user.subscription}>
-                            {children}
-                        </SubscriptionProvider>
+                        <SolanaWalletProvider>
+                            <SubscriptionProvider initialTier={session?.user.subscription}>
+                                {children}
+                            </SubscriptionProvider>
+                        </SolanaWalletProvider>
                         <SessionSetter session={session} />
                     </ThemeProvider>
                 </LenisProvider>

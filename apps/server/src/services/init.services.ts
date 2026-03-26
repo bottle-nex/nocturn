@@ -11,6 +11,8 @@ import CollabStateCache from '../cache/collab_state.cache';
 import DodoPaymentService from './premium/DodoPaymentService';
 import DodoWebhookService from './premium/DodoWebhookService';
 import DatabaseQueue from '../queue/database/database.queue';
+import SolanaService from './solana/solana.service';
+import PrizeQueue from '../queue/prize/prize.queue';
 import { CompiledStateGraph } from '@langchain/langgraph';
 
 export let redisCacheInstance: RedisCache;
@@ -24,6 +26,8 @@ export let subscriberInstance: Redis;
 export let collabStateCacheInstance: CollabStateCache;
 export let dodo_payment_service: DodoPaymentService;
 export let dodo_webhook_service: DodoWebhookService;
+export let solanaServiceInstance: SolanaService;
+export let prizeQueueInstance: PrizeQueue;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export let quizAgentGraph: CompiledStateGraph<any, any, any>;
@@ -40,6 +44,8 @@ export default async function initServices() {
         env.SERVER_NODE_ENV === 'development' ? 'test' : 'production',
     );
     dodo_webhook_service = new DodoWebhookService();
+    solanaServiceInstance = new SolanaService();
+    prizeQueueInstance = new PrizeQueue();
     quizManagerInstance = new QuizManager({
         publisher: publisherInstance,
         subscriber: subscriberInstance,

@@ -126,13 +126,15 @@ export default function Home() {
                                 if (showBanner) setTooltipOpen(true);
                             }, 2000);
                         }}
-                        className="bg-alpha flex items-center justify-end w-full px-12 overflow-hidden">
+                        className="bg-alpha flex items-center justify-end w-full px-12 overflow-hidden"
+                    >
                         <div className="flex items-center gap-x-3 pr-4 min-h-16">
                             <motion.span
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, ease: 'easeInOut', delay: 0.2 }}
-                                className="text-light-alpha text-sm">
+                                className="text-light-alpha text-sm"
+                            >
                                 Get 30 days free access to all premium features
                             </motion.span>
                             <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
@@ -141,8 +143,13 @@ export default function Home() {
                                         <motion.button
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
-                                            transition={{ duration: 0.3, ease: 'easeInOut', delay: 0.2 }}
-                                            className="bg-dark-alpha rounded-full hover:bg-dark-base h-11 px-6! text-light-base dark:text-light-base flex items-center justify-center gap-x-2">
+                                            transition={{
+                                                duration: 0.3,
+                                                ease: 'easeInOut',
+                                                delay: 0.2,
+                                            }}
+                                            className="bg-dark-alpha rounded-full hover:bg-dark-base h-11 px-6! text-light-base dark:text-light-base flex items-center justify-center gap-x-2"
+                                        >
                                             <RiVipCrownFill />
                                             Get Premium
                                         </motion.button>

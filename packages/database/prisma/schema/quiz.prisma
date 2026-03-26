@@ -54,6 +54,12 @@ model Quiz {
     CollabSession           CollabSession?
     collaboratorInvitations CollaboratorInvitation[]
     aiChat                  AiQuizChatSession?
+    prizeDistributions      PrizeDistribution[]
+    prizeClaims             PrizeClaim[]
+
+    escrowPda          String?
+    quizAccountPda     String?
+    onChainTxSignature String?
 
     @@map("quizzes")
 }
@@ -107,4 +113,41 @@ model CDOBets {
     participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
 
     @@map("cdo_bets")
+}
+
+model PrizeDistribution {
+    id             String @id @default(cuid())
+    quizId         String
+    quiz           Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    rank           Int
+    percentage     Float
+    amount         Float?
+    amountLamports BigInt?
+
+    @@unique([quizId, rank])
+    @@map("prize_distributions")
+}
+
+model PrizeClaim {
+    id             String      @id @default(cuid())
+    quizId         String
+    quiz           Quiz        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    participantId  String
+    participant    Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
+    rank           Int
+    amount         Float
+    amountLamports BigInt
+    claimToken     String      @unique
+    claimTokenHash String
+    emailHash      String
+    status         ClaimStatus @default(PENDING)
+    claimedAt      DateTime?
+    claimerWallet  String?
+    txSignature    String?
+    expiresAt      DateTime
+    emailSentAt    DateTime?
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+
+    @@map("prize_claims")
 }

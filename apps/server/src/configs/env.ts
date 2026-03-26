@@ -28,6 +28,8 @@ const envSchema = z.object({
     SERVER_DODO_ENVIRONMENT: z.enum(['test', 'production']).default('test'),
     SERVER_DODO_PRO_PRODUCT_ID: z.string().min(1, 'Dodo Pro Product ID is required'),
     SERVER_DODO_ENTERPRISE_PRODUCT_ID: z.string().min(1, 'Dodo Enterprise Product ID is required'),
+    SERVER_SOLANA_RPC_URL: z.string().url().default('https://api.devnet.solana.com'),
+    SERVER_PLATFORM_AUTHORITY_KEYPAIR: z.string().min(1, 'Platform authority keypair is required'),
 });
 
 function parseEnv() {

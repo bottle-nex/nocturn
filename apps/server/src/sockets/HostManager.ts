@@ -21,6 +21,7 @@ import {
     QuizStatus,
 } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
+import crypto from 'crypto';
 import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
@@ -531,19 +532,11 @@ export default class HostManager {
             game_session_id,
         );
 
-        // here call another function for processing the transaction of the winner if prize exists
-
-        // this.quiz_settings.cleanup_session(game_session_id);
-
-        if (!quiz.prizePool) {
-            // const rankers = Array.from(final_scores).sort((a, b) => a.finalRank - b.finalRank).slice(0, 3);
-            // this.quizManager.distribute_prize(
-            //     game_session_id,
-            //     quiz_id,
-            //     rankers[0],
-            //     rankers[1],
-            //     rankers[2],
-            // );
+        // Create prize claims for winners if prize pool exists
+        if (quiz.prizePool && quiz.prizePool > 0) {
+            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
+                console.error('Failed to create prize claims:', err);
+            });
         }
     }
 
@@ -603,6 +596,129 @@ export default class HostManager {
             where: { id: quizId, hostId },
         });
         return !!quiz;
+    }
+
+    private async create_prize_claims(
+        quiz_id: string,
+        game_session_id: string,
+        rankable: { id: string; totalScore: number }[],
+    ) {
+        const distributions = await prisma.prizeDistribution.findMany({
+            where: { quizId: quiz_id },
+            orderBy: { rank: 'asc' },
+        });
+
+        if (distributions.length === 0) return;
+
+        const quiz = await prisma.quiz.findUnique({
+            where: { id: quiz_id },
+            select: { prizePool: true, title: true },
+        });
+
+        if (!quiz || !quiz.prizePool) return;
+
+        // Assign finalRanks to rankable (already done in handle_quiz_results)
+        // Build rank-to-participants mapping with tie handling
+        const rankMap = new Map<number, string[]>();
+        let currentRank = 1;
+        for (let i = 0; i < rankable.length; i++) {
+            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
+                currentRank = i + 1;
+            }
+            const existing = rankMap.get(currentRank) || [];
+            existing.push(rankable[i]!.id);
+            rankMap.set(currentRank, existing);
+        }
+
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+        const claimsToCreate: Array<{
+            participantId: string;
+            rank: number;
+            amount: number;
+            amountLamports: bigint;
+        }> = [];
+
+        for (const dist of distributions) {
+            const participantIds = rankMap.get(dist.rank);
+            if (!participantIds || participantIds.length === 0) continue;
+
+            if (participantIds.length === 1) {
+                // Single winner at this rank
+                claimsToCreate.push({
+                    participantId: participantIds[0]!,
+                    rank: dist.rank,
+                    amount: dist.amount || (quiz.prizePool * dist.percentage) / 100,
+                    amountLamports:
+                        dist.amountLamports ||
+                        BigInt(Math.floor(((quiz.prizePool * dist.percentage) / 100) * 1e9)),
+                });
+            } else {
+                // Tied participants: split the prize for this rank among them
+                // Also collect prizes from subsequent tied positions
+                const tiedCount = participantIds.length;
+                let totalAmountForTied = dist.amount || (quiz.prizePool * dist.percentage) / 100;
+
+                // Add amounts from ranks that are "consumed" by the tie
+                for (let r = 1; r < tiedCount; r++) {
+                    const nextDist = distributions.find((d) => d.rank === dist.rank + r);
+                    if (nextDist) {
+                        totalAmountForTied +=
+                            nextDist.amount || (quiz.prizePool * nextDist.percentage) / 100;
+                    }
+                }
+
+                const splitAmount = totalAmountForTied / tiedCount;
+                const splitLamports = BigInt(Math.floor(splitAmount * 1e9));
+
+                for (const pid of participantIds) {
+                    claimsToCreate.push({
+                        participantId: pid,
+                        rank: dist.rank,
+                        amount: splitAmount,
+                        amountLamports: splitLamports,
+                    });
+                }
+            }
+        }
+
+        // Create PrizeClaim records in the database
+        for (const claim of claimsToCreate) {
+            const participant = await prisma.participant.findUnique({
+                where: { id: claim.participantId },
+                select: { email: true, nickname: true },
+            });
+
+            if (!participant) continue;
+
+            const claimToken = crypto.randomBytes(32).toString('hex');
+            const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
+            const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
+
+            await prisma.prizeClaim.create({
+                data: {
+                    quizId: quiz_id,
+                    participantId: claim.participantId,
+                    rank: claim.rank,
+                    amount: claim.amount,
+                    amountLamports: claim.amountLamports,
+                    claimToken,
+                    claimTokenHash,
+                    emailHash,
+                    expiresAt,
+                },
+            });
+        }
+
+        // Notify host via WebSocket that prize claims are ready
+        const event_data: PubSubMessageTypes = {
+            type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
+            payload: {
+                quizId: quiz_id,
+                totalClaims: claimsToCreate.length,
+            },
+        };
+        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
     private generateSocketId(): string {

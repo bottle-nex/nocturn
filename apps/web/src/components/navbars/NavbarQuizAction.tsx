@@ -181,7 +181,7 @@ export default function NavbarQuizAction() {
             )}
             {finalLaunchCard && (
                 <OpacityBackground onBackgroundClick={() => setFinalLaunchCard(false)}>
-                    <UtilityCard className='max-w-2xl w-full bg-light-alpha dark:bg-dark-alpha rounded-lg px-8 py-6'>
+                    <UtilityCard className="max-w-2xl w-full bg-light-alpha dark:bg-dark-alpha rounded-lg px-8 py-6">
                         {/* <div className="-mt-4 -ml-4">
                             <AppLogo
                                 withText
@@ -189,12 +189,10 @@ export default function NavbarQuizAction() {
                                 textColor="text-dark-base dark:text-light-base"
                             />
                         </div> */}
-                        <h1 className='text-3xl'>Are you ready to launch your quiz?</h1>
-
+                        <h1 className="text-3xl">Are you ready to launch your quiz?</h1>
                     </UtilityCard>
                 </OpacityBackground>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 }

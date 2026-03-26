@@ -91,6 +91,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
             },
         ],
         interactions: [],
+        prizeDistributions: [],
     },
 
     pendingTemplate: null,

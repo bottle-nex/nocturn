@@ -1,8 +1,11 @@
 import { Input } from '@/components/ui/input';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 
 export default function StakeAmountSection() {
+    const { quiz, updateQuiz } = useNewQuizStore();
+
     return (
         <div className="w-full px-2 mt-6 space-y-2">
             <div className="flex flex-col gap-x-1">
@@ -24,6 +27,11 @@ export default function StakeAmountSection() {
                 placeholder="e.g. 2.5"
                 min={0.1}
                 step={0.1}
+                value={quiz.prizePool || ''}
+                onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    updateQuiz({ prizePool: isNaN(value) ? 0 : value });
+                }}
                 className="mt-4 placeholder:font-mono placeholder:text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
         </div>

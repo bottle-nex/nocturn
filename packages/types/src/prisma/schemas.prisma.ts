@@ -2,6 +2,7 @@ import {
   AgentStep,
   AiMessageElement,
   AiQuizChatRole,
+  ClaimStatusEnum,
   CollabRole,
   HostScreenEnum,
   InteractionEnum,
@@ -94,6 +95,11 @@ export interface QuizType {
   spectators?: SpectatorType[];
   aiChat?: AiQuizChatSession;
   CollabSession?: CollabSession;
+  prizeDistributions?: PrizeDistributionType[];
+  prizeClaims?: PrizeClaimType[];
+  escrowPda?: string | null;
+  quizAccountPda?: string | null;
+  onChainTxSignature?: string | null;
 }
 
 export interface QuestionType {
@@ -286,24 +292,32 @@ export interface AiQuizMessage {
   updatedAt?: Date;
 }
 
-export interface Collaborator {
+export interface PrizeDistributionType {
   id: string;
-  sessionId: string;
-  userId: string;
-  role: CollabRole;
-  isBlocked: boolean;
-  joinedAt?: Date | null;
-  session: CollabSession;
-  user: UserType;
+  quizId: string;
+  rank: number;
+  percentage: number;
+  amount?: number | null;
+  amountLamports?: bigint | null;
 }
 
-export interface CollabSession {
+export interface PrizeClaimType {
   id: string;
-  hostId: string;
   quizId: string;
-  host: UserType;
-  quiz: QuizType;
-  collaborators: Collaborator[];
+  participantId: string;
+  participant?: ParticipantType;
+  rank: number;
+  amount: number;
+  amountLamports: bigint;
+  claimToken: string;
+  claimTokenHash: string;
+  emailHash: string;
+  status: ClaimStatusEnum;
+  claimedAt?: Date | null;
+  claimerWallet?: string | null;
+  txSignature?: string | null;
+  expiresAt: Date;
+  emailSentAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -15,6 +15,14 @@ pub fn create_quiz(ctx: Context<CreateQuiz>, quiz_id: String, host_id: String, a
     quiz_account.prize = amount;
     quiz_account.host_id = host_id;
     quiz_account.host_pub_key = host.key();
+    quiz_account.is_finalized = false;
+    quiz_account.total_winners = 0;
+    quiz_account.total_claimed = 0;
+    quiz_account.total_refunded = 0;
+    quiz_account.is_cancelled = false;
+    quiz_account.claim_expiry = 0;
+    quiz_account.platform_authority = Pubkey::default();
+    quiz_account.bump = ctx.bumps.quiz_account;
     
     let nocturn_fees = amount / 100 * NocturnData::FEES;
     let escrow_account = &ctx.accounts.escrow_account;

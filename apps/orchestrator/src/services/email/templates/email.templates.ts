@@ -11,6 +11,16 @@ interface CollaboratorAddedTemplateData {
     quizUrl: string;
 }
 
+interface WinnerNotificationTemplateData {
+    participantName: string;
+    quizTitle: string;
+    rank: number;
+    prizeAmount: number;
+    claimUrl: string;
+    expiresAt: string;
+    qrCodeDataUrl: string;
+}
+
 export default class EmailTemplate {
     static generate_collaborator_invite_email(data: CollaboratorInviteTemplateData): string {
         return `
@@ -220,5 +230,121 @@ export default class EmailTemplate {
 </body>
 </html>
     `.trim();
+    }
+
+    static generate_winner_notification_email(data: WinnerNotificationTemplateData): string {
+        const rankColors: Record<number, string> = { 1: '#FFD700', 2: '#C0C0C0', 3: '#CD7F32' };
+        const rankColor = rankColors[data.rank] || '#4f46e5';
+        const rankLabel =
+            data.rank === 1
+                ? '1st'
+                : data.rank === 2
+                  ? '2nd'
+                  : data.rank === 3
+                    ? '3rd'
+                    : `${data.rank}th`;
+
+        return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Won a Prize!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #0f172a;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 48px 20px;">
+                <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #1e293b; border: 2px solid ${rankColor}; border-radius: 8px; box-shadow: 4px 4px 0px ${rankColor};">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 32px 24px; text-align: center; background: linear-gradient(135deg, #2B2E4A 0%, #53354A 100%); border-radius: 4px 4px 0 0;">
+                            <p style="margin: 0 0 8px; font-size: 48px;">&#127942;</p>
+                            <h1 style="margin: 0; color: ${rankColor}; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">
+                                You Won!
+                            </h1>
+                            <p style="margin: 8px 0 0; color: #F3ECE7; font-size: 16px; font-weight: 400;">
+                                Congratulations, ${data.participantName}!
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Prize Details -->
+                    <tr>
+                        <td style="padding: 32px;">
+                            <div style="background-color: #0f172a; border: 2px solid #334155; padding: 24px; margin: 0 0 24px; border-radius: 8px; text-align: center;">
+                                <p style="margin: 0 0 4px; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Quiz</p>
+                                <p style="margin: 0 0 20px; color: #f1f5f9; font-size: 18px; font-weight: 600;">${data.quizTitle}</p>
+
+                                <div style="display: inline-block; background-color: ${rankColor}20; border: 1px solid ${rankColor}; border-radius: 24px; padding: 6px 20px; margin: 0 0 16px;">
+                                    <span style="color: ${rankColor}; font-size: 16px; font-weight: 700;">${rankLabel} Place</span>
+                                </div>
+
+                                <p style="margin: 16px 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Prize Amount</p>
+                                <p style="margin: 4px 0 0; color: #ffffff; font-size: 36px; font-weight: 700; font-family: 'Courier New', monospace;">
+                                    ${data.prizeAmount} SOL
+                                </p>
+                            </div>
+
+                            <p style="margin: 0 0 24px; color: #cbd5e1; font-size: 15px; line-height: 1.6; text-align: center;">
+                                Connect your Solana wallet to claim your prize. Scan the QR code or click the button below.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- QR Code -->
+                    <tr>
+                        <td style="padding: 0 32px 24px;" align="center">
+                            <div style="background-color: #ffffff; padding: 12px; border-radius: 8px; display: inline-block;">
+                                <img src="${data.qrCodeDataUrl}" alt="Claim QR Code" width="200" height="200" style="display: block;" />
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- CTA Button -->
+                    <tr>
+                        <td style="padding: 0 32px 32px;" align="center">
+                            <table role="presentation" style="border-collapse: collapse;">
+                                <tr>
+                                    <td>
+                                        <a href="${data.claimUrl}" style="display: inline-block; padding: 16px 40px; background-color: #E84545; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: 700; letter-spacing: -0.2px;">
+                                            Claim Your Prize
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Expiry Notice -->
+                    <tr>
+                        <td style="padding: 0 32px 32px;" align="center">
+                            <div style="background-color: #E8454520; border: 1px solid #E84545; border-radius: 4px; padding: 12px 20px;">
+                                <p style="margin: 0; color: #E84545; font-size: 13px; font-weight: 600;">
+                                    This claim expires on ${data.expiresAt}. Unclaimed prizes will be returned to the host.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 24px 32px; background-color: #0f172a; border-top: 2px solid #334155; border-radius: 0 0 4px 4px;">
+                            <p style="margin: 0 0 8px; color: #94a3b8; font-size: 13px; text-align: center;">
+                                Prize powered by <strong style="color: #E84545;">Nocturn</strong> on Solana
+                            </p>
+                            <p style="margin: 0; color: #64748b; font-size: 12px; text-align: center;">
+                                &copy; ${new Date().getFullYear()} Nocturn. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+        `.trim();
     }
 }

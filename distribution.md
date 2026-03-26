@@ -5,6 +5,7 @@
 Nocturn needs a complete prizepool system where hosts stake SOL into an on-chain escrow, configure how prizes are distributed among top N winners, and winners claim their rewards via a `/claim` page after receiving an email with a QR code. The existing contract only has `create_quiz` (escrow deposit). Everything else - distribution config, finalization, claiming, refunds - needs to be built.
 
 **Key decisions:**
+
 - **Hybrid finalization:** Host signs ONE approval tx, then the server auto-finalizes all winners using a platform authority keypair
 - **Wallet-only claiming:** Winners must connect a Solana wallet to claim (no custodial option)
 - **7-day claim expiry:** Winners have 7 days to claim before host can reclaim
@@ -14,6 +15,7 @@ Nocturn needs a complete prizepool system where hosts stake SOL into an on-chain
 ## 1. Smart Contract (apps/contract/)
 
 ### New Account: `ClaimAccount`
+
 One PDA per winner per quiz, created when server finalizes prizes after host approval.
 
 ```rust
@@ -34,6 +36,7 @@ pub struct ClaimAccount {
 ```
 
 ### Updated `QuizAccountShape`
+
 ```rust
 #[account]
 pub struct QuizAccountShape {
@@ -54,16 +57,17 @@ pub struct QuizAccountShape {
 
 ### New Instructions
 
-| Instruction | Signer | Purpose |
-|---|---|---|
-| `authorize_platform` | Host (browser wallet) | Host signs ONCE to delegate finalization authority to the platform keypair for this specific quiz. Stores platform pubkey on QuizAccountShape. |
-| `finalize_quiz` | Platform authority (server keypair) | Creates a ClaimAccount PDA for one winner. Called N times by server automatically. Verifies `signer == quiz_account.platform_authority`. |
-| `seal_quiz` | Platform authority | Marks quiz as finalized, sets 7-day claim expiry. No more claims can be added after this. |
-| `claim_prize` | Winner (browser wallet) | Transfers SOL from escrow PDA to winner's wallet. Winner must connect wallet on `/claim` page. |
-| `cancel_quiz` | Host | Returns all escrow SOL to host. Only works before finalization. |
-| `reclaim_expired` | Host | Reclaims a single expired unclaimed prize from escrow after 7-day window. |
+| Instruction          | Signer                              | Purpose                                                                                                                                        |
+| -------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authorize_platform` | Host (browser wallet)               | Host signs ONCE to delegate finalization authority to the platform keypair for this specific quiz. Stores platform pubkey on QuizAccountShape. |
+| `finalize_quiz`      | Platform authority (server keypair) | Creates a ClaimAccount PDA for one winner. Called N times by server automatically. Verifies `signer == quiz_account.platform_authority`.       |
+| `seal_quiz`          | Platform authority                  | Marks quiz as finalized, sets 7-day claim expiry. No more claims can be added after this.                                                      |
+| `claim_prize`        | Winner (browser wallet)             | Transfers SOL from escrow PDA to winner's wallet. Winner must connect wallet on `/claim` page.                                                 |
+| `cancel_quiz`        | Host                                | Returns all escrow SOL to host. Only works before finalization.                                                                                |
+| `reclaim_expired`    | Host                                | Reclaims a single expired unclaimed prize from escrow after 7-day window.                                                                      |
 
 ### Hybrid Finalization Model
+
 ```
 Quiz ends → Host sees "Approve Prize Distribution" button
 → Host signs ONE `authorize_platform` tx (wallet popup)
@@ -78,6 +82,7 @@ Quiz ends → Host sees "Approve Prize Distribution" button
 - Host never needs to stay on the page after the single approval
 
 ### Security
+
 - Escrow PDA seeds: `["escrow", quiz_account.key()]` - program signs on its behalf
 - `finalize_quiz` verifies `signer == quiz_account.platform_authority` (set by host via `authorize_platform`)
 - Platform keypair cannot touch escrows it wasn't authorized for
@@ -86,6 +91,7 @@ Quiz ends → Host sees "Approve Prize Distribution" button
 - Claimer pays gas (~5000 lamports) - standard for pull-based models
 
 ### Error Codes
+
 ```rust
 #[error_code]
 pub enum ErrorCodes {
@@ -109,6 +115,7 @@ pub enum ErrorCodes {
 ### New Models
 
 **`PrizeDistribution`** - Host's configured split
+
 ```prisma
 model PrizeDistribution {
     id             String  @id @default(cuid())
@@ -125,6 +132,7 @@ model PrizeDistribution {
 ```
 
 **`PrizeClaim`** - Per-winner claim record
+
 ```prisma
 model PrizeClaim {
     id              String      @id @default(cuid())
@@ -159,6 +167,7 @@ enum ClaimStatus {
 ```
 
 **Quiz model additions:**
+
 - `prizeDistributions PrizeDistribution[]`
 - `prizeClaims PrizeClaim[]`
 - `escrowPda String?`
@@ -166,9 +175,11 @@ enum ClaimStatus {
 - `onChainTxSignature String?`
 
 **Participant model addition:**
+
 - `prizeClaims PrizeClaim[]`
 
 ### Files to modify
+
 - `packages/database/prisma/schema/quiz.prisma` - add PrizeDistribution, PrizeClaim models, Quiz fields
 - `packages/database/prisma/schema/enums.prisma` - add ClaimStatus enum
 - `packages/database/prisma/schema/users.prisma` - add prizeClaims relation to Participant
@@ -178,21 +189,27 @@ enum ClaimStatus {
 ## 3. Backend Flow
 
 ### 3.1 Distribution Configuration
+
 **New endpoint:** `POST /api/quiz/:quizId/distribution`
+
 - Body: `{ distributions: [{ rank: 1, percentage: 50 }, ...] }`
 - Validates: percentages sum to 100, ranks sequential from 1
 - Saves to `PrizeDistribution` table
 
 ### 3.2 Stake Confirmation
+
 **New endpoint:** `POST /api/quiz/:quizId/confirm-stake`
+
 - Body: `{ txSignature, escrowPda, quizAccountPda }`
 - Verifies tx on Solana via `Connection.getTransaction()`
 - Updates Quiz with on-chain addresses
 
 ### 3.3 Post-Quiz Prize Claim Creation
+
 **Insert point:** `apps/server/src/sockets/HostManager.ts:533` (the comment says "call another function for processing the transaction")
 
 When `quiz.prizePool > 0` and quiz ends:
+
 1. Fetch `PrizeDistribution` records
 2. Match winners by `finalRank` from the ranked leaderboard
 3. Handle ties: if 2 participants tie for rank 1, split rank 1 + rank 2 prizes equally
@@ -206,6 +223,7 @@ When `quiz.prizePool > 0` and quiz ends:
 6. Emit WebSocket event to host with prize data → shows "Approve Distribution" button
 
 ### 3.4 Hybrid Finalization Flow
+
 1. Host clicks "Approve Distribution" → frontend sends `authorize_platform` tx (ONE wallet popup)
 2. Frontend calls `POST /api/quiz/:quizId/authorize-confirm` with txSignature
 3. Server verifies the `authorize_platform` tx on-chain
@@ -215,26 +233,33 @@ When `quiz.prizePool > 0` and quiz ends:
 7. Host gets real-time progress updates via WebSocket
 
 **New endpoints:**
+
 - `POST /api/quiz/:quizId/authorize-confirm` - Body: `{ txSignature }` - confirms host's authorize_platform tx
 - `GET /api/quiz/:quizId/prize-claims` - Returns all PrizeClaim records + finalization status
 
 ### 3.5 Claim Endpoints
+
 **`GET /api/claim/:token`** - Public, no auth required
+
 - Returns: quiz title, rank, amount (SOL), expiry, status
 
 **`POST /api/claim/:token/confirm`** - Public
+
 - Body: `{ txSignature, walletAddress }`
 - Verifies on-chain `claim_prize` tx
 - Updates PrizeClaim: status=CLAIMED, claimerWallet, txSignature
 - If all claims resolved → quiz status = PAYOUT_COMPLETED
 
 ### 3.6 Expiry Cron
+
 Daily cron job (apps/orchestrator):
+
 - Find PrizeClaims where `expiresAt < now` AND `status == PENDING`
 - Mark as EXPIRED
 - Notify host via email they can reclaim unclaimed funds
 
 ### 3.7 New env vars for server
+
 - `PLATFORM_AUTHORITY_KEYPAIR` - Base58-encoded Solana keypair for server-side signing
 - `SOLANA_RPC_URL` - Solana RPC endpoint (devnet for dev, mainnet for prod)
 
@@ -243,23 +268,27 @@ Daily cron job (apps/orchestrator):
 ## 4. Email & QR Code
 
 ### New dependency
+
 `qrcode` npm package in `apps/orchestrator`
 
 ### New email type: `WINNER_NOTIFICATION`
+
 Add to `packages/types/src/email/email.types.ts`:
+
 ```typescript
 interface WinnerNotificationEmailData {
-    email: string;
-    participantName: string;
-    quizTitle: string;
-    rank: number;
-    prizeAmount: number; // SOL
-    claimUrl: string;    // https://nocturn.app/claim?token=<TOKEN>
-    expiresAt: string;   // formatted date
+  email: string;
+  participantName: string;
+  quizTitle: string;
+  rank: number;
+  prizeAmount: number; // SOL
+  claimUrl: string; // https://nocturn.app/claim?token=<TOKEN>
+  expiresAt: string; // formatted date
 }
 ```
 
 ### Email content
+
 - "You Won!" header with rank badge
 - Quiz title, rank (#1, #2...), prize amount (X.XX SOL)
 - QR code (200x200, generated server-side as base64 data URI) encoding the claim URL
@@ -268,6 +297,7 @@ interface WinnerNotificationEmailData {
 - Nocturn branding (dark theme with alpha/delta colors)
 
 ### Files to modify
+
 - `apps/orchestrator/src/services/email/templates/email.templates.ts` - add winner template
 - `apps/orchestrator/src/queue/email_service.queue.ts` - handle new job type
 - `packages/types/src/email/email.types.ts` - add interface and enum value
@@ -277,7 +307,9 @@ interface WinnerNotificationEmailData {
 ## 5. Frontend
 
 ### 5.1 Prize Distribution Config
+
 **New component:** `PrizeDistributionConfig` (in quiz creation sidebar, shown when prizePool > 0)
+
 - "Number of winners" input (default 3)
 - Dynamic rank rows with percentage inputs
 - Default suggestions: 1→100%, 2→60/40, 3→50/30/20, 4→40/25/20/15, 5→35/25/20/12/8
@@ -288,14 +320,18 @@ interface WinnerNotificationEmailData {
 **Store changes:** Add `prizeDistributions: { rank: number; percentage: number }[]` to `useNewQuizStore`
 
 ### 5.2 Host Finalization Panel
+
 **New component:** `PrizeFinalizationPanel` (shown on quiz results screen when prizePool > 0)
+
 - List of winners with rank + prize amount
 - Single "Approve Distribution" button (ONE wallet popup)
 - Progress indicator showing server-side finalization status (via WebSocket)
 - States: waiting for approval → authorizing → finalizing (X/N) → sealing → complete → emails sent
 
 ### 5.3 Claim Page
+
 **New route:** `apps/web/app/claim/page.tsx`
+
 - Extracts `token` from `?token=` query param
 - Calls `GET /api/claim/:token` for claim details
 - States:
@@ -306,7 +342,9 @@ interface WinnerNotificationEmailData {
 - New store: `apps/web/src/store/claim/useClaimStore.ts`
 
 ### 5.4 Host Dashboard Prize Status
+
 In quiz management view, show prize claim status:
+
 - Claim progress: X/Y claimed
 - Individual winner statuses with timestamps
 - "Reclaim" button for expired unclaimed prizes (triggers `reclaim_expired` tx via wallet)
@@ -315,18 +353,18 @@ In quiz management view, show prize claim status:
 
 ## 6. Edge Cases
 
-| Case | Handling |
-|---|---|
-| **Rank ties** | Split combined prize of tied ranks equally. E.g., two tied for 1st split (rank1% + rank2%) / 2 each |
-| **Fewer participants than winners** | Only create claims for actual participants. Remainder stays in escrow for host to reclaim after 7-day expiry |
-| **Unclaimed prizes** | 7-day expiry → daily cron marks EXPIRED → host notified → host reclaims via `reclaim_expired` |
-| **Double claim attempt** | On-chain: fails with `AlreadyClaimed`. Backend: idempotent confirm endpoint |
-| **Host cancels before live** | `cancel_quiz` instruction returns all escrow SOL. Only works before `authorize_platform` |
-| **Insufficient escrow** | Contract validates `escrow.lamports >= claim.amount` before transfer |
-| **Email not delivered** | Claim page is still accessible if winner has the URL. Host can view claim URLs in dashboard |
-| **Quiz with 0 prizePool** | Entire prizepool system is bypassed - existing flow unchanged |
-| **Server-side finalization fails midway** | Bull queue retries (3 attempts). If still fails, host is notified. Partial finalization is safe - only sealed claims are claimable |
-| **Platform keypair compromised** | Can only finalize quizzes that were explicitly authorized by hosts. Cannot steal escrow funds (only create claim PDAs). Rotate key + re-deploy |
+| Case                                      | Handling                                                                                                                                       |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rank ties**                             | Split combined prize of tied ranks equally. E.g., two tied for 1st split (rank1% + rank2%) / 2 each                                            |
+| **Fewer participants than winners**       | Only create claims for actual participants. Remainder stays in escrow for host to reclaim after 7-day expiry                                   |
+| **Unclaimed prizes**                      | 7-day expiry → daily cron marks EXPIRED → host notified → host reclaims via `reclaim_expired`                                                  |
+| **Double claim attempt**                  | On-chain: fails with `AlreadyClaimed`. Backend: idempotent confirm endpoint                                                                    |
+| **Host cancels before live**              | `cancel_quiz` instruction returns all escrow SOL. Only works before `authorize_platform`                                                       |
+| **Insufficient escrow**                   | Contract validates `escrow.lamports >= claim.amount` before transfer                                                                           |
+| **Email not delivered**                   | Claim page is still accessible if winner has the URL. Host can view claim URLs in dashboard                                                    |
+| **Quiz with 0 prizePool**                 | Entire prizepool system is bypassed - existing flow unchanged                                                                                  |
+| **Server-side finalization fails midway** | Bull queue retries (3 attempts). If still fails, host is notified. Partial finalization is safe - only sealed claims are claimable             |
+| **Platform keypair compromised**          | Can only finalize quizzes that were explicitly authorized by hosts. Cannot steal escrow funds (only create claim PDAs). Rotate key + re-deploy |
 
 ---
 
@@ -349,6 +387,7 @@ Host creates quiz → Sets prizePool (SOL) → Configures distribution (N winner
 ## 8. Implementation Phases
 
 **Phase 1: Smart Contract** (independent)
+
 - Updated QuizAccountShape with new fields
 - ClaimAccount structure
 - 6 new instructions: authorize_platform, finalize_quiz, seal_quiz, claim_prize, cancel_quiz, reclaim_expired
@@ -357,6 +396,7 @@ Host creates quiz → Sets prizePool (SOL) → Configures distribution (N winner
 - Files: `apps/contract/programs/contract/src/`
 
 **Phase 2: Database** (independent)
+
 - PrizeDistribution and PrizeClaim models
 - ClaimStatus enum
 - Quiz model additions (escrowPda, quizAccountPda, onChainTxSignature, relations)
@@ -365,6 +405,7 @@ Host creates quiz → Sets prizePool (SOL) → Configures distribution (N winner
 - Files: `packages/database/prisma/schema/`
 
 **Phase 3: Backend** (depends on Phase 2)
+
 - Distribution config endpoint
 - Stake confirmation endpoint
 - Prize claim creation logic in HostManager
@@ -375,12 +416,14 @@ Host creates quiz → Sets prizePool (SOL) → Configures distribution (N winner
 - Files: `apps/server/src/controllers/`, `apps/server/src/sockets/HostManager.ts`, `apps/orchestrator/`
 
 **Phase 4: Email** (depends on Phase 3)
+
 - Winner notification email template with QR code
 - `qrcode` dependency in orchestrator
 - Email job handler for WINNER_NOTIFICATION
 - Files: `apps/orchestrator/src/services/email/`
 
 **Phase 5: Frontend** (depends on Phase 1 + Phase 3)
+
 - PrizeDistributionConfig component in quiz creation
 - PrizeFinalizationPanel on quiz results screen
 - `/claim` page + useClaimStore

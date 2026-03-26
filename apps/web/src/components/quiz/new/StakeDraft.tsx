@@ -4,6 +4,7 @@ import { RxCross2 } from 'react-icons/rx';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import StakeAmountSection from '@/components/utility/StakeAmountSection';
 import ShowWalletInfo from '@/components/utility/ShowWalletInfo';
+import PrizeDistributionConfig from './PrizeDistributionConfig';
 
 export default function StakeDraft() {
     const { setState } = useDraftRendererStore();
@@ -35,6 +36,7 @@ export default function StakeDraft() {
             </div>
 
             <StakeAmountSection />
+            <PrizeDistributionConfig />
         </div>
     );
 }

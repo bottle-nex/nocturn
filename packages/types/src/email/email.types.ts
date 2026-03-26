@@ -2,6 +2,7 @@ export enum EmailJobType {
   COLLABORATOR_INVITE = "COLLABORATOR_INVITE",
   COLLABORATOR_ADDED = "COLLABORATOR_ADDED",
   OTP_EMAIL = "OTP_EMAIL",
+  WINNER_NOTIFICATION = "WINNER_NOTIFICATION",
 }
 
 export interface CollaboratorInviteEmailData {
@@ -26,10 +27,21 @@ export interface OtpEmailData {
   otp: string;
 }
 
+export interface WinnerNotificationEmailData {
+  email: string;
+  participantName: string;
+  quizTitle: string;
+  rank: number;
+  prizeAmount: number;
+  claimUrl: string;
+  expiresAt: string;
+}
+
 export type EmailJobData =
   | CollaboratorInviteEmailData
   | CollaboratorAddedEmailData
-  | OtpEmailData;
+  | OtpEmailData
+  | WinnerNotificationEmailData;
 
 export interface EmailJob {
   type: EmailJobType;

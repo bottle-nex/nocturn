@@ -7,6 +7,7 @@ import Publisher from '../client/publisher';
 import DatabaseQueue from '../queue/database.queue';
 import { Env } from '../configs/env';
 import EmailServiceProcessor from '../queue/email_service.queue';
+import PrizeExpiryWorker from '../job/prize-expiry.worker';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ export let databaseQueueInstance: DatabaseQueue;
 export let phaseQueueProcessorInstance: PhaseQueueProcessor;
 export let transitionWorkerInstance: TransitionWorker;
 export let emailServiceProcessor: EmailServiceProcessor;
+export let prizeExpiryWorker: PrizeExpiryWorker;
 export let redisPublisherInstance: Redis;
 export let publisherInstnace: Publisher;
 const REDIS_URL = Env.ORCH_REDIS_URL;
@@ -27,6 +29,7 @@ export default function initServices() {
     phaseQueueProcessorInstance = new PhaseQueueProcessor();
     transitionWorkerInstance = new TransitionWorker();
     emailServiceProcessor = new EmailServiceProcessor('email-service-queue');
+    prizeExpiryWorker = new PrizeExpiryWorker();
 
     transitionWorkerInstance.setPhaseQueueProcessor(phaseQueueProcessorInstance);
     phaseQueueProcessorInstance.set_transition_worker(transitionWorkerInstance);

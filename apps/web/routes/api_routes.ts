@@ -68,3 +68,12 @@ export const ALL_CONTRIBUTORS_DETAILS_URL =
 export const PREMIUM_URL = API_URL + '/premium';
 export const GET_TIERS_URL = PREMIUM_URL + '/tiers';
 export const CREATE_CHECKOUT_URL = PREMIUM_URL + '/create-checkout-session';
+
+// Prize routes
+export const PRIZE_URL = API_URL + '/prize';
+export const SET_PRIZE_DISTRIBUTION_URL = PRIZE_URL + '/distribution';
+export const CONFIRM_STAKE_URL = PRIZE_URL + '/confirm-stake';
+export const AUTHORIZE_CONFIRM_URL = PRIZE_URL + '/authorize-confirm';
+export const GET_PRIZE_CLAIMS_URL = PRIZE_URL + '/claims';
+export const GET_CLAIM_URL = PRIZE_URL + '/claim';
+export const CONFIRM_CLAIM_URL = PRIZE_URL + '/claim';
