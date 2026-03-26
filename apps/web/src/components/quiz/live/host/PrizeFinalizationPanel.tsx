@@ -88,8 +88,8 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
             );
 
             setStep('complete');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Authorization failed');
+        } catch {
+            setError('Authorization failed');
             setStep('error');
         }
     };

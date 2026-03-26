@@ -41,6 +41,7 @@ export default function PrizeDistributionConfig() {
             setWinnerCount(quiz.prizeDistributions.length);
             setPercentages(quiz.prizeDistributions.map((d) => d.percentage));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const totalPercentage = percentages.reduce((sum, p) => sum + p, 0);
@@ -72,10 +73,12 @@ export default function PrizeDistributionConfig() {
     const handleSave = () => {
         if (!isValid) return;
         const distributions = percentages.map((p, i) => ({
+            id: '',
+            quizId: '',
             rank: i + 1,
             percentage: p,
         }));
-        updateQuiz({ prizeDistributions: distributions as any });
+        updateQuiz({ prizeDistributions: distributions });
     };
 
     const handleSuggest = () => {

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
 import { GoPeople } from 'react-icons/go';
-import { PiChats, PiTrashSimple } from 'react-icons/pi';
+import { PiTrashSimple } from 'react-icons/pi';
 import { RiSettings6Line } from 'react-icons/ri';
 import { FaRegHeart } from 'react-icons/fa6';
 import { useDragQuizStore } from '@/store/home/useDragQuizStore';

@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useClaimStore, ClaimPageStatus } from '@/store/claim/useClaimStore';
+import { useClaimStore } from '@/store/claim/useClaimStore';
 import { useWallet } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { GET_CLAIM_URL, CONFIRM_CLAIM_URL } from 'routes/api_routes';
@@ -75,8 +75,8 @@ export default function ClaimPage() {
                 setPageStatus('claimed');
                 setClaimData({ ...claimData, status: 'CLAIMED', txSignature });
             }
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to claim prize');
+        } catch {
+            setError('Failed to claim prize');
             setPageStatus('error');
         }
     };

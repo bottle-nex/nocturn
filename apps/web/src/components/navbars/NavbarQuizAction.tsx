@@ -20,7 +20,6 @@ import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { Button } from '../ui/button';
 import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
-import AppLogo from '../app/AppLogo';
 
 interface Option {
     name: string;

@@ -60,6 +60,7 @@ This document explains the complete lifecycle of a prizepool quiz in Nocturn, fr
 There are three types of Program Derived Addresses (PDAs) on Solana:
 
 ### QuizAccountShape
+
 **Seeds:** `["quiz", quiz_id, host_pubkey]`
 
 Stores quiz metadata on-chain. Created when the host stakes SOL.
@@ -72,11 +73,13 @@ claim_expiry, platform_authority, bump
 ```
 
 ### EscrowAccount
+
 **Seeds:** `["escrow", quiz_account_key]`
 
 A system account (not a data account) that holds the staked SOL. The host's SOL lands here during `create_quiz`. This is a PDA-controlled vault — no private key exists for it. SOL can only leave via program instructions (`claim_prize`, `cancel_quiz`, `reclaim_expired`).
 
 ### ClaimAccount
+
 **Seeds:** `["claim", quiz_id, claim_token]`
 
 One per winner. Created by the server during `finalize_quiz`. Contains:
@@ -92,6 +95,7 @@ is_claimed, claimed_at, claimer_pubkey, bump
 ## Database Models
 
 ### PrizeDistribution
+
 Configured by the host during quiz creation. Defines how the prize pool splits.
 
 ```
@@ -102,11 +106,12 @@ quizId, rank, percentage, amount, amountLamports
 Example for a 5 SOL pool with 3 winners:
 | rank | percentage | amount |
 |------|-----------|--------|
-| 1    | 50%       | 2.5 SOL |
-| 2    | 30%       | 1.5 SOL |
-| 3    | 20%       | 1.0 SOL |
+| 1 | 50% | 2.5 SOL |
+| 2 | 30% | 1.5 SOL |
+| 3 | 20% | 1.0 SOL |
 
 ### PrizeClaim
+
 Created after quiz results are computed. One per winning participant.
 
 ```
@@ -117,6 +122,7 @@ claimerWallet, txSignature, expiresAt, emailSentAt
 ```
 
 ### Quiz (added fields)
+
 ```
 escrowPda, quizAccountPda, onChainTxSignature
 prizeDistributions[], prizeClaims[]
@@ -150,6 +156,7 @@ When the host saves/publishes the quiz:
 **Quiz status:** `PUBLISHED` (or `SCHEDULED`)
 
 **What's on-chain at this point:**
+
 - `QuizAccountShape` PDA exists with the quiz metadata
 - `EscrowAccount` PDA holds the staked SOL
 - `platform_authority` is still `Pubkey::default()` (not yet delegated)
@@ -208,6 +215,7 @@ HostManager.handle_quiz_results()
 5. Emits `PRIZE_CLAIMS_READY` WebSocket event to the host, so the frontend can show the PrizeFinalizationPanel
 
 **At this point:**
+
 - Database has PrizeClaim records (one per winner)
 - Nothing has happened on-chain yet
 - No emails sent yet
@@ -231,6 +239,7 @@ PrizeFinalizationPanel
 ```
 
 **On-chain (`authorize_platform` instruction):**
+
 - Verifies the signer is the quiz host (`host.key() == quiz_account.host_pub_key`)
 - Verifies platform_authority hasn't been set yet (`== Pubkey::default()`)
 - Sets `quiz_account.platform_authority = server's platform keypair pubkey`
@@ -238,6 +247,7 @@ PrizeFinalizationPanel
 This is the trust handoff — the host says "I trust the Nocturn server to finalize this quiz."
 
 **Server-side (`authorizeConfirmController`):**
+
 1. Verifies the `authorize_platform` tx on-chain
 2. Loads all `PrizeClaim` records for this quiz (with participant data)
 3. Enqueues a `FINALIZE_PRIZE_ON_CHAIN` job to the **prize-finalization Bull queue**
@@ -352,6 +362,7 @@ Winner opens email → clicks claim link or scans QR code
    - Updates PrizeClaim in PostgreSQL: status → `CLAIMED`, stores wallet + tx signature
 
 **Claim page states:**
+
 ```
 loading → pending → connecting → claiming → claimed
                                           → error (retry)
@@ -378,6 +389,7 @@ Orchestrator boots up
 ```
 
 Daily at midnight, the orchestrator runs:
+
 ```sql
 UPDATE prize_claims
 SET status = 'EXPIRED'
@@ -411,18 +423,18 @@ There are **two separate Bull queue systems** running on Redis:
 
 ### Server Queues (apps/server process)
 
-| Queue Name | Job Type | Purpose |
-|-----------|----------|---------|
-| `prize-finalization` | `FINALIZE_PRIZE_ON_CHAIN` | Calls finalize_quiz + seal_quiz on-chain, triggers emails |
-| `email-service-queue` | Various email types | Adds jobs that the orchestrator processes |
-| `database-operations` | Various DB updates | Async database writes |
+| Queue Name            | Job Type                  | Purpose                                                   |
+| --------------------- | ------------------------- | --------------------------------------------------------- |
+| `prize-finalization`  | `FINALIZE_PRIZE_ON_CHAIN` | Calls finalize_quiz + seal_quiz on-chain, triggers emails |
+| `email-service-queue` | Various email types       | Adds jobs that the orchestrator processes                 |
+| `database-operations` | Various DB updates        | Async database writes                                     |
 
 ### Orchestrator Queues (apps/orchestrator process)
 
-| Queue Name | Job Type | Purpose |
-|-----------|----------|---------|
+| Queue Name            | Job Type                         | Purpose                                |
+| --------------------- | -------------------------------- | -------------------------------------- |
 | `email-service-queue` | `WINNER_NOTIFICATION` (+ others) | Processes email jobs, sends via Resend |
-| `prize-expiry` | `check-expired-claims` | Daily cron, marks expired claims |
+| `prize-expiry`        | `check-expired-claims`           | Daily cron, marks expired claims       |
 
 **How they connect:**
 
@@ -438,18 +450,22 @@ Server (producer) ──> Redis ──> Orchestrator (consumer)
 ## Security Model
 
 ### Claim Token
+
 - 64-character hex string (`crypto.randomBytes(32)`)
 - Single-use, stored hashed in the database
 - Transmitted only via email — never exposed in WebSocket events or API responses (except the claim endpoint itself)
 - The token is in the URL: `/claim?token=<token>`
 
 ### Hybrid Finalization
+
 The host delegates finalization to the platform but retains control:
+
 - **Host signs once** (`authorize_platform`) — sets `platform_authority` on-chain
 - **Server signs many** (`finalize_quiz` × N, then `seal_quiz`) — but can ONLY do this for quizzes where it was authorized
 - **The server cannot:** create claims for unauthorized quizzes, claim prizes, cancel quizzes, or modify the escrow
 
 ### On-Chain Guarantees
+
 - SOL is locked in an escrow PDA — no private key can drain it
 - Claims can only be made after `is_finalized == true`
 - Each claim can only be claimed once (`is_claimed` flag)
@@ -457,6 +473,7 @@ The host delegates finalization to the platform but retains control:
 - Only the host can cancel (before finalization) or reclaim (after expiry)
 
 ### Email Hash
+
 - The winner's email is hashed (`SHA-256`) and stored on-chain in the ClaimAccount
 - This creates a verifiable link between the off-chain identity (email) and the on-chain claim, without exposing the email on the blockchain
 
@@ -465,6 +482,7 @@ The host delegates finalization to the platform but retains control:
 ## File Map
 
 ### Smart Contract (Rust/Anchor)
+
 ```
 apps/contract/programs/contract/src/
 ├── lib.rs                              # Program entry — 7 instructions
@@ -486,6 +504,7 @@ apps/contract/programs/contract/src/
 ```
 
 ### Database (Prisma)
+
 ```
 packages/database/prisma/schema/
 ├── enums.prisma                        # ClaimStatus enum
@@ -494,6 +513,7 @@ packages/database/prisma/schema/
 ```
 
 ### Shared Types
+
 ```
 packages/types/src/
 ├── email/email.types.ts                # WinnerNotificationEmailData, EmailJobType.WINNER_NOTIFICATION
@@ -503,6 +523,7 @@ packages/types/src/
 ```
 
 ### Server (Express)
+
 ```
 apps/server/src/
 ├── configs/env.ts                      # SERVER_SOLANA_RPC_URL, SERVER_PLATFORM_AUTHORITY_KEYPAIR
@@ -525,6 +546,7 @@ apps/server/src/
 ```
 
 ### Orchestrator
+
 ```
 apps/orchestrator/src/
 ├── queue/email_service.queue.ts         # WINNER_NOTIFICATION case in processor
@@ -536,6 +558,7 @@ apps/orchestrator/src/
 ```
 
 ### Frontend (Next.js)
+
 ```
 apps/web/
 ├── app/

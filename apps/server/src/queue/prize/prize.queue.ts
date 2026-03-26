@@ -1,7 +1,7 @@
 import Bull from 'bull';
 import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
-import { email_service_queue_instance, solanaServiceInstance } from '../../services/init.services';
+import { email_service_queue_instance } from '../../services/init.services';
 
 interface ClaimData {
     id: string;
