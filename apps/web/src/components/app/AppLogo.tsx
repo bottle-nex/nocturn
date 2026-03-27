@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import CatRive from '../ui/Rives/CatRive';
+import { audio } from '../test/LandingFooter';
 
 export default function AppLogo({
     className,
@@ -27,7 +28,9 @@ export default function AppLogo({
                             textColor,
                         )}
                     >
-                        <div className="font-semibold text-base">Nocturn</div>
+                        <div className={cn('font-semibold text-base', audio.className)}>
+                            Nocturn
+                        </div>
                         <div className={cn('text-[13px] opacity-70')}>Play Bold</div>
                     </div>
                 )}

@@ -198,7 +198,7 @@ function JoinQuizPill({
             initial="closed"
             onClick={!isOpen ? onOpen : undefined}
             className={cn(
-                'relative flex items-center rounded-full h-13 px-2 overflow-hidden',
+                'relative flex items-center rounded-full h-11 px-1.5 overflow-hidden',
                 'ring-1 ring-black/10 shadow-sm backdrop-blur-sm',
             )}
         >
@@ -208,7 +208,7 @@ function JoinQuizPill({
                     e.stopPropagation();
                     onClose();
                 }}
-                className="absolute right-4 h-6 w-6 rounded-full bg-black text-light-base flex items-center justify-center hover:opacity-70 z-10 cursor-pointer"
+                className="absolute right-4 h-5 w-5 rounded-full bg-black text-light-base flex items-center justify-center hover:opacity-70 z-10 cursor-pointer"
             >
                 <IoCloseOutline size={17} />
             </motion.div>
@@ -228,13 +228,13 @@ function JoinQuizPill({
                               }
                             : undefined
                     }
-                    className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+                    className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
                     style={{ color: isOpen ? '#f5f5f5' : '#0a0a0a' }}
                 >
                     <IoIosArrowForward size={18} />
                 </motion.div>
             )}
-            <div className="flex-1 pl-3.5 overflow-hidden">
+            <div className="flex-1 pl-4 overflow-hidden">
                 <AnimatePresence mode="wait" initial={false}>
                     {isOpen ? (
                         <motion.input
@@ -258,7 +258,7 @@ function JoinQuizPill({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.001 }}
-                            className="whitespace-nowrap font-normal text-[18px]"
+                            className="whitespace-nowrap font-normal text-[17px]"
                         >
                             Join Quiz
                         </motion.div>
