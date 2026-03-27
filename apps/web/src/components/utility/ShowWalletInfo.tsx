@@ -32,11 +32,14 @@ export default function ShowInfoToggle() {
         // Fetch USDC balance for staking display
         try {
             const ata = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
-            connection.getTokenAccountBalance(ata).then((res) => {
-                setBalance(Number(res.value.uiAmount ?? 0));
-            }).catch(() => {
-                setBalance(0);
-            });
+            connection
+                .getTokenAccountBalance(ata)
+                .then((res) => {
+                    setBalance(Number(res.value.uiAmount ?? 0));
+                })
+                .catch(() => {
+                    setBalance(0);
+                });
         } catch {
             setBalance(0);
         }

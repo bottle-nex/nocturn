@@ -27,11 +27,14 @@ export function ConnectedWalletInfoCard() {
             // Fetch USDC balance
             try {
                 const ata = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
-                connection.getTokenAccountBalance(ata).then((res) => {
-                    setUsdcBalance(Number(res.value.uiAmount ?? 0));
-                }).catch(() => {
-                    setUsdcBalance(0);
-                });
+                connection
+                    .getTokenAccountBalance(ata)
+                    .then((res) => {
+                        setUsdcBalance(Number(res.value.uiAmount ?? 0));
+                    })
+                    .catch(() => {
+                        setUsdcBalance(0);
+                    });
             } catch {
                 setUsdcBalance(0);
             }

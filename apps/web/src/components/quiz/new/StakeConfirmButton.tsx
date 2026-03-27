@@ -80,8 +80,7 @@ export default function StakeConfirmButton() {
             );
 
             setStatus('done');
-        } catch (err) {
-            console.log('error is : ', err);
+        } catch {
             setError('Failed to stake USDC. Please try again.');
             setStatus('error');
         }

@@ -86,8 +86,12 @@ export default class SolanaService {
             if (escrowIndex === -1) {
                 return { valid: false };
             }
-            const preTokenBal = tx.meta.preTokenBalances?.find(b => b.accountIndex === escrowIndex);
-            const postTokenBal = tx.meta.postTokenBalances?.find(b => b.accountIndex === escrowIndex);
+            const preTokenBal = tx.meta.preTokenBalances?.find(
+                (b) => b.accountIndex === escrowIndex,
+            );
+            const postTokenBal = tx.meta.postTokenBalances?.find(
+                (b) => b.accountIndex === escrowIndex,
+            );
             const pre = preTokenBal ? Number(preTokenBal.uiTokenAmount.amount) : 0;
             const post = postTokenBal ? Number(postTokenBal.uiTokenAmount.amount) : 0;
             const diff = post - pre;

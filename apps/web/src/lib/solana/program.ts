@@ -2,7 +2,6 @@ import { AnchorProvider, Program } from '@nocturn/contract';
 import { Connection, PublicKey } from '@solana/web3.js';
 import type { AnchorWallet } from '@solana/wallet-adapter-react';
 import { createProgram, type Contract } from '@nocturn/contract';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 
 export const PROGRAM_ID = new PublicKey('8Gj7Nuc8uQZjA9h4XrfQ7RCbuKFW74mhk6nbQ8cdjZue');
 export const NOCTURN_FEE_WALLET = new PublicKey('DsGpvUYdJs7SRpXfST2N4EebKLsXq4SyoYvN3cyJ7uBR');
