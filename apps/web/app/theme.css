@@ -502,6 +502,7 @@ svg {
     font-size: 12px;
     opacity: 0.6;
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -517,6 +518,7 @@ svg {
         0 0 22px rgba(255, 255, 255, 0.12) !important;
 }
 .driver-overlay {
+    -webkit-backdrop-filter: blur(0.4px);
     backdrop-filter: blur(0.4px);
     background: rgba(0, 0, 0, 0.28) !important;
 }
@@ -534,6 +536,7 @@ svg {
 
 /* ensure popover stays sharp */
 .driver-popover {
+    -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
 }
 
@@ -632,6 +635,11 @@ body.driver-active .driver-popover * {
   }
 }
 
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Layers */
 .layer {
   position: absolute;
@@ -674,4 +682,8 @@ body.driver-active .driver-popover * {
 .layer.front p {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.footer-rainbow-bar {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 15%, #a855f7 28%, #ec4899 42%, #f43f5e 52%, #f97316 62%, #eab308 72%, #22c55e 82%, #06b6d4 90%, #3b82f6 100%);
 }

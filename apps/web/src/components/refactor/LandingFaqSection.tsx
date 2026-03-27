@@ -2,6 +2,7 @@
 import { JSX, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PerspectiveCard from '@/components/utility/PerspectiveCard';
+import LandingHeader from './LandingHeader';
 
 interface FaqItem {
     index: number;
@@ -46,11 +47,14 @@ export default function LandingFaqSection(): JSX.Element {
     const [selectedFaq, setSelectedFaq] = useState<number>(0);
 
     return (
-        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none h-screen">
-            <h1 className="text-5xl font-semibold">FAQ</h1>
-            <main className="w-full grid grid-cols-[40%_60%] gap-x-10 mt-10 items-start">
+        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none pb-16">
+            <LandingHeader
+                heading="Frequently Asked Questions"
+                subheading="Find answers to common questions about Nocturn."
+            />
+            <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
                 <PerspectiveCard
-                    className="w-full bg-[#4f46e540] rounded-sm p-6 space-y-4 h-full"
+                    className="w-full bg-[#4f46e590] rounded-sm p-6 space-y-4 h-full"
                     shadowColor="79,70,229"
                     sticky
                     stickyTop={10}

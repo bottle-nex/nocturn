@@ -23,18 +23,18 @@ export default function PerspectiveCard({
         offset: ['start end', 'start start'],
     });
 
-    const y = useTransform(scrollYProgress, [0, 0.85, 1], [80, 10, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.85, 1], [1.04, 1.02, 1]);
+    const y = useTransform(scrollYProgress, [0, 0.4, 0.6], [80, 10, 0]);
+    const scale = useTransform(scrollYProgress, [0, 0.4, 0.6], [1.04, 1.02, 1]);
     const boxShadow = useTransform(
         scrollYProgress,
-        [0, 0.85, 1],
+        [0, 0.4, 0.6],
         [
             `0 25px 60px rgba(${shadowColor},0.35), 0 10px 20px rgba(0,0,0,0.2)`,
             `0 8px 24px rgba(${shadowColor},0.2), 0 4px 8px rgba(0,0,0,0.1)`,
             `0 0px 0px rgba(${shadowColor},0), 0 0px 0px rgba(0,0,0,0)`,
         ],
     );
-    const opacity = useTransform(scrollYProgress, [0, 0.4, 1], [0.5, 1, 1]);
+    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.5, 1, 1]);
 
     const wrapper = (
         <motion.div ref={ref} style={{ y, scale, boxShadow, opacity }} className={className}>
@@ -45,7 +45,7 @@ export default function PerspectiveCard({
     if (!sticky) return wrapper;
 
     return (
-        <div className="sticky h-full" style={{ top: stickyTop }}>
+        <div className="sticky h-full w-full" style={{ top: stickyTop }}>
             {wrapper}
         </div>
     );
