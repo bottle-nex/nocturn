@@ -1,4 +1,6 @@
 import LandingCreateCardComponent from './LandingCardsSectionComponents/LandingCreateCardComponent';
+import LandingLaunchCardComponent from './LandingCardsSectionComponents/LandingLaunchCardComponent';
+import LandingPublishCardComponent from './LandingCardsSectionComponents/LandingPublishCardComponent';
 
 export default function LandingCardsComponent() {
     return (
@@ -12,12 +14,8 @@ export default function LandingCardsComponent() {
 
             <div className="w-full h-full items-center flex justify-between px-6 gap-x-6">
                 <LandingCreateCardComponent />
-
-                {/* CARD 2 */}
-                <div className="ring-1 ring-black/10 w-full h-100 rounded-lg bg-light-alpha shadow-xs shadow-black/5 p-6"></div>
-
-                {/* CARD 3 */}
-                <div className="ring-1 ring-black/10 w-full h-100 rounded-lg bg-light-alpha shadow-xs shadow-black/5 p-6"></div>
+                <LandingPublishCardComponent />
+                <LandingLaunchCardComponent />
             </div>
         </div>
     );

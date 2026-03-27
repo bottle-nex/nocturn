@@ -1,0 +1,16 @@
+interface LandingHeaderComponentProps {
+    title: string;
+    description: string;
+}
+
+export default function LandingHeaderComponent({
+    title,
+    description,
+}: LandingHeaderComponentProps) {
+    return (
+        <>
+            <div className="text-dark-base/90 text-[17px] font-semibold">{title}</div>
+            <div className="text-dark-base/50 text-[14px] leading-[1.2]">{description}</div>
+        </>
+    );
+}
