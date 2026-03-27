@@ -15,7 +15,13 @@ export default async function getClaimController(req: Request, res: Response) {
             where: { claimToken: token },
             include: {
                 quiz: {
-                    select: { title: true, prizePool: true, currency: true },
+                    select: {
+                        id: true,
+                        title: true,
+                        prizePool: true,
+                        currency: true,
+                        hostWalletPubkey: true,
+                    },
                 },
                 participant: {
                     select: { nickname: true, avatar: true },
@@ -31,13 +37,15 @@ export default async function getClaimController(req: Request, res: Response) {
         // Return public claim data (no sensitive info)
         ResponseWriter.success(res, {
             id: claim.id,
+            quizId: claim.quiz.id,
             quizTitle: claim.quiz.title,
             currency: claim.quiz.currency,
+            hostWalletPubkey: claim.quiz.hostWalletPubkey,
             participantName: claim.participant.nickname,
             participantAvatar: claim.participant.avatar,
             rank: claim.rank,
             amount: claim.amount,
-            amountLamports: claim.amountLamports.toString(),
+            amountBaseUnits: claim.amountBaseUnits.toString(),
             status: claim.status,
             claimedAt: claim.claimedAt,
             claimerWallet: claim.claimerWallet,

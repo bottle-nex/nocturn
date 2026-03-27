@@ -11,7 +11,7 @@ import CollabStateCache from '../cache/collab_state.cache';
 import DodoPaymentService from './premium/DodoPaymentService';
 import DodoWebhookService from './premium/DodoWebhookService';
 import DatabaseQueue from '../queue/database/database.queue';
-import SolanaService from './solana/solana.service';
+import SolanaService from './solana/service.solana';
 import PrizeQueue from '../queue/prize/prize.queue';
 import { CompiledStateGraph } from '@langchain/langgraph';
 

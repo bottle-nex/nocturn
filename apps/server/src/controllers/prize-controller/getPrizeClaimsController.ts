@@ -38,7 +38,7 @@ export default async function getPrizeClaimsController(req: Request, res: Respon
         // Serialize BigInt to string for JSON response
         const serializedClaims = claims.map((claim) => ({
             ...claim,
-            amountLamports: claim.amountLamports.toString(),
+            amountBaseUnits: claim.amountBaseUnits.toString(),
         }));
 
         ResponseWriter.success(res, serializedClaims);

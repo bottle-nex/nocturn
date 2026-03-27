@@ -9,7 +9,7 @@ export default function LandingNavbarComponent() {
     const router = useRouter();
 
     return (
-        <div className="h-14 w-full bg-white max-w-270.5 mx-auto border-b border-px border-dark-alpha/7 fixed top-0 flex items-center justify-between px-9">
+        <div className="h-14 w-full bg-white max-w-270.5 mx-auto border-b border-px border-dark-alpha/7 fixed top-0 flex items-center justify-between px-9 z-10">
             <AppLogo size={105} className="-left-10 top-1 text-dark-base" />
 
             <div className="flex items-center gap-x-3 text-dark-base/90">

@@ -1,119 +1,75 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { IoWalletOutline } from 'react-icons/io5';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { MdOutlineKey } from 'react-icons/md';
 import { PiCurrencyDollar } from 'react-icons/pi';
 import { LuCopy } from 'react-icons/lu';
-import { gsap } from 'gsap';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+
+import { useEffect } from 'react';
 import { WalletPanel } from './WalletPanel';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { USDC_MINT } from '@/lib/solana/program';
 
 export default function ShowInfoToggle() {
     const [showInfo, setShowInfo] = useState(false);
     const [showBalance, setShowBalance] = useState(false);
     const [showPublicKey, setShowPublicKey] = useState(false);
-    const [walletConnected, _setWalletConnected] = useState<boolean>(false);
-    // const { connect, wallet, publicKey } = useWallet();
-    const [walletPanel, setWalletPanel] = useState<boolean>(false);
+    const [openWalletPanel, setOpenWalletPanel] = useState<boolean>(false);
+    const [balance, setBalance] = useState<number | null>(null);
 
-    const infoContainerRef = useRef<HTMLDivElement>(null);
-    const balanceRef = useRef<HTMLDivElement>(null);
-    const publicKeyRef = useRef<HTMLDivElement>(null);
+    const { publicKey, connected } = useWallet();
+    const { connection } = useConnection();
 
-    const dummyBalance = '123.456 SOL';
-    const dummyPublicKey =
-        'F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2F9kJ9vX2';
+    useEffect(() => {
+        if (!publicKey || !connected) {
+            setBalance(null);
+            return;
+        }
+
+        // Fetch USDC balance for staking display
+        try {
+            const ata = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
+            connection.getTokenAccountBalance(ata).then((res) => {
+                setBalance(Number(res.value.uiAmount ?? 0));
+            }).catch(() => {
+                setBalance(0);
+            });
+        } catch {
+            setBalance(0);
+        }
+    }, [publicKey, connected, connection]);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(dummyPublicKey);
+        if (publicKey) {
+            navigator.clipboard.writeText(publicKey.toBase58());
+        }
     };
-
-    useEffect(() => {
-        if (!infoContainerRef.current) return;
-
-        if (showInfo) {
-            gsap.fromTo(
-                infoContainerRef.current,
-                {
-                    opacity: 0,
-                    y: -10,
-                    scale: 0.95,
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.4,
-                    ease: 'back.out(1.7)',
-                },
-            );
-        }
-    }, [showInfo]);
-
-    useEffect(() => {
-        if (!balanceRef.current) return;
-
-        if (showBalance) {
-            gsap.fromTo(
-                balanceRef.current,
-                {
-                    opacity: 0,
-                    y: -10,
-                    scale: 0.95,
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.3,
-                    ease: 'back.out(1.7)',
-                },
-            );
-        }
-    }, [showBalance]);
-
-    useEffect(() => {
-        if (!publicKeyRef.current) return;
-
-        if (showPublicKey) {
-            gsap.fromTo(
-                publicKeyRef.current,
-                {
-                    opacity: 0,
-                    y: -10,
-                    scale: 0.95,
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.3,
-                    ease: 'back.out(1.7)',
-                },
-            );
-        }
-    }, [showPublicKey]);
 
     return (
         <div className="w-full mt-4">
             <Button
                 onClick={() => {
-                    setWalletPanel((prev) => !prev);
-                    if (walletConnected) setShowInfo(!showInfo);
+                    if (connected) {
+                        setShowInfo(!showInfo);
+                    } else {
+                        setOpenWalletPanel((prev) => !prev);
+                    }
                 }}
                 className="flex items-center justify-center h-10 rounded-lg hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 ease-in-out bg-light-base hover:bg-light-base dark:bg-dark-base/30 dark:text-neutral-300 text-neutral-700 border border-neutral-600 dark:border-neutral-500 w-full"
             >
                 <IoWalletOutline className="mr-1" />
-                {walletConnected
+                {connected
                     ? showInfo
                         ? 'Hide Wallet Info'
                         : 'Show Wallet Info'
                     : 'Connect Wallet'}
             </Button>
 
-            {walletConnected && showInfo && (
-                <div ref={infoContainerRef} className="mt-4">
+            {connected && showInfo && (
+                <div className="mt-4 animate-in fade-in slide-in-from-top-1 duration-300">
                     <div className="flex flex-col gap-y-6 mt-4">
                         <div className="flex flex-col gap-y-1">
                             <div className="flex items-center justify-between">
@@ -130,11 +86,8 @@ export default function ShowInfoToggle() {
                                 </Button>
                             </div>
                             {showBalance && (
-                                <div
-                                    ref={balanceRef}
-                                    className="text-sm text-neutral-500 dark:text-neutral-300 mt-1"
-                                >
-                                    {dummyBalance}
+                                <div className="text-sm text-neutral-500 dark:text-neutral-300 mt-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    {balance !== null ? `${balance} USDC` : 'Loading...'}
                                 </div>
                             )}
                         </div>
@@ -153,10 +106,10 @@ export default function ShowInfoToggle() {
                                     {showPublicKey ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                                 </Button>
                             </div>
-                            {showPublicKey && (
-                                <div ref={publicKeyRef} className="mt-1 flex items-center gap-x-2">
+                            {showPublicKey && publicKey && (
+                                <div className="mt-1 flex items-center gap-x-2 animate-in fade-in slide-in-from-top-1 duration-200">
                                     <div className="text-sm text-neutral-500 dark:text-neutral-300 truncate max-w-[calc(100%-32px)]">
-                                        {dummyPublicKey}
+                                        {publicKey.toBase58()}
                                     </div>
                                     <Button
                                         variant={'ghost'}
@@ -172,7 +125,7 @@ export default function ShowInfoToggle() {
                     </div>
                 </div>
             )}
-            {walletPanel && <WalletPanel close={() => setWalletPanel(false)} />}
+            {openWalletPanel && <WalletPanel close={() => setOpenWalletPanel(false)} />}
         </div>
     );
 }

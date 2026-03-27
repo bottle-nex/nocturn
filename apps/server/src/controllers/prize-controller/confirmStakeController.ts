@@ -10,13 +10,16 @@ export default async function confirmStakeController(req: Request, res: Response
     }
 
     const { quizId } = req.params;
-    const { txSignature, escrowPda, quizAccountPda } = req.body as {
+    const { txSignature, escrowPda, quizAccountPda, hostWalletPubkey } = req.body as {
         txSignature: string;
         escrowPda: string;
         quizAccountPda: string;
+        hostWalletPubkey: string;
     };
 
-    if (!quizId || !txSignature || !escrowPda || !quizAccountPda) {
+    console.log('req body: ', req.body);
+
+    if (!quizId || !txSignature || !escrowPda || !quizAccountPda || !hostWalletPubkey) {
         ResponseWriter.invalid_data(res, 'All fields are required');
         return;
     }
@@ -32,8 +35,8 @@ export default async function confirmStakeController(req: Request, res: Response
         }
 
         // Verify the transaction on-chain
-        const isValid = await solanaServiceInstance.verify_transaction(txSignature);
-        if (!isValid) {
+        const isValid = await solanaServiceInstance.verify_stake_tx(txSignature, escrowPda);
+        if (!isValid.valid) {
             ResponseWriter.error(
                 res,
                 'INVALID_TX',
@@ -51,6 +54,8 @@ export default async function confirmStakeController(req: Request, res: Response
                 escrowPda,
                 quizAccountPda,
                 onChainTxSignature: txSignature,
+                hostWalletPubkey,
+                prizePool: isValid.baseUnits ? Number(isValid.baseUnits) / 1e6 : quiz.prizePool,
             },
         });
 

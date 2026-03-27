@@ -57,14 +57,14 @@ export default async function setDistributionController(req: Request, res: Respo
             prisma.prizeDistribution.deleteMany({ where: { quizId } }),
             ...sortedDistributions.map((d) => {
                 const amount = (quiz.prizePool * d.percentage) / 100;
-                const amountLamports = BigInt(Math.floor(amount * 1e9));
+                const amountBaseUnits = BigInt(Math.floor(amount * 1e6));
                 return prisma.prizeDistribution.create({
                     data: {
                         quizId,
                         rank: d.rank,
                         percentage: d.percentage,
                         amount,
-                        amountLamports,
+                        amountBaseUnits,
                     },
                 });
             }),

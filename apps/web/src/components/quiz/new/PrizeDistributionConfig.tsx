@@ -139,7 +139,7 @@ export default function PrizeDistributionConfig() {
                         />
                         <span className="text-xs text-neutral-500 dark:text-neutral-400">%</span>
                         <span className="text-xs text-neutral-400 dark:text-neutral-500 ml-auto font-mono">
-                            {((prizePool * pct) / 100).toFixed(4)} SOL
+                            {((prizePool * pct) / 100).toFixed(2)} USDC
                         </span>
                     </div>
                 ))}

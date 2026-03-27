@@ -3,7 +3,6 @@
 import { RxCross2 } from 'react-icons/rx';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { cn } from '@/lib/utils';
 import { ConnectedWalletInfoCard } from '../ui/ConnectedWalletInfoCard';
@@ -18,51 +17,22 @@ export const WalletPanel = ({ close }: WalletPanelProps) => {
     const walletPanelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setMounted(true); // Ensure DOM is ready
+        setMounted(true);
+    }, []);
+
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        requestAnimationFrame(() => setVisible(true));
     }, []);
 
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
             if (walletPanelRef.current && !walletPanelRef.current.contains(event.target as Node)) {
-                close(); // Call the close function when clicked outside
-            }
-        };
-
-        document.addEventListener('mousedown', handleOutsideClick);
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        };
-    }, [close]);
-
-    useEffect(() => {
-        if (!mounted || !walletPanelRef.current) return;
-
-        const el = walletPanelRef.current;
-
-        // Initial animation setup
-        gsap.set(el, {
-            y: 50,
-            opacity: 0,
-        });
-
-        // Trigger entrance animation after next frame
-        requestAnimationFrame(() => {
-            gsap.to(el, {
-                y: 0,
-                opacity: 1,
-                duration: 0.4,
-                ease: 'power2.out',
-            });
-        });
-
-        // Close on outside click
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (el && !el.contains(event.target as Node)) {
                 close();
             }
         };
 
-        // Close on Esc key press
         const handleEsc = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 close();
@@ -76,7 +46,7 @@ export const WalletPanel = ({ close }: WalletPanelProps) => {
             document.removeEventListener('mousedown', handleOutsideClick);
             document.removeEventListener('keydown', handleEsc);
         };
-    }, [mounted, close]);
+    }, [close]);
 
     if (!mounted) return null;
 
@@ -88,7 +58,10 @@ export const WalletPanel = ({ close }: WalletPanelProps) => {
         >
             <div
                 ref={walletPanelRef}
-                className="w-[700px] h-[500px] bg-[#0f0f0f] rounded-xl overflow-hidden shadow-2xl flex border border-[#565449] opacity-0 "
+                className={cn(
+                    'w-[700px] h-[500px] bg-[#0f0f0f] rounded-xl overflow-hidden shadow-2xl flex border border-[#565449] transition-all duration-400 ease-out',
+                    visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12',
+                )}
             >
                 <div className="w-[240px] h-full border-r border-[#3d3932] p-5 flex flex-col gap-4">
                     <div className="w-full text-left px-3 flex justify-start items-start text-lg font-semibold ">

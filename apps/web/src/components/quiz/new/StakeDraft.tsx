@@ -5,6 +5,7 @@ import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import StakeAmountSection from '@/components/utility/StakeAmountSection';
 import ShowWalletInfo from '@/components/utility/ShowWalletInfo';
 import PrizeDistributionConfig from './PrizeDistributionConfig';
+import StakeConfirmButton from './StakeConfirmButton';
 
 export default function StakeDraft() {
     const { setState } = useDraftRendererStore();
@@ -37,6 +38,7 @@ export default function StakeDraft() {
 
             <StakeAmountSection />
             <PrizeDistributionConfig />
+            <StakeConfirmButton />
         </div>
     );
 }

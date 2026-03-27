@@ -1,7 +1,9 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 use crate::data::{
     quiz_account_shape::QuizAccountShape,
     claim_account_shape::ClaimAccount,
+    nocturn_data::NocturnData,
 };
 use crate::error::error::ErrorCodes;
 
@@ -23,24 +25,33 @@ pub fn claim_prize(
         ErrorCodes::ClaimExpired
     );
 
-    let escrow = &ctx.accounts.escrow_account;
     require!(
-        escrow.lamports() >= claim_account.amount,
+        ctx.accounts.escrow_token_account.amount >= claim_account.amount,
         ErrorCodes::InsufficientEscrow
     );
 
-    // Transfer SOL from escrow PDA to claimer
-    let quiz_account_key = quiz_account.key();
-    let escrow_seeds: &[&[u8]] = &[
-        b"escrow",
-        quiz_account_key.as_ref(),
-        &[ctx.bumps.escrow_account],
-    ];
-
     let transfer_amount = claim_account.amount;
 
-    **escrow.try_borrow_mut_lamports()? -= transfer_amount;
-    **claimer.try_borrow_mut_lamports()? += transfer_amount;
+    // Sign with escrow authority PDA
+    let quiz_account_key = quiz_account.key();
+    let escrow_auth_seeds: &[&[u8]] = &[
+        b"escrow_auth",
+        quiz_account_key.as_ref(),
+        &[quiz_account.escrow_bump],
+    ];
+
+    token::transfer(
+        CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.escrow_token_account.to_account_info(),
+                to: ctx.accounts.claimer_token_account.to_account_info(),
+                authority: ctx.accounts.escrow_authority.to_account_info(),
+            },
+            &[escrow_auth_seeds],
+        ),
+        transfer_amount,
+    )?;
 
     // Mark as claimed
     claim_account.is_claimed = true;
@@ -49,14 +60,11 @@ pub fn claim_prize(
     quiz_account.total_claimed += 1;
 
     msg!(
-        "Prize of {} lamports claimed by {:?} for rank {}",
+        "Prize of {} USDC base units claimed by {:?} for rank {}",
         transfer_amount,
         claimer.key(),
         claim_account.rank
     );
-
-    // Suppress unused variable warning for escrow_seeds (used for PDA verification)
-    let _ = escrow_seeds;
 
     Ok(())
 }
@@ -71,13 +79,21 @@ pub struct ClaimPrize<'info> {
     )]
     pub quiz_account: Account<'info, QuizAccountShape>,
 
-    /// CHECK: Escrow PDA holding the prize pool SOL
+    /// CHECK: Escrow authority PDA for signing token transfers
+    #[account(
+        seeds = [b"escrow_auth", quiz_account.key().as_ref()],
+        bump,
+    )]
+    pub escrow_authority: UncheckedAccount<'info>,
+
+    /// Escrow USDC token account
     #[account(
         mut,
         seeds = [b"escrow", quiz_account.key().as_ref()],
         bump,
+        constraint = escrow_token_account.mint == NocturnData::USDC_MINT @ ErrorCodes::InvalidMint,
     )]
-    pub escrow_account: SystemAccount<'info>,
+    pub escrow_token_account: Account<'info, TokenAccount>,
 
     #[account(
         mut,
@@ -86,8 +102,16 @@ pub struct ClaimPrize<'info> {
     )]
     pub claim_account: Account<'info, ClaimAccount>,
 
+    /// Claimer's USDC token account (ATA, must pre-exist — frontend creates beforehand)
+    #[account(
+        mut,
+        constraint = claimer_token_account.owner == claimer.key(),
+        constraint = claimer_token_account.mint == NocturnData::USDC_MINT @ ErrorCodes::InvalidMint,
+    )]
+    pub claimer_token_account: Account<'info, TokenAccount>,
+
     #[account(mut)]
     pub claimer: Signer<'info>,
 
-    pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
 }

@@ -12,13 +12,15 @@ export type ClaimPageStatus =
 
 interface ClaimData {
     id: string;
+    quizId: string;
     quizTitle: string;
     currency: string;
+    hostWalletPubkey: string | null;
     participantName: string;
     participantAvatar: string | null;
     rank: number;
     amount: number;
-    amountLamports: string;
+    amountBaseUnits: string;
     status: string;
     claimedAt: string | null;
     claimerWallet: string | null;

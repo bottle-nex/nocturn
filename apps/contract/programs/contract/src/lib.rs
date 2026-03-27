@@ -5,7 +5,7 @@ pub mod error;
 use anchor_lang::prelude::*;
 use func::*;
 
-declare_id!("3ULNo29njjmDEyLr8DSyyJUDgnZW5BqPGrHFXVP2fjKL");
+declare_id!("8Gj7Nuc8uQZjA9h4XrfQ7RCbuKFW74mhk6nbQ8cdjZue");
 
 #[program]
 pub mod contract {

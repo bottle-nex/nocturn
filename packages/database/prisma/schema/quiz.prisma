@@ -12,8 +12,8 @@ model Quiz {
 
     isFavourite Boolean?
 
-    prizePool Float // Maybe in lamports -> then Number
-    currency  String @default("SOL")
+    prizePool Float
+    currency  String @default("USDC")
 
     basePointsPerQuestion Int     @default(100)
     pointsMultiplier      Float   @default(1.2)
@@ -60,6 +60,7 @@ model Quiz {
     escrowPda          String?
     quizAccountPda     String?
     onChainTxSignature String?
+    hostWalletPubkey   String?
 
     @@map("quizzes")
 }
@@ -122,7 +123,7 @@ model PrizeDistribution {
     rank           Int
     percentage     Float
     amount         Float?
-    amountLamports BigInt?
+    amountBaseUnits BigInt?
 
     @@unique([quizId, rank])
     @@map("prize_distributions")
@@ -136,7 +137,7 @@ model PrizeClaim {
     participant    Participant  @relation(fields: [participantId], references: [id], onDelete: Cascade)
     rank           Int
     amount         Float
-    amountLamports BigInt
+    amountBaseUnits BigInt
     claimToken     String      @unique
     claimTokenHash String
     emailHash      String

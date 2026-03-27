@@ -64,11 +64,12 @@ export default async function authorizeConfirmController(req: Request, res: Resp
             quizId,
             quizAccountPda: quiz.quizAccountPda,
             escrowPda: quiz.escrowPda,
+            hostWalletPubkey: quiz.hostWalletPubkey || '',
             claims: quiz.prizeClaims.map((claim) => ({
                 id: claim.id,
                 claimToken: claim.claimToken,
                 emailHash: claim.emailHash,
-                amountLamports: claim.amountLamports.toString(),
+                amountBaseUnits: claim.amountBaseUnits.toString(),
                 rank: claim.rank,
                 participantEmail: claim.participant.email || '',
                 participantName: claim.participant.nickname,

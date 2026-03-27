@@ -22,4 +22,6 @@ pub enum ErrorCodes {
     PlatformNotAuthorized,
     #[msg("Platform authority already set for this quiz")]
     AlreadyAuthorized,
+    #[msg("Invalid token mint")]
+    InvalidMint,
 }

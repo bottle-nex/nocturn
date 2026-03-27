@@ -16,7 +16,7 @@ pub struct ClaimAccount {
 
 impl ClaimAccount {
     pub fn length() -> usize {
-        4 + 16 +   // quiz_id (String)
+        4 + 32 +   // quiz_id (String: max 32 chars for cuid)
         4 + 64 +   // claim_token (String)
         32 +       // winner_email_hash ([u8; 32])
         8 +        // amount (u64)

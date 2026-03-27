@@ -3,9 +3,17 @@
 import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import { GET_CLAIM_URL, CONFIRM_CLAIM_URL } from 'routes/api_routes';
+import { getProgram, USDC_MINT } from '@/lib/solana/program';
+import { buildClaimPrizeTx } from '@/lib/solana/transactions';
+import {
+    createAssociatedTokenAccountInstruction,
+    getAssociatedTokenAddressSync,
+    getAccount,
+} from '@solana/spl-token';
 
 function getRankLabel(rank: number): string {
     if (rank === 1) return '1st Place';
@@ -25,7 +33,9 @@ export default function ClaimPage() {
     const searchParams = useSearchParams();
     const token = searchParams.get('token');
     const { pageStatus, claimData, error, setPageStatus, setClaimData, setError } = useClaimStore();
-    const { publicKey, connected, select, wallets, connect } = useWallet();
+    const { publicKey, connected, select, wallets, connect, signTransaction } = useWallet();
+    const anchorWallet = useAnchorWallet();
+    const { connection } = useConnection();
 
     const fetchClaim = useCallback(async () => {
         if (!token) {
@@ -55,16 +65,40 @@ export default function ClaimPage() {
     }, [fetchClaim]);
 
     const handleClaim = async () => {
-        if (!publicKey || !token || !claimData) return;
+        if (!publicKey || !signTransaction || !anchorWallet || !token || !claimData) return;
 
         setPageStatus('claiming');
 
         try {
-            // The actual on-chain claim_prize transaction would be built and signed here
-            // using the Anchor client. For now, we send a confirmation to the backend.
-            // TODO: Build and sign claim_prize transaction using Anchor IDL
+            const program = getProgram(connection, anchorWallet);
 
-            const txSignature = 'pending_onchain_implementation';
+            // Ensure claimer has a USDC ATA, create if missing
+            const claimerAta = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
+            let needsAta = false;
+            try {
+                await getAccount(connection, claimerAta);
+            } catch {
+                needsAta = true;
+            }
+
+            const tx = await buildClaimPrizeTx(program, claimData.quizId, token, publicKey);
+
+            if (needsAta) {
+                const createAtaIx = createAssociatedTokenAccountInstruction(
+                    publicKey,
+                    claimerAta,
+                    publicKey,
+                    USDC_MINT,
+                );
+                tx.instructions.unshift(createAtaIx);
+            }
+
+            tx.feePayer = publicKey;
+            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+            const signed = await signTransaction(tx);
+            const txSignature = await connection.sendRawTransaction(signed.serialize());
+            await connection.confirmTransaction(txSignature, 'confirmed');
 
             const res = await axios.post(`${CONFIRM_CLAIM_URL}/${token}/confirm`, {
                 txSignature,
@@ -139,7 +173,7 @@ export default function ClaimPage() {
                         Prize Amount
                     </p>
                     <p className="text-3xl font-bold text-[#E84545]">
-                        {claimData.amount.toFixed(4)} <span className="text-lg">SOL</span>
+                        {claimData.amount.toFixed(2)} <span className="text-lg">USDC</span>
                     </p>
                 </div>
 

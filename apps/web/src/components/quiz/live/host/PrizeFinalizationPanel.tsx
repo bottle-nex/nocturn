@@ -1,17 +1,21 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import axios from 'axios';
 import { GET_PRIZE_CLAIMS_URL, AUTHORIZE_CONFIRM_URL } from 'routes/api_routes';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { motion } from 'framer-motion';
+import { getProgram } from '@/lib/solana/program';
+import { buildAuthorizePlatformTx } from '@/lib/solana/transactions';
 
 interface PrizeClaim {
     id: string;
     rank: number;
     amount: number;
-    amountLamports: string;
+    amountBaseUnits: string;
     status: string;
     participant: {
         nickname: string;
@@ -41,6 +45,8 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
     const [step, setStep] = useState<FinalizationStep>('loading');
     const [error, setError] = useState<string | null>(null);
     const { publicKey, signTransaction } = useWallet();
+    const anchorWallet = useAnchorWallet();
+    const { connection } = useConnection();
     const { quiz } = useLiveQuizStore();
 
     const fetchClaims = useCallback(async () => {
@@ -63,7 +69,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
     }, [fetchClaims]);
 
     const handleAuthorize = async () => {
-        if (!publicKey || !signTransaction) {
+        if (!publicKey || !signTransaction || !anchorWallet) {
             setError('Please connect your wallet first');
             return;
         }
@@ -71,9 +77,22 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
         setStep('authorizing');
 
         try {
-            // TODO: Build and sign authorize_platform transaction using Anchor IDL
-            // For now we send a placeholder tx signature
-            const txSignature = 'pending_onchain_implementation';
+            const platformPubkey = new PublicKey(
+                process.env.NEXT_PUBLIC_PLATFORM_AUTHORITY_PUBKEY!,
+            );
+            const program = getProgram(connection, anchorWallet);
+
+            const tx = await buildAuthorizePlatformTx(program, quizId, platformPubkey, publicKey);
+            tx.feePayer = publicKey;
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+            tx.recentBlockhash = blockhash;
+
+            const signed = await signTransaction(tx);
+            const txSignature = await connection.sendRawTransaction(signed.serialize());
+            await connection.confirmTransaction(
+                { signature: txSignature, blockhash, lastValidBlockHeight },
+                'confirmed',
+            );
 
             setStep('finalizing');
 
@@ -104,7 +123,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
         >
             <div className="p-4 border-b border-[#903749]/30">
                 <h3 className="text-sm font-semibold text-[#F3ECE7]">Prize Distribution</h3>
-                <p className="text-xs text-[#F3ECE7]/50 mt-0.5">{quiz.prizePool} SOL prize pool</p>
+                <p className="text-xs text-[#F3ECE7]/50 mt-0.5">{quiz.prizePool} USDC prize pool</p>
             </div>
 
             <div className="p-4 space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
@@ -123,7 +142,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                             {claim.participant.nickname}
                         </span>
                         <span className="text-xs font-mono text-[#E84545]">
-                            {claim.amount.toFixed(4)} SOL
+                            {claim.amount.toFixed(2)} USDC
                         </span>
                         <span
                             className={`text-[10px] px-1.5 py-0.5 rounded ${

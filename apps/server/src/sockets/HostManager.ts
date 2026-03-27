@@ -636,7 +636,7 @@ export default class HostManager {
             participantId: string;
             rank: number;
             amount: number;
-            amountLamports: bigint;
+            amountBaseUnits: bigint;
         }> = [];
 
         for (const dist of distributions) {
@@ -649,9 +649,9 @@ export default class HostManager {
                     participantId: participantIds[0]!,
                     rank: dist.rank,
                     amount: dist.amount || (quiz.prizePool * dist.percentage) / 100,
-                    amountLamports:
-                        dist.amountLamports ||
-                        BigInt(Math.floor(((quiz.prizePool * dist.percentage) / 100) * 1e9)),
+                    amountBaseUnits:
+                        dist.amountBaseUnits ||
+                        BigInt(Math.floor(((quiz.prizePool * dist.percentage) / 100) * 1e6)),
                 });
             } else {
                 // Tied participants: split the prize for this rank among them
@@ -669,14 +669,14 @@ export default class HostManager {
                 }
 
                 const splitAmount = totalAmountForTied / tiedCount;
-                const splitLamports = BigInt(Math.floor(splitAmount * 1e9));
+                const splitBaseUnits = BigInt(Math.floor(splitAmount * 1e6));
 
                 for (const pid of participantIds) {
                     claimsToCreate.push({
                         participantId: pid,
                         rank: dist.rank,
                         amount: splitAmount,
-                        amountLamports: splitLamports,
+                        amountBaseUnits: splitBaseUnits,
                     });
                 }
             }
@@ -701,7 +701,7 @@ export default class HostManager {
                     participantId: claim.participantId,
                     rank: claim.rank,
                     amount: claim.amount,
-                    amountLamports: claim.amountLamports,
+                    amountBaseUnits: claim.amountBaseUnits,
                     claimToken,
                     claimTokenHash,
                     emailHash,

@@ -298,7 +298,7 @@ export interface PrizeDistributionType {
   rank: number;
   percentage: number;
   amount?: number | null;
-  amountLamports?: bigint | null;
+  amountBaseUnits?: bigint | null;
 }
 
 export interface PrizeClaimType {
@@ -308,7 +308,7 @@ export interface PrizeClaimType {
   participant?: ParticipantType;
   rank: number;
   amount: number;
-  amountLamports: bigint;
+  amountBaseUnits: bigint;
   claimToken: string;
   claimTokenHash: string;
   emailHash: string;

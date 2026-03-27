@@ -14,14 +14,15 @@ pub struct QuizAccountShape {
     pub claim_expiry: i64,
     pub platform_authority: Pubkey,
     pub bump: u8,
+    pub escrow_bump: u8,
 }
 
 impl QuizAccountShape {
     pub fn length() -> usize {
-        4 + 16 +   // quiz_id (String: 4 byte prefix + max 16 chars)
+        4 + 32 +   // quiz_id (String: 4 byte prefix + max 32 chars for cuid)
         8 +        // prize (u64)
         32 +       // host_pub_key (Pubkey)
-        4 + 16 +   // host_id (String: 4 byte prefix + max 16 chars)
+        4 + 32 +   // host_id (String: 4 byte prefix + max 32 chars for cuid)
         1 +        // is_finalized (bool)
         1 +        // total_winners (u8)
         1 +        // total_claimed (u8)
@@ -29,6 +30,7 @@ impl QuizAccountShape {
         1 +        // is_cancelled (bool)
         8 +        // claim_expiry (i64)
         32 +       // platform_authority (Pubkey)
-        1          // bump (u8)
+        1 +        // bump (u8)
+        1          // escrow_bump (u8)
     }
 }

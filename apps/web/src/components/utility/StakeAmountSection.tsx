@@ -13,20 +13,21 @@ export default function StakeAmountSection() {
                     <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Stake Amount
                     </span>
-                    <ToolTipComponent content="Amount of SOL to be staked as quiz reward.">
+                    <ToolTipComponent content="Amount of USDC to be staked as quiz reward.">
                         <AiOutlineQuestionCircle size={15} />
                     </ToolTipComponent>
                 </div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
-                    Minimum stake: 0.1 SOL · Maximum: 100 SOL
+                    Minimum stake: 1 USDC · Maximum: 10000 USDC
                 </p>
             </div>
 
             <Input
                 type="number"
                 placeholder="e.g. 2.5"
-                min={0.1}
-                step={0.1}
+                min={1}
+                max={10000}
+                step={0.01}
                 value={quiz.prizePool || ''}
                 onChange={(e) => {
                     const value = parseFloat(e.target.value);

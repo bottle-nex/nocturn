@@ -1,13 +1,13 @@
 import Bull from 'bull';
 import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
-import { email_service_queue_instance } from '../../services/init.services';
+import { email_service_queue_instance, solanaServiceInstance } from '../../services/init.services';
 
 interface ClaimData {
     id: string;
     claimToken: string;
     emailHash: string;
-    amountLamports: string;
+    amountBaseUnits: string;
     rank: number;
     participantEmail: string;
     participantName: string;
@@ -18,6 +18,7 @@ interface FinalizationJobData {
     quizId: string;
     quizAccountPda: string;
     escrowPda: string;
+    hostWalletPubkey: string;
     claims: ClaimData[];
     quizTitle: string;
 }
@@ -60,8 +61,29 @@ export default class PrizeQueue {
 
         for (const claim of claims) {
             try {
-                // TODO: Call finalize_quiz instruction on-chain
-                // const tx = await this.call_finalize_quiz_onchain(data, claim);
+                // Call finalize_quiz instruction on-chain
+                try {
+                    const txSig = await solanaServiceInstance.finalize_quiz_onchain(
+                        quizId,
+                        claim.claimToken,
+                        Array.from(Buffer.from(claim.emailHash, 'hex')),
+                        BigInt(claim.amountBaseUnits),
+                        claim.rank,
+                        Math.floor(new Date(claim.expiresAt).getTime() / 1000),
+                    );
+                    console.log(`[PrizeQueue] Finalized claim ${claim.id} on-chain: ${txSig}`);
+                } catch (onChainErr: unknown) {
+                    // If PDA already exists (retry scenario), skip
+                    const errMsg =
+                        onChainErr instanceof Error ? onChainErr.message : String(onChainErr);
+                    if (errMsg.includes('already in use')) {
+                        console.log(
+                            `[PrizeQueue] Claim ${claim.id} already finalized on-chain, skipping`,
+                        );
+                    } else {
+                        throw onChainErr;
+                    }
+                }
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
@@ -79,7 +101,7 @@ export default class PrizeQueue {
                         participantName: claim.participantName,
                         quizTitle: quizTitle,
                         rank: claim.rank,
-                        prizeAmount: Number(claim.amountLamports) / 1e9,
+                        prizeAmount: Number(claim.amountBaseUnits) / 1e6,
                         claimUrl,
                         expiresAt: claim.expiresAt,
                     });
@@ -90,8 +112,9 @@ export default class PrizeQueue {
             }
         }
 
-        // TODO: Call seal_quiz instruction on-chain after all claims are finalized
-        // await this.call_seal_quiz_onchain(data);
+        // Seal the quiz on-chain after all claims are finalized
+        const sealTx = await solanaServiceInstance.seal_quiz_onchain(quizId);
+        console.log(`[PrizeQueue] Quiz ${quizId} sealed on-chain: ${sealTx}`);
 
         // Update quiz status to indicate finalization is complete
         await prisma.quiz.update({
