@@ -17,32 +17,32 @@ export default function PerspectiveCard({
     shadowColor = '0,0,0',
     sticky = true,
     stickyTop = 10,
-    delay,
+    delay = 0,
 }: PerspectiveCardProps) {
     const ref = useRef<HTMLDivElement>(null);
+
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ['start end', 'start start'],
     });
 
-    const y = useTransform(scrollYProgress, [0, 0.4, 0.6], [80, 10, 0]);
-    const scale = useTransform(scrollYProgress, [0, 0.4, 0.6], [1.04, 1.02, 1]);
+    const d = delay;
+
+    const y = useTransform(scrollYProgress, [d, d + 0.4, d + 0.6], [80, 10, 0]);
+    const scale = useTransform(scrollYProgress, [d, d + 0.4, d + 0.6], [1.04, 1.02, 1]);
     const boxShadow = useTransform(
         scrollYProgress,
-        [0, 0.4, 0.6],
+        [d, d + 0.4, d + 0.6],
         [
             `0 25px 60px rgba(${shadowColor},0.35), 0 10px 20px rgba(0,0,0,0.2)`,
             `0 8px 24px rgba(${shadowColor},0.2), 0 4px 8px rgba(0,0,0,0.1)`,
             `0 0px 0px rgba(${shadowColor},0), 0 0px 0px rgba(0,0,0,0)`,
         ],
     );
-    const opacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.5, 1, 1]);
+    const opacity = useTransform(scrollYProgress, [d, d + 0.3, d + 0.5], [0.5, 1, 1]);
 
     const wrapper = (
         <motion.div
-            transition={{
-                delay: delay,
-            }}
             ref={ref}
             style={{ y, scale, boxShadow, opacity }}
             className={className}

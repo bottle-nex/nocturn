@@ -6,7 +6,9 @@ import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingLaunchCardComponent() {
     return (
-        <PerspectiveCard className="mt-20 relative w-full h-100 rounded-xl bg-[#7fc8f8] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6">
+        <PerspectiveCard 
+        delay={0.09}
+        className="mt-20 relative w-full h-100 rounded-xl bg-[#7fc8f8] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6">
             <style>{`
                 @keyframes orbit-a {
                     from { transform: translate(-50%, -50%) rotate(0deg) translateX(110px) rotate(0deg); }

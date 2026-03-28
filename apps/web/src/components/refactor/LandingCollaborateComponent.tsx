@@ -4,6 +4,7 @@ import LandingHeader from './LandingHeader';
 import { Button } from '../ui/button';
 import { PiChefHat } from 'react-icons/pi';
 import PerspectiveCard from '../utility/PerspectiveCard';
+import { cn } from '@/lib/utils';
 
 export default function LandingCollaborateComponent() {
     return (
@@ -29,71 +30,110 @@ export default function LandingCollaborateComponent() {
 
                     <div className="col-span-1 flex gap-x-4 items-center">
                         {/* card 1 */}
-                        <PerspectiveCard className="mt-15 h-90 w-70 shadow-md shadow-black/10 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
+                        <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
                             <div className="text-sm text-light-base/70 flex items-center gap-x-3">
-                                <div className="h-9 w-9 -rotate-2 ring-1 ring-white/15 flex justify-center items-center shrink-0 rounded-sm bg-neutral-700/10 inset-shadow-xs inset-shadow-white/10 shadow-2xl shadow-black/20">
-                                    <PiChefHat className="size-6" />
+                                <div className={cn(
+                                    'h-9 w-9 -rotate-2 flex justify-center items-center shrink-0 rounded-sm',
+                                    // 'bg-light-base/5 ring-1 ring-white/5 shadow-sm shadow-black/10',
+                                   'prem-surface' 
+                                )}>
+                                    <PiChefHat className="size-6 text-light-base/60" />
                                 </div>
                                 Cause every great quiz needs more than one chef.
                             </div>
 
-                            <div className="w-full h-40 flex flex-col">
-                                <div className="bg-neutral-700/70 h-30 w-full rounded-xl flex flex-col justify-between p-3 px-4 text-sm inset-shadow-xs inset-shadow-black/10">
-                                    <div className="flex text-dark-base gap-x-8 items-center">
-                                        <div className="text-light-base/70">From:</div>
+                            <div className="w-full flex flex-col gap-y-3">
+                                <div className="relative w-full rounded-lg bg-linear-to-b from-white/[0.07] to-white/3 ring-1 ring-white/8 shadow-[0_1px_1px_rgba(0,0,0,0.01),inset_0_1px_0_rgba(255,255,255,0.01)] backdrop-blur-sm">
 
-                                        <div className="flex gap-x-1 items-center rounded-sm px-1.5 py-0.5">
-                                            <div className="h-5 w-5 rounded-full overflow-hidden relative">
-                                                <Image
-                                                    src={
-                                                        'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg'
-                                                    }
-                                                    alt=""
-                                                    className="object-cover"
-                                                    fill
-                                                    unoptimized
-                                                />
-                                            </div>
-                                            <div className="font-semibold text-light-base/80">
-                                                Patrick Jane
+                                    {/* <div className='absolute top-12 right-5'>
+                                        <div className='h-6 w-6 relative rounded-xs'>
+                                        <Image
+                                            src={'/images/landing/gmail.png'}
+                                            alt=''
+                                            className='object-cover p-0.5'
+                                            fill
+                                            unoptimized
+                                            loading='lazy'
+                                        />
+                                        </div>
+                                    </div> */}
+
+                                    {/* <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/5 to-transparent" /> */}
+
+                                    <div className="flex flex-col divide-y divide-white/6">
+
+                                        <div className="flex items-center gap-x-3 px-4 py-2.5 group transition-colors duration-150">
+                                            <span className="w-12 text-[11px] font-medium tracking-widest text-light-base/30 uppercase shrink-0">
+                                                From
+                                            </span>
+                                            <div className="flex items-center gap-x-2">
+                                                <div className="relative h-5 w-5 rounded-full overflow-hidden ring-1 ring-white/20 shadow-[0_0_0_2px_rgba(255,255,255,0.04)]">
+                                                    <Image
+                                                        src="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg"
+                                                        alt="Patrick Jane"
+                                                        className="object-cover"
+                                                        fill
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                                <span className="text-[13px] font-medium text-light-base/75 tracking-tight">
+                                                    Patrick Jane
+                                                </span>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex text-dark-base gap-x-12 items-center ">
-                                        <div className="text-light-base/70">To:</div>
-
-                                        <div className="flex gap-x-1 items-center rounded-sm px-1.5 py-0.5">
-                                            <div className="font-semibold text-light-base/80">
+                                        <div className="flex items-center gap-x-3 px-4 py-2.5 transition-colors duration-150">
+                                            <span className="w-12 text-[11px] font-medium tracking-widest text-light-base/30 uppercase shrink-0">
+                                                To
+                                            </span>
+                                            <span className="text-[13px] text-light-base/60 tracking-tight">
                                                 lisbon@gmail.com
-                                            </div>
+                                            </span>
                                         </div>
+
+                                        <div className="flex items-center gap-x-3 px-4 py-2.5 transition-colors duration-150">
+                                            <span className="w-12 text-[11px] font-medium tracking-widest text-light-base/30 uppercase shrink-0">
+                                                Sub
+                                            </span>
+                                            <span className="text-[13px] font-semibold text-light-base/70 tracking-normal">
+                                                Collab invitation
+                                            </span>
+                                        </div>
+
                                     </div>
 
-                                    <div className="flex  gap-x-4 items-center">
-                                        <div className="text-light-base/70">Subject:</div>
-
-                                        <div className="flex gap-x-1 items-center text-light-base/80 rounded-sm px-1.5 py-0.5">
-                                            <div className="font-semibold">Collab invitation</div>
-                                        </div>
-                                    </div>
+                                    {/* <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-white/5 to-transparent" /> */}
                                 </div>
 
-                                <div className="flex gap-x-1.5 mt-3">
-                                    <Button className="h-8 w-16 text-light-base hover:bg-alpha rounded-full">
+                                <div className="flex items-center gap-x-2 px-0.5">
+                                    <button className={cn(
+                                        'h-7 px-4 rounded-md text-[12px] font-semibold tracking-wide',
+                                        'bg-neutral-200 text-neutral-900',
+                                        'shadow-[0_1px_0_1px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.12)]',
+                                        'active:scale-[0.97] active:shadow-none',
+                                        'transition-all duration-100 ease-out',
+                                    )}>
                                         Send
-                                    </Button>
+                                    </button>
 
-                                    <Button className="h-8 w-18 text-light-base rounded-full bg-neutral-700/70 hover:bg-neutral-700/70">
+                                    <button className={cn(
+                                        'h-7 px-3 rounded-md text-[12px] font-medium tracking-wide',
+                                        'text-light-base/60 bg-white/5',
+                                        'hover:text-light-base/60 hover:bg-white/5',
+                                        'ring-1 ring-white/10',
+                                        'active:scale-[0.97]',
+                                        'shadow-xs shadow-black',
+                                        'transition-all duration-100 ease-out',
+                                    )}>
                                         Cancel
-                                    </Button>
+                                    </button>
                                 </div>
                             </div>
                         </PerspectiveCard>
 
                         {/* card 2 */}
                         <PerspectiveCard
-                            delay={10}
+                            delay={0.01}
                             className="mt-15 h-90 w-70 shrink-0 shadow-sm shadow-black/10 ring-1 ring-black/10 rounded-2xl bg-light-alpha flex flex-col justify-end p-6"
                         >
                             <div className="relative shrink-0 h-12 w-12 bg-light-base top-25 right-2 rounded-full overflow-hidden -rotate-10 ring-2 ring-white shadow-sm shadow-black">
@@ -139,7 +179,7 @@ export default function LandingCollaborateComponent() {
                                     Made specifically for people who value time
                                 </div>
 
-                                <div className="text-dark-base/60 flex items-center gap-x-3 leading-[1] text-[14px]">
+                                <div className="text-dark-base/60 flex items-center gap-x-3 leading-none text-[14px]">
                                     No hard flow, just invite people through emails, and quickly
                                     wrap up the quizzes.
                                 </div>
