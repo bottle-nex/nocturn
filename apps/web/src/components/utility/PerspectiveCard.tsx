@@ -8,14 +8,16 @@ interface PerspectiveCardProps {
     shadowColor?: string;
     sticky?: boolean;
     stickyTop?: number;
+    delay?: number;
 }
 
 export default function PerspectiveCard({
     children,
     className = '',
-    shadowColor = '79,70,229',
+    shadowColor = '0,0,0',
     sticky = true,
     stickyTop = 10,
+    delay,
 }: PerspectiveCardProps) {
     const ref = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
@@ -37,7 +39,14 @@ export default function PerspectiveCard({
     const opacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [0.5, 1, 1]);
 
     const wrapper = (
-        <motion.div ref={ref} style={{ y, scale, boxShadow, opacity }} className={className}>
+        <motion.div
+            transition={{
+                delay: delay,
+            }}
+            ref={ref}
+            style={{ y, scale, boxShadow, opacity }}
+            className={className}
+        >
             {children}
         </motion.div>
     );

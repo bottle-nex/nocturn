@@ -2,10 +2,11 @@
 import { MdOutlineRocketLaunch } from 'react-icons/md';
 import LandingHeaderComponent from './LandingHeaderComponent';
 import Image from 'next/image';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingLaunchCardComponent() {
     return (
-        <div className="relative w-full h-100 rounded-lg bg-light-alpha ring-1 ring-black/10 shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6">
+        <PerspectiveCard className="mt-20 relative w-full h-100 rounded-xl bg-[#7fc8f8] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6">
             <style>{`
                 @keyframes orbit-a {
                     from { transform: translate(-50%, -50%) rotate(0deg) translateX(110px) rotate(0deg); }
@@ -30,8 +31,8 @@ export default function LandingLaunchCardComponent() {
                 className="h-55 w-55 rounded-full absolute left-1/2 -translate-x-1/2 flex justify-center items-center ring-1 ring-black/10 bg-light-base/30 shadow-[0_0_35px_rgba(0,0,0,0.03)]"
                 style={{ top: '8.25rem' }}
             >
-                <div className="h-35 w-35 rounded-full flex justify-center items-center ring-1 ring-black/10 bg-light-base/70 shadow-[0_0_25px_rgba(0,0,0,0.08)]">
-                    <div className="h-15 w-15 rounded-full flex justify-center items-center bg-light-base ring-1 ring-black/10 shadow-[0_0_15px_rgba(0,0,0,0.10)]">
+                <div className="h-35 w-35 rounded-full flex justify-center items-center ring-1 ring-black/10 bg-light-base/50 shadow-[0_0_25px_rgba(0,0,0,0.08)]">
+                    <div className="h-15 w-15 rounded-full flex justify-center items-center bg-light-base/80 ring-1 ring-black/10 shadow-[0_0_15px_rgba(0,0,0,0.10)]">
                         <MdOutlineRocketLaunch className="size-5 text-dark-base" />
                     </div>
                 </div>
@@ -70,6 +71,6 @@ export default function LandingLaunchCardComponent() {
                     <Image src={src} alt="" className="object-cover" fill unoptimized />
                 </div>
             ))}
-        </div>
+        </PerspectiveCard>
     );
 }

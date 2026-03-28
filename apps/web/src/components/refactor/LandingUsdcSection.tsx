@@ -82,7 +82,7 @@ export default function LandingUsdcSection(): JSX.Element {
     const [leftRenderType, setLeftRenderType] = useState<LeftRenderType>(LeftRenderType.COIN);
 
     return (
-        <main className='max-w-270 mx-auto w-full pb-16'>
+        <main className="max-w-270 mx-auto w-full pb-16">
             <LandingHeader
                 heading="USDC Support"
                 subheading="Learn more about our USDC integration."
@@ -114,7 +114,8 @@ export default function LandingUsdcSection(): JSX.Element {
                             {[...topThree]
                                 .sort(
                                     (a, b) =>
-                                        (a.position % 2) - (b.position % 2) || a.position - b.position,
+                                        (a.position % 2) - (b.position % 2) ||
+                                        a.position - b.position,
                                 )
                                 .map((item) => (
                                     <div
@@ -187,7 +188,7 @@ export default function LandingUsdcSection(): JSX.Element {
                                                 style={{
                                                     backgroundColor:
                                                         barColors[
-                                                        (item.position - 1) % barColors.length
+                                                            (item.position - 1) % barColors.length
                                                         ],
                                                 }}
                                             />

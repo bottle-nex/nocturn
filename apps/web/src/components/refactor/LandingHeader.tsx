@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX } from 'react';
 
 interface LandingHeaderProps {
     heading: string;
@@ -7,9 +7,9 @@ interface LandingHeaderProps {
 
 export default function LandingHeader({ heading, subheading }: LandingHeaderProps): JSX.Element {
     return (
-        <div>
-            <h1 className="text-5xl text-dark-alpha text-center font-semibold">{heading}</h1>
-            <p className="text-lg text-center text-dark-base/60 mt-4">{subheading}</p>
+        <div className="flex flex-col items-center">
+            <h1 className="text-5xl text-dark-base/90 text-center font-semibold">{heading}</h1>
+            <p className="text-lg text-center text-dark-base/50 mt-3 max-w-120">{subheading}</p>
         </div>
     );
 }

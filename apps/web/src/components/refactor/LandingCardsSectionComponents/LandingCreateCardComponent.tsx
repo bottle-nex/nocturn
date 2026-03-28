@@ -1,16 +1,17 @@
 'use client';
 import { cn } from '@/lib/utils';
 import LandingHeaderComponent from './LandingHeaderComponent';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingCreateCardComponent() {
     return (
-        <div className="relative w-full h-100 rounded-lg bg-light-alpha ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6">
+        <PerspectiveCard className="relative mt-20 w-85 h-100 rounded-xl bg-[#c4b6ff] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6">
             <LandingHeaderComponent
                 title="Create quiz"
                 description="Design structured quizzes with intelligent assistance"
             />
 
-            <div className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] perspective-[1400px]">
+            <div className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] perspective-[1400px] scale-[0.97]">
                 <div
                     className={cn(
                         'relative w-full h-full rounded-xl bg-light-base',
@@ -50,7 +51,7 @@ export default function LandingCreateCardComponent() {
             </div>
 
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[240px] h-10 bg-black/10 blur-xl rounded-full opacity-30" />
-        </div>
+        </PerspectiveCard>
     );
 }
 

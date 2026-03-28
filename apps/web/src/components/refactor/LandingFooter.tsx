@@ -1,10 +1,4 @@
-import {
-    FaXTwitter,
-    FaInstagram,
-    FaLinkedinIn,
-    FaDiscord,
-    FaGithub,
-} from 'react-icons/fa6';
+import { FaXTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaGithub } from 'react-icons/fa6';
 
 const footerLinks = {
     Resources: ['Blog', 'Brand', 'FAQ', 'Help & Support', 'Community'],
@@ -23,7 +17,7 @@ const socialIcons = [
 
 export default function LandingFooter() {
     return (
-        <main className='w-full max-w-270 mx-auto py-16'>
+        <main className="w-full max-w-270 mx-auto py-16">
             <footer className="w-full  pb-0">
                 <div className="rounded-3xl bg-dark-base/10 pt-14 pb-0 overflow-hidden">
                     {/* Top section */}
@@ -47,7 +41,9 @@ export default function LandingFooter() {
                         <div className="lg:w-[62%] grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
                             {Object.entries(footerLinks).map(([heading, links]) => (
                                 <div key={heading} className="flex flex-col gap-3.5">
-                                    <h4 className="text-sm font-semibold text-dark-base">{heading}</h4>
+                                    <h4 className="text-sm font-semibold text-dark-base">
+                                        {heading}
+                                    </h4>
                                     <ul className="flex flex-col gap-2.5">
                                         {links.map((link) => (
                                             <li key={link}>
