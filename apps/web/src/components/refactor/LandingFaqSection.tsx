@@ -54,7 +54,7 @@ export default function LandingFaqSection(): JSX.Element {
             />
             <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
                 <PerspectiveCard
-                    className="w-full bg-[#4f46e590] rounded-sm p-6 space-y-4 h-full"
+                    className="w-full bg-[#4f46e590] rounded-xl p-6 space-y-4 h-full"
                     shadowColor="79,70,229"
                     sticky
                     stickyTop={10}
@@ -66,7 +66,7 @@ export default function LandingFaqSection(): JSX.Element {
                             onClick={() =>
                                 setSelectedFaq(selectedFaq === item.index ? -1 : item.index)
                             }
-                            className="bg-light-base/70 text-lg font-normal text-dark-base/90 rounded-sm cursor-pointer"
+                            className="bg-light-base/70 text-lg font-normal text-dark-base/90 rounded-xl cursor-pointer"
                         >
                             <section className="flex items-center justify-between px-4 py-4">
                                 <h3 className="font-normal">{item.question}</h3>

@@ -5,6 +5,7 @@ import LandingFooter from '@/components/refactor/LandingFooter';
 import LandingHeroSection from '@/components/refactor/LandingHeroSection';
 import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
 import LandingUsdcSection from '@/components/refactor/LandingUsdcSection';
+import LandingUserType from '@/components/refactor/LandingUserType';
 import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Revamp() {
@@ -15,7 +16,10 @@ export default function Revamp() {
             <LandingCardsComponent />
             <SectionDivider />
             <LandingCollaborateComponent />
+            <SectionDivider />
             <LandingUsdcSection />
+            <SectionDivider />
+            <LandingUserType />
             <SectionDivider />
             <LandingFaqSection />
             <SectionDivider />

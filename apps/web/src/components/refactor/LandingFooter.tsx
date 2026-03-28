@@ -1,4 +1,5 @@
 import { FaXTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaGithub } from 'react-icons/fa6';
+import AppLogo from '../app/AppLogo';
 
 const footerLinks = {
     Resources: ['Blog', 'Brand', 'FAQ', 'Help & Support', 'Community'],
@@ -24,11 +25,12 @@ export default function LandingFooter() {
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">
                         {/* Left: Logo + Description */}
                         <div className="lg:w-[38%] flex flex-col gap-5">
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-full bg-dark-base" />
-                                <span className="text-xl font-semibold text-dark-base tracking-tight">
-                                    nocturn
-                                </span>
+                            <div className="-ml-12 -mt-12">
+                                <AppLogo
+                                    withText
+                                    size={120}
+                                    textColor="text-dark-base dark:text-dark-base"
+                                />
                             </div>
                             <p className="text-sm leading-relaxed text-dark-base/50 max-w-sm">
                                 Nocturn is a live quiz platform where knowledge pays off. Compete in
