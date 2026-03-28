@@ -1,0 +1,18 @@
+import SolanaIphoneComponent from './SolanaIphoneComponent';
+
+export default function SolanaFeatureCardComponent() {
+    return (
+        <div className="flex flex-col ring-1 ring-black/10 h-75 w-110 rounded-xl overflow-hidden">
+            <div className="h-55 bg-[#A7E9FC] relative flex justify-center pt-7 shrink-0 overflow-hidden group">
+                <SolanaIphoneComponent />
+            </div>
+            <div className="h-20 shrink-0 flex flex-col justify-center px-4 gap-y-1">
+                <div className="text-dark-base/80 text-base">Prize Pool</div>
+                <div className="text-dark-base/50 text-[13px] leading-[1.1]">
+                    Stop making quizzes that is worth nothing, rewards your kids with crypto, cause
+                    applause alone doesnt help them grow.
+                </div>
+            </div>
+        </div>
+    );
+}

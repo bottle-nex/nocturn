@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import LandingHeader from './LandingHeader';
-import { Button } from '../ui/button';
 import { PiChefHat } from 'react-icons/pi';
 import PerspectiveCard from '../utility/PerspectiveCard';
 import { cn } from '@/lib/utils';
@@ -32,11 +31,13 @@ export default function LandingCollaborateComponent() {
                         {/* card 1 */}
                         <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
                             <div className="text-sm text-light-base/70 flex items-center gap-x-3">
-                                <div className={cn(
-                                    'h-9 w-9 -rotate-2 flex justify-center items-center shrink-0 rounded-sm',
-                                    // 'bg-light-base/5 ring-1 ring-white/5 shadow-sm shadow-black/10',
-                                   'prem-surface' 
-                                )}>
+                                <div
+                                    className={cn(
+                                        'h-9 w-9 -rotate-2 flex justify-center items-center shrink-0 rounded-sm',
+                                        // 'bg-light-base/5 ring-1 ring-white/5 shadow-sm shadow-black/10',
+                                        'prem-surface',
+                                    )}
+                                >
                                     <PiChefHat className="size-6 text-light-base/60" />
                                 </div>
                                 Cause every great quiz needs more than one chef.
@@ -44,7 +45,6 @@ export default function LandingCollaborateComponent() {
 
                             <div className="w-full flex flex-col gap-y-3">
                                 <div className="relative w-full rounded-lg bg-linear-to-b from-white/[0.07] to-white/3 ring-1 ring-white/8 shadow-[0_1px_1px_rgba(0,0,0,0.01),inset_0_1px_0_rgba(255,255,255,0.01)] backdrop-blur-sm">
-
                                     {/* <div className='absolute top-12 right-5'>
                                         <div className='h-6 w-6 relative rounded-xs'>
                                         <Image
@@ -61,7 +61,6 @@ export default function LandingCollaborateComponent() {
                                     {/* <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/5 to-transparent" /> */}
 
                                     <div className="flex flex-col divide-y divide-white/6">
-
                                         <div className="flex items-center gap-x-3 px-4 py-2.5 group transition-colors duration-150">
                                             <span className="w-12 text-[11px] font-medium tracking-widest text-light-base/30 uppercase shrink-0">
                                                 From
@@ -99,32 +98,35 @@ export default function LandingCollaborateComponent() {
                                                 Collab invitation
                                             </span>
                                         </div>
-
                                     </div>
 
                                     {/* <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-white/5 to-transparent" /> */}
                                 </div>
 
                                 <div className="flex items-center gap-x-2 px-0.5">
-                                    <button className={cn(
-                                        'h-7 px-4 rounded-md text-[12px] font-semibold tracking-wide',
-                                        'bg-neutral-200 text-neutral-900',
-                                        'shadow-[0_1px_0_1px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.12)]',
-                                        'active:scale-[0.97] active:shadow-none',
-                                        'transition-all duration-100 ease-out',
-                                    )}>
+                                    <button
+                                        className={cn(
+                                            'h-7 px-4 rounded-md text-[12px] font-semibold tracking-wide',
+                                            'bg-neutral-200 text-neutral-900',
+                                            'shadow-[0_1px_0_1px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(0,0,0,0.12)]',
+                                            'active:scale-[0.97] active:shadow-none',
+                                            'transition-all duration-100 ease-out',
+                                        )}
+                                    >
                                         Send
                                     </button>
 
-                                    <button className={cn(
-                                        'h-7 px-3 rounded-md text-[12px] font-medium tracking-wide',
-                                        'text-light-base/60 bg-white/5',
-                                        'hover:text-light-base/60 hover:bg-white/5',
-                                        'ring-1 ring-white/10',
-                                        'active:scale-[0.97]',
-                                        'shadow-xs shadow-black',
-                                        'transition-all duration-100 ease-out',
-                                    )}>
+                                    <button
+                                        className={cn(
+                                            'h-7 px-3 rounded-md text-[12px] font-medium tracking-wide',
+                                            'text-light-base/60 bg-white/5',
+                                            'hover:text-light-base/60 hover:bg-white/5',
+                                            'ring-1 ring-white/10',
+                                            'active:scale-[0.97]',
+                                            'shadow-xs shadow-black',
+                                            'transition-all duration-100 ease-out',
+                                        )}
+                                    >
                                         Cancel
                                     </button>
                                 </div>

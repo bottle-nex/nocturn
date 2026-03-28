@@ -5,9 +5,10 @@ import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingPublishCardComponent() {
     return (
-        <PerspectiveCard 
-        delay={0.04}
-        className="mt-20 relative w-full h-100 rounded-xl bg-[#ffd670] shadow-xs shadow-black/5 overflow-hidden p-6">
+        <PerspectiveCard
+            delay={0.04}
+            className="mt-20 relative w-full h-100 rounded-xl bg-[#ffd670] shadow-xs shadow-black/5 overflow-hidden p-6"
+        >
             <LandingHeaderComponent
                 title="Publish quiz"
                 description="Configure everything before your quiz goes live"
