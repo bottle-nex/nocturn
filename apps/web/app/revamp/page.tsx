@@ -14,9 +14,10 @@ export default function Revamp() {
         <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
             <LandingNavbarComponent />
             <LandingHeroSection />
-            <LandingCardsComponent />
             <SectionDivider />
             <LandingFeaturesComponent />
+            <SectionDivider />
+            <LandingCardsComponent />
             <SectionDivider />
             <LandingCollaborateComponent />
             <SectionDivider />

@@ -13,7 +13,7 @@ export default function LandingCollaborateComponent() {
                 subheading="Add collaborators, share ideas, and edit quizzes in real time. Keep everything aligned from creation to launch."
             />
 
-            <div className="h-full flex items-center pt-15">
+            <div className="h-full flex items-center pt-10">
                 <div className="h-120 w-full ring-1 ring-black/20 rounded-xl grid grid-cols-2 overflow-hidden bg-light-base">
                     <div className="col-span-1 flex flex-col justify-between p-10">
                         <div className="text-dark-base/90 text-5xl font-semibold">

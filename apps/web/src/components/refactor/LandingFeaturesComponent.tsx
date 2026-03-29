@@ -4,7 +4,7 @@ import RightFeatureComponent from './LandingFeatureSectionComponents/RightFeatur
 
 const LandingFeaturesComponent: FC = () => {
     return (
-        <div className="mx-auto w-full max-w-270 pb-32 pt-25">
+        <div className="mx-auto w-full max-w-270 py-15">
             <div className="flex w-full items-start">
                 <LeftFeatureComponent />
                 <RightFeatureComponent />
