@@ -1,19 +1,19 @@
-import LandingHeader from '@/components/refactor/LandingHeader';
+import LandingSectionHeader from '@/components/refactor/LandingSectionHeader';
 import PerspectiveCard from '@/components/utility/PerspectiveCard';
-import LandingHeaderComponent from '@/components/refactor/LandingCardsSectionComponents/LandingHeaderComponent';
+import LandingCardHeader from '@/components/refactor/LandingCardsSectionComponents/LandingCardHeader';
 import Link from 'next/link';
 
 export default function NotFoundCardsSection() {
     return (
         <div className="py-32 w-full max-w-270 flex flex-col items-center mx-auto ring-1 ring-black/10 bg-light-base pt-25">
-            <LandingHeader
+            <LandingSectionHeader
                 heading="Where to next?"
                 subheading="We couldn't find your page, but there's plenty more to explore on Nocturn."
             />
 
             <div className="w-full justify-center flex px-6 gap-x-6 mt-5 pb-10">
                 <PerspectiveCard className="relative mt-20 w-85 h-80 rounded-xl bg-[#c4b6ff] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6 hover:-translate-y-2 transition-transform duration-300 group">
-                    <LandingHeaderComponent
+                    <LandingCardHeader
                         title="Head Home"
                         description="Return to the main dashboard and start over."
                     />
@@ -28,7 +28,7 @@ export default function NotFoundCardsSection() {
                 </PerspectiveCard>
 
                 <PerspectiveCard className="relative mt-20 w-85 h-80 rounded-xl bg-[#ffd1b6] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6 hover:-translate-y-2 transition-transform duration-300">
-                    <LandingHeaderComponent
+                    <LandingCardHeader
                         title="Browse Quizzes"
                         description="Find your next challenge in our community hub."
                     />
@@ -43,7 +43,7 @@ export default function NotFoundCardsSection() {
                 </PerspectiveCard>
 
                 <PerspectiveCard className="relative mt-20 w-85 h-80 rounded-xl bg-[#b6ffda] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6 hover:-translate-y-2 transition-transform duration-300">
-                    <LandingHeaderComponent
+                    <LandingCardHeader
                         title="Get Support"
                         description="Need help? Reach out to our support team."
                     />
