@@ -18,7 +18,10 @@ export default function NotFoundCardsSection() {
                         description="Return to the main dashboard and start over."
                     />
                     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[80%] h-32 text-center flex flex-col justify-end items-center">
-                        <Link href="/" className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm">
+                        <Link
+                            href="/"
+                            className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm"
+                        >
                             Go Home
                         </Link>
                     </div>
@@ -30,7 +33,10 @@ export default function NotFoundCardsSection() {
                         description="Find your next challenge in our community hub."
                     />
                     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[80%] h-32 text-center flex flex-col justify-end items-center">
-                        <Link href="/" className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm">
+                        <Link
+                            href="/"
+                            className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm"
+                        >
                             Explore
                         </Link>
                     </div>
@@ -42,7 +48,10 @@ export default function NotFoundCardsSection() {
                         description="Need help? Reach out to our support team."
                     />
                     <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[80%] h-32 text-center flex flex-col justify-end items-center">
-                        <Link href="/" className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm">
+                        <Link
+                            href="/"
+                            className="px-6 py-2.5 bg-dark-base text-white rounded-full text-[15px] hover:scale-105 active:scale-95 transition-transform shadow-sm"
+                        >
                             Contact Us
                         </Link>
                     </div>
