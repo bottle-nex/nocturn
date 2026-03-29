@@ -47,7 +47,7 @@ export default function LandingFaqSection(): JSX.Element {
     const [selectedFaq, setSelectedFaq] = useState<number>(0);
 
     return (
-        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none pb-16">
+        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none py-15">
             <LandingSectionHeader
                 heading="Frequently Asked Questions"
                 subheading="Find answers to common questions about Nocturn."

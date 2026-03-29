@@ -18,13 +18,8 @@ const socialIcons = [
 
 export default function LandingFooter() {
     return (
-<<<<<<< HEAD
         <main className="w-full max-w-270 mx-auto pb-16">
             <footer className="w-full  pb-0">
-=======
-        <main className="w-full max-w-270 mx-auto py-16">
-            <footer className="w-full pb-0">
->>>>>>> 38aa8e93 (made changes in revamp page)
                 <div className="rounded-3xl bg-dark-base/10 pt-14 pb-0 overflow-hidden">
                     {/* Top section */}
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">

@@ -1,4 +1,3 @@
-
 const STATS = [
     { value: '0', label: 'Pages Found' },
     { value: '404', label: 'Error Code' },
@@ -23,12 +22,14 @@ export default function NotFoundFeaturesSection() {
 
                     <h2 className="mb-4 text-[36px] font-bold leading-[1.1] tracking-tight text-gray-900">
                         <div>{"You've ventured"}</div>
-                        <div style={{ color: '#b0b7c3' }}>{"into the unknown"}</div>
-                        <div>{"territory."}</div>
+                        <div style={{ color: '#b0b7c3' }}>{'into the unknown'}</div>
+                        <div>{'territory.'}</div>
                     </h2>
 
                     <p className="max-w-[250px] text-[13.5px] leading-relaxed text-gray-400">
-                        {"The link you clicked might be broken, or the page you're trying to reach has been retired from our servers."}
+                        {
+                            "The link you clicked might be broken, or the page you're trying to reach has been retired from our servers."
+                        }
                     </p>
 
                     <div className="my-8 h-px w-full bg-gradient-to-r from-gray-200 to-transparent" />

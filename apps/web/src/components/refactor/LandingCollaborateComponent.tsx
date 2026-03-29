@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 export default function LandingCollaborateComponent() {
     return (
-        <div className="h-screen w-full max-w-270 flex flex-col items-center mx-auto ring-1 ring-black/10 bg-light-alpha pt-25 gap-y-5 p-5">
+        <div className="h-screen w-full max-w-270 flex flex-col items-center mx-auto py-15 gap-y-6 p-5">
             <LandingSectionHeader
                 heading="Add collaborators and work seamlessly"
                 subheading="Add collaborators, share ideas, and edit quizzes in real time. Keep everything aligned from creation to launch."

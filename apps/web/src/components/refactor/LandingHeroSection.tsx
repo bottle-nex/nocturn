@@ -1,5 +1,4 @@
 import JoinQuizButton from '../test/JoinQuizButton';
-import LandingHeaderComponent from './LandingCardsSectionComponents/LandingHeaderComponent';
 
 export default function LandingHeroSection() {
     return (
