@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import LandingHeaderComponent from './LandingHeaderComponent';
+import LandingCardHeader from './LandingCardHeader';
 import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingPublishCardComponent() {
@@ -9,7 +9,7 @@ export default function LandingPublishCardComponent() {
             delay={0.04}
             className="mt-20 relative w-full h-100 rounded-xl bg-[#ffd670] shadow-xs shadow-black/5 overflow-hidden p-6"
         >
-            <LandingHeaderComponent
+            <LandingCardHeader
                 title="Publish quiz"
                 description="Configure everything before your quiz goes live"
             />

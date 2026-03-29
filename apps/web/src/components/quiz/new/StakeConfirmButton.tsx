@@ -9,6 +9,7 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { CONFIRM_STAKE_URL } from 'routes/api_routes';
 import { getProgram, getQuizPda, getEscrowPda } from '@/lib/solana/program';
 import { buildCreateQuizTx } from '@/lib/solana/transactions';
+import { Button } from '@/components/ui/button';
 
 type StakeStatus = 'idle' | 'signing' | 'confirming' | 'done' | 'error';
 
@@ -100,18 +101,18 @@ export default function StakeConfirmButton() {
 
     return (
         <div className="w-full px-2 mt-4 space-y-2">
-            <button
+            <Button
                 type="button"
                 onClick={handleStake}
                 disabled={!isReady || status === 'signing' || status === 'confirming'}
-                className="w-full bg-[#E84545] hover:bg-[#E84545]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+                className="w-full bg-alpha disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
             >
                 {status === 'signing'
                     ? 'Awaiting signature...'
                     : status === 'confirming'
                       ? 'Confirming on-chain...'
                       : `Stake ${quiz.prizePool || 0} USDC`}
-            </button>
+            </Button>
 
             {!publicKey && (
                 <p className="text-xs text-neutral-500 text-center">

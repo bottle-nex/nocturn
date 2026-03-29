@@ -34,7 +34,12 @@ export function getClaimPda(quizId: string, claimToken: string): [PublicKey, num
     );
 }
 
-export const USDC_MINT = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU');
+// SPL Token Mint for prize payments
+// DEVNET:  Custom test token (FNvGsacFM6ApWceMkqyg3NWoZZqeHizZk9Q3ZSJMmkja)
+// MAINNET: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v (real USDC)
+export const USDC_MINT = new PublicKey(
+    process.env.NEXT_PUBLIC_USDC_MINT ?? 'FNvGsacFM6ApWceMkqyg3NWoZZqeHizZk9Q3ZSJMmkja',
+);
 export const USDC_DECIMALS = 6;
 
 export function getEscrowAuthorityPda(quizAccountPda: PublicKey): [PublicKey, number] {

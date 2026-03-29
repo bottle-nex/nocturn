@@ -2,7 +2,7 @@
 import { JSX, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PerspectiveCard from '@/components/utility/PerspectiveCard';
-import LandingHeader from './LandingHeader';
+import LandingSectionHeader from './LandingSectionHeader';
 
 interface FaqItem {
     index: number;
@@ -48,7 +48,7 @@ export default function LandingFaqSection(): JSX.Element {
 
     return (
         <main className="max-w-270 mx-auto w-full text-dark-alpha select-none pb-16">
-            <LandingHeader
+            <LandingSectionHeader
                 heading="Frequently Asked Questions"
                 subheading="Find answers to common questions about Nocturn."
             />

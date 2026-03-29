@@ -1,6 +1,6 @@
 'use client';
 import { MdOutlineRocketLaunch } from 'react-icons/md';
-import LandingHeaderComponent from './LandingHeaderComponent';
+import LandingCardHeader from './LandingCardHeader';
 import Image from 'next/image';
 import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
@@ -25,7 +25,7 @@ export default function LandingLaunchCardComponent() {
                 }
             `}</style>
 
-            <LandingHeaderComponent
+            <LandingCardHeader
                 title="Launch quiz"
                 description="Configure everything before your quiz goes live"
             />

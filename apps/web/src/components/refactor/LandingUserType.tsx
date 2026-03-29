@@ -1,7 +1,7 @@
 'use client';
 import { JSX, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import LandingHeader from './LandingHeader';
+import LandingSectionHeader from './LandingSectionHeader';
 import PerspectiveCard from '../utility/PerspectiveCard';
 
 function UserTypeSection({ heading, description }: { heading: string; description: string }) {
@@ -39,7 +39,7 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
 export default function LandingUserType(): JSX.Element {
     return (
         <main className="w-full max-w-270 mx-auto pb-16">
-            <LandingHeader
+            <LandingSectionHeader
                 heading="Built for Every Role"
                 subheading="Whether you're hosting, playing, or building together — Nocturn adapts to how you work."
             />

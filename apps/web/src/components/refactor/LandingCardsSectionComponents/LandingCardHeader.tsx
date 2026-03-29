@@ -1,12 +1,9 @@
-interface LandingHeaderComponentProps {
+interface LandingCardHeaderProps {
     title: string;
     description: string;
 }
 
-export default function LandingHeaderComponent({
-    title,
-    description,
-}: LandingHeaderComponentProps) {
+export default function LandingCardHeader({ title, description }: LandingCardHeaderProps) {
     return (
         <>
             <div className="text-dark-base/90 text-[17px] font-semibold">{title}</div>

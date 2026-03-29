@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { ChevronRight } from 'lucide-react';
-import LandingHeader from './LandingHeader';
+import LandingSectionHeader from './LandingSectionHeader';
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -83,7 +83,7 @@ export default function LandingUsdcSection(): JSX.Element {
 
     return (
         <main className="max-w-270 mx-auto w-full pb-16">
-            <LandingHeader
+            <LandingSectionHeader
                 heading="USDC Support"
                 subheading="Learn more about our USDC integration."
             />

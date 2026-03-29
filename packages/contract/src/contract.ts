@@ -264,7 +264,7 @@ export type Contract = {
         {
           name: "usdcMint";
           docs: ["USDC mint account"];
-          address: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+          address: "FNvGsacFM6ApWceMkqyg3NWoZZqeHizZk9Q3ZSJMmkja";
         },
         {
           name: "escrowAuthority";
