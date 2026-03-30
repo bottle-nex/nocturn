@@ -1,5 +1,6 @@
 import { FaXTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaGithub } from 'react-icons/fa6';
 import AppLogo from '../app/AppLogo';
+import PerspectiveCard from '../utility/PerspectiveCard';
 
 const footerLinks = {
     Resources: ['Blog', 'Brand', 'FAQ', 'Help & Support', 'Community'],
@@ -18,32 +19,29 @@ const socialIcons = [
 
 export default function LandingFooter() {
     return (
-        <main className="w-full max-w-270 mx-auto py-16">
+        <PerspectiveCard className="w-full max-w-270 mx-auto pb-16 mt-15">
             <footer className="w-full  pb-0">
-                <div className="rounded-3xl bg-dark-base/10 pt-14 pb-0 overflow-hidden">
-                    {/* Top section */}
+                <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
                     <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">
-                        {/* Left: Logo + Description */}
-                        <div className="lg:w-[38%] flex flex-col gap-5">
+                        <section className="lg:w-[38%] flex flex-col gap-5">
                             <div className="-ml-12 -mt-12">
                                 <AppLogo
                                     withText
                                     size={120}
-                                    textColor="text-dark-base dark:text-dark-base"
+                                    textColor="text-light-base dark:text-light-base"
                                 />
                             </div>
-                            <p className="text-sm leading-relaxed text-dark-base/50 max-w-sm">
+                            <p className="text-sm leading-relaxed text-light-base/50 max-w-sm">
                                 Nocturn is a live quiz platform where knowledge pays off. Compete in
                                 real-time multiplayer quizzes, collaborate on quiz creation, and win
                                 prizes from blockchain-powered prize pools.
                             </p>
-                        </div>
+                        </section>
 
-                        {/* Right: Link columns */}
-                        <div className="lg:w-[62%] grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
+                        <section className="lg:w-[62%] grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
                             {Object.entries(footerLinks).map(([heading, links]) => (
                                 <div key={heading} className="flex flex-col gap-3.5">
-                                    <h4 className="text-sm font-semibold text-dark-base">
+                                    <h4 className="text-sm font-semibold text-light-base">
                                         {heading}
                                     </h4>
                                     <ul className="flex flex-col gap-2.5">
@@ -51,7 +49,7 @@ export default function LandingFooter() {
                                             <li key={link}>
                                                 <a
                                                     href="#"
-                                                    className="text-sm text-dark-base/45 hover:text-dark-base transition-colors duration-200"
+                                                    className="text-sm text-light-alpha/45 hover:text-light-base transition-colors duration-200"
                                                 >
                                                     {link}
                                                 </a>
@@ -60,7 +58,7 @@ export default function LandingFooter() {
                                     </ul>
                                 </div>
                             ))}
-                        </div>
+                        </section>
                     </div>
 
                     <div className="flex items-center gap-5 mt-16 mb-8 px-10 md:px-14">
@@ -69,14 +67,14 @@ export default function LandingFooter() {
                                 key={label}
                                 href="#"
                                 aria-label={label}
-                                className="text-dark-base/40 hover:text-dark-base transition-colors duration-200"
+                                className="text-light-alpha/40 hover:text-light-base transition-colors duration-200"
                             >
                                 <Icon className="w-5 h-5" />
                             </a>
                         ))}
                     </div>
-                </div>
+                </main>
             </footer>
-        </main>
+        </PerspectiveCard>
     );
 }
