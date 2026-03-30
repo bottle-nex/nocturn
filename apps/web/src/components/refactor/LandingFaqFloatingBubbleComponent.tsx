@@ -40,6 +40,16 @@ export default function LandingFaqFloatingBubbleComponent() {
                 className="h-4 w-4 rounded-full bg-alpha/80 absolute top-38 left-28"
             />
             <motion.div
+                animate={{ y: [0, -5, 0] }}
+                transition={{
+                    duration: 2.8,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: 0.6,
+                }}
+                className="h-4 w-4 rounded-full bg-alpha/80 absolute bottom-22 right-38"
+            />
+            <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{
                     duration: 3.2,

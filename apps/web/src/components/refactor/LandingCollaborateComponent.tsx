@@ -26,11 +26,6 @@ export default function LandingCollaborateComponent() {
                                 some bring the structure, and some just taste-test everything—but
                                 together, you create something truly delicious.
                             </div>
-                            <div className="flex gap-x-2 items-center">
-                                <button className="bg-dark-base text-light-alpha prem-surface h-8 w-28 flex justify-center items-center rounded-sm">
-                                    Get started
-                                </button>
-                            </div>
                         </div>
                     </div>
 
