@@ -1,8 +1,8 @@
 'use client';
 import { JSX, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import LandingSectionHeader from './LandingSectionHeader';
+import LandingFaqFloatingBubbleComponent from './LandingFaqFloatingBubbleComponent';
 
 interface FaqItem {
     index: number;
@@ -53,12 +53,7 @@ export default function LandingFaqSection(): JSX.Element {
                 subheading="Find answers to common questions about Nocturn."
             />
             <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
-                <PerspectiveCard
-                    className="w-full bg-[#4f46e590] rounded-xl p-6 space-y-4 h-full"
-                    shadowColor="79,70,229"
-                    sticky
-                    stickyTop={10}
-                ></PerspectiveCard>
+                <LandingFaqFloatingBubbleComponent />
                 <section className="w-full space-y-2">
                     {faqItems.map((item) => (
                         <motion.div

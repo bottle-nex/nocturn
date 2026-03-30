@@ -20,10 +20,17 @@ export default function LandingCollaborateComponent() {
                             Too many cooks? Perfect for the kitchen
                         </div>
 
-                        <div className="text-dark-base/50 text-base">
-                            Every great quiz needs more than one chef. Some bring the spice, some
-                            bring the structure, and some just taste-test everything—but together,
-                            you create something truly delicious.
+                        <div className="flex flex-col gap-y-5">
+                            <div className="text-dark-base/60 text-base">
+                                Every great quiz needs more than one chef. Some bring the spice,
+                                some bring the structure, and some just taste-test everything—but
+                                together, you create something truly delicious.
+                            </div>
+                            <div className="flex gap-x-2 items-center">
+                                <button className="bg-dark-base text-light-alpha prem-surface h-8 w-28 flex justify-center items-center rounded-sm">
+                                    Get started
+                                </button>
+                            </div>
                         </div>
                     </div>
 
