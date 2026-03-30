@@ -67,6 +67,7 @@
 
     --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
 
+
     --radius-alpha: 4px;
     --radius-beta: 6px;
 
