@@ -8,7 +8,6 @@ export default function NotFound() {
     return (
         <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
             <LandingNavbarComponent />
-            {/* <NotFoundHeroSection /> */}
             <NotFoundFeaturesSection />
             <SectionDivider />
             <NotFoundCardsSection />

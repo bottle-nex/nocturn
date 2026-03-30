@@ -1,61 +1,71 @@
-const STATS = [
-    { value: '0', label: 'Pages Found' },
-    { value: '404', label: 'Error Code' },
-    { value: '1', label: 'Lost Explorer' },
-];
+'use client';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function NotFoundFeaturesSection() {
     return (
-        <div className="mx-auto w-full max-w-270 bg-light-base pb-32 pt-25 ring-1 ring-black/10">
-            <div className="flex w-full items-start">
-                {/* Left Side */}
-                <div className="w-[38%] shrink-0 px-10 py-4 sticky top-15 self-start">
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/[0.07] bg-white px-3 py-1 shadow-sm">
-                        <span className="relative flex h-1.5 w-1.5">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
-                            <span className="relative h-1.5 w-1.5 rounded-full bg-red-400" />
-                        </span>
-                        <span className="text-[11px] font-medium text-gray-500">
-                            System Status: Broken Link
-                        </span>
-                    </div>
+        <div className="w-full max-w-270 mx-auto flex flex-col items-center pt-52 pb-28 px-6">
+            {/* Pill badge */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className="mb-8 inline-flex items-center gap-2 rounded-full border border-dark-base/[0.07] bg-light-base px-4 py-1.5 shadow-sm"
+            >
+                <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
+                    <span className="relative h-1.5 w-1.5 rounded-full bg-red-400" />
+                </span>
+                <span className="text-xs font-medium text-dark-base/50 tracking-wide">
+                    Page not found
+                </span>
+            </motion.div>
 
-                    <h2 className="mb-4 text-[36px] font-bold leading-[1.1] tracking-tight text-gray-900">
-                        <div>{"You've ventured"}</div>
-                        <div style={{ color: '#b0b7c3' }}>{'into the unknown'}</div>
-                        <div>{'territory.'}</div>
-                    </h2>
+            {/* 404 Display */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+                className="text-[120px] font-bold leading-none tracking-tighter text-dark-base/90 select-none"
+            >
+                404
+            </motion.div>
 
-                    <p className="max-w-[250px] text-[13.5px] leading-relaxed text-gray-400">
-                        {
-                            "The link you clicked might be broken, or the page you're trying to reach has been retired from our servers."
-                        }
-                    </p>
+            {/* Heading */}
+            <motion.h1
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.25 }}
+                className="text-4xl font-semibold text-dark-base text-center mt-4"
+            >
+                Lost in the unknown
+            </motion.h1>
 
-                    <div className="my-8 h-px w-full bg-gradient-to-r from-gray-200 to-transparent" />
+            {/* Subtext */}
+            <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.35 }}
+                className="text-lg text-dark-base/50 text-center mt-4 max-w-md"
+            >
+                The page you&apos;re looking for doesn&apos;t exist or has been moved to a new
+                location.
+            </motion.p>
 
-                    <div className="flex flex-col gap-3.5">
-                        {STATS.map((stat) => (
-                            <div key={stat.label} className="flex items-baseline gap-2.5">
-                                <span className="text-[16px] font-bold tracking-tight text-gray-800">
-                                    {stat.value}
-                                </span>
-                                <span className="text-[11px] text-gray-400">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Right Side */}
-                <div className="flex-1 px-10">
-                    <div className="w-full h-[500px] border border-black/5 rounded-2xl bg-white/50 shadow-[0_0_40px_-15px_rgba(0,0,0,0.1)] flex items-center justify-center p-8 overflow-hidden relative">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:16px_16px]" />
-                        <div className="text-[180px] font-black tracking-tighter text-black/60 z-10 select-none flex ">
-                            404
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/* CTA Button */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.45 }}
+                className="mt-10"
+            >
+                <Link
+                    href="/"
+                    className="bg-dark-base text-light-base text-[15px] h-11 px-8 flex items-center justify-center rounded-full shadow-xs cursor-pointer transition-all transform duration-200 ease-in-out hover:scale-105 active:scale-95 inset-shadow-xs inset-shadow-white/30"
+                >
+                    Back to Home
+                </Link>
+            </motion.div>
         </div>
     );
 }
