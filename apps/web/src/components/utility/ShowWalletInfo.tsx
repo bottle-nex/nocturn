@@ -61,7 +61,7 @@ export default function ShowInfoToggle() {
                         setOpenWalletPanel((prev) => !prev);
                     }
                 }}
-                className="flex items-center justify-center h-10 rounded-lg hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 ease-in-out bg-light-base hover:bg-light-base dark:bg-dark-base/30 dark:text-neutral-300 text-neutral-700 border border-neutral-600 dark:border-neutral-500 w-full"
+                className="flex items-center justify-center h-10 rounded-lg hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 ease-in-out bg-light-base hover:bg-light-base dark:bg-dark-base/30 dark:text-neutral-300 text-neutral-700 border border-neutral-600 dark:border-neutral-700 w-full"
             >
                 <IoWalletOutline className="mr-1" />
                 {connected
