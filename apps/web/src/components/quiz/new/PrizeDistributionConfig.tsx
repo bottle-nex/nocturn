@@ -255,7 +255,7 @@ export default function PrizeDistributionConfig() {
                 <PrizeDistributionHeader
                     prizePool={prizePool}
                     winnerCount={winnerCount}
-                    setWinnerCount={setWinnerCount}
+                    // setWinnerCount={setWinnerCount}
                     handleWinnerCountChange={handleWinnerCountChange}
                 />
             </div>
