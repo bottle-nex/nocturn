@@ -24,19 +24,19 @@ function getRankLabel(rank: number): string {
 
 const RANK_STYLES: Record<number, { badge: string; text: string; bar: string }> = {
     1: {
-        badge: 'bg-[#facc15]/8 border-[#facc15]/25 text-[#eab308]',
-        text: 'text-[#eab308]',
-        bar: 'bg-[#eab308]/80',
+        badge: 'bg-[#ce2354]/12 border-[#ce2354]/40 text-[#ce2354]',
+        text: 'text-[#ce2354]',
+        bar: 'bg-linear-to-r from-[#a4133c] to-[#c9184a]',
     },
     2: {
-        badge: 'bg-[#94a3b8]/10 border-[#94a3b8]/25 text-[#cbd5f5]',
-        text: 'text-[#cbd5f5]',
-        bar: 'bg-[#cbd5f5]/70',
+        badge: 'bg-[#2100c7]/10 border-[#2100c7]/35 text-[#2100c7]',
+        text: 'text-[#2100c7]',
+        bar: 'bg-linear-to-r from-[#2100c7] to-[#4a2fe0]',
     },
     3: {
-        badge: 'bg-[#fb923c]/8 border-[#fb923c]/25 text-[#f97316]',
-        text: 'text-[#f97316]',
-        bar: 'bg-[#f97316]/75',
+        badge: 'bg-[#7248e4]/10 border-[#7248e4]/35 text-[#7248e4]',
+        text: 'text-[#7248e4]',
+        bar: 'bg-linear-to-r from-[#7248e4] to-[#9065f0]',
     },
 };
 
@@ -260,14 +260,140 @@ export default function PrizeDistributionConfig() {
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2">
-                <PrizeDistributionList
-                    percentages={percentages}
-                    handlePercentageChange={handlePercentageChange}
-                    prizePool={prizePool}
-                    totalPercentage={totalPercentage}
-                    isValid={isValid}
-                />
+            {/* Winner count stepper */}
+            <div className="flex items-center justify-between rounded-prime bg-neutral-100 dark:bg-neutral-900/60 px-3 py-2.5">
+                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+                    Winners
+                </span>
+                <div className="flex items-center gap-x-2">
+                    <button
+                        type="button"
+                        aria-label="Decrease winner count"
+                        onClick={() => handleWinnerCountChange(winnerCount - 1)}
+                        disabled={winnerCount <= 1}
+                        className="flex items-center justify-center w-7 h-7 rounded-prime cursor-pointer bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                        <LuMinus size={14} />
+                    </button>
+                    <span className="w-6 text-center text-sm font-semibold text-dark-alpha dark:text-gamma tabular-nums">
+                        {winnerCount}
+                    </span>
+                    <button
+                        type="button"
+                        aria-label="Increase winner count"
+                        onClick={() => handleWinnerCountChange(winnerCount + 1)}
+                        disabled={winnerCount >= 20}
+                        className="flex items-center justify-center w-7 h-7 rounded-prime cursor-pointer bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    >
+                        <LuPlus size={14} />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleWinnerCountChange(winnerCount)}
+                        className="flex items-center gap-x-1 ml-1 px-2.5 h-7 rounded-prime cursor-pointer text-xs font-medium text-neutral-600 dark:text-neutral-400 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+                    >
+                        <LuSparkles size={12} />
+                        Auto
+                    </button>
+                </div>
+            </div>
+
+            {/* Distribution rows */}
+            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-0.5">
+                {percentages.map((pct, index) => {
+                    const rank = index + 1;
+                    const style = getRankStyle(rank);
+                    const amount = (prizePool * pct) / 100;
+
+                    return (
+                        <div
+                            key={index}
+                            className="rounded-prime px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900/40 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all"
+                        >
+                            {/* Top row: badge, input, amount */}
+                            <div className="flex items-center gap-x-3">
+                                {/* Rank badge */}
+                                <span
+                                    className={`inline-flex items-center justify-center w-11 h-7 rounded-prime border text-xs font-bold tracking-wide ${style.badge}`}
+                                >
+                                    {getRankLabel(rank)}
+                                </span>
+
+                                {/* Percentage input */}
+                                <div className="flex items-center gap-x-1.5">
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={pct}
+                                        onChange={(e) =>
+                                            handlePercentageChange(
+                                                index,
+                                                parseFloat(e.target.value),
+                                            )
+                                        }
+                                        className="w-16 h-8 text-sm text-center font-medium tabular-nums rounded-prime border-neutral-300 dark:border-neutral-700 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    />
+                                    <span className="text-xs text-neutral-400 dark:text-neutral-500">
+                                        %
+                                    </span>
+                                </div>
+
+                                {/* Amount */}
+                                <span
+                                    className={`text-sm font-semibold tabular-nums ml-auto ${style.text}`}
+                                >
+                                    {amount.toFixed(2)}
+                                    <span className="ml-0.5 text-[11px] font-normal opacity-60">
+                                        USDC
+                                    </span>
+                                </span>
+                            </div>
+
+                            {/* Bar below */}
+                            <div className="mt-2 h-1.5 rounded-prime bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
+                                <div
+                                    className={`h-full rounded-prime transition-all duration-300 ${style.bar}`}
+                                    style={{ width: `${Math.min(pct, 100)}%` }}
+                                />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-neutral-800">
+                <div className="flex items-center gap-x-2">
+                    <div className="w-20 h-1.5 rounded-prime bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
+                        <div
+                            className={`h-full rounded-prime transition-all duration-300 ${isValid
+                                    ? 'bg-emerald-500'
+                                    : totalPercentage > 100
+                                        ? 'bg-red-500'
+                                        : 'bg-amber-500'
+                                }`}
+                            style={{ width: `${Math.min(totalPercentage, 100)}%` }}
+                        />
+                    </div>
+                    <span
+                        className={`text-xs font-semibold tabular-nums ${isValid
+                                ? 'text-emerald-500'
+                                : totalPercentage > 100
+                                    ? 'text-red-400'
+                                    : 'text-amber-400'
+                            }`}
+                    >
+                        {totalPercentage.toFixed(1)}%
+                    </span>
+                    {!isValid && (
+                        <span className="text-[11px] text-red-400/80">Must equal 100%</span>
+                    )}
+                </div>
+                {isValid && (
+                    <span className="text-[11px] font-medium text-emerald-500/80">Auto-saved</span>
+                )}
             </div>
         </div>
     );

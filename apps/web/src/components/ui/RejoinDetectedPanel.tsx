@@ -103,7 +103,7 @@ export default function RejoinDetectedPanel({ deny, onJoinAsNew }: RejoinDetecte
                         'flex flex-col relative overflow-hidden',
                     )}
                 >
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent" />
+                    <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent" />
 
                     <motion.button
                         onClick={deny}

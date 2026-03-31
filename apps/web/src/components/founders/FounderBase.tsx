@@ -24,7 +24,7 @@ export const animations = `
 
 export default function FounderBase() {
     return (
-        <div className="relative w-full flex flex-col items-center justify-between dark:text-white text-gray-900 dark:bg-gradient-to-b dark:from-[#20163560] dark:to-black bg-gradient-to-b from-gray-50 to-[#f7fafc] select-none overflow-x-hidden">
+        <div className="relative w-full flex flex-col items-center justify-between dark:text-white text-gray-900 dark:bg-linear-to-b dark:from-[#20163560] dark:to-black bg-linear-to-b from-gray-50 to-[#f7fafc] select-none overflow-x-hidden">
             <style>{animations}</style>
 
             {/* Dark mode background gradient - preserved original */}
@@ -140,7 +140,7 @@ export default function FounderBase() {
             <div className="w-full flex items-center justify-center">
                 <div
                     className="text-[14rem] font-medium text-center 
-                    bg-gradient-to-b from-[rgba(116,74,199,0.3)] via-[rgba(116,74,199,0.1)] 
+                    bg-linear-to-b from-[rgba(116,74,199,0.3)] via-[rgba(116,74,199,0.1)] 
                     to-white/10 dark:to-[#01011220] bg-clip-text text-transparent"
                 >
                     NOCTURN

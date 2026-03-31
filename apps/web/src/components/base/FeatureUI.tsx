@@ -357,7 +357,7 @@
 //         >
 //             <div
 //                 className={clsx(
-//                     "group relative w-full overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-b from-gray-900/90 to-gray-800 transition duration-300",
+//                     "group relative w-full overflow-hidden rounded-3xl border border-black/10 bg-linear-to-b from-gray-900/90 to-gray-800 transition duration-300",
 //                     "md:hover:border-transparent",
 //                     bgClass
 //                 )}

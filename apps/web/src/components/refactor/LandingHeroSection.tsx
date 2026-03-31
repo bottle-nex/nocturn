@@ -58,7 +58,7 @@ export default function LandingHeroSection() {
                             <div className="h-3 w-3 rounded-full bg-[#66E035]" />
 
                             <div className="text-dark-base/80 ml-3 text-sm flex items-center gap-x-3 bg-light-base px-3 py-1 rounded-sm">
-                                nocturn.gg
+                                nocturn.app
                                 <IoCloseOutline className="size-3.5" />
                             </div>
                         </div>

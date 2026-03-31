@@ -1,27 +1,33 @@
-import LandingFooter from '@/components/test/LandingFooter';
-import LandingHeroSection from '@/components/revamp/LandingHeroSection';
-import LandingTestNav from '@/components/revamp/LandingTestNav';
-import ChatBoxCardSection from '@/components/revamp/ChatBoxCardSection';
-import LandingCTASection from '@/components/revamp/LandingCTASection';
-import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
-import LandingFeaturesSection from '@/components/revamp/LandingFeaturesSection';
-import LandingSubscriptionComponent from '@/components/revamp/LandingSubscriptionComponent';
+import LandingCardsComponent from '@/components/refactor/LandingCardsComponent';
+import LandingCollaborateComponent from '@/components/refactor/LandingCollaborateComponent';
+import LandingFaqSection from '@/components/refactor/LandingFaqSection';
+import LandingFeaturesComponent from '@/components/refactor/LandingFeaturesComponent';
+import LandingFooter from '@/components/refactor/LandingFooter';
+import LandingHeroSection from '@/components/refactor/LandingHeroSection';
+import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
+import LandingUsdcSection from '@/components/refactor/LandingUsdcSection';
+import LandingUserType from '@/components/refactor/LandingUserType';
+import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Page() {
     return (
-        <div className="overflow-x-hidden w-full relative custom-scrollbar">
-            <div className="min-h-screen w-full bg-light-alpha relative z-10 flex flex-col items-center mb-[60vh] custom-scrollbar">
-                <LandingTestNav />
-                <LandingHeroSection />
-                <ChatBoxCardSection />
-                <LandingPenguinSection />
-                <LandingFeaturesSection />
-                <LandingSubscriptionComponent />
-                <LandingCTASection />
-            </div>
-            <footer className="fixed bottom-0 left-0 w-full z-1">
-                <LandingFooter />
-            </footer>
+        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
+            <LandingNavbarComponent />
+            <LandingHeroSection />
+            <SectionDivider />
+            <LandingFeaturesComponent />
+            <SectionDivider />
+            <LandingCardsComponent />
+            <SectionDivider />
+            <LandingCollaborateComponent />
+            <SectionDivider />
+            <LandingUsdcSection />
+            <SectionDivider />
+            <LandingUserType />
+            <SectionDivider />
+            <LandingFaqSection />
+            <SectionDivider />
+            <LandingFooter />
         </div>
     );
 }

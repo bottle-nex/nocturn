@@ -137,7 +137,7 @@ export default function HomeAnimatedList({ className }: { className?: string }) 
                 ))}
             </AnimatedList>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background"></div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-linear-to-t from-background"></div>
         </div>
     );
 }
