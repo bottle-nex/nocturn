@@ -368,22 +368,24 @@ export default function PrizeDistributionConfig() {
                 <div className="flex items-center gap-x-2">
                     <div className="w-20 h-1.5 rounded-prime bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
                         <div
-                            className={`h-full rounded-prime transition-all duration-300 ${isValid
+                            className={`h-full rounded-prime transition-all duration-300 ${
+                                isValid
                                     ? 'bg-emerald-500'
                                     : totalPercentage > 100
-                                        ? 'bg-red-500'
-                                        : 'bg-amber-500'
-                                }`}
+                                      ? 'bg-red-500'
+                                      : 'bg-amber-500'
+                            }`}
                             style={{ width: `${Math.min(totalPercentage, 100)}%` }}
                         />
                     </div>
                     <span
-                        className={`text-xs font-semibold tabular-nums ${isValid
+                        className={`text-xs font-semibold tabular-nums ${
+                            isValid
                                 ? 'text-emerald-500'
                                 : totalPercentage > 100
-                                    ? 'text-red-400'
-                                    : 'text-amber-400'
-                            }`}
+                                  ? 'text-red-400'
+                                  : 'text-amber-400'
+                        }`}
                     >
                         {totalPercentage.toFixed(1)}%
                     </span>

@@ -59,7 +59,12 @@ export default function UsdcHeroSection() {
                 />
                 <svg className="absolute w-0 h-0">
                     <filter id="grain-noise">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+                        <feTurbulence
+                            type="fractalNoise"
+                            baseFrequency="0.65"
+                            numOctaves="3"
+                            stitchTiles="stitch"
+                        />
                         <feColorMatrix type="saturate" values="0" />
                     </filter>
                 </svg>
