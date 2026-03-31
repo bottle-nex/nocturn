@@ -47,6 +47,31 @@ export default function UsdcHeroSection() {
                     }}
                 />
 
+                {/* Grainy blur overlay at top */}
+                <div
+                    className="absolute inset-x-0 top-0 h-1/3 z-[1] pointer-events-none"
+                    style={{
+                        backdropFilter: 'blur(1.5px)',
+                        WebkitBackdropFilter: 'blur(1.5px)',
+                        maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                    }}
+                />
+                <svg className="absolute w-0 h-0">
+                    <filter id="grain-noise">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+                        <feColorMatrix type="saturate" values="0" />
+                    </filter>
+                </svg>
+                <div
+                    className="absolute inset-x-0 top-0 h-1/3 z-[2] pointer-events-none opacity-[0.08]"
+                    style={{
+                        filter: 'url(#grain-noise)',
+                        maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
+                    }}
+                />
+
                 <div className="flex items-center gap-x-5 relative z-10">
                     <span className={`text-light-base text-7xl font-semibold ${audio.className}`}>
                         nocturn
