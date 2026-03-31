@@ -78,9 +78,7 @@ export default function UsdcClaimSection() {
                                     </div>
                                     <span
                                         className={`text-[11px] tracking-[0.15em] uppercase font-semibold ${
-                                            step.light
-                                                ? 'text-dark-base/20'
-                                                : 'text-light-base/15'
+                                            step.light ? 'text-dark-base/20' : 'text-light-base/15'
                                         }`}
                                     >
                                         Step {step.num}
@@ -116,9 +114,9 @@ export default function UsdcClaimSection() {
 
                 <div className="mt-12 max-w-2xl mx-auto text-center">
                     <p className="text-[14px] text-light-base/25 leading-relaxed">
-                        If a winner doesn&apos;t claim within 7 days, the funds are returned to
-                        the host via a separate reclaim transaction. Nothing is ever stuck — the
-                        program handles every outcome automatically.
+                        If a winner doesn&apos;t claim within 7 days, the funds are returned to the
+                        host via a separate reclaim transaction. Nothing is ever stuck — the program
+                        handles every outcome automatically.
                     </p>
                 </div>
             </div>

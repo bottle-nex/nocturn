@@ -11,8 +11,7 @@ import UsdcFaqSection from '@/components/resources/usdc-integration/UsdcFaqSecti
 
 export const metadata: Metadata = {
     title: 'USDC Integration | Nocturn',
-    description:
-        'Learn how Nocturn uses USDC on Solana for transparent, secure quiz prize pools.',
+    description: 'Learn how Nocturn uses USDC on Solana for transparent, secure quiz prize pools.',
 };
 
 export default function UsdcIntegrationPage() {

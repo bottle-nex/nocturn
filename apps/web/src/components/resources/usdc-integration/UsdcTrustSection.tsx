@@ -34,7 +34,9 @@ export default function UsdcTrustSection() {
                         <h3 className="text-[26px] font-semibold text-light-base/90 leading-[1.15] tracking-[-0.01em]">
                             Funds are locked
                             <br />
-                            <span className="text-light-base/40">before the first question is asked</span>
+                            <span className="text-light-base/40">
+                                before the first question is asked
+                            </span>
                         </h3>
                         <p className="text-[14px] text-light-base/30 leading-[1.7] mt-6 max-w-85">
                             The escrow account is controlled by a program deployed on Solana — not
@@ -69,9 +71,9 @@ export default function UsdcTrustSection() {
                             No middleman on claims
                         </h3>
                         <p className="text-[14px] text-light-base/30 leading-[1.7] mt-4">
-                            When you claim your prize, the USDC moves directly from the escrow to your
-                            wallet in a single transaction. Nocturn never touches your winnings — the
-                            transfer is signed by the escrow program itself.
+                            When you claim your prize, the USDC moves directly from the escrow to
+                            your wallet in a single transaction. Nocturn never touches your winnings
+                            — the transfer is signed by the escrow program itself.
                         </p>
                     </div>
                 </PerspectiveCard>
@@ -90,8 +92,8 @@ export default function UsdcTrustSection() {
                                 Verifiable on Solana
                             </h3>
                             <p className="text-[13px] text-light-base/25 leading-[1.65] mt-3">
-                                Every deposit, claim, and refund is a transaction you can look up on any
-                                Solana explorer. Nothing is hidden.
+                                Every deposit, claim, and refund is a transaction you can look up on
+                                any Solana explorer. Nothing is hidden.
                             </p>
                         </div>
                     </PerspectiveCard>
@@ -109,8 +111,8 @@ export default function UsdcTrustSection() {
                                 7-day claim window
                             </h3>
                             <p className="text-[13px] text-light-base/25 leading-[1.65] mt-3">
-                                Unclaimed prizes return to the host after 7 days. Nothing gets stuck —
-                                the program handles it automatically.
+                                Unclaimed prizes return to the host after 7 days. Nothing gets stuck
+                                — the program handles it automatically.
                             </p>
                         </div>
                     </PerspectiveCard>

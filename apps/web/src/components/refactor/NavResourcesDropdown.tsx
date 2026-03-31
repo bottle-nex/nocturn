@@ -54,7 +54,10 @@ interface NavResourcesDropdownProps {
     onMouseLeave: () => void;
 }
 
-export default function NavResourcesDropdown({ onMouseEnter, onMouseLeave }: NavResourcesDropdownProps) {
+export default function NavResourcesDropdown({
+    onMouseEnter,
+    onMouseLeave,
+}: NavResourcesDropdownProps) {
     const router = useRouter();
     const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
     const [bgStyle, setBgStyle] = useState({ top: 0, height: 0 });
@@ -85,7 +88,6 @@ export default function NavResourcesDropdown({ onMouseEnter, onMouseLeave }: Nav
             onMouseLeave={onMouseLeave}
             className="absolute top-full right-0 mt-3 z-50"
         >
-
             <div
                 className="relative w-75 bg-white rounded-2xl py-2.5 px-1.5 overflow-hidden"
                 style={{
@@ -128,7 +130,9 @@ export default function NavResourcesDropdown({ onMouseEnter, onMouseLeave }: Nav
                             <div
                                 key={idx}
                                 onMouseEnter={(e) => handleItemMouseEnter(e, idx)}
-                                onClick={() => { if (item.href) router.push(item.href); }}
+                                onClick={() => {
+                                    if (item.href) router.push(item.href);
+                                }}
                                 className="relative flex items-start gap-3.5 px-3.5 py-3 rounded-xl cursor-pointer z-10"
                             >
                                 <div

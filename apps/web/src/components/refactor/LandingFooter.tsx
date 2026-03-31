@@ -1,4 +1,4 @@
-import { FaXTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaGithub } from 'react-icons/fa6';
+import { FaXTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import AppLogo from '../app/AppLogo';
 import PerspectiveCard from '../utility/PerspectiveCard';
 
@@ -11,9 +11,7 @@ const footerLinks = {
 
 const socialIcons = [
     { icon: FaXTwitter, label: 'X' },
-    { icon: FaInstagram, label: 'Instagram' },
     { icon: FaLinkedinIn, label: 'LinkedIn' },
-    { icon: FaDiscord, label: 'Discord' },
     { icon: FaGithub, label: 'GitHub' },
 ];
 

@@ -22,8 +22,8 @@ export default function UsdcHowItWorksSection() {
                     </h2>
                     <p className="text-base text-dark-base/55 leading-relaxed max-w-md mt-1">
                         When a host creates a quiz with a prize pool, they sign a single transaction
-                        that moves their USDC into a secure escrow account on Solana. This account is
-                        controlled by an automated program.not by Nocturn, and not by the host.
+                        that moves their USDC into a secure escrow account on Solana. This account
+                        is controlled by an automated program.not by Nocturn, and not by the host.
                     </p>
                     <p className="text-base text-dark-base/55 leading-relaxed max-w-md">
                         Once the funds are in, they&apos;re locked. The host cannot pull them back
@@ -108,7 +108,10 @@ export default function UsdcHowItWorksSection() {
                                     detail: 'Stores the quiz ID, prize amount, host identity, and finalization status',
                                 },
                             ].map((item, i) => (
-                                <div key={i} className="flex gap-x-4 py-3.5 border-b border-dark-base/5 last:border-0">
+                                <div
+                                    key={i}
+                                    className="flex gap-x-4 py-3.5 border-b border-dark-base/5 last:border-0"
+                                >
                                     <div className="w-6 h-6 rounded-full bg-alpha/10 text-alpha text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                                         {i + 1}
                                     </div>
@@ -194,8 +197,8 @@ export default function UsdcHowItWorksSection() {
                     </p>
                     <p className="text-base text-dark-base/55 leading-relaxed max-w-md">
                         If two players tie, they share the combined prize for their ranks. For
-                        example, if 1st and 2nd place tie, they split 50% + 30% = 40% each. Fair
-                        and automatic.
+                        example, if 1st and 2nd place tie, they split 50% + 30% = 40% each. Fair and
+                        automatic.
                     </p>
                 </div>
             </div>
@@ -210,8 +213,8 @@ export default function UsdcHowItWorksSection() {
                     </h2>
                     <p className="text-base text-dark-base/55 leading-relaxed max-w-md mt-1">
                         When the quiz ends, final rankings are locked in. The platform creates a
-                        claim record for each winner on Solana.storing their rank, prize amount,
-                        and a 7-day expiry window.
+                        claim record for each winner on Solana.storing their rank, prize amount, and
+                        a 7-day expiry window.
                     </p>
                     <p className="text-base text-dark-base/55 leading-relaxed max-w-md">
                         Once all claims are written, the quiz is &ldquo;sealed.&rdquo; From this

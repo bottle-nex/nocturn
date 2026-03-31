@@ -23,7 +23,7 @@ const faqItems = [
     {
         index: 3,
         question: 'Is there a fee?',
-        answer: "The platform takes a 1% fee from the prize pool when the host stakes. This is deducted upfront.99% goes into the escrow, 1% goes to Nocturn. There are zero fees on claiming. Winners receive exactly the amount shown.",
+        answer: 'The platform takes a 1% fee from the prize pool when the host stakes. This is deducted upfront.99% goes into the escrow, 1% goes to Nocturn. There are zero fees on claiming. Winners receive exactly the amount shown.',
     },
     {
         index: 4,

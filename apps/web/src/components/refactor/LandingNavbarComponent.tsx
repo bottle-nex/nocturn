@@ -22,8 +22,7 @@ export default function LandingNavbarComponent() {
         }
         document.addEventListener('scroll', handleScroll);
         return () => document.removeEventListener('scroll', handleScroll);
-    }, [])
-
+    }, []);
 
     const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
         const container = containerRef.current;
@@ -43,7 +42,8 @@ export default function LandingNavbarComponent() {
         <motion.div
             animate={{ height: atTop ? 80 : 56 }}
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-            className={`w-full bg-white max-w-270.5 mx-auto fixed top-0 flex items-center justify-between px-9 z-30 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}>
+            className={`w-full bg-white max-w-270.5 mx-auto fixed top-0 flex items-center justify-between px-9 z-30 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
+        >
             <AppLogo size={105} className="-left-10 top-1 text-dark-base" />
             <div className="flex items-center gap-x-3 text-dark-base/90">
                 <div
@@ -81,13 +81,17 @@ export default function LandingNavbarComponent() {
                                 setHoveredIdx(idx);
                                 handleMouseEnter(e);
                                 if (item.name === 'Resources') {
-                                    if (resourcesTimeoutRef.current) clearTimeout(resourcesTimeoutRef.current);
+                                    if (resourcesTimeoutRef.current)
+                                        clearTimeout(resourcesTimeoutRef.current);
                                     setShowResources(true);
                                 }
                             }}
                             onMouseLeave={() => {
                                 if (item.name === 'Resources') {
-                                    resourcesTimeoutRef.current = setTimeout(() => setShowResources(false), 150);
+                                    resourcesTimeoutRef.current = setTimeout(
+                                        () => setShowResources(false),
+                                        150,
+                                    );
                                 }
                             }}
                             className="relative text-[15px] tracking-wide h-8 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10"
@@ -98,11 +102,15 @@ export default function LandingNavbarComponent() {
                                     {showResources && (
                                         <NavResourcesDropdown
                                             onMouseEnter={() => {
-                                                if (resourcesTimeoutRef.current) clearTimeout(resourcesTimeoutRef.current);
+                                                if (resourcesTimeoutRef.current)
+                                                    clearTimeout(resourcesTimeoutRef.current);
                                                 setShowResources(true);
                                             }}
                                             onMouseLeave={() => {
-                                                resourcesTimeoutRef.current = setTimeout(() => setShowResources(false), 150);
+                                                resourcesTimeoutRef.current = setTimeout(
+                                                    () => setShowResources(false),
+                                                    150,
+                                                );
                                             }}
                                         />
                                     )}

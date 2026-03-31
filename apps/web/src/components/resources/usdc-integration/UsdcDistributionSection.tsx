@@ -28,9 +28,7 @@ export default function UsdcDistributionSection() {
                             <div className="text-[11px] tracking-[0.15em] uppercase text-dark-base/30 font-medium mb-1">
                                 Example Prize Pool
                             </div>
-                            <div className="text-3xl font-semibold text-dark-base/90">
-                                250 USDC
-                            </div>
+                            <div className="text-3xl font-semibold text-dark-base/90">250 USDC</div>
                         </div>
                         <div className="text-[12px] text-dark-base/30">3 winners</div>
                     </div>

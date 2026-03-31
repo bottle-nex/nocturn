@@ -51,12 +51,8 @@ export default function UsdcHeroSection() {
                     <span className={`text-light-base text-7xl font-semibold ${audio.className}`}>
                         nocturn
                     </span>
-                    <span className="text-light-base/30 text-5xl font-normal">
-                        x
-                    </span>
-                    <span className="text-light-base text-7xl font-semibold">
-                        USDC
-                    </span>
+                    <span className="text-light-base/30 text-5xl font-normal">x</span>
+                    <span className="text-light-base text-7xl font-semibold">USDC</span>
                 </div>
             </motion.div>
         </div>
