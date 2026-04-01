@@ -20,6 +20,7 @@ import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { Button } from '../ui/button';
 import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
+import RevisePanel from './RevisePanel';
 
 interface Option {
     name: string;
@@ -43,6 +44,11 @@ export default function NavbarQuizAction() {
 
     useEffect(() => {
 
+        console.log(currentAction);
+        if (reviseQuizPanel === currentAction) {
+            return;
+        }
+
         switch (currentAction) {
             case 'Save Draft':
                 handleSaveDraft();
@@ -53,12 +59,12 @@ export default function NavbarQuizAction() {
                 return;
             case 'Launch Quiz':
                 setReviseQuizPanel(currentAction);
-                handleLaunchQuiz();
+                // handleLaunchQuiz();
                 return;
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentAction, setCurrentAction]);
+    }, [currentAction, setCurrentAction, reviseQuizPanel, setReviseQuizPanel]);
 
     // function reviseQuiz() {
         
@@ -203,19 +209,18 @@ export default function NavbarQuizAction() {
                 />
             )}
             {reviseQuizPanel && (
-                <OpacityBackground onBackgroundClick={() => setFinalLaunchCard(false)}>
-                    <UtilityCard className="max-w-2xl w-full bg-light-alpha dark:bg-dark-alpha rounded-lg px-8 py-6">
-                        {/* <div className="-mt-4 -ml-4">
-                            <AppLogo
-                                withText
-                                size={120}
-                                textColor="text-dark-base dark:text-light-base"
-                            />
-                        </div> */}
-                        <h1 className="text-3xl">Are you ready to launch your quiz?</h1>
-                    </UtilityCard>
-                </OpacityBackground>
+                <RevisePanel
+                    onBackgroundClick={() => {
+                        setReviseQuizPanel(null);
+                        setCurrentAction(null);
+                    }}
+                    reviseQuizPanel={reviseQuizPanel}
+                    onConfirm={reviseQuizPanel === 'Publish Quiz' ? handlePublishQuiz : handleLaunchQuiz}
+                    isLoading={isLoading}
+                />
             )}
         </div>
     );
 }
+
+

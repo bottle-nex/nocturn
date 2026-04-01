@@ -61,7 +61,6 @@ export default function New({ params }: NewProps) {
 
                 if (data.success && data.data) {
 
-
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
                             if (data.data.quiz) {

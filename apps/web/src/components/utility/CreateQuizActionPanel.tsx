@@ -2,6 +2,9 @@ import { cn } from '@/lib/utils';
 import UtilityCard from './UtilityCard';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import { useHandleClickOutside } from '@/hooks/useHandleClickOutside';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { QuizStatusEnum } from '@nocturn/types';
+import { toast } from '@/lib/toast';
 
 interface action {
     name: string;
@@ -25,8 +28,15 @@ export default function CreateQuizActionPanel({
 }: CreateQuizActionPanelProps) {
     const ref = useRef<HTMLDivElement>(null);
     useHandleClickOutside([ref], setActionsPanel);
+    const { quiz } = useNewQuizStore();
 
     const handleActionClick = async (action: action) => {
+        if (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE) {
+            if (action.name === 'Publish Quiz' || action.name === 'Save Draft') {
+                toast.error('Quiz is already published');
+                return;
+            }
+        }
         setCurrentAction(action.name);
         setActionsPanel(false);
         setFinalLaunchCard(true);
