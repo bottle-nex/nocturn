@@ -1,33 +1,18 @@
-import PremiumComponent from '@/components/premium/PremiumComponent';
-import PremiumPageMain from '@/components/premium/PremiumPageMain';
-import PremiumPricingCardComponent from '@/components/premium/PremiumPricingCardComponent';
-import LandingCTASection from '@/components/revamp/LandingCTASection';
-import LandingTestNav from '@/components/revamp/LandingTestNav';
-import PricingComponent from '@/components/revamp/PricingComponent';
-import LandingFooter from '@/components/test/LandingFooter';
-import { Metadata } from 'next';
-import { JSX } from 'react';
+import PremiumFeaturesComponent from '@/components/premium/PremiumFeatureComponent';
+import LandingFooter from '@/components/refactor/LandingFooter';
+import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
+import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
+import SectionDivider from '@/components/utility/SectionDivider';
 
-export const metadata: Metadata = {
-    title: 'Premium | Nocturn',
-    description:
-        'Unlock premium quizzes and exclusive experiences with Nocturn Premium. AI-powered quiz generation, unlimited participants, advanced analytics, and Solana prize pools.',
-};
-
-export default function PremiumPage(): JSX.Element {
+export default function PremiumPage() {
     return (
-        <div className="overflow-x-hidden w-full relative">
-            <main className="min-h-screen w-full bg-light-base dark:bg-dark-alpha text-dark-base dark:text-light-base relative z-10 mb-[60vh] flex flex-col gap-y-15">
-                <LandingTestNav />
-                <PremiumPageMain />
-                <PremiumComponent />
-                <PremiumPricingCardComponent />
-                <PricingComponent className="pb-32" showHeading={false} />
-                <LandingCTASection />
-            </main>
-            <footer className="fixed bottom-0 left-0 w-full z-0">
-                <LandingFooter />
-            </footer>
+        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
+            <LandingNavbarComponent />
+            <LandingPenguinSection />
+            <SectionDivider />
+            <PremiumFeaturesComponent />
+            <SectionDivider />
+            <LandingFooter />
         </div>
     );
 }
