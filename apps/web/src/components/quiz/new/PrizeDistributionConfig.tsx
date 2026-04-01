@@ -1,11 +1,12 @@
 'use client';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { Input } from '@/components/ui/input';
-import ToolTipComponent from '@/components/utility/TooltipComponent';
-import { AiOutlineQuestionCircle } from 'react-icons/ai';
-import { LuTrophy, LuMinus, LuPlus, LuSparkles } from 'react-icons/lu';
+import { Button } from '@/components/ui/button';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { GoPlus } from 'react-icons/go';
+import { HiMiniMinusSmall } from 'react-icons/hi2';
 
 const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     1: [100],
@@ -15,96 +16,69 @@ const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     5: [35, 25, 20, 12, 8],
 };
 
-function getRankLabel(rank: number): string {
-    if (rank === 1) return '1st';
-    if (rank === 2) return '2nd';
-    if (rank === 3) return '3rd';
-    return `${rank}th`;
-}
-
-const RANK_STYLES: Record<number, { badge: string; text: string; bar: string }> = {
-    1: {
-        badge: 'bg-[#ce2354]/12 border-[#ce2354]/40 text-[#ce2354]',
-        text: 'text-[#ce2354]',
-        bar: 'bg-linear-to-r from-[#a4133c] to-[#c9184a]',
-    },
-    2: {
-        badge: 'bg-[#2100c7]/10 border-[#2100c7]/35 text-[#2100c7]',
-        text: 'text-[#2100c7]',
-        bar: 'bg-linear-to-r from-[#2100c7] to-[#4a2fe0]',
-    },
-    3: {
-        badge: 'bg-[#7248e4]/10 border-[#7248e4]/35 text-[#7248e4]',
-        text: 'text-[#7248e4]',
-        bar: 'bg-linear-to-r from-[#7248e4] to-[#9065f0]',
-    },
-};
-
-function getRankStyle(rank: number) {
-    return (
-        RANK_STYLES[rank] ?? {
-            badge: 'bg-neutral-200/10 dark:bg-neutral-900 border-neutral-300/20 dark:border-neutral-700/80 text-neutral-500 dark:text-neutral-500',
-            text: 'text-neutral-500 dark:text-neutral-500',
-            bar: 'bg-neutral-400 dark:bg-neutral-600',
-        }
-    );
-}
+// function getRankLabel(rank: number): string {
+//     if (rank === 1) return '1st';
+//     if (rank === 2) return '2nd';
+//     if (rank === 3) return '3rd';
+//     return `${rank}th`;
+// }
 
 export function PrizeDistributionHeader({
     prizePool,
     winnerCount,
-    // setWinnerCount,
     handleWinnerCountChange,
 }: {
     prizePool: number;
     winnerCount: number;
-    // setWinnerCount: (n: number) => void;
     handleWinnerCountChange: (n: number) => void;
 }) {
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-2">
-                    <LuTrophy size={14} className="text-neutral-500" />
-                    <span className="text-sm font-medium text-neutral-200">Prize Distribution</span>
-                    <ToolTipComponent content="Configure how rewards are split">
-                        <AiOutlineQuestionCircle size={14} className="text-neutral-500" />
-                    </ToolTipComponent>
+        <div className="space-y-6">
+            <div className="space-y-3">
+                <label className="text-[11px] text-light-base/40 dark:text-light-base/40 text-gray-500">
+                    TOTAL STAKE
+                </label>
+
+                <div className="relative">
+                    <Input
+                        value={prizePool}
+                        readOnly
+                        className="h-30 text-3xl! dark:text-light-base! text-gray-900! px-5! dark:bg-[#151E28]! bg-gray-100! border-none rounded-[10px]"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-x-1 dark:ring-white/10 ring-gray-200 ring-1 dark:bg-[#2a3545] bg-white rounded-full p-1.5 px-2.5">
+                        <Image src={'/icons/usdc.png'} alt="usdc-logo" width={18} height={18} />
+                        <span className="font-semibold dark:text-light-base text-gray-700 uppercase text-[13px]">
+                            usdc
+                        </span>
+                    </span>
                 </div>
-                <span className="text-xs text-neutral-500">{prizePool} USDC</span>
             </div>
 
-            <div className="flex items-center justify-between px-3 py-2 rounded-md bg-neutral-900/40 border border-neutral-800">
-                <span className="text-xs text-light-base/40">Number of Winners</span>
+            <div className="space-y-2">
+                <label className="text-[11px] dark:text-light-base/40 text-gray-500">WINNERS</label>
 
-                <div className="flex items-center gap-x-2">
-                    <button
-                        onClick={() => handleWinnerCountChange(winnerCount - 1)}
-                        disabled={winnerCount <= 1}
-                        className="w-7 h-7 flex items-center justify-center rounded-md border border-neutral-800 hover:bg-neutral-800 transition-colors disabled:opacity-30"
-                    >
-                        <LuMinus size={14} />
-                    </button>
-
-                    <span className="w-6 text-center text-sm font-medium tabular-nums text-neutral-200">
-                        {winnerCount}
-                    </span>
-
-                    <button
-                        onClick={() => handleWinnerCountChange(winnerCount + 1)}
-                        disabled={winnerCount >= 20}
-                        className="w-7 h-7 flex items-center justify-center rounded-md border border-neutral-800 hover:bg-neutral-800 transition-colors disabled:opacity-30"
-                    >
-                        <LuPlus size={14} />
-                    </button>
-
-                    <button
-                        onClick={() => handleWinnerCountChange(winnerCount)}
-                        className="flex items-center gap-x-1 px-2 h-7 rounded-md border border-neutral-800 text-xs text-neutral-500 hover:bg-neutral-800 transition-colors"
-                    >
-                        <LuSparkles size={12} />
-                        Auto
-                    </button>
+                <div className="flex gap-2 relative">
+                    <Input
+                        value={winnerCount}
+                        onChange={(e) => handleWinnerCountChange(Number(e.target.value))}
+                        className="h-12 dark:bg-[#151E28]! bg-gray-100! border-none px-5! rounded-lg dark:text-light-base text-gray-900"
+                    />
+                    <div className="absolute right-3 flex gap-x-1.5 top-1/2 -translate-y-1/2">
+                        <Button
+                            onClick={() => handleWinnerCountChange(winnerCount - 1)}
+                            disabled={winnerCount <= 1}
+                            className="w-7 h-7 rounded-full flex justify-center items-center shrink-0 dark:bg-[#090D10] bg-white hover:dark:bg-[#090D10] hover:bg-gray-50 dark:text-light-base/50 text-gray-500 dark:ring-white/3 ring-gray-200 ring-1 shadow-xs! shadow-black/5! disabled:opacity-30"
+                        >
+                            <HiMiniMinusSmall className="size-4 dark:text-light-base/80 text-gray-600" />
+                        </Button>
+                        <Button
+                            onClick={() => handleWinnerCountChange(winnerCount + 1)}
+                            disabled={winnerCount >= 20}
+                            className="w-7 h-7 rounded-full flex justify-center items-center shrink-0 dark:bg-[#090D10] bg-white hover:dark:bg-[#090D10] hover:bg-gray-50 dark:text-light-base/50 text-gray-500 dark:ring-white/3 ring-gray-200 ring-1 shadow-xs! shadow-black/5! disabled:opacity-30"
+                        >
+                            <GoPlus className="size-4 dark:text-light-base/80 text-gray-600" />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,30 +98,40 @@ export function PrizeDistributionList({
     totalPercentage: number;
     isValid: boolean;
 }) {
+    const barColors = ['bg-[#c44536]', 'bg-[#edddd4]', 'bg-[#197278]'];
+
     return (
-        <div className="space-y-2">
-            {percentages.map((pct, index) => {
-                const rank = index + 1;
-                const style = getRankStyle(rank);
-                const amount = (prizePool * pct) / 100;
+        <div className="h-full rounded-md p-5 px-6 flex flex-col dark:bg-[#151E2850] bg-gray-50 gap-y-5 overflow-hidden border dark:border-transparent border-gray-200">
+            <div className="shrink-0">
+                <div className="text-sm dark:text-white text-gray-900 font-medium">Output</div>
+                <div className="text-xs dark:text-white/40 text-gray-400">
+                    Computed distribution
+                </div>
+            </div>
 
-                return (
-                    <div
-                        key={index}
-                        className="px-3 py-2 rounded-md border border-neutral-800 bg-neutral-900/40 hover:bg-neutral-900/60 transition-colors"
-                    >
-                        <div className="flex items-center gap-x-3">
-                            <span
-                                className={cn(
-                                    'w-10 h-7 flex items-center justify-center text-xs font-medium border rounded-md',
-                                    style.badge,
-                                )}
-                            >
-                                {getRankLabel(rank)}
-                            </span>
+            <div data-lenis-prevent className="flex-1 overflow-y-auto space-y-5 pr-1">
+                {percentages.map((pct, index) => {
+                    const rank = index + 1;
+                    const barColor = barColors[index] || 'bg-[#a5a5a5]';
+                    const amount = (prizePool * pct) / 100;
 
-                            <div className="flex items-center gap-x-1">
-                                <Input
+                    return (
+                        <div key={rank} className="flex items-center gap-3">
+                            <div className="w-6 text-sm dark:text-light-base/40 text-gray-400">
+                                {rank}
+                            </div>
+
+                            <div className="flex-1 relative">
+                                <div className="h-6 rounded-md dark:bg-white/5 bg-gray-200/60 dark:border-white/10 border border-gray-200 overflow-hidden">
+                                    <div
+                                        className={cn('h-full transition-all', barColor)}
+                                        style={{ width: `${Math.min(pct, 100)}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-1">
+                                <input
                                     type="number"
                                     value={pct}
                                     min={0}
@@ -155,33 +139,24 @@ export function PrizeDistributionList({
                                     onChange={(e) =>
                                         handlePercentageChange(index, parseFloat(e.target.value))
                                     }
-                                    className="w-14 h-8 text-sm text-center font-medium tabular-nums border-b border-neutral-700 bg-transparent focus:outline-none"
+                                    className="w-10 text-right text-sm bg-transparent outline-none dark:text-white/80 text-gray-700 tabular-nums"
                                 />
-                                <span className="text-xs text-neutral-500">%</span>
+                                <span className="text-xs dark:text-white/40 text-gray-400">%</span>
                             </div>
 
-                            <span className={cn('ml-auto text-sm tabular-nums', style.text)}>
-                                {amount.toFixed(2)}
-                                <span className="ml-1 text-[11px] text-neutral-500">USDC</span>
-                            </span>
+                            <div className="w-16 text-right text-xs dark:text-white/40 text-gray-400 tabular-nums">
+                                {amount.toFixed(2)} <span className="text-[10px]">USDC</span>
+                            </div>
                         </div>
+                    );
+                })}
+            </div>
 
-                        <div className="mt-2 h-[2px] rounded-full bg-neutral-800">
-                            <div
-                                className={cn('h-full rounded-full transition-all', style.bar)}
-                                style={{ width: `${Math.min(pct, 100)}%` }}
-                            />
-                        </div>
-                    </div>
-                );
-            })}
-
-            <div className="flex items-center justify-between pt-2 border-t border-neutral-800">
-                <span className="text-xs text-neutral-500">
+            <div className="shrink-0 flex items-center justify-between pt-2 dark:border-white/10 border-gray-200 border-t">
+                <span className="text-xs dark:text-white/40 text-gray-400">
                     Total: {totalPercentage.toFixed(1)}%
                 </span>
-
-                {!isValid && <span className="text-xs text-neutral-500">Must equal 100%</span>}
+                {!isValid && <span className="text-xs text-red-400/70">Must equal 100%</span>}
             </div>
         </div>
     );
@@ -250,152 +225,59 @@ export default function PrizeDistributionConfig() {
     if (prizePool <= 0) return null;
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="pb-3">
-                <PrizeDistributionHeader
-                    prizePool={prizePool}
-                    winnerCount={winnerCount}
-                    // setWinnerCount={setWinnerCount}
-                    handleWinnerCountChange={handleWinnerCountChange}
-                />
-            </div>
-
-            {/* Winner count stepper */}
-            <div className="flex items-center justify-between rounded-prime bg-neutral-100 dark:bg-neutral-900/60 px-3 py-2.5">
-                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
-                    Winners
-                </span>
-                <div className="flex items-center gap-x-2">
-                    <button
-                        type="button"
-                        aria-label="Decrease winner count"
-                        onClick={() => handleWinnerCountChange(winnerCount - 1)}
-                        disabled={winnerCount <= 1}
-                        className="flex items-center justify-center w-7 h-7 rounded-prime cursor-pointer bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <LuMinus size={14} />
-                    </button>
-                    <span className="w-6 text-center text-sm font-semibold text-dark-alpha dark:text-gamma tabular-nums">
-                        {winnerCount}
-                    </span>
-                    <button
-                        type="button"
-                        aria-label="Increase winner count"
-                        onClick={() => handleWinnerCountChange(winnerCount + 1)}
-                        disabled={winnerCount >= 20}
-                        className="flex items-center justify-center w-7 h-7 rounded-prime cursor-pointer bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-300 dark:hover:bg-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        <LuPlus size={14} />
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handleWinnerCountChange(winnerCount)}
-                        className="flex items-center gap-x-1 ml-1 px-2.5 h-7 rounded-prime cursor-pointer text-xs font-medium text-neutral-600 dark:text-neutral-400 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
-                    >
-                        <LuSparkles size={12} />
-                        Auto
-                    </button>
-                </div>
-            </div>
-
-            {/* Distribution rows */}
-            <div className="space-y-2.5 max-h-64 overflow-y-auto pr-0.5">
-                {percentages.map((pct, index) => {
-                    const rank = index + 1;
-                    const style = getRankStyle(rank);
-                    const amount = (prizePool * pct) / 100;
-
-                    return (
-                        <div
-                            key={index}
-                            className="rounded-prime px-3 py-2.5 bg-neutral-50 dark:bg-neutral-900/40 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all"
-                        >
-                            {/* Top row: badge, input, amount */}
-                            <div className="flex items-center gap-x-3">
-                                {/* Rank badge */}
-                                <span
-                                    className={`inline-flex items-center justify-center w-11 h-7 rounded-prime border text-xs font-bold tracking-wide ${style.badge}`}
-                                >
-                                    {getRankLabel(rank)}
-                                </span>
-
-                                {/* Percentage input */}
-                                <div className="flex items-center gap-x-1.5">
-                                    <Input
-                                        type="number"
-                                        min={0}
-                                        max={100}
-                                        step={1}
-                                        value={pct}
-                                        onChange={(e) =>
-                                            handlePercentageChange(
-                                                index,
-                                                parseFloat(e.target.value),
-                                            )
-                                        }
-                                        className="w-16 h-8 text-sm text-center font-medium tabular-nums rounded-prime border-neutral-300 dark:border-neutral-700 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                                    />
-                                    <span className="text-xs text-neutral-400 dark:text-neutral-500">
-                                        %
-                                    </span>
-                                </div>
-
-                                {/* Amount */}
-                                <span
-                                    className={`text-sm font-semibold tabular-nums ml-auto ${style.text}`}
-                                >
-                                    {amount.toFixed(2)}
-                                    <span className="ml-0.5 text-[11px] font-normal opacity-60">
-                                        USDC
-                                    </span>
-                                </span>
-                            </div>
-
-                            {/* Bar below */}
-                            <div className="mt-2 h-1.5 rounded-prime bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
-                                <div
-                                    className={`h-full rounded-prime transition-all duration-300 ${style.bar}`}
-                                    style={{ width: `${Math.min(pct, 100)}%` }}
-                                />
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-neutral-200 dark:border-neutral-800">
-                <div className="flex items-center gap-x-2">
-                    <div className="w-20 h-1.5 rounded-prime bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
-                        <div
-                            className={`h-full rounded-prime transition-all duration-300 ${
-                                isValid
-                                    ? 'bg-emerald-500'
-                                    : totalPercentage > 100
-                                      ? 'bg-red-500'
-                                      : 'bg-amber-500'
-                            }`}
-                            style={{ width: `${Math.min(totalPercentage, 100)}%` }}
-                        />
+        <div
+            className="grid grid-cols-[1fr_1fr] h-full overflow-hidden"
+            style={{ gridTemplateRows: '100%' }}
+        >
+            <div className="p-8 flex flex-col justify-between min-h-0 overflow-hidden">
+                <div className="shrink-0">
+                    <div className="text-sm dark:text-white text-gray-900 font-medium">
+                        Configure Stake
                     </div>
-                    <span
-                        className={`text-xs font-semibold tabular-nums ${
-                            isValid
-                                ? 'text-emerald-500'
-                                : totalPercentage > 100
-                                  ? 'text-red-400'
-                                  : 'text-amber-400'
-                        }`}
-                    >
-                        {totalPercentage.toFixed(1)}%
-                    </span>
-                    {!isValid && (
-                        <span className="text-[11px] text-red-400/80">Must equal 100%</span>
-                    )}
+                    <div className="text-xs dark:text-white/40 text-gray-400">
+                        Define pool and reward logic
+                    </div>
                 </div>
-                {isValid && (
-                    <span className="text-[11px] font-medium text-emerald-500/80">Auto-saved</span>
-                )}
+
+                <div className="shrink-0 space-y-6">
+                    <PrizeDistributionHeader
+                        prizePool={prizePool}
+                        winnerCount={winnerCount}
+                        handleWinnerCountChange={handleWinnerCountChange}
+                    />
+
+                    <div className="flex flex-col text-[11px] dark:text-light-base/40 text-gray-400 select-none">
+                        <div className="text-[11px] dark:text-light-base/40 text-gray-500 uppercase">
+                            Instructions
+                        </div>
+                        <div className="mt-1">1. Add the amount to stake</div>
+                        <div>
+                            2. Choose the number of winners the amount will be distributed to.
+                        </div>
+                        <div>3. Edit the percentage for every rank — keep total at 100%.</div>
+                        <div>4. Once you confirm, changes cannot be reverted.</div>
+                    </div>
+
+                    <Button
+                        className={cn(
+                            'dark:bg-light-base dark:hover:bg-light-base bg-gray-900 hover:bg-gray-800',
+                            'active:scale-[0.98] cursor-pointer',
+                            'w-full dark:text-dark-base text-white mt-3.5',
+                        )}
+                    >
+                        Confirm Configuration
+                    </Button>
+                </div>
+            </div>
+
+            <div className="p-6 min-h-0 overflow-hidden">
+                <PrizeDistributionList
+                    percentages={percentages}
+                    handlePercentageChange={handlePercentageChange}
+                    prizePool={prizePool}
+                    totalPercentage={totalPercentage}
+                    isValid={isValid}
+                />
             </div>
         </div>
     );
