@@ -53,6 +53,23 @@ export default class ResponseWriter {
         this.send_response(res, response, status_code);
     }
 
+    static redirect(
+        res: Response,
+        url: string,
+        message: string = 'redirecting', 
+        status_code: number = 302,
+    ) {
+        const response: CustomResponse = {
+            success: true,
+            message,
+            url,
+            meta: {
+                timestamp: new Date().toISOString(),
+            },
+        };
+        this.send_response(res, response, status_code);
+    }
+
     static not_authorized(
         res: Response,
         message: string = 'Not authorized',

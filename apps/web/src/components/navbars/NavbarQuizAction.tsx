@@ -31,7 +31,7 @@ interface Option {
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [currentAction, setCurrentAction] = useState<string | null>(null);
-    // const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
+    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [finalLaunchCard, setFinalLaunchCard] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
@@ -48,10 +48,11 @@ export default function NavbarQuizAction() {
                 handleSaveDraft();
                 return;
             case 'Publish Quiz':
-
-                handlePublishQuiz();
+                setReviseQuizPanel(currentAction);
+                // handlePublishQuiz();
                 return;
             case 'Launch Quiz':
+                setReviseQuizPanel(currentAction);
                 handleLaunchQuiz();
                 return;
         }
@@ -201,7 +202,7 @@ export default function NavbarQuizAction() {
                     setActionsPanel={setActionsPanel}
                 />
             )}
-            {finalLaunchCard && (
+            {reviseQuizPanel && (
                 <OpacityBackground onBackgroundClick={() => setFinalLaunchCard(false)}>
                     <UtilityCard className="max-w-2xl w-full bg-light-alpha dark:bg-dark-alpha rounded-lg px-8 py-6">
                         {/* <div className="-mt-4 -ml-4">

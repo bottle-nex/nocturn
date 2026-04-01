@@ -2,13 +2,15 @@
 import CreateQuizNavBar from '@/components/navbars/CreateQuizNavbar';
 import QuizCreationPanels from '@/components/quiz/new/QuizCreationPanels';
 import { cleanWebSocketClient } from '@/lib/singleton-socket';
+import { toast } from '@/lib/toast';
 import { useCollaboratorStore } from '@/store/new-quiz/useCollaboratorStore';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { CustomResponse, GetNewQuizResponse, QuizResponseType, TemplateType } from '@nocturn/types';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { use, useEffect, useState } from 'react';
 import { GET_OWNER_QUIZ_URL, GET_QUIZ_TEMPLATES } from 'routes/api_routes';
 
@@ -32,6 +34,7 @@ export default function New({ params }: NewProps) {
     const { quiz, updateQuiz, resetStore } = useNewQuizStore();
     const { setCollaborators } = useCollaboratorStore();
     const { setTemplates } = useQuizTemplatesStore();
+    const router = useRouter();
 
     const storeHasQuiz = quiz.id === quizId && quiz.id !== '';
 
@@ -55,7 +58,10 @@ export default function New({ params }: NewProps) {
                     },
                 );
 
+
                 if (data.success && data.data) {
+
+
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
                             if (data.data.quiz) {
@@ -79,6 +85,18 @@ export default function New({ params }: NewProps) {
                 }
             } catch (error) {
                 console.error('Error while fetching quiz', error);
+
+                // redirect check
+                if (error instanceof AxiosError) {
+
+                    const data = error?.response?.data;
+
+                    if (data.url) {
+                        toast.error(data.message);
+                        router.push(data.url);
+                        return;
+                    }
+                }
                 if (!storeHasQuiz) {
                     setAllowance(AllowanceEnum.NOT_ALLOWED);
                 }

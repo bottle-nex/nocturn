@@ -2,7 +2,7 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
-import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType } from '@nocturn/types';
+import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType, QuizStatusEnum } from '@nocturn/types';
 import { env } from '../../configs/env';
 
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
@@ -67,6 +67,11 @@ export default async function getQuizController(req: Request, res: Response): Pr
             return;
         }
 
+        if (quiz.status === QuizStatusEnum.LIVE) {
+            ResponseWriter.redirect(res, '/home', `Cannot enter this page, as quiz is ${quiz.status.toLowerCase()}`);
+            return;
+        }
+
         QuizAction.record_quiz_view(quizId, String(user.id));
 
         const is_owner = quiz.hostId === user.id;
@@ -91,9 +96,9 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 userCollabRole,
                 req?.user.name,
                 '#' +
-                    Math.floor(Math.random() * 16777215)
-                        .toString(16)
-                        .padStart(6, '0'),
+                Math.floor(Math.random() * 16777215)
+                    .toString(16)
+                    .padStart(6, '0'),
                 collabSessionId,
             );
 

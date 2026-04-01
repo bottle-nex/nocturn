@@ -6,6 +6,7 @@ export interface CustomResponse<T = unknown> {
     code: string;
     details?: string;
   };
+  url?: string;
   meta: {
     timestamp: string;
     [key: string]: unknown;
