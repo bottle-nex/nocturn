@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { QuizStatusEnum } from '@nocturn/types';
 import { toast } from '@/lib/toast';
@@ -7,6 +7,7 @@ import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PiSpinnerThin } from 'react-icons/pi';
+import ToolTipComponent from '../utility/TooltipComponent';
 
 interface RevisePanelProps {
     onBackgroundClick: () => void;
@@ -37,6 +38,25 @@ export default function RevisePanel({ onBackgroundClick, reviseQuizPanel, onConf
         setDirection(-1);
         setStep((s) => Math.max(s - 1, 0));
     };
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight') {
+                if (step < 4) {
+                    setDirection(1);
+                    setStep((s) => Math.min(s + 1, 4));
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (step > 0) {
+                    setDirection(-1);
+                    setStep((s) => Math.max(s - 1, 0));
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [step]);
 
     const stepsContent = [
         {
@@ -157,7 +177,10 @@ export default function RevisePanel({ onBackgroundClick, reviseQuizPanel, onConf
     ];
 
     return (
-        <OpacityBackground onBackgroundClick={onBackgroundClick}>
+        <OpacityBackground
+            onBackgroundClick={onBackgroundClick}
+            escapeClosing
+        >
             <UtilityCard className="max-w-md w-full bg-[#fcfcfc] dark:bg-[#121212] rounded-2xl p-0 shadow-2xl border border-neutral-200 dark:border-neutral-800/60 overflow-hidden relative">
                 <div className="flex p-6 pb-4">
                     <div className="flex-1">
@@ -169,7 +192,7 @@ export default function RevisePanel({ onBackgroundClick, reviseQuizPanel, onConf
                         </p>
                     </div>
                 </div>
-                
+
                 <div className="px-6 h-[260px] relative overflow-hidden">
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -186,68 +209,42 @@ export default function RevisePanel({ onBackgroundClick, reviseQuizPanel, onConf
                 </div>
 
                 <div className="relative flex justify-between items-center p-6 border-t border-neutral-100 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-[#0a0a0a]/50">
-                    <AnimatePresence>
-                        {step === 4 && reviseQuizPanel === 'Publish Quiz' && quiz.status !== QuizStatusEnum.PUBLISHED && quiz.status !== QuizStatusEnum.LIVE && (
-                            <motion.div 
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 10 }}
-                                className="absolute bottom-full left-0 w-full p-2 border-y border-red-500/30 bg-red-500/10 text-center"
-                            >
-                                <span className="text-[11px] font-medium text-red-600 dark:text-red-500 uppercase tracking-wide">
-                                    Warning: You will not be able to change the quiz after publishing.
-                                </span>
-                            </motion.div>
-                        )}
-                        
-                        {step === 4 && reviseQuizPanel === 'Launch Quiz' && quiz.status !== QuizStatusEnum.LIVE && (
-                            <motion.div 
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 10 }}
-                                className="absolute bottom-full left-0 w-full p-2 border-y border-red-500/30 bg-red-500/10 text-center"
-                            >
-                                <span className="text-[11px] font-medium text-red-600 dark:text-red-500 uppercase tracking-wide">
-                                    Warning: You will not be able to change the quiz after launching.
-                                </span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
 
-                    <Button 
-                        variant="outline" 
-                        onClick={handleBack} 
-                        disabled={isLoading || step === 0} 
+                    <Button
+                        variant="outline"
+                        onClick={handleBack}
+                        disabled={isLoading || step === 0}
                         className={`dark:text-neutral-300 rounded-xl transition-all ${step === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                     >
                         Back
                     </Button>
-                    
+
                     {step < 4 ? (
-                        <Button 
-                            className="bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white rounded-xl px-8 shadow-sm" 
+                        <Button
+                            className="bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white rounded-xl px-8 shadow-sm"
                             onClick={handleNext}
                         >
                             Next
                         </Button>
                     ) : (
-                        <Button 
-                            onClick={onConfirm} 
-                            disabled={isLoading || (reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE)) || (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE)}
-                            className={`relative rounded-xl px-8 font-medium shadow-lg transition-all ${
-                                (reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE)) || 
-                                (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE) 
-                                ? 'bg-neutral-300 dark:bg-neutral-800 text-neutral-500 shadow-none cursor-not-allowed' 
-                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
-                            }`}
-                        >
-                            {isLoading && <PiSpinnerThin className="animate-spin size-4 mr-2" />}
-                            {(reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE)) 
-                                ? 'Published' 
-                                : (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE) 
-                                    ? 'Launched' 
-                                    : `${reviseQuizPanel.split(" ")[0]} Now`}
-                        </Button>
+                        <ToolTipComponent content={`You will not be able to change the quiz after ${reviseQuizPanel.split(" ")[0]}ing`}>
+                            <Button
+                                onClick={onConfirm}
+                                disabled={isLoading || (reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE)) || (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE)}
+                                className={`relative rounded-xl px-8 font-medium shadow-lg transition-all ${(reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE)) ||
+                                    (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE)
+                                    ? 'bg-neutral-300 dark:bg-neutral-800 text-neutral-500 shadow-none cursor-not-allowed'
+                                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
+                                    }`}
+                            >
+                                {isLoading && <PiSpinnerThin className="animate-spin size-4 mr-2" />}
+                                {(reviseQuizPanel === 'Publish Quiz' && (quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE))
+                                    ? 'Published'
+                                    : (reviseQuizPanel === 'Launch Quiz' && quiz.status === QuizStatusEnum.LIVE)
+                                        ? 'Launched'
+                                        : `${reviseQuizPanel.split(" ")[0]} Now`}
+                            </Button>
+                        </ToolTipComponent>
                     )}
                 </div>
             </UtilityCard>

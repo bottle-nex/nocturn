@@ -7,18 +7,37 @@ interface OpacityBackgroundProps {
     children: React.ReactNode;
     className?: string;
     onBackgroundClick?: () => void;
+    escapeClosing?: boolean;
 }
 
 export default function OpacityBackground({
     children,
     className,
     onBackgroundClick,
+    escapeClosing = false,
 }: OpacityBackgroundProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
         return () => setMounted(false);
+    }, []);
+
+    useEffect(() => {
+        if (!escapeClosing) return;
+
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === 'Escape' && onBackgroundClick) {
+                onBackgroundClick();
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+
     }, []);
 
     const handleBackgroundClick = (e: React.MouseEvent) => {
