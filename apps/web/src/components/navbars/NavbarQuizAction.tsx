@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SlArrowDown } from 'react-icons/sl';
 import ToolTipComponent from '../utility/TooltipComponent';
 import { IoIosPlay } from 'react-icons/io';
@@ -30,7 +30,8 @@ interface Option {
 
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
-    const [_currentAction, setCurrentAction] = useState<string | null>(null);
+    const [currentAction, setCurrentAction] = useState<string | null>(null);
+    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [finalLaunchCard, setFinalLaunchCard] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
@@ -39,6 +40,27 @@ export default function NavbarQuizAction() {
     const { updateQuiz: updateAllQuiz } = useAllQuizsStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const router = useRouter();
+
+    useEffect(() => {
+
+        switch (currentAction) {
+            case 'Save Draft':
+                handleSaveDraft();
+                return;
+            case 'Publish Quiz':
+
+                handlePublishQuiz();
+                return;
+            case 'Launch Quiz':
+                handleLaunchQuiz();
+                return;
+        }
+
+    }, [currentAction, setCurrentAction]);
+
+    function reviseQuiz() {
+        
+    }
 
     async function handleSaveDraft() {
         if (!quiz || !session?.user.token) {
