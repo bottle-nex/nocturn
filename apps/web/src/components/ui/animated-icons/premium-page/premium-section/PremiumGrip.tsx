@@ -54,7 +54,7 @@ const PremiumGrip = ({
 
         const interval = setInterval(() => {
             runAnimation();
-        }, 2500);
+        }, 5500);
 
         return () => clearInterval(interval);
     }, [controls]);

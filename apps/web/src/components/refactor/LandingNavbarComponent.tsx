@@ -95,6 +95,7 @@ export default function LandingNavbarComponent() {
                     {navItems.map((item, idx) => (
                         <div
                             key={idx}
+                            onClick={() => router.push(`/${item.redirectUrl}`)}
                             onMouseEnter={(e) => {
                                 setHoveredIdx(idx);
                                 handleMouseEnter(e);
@@ -160,6 +161,6 @@ export default function LandingNavbarComponent() {
 const navItems = [
     { name: 'Features', redirectUrl: '' },
     { name: 'About', redirectUrl: '' },
-    { name: 'Premium', redirectUrl: '' },
+    { name: 'Premium', redirectUrl: 'premium' },
     { name: 'Resources', redirectUrl: '' },
 ];

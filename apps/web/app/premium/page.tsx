@@ -1,4 +1,5 @@
 import PremiumFeaturesComponent from '@/components/premium/PremiumFeatureComponent';
+import PremiumSubscriptionCards from '@/components/premium/PremiumSubscriptionCards';
 import LandingFooter from '@/components/refactor/LandingFooter';
 import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
 import LandingPenguinSection from '@/components/revamp/LandingPenguinSection';
@@ -12,6 +13,7 @@ export default function PremiumPage() {
             <SectionDivider />
             <PremiumFeaturesComponent />
             <SectionDivider />
+            <PremiumSubscriptionCards/>
             <LandingFooter />
         </div>
     );
