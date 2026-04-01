@@ -63,10 +63,6 @@ export default function NavbarQuizAction() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentAction, setCurrentAction, reviseQuizPanel, setReviseQuizPanel]);
 
-    // function reviseQuiz() {
-
-    // }
-
     async function handleSaveDraft() {
         if (!quiz || !session?.user.token) {
             console.error('Quiz or token is missing');
