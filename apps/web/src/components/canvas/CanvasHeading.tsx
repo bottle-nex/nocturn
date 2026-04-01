@@ -80,7 +80,7 @@ export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
             }
         },
         onUpdate: ({ editor }) => {
-            setHasError(prev => {
+            setHasError((prev) => {
                 if (prev && !editor.isEmpty && editor.getText().trim() !== '') return false;
                 return prev;
             });
@@ -138,7 +138,8 @@ export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
                 'w-full py-2 sm:py-3 px-2 rounded-md transition-all duration-200 focus:outline-gray-200',
                 newFontSizeClass,
                 currentOn === SELECTION_MODE.QUESTION && selectedStyles,
-                hasError && 'bg-red-50 dark:bg-red-950/20 ring-1 ring-red-500! border-red-500! text-red-500 dark:text-red-400'
+                hasError &&
+                    'bg-red-50 dark:bg-red-950/20 ring-1 ring-red-500! border-red-500! text-red-500 dark:text-red-400',
             );
         }
     }, [question, editor, currentOn, setCurrentOn, hasError]);
@@ -152,13 +153,21 @@ export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
             <div
                 onClick={questionTapHandler}
                 className={cn('p-1 rounded-[10px]')}
-                style={{ boxSizing: 'border-box', animation: isShaking ? 'shaky-error 0.4s ease-in-out' : undefined }}
+                style={{
+                    boxSizing: 'border-box',
+                    animation: isShaking ? 'shaky-error 0.4s ease-in-out' : undefined,
+                }}
             >
                 <div className="relative">
                     <EditorContent editor={editor} className="question-editor text-center" />
 
                     {editor.isEmpty && (
-                        <div className={cn("absolute top-2 sm:top-3 left-2 pointer-events-none text-2xl", hasError ? "text-red-500/70 dark:text-red-500/70" : "text-gray-400")}>
+                        <div
+                            className={cn(
+                                'absolute top-2 sm:top-3 left-2 pointer-events-none text-2xl',
+                                hasError ? 'text-red-500/70 dark:text-red-500/70' : 'text-gray-400',
+                            )}
+                        >
                             Ask your question here
                         </div>
                     )}

@@ -67,8 +67,9 @@ export default function ColoredInput({ className, value, color, onChange }: Colo
             <input
                 aria-label="Option"
                 className={cn(
-                    "outline-none h-full w-full bg-transparent text-dark-base dark:text-light-base dark:placeholder:text-light-base placeholder:text-dark-base",
-                    hasError && 'placeholder:text-red-500/60 dark:placeholder:text-red-400/60 text-red-500 dark:text-red-400'
+                    'outline-none h-full w-full bg-transparent text-dark-base dark:text-light-base dark:placeholder:text-light-base placeholder:text-dark-base',
+                    hasError &&
+                        'placeholder:text-red-500/60 dark:placeholder:text-red-400/60 text-red-500 dark:text-red-400',
                 )}
                 value={value}
                 onChange={(e) => handleChange(e.target.value)}

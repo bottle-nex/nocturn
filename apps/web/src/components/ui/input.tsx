@@ -28,9 +28,9 @@ function Input({
     triggerErrorTime = 400,
     ...props
 }: React.ComponentProps<'input'> & {
-    triggerError?: boolean,
-    setTriggerError?: (value: boolean) => void,
-    triggerErrorTime?: number,
+    triggerError?: boolean;
+    setTriggerError?: (value: boolean) => void;
+    triggerErrorTime?: number;
 }) {
     const [isShaking, setIsShaking] = React.useState(false);
 
@@ -44,7 +44,7 @@ function Input({
             }, triggerErrorTime);
             return () => clearTimeout(timer);
         }
-    }, [triggerError, triggerErrorTime]);
+    }, [triggerError, triggerErrorTime, setTriggerError]);
 
     return (
         <input
@@ -57,7 +57,11 @@ function Input({
                 isShaking && 'border-red-500! ring-1 ring-red-500! text-red-500 dark:text-red-400',
                 className,
             )}
-            style={isShaking ? { animation: `shaky-error ${triggerErrorTime}ms ease-in-out` } : undefined}
+            style={
+                isShaking
+                    ? { animation: `shaky-error ${triggerErrorTime}ms ease-in-out` }
+                    : undefined
+            }
             {...props}
         />
     );
