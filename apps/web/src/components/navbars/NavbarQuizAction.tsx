@@ -31,7 +31,7 @@ interface Option {
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [currentAction, setCurrentAction] = useState<string | null>(null);
-    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
+    // const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [finalLaunchCard, setFinalLaunchCard] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
@@ -56,11 +56,12 @@ export default function NavbarQuizAction() {
                 return;
         }
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentAction, setCurrentAction]);
 
-    function reviseQuiz() {
+    // function reviseQuiz() {
         
-    }
+    // }
 
     async function handleSaveDraft() {
         if (!quiz || !session?.user.token) {
