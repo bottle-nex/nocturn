@@ -5,9 +5,10 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import NavResourcesDropdown from './NavResourcesDropdown';
+import SigninModal from '../utility/SigninModal';
 
 export default function LandingNavbarComponent() {
-    const { session } = useUserSessionStore();
+    const { session, openSigninModal, setOpenSigninModal } = useUserSessionStore();
     const router = useRouter();
     const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
     const [bgStyle, setBgStyle] = useState({ left: 0, width: 0 });
@@ -24,6 +25,15 @@ export default function LandingNavbarComponent() {
         return () => document.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key !== 'Escape') return;
+            if (openSigninModal) setOpenSigninModal(false);
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [openSigninModal, setOpenSigninModal]);
+
     const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
         const container = containerRef.current;
         const item = e.currentTarget;
@@ -37,6 +47,14 @@ export default function LandingNavbarComponent() {
             width: itemRect.width,
         });
     };
+
+    function handleAuth() {
+        if (!session) {
+            setOpenSigninModal(true);
+            return;
+        }
+        router.push('/home');
+    }
 
     return (
         <motion.div
@@ -128,15 +146,13 @@ export default function LandingNavbarComponent() {
                         scale: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
                         y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
                     }}
-                    onClick={() => {
-                        if (!session?.user.token) return;
-                        router.push('/home');
-                    }}
+                    onClick={handleAuth}
                     className="bg-dark-base text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
                 >
-                    Go to Home
+                    {session ? "Go to Home" : "Log in"}
                 </motion.button>
             </div>
+            <SigninModal />
         </motion.div>
     );
 }

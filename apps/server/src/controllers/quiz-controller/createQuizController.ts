@@ -3,6 +3,7 @@ import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
 import { TemplateEnum } from '../../schemas/createQuizSchema';
 import { getRandomSampleQuiz } from '../../data/sampleQuizData';
+import { InteractionEnum } from '@nocturn/types';
 
 export default async function createQuizController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -22,6 +23,16 @@ export default async function createQuizController(req: Request, res: Response) 
             ResponseWriter.system_error(res);
             return;
         }
+
+        const interactions_array = [
+            InteractionEnum.BULB,
+            InteractionEnum.DOLLAR,
+            InteractionEnum.HEART,
+            InteractionEnum.SMILE,
+            InteractionEnum.THUMBS_UP,
+        ];
+        // choose any three random interactions
+        const interactions = interactions_array.sort(() => 0.5 - Math.random()).slice(0, 3);
 
         const quiz = await prisma.quiz.create({
             data: {
@@ -45,6 +56,7 @@ export default async function createQuizController(req: Request, res: Response) 
                         },
                     ],
                 },
+                interactions,
             },
             include: {
                 template: true,

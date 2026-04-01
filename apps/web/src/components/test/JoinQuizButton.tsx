@@ -16,6 +16,7 @@ import { Button } from '../ui/button';
 import { useRejoinPanelStore } from '@/store/base/useRejoinPanelStore';
 import RejoinDetectedPanel from '../ui/RejoinDetectedPanel';
 import { cn } from '@/lib/utils';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 const container: Variants = {
     closed: {
@@ -223,9 +224,9 @@ function JoinQuizPill({
                     onClick={
                         isOpen
                             ? (e) => {
-                                  e.stopPropagation();
-                                  onJoin();
-                              }
+                                e.stopPropagation();
+                                onJoin();
+                            }
                             : undefined
                     }
                     className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
@@ -278,6 +279,7 @@ export default function JoinQuizButton() {
     const [isForceJoin, setIsForceJoin] = useState<boolean>(false);
     const router = useRouter();
     const { active, setActive, setData, setJoinData } = useRejoinPanelStore();
+    const { session } = useUserSessionStore();
 
     function handleJoinQuiz() {
         if (!code.trim()) return;
@@ -285,10 +287,14 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                  ? 'spectator'
-                  : null;
+                    ? 'spectator'
+                    : null;
         if (!type) return;
         if (type === 'participant') {
+            if (session && session.user.email) {
+                makeBackendCall(session.user.email, session.user.name);
+                return;
+            }
             setStep(2);
         } else if (type === 'spectator') {
             makeBackendCall();
