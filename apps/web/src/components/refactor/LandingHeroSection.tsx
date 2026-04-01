@@ -239,38 +239,13 @@ const chatMessages = [
     },
 ];
 
-function MockChat() {
-    const [visibleCount, setVisibleCount] = useState(0);
-    const [revealedText, setRevealedText] = useState<Set<number>>(new Set());
-
-    useEffect(() => {
-        if (visibleCount >= chatMessages.length) {
-            const resetTimeout = setTimeout(() => {
-                setVisibleCount(0);
-                setRevealedText(new Set());
-            }, 4000);
-            return () => clearTimeout(resetTimeout);
-        }
-
-        const showNext = setTimeout(
-            () => {
-                setVisibleCount((c) => c + 1);
-            },
-            visibleCount === 0 ? 400 : 600,
-        );
-        return () => clearTimeout(showNext);
-    }, [visibleCount]);
-
-    useEffect(() => {
-        if (visibleCount > 0) {
-            const idx = visibleCount - 1;
-            const revealDelay = setTimeout(() => {
-                setRevealedText((prev) => new Set(prev).add(idx));
-            }, 100);
-            return () => clearTimeout(revealDelay);
-        }
-    }, [visibleCount]);
-
+function MockChat({
+    visibleCount,
+    revealedText,
+}: {
+    visibleCount: number;
+    revealedText: Set<number>;
+}) {
     return (
         <div className="flex-1 min-h-0 flex flex-col gap-y-3 justify-end overflow-hidden py-2 relative">
             <div className="absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
@@ -293,7 +268,7 @@ function MockChat() {
                     >
                         <div
                             className={cn(
-                                'rounded-xl text-[12px] leading-tight max-w-[80%] px-2.5 py-1.5 overflow-hidden',
+                                'rounded-lg text-[12px] leading-tight max-w-[80%] px-2.5 py-1.5 overflow-hidden',
                                 isUser
                                     ? 'bg-alpha text-light-alpha'
                                     : 'bg-light-base text-dark-base/70',
@@ -316,6 +291,33 @@ function MockChat() {
 }
 
 export default function LandingHeroSection() {
+    const [visibleCount, setVisibleCount] = useState(0);
+    const [revealedText, setRevealedText] = useState<Set<number>>(new Set());
+
+    useEffect(() => {
+        if (visibleCount >= chatMessages.length) return;
+
+        const showNext = setTimeout(
+            () => {
+                setVisibleCount((c) => c + 1);
+            },
+            visibleCount === 0 ? 400 : 600,
+        );
+        return () => clearTimeout(showNext);
+    }, [visibleCount]);
+
+    useEffect(() => {
+        if (visibleCount > 0) {
+            const idx = visibleCount - 1;
+            const revealDelay = setTimeout(() => {
+                setRevealedText((prev) => new Set(prev).add(idx));
+            }, 100);
+            return () => clearTimeout(revealDelay);
+        }
+    }, [visibleCount]);
+
+    const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
+
     return (
         <div className="h-screen w-full max-w-270 flex flex-col gap-y-3 pt-40 items-center select-none">
             <div className="text-5xl font-semibold max-w-xl text-dark-base text-center">
@@ -363,11 +365,158 @@ export default function LandingHeroSection() {
                                     fill
                                     className="object-cover"
                                 />
+                                <AnimatePresence>
+                                    {quizStage === 1 && (
+                                        <motion.div
+                                            className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
+                                            initial={{ x: '-100%' }}
+                                            animate={{ x: '100%' }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                        />
+                                    )}
+                                </AnimatePresence>
                             </div>
-                            <div className="h-10 w-full bg-light-base rounded-lg" />
-                            <div className="h-4 w-full bg-light-base rounded-xl" />
-                            <div className="h-4 w-full bg-light-base rounded-xl" />
-                            <div className="h-10 w-full bg-light-base rounded-lg" />
+
+                            {/* Quiz Title Row */}
+                            <div className="h-8 w-full flex items-center justify-between px-1 overflow-hidden">
+                                <AnimatePresence mode="wait">
+                                    {quizStage >= 1 ? (
+                                        <motion.div
+                                            key="title"
+                                            className="flex items-center justify-between w-full"
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                        >
+                                            <div className="flex items-center gap-x-2">
+                                                <div className="h-6 w-6 shrink-0 rounded-md bg-alpha/10 flex items-center justify-center text-alpha">
+                                                    <HiFire size={13} />
+                                                </div>
+                                                <span className="text-dark-base/80 text-[13px] font-semibold">
+                                                    Solar System Explorer
+                                                </span>
+                                            </div>
+                                            <span className="text-dark-base/30 text-[10px]">
+                                                10 questions &middot; 30s
+                                            </span>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="skeleton"
+                                            className="h-5 w-3/4 bg-light-base rounded-md animate-pulse"
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Image Cards */}
+                            <div className="flex-1 w-full flex gap-x-2.5 min-h-0">
+                                {[
+                                    { src: '/images/card-1.jpg', label: 'Planets', stage: 1 },
+                                    { src: '/images/card-2.jpg', label: 'Orbits', stage: 2 },
+                                    { src: '/images/card-3.jpg', label: 'Black Holes', stage: 2 },
+                                ].map((card, i) => (
+                                    <div key={card.label} className="flex-1 min-w-0 h-full rounded-lg overflow-hidden">
+                                        <AnimatePresence mode="wait">
+                                            {quizStage >= card.stage ? (
+                                                <motion.div
+                                                    key="card"
+                                                    className="relative w-full h-full rounded-lg overflow-hidden"
+                                                    initial={{ opacity: 0, scale: 0.92 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.95 }}
+                                                    transition={{
+                                                        duration: 0.5,
+                                                        ease: [0.25, 0.46, 0.45, 0.94],
+                                                        delay: i * 0.1,
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={card.src}
+                                                        alt={card.label}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                    <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-black/50 to-transparent" />
+                                                    <span className="absolute bottom-1.5 left-2 text-white/90 text-[10px] font-medium">
+                                                        {card.label}
+                                                    </span>
+                                                </motion.div>
+                                            ) : (
+                                                <motion.div
+                                                    key="skeleton"
+                                                    className="w-full h-full bg-light-base rounded-lg animate-pulse"
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{ duration: 0.2 }}
+                                                />
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Action Bar */}
+                            <div className="h-9 w-full rounded-lg overflow-hidden shrink-0">
+                                <AnimatePresence mode="wait">
+                                    {quizStage >= 3 ? (
+                                        <motion.div
+                                            key="action"
+                                            className="h-full w-full flex items-center justify-between px-2"
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                        >
+                                            <div className="flex items-center gap-x-1.5">
+                                                <div className="flex -space-x-1.5">
+                                                    {people.slice(0, 3).map((p) => (
+                                                        <div
+                                                            key={p.id}
+                                                            className="h-5 w-5 rounded-full ring-1 ring-white overflow-hidden relative"
+                                                        >
+                                                            <Image
+                                                                src={p.avatar}
+                                                                alt={p.name}
+                                                                fill
+                                                                unoptimized
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <span className="text-[10px] text-dark-base/35 ml-1">
+                                                    3 joined
+                                                </span>
+                                            </div>
+                                            <motion.div
+                                                className="h-7 px-3 rounded-md bg-alpha text-light-alpha text-[11px] font-medium flex items-center gap-x-1 cursor-default"
+                                                initial={{ scale: 0.9 }}
+                                                animate={{ scale: 1 }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 400,
+                                                    damping: 25,
+                                                    delay: 0.2,
+                                                }}
+                                            >
+                                                Publish Quiz
+                                                <FiArrowUp size={12} />
+                                            </motion.div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="skeleton"
+                                            className="h-full w-full bg-light-base rounded-lg animate-pulse"
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </section>
 
                         <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border border-dashed border-alpha rounded-xl">
@@ -380,7 +529,7 @@ export default function LandingHeroSection() {
                                 nocturn
                             </div>
 
-                            <MockChat />
+                            <MockChat visibleCount={visibleCount} revealedText={revealedText} />
 
                             <div className="min-h-10 w-full shrink-0 flex flex-col justify-between p-2 px-2.5 text-sm rounded-lg ring-1 ring-black/5 shadow-sm shadow-black/5">
                                 <div className="w-full flex justify-between items-center">

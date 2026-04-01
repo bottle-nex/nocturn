@@ -66,10 +66,15 @@
     --color-sidebar-ring: var(--sidebar-ring);
 
     --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
-
+    --animate-gradient-slide: gradient-slide 8s linear infinite;
 
     --radius-alpha: 4px;
     --radius-beta: 6px;
+
+    @keyframes gradient-slide {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
 
     @keyframes cell-ripple {
         0% {
@@ -84,6 +89,18 @@
             opacity: 0.4;
         }
     }
+}
+
+.gradient-bar-1 {
+    background-image: linear-gradient(90deg, #841836, #a4133c, #c9184a, #841836);
+}
+
+.gradient-bar-2 {
+    background-image: linear-gradient(90deg, #2100c7, #7300d8, #7248e4, #2100c7);
+}
+
+.gradient-bar-3 {
+    background-image: linear-gradient(90deg, #ff758f, #ff8fa3, #1b035e, #ff758f);
 }
 
 /* Regular */
