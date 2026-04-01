@@ -1,309 +1,349 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { QuizStatusEnum } from '@nocturn/types';
-import { toast } from '@/lib/toast';
+import { QuizStatusEnum, InteractionEnum } from '@nocturn/types';
 import { Button } from '../ui/button';
 import OpacityBackground from '../utility/OpacityBackground';
 import UtilityCard from '../utility/UtilityCard';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PiSpinnerThin } from 'react-icons/pi';
+import { PiSpinnerThin, PiCurrencyCircleDollarFill } from 'react-icons/pi';
 import ToolTipComponent from '../utility/TooltipComponent';
+import { FaHeart, FaLightbulb } from 'react-icons/fa6';
+import { BsFillHandThumbsUpFill } from 'react-icons/bs';
+import { MdEmojiEmotions } from 'react-icons/md';
+import { IconType } from 'react-icons/lib';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface RevisePanelProps {
     onBackgroundClick: () => void;
-    reviseQuizPanel: string;
     onConfirm: () => void;
     isLoading: boolean;
 }
 
-export default function RevisePanel({
-    onBackgroundClick,
-    reviseQuizPanel,
-    onConfirm,
-    isLoading,
-}: RevisePanelProps) {
-    const { quiz } = useNewQuizStore();
-    const [step, setStep] = useState(0);
-    const [direction, setDirection] = useState(1);
+interface InteractionIcon {
+    id: InteractionEnum;
+    Component: IconType;
+    iconColor: string;
+}
 
-    const totalTime = quiz.questions.reduce((acc, q) => acc + q.timeLimit, 0);
-    const totalPoints = quiz.questions.reduce((acc, q) => acc + q.basePoints, 0);
+const interactionIcons: InteractionIcon[] = [
+    { id: InteractionEnum.HEART, Component: FaHeart, iconColor: '#E53E3E' },
+    { id: InteractionEnum.DOLLAR, Component: PiCurrencyCircleDollarFill, iconColor: '#38A169' },
+    { id: InteractionEnum.BULB, Component: FaLightbulb, iconColor: '#252525' },
+    { id: InteractionEnum.THUMBS_UP, Component: BsFillHandThumbsUpFill, iconColor: '#3182CE' },
+    { id: InteractionEnum.SMILE, Component: MdEmojiEmotions, iconColor: '#F6AD55' },
+];
+
+export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }: RevisePanelProps) {
+    const { quiz } = useNewQuizStore();
+
+    const questionCount = quiz.questions.length;
+
+    // Total duration: reading + answering per question + breaks between questions
+    const totalAnswerTime = quiz.questions.reduce(
+        (acc, q) => acc + (q.timeLimit || quiz.questionTimeLimit),
+        0,
+    );
+    const totalReadingTime = quiz.questions.reduce((acc, q) => acc + (q.readingTime || 0), 0);
+    const totalBreakTime = Math.max(0, questionCount - 1) * quiz.breakBetweenQuestions;
+    const totalTime = totalAnswerTime + totalReadingTime + totalBreakTime;
+
+    // Total points: sum of each question's actual basePoints
+    const totalPoints = quiz.questions.reduce(
+        (acc, q) => acc + (q.basePoints || quiz.basePointsPerQuestion),
+        0,
+    );
 
     const formatTime = (seconds: number) => {
+        if (seconds >= 3600) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            return m > 0 ? `${h}h ${m}m` : `${h}h`;
+        }
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return m > 0 ? `${m}m ${s}s` : `${s}s`;
     };
 
-    const handleNext = () => {
-        setDirection(1);
-        setStep((s) => Math.min(s + 1, 4));
-    };
-    const handleBack = () => {
-        setDirection(-1);
-        setStep((s) => Math.max(s - 1, 0));
-    };
+    const isAlreadyPublished =
+        quiz.status === QuizStatusEnum.PUBLISHED || quiz.status === QuizStatusEnum.LIVE;
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowRight') {
-                if (step < 4) {
-                    setDirection(1);
-                    setStep((s) => Math.min(s + 1, 4));
-                }
-            } else if (e.key === 'ArrowLeft') {
-                if (step > 0) {
-                    setDirection(-1);
-                    setStep((s) => Math.max(s - 1, 0));
-                }
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [step]);
-
-    const stepsContent = [
-        {
-            title: 'Theme & Questions',
-            content: (
-                <div className="flex flex-col gap-y-4 text-neutral-800 dark:text-neutral-200 mt-2">
-                    <p className="text-sm opacity-70 mb-2">
-                        Check your selected theme and total questions.
-                    </p>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                        <span className="font-medium">Selected Theme:</span>
-                        <span className="bg-indigo-600/10 border border-indigo-600/20 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full text-sm shadow-sm font-medium uppercase tracking-wider">
-                            {quiz.template.name || 'Default'}
-                        </span>
-                    </div>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                        <span className="font-medium">Total Questions:</span>
-                        <div className="flex items-center justify-center bg-neutral-200 dark:bg-neutral-800 h-8 px-4 rounded-full font-bold">
-                            {quiz.questions.length}
-                        </div>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            title: 'Time & Points',
-            content: (
-                <div className="flex flex-col gap-y-3 text-neutral-800 dark:text-neutral-200 mt-2">
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                        <span className="font-medium">Total Calculated Time:</span>
-                        <span className="font-semibold text-lg">{formatTime(totalTime)}</span>
-                    </div>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm mt-1">
-                        <span className="font-medium">Total Points:</span>
-                        <span className="font-semibold text-lg">{totalPoints}</span>
-                    </div>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm mt-1">
-                        <span className="font-medium">Selected Multiplier:</span>
-                        <span className="font-semibold text-lg px-2 py-0.5 bg-indigo-600/10 rounded-md text-indigo-600 dark:text-indigo-400">
-                            {quiz.pointsMultiplier || 1}x
-                        </span>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            title: 'Enabled Interactions',
-            content: (
-                <div className="flex flex-col gap-y-4 text-neutral-800 dark:text-neutral-200 mt-2">
-                    <p className="text-sm opacity-70 mb-2">
-                        Reactions and interactive modules selected.
-                    </p>
-                    {quiz.interactions.length > 0 ? (
-                        <div className="flex flex-wrap gap-2 p-2">
-                            {quiz.interactions.map((interaction) => (
-                                <span
-                                    key={interaction}
-                                    className="px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800/80 rounded-xl text-sm font-medium shadow-sm"
-                                >
-                                    {interaction}
-                                </span>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="bg-neutral-100/50 dark:bg-neutral-800/30 border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl text-center flex flex-col items-center justify-center h-[120px]">
-                            <span className="opacity-50 text-sm font-medium">
-                                No interactions enabled
-                            </span>
-                        </div>
-                    )}
-                </div>
-            ),
-        },
-        {
-            title: 'Audience Settings',
-            content: (
-                <div className="flex flex-col gap-y-4 text-neutral-800 dark:text-neutral-200 mt-2">
-                    <p className="text-sm opacity-70 italic mb-2">
-                        These settings can also be toggled during the live quiz.
-                    </p>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                        <span className="font-medium">Live Chat:</span>
-                        <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${quiz.liveChat ? 'bg-green-500/20 text-green-600 dark:text-green-500 border border-green-500/30' : 'bg-red-500/10 text-red-600 dark:text-red-500 border border-red-500/20'}`}
-                        >
-                            {quiz.liveChat ? 'Enabled' : 'Disabled'}
-                        </span>
-                    </div>
-                    <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                        <span className="font-medium">Spectator Mode:</span>
-                        <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${quiz.spectatorMode ? 'bg-green-500/20 text-green-600 dark:text-green-500 border border-green-500/30' : 'bg-red-500/10 text-red-600 dark:text-red-500 border border-red-500/20'}`}
-                        >
-                            {quiz.spectatorMode ? 'Enabled' : 'Disabled'}
-                        </span>
-                    </div>
-                </div>
-            ),
-        },
-        {
-            title: 'Prize Details',
-            content: (
-                <div className="flex flex-col gap-y-4 text-neutral-800 dark:text-neutral-200 mt-2">
-                    {quiz.prizePool > 0 ? (
-                        <>
-                            <div className="flex justify-between items-center bg-gradient-to-r from-green-500/5 to-emerald-500/10 border border-green-500/20 p-4 rounded-xl shadow-sm">
-                                <span className="font-medium">Staked Amount:</span>
-                                <span className="font-bold text-green-600 dark:text-green-500 text-xl tracking-tight">
-                                    {quiz.prizePool} {quiz.currency || 'USDC'}
-                                </span>
-                            </div>
-                            <div className="flex justify-between items-center bg-white/5 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm">
-                                <span className="font-medium">Total Winners:</span>
-                                <span className="font-semibold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 rounded-full">
-                                    {quiz.prizeDistributions?.length || 0}
-                                </span>
-                            </div>
-                            <div className="p-4 border border-dashed border-neutral-400 dark:border-neutral-700 rounded-xl flex flex-col gap-y-3 relative mt-2 bg-neutral-50 dark:bg-neutral-900/40">
-                                <span className="text-xs font-semibold opacity-60 uppercase tracking-widest text-[10px]">
-                                    Staked From Address
-                                </span>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm font-mono opacity-80 max-w-[200px] truncate bg-white dark:bg-black px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-800">
-                                        {'0xStakePlaceholderAddress...123'}
-                                    </span>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-[28px] text-xs px-3 dark:border-neutral-700 bg-white dark:hover:bg-neutral-800 shadow-sm rounded-lg"
-                                    >
-                                        Set Address
-                                    </Button>
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50/50 dark:bg-neutral-800/20 rounded-xl gap-y-4 my-2">
-                            <span className="text-center text-sm font-medium opacity-80 max-w-[250px]">
-                                No staked prize found for this quiz.
-                            </span>
-                            <Button
-                                size="sm"
-                                onClick={() =>
-                                    toast.success('Configure prize in the settings panel')
-                                }
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md shadow-indigo-600/20 px-6"
-                            >
-                                Add Prize
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            ),
-        },
+    const allSettings = [
+        { label: 'Live Chat', enabled: quiz.liveChat },
+        { label: 'Spectator Mode', enabled: quiz.spectatorMode },
+        { label: 'Time Bonus', enabled: quiz.timeBonus },
+        { label: 'Open Spectators', enabled: quiz.allowNewSpectator },
     ];
 
     return (
         <OpacityBackground onBackgroundClick={onBackgroundClick} escapeClosing>
-            <UtilityCard className="max-w-md w-full bg-[#fcfcfc] dark:bg-[#121212] rounded-2xl p-0 shadow-2xl border border-neutral-200 dark:border-neutral-800/60 overflow-hidden relative">
-                <div className="flex p-6 pb-4">
-                    <div className="flex-1">
-                        <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-                            {stepsContent[step].title}
-                        </h1>
-                        <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mt-1 uppercase tracking-wide">
-                            Step {step + 1} of 5
-                        </p>
+            <UtilityCard className="max-w-3xl w-full bg-light-base dark:bg-dark-base rounded-2xl p-0 border border-neutral-300 dark:border-neutral-700 overflow-hidden relative">
+                {/* Header */}
+                <div className="px-7 pt-6 pb-4">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-nprimary dark:text-nlight mb-1">
+                        Pre-publish review
+                    </p>
+                    <h1 className="text-xl font-bold tracking-tight text-dark-alpha dark:text-light-alpha leading-tight">
+                        {quiz.title || 'Untitled Quiz'}
+                    </h1>
+                </div>
+
+                {/* Content */}
+                <div
+                    data-lenis-prevent
+                    className="px-7 pb-6 max-h-[420px] overflow-y-auto space-y-4"
+                >
+                    {/* Hero metrics row */}
+                    <div className="grid grid-cols-4 gap-2.5">
+                        <MetricCell label="Questions" value={String(questionCount)} />
+                        <MetricCell label="Duration" value={formatTime(totalTime)} accent />
+                        <MetricCell label="Total Pts" value={totalPoints.toLocaleString()} />
+                        <MetricCell
+                            label="Multiplier"
+                            value={`${quiz.pointsMultiplier || 1}x`}
+                        />
+                    </div>
+
+                    {/* Two-column body */}
+                    <div className="grid grid-cols-2 gap-2.5">
+                        {/* Left: Settings */}
+                        <div className="bg-light-alpha dark:bg-dark-alpha border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 space-y-3">
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
+                                Configuration
+                            </span>
+
+                            <div className="space-y-2">
+                                {allSettings.map(({ label, enabled }) => (
+                                    <div
+                                        key={label}
+                                        className="flex items-center justify-between text-sm"
+                                    >
+                                        <span className="text-dark-alpha dark:text-light-alpha">
+                                            {label}
+                                        </span>
+                                        <span
+                                            className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                                                enabled
+                                                    ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/20'
+                                                    : 'text-red-500 dark:text-red-400 bg-red-500/10 border border-red-500/15'
+                                            }`}
+                                        >
+                                            {enabled ? 'Enabled' : 'Disabled'}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="pt-2.5 border-t border-neutral-100 dark:border-neutral-800 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-neutral-500 dark:text-neutral-500">
+                                        Elimination
+                                    </span>
+                                    <span className="font-mono font-medium text-dark-alpha dark:text-light-alpha">
+                                        {quiz.eliminationThreshold > 0
+                                            ? `${quiz.eliminationThreshold * 100}%`
+                                            : 'Off'}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-neutral-500 dark:text-neutral-500">
+                                        Break time
+                                    </span>
+                                    <span className="font-mono font-medium text-dark-alpha dark:text-light-alpha">
+                                        {formatTime(quiz.breakBetweenQuestions)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right: Interactions + Prize */}
+                        <div className="space-y-2.5">
+                            {/* Interactions */}
+                            <div className="bg-light-alpha dark:bg-dark-alpha border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 space-y-3">
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
+                                    Reactions
+                                </span>
+                                {quiz.interactions.length > 0 ? (
+                                    <InteractiveReactions interactions={quiz.interactions} />
+                                ) : (
+                                    <p className="text-sm text-neutral-400 dark:text-neutral-600 italic">
+                                        None selected
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Prize pool */}
+                            {quiz.prizePool > 0 ? (
+                                <div className="bg-eta/5 dark:bg-eta/5 border border-eta/20 dark:border-eta/15 rounded-xl p-4 space-y-2">
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-eta/70">
+                                        Prize Pool
+                                    </span>
+                                    <div className="flex items-baseline justify-between">
+                                        <span className="text-xl font-bold font-mono text-eta">
+                                            {quiz.prizePool}{' '}
+                                            <span className="text-[11px] font-semibold tracking-wider">
+                                                {quiz.currency || 'USDC'}
+                                            </span>
+                                        </span>
+                                        <span className="text-sm text-neutral-500 dark:text-neutral-500">
+                                            {quiz.prizeDistributions?.length || 0}{' '}
+                                            {(quiz.prizeDistributions?.length || 0) === 1
+                                                ? 'winner'
+                                                : 'winners'}
+                                        </span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="border border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl p-4 flex items-center justify-center">
+                                    <span className="text-sm text-neutral-400 dark:text-neutral-600">
+                                        No prize pool configured
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                <div className="px-6 h-[260px] relative overflow-hidden">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={step}
-                            initial={{ opacity: 0, x: 15 * direction }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -15 * direction }}
-                            transition={{ duration: 0.25, ease: 'easeOut' }}
-                            className="absolute w-full pr-12"
-                        >
-                            {stepsContent[step].content}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-
-                <div className="relative flex justify-between items-center p-6 border-t border-neutral-100 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-[#0a0a0a]/50">
-                    <Button
-                        variant="outline"
-                        onClick={handleBack}
-                        disabled={isLoading || step === 0}
-                        className={`dark:text-neutral-300 rounded-xl transition-all ${step === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                {/* Footer */}
+                <div className="flex items-center justify-between px-7 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-light-alpha/50 dark:bg-dark-alpha/50">
+                    <button
+                        onClick={onBackgroundClick}
+                        className="text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors cursor-pointer"
                     >
-                        Back
-                    </Button>
-
-                    {step < 4 ? (
+                        Cancel
+                    </button>
+                    <ToolTipComponent content="You will not be able to change the quiz after publishing">
                         <Button
-                            className="bg-neutral-900 hover:bg-neutral-800 text-white dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white rounded-xl px-8 shadow-sm"
-                            onClick={handleNext}
+                            onClick={onConfirm}
+                            disabled={isLoading || isAlreadyPublished}
+                            variant={null}
+                            size={null}
+                            className={`relative text-[13px] font-semibold px-6 py-2 rounded-lg transition-all cursor-pointer ${
+                                isAlreadyPublished
+                                    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 cursor-not-allowed'
+                                    : 'bg-nprimary text-white shadow-button hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0_0_#000]'
+                            }`}
                         >
-                            Next
+                            {isLoading && (
+                                <PiSpinnerThin className="animate-spin size-4 mr-2 inline" />
+                            )}
+                            {isAlreadyPublished ? 'Already Published' : 'Publish Quiz'}
                         </Button>
-                    ) : (
-                        <ToolTipComponent
-                            content={`You will not be able to change the quiz after ${reviseQuizPanel.split(' ')[0]}ing`}
-                        >
-                            <Button
-                                onClick={onConfirm}
-                                disabled={
-                                    isLoading ||
-                                    (reviseQuizPanel === 'Publish Quiz' &&
-                                        (quiz.status === QuizStatusEnum.PUBLISHED ||
-                                            quiz.status === QuizStatusEnum.LIVE)) ||
-                                    (reviseQuizPanel === 'Launch Quiz' &&
-                                        quiz.status === QuizStatusEnum.LIVE)
-                                }
-                                className={`relative rounded-xl px-8 font-medium shadow-lg transition-all ${
-                                    (reviseQuizPanel === 'Publish Quiz' &&
-                                        (quiz.status === QuizStatusEnum.PUBLISHED ||
-                                            quiz.status === QuizStatusEnum.LIVE)) ||
-                                    (reviseQuizPanel === 'Launch Quiz' &&
-                                        quiz.status === QuizStatusEnum.LIVE)
-                                        ? 'bg-neutral-300 dark:bg-neutral-800 text-neutral-500 shadow-none cursor-not-allowed'
-                                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/20'
-                                }`}
-                            >
-                                {isLoading && (
-                                    <PiSpinnerThin className="animate-spin size-4 mr-2" />
-                                )}
-                                {reviseQuizPanel === 'Publish Quiz' &&
-                                (quiz.status === QuizStatusEnum.PUBLISHED ||
-                                    quiz.status === QuizStatusEnum.LIVE)
-                                    ? 'Published'
-                                    : reviseQuizPanel === 'Launch Quiz' &&
-                                        quiz.status === QuizStatusEnum.LIVE
-                                      ? 'Launched'
-                                      : `${reviseQuizPanel.split(' ')[0]} Now`}
-                            </Button>
-                        </ToolTipComponent>
-                    )}
+                    </ToolTipComponent>
                 </div>
             </UtilityCard>
         </OpacityBackground>
+    );
+}
+
+function MetricCell({
+    label,
+    value,
+    accent,
+}: {
+    label: string;
+    value: string;
+    accent?: boolean;
+}) {
+    return (
+        <div
+            className={`rounded-xl p-3.5 border ${
+                accent
+                    ? 'bg-nprimary/5 dark:bg-nprimary/8 border-nprimary/15 dark:border-nprimary/15'
+                    : 'bg-light-alpha dark:bg-dark-alpha border-neutral-200 dark:border-neutral-800'
+            }`}
+        >
+            <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500 block">
+                {label}
+            </span>
+            <span
+                className={`text-lg font-bold font-mono tracking-tight block mt-0.5 ${
+                    accent
+                        ? 'text-nprimary dark:text-nlight'
+                        : 'text-dark-alpha dark:text-light-alpha'
+                }`}
+            >
+                {value}
+            </span>
+        </div>
+    );
+}
+
+interface AnimatingIcon {
+    id: number;
+    Icon: IconType;
+    containerIndex: number;
+}
+
+function InteractiveReactions({ interactions }: { interactions: InteractionEnum[] }) {
+    const [animatingIcons, setAnimatingIcons] = useState<AnimatingIcon[]>([]);
+
+    const activeIcons = interactionIcons.filter(({ id }) => interactions.includes(id));
+
+    function createAnimation(Icon: IconType, containerIndex: number) {
+        const newIcon: AnimatingIcon = {
+            id: Date.now() + Math.random(),
+            Icon,
+            containerIndex,
+        };
+        setAnimatingIcons((prev) => [...prev, newIcon]);
+        setTimeout(() => {
+            setAnimatingIcons((prev) => prev.filter((i) => i.id !== newIcon.id));
+        }, 2200);
+    }
+
+    return (
+        <div className="flex items-center gap-x-3">
+            {activeIcons.map(({ id, Component, iconColor }, index) => (
+                <div key={id} className="relative w-fit h-fit overflow-visible">
+                    <Component
+                        onClick={() => createAnimation(Component, index)}
+                        size={22}
+                        style={{ backgroundColor: '#00000070', color: '#EEEEEEca' }}
+                        className="p-1.5 rounded-full transition-transform duration-200 ease-in-out hover:scale-110 cursor-pointer"
+                    />
+                    <AnimatePresence>
+                        {animatingIcons
+                            .filter((icon) => icon.containerIndex === index)
+                            .map(({ id: animId, Icon }) => (
+                                <motion.div
+                                    key={animId}
+                                    className="absolute left-1/2 top-1/2 pointer-events-none"
+                                    initial={{
+                                        opacity: 1,
+                                        y: 0,
+                                        x: '-50%',
+                                        scale: 1,
+                                        rotate: 0,
+                                    }}
+                                    animate={{
+                                        opacity: 0,
+                                        y: -120 - Math.random() * 100,
+                                        x: '-50%',
+                                        scale: 1 + Math.random(),
+                                        rotate: Math.random() * 30 - 15,
+                                    }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{
+                                        duration: 2.2,
+                                        ease: [0.23, 1, 0.32, 1],
+                                        opacity: { duration: 2.2, ease: 'easeOut' },
+                                        rotate: {
+                                            duration: 0.3,
+                                            ease: 'easeInOut',
+                                            repeat: Infinity,
+                                            repeatType: 'reverse',
+                                        },
+                                    }}
+                                >
+                                    <Icon
+                                        size={22}
+                                        className="drop-shadow-lg"
+                                        style={{ color: iconColor }}
+                                    />
+                                </motion.div>
+                            ))}
+                    </AnimatePresence>
+                </div>
+            ))}
+        </div>
     );
 }

@@ -30,9 +30,7 @@ interface Option {
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [currentAction, setCurrentAction] = useState<string | null>(null);
-    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(
-        null,
-    );
+    const [reviseQuizPanel, setReviseQuizPanel] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
     const { session } = useUserSessionStore();
@@ -42,26 +40,23 @@ export default function NavbarQuizAction() {
     const router = useRouter();
 
     useEffect(() => {
-        if (reviseQuizPanel === currentAction) {
-            return;
-        }
+        if (!currentAction) return;
 
         switch (currentAction) {
             case 'Save Draft':
                 handleSaveDraft();
-                return;
+                break;
             case 'Publish Quiz':
-                setReviseQuizPanel(currentAction);
-                // handlePublishQuiz();
-                return;
+                setReviseQuizPanel(true);
+                break;
             case 'Launch Quiz':
-                setReviseQuizPanel(currentAction);
-                // handleLaunchQuiz();
-                return;
+                handleLaunchQuiz();
+                break;
         }
 
+        setCurrentAction(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentAction, setCurrentAction, reviseQuizPanel, setReviseQuizPanel]);
+    }, [currentAction]);
 
     async function handleSaveDraft() {
         if (!quiz || !session?.user.token) {
@@ -203,13 +198,10 @@ export default function NavbarQuizAction() {
             {reviseQuizPanel && (
                 <RevisePanel
                     onBackgroundClick={() => {
-                        setReviseQuizPanel(null);
+                        setReviseQuizPanel(false);
                         setCurrentAction(null);
                     }}
-                    reviseQuizPanel={reviseQuizPanel}
-                    onConfirm={
-                        reviseQuizPanel === 'Publish Quiz' ? handlePublishQuiz : handleLaunchQuiz
-                    }
+                    onConfirm={handlePublishQuiz}
                     isLoading={isLoading}
                 />
             )}
