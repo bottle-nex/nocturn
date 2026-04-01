@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
@@ -14,6 +15,11 @@ export default function StakeAmountSection({
     onConfigure?: () => void;
 }) {
     const { quiz, updateQuiz } = useNewQuizStore();
+    const [triggerError, setTriggerError] = useState<boolean>(false);
+
+    const handleTriggerError = () => {
+        setTriggerError(true);
+    };
 
     return (
         <div className="w-full px-2 mt-6 space-y-3">
@@ -32,14 +38,22 @@ export default function StakeAmountSection({
 
             <div className="w-full relative">
                 <button
-                    disabled={!quiz.prizePool}
-                    onClick={onConfigure}
+                    onClick={() => {
+                        if (!quiz.prizePool || quiz.prizePool < 1 || quiz.prizePool > 10000) {
+                            handleTriggerError();
+                        } else {
+                            onConfigure?.();
+                        }
+                    }}
                     className="dark:bg-light-base/95! bg-dark-base/90 dark:text-dark-base text-light-base h-8! w-8! rounded-sm! text-[13px]! absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center cursor-pointer"
                 >
                     <IoArrowForward className="" />
                 </button>
 
                 <Input
+                    triggerError={triggerError}
+                    setTriggerError={setTriggerError}
+                    triggerErrorTime={400}
                     type="number"
                     placeholder="0.00"
                     value={quiz.prizePool || ''}
@@ -51,9 +65,13 @@ export default function StakeAmountSection({
                         updateQuiz({ prizePool: isNaN(value) ? 0 : value });
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter' && quiz.prizePool > 0) {
+                        if (e.key === 'Enter') {
                             e.preventDefault();
-                            onSubmit?.();
+                            if (!quiz.prizePool || quiz.prizePool < 1 || quiz.prizePool > 10000) {
+                                handleTriggerError();
+                            } else {
+                                onSubmit?.();
+                            }
                         }
                     }}
                     className={cn(
