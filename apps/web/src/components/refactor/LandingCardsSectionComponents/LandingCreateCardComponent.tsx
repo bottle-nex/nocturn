@@ -11,14 +11,14 @@ export default function LandingCreateCardComponent() {
                 description="Design structured quizzes with intelligent assistance"
             />
 
-            <div className="absolute bottom-[-30px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] perspective-[1400px] scale-[0.97]">
+            <div className="absolute -bottom-7.5 left-1/2 -translate-x-1/2 w-75 h-75 perspective-[1400px] scale-[0.97]">
                 <div
                     className={cn(
                         'relative w-full h-full rounded-xl bg-light-base',
                         'ring-1 ring-black/10 shadow-xl',
                         'p-5 flex flex-col justify-between',
                         'transition-all duration-500 transform-3d',
-                        'rotate-x-[12deg] rotate-y-[8deg]',
+                        'rotate-x-12 rotate-y-[8deg]',
                         'hover:rotate-x-0 hover:rotate-y-0 hover:scale-[1.02]',
                     )}
                 >
@@ -50,7 +50,7 @@ export default function LandingCreateCardComponent() {
                 </div>
             </div>
 
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[240px] h-10 bg-black/10 blur-xl rounded-full opacity-30" />
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-60 h-10 bg-black/10 blur-xl rounded-full opacity-30" />
         </PerspectiveCard>
     );
 }

@@ -2,11 +2,13 @@ import LandingCardsComponent from '@/components/refactor/LandingCardsComponent';
 import LandingCollaborateComponent from '@/components/refactor/LandingCollaborateComponent';
 import LandingFaqSection from '@/components/refactor/LandingFaqSection';
 import LandingFeaturesComponent from '@/components/refactor/LandingFeaturesComponent';
+import LandingCtaSection from '@/components/refactor/LandingCtaSection';
 import LandingFooter from '@/components/refactor/LandingFooter';
 import LandingHeroSection from '@/components/refactor/LandingHeroSection';
 import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
 import LandingUsdcSection from '@/components/refactor/LandingUsdcSection';
 import LandingUserType from '@/components/refactor/LandingUserType';
+import PricingComponent from '@/components/revamp/PricingComponent';
 import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Page() {
@@ -25,8 +27,11 @@ export default function Page() {
             <SectionDivider />
             <LandingUserType />
             <SectionDivider />
+            <PricingComponent />
+            <SectionDivider />
             <LandingFaqSection />
             <SectionDivider />
+            <LandingCtaSection />
             <LandingFooter />
         </div>
     );

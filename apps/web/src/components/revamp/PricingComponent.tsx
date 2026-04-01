@@ -28,10 +28,12 @@ import { CREATE_CHECKOUT_URL, GET_TIERS_URL } from '../../../routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
 import axios from 'axios';
-import InformationHeadingSection from './InformationHeadingSection';
+import LandingSectionHeader from '../refactor/LandingSectionHeader';
+import PerspectiveCard from '../utility/PerspectiveCard';
+import NotFoundDiagonalGrid from '../notFound/NotFoundDiagonalGrid';
 
 interface PricingComponentProps {
-    showHeading: boolean;
+    showHeading?: boolean;
     className?: string;
 }
 
@@ -142,32 +144,21 @@ export default function PricingComponent({
     }
 
     return (
-        <main className={cn('max-w-6xl mx-auto w-full', className)}>
+        <main className={cn('max-w-270 relative mx-auto w-full', className)}>
             {showHeading && (
-                // <SectionHeading
-                //     className="pb-16"
-                //     title="Choose your Nocturn subscription"
-                //     description="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes, collaborate with your team, and reach your audience. Flexible pricing designed to grow with you, from individuals to teams."
-                //     icon={<RiServiceFill className="size-4" />}
-                //     ticker="pricing plans"
-                // />
-                <InformationHeadingSection
-                    topText="Nocturn Pricing"
-                    topTextClassName="text-[#38b000]"
-                    title="Choose your subscription."
-                    description="Learning doesn't have to be hard. With jitter, learning becomes easy, and on top of that you can make money from your knowledge. Can't ask for more, can you.."
-                    buttonTitle="Buy Premium"
-                    buttonRedirectUrl="/home"
-                    buttonClassName="bg-[#9ef01a] hover:bg-[#9ef01a] text-dark-base w-45 shadow-[inset_0px_2px_1.5px_rgba(0,0,0,0.10)]"
-                />
+                <div className="pb-16">
+                    <LandingSectionHeader
+                        heading="Choose your subscription"
+                        subheading="Select the perfect plan for your needs. Unlock powerful features to create engaging live quizzes and collaborate with your team."
+                    />
+                </div>
             )}
-
             <section className="w-full grid md:grid-cols-2 gap-8 max-w-3xl mx-auto items-end">
                 {premium_features.map((feature) => {
                     const isLoading = loadingTier === feature.id;
 
                     return (
-                        <div
+                        <PerspectiveCard
                             key={feature.id}
                             className={cn(
                                 'rounded-2xl relative hover:shadow-sm flex flex-col overflow-hidden transform-gpu',
@@ -269,7 +260,7 @@ export default function PricingComponent({
                                     </section>
                                 </>
                             )}
-                        </div>
+                        </PerspectiveCard>
                     );
                 })}
             </section>

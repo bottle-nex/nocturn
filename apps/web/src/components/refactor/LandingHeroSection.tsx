@@ -355,13 +355,20 @@ export default function LandingHeroSection() {
                     </div>
 
                     <div className="h-full min-h-0 w-full flex gap-x-3 px-3 pb-3">
-                        <div className="w-[60%] h-full flex flex-col gap-y-3">
-                            <div className="h-50 w-full rounded-xl bg-light-base" />
+                        <section className="w-[60%] h-full flex flex-col gap-y-3">
+                            <div className="h-50 w-full rounded-xl bg-light-base relative overflow-hidden">
+                                <Image
+                                    src="/images/hero-img.jpg"
+                                    alt="Chat preview"
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                             <div className="h-10 w-full bg-light-base rounded-lg" />
                             <div className="h-4 w-full bg-light-base rounded-xl" />
                             <div className="h-4 w-full bg-light-base rounded-xl" />
                             <div className="h-10 w-full bg-light-base rounded-lg" />
-                        </div>
+                        </section>
 
                         <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border border-dashed border-alpha rounded-xl">
                             <div

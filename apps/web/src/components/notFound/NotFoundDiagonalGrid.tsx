@@ -37,13 +37,13 @@ function getAnimationDelay(row: number, col: number) {
     return seededRandom(col, row) * 5;
 }
 
-export default function NotFoundDiagonalGrid() {
+export default function NotFoundDiagonalGrid({ rotation = -12 }: { rotation?: number }) {
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div
                 className="absolute top-1/2 left-1/2"
                 style={{
-                    transform: 'translate(-50%, -50%) rotate(-12deg)',
+                    transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
                     width: '200%',
                     height: '200%',
                 }}
