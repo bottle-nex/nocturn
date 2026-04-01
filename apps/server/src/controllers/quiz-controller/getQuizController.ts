@@ -68,7 +68,11 @@ export default async function getQuizController(req: Request, res: Response): Pr
         }
 
         if (quiz.status === QuizStatusEnum.LIVE) {
-            ResponseWriter.redirect(res, '/home', `Cannot enter this page, as quiz is ${quiz.status.toLowerCase()}`);
+            ResponseWriter.redirect(
+                res,
+                '/home',
+                `Cannot enter this page, as quiz is ${quiz.status.toLowerCase()}`,
+            );
             return;
         }
 
@@ -96,9 +100,9 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 userCollabRole,
                 req?.user.name,
                 '#' +
-                Math.floor(Math.random() * 16777215)
-                    .toString(16)
-                    .padStart(6, '0'),
+                    Math.floor(Math.random() * 16777215)
+                        .toString(16)
+                        .padStart(6, '0'),
                 collabSessionId,
             );
 

@@ -36,9 +36,8 @@ export default function OpacityBackground({
 
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
-        }
-
-    }, []);
+        };
+    }, [escapeClosing, onBackgroundClick]);
 
     const handleBackgroundClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget && onBackgroundClick) {

@@ -58,9 +58,7 @@ export default function New({ params }: NewProps) {
                     },
                 );
 
-
                 if (data.success && data.data) {
-
                     switch (data.data.type) {
                         case QuizResponseType.QUIZ_FOUND:
                             if (data.data.quiz) {
@@ -87,7 +85,6 @@ export default function New({ params }: NewProps) {
 
                 // redirect check
                 if (error instanceof AxiosError) {
-
                     const data = error?.response?.data;
 
                     if (data.url) {

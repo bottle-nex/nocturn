@@ -56,7 +56,7 @@ export default class ResponseWriter {
     static redirect(
         res: Response,
         url: string,
-        message: string = 'redirecting', 
+        message: string = 'redirecting',
         status_code: number = 302,
     ) {
         const response: CustomResponse = {

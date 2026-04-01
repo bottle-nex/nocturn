@@ -16,14 +16,12 @@ interface action {
 interface CreateQuizActionPanelProps {
     setActionsPanel: Dispatch<SetStateAction<boolean>>;
     setCurrentAction: Dispatch<SetStateAction<string | null>>;
-    setFinalLaunchCard: Dispatch<SetStateAction<boolean>>;
     actions: action[];
 }
 
 export default function CreateQuizActionPanel({
     setCurrentAction,
     setActionsPanel,
-    setFinalLaunchCard,
     actions,
 }: CreateQuizActionPanelProps) {
     const ref = useRef<HTMLDivElement>(null);
@@ -39,7 +37,6 @@ export default function CreateQuizActionPanel({
         }
         setCurrentAction(action.name);
         setActionsPanel(false);
-        setFinalLaunchCard(true);
         // this needs to be changed
         // if (action.action) {
         //     try {

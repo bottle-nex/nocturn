@@ -149,7 +149,7 @@ export default function LandingNavbarComponent() {
                     onClick={handleAuth}
                     className="bg-dark-base text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
                 >
-                    {session ? "Go to Home" : "Log in"}
+                    {session ? 'Go to Home' : 'Log in'}
                 </motion.button>
             </div>
             <SigninModal />

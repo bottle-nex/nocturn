@@ -18,8 +18,6 @@ import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { Button } from '../ui/button';
-import OpacityBackground from '../utility/OpacityBackground';
-import UtilityCard from '../utility/UtilityCard';
 import RevisePanel from './RevisePanel';
 
 interface Option {
@@ -32,9 +30,10 @@ interface Option {
 export default function NavbarQuizAction() {
     const [actionsPanel, setActionsPanel] = useState<boolean>(false);
     const [currentAction, setCurrentAction] = useState<string | null>(null);
-    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(null);
+    const [reviseQuizPanel, setReviseQuizPanel] = useState<'Publish Quiz' | 'Launch Quiz' | null>(
+        null,
+    );
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [finalLaunchCard, setFinalLaunchCard] = useState<boolean>(false);
     const [buttonText, setButtonText] = useState<string>('Save Draft');
     const { session } = useUserSessionStore();
     const { quiz } = useNewQuizStore();
@@ -43,8 +42,6 @@ export default function NavbarQuizAction() {
     const router = useRouter();
 
     useEffect(() => {
-
-        console.log(currentAction);
         if (reviseQuizPanel === currentAction) {
             return;
         }
@@ -67,7 +64,7 @@ export default function NavbarQuizAction() {
     }, [currentAction, setCurrentAction, reviseQuizPanel, setReviseQuizPanel]);
 
     // function reviseQuiz() {
-        
+
     // }
 
     async function handleSaveDraft() {
@@ -203,7 +200,6 @@ export default function NavbarQuizAction() {
             {actionsPanel && (
                 <CreateQuizActionPanel
                     setCurrentAction={setCurrentAction}
-                    setFinalLaunchCard={setFinalLaunchCard}
                     actions={options}
                     setActionsPanel={setActionsPanel}
                 />
@@ -215,12 +211,12 @@ export default function NavbarQuizAction() {
                         setCurrentAction(null);
                     }}
                     reviseQuizPanel={reviseQuizPanel}
-                    onConfirm={reviseQuizPanel === 'Publish Quiz' ? handlePublishQuiz : handleLaunchQuiz}
+                    onConfirm={
+                        reviseQuizPanel === 'Publish Quiz' ? handlePublishQuiz : handleLaunchQuiz
+                    }
                     isLoading={isLoading}
                 />
             )}
         </div>
     );
 }
-
-

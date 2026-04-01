@@ -224,9 +224,9 @@ function JoinQuizPill({
                     onClick={
                         isOpen
                             ? (e) => {
-                                e.stopPropagation();
-                                onJoin();
-                            }
+                                  e.stopPropagation();
+                                  onJoin();
+                              }
                             : undefined
                     }
                     className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
@@ -287,8 +287,8 @@ export default function JoinQuizButton() {
             code.trim().length === 12
                 ? 'participant'
                 : code.trim().length === 6
-                    ? 'spectator'
-                    : null;
+                  ? 'spectator'
+                  : null;
         if (!type) return;
         if (type === 'participant') {
             if (session && session.user.email) {
