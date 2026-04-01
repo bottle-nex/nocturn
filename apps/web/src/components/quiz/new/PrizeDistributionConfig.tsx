@@ -7,6 +7,9 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { GoPlus } from 'react-icons/go';
 import { HiMiniMinusSmall } from 'react-icons/hi2';
+import OpacityBackground from '@/components/utility/OpacityBackground';
+import UtilityCard from '@/components/utility/UtilityCard';
+import { AnimatePresence, motion } from 'motion/react';
 
 const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     1: [100],
@@ -162,7 +165,13 @@ export function PrizeDistributionList({
     );
 }
 
-export default function PrizeDistributionConfig() {
+export default function PrizeDistributionConfig({
+    open,
+    onClose,
+}: {
+    open: boolean;
+    onClose: () => void;
+}) {
     const { quiz, updateQuiz } = useNewQuizStore();
     const [winnerCount, setWinnerCount] = useState(3);
     const [percentages, setPercentages] = useState<number[]>([50, 30, 20]);
@@ -225,60 +234,87 @@ export default function PrizeDistributionConfig() {
     if (prizePool <= 0) return null;
 
     return (
-        <div
-            className="grid grid-cols-[1fr_1fr] h-full overflow-hidden"
-            style={{ gridTemplateRows: '100%' }}
-        >
-            <div className="p-8 flex flex-col justify-between min-h-0 overflow-hidden">
-                <div className="shrink-0">
-                    <div className="text-lg dark:text-white text-gray-900 font-medium">
-                        Configure Stake
-                    </div>
-                    {/* <div className="text-sm dark:text-white/40 text-gray-400">
-                        Define pool and reward logic
-                    </div> */}
-                </div>
-
-                <div className="shrink-0 space-y-6 mt-2">
-                    <PrizeDistributionHeader
-                        prizePool={prizePool}
-                        winnerCount={winnerCount}
-                        handleWinnerCountChange={handleWinnerCountChange}
-                    />
-
-                    <div className="flex flex-col text-[11px] dark:text-light-base/40 text-gray-400 select-none">
-                        <div className="text-[11px] dark:text-light-base/40 text-gray-500 uppercase">
-                            Instructions
-                        </div>
-                        <div className="mt-1">1. Add the amount to stake</div>
-                        <div>
-                            2. Choose the number of winners the amount will be distributed to.
-                        </div>
-                        <div>3. Edit the percentage for every rank — keep total at 100%.</div>
-                        <div>4. Once you confirm, changes cannot be reverted.</div>
-                    </div>
-
-                    <Button
-                        className={cn(
-                            'dark:bg-light-base dark:hover:bg-light-base bg-gray-900 hover:bg-gray-800',
-                            'active:scale-[0.98] cursor-pointer',
-                            'w-full dark:text-dark-base text-white mt-3',
-                        )}
+        <AnimatePresence>
+            {open && (
+                <OpacityBackground onBackgroundClick={onClose}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.2 }}
                     >
-                        Confirm Configuration
-                    </Button>
-                </div>
-            </div>
+                        <UtilityCard
+                            className={cn(
+                                'w-230 h-130',
+                                'dark:bg-[#090D10]! bg-white!',
+                                'dark:border-white/10! border-gray-200! border!',
+                                'rounded-2xl',
+                                'p-0 overflow-hidden',
+                            )}
+                            onClose={onClose}
+                        >
+                            <div
+                                className="grid grid-cols-[1fr_1fr] h-full overflow-hidden"
+                                style={{ gridTemplateRows: '100%' }}
+                            >
+                                <div className="p-8 flex flex-col justify-between min-h-0 overflow-hidden">
+                                    <div className="shrink-0">
+                                        <div className="text-lg dark:text-white text-gray-900 font-medium">
+                                            Configure Stake
+                                        </div>
+                                    </div>
 
-            <div className="p-6 min-h-0 overflow-hidden">
-                <PrizeDistributionList
-                    percentages={percentages}
-                    handlePercentageChange={handlePercentageChange}
-                    prizePool={prizePool}
-                    totalPercentage={totalPercentage}
-                    isValid={isValid}
-                />
-            </div>
-        </div>
+                                    <div className="shrink-0 space-y-6 mt-2">
+                                        <PrizeDistributionHeader
+                                            prizePool={prizePool}
+                                            winnerCount={winnerCount}
+                                            handleWinnerCountChange={handleWinnerCountChange}
+                                        />
+
+                                        <div className="flex flex-col text-[11px] dark:text-light-base/40 text-gray-400 select-none">
+                                            <div className="text-[11px] dark:text-light-base/40 text-gray-500 uppercase">
+                                                Instructions
+                                            </div>
+                                            <div className="mt-1">1. Add the amount to stake</div>
+                                            <div>
+                                                2. Choose the number of winners the amount will be
+                                                distributed to.
+                                            </div>
+                                            <div>
+                                                3. Edit the percentage for every rank — keep total at
+                                                100%.
+                                            </div>
+                                            <div>
+                                                4. Once you confirm, changes cannot be reverted.
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            className={cn(
+                                                'dark:bg-light-base dark:hover:bg-light-base bg-gray-900 hover:bg-gray-800',
+                                                'active:scale-[0.98] cursor-pointer',
+                                                'w-full dark:text-dark-base text-white mt-3',
+                                            )}
+                                        >
+                                            Confirm Configuration
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 min-h-0 overflow-hidden">
+                                    <PrizeDistributionList
+                                        percentages={percentages}
+                                        handlePercentageChange={handlePercentageChange}
+                                        prizePool={prizePool}
+                                        totalPercentage={totalPercentage}
+                                        isValid={isValid}
+                                    />
+                                </div>
+                            </div>
+                        </UtilityCard>
+                    </motion.div>
+                </OpacityBackground>
+            )}
+        </AnimatePresence>
     );
 }
