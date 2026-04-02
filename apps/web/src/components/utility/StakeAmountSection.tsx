@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
@@ -22,22 +23,23 @@ export default function StakeAmountSection({
     };
 
     return (
-        <div className="w-full px-2 mt-6 space-y-3">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-1">
-                    <span className="text-sm dark:text-neutral-300 font-medium">Stake USDC</span>
-                    <ToolTipComponent content="Amount of USDC to be staked as quiz reward.">
-                        <AiOutlineQuestionCircle size={14} className="text-light-base/40 mb-0.5" />
-                    </ToolTipComponent>
-                </div>
-
-                <span className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 block">
-                    Min 1 · Max 10000
+        <div className="w-full px-2 mt-6">
+            <div className="flex items-center justify-start gap-x-1">
+                <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
+                    Stake USDC
                 </span>
+                <ToolTipComponent content="Amount of USDC to be staked as the quiz prize pool. Winners receive a share based on the distribution config.">
+                    <AiOutlineQuestionCircle size={15} />
+                </ToolTipComponent>
+            </div>
+            <div className="flex w-full items-center gap-x-2 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                enter a value between 1 and 10,000 USDC
             </div>
 
-            <div className="w-full relative">
-                <button
+            <div className="w-full relative mt-1">
+                <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => {
                         if (!quiz.prizePool || quiz.prizePool < 1 || quiz.prizePool > 10000) {
                             handleTriggerError();
@@ -45,10 +47,10 @@ export default function StakeAmountSection({
                             onConfigure?.();
                         }
                     }}
-                    className="dark:bg-light-base/95! bg-dark-base/90 dark:text-dark-base text-light-base h-8! w-8! rounded-sm! text-[13px]! absolute right-1.5 top-1/2 -translate-y-1/2 flex justify-center items-center cursor-pointer"
+                    className="dark:bg-light-base/95! bg-dark-base/90 dark:text-dark-base text-light-base h-8! w-8! rounded-sm! text-[13px]! absolute right-1.5 top-1/2 -translate-y-1/2 z-10"
                 >
-                    <IoArrowForward className="" />
-                </button>
+                    <IoArrowForward />
+                </Button>
 
                 <Input
                     triggerError={triggerError}

@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { GoPlus } from 'react-icons/go';
 import { HiMiniMinusSmall } from 'react-icons/hi2';
+import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import UtilityCard from '@/components/utility/UtilityCard';
 import { AnimatePresence, motion } from 'motion/react';
@@ -39,10 +41,18 @@ export function PrizeDistributionHeader({
 }) {
     return (
         <div className="space-y-6">
-            <div className="space-y-3">
-                <label className="text-[11px] dark:text-light-base/40 text-gray-500">
-                    TOTAL STAKE
-                </label>
+            <div className="space-y-1">
+                <div className="flex items-center justify-start gap-x-1">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
+                        Total Stake
+                    </span>
+                    <ToolTipComponent content="Total USDC amount to be staked as the quiz prize pool. This will be distributed among winners based on their rank.">
+                        <AiOutlineQuestionCircle size={15} />
+                    </ToolTipComponent>
+                </div>
+                <div className="flex w-full items-center gap-x-2 mt-1 text-xs text-neutral-500 dark:text-white/40">
+                    enter the total prize pool amount in USDC
+                </div>
 
                 <div className="relative">
                     <Input
@@ -50,9 +60,9 @@ export function PrizeDistributionHeader({
                         value={prizePool}
                         min={0}
                         onChange={(e) => onPrizePoolChange(parseFloat(e.target.value) || 0)}
-                        className="h-30 text-5xl! font-semibold dark:text-light-base! text-gray-900! px-5! dark:bg-[#151E28]! bg-gray-100! border-none rounded-xl"
+                        className="h-30 text-5xl! font-semibold dark:text-light-base! text-gray-900! px-5! dark:bg-dark-base! bg-gray-100! border-none rounded-xl ring-1 dark:ring-white/5 ring-transparent"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-x-1 dark:ring-white/10 ring-gray-200 ring-1 dark:bg-[#2a3545] bg-white rounded-xl p-1.5 px-2.5">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-x-1 dark:ring-white/10 ring-gray-200 ring-1 dark:bg-dark-faded bg-white rounded-xl p-1.5 px-2.5">
                         <Image src={'/icons/usdc.png'} alt="usdc-logo" width={18} height={18} />
                         <span className="font-semibold dark:text-light-base text-gray-700 uppercase text-[13px]">
                             usdc
@@ -61,27 +71,37 @@ export function PrizeDistributionHeader({
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-[11px] dark:text-light-base/40 text-gray-500">WINNERS</label>
+            <div className="space-y-1">
+                <div className="flex items-center justify-start gap-x-1">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
+                        Winners
+                    </span>
+                    <ToolTipComponent content="Number of top-ranked participants who will receive a share of the prize pool. Max 20 winners allowed.">
+                        <AiOutlineQuestionCircle size={15} />
+                    </ToolTipComponent>
+                </div>
+                <div className="flex w-full items-center gap-x-2 mt-1 text-xs text-neutral-500 dark:text-white/40">
+                    choose between 1 and 20 winners
+                </div>
 
                 <div className="flex gap-2 relative">
                     <Input
                         value={winnerCount}
                         onChange={(e) => handleWinnerCountChange(Number(e.target.value))}
-                        className="h-12 dark:bg-[#151E28]! bg-gray-100! border-none px-5! rounded-xl dark:text-light-base text-gray-900"
+                        className="h-12 dark:bg-dark-base! bg-gray-100! border-none px-5! rounded-xl dark:text-light-base text-gray-900 ring-1 dark:ring-white/5 ring-transparent"
                     />
                     <div className="absolute right-3 flex gap-x-1.5 top-1/2 -translate-y-1/2">
                         <Button
                             onClick={() => handleWinnerCountChange(winnerCount - 1)}
                             disabled={winnerCount <= 1}
-                            className="w-7 h-7 rounded-xl flex justify-center items-center shrink-0 dark:bg-[#090D10] bg-white hover:dark:bg-[#090D10] hover:bg-gray-50 dark:text-light-base/50 text-gray-500 shadow-xs! shadow-black/5! disabled:opacity-30"
+                            className="w-7 h-7 rounded-md flex justify-center items-center shrink-0 dark:bg-dark-faded bg-white hover:dark:bg-dark-faded/80 hover:bg-gray-50 dark:text-light-base/50 text-gray-500 shadow-xs! shadow-black/5! disabled:opacity-30"
                         >
                             <HiMiniMinusSmall className="size-4 dark:text-light-base/80 text-gray-600" />
                         </Button>
                         <Button
                             onClick={() => handleWinnerCountChange(winnerCount + 1)}
                             disabled={winnerCount >= 20}
-                            className="w-7 h-7 rounded-xl flex justify-center items-center shrink-0 dark:bg-[#090D10] bg-white hover:dark:bg-[#090D10] hover:bg-gray-50 dark:text-light-base/50 text-gray-500 shadow-xs! shadow-black/5! disabled:opacity-30"
+                            className="w-7 h-7 rounded-md flex justify-center items-center shrink-0 dark:bg-dark-faded bg-white hover:dark:bg-dark-faded/80 hover:bg-gray-50 dark:text-light-base/50 text-gray-500 shadow-xs! shadow-black/5! disabled:opacity-30"
                         >
                             <GoPlus className="size-4 dark:text-light-base/80 text-gray-600" />
                         </Button>
@@ -108,11 +128,18 @@ export function PrizeDistributionList({
     const barColors = ['bg-[#c44536]', 'bg-[#edddd4]', 'bg-[#197278]'];
 
     return (
-        <div className="h-full rounded-xl p-5 px-6 flex flex-col dark:bg-[#151E2850] bg-gray-50 gap-y-5 overflow-hidden border dark:border-transparent border-gray-200">
+        <div className="h-full rounded-xl p-5 px-6 flex flex-col dark:bg-dark-base/30 bg-gray-50 gap-y-5 overflow-hidden border dark:border-white/10 border-gray-200">
             <div className="shrink-0">
-                <div className="text-lg dark:text-white text-gray-900 font-medium">Output</div>
-                <div className="text-xs dark:text-white/40 text-gray-400">
-                    Computed distribution
+                <div className="flex items-center justify-start gap-x-1">
+                    <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
+                        Output
+                    </span>
+                    <ToolTipComponent content="Shows how the total stake will be split among winners based on their rank percentages.">
+                        <AiOutlineQuestionCircle size={15} />
+                    </ToolTipComponent>
+                </div>
+                <div className="flex w-full items-center gap-x-2 mt-1 text-xs text-neutral-500 dark:text-white/40">
+                    computed distribution
                 </div>
             </div>
 
@@ -146,7 +173,7 @@ export function PrizeDistributionList({
                                     onChange={(e) =>
                                         handlePercentageChange(index, parseFloat(e.target.value))
                                     }
-                                    className="w-14 h-7 text-center text-sm dark:bg-white/5! bg-gray-100! dark:border-white/10! border-gray-200! rounded-lg! dark:text-white/80 text-gray-700 tabular-nums px-1!"
+                                    className="w-14 h-7 text-center text-sm dark:bg-dark-alpha/60! bg-gray-100! dark:border-white/10! border-gray-200! rounded-lg! dark:text-light-base text-gray-700 tabular-nums px-1!"
                                 />
                                 <span className="text-xs dark:text-white/40 text-gray-400">%</span>
                             </div>
@@ -261,15 +288,15 @@ export default function PrizeDistributionConfig({
                     >
                         <UtilityCard
                             className={cn(
-                                'w-230',
-                                'dark:bg-[#090D10]! bg-white!',
+                                'w-230 max-h-[80vh] flex flex-col',
+                                'dark:bg-dark-alpha! bg-white!',
                                 'dark:border-white/10! border-gray-200! border!',
                                 'rounded-xl',
                                 'p-0 overflow-hidden',
                             )}
                             onClose={onClose}
                         >
-                            <section className='w-full h-56 relative'>
+                            <section className='w-full h-56 shrink-0 relative'>
                                 <Image
                                     src={'/images/landing/buttonPressYellow.png'}
                                     alt="sign-in image"
@@ -279,17 +306,16 @@ export default function PrizeDistributionConfig({
                                 />
                             </section>
                             <div
-                                className="grid grid-cols-[1fr_1fr] h-full overflow-hidden"
-                                style={{ gridTemplateRows: '100%' }}
+                                className="grid grid-cols-[1fr_1fr] flex-1 min-h-0 overflow-hidden"
                             >
-                                <div className="p-8 flex flex-col justify-between min-h-0 overflow-hidden">
-                                    <div className="shrink-0">
-                                        <div className="text-lg dark:text-white text-neutral-900 font-medium">
-                                            Configure Stake
+                                <div className="p-8 flex flex-col min-h-0 overflow-hidden">
+                                    <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
+                                        <div>
+                                            <div className="text-lg dark:text-white text-neutral-900 font-medium">
+                                                Configure Stake
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="shrink-0 space-y-6 mt-2">
                                         <PrizeDistributionHeader
                                             prizePool={prizePool}
                                             winnerCount={winnerCount}
@@ -314,12 +340,14 @@ export default function PrizeDistributionConfig({
                                                 4. Once you confirm, changes cannot be reverted.
                                             </div>
                                         </div>
+                                    </div>
 
+                                    <div className="shrink-0 pt-4">
                                         <Button
                                             className={cn(
                                                 'dark:bg-light-base dark:hover:bg-light-base bg-dark-alpha hover:bg-neutral-800',
                                                 'active:scale-[0.98] cursor-pointer',
-                                                'w-full dark:text-dark-base text-white mt-3 py-5.5 rounded-xl!',
+                                                'w-full dark:text-dark-base text-white py-5.5 rounded-xl!',
                                                 'inset-shadow-xs inset-shadow-white/30 ring-1 ring-dark-alpha',
                                             )}
                                         >
