@@ -5,45 +5,36 @@ import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import QuizAutoSaveDB from '@/class/QuizAutoSaveDB';
 import { create } from 'zustand';
 
-/**
- * Shared auto-save status store so the UI indicator can read it
- * without needing to be a direct child of the hook's host.
- */
-export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'idle';
+export enum SAVE_STATUS {
+    SAVED = "SAVED",
+    SAVING = "SAVING",
+    UNSAVED = "UNSAVED",
+    IDLE = "IDLE",
+}
 
 interface AutoSaveStatusStore {
-    status: SaveStatus;
-    setStatus: (status: SaveStatus) => void;
+    status: SAVE_STATUS;
+    setStatus: (status: SAVE_STATUS) => void;
 }
 
 export const useAutoSaveStatusStore = create<AutoSaveStatusStore>((set) => ({
-    status: 'idle',
+    status: SAVE_STATUS.IDLE,
     setStatus: (status) => set({ status }),
 }));
 
-/** Debounce delay for IndexedDB writes (ms) */
+// deboucing of writing chnages in IndexedDB
 const IDB_DEBOUNCE_MS = 300;
 
-/**
- * useAutoSave
- *
- * Google Docs-style auto-save hook:
- * 1. On mount, recovers any dirty local draft from IndexedDB
- * 2. After recovery, subscribes to store changes and writes to IndexedDB (debounced)
- * 3. Flushes to server on tab switch (visibilitychange) and on page unload (pagehide)
- */
 export function useAutoSave() {
     const dbRef = useRef<QuizAutoSaveDB | null>(null);
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isSyncingRef = useRef<boolean>(false);
 
-    // Gate: IDB writes are blocked until recovery completes.
-    // This prevents the initial server data load from overwriting the local draft.
+    // This is used to prevent any conflict in server sent quiz and IndexedDB quiz
     const recoveryCompleteRef = useRef<boolean>(false);
 
     const { setStatus } = useAutoSaveStatusStore();
 
-    // Initialize the DB instance once
     useEffect(() => {
         dbRef.current = new QuizAutoSaveDB();
         return () => {
@@ -52,10 +43,7 @@ export function useAutoSave() {
         };
     }, []);
 
-    /**
-     * Sync the current dirty draft from IndexedDB to the server.
-     * Used on visibilitychange / pagehide.
-     */
+    // this is used ot sync the changes from IndexedDB to server
     const syncToServer = useCallback(async () => {
         const db = dbRef.current;
         if (!db || isSyncingRef.current) return;
@@ -68,29 +56,26 @@ export function useAutoSave() {
         if (!isDirty) return;
 
         isSyncingRef.current = true;
-        setStatus('saving');
+        setStatus(SAVE_STATUS.SAVING);
 
         try {
             const success = await BackendActions.upsertQuizAction(quiz, token);
             if (success) {
                 await db.markSynced(quiz.id);
-                setStatus('saved');
+                setStatus(SAVE_STATUS.SAVED);
             } else {
-                setStatus('unsaved');
+                setStatus(SAVE_STATUS.UNSAVED);
             }
         } catch (error) {
-            console.error('[useAutoSave] Server sync failed:', error);
-            setStatus('unsaved');
+            console.error('Server sync failed:', error);
+            setStatus(SAVE_STATUS.UNSAVED);
         } finally {
             isSyncingRef.current = false;
         }
     }, [setStatus]);
 
-    /**
-     * On mount: attempt recovery FIRST, then enable IDB writes.
-     * This runs before the subscription starts writing, so the local
-     * draft in IndexedDB won't be overwritten by server data.
-     */
+    // when the new page refreshes or loads then load the quiz from server then compare the updated timestamp
+    // and if the updated timestamp of IDB is newer than server then update quiz from IDB
     useEffect(() => {
         const attemptRecovery = async () => {
             const db = dbRef.current;
@@ -109,51 +94,42 @@ export function useAutoSave() {
                 const record = await db.load(quiz.id);
 
                 if (record && record.dirty) {
-                    // Compare timestamps — only restore if local draft is newer
                     const serverUpdatedAt = new Date(quiz.updatedAt).getTime();
 
                     if (record.lastModified > serverUpdatedAt) {
-                        // Restore the local draft into the store
                         useNewQuizStore.getState().updateQuiz(record.data);
-                        setStatus('unsaved');
+                        setStatus(SAVE_STATUS.UNSAVED);
                     } else {
-                        // Server data is newer, clear the stale local draft flag
                         await db.markSynced(quiz.id);
-                        setStatus('saved');
+                        setStatus(SAVE_STATUS.SAVED);
                     }
                 } else {
-                    setStatus('saved');
+                    setStatus(SAVE_STATUS.SAVED);
                 }
             } catch (error) {
                 console.error('Recovery check failed:', error);
             } finally {
-                // Now allow the subscription to write to IDB
                 recoveryCompleteRef.current = true;
             }
         };
 
-        // Delay slightly to ensure the quiz data has loaded from the server
+        // delay is added to avoid conflict in timing of server sent quiz and IDB quiz
         const recoveryTimer = setTimeout(attemptRecovery, 1500);
         return () => clearTimeout(recoveryTimer);
     }, [setStatus]);
 
-    /**
-     * Subscribe to zustand store changes and write to IndexedDB (debounced).
-     * IMPORTANT: Writes are gated behind recoveryCompleteRef to prevent
-     * the initial server data load from overwriting the local draft.
-     */
+    // This is most critical thing
+    // In zustand, we can subscribe to any store to check if change in state occurs
     useEffect(() => {
         const unsubscribe = useNewQuizStore.subscribe((state) => {
             const { quiz } = state;
             const db = dbRef.current;
 
-            // Don't write to IDB until recovery is done
-            if (!recoveryCompleteRef.current) return;
-            if (!db || !quiz.id || !quiz.autoSave) return;
+            if (!recoveryCompleteRef.current || !db || !quiz.id || !quiz.autoSave) return;
 
-            setStatus('unsaved');
+            setStatus(SAVE_STATUS.UNSAVED);
 
-            // Debounce the IndexedDB write
+            // Debounce the IDB write
             if (debounceTimerRef.current) {
                 clearTimeout(debounceTimerRef.current);
             }
@@ -175,11 +151,7 @@ export function useAutoSave() {
         };
     }, [setStatus]);
 
-    /**
-     * Listen to browser lifecycle events for server sync.
-     * - visibilitychange: tab switch / minimize (normal async fetch)
-     * - pagehide: tab close / navigation (uses keepalive fetch)
-     */
+    // this is to detect changes in tab or browser switch
     useEffect(() => {
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
@@ -215,7 +187,10 @@ export function useAutoSave() {
             }
         };
 
+        // this is used to check the visibility of the current screen
         document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        // this is used when tab is closed of changed
         window.addEventListener('pagehide', handlePageHide);
 
         return () => {

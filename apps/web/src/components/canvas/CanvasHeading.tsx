@@ -139,7 +139,7 @@ export default function CanvasHeading({ currentQ }: CanvasHeadingProps) {
                 newFontSizeClass,
                 currentOn === SELECTION_MODE.QUESTION && selectedStyles,
                 hasError &&
-                    'bg-red-50 dark:bg-red-950/20 ring-1 ring-red-500! border-red-500! text-red-500 dark:text-red-400',
+                    'bg-transparent ring-1 ring-red-500! border-red-500! text-red-500 dark:text-red-400',
             );
         }
     }, [question, editor, currentOn, setCurrentOn, hasError]);

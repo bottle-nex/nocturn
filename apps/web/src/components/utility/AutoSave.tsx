@@ -4,13 +4,13 @@ import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftR
 import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { useAutoSaveStatusStore, SaveStatus } from '@/hooks/useAutoSave';
+import { useAutoSaveStatusStore, SAVE_STATUS } from '@/hooks/useAutoSave';
 
-const statusConfig: Record<SaveStatus, { color: string; label: string; pulse: boolean }> = {
-    idle: { color: 'bg-neutral-400', label: 'auto save', pulse: false },
-    saved: { color: 'bg-green-600', label: 'all changes saved', pulse: false },
-    saving: { color: 'bg-yellow-500', label: 'saving...', pulse: true },
-    unsaved: { color: 'bg-orange-500', label: 'unsaved changes', pulse: true },
+const statusConfig: Record<SAVE_STATUS, { color: string; label: string; pulse: boolean }> = {
+    [SAVE_STATUS.IDLE]: { color: 'bg-neutral-400', label: 'auto save', pulse: false },
+    [SAVE_STATUS.SAVED]: { color: 'bg-green-600', label: 'all changes saved', pulse: false },
+    [SAVE_STATUS.SAVING]: { color: 'bg-yellow-500', label: 'saving...', pulse: true },
+    [SAVE_STATUS.UNSAVED]: { color: 'bg-orange-500', label: 'unsaved changes', pulse: true },
 };
 
 export default function AutoSaveComponent({ className }: { className?: string }) {

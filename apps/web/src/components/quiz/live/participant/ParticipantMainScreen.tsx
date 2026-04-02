@@ -78,6 +78,24 @@ export default function ParticipantMainScreen() {
         return () => document.removeEventListener('fullscreenchange', handleChange);
     }, []);
 
+    useEffect(() => {
+        function handleVisibilityChange() {
+            if (document.visibilityState === 'hidden') {
+                if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
+                    toast.error('Do not switch tabs. When quiz starts, you may be kicked based on warnings.');
+                } else {
+                    handleAddParticipantWarningCount({});
+                }
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [gameSession?.participantScreen]);
+
     const [allowed, setAllowed] = useState(false);
 
     useEffect(() => {
@@ -101,7 +119,7 @@ export default function ParticipantMainScreen() {
 
     function requestFullscreen() {
         if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(() => {});
+            document.documentElement.requestFullscreen().catch(() => { });
         }
     }
 

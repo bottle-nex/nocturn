@@ -1,11 +1,3 @@
-/**
- * QuizAutoSaveDB
- *
- * A class that manages all IndexedDB communication for quiz draft auto-saving.
- * Stores quiz snapshots locally so changes are never lost, even if the tab
- * crashes or the network goes down. Server syncs happen on lifecycle events.
- */
-
 import { QuizType } from '@nocturn/types';
 
 const DB_NAME = 'nocturn-autosave';
@@ -27,10 +19,7 @@ export default class QuizAutoSaveDB {
         this.dbReady = this.open();
     }
 
-    /**
-     * Opens (or creates) the IndexedDB database.
-     * Returns a promise that resolves with the ready database instance.
-     */
+    // this runs at start and creates an instance of IDB
     private open(): Promise<IDBDatabase> {
         return new Promise((resolve, reject) => {
             if (typeof window === 'undefined') {
@@ -60,17 +49,12 @@ export default class QuizAutoSaveDB {
         });
     }
 
-    /**
-     * Returns the ready database instance, waiting for init if needed.
-     */
     private async getDB(): Promise<IDBDatabase> {
         if (this.db) return this.db;
         return this.dbReady;
     }
 
-    /**
-     * Saves a quiz snapshot to IndexedDB and marks it as dirty (unsynced with server).
-     */
+    // this saves the quiz in IDB
     async save(quizId: string, data: QuizType): Promise<void> {
         const db = await this.getDB();
 
@@ -95,10 +79,7 @@ export default class QuizAutoSaveDB {
         });
     }
 
-    /**
-     * Loads a saved quiz draft from IndexedDB.
-     * Returns null if no draft exists for this quizId.
-     */
+    // this loads back the quiz to the canvas from IDB
     async load(quizId: string): Promise<QuizDraftRecord | null> {
         const db = await this.getDB();
 
@@ -118,9 +99,7 @@ export default class QuizAutoSaveDB {
         });
     }
 
-    /**
-     * Deletes a draft from IndexedDB (e.g. after successful server sync or quiz deletion).
-     */
+    // this deletes the quiz in IDB
     async delete(quizId: string): Promise<void> {
         const db = await this.getDB();
 
@@ -137,26 +116,20 @@ export default class QuizAutoSaveDB {
         });
     }
 
-    /**
-     * Checks if a local draft exists for this quiz.
-     */
+    // this checks if the quiz is available in IDB
     async hasDraft(quizId: string): Promise<boolean> {
         const record = await this.load(quizId);
         return record !== null;
     }
 
-    /**
-     * Returns whether the local draft has unsaved changes vs the server.
-     */
+    // this returns if the quiz is saved to server or not
+    // dirty === true means unsaved
     async isDirty(quizId: string): Promise<boolean> {
         const record = await this.load(quizId);
         return record?.dirty ?? false;
     }
 
-    /**
-     * Marks a draft as synced (not dirty) after a successful server save.
-     * Keeps the data in IndexedDB for crash recovery but marks it as clean.
-     */
+    // this marks that quiz is synced to server
     async markSynced(quizId: string): Promise<void> {
         const db = await this.getDB();
 
@@ -179,23 +152,18 @@ export default class QuizAutoSaveDB {
 
             request.onsuccess = () => resolve();
             request.onerror = (event) => {
-                console.error('[QuizAutoSaveDB] Failed to mark draft as synced:', event);
+                console.error('Failed to mark draft as synced:', event);
                 reject(new Error('Failed to mark draft as synced'));
             };
         });
     }
 
-    /**
-     * Returns the lastModified timestamp for a draft, or null if no draft exists.
-     */
     async getLastModified(quizId: string): Promise<number | null> {
         const record = await this.load(quizId);
         return record?.lastModified ?? null;
     }
 
-    /**
-     * Closes the database connection.
-     */
+    // closes the instance of IDB
     close(): void {
         if (this.db) {
             this.db.close();

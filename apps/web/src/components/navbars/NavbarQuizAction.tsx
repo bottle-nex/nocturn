@@ -40,7 +40,6 @@ export default function NavbarQuizAction() {
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const router = useRouter();
 
-    // Activate Google Docs-style auto-save (IndexedDB + lifecycle server sync)
     useAutoSave();
 
     useEffect(() => {
