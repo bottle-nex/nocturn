@@ -82,7 +82,9 @@ export default function ParticipantMainScreen() {
         function handleVisibilityChange() {
             if (document.visibilityState === 'hidden') {
                 if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
-                    toast.error('Do not switch tabs. When quiz starts, you may be kicked based on warnings.');
+                    toast.error(
+                        'Do not switch tabs. When quiz starts, you may be kicked based on warnings.',
+                    );
                 } else {
                     handleAddParticipantWarningCount({});
                 }
@@ -94,6 +96,7 @@ export default function ParticipantMainScreen() {
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gameSession?.participantScreen]);
 
     const [allowed, setAllowed] = useState(false);

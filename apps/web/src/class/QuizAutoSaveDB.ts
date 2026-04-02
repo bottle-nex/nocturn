@@ -129,10 +129,10 @@ export default class QuizAutoSaveDB {
         return record?.dirty ?? false;
     }
 
-    // this marks that quiz is synced to server
     async markSynced(quizId: string): Promise<void> {
         const db = await this.getDB();
 
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             const record = await this.load(quizId);
             if (!record) {

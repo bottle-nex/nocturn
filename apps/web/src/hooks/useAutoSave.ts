@@ -6,10 +6,10 @@ import QuizAutoSaveDB from '@/class/QuizAutoSaveDB';
 import { create } from 'zustand';
 
 export enum SAVE_STATUS {
-    SAVED = "SAVED",
-    SAVING = "SAVING",
-    UNSAVED = "UNSAVED",
-    IDLE = "IDLE",
+    SAVED = 'SAVED',
+    SAVING = 'SAVING',
+    UNSAVED = 'UNSAVED',
+    IDLE = 'IDLE',
 }
 
 interface AutoSaveStatusStore {
@@ -39,11 +39,10 @@ export function useAutoSave() {
         dbRef.current = new QuizAutoSaveDB();
 
         // call cleanup just after initialization
-        dbRef.current.cleanup(7, 50).then((deleted) => {
-            if (deleted > 0) {
-                console.info(`Cleaned up ${deleted} old draft(s) from IndexedDB`);
-            }
-        }).catch(() => {});
+        dbRef.current
+            .cleanup(7, 50)
+            .then(() => {})
+            .catch(() => {});
 
         return () => {
             dbRef.current?.close();
@@ -188,7 +187,9 @@ export function useAutoSave() {
                     body,
                     keepalive: true,
                 }).catch(() => {});
-            } catch {}
+            } catch {
+                console.error('error in page hide');
+            }
         };
 
         // this is used to check the visibility of the current screen
