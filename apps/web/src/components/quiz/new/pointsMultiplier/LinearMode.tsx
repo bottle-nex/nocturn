@@ -10,7 +10,7 @@ export function LinearMode({ inputPointMultiplier, calculatedPoints, onChange }:
     return (
         <div className="flex flex-col space-y-3 mt-2">
             <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                Multiplier — points increase evenly per question
+                Points increase evenly per question
             </span>
             <Input
                 min={1}

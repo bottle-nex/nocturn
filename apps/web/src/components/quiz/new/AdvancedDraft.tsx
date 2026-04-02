@@ -5,12 +5,10 @@ import { useEffect, useState } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import {
-    usePointsMultiplierAdvStore,
-    MultiplierEnum,
-} from '@/store/new-quiz/usePointsMultiplierAdvStore';
+import { usePointsMultiplierAdvStore } from '@/store/new-quiz/usePointsMultiplierAdvStore';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import PointsMultiplier from './pointsMultiplier/PointsMultiplier';
+import { PointsMultiplier as PointsMultiplierEnum } from "@nocturn/types";
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
@@ -23,7 +21,18 @@ export default function AdvancedDraft() {
         multiplierType,
         setEnablePointMultiplier,
         setMultiplierType,
+        initializeFromQuiz,
     } = usePointsMultiplierAdvStore();
+
+    // Hydrate multiplier store from server quiz data on load
+    useEffect(() => {
+        if (quiz.pointsMultiplier && quiz.pointsMultiplier !== PointsMultiplierEnum.NONE) {
+            setEnablePointMultiplier(true);
+            setMultiplierType(quiz.pointsMultiplier);
+            initializeFromQuiz(quiz);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [quiz.id]);
 
     useEffect(() => {
         if (!multiplierType) {
@@ -38,10 +47,13 @@ export default function AdvancedDraft() {
     function handleOnCheckedChange(checked: boolean) {
         setEnablePointMultiplier(checked);
         if (checked && !multiplierType) {
-            setMultiplierType(MultiplierEnum.LINEAR);
+            setMultiplierType(PointsMultiplierEnum.LINEAR);
+            updateQuizAndBroadcast({ pointsMultiplier: PointsMultiplierEnum.LINEAR });
         }
         if (!checked) {
             setCalculatedPoints([]);
+            setMultiplierType(PointsMultiplierEnum.NONE);
+            updateQuizAndBroadcast({ pointsMultiplier: PointsMultiplierEnum.NONE });
             const defaultPoints = Number(quiz.basePointsPerQuestion) || 100;
             updateQuestionPoints(quiz.questions.map(() => defaultPoints));
         }

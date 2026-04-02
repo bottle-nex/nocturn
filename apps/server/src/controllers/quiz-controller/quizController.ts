@@ -603,6 +603,8 @@ export default class QuizController {
                     spectatorMode: true,
                     basePointsPerQuestion: true,
                     pointsMultiplier: true,
+                    pointsIncrement: true,
+                    batchSize: true,
                     prizePool: true,
                     currency: true,
                     _count: { select: { questions: true, participants: true } },

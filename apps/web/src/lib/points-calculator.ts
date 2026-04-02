@@ -22,29 +22,18 @@ export default class PointsCalculator {
         return points;
     }
 
-    public calculate_stepped_points(new_point_multiplier: number): number[] {
+    public calculate_stepped_points(step_increment: number, batch_size: number = 3): number[] {
         const points: number[] = [];
-        this.point_multiplier = new_point_multiplier;
-
-        const step_size = Math.round((this.base_points * (new_point_multiplier - 1)) / 2);
 
         for (let i = 0; i < this.no_of_question; i++) {
             if (i === 0) {
                 points.push(this.base_points);
-            } else if (i <= 3) {
-                const prevPoint = points[i - 1];
-                if (prevPoint !== undefined) {
-                    points.push(prevPoint + step_size);
-                }
-            } else if (i <= 6) {
-                const prevPoint = points[i - 1];
-                if (prevPoint !== undefined) {
-                    points.push(Math.round(prevPoint + step_size * 1.5));
-                }
             } else {
+                const tier = Math.floor(i / batch_size);
+                const tierMultiplier = 1 + tier * 0.5; // tier 0 = 1x, tier 1 = 1.5x, tier 2 = 2x, etc.
                 const prevPoint = points[i - 1];
                 if (prevPoint !== undefined) {
-                    points.push(prevPoint + step_size * 2);
+                    points.push(Math.round(prevPoint + step_increment * tierMultiplier));
                 }
             }
         }

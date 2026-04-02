@@ -1,21 +1,23 @@
 import ToolTipComponent from "@/components/utility/TooltipComponent";
-import { MultiplierEnum, usePointsMultiplierAdvStore } from "@/store/new-quiz/usePointsMultiplierAdvStore";
+import { usePointsMultiplierAdvStore } from "@/store/new-quiz/usePointsMultiplierAdvStore";
 import { IconType } from "react-icons";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { RiLineChartLine } from 'react-icons/ri';
 import { HiChartBar } from 'react-icons/hi';
 import { BsKeyboardFill } from 'react-icons/bs';
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNewQuizStore } from "@/store/new-quiz/useNewQuizStore";
 import { getSingletonPointsCalculator } from "@/lib/singleton-points-calculator";
 import { LinearMode } from "./LinearMode";
 import { SteppedMode } from "./SteppedMode";
 import { ManualMode } from "./ManualMode";
 import { cn } from "@/lib/utils";
+import { PointsMultiplier as PointsMultiplierEnum } from "@nocturn/types";
+import { useCollaborativeEdit } from "@/hooks/useCollaborativeEdit";
 
 interface MultiplierOption {
-    type: MultiplierEnum;
+    type: PointsMultiplierEnum;
     icon: IconType;
     label: string;
     tooltip: string;
@@ -23,22 +25,22 @@ interface MultiplierOption {
 
 const MULTIPLIER_OPTIONS: MultiplierOption[] = [
     {
-        type: MultiplierEnum.LINEAR,
+        type: PointsMultiplierEnum.LINEAR,
         icon: RiLineChartLine,
         label: 'Linear',
-        tooltip: 'Points increase evenly per question (e.g. +25 each)',
+        tooltip: "Every question get's increase in points linearly",
     },
     {
-        type: MultiplierEnum.STEPPED,
+        type: PointsMultiplierEnum.STEPPED,
         icon: HiChartBar,
         label: 'Stepped',
-        tooltip: 'Points jump in tiers — bigger gaps for later questions',
+        tooltip: 'Points jump in batches',
     },
     {
-        type: MultiplierEnum.MANUAL,
+        type: PointsMultiplierEnum.MANUAL,
         icon: BsKeyboardFill,
         label: 'Manual',
-        tooltip: 'Set each question point individually',
+        tooltip: 'Complete ownership, set each question point individually',
     },
 ];
 
@@ -50,14 +52,19 @@ interface PointsMultiplierProps {
 export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints }: PointsMultiplierProps) {
 
     const { quiz, updateQuestionPoints, changeQuestionPoint } = useNewQuizStore();
+    const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const {
         enablePointMultiplier,
         multiplierType,
         inputPointMultiplier,
+        steppedBatchSize,
+        steppedIncrement,
         manualPoints,
         setEnablePointMultiplier,
         setMultiplierType,
         setInputPointMultiplier,
+        setSteppedBatchSize,
+        setSteppedIncrement,
         setManualPoints,
         setManualPointAt,
     } = usePointsMultiplierAdvStore();
@@ -65,7 +72,7 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
     useEffect(() => {
         if (!enablePointMultiplier || !multiplierType) return;
 
-        if (multiplierType === MultiplierEnum.MANUAL) {
+        if (multiplierType === PointsMultiplierEnum.MANUAL) {
             if (manualPoints.length !== quiz.questions.length) {
                 setManualPoints(quiz.questions.map((q) => q.basePoints));
             }
@@ -81,20 +88,23 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
             Number(quiz.basePointsPerQuestion),
         );
 
-        if (multiplierType === MultiplierEnum.LINEAR) {
+        if (multiplierType === PointsMultiplierEnum.LINEAR) {
             const points = calculator.calculate_linear_points(num);
             setCalculatedPoints(points);
             updateQuestionPoints(points);
-        } else if (multiplierType === MultiplierEnum.STEPPED) {
-            const points = calculator.calculate_stepped_points(num);
+        } else if (multiplierType === PointsMultiplierEnum.STEPPED) {
+            if (steppedIncrement < 1) return;
+            const points = calculator.calculate_stepped_points(steppedIncrement, steppedBatchSize);
             setCalculatedPoints(points);
             updateQuestionPoints(points);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [multiplierType, enablePointMultiplier, quiz.questions.length]);
+    }, [multiplierType, enablePointMultiplier, quiz.questions.length, steppedBatchSize, steppedIncrement]);
 
-    function handleMultiplierTypeClick(type: MultiplierEnum) {
-        setMultiplierType(multiplierType === type ? MultiplierEnum.NONE : type);
+    function handleMultiplierTypeClick(type: PointsMultiplierEnum) {
+        const newType = multiplierType === type ? PointsMultiplierEnum.NONE : type;
+        setMultiplierType(newType);
+        updateQuizAndBroadcast({ pointsMultiplier: newType });
     }
 
     function handleLinearChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -116,21 +126,36 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
         updateQuestionPoints(points);
     }
 
-    function handleSteppedChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleSteppedIncrementChange(e: React.ChangeEvent<HTMLInputElement>) {
         const value = e.target.value;
         if (value === '') {
-            setInputPointMultiplier('');
+            setSteppedIncrement(0);
             setCalculatedPoints([]);
             return;
         }
-        const num = Number(value);
+        const num = Math.floor(Number(value));
         if (isNaN(num) || num < 1) return;
-        setInputPointMultiplier(value);
+        setSteppedIncrement(num);
+        updateQuizAndBroadcast({ pointsIncrement: num });
         const calculator = getSingletonPointsCalculator(
             quiz.questions.length,
             Number(quiz.basePointsPerQuestion),
         );
-        const points = calculator.calculate_stepped_points(num);
+        const points = calculator.calculate_stepped_points(num, steppedBatchSize);
+        setCalculatedPoints(points);
+        updateQuestionPoints(points);
+    }
+
+    function handleBatchSizeChange(size: number) {
+        if (size < 1 || size > 15) return;
+        setSteppedBatchSize(size);
+        updateQuizAndBroadcast({ batchSize: size });
+        if (steppedIncrement < 1) return;
+        const calculator = getSingletonPointsCalculator(
+            quiz.questions.length,
+            Number(quiz.basePointsPerQuestion),
+        );
+        const points = calculator.calculate_stepped_points(steppedIncrement, size);
         setCalculatedPoints(points);
         updateQuestionPoints(points);
     }
@@ -139,6 +164,40 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
         if (isNaN(value) || value < 0) return;
         setManualPointAt(index, value);
         changeQuestionPoint(index, value);
+    }
+
+    function renderMultiplier() {
+        switch (multiplierType) {
+            case PointsMultiplierEnum.LINEAR: {
+                return (
+                    <LinearMode
+                        inputPointMultiplier={inputPointMultiplier}
+                        calculatedPoints={calculatedPoints}
+                        onChange={handleLinearChange}
+                    />
+                );
+            };
+            case PointsMultiplierEnum.STEPPED: {
+                return (
+                    <SteppedMode
+                        steppedIncrement={steppedIncrement}
+                        calculatedPoints={calculatedPoints}
+                        batchSize={steppedBatchSize}
+                        onIncrementChange={handleSteppedIncrementChange}
+                        onBatchSizeChange={handleBatchSizeChange}
+                    />
+                );
+            }
+            case PointsMultiplierEnum.MANUAL: {
+                return (
+                    <ManualMode
+                        questions={quiz.questions}
+                        manualPoints={manualPoints}
+                        onPointChange={handleManualPointChange}
+                    />
+                );
+            }
+        }
     }
 
     useEffect(() => {
@@ -192,29 +251,7 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
                 })}
             </div>
 
-            {multiplierType === MultiplierEnum.LINEAR && (
-                <LinearMode
-                    inputPointMultiplier={inputPointMultiplier}
-                    calculatedPoints={calculatedPoints}
-                    onChange={handleLinearChange}
-                />
-            )}
-
-            {multiplierType === MultiplierEnum.STEPPED && (
-                <SteppedMode
-                    inputPointMultiplier={inputPointMultiplier}
-                    calculatedPoints={calculatedPoints}
-                    onChange={handleSteppedChange}
-                />
-            )}
-
-            {multiplierType === MultiplierEnum.MANUAL && (
-                <ManualMode
-                    questions={quiz.questions}
-                    manualPoints={manualPoints}
-                    onPointChange={handleManualPointChange}
-                />
-            )}
+            {renderMultiplier()}
         </div>
     )
 }
