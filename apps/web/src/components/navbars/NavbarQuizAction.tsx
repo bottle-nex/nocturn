@@ -17,7 +17,8 @@ import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
-import { useAutoSave } from '@/hooks/useAutoSave';
+import { useAutoSave, useAutoSaveStatusStore, SAVE_STATUS } from '@/hooks/useAutoSave';
+import QuizAutoSaveDB from '@/class/QuizAutoSaveDB';
 import { Button } from '../ui/button';
 import RevisePanel from './RevisePanel';
 
@@ -41,6 +42,20 @@ export default function NavbarQuizAction() {
     const router = useRouter();
 
     useAutoSave();
+    const { setStatus } = useAutoSaveStatusStore();
+
+    // Helper to mark IDB as synced after a successful server save
+    const markAutoSaveSynced = async () => {
+        if (!quiz.id) return;
+        try {
+            const db = new QuizAutoSaveDB();
+            await db.markSynced(quiz.id);
+            db.close();
+            setStatus(SAVE_STATUS.SAVED);
+        } catch {
+            console.error('failed to mark saved in IDB');
+        }
+    };
 
     useEffect(() => {
         if (!currentAction) return;
@@ -78,6 +93,7 @@ export default function NavbarQuizAction() {
                 });
                 updateQuizAndBroadcast({ status: QuizStatusEnum.CREATED });
                 toast.success('Draft saved');
+                await markAutoSaveSynced();
                 return;
             }
             toast.error('Failed to save draft');
@@ -106,6 +122,7 @@ export default function NavbarQuizAction() {
                 });
                 updateQuizAndBroadcast({ status: QuizStatusEnum.PUBLISHED });
                 toast.success('Quiz published successfully');
+                await markAutoSaveSynced();
                 return;
             }
             toast.error('Failed to publish quiz');
@@ -134,6 +151,7 @@ export default function NavbarQuizAction() {
                 });
                 updateQuizAndBroadcast({ status: QuizStatusEnum.LIVE });
                 toast.success('Quiz launched successfully');
+                await markAutoSaveSynced();
                 router.push(`/live/${quiz.id}`);
                 return;
             }

@@ -163,6 +163,67 @@ export default class QuizAutoSaveDB {
         return record?.lastModified ?? null;
     }
 
+    // returns all draft records from IDB
+    async getAllDrafts(): Promise<QuizDraftRecord[]> {
+        const db = await this.getDB();
+
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readonly');
+            const store = tx.objectStore(STORE_NAME);
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                resolve((request.result as QuizDraftRecord[]) ?? []);
+            };
+
+            request.onerror = (error) => {
+                console.error('Failed to get all drafts:', error);
+                reject(new Error('Failed to get all drafts from IndexedDB'));
+            };
+        });
+    }
+
+    // This cleans the quiz in Indexed after 7 days or max storage exceeds
+    async cleanup(maxAgeDays: number = 7, maxDrafts: number = 50): Promise<number> {
+        const allDrafts = await this.getAllDrafts();
+        const now = Date.now();
+        const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
+        let deletedCount = 0;
+
+        // remove the old drafts
+        const toDelete: string[] = [];
+        const remaining: QuizDraftRecord[] = [];
+
+        for (const draft of allDrafts) {
+            const age = now - draft.lastModified;
+            if (!draft.dirty && age > maxAgeMs) {
+                toDelete.push(draft.quizId);
+            } else {
+                remaining.push(draft);
+            }
+        }
+
+        for (const quizId of toDelete) {
+            await this.delete(quizId);
+            deletedCount++;
+        }
+
+        // if size is still greater than maxDrafts delete until it's less
+        if (remaining.length > maxDrafts) {
+            const sorted = remaining
+                .filter((d) => !d.dirty)
+                .sort((a, b) => a.lastModified - b.lastModified);
+
+            const toEvict = sorted.slice(0, remaining.length - maxDrafts);
+            for (const draft of toEvict) {
+                await this.delete(draft.quizId);
+                deletedCount++;
+            }
+        }
+
+        return deletedCount;
+    }
+
     // closes the instance of IDB
     close(): void {
         if (this.db) {

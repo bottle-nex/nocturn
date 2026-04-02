@@ -37,6 +37,14 @@ export function useAutoSave() {
 
     useEffect(() => {
         dbRef.current = new QuizAutoSaveDB();
+
+        // call cleanup just after initialization
+        dbRef.current.cleanup(7, 50).then((deleted) => {
+            if (deleted > 0) {
+                console.info(`Cleaned up ${deleted} old draft(s) from IndexedDB`);
+            }
+        }).catch(() => {});
+
         return () => {
             dbRef.current?.close();
             dbRef.current = null;
@@ -179,12 +187,8 @@ export function useAutoSave() {
                     },
                     body,
                     keepalive: true,
-                }).catch(() => {
-                    // Silent fail — draft is safe in IndexedDB
-                });
-            } catch {
-                // Silent fail — draft is safe in IndexedDB
-            }
+                }).catch(() => {});
+            } catch {}
         };
 
         // this is used to check the visibility of the current screen
