@@ -128,3 +128,10 @@ export enum ClaimStatusEnum {
   EXPIRED = "EXPIRED",
   REFUNDED = "REFUNDED",
 }
+
+export enum PointsMultiplier {
+    LINEAR = "LINEAR",
+    STEPPED = "STEPPED",
+    MANUAL = "MANUAL",
+    NONE = "NONE",
+}

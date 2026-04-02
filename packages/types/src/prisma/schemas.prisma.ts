@@ -7,12 +7,12 @@ import {
   HostScreenEnum,
   InteractionEnum,
   ParticipantScreenEnum,
+  PointsMultiplier,
   QuizEndScreen,
   QuizPhaseEnum,
   QuizStatusEnum,
   SessionStatusEnum,
   SpectatorScreenEnum,
-  TemplateEnum,
 } from "./enums.prisma";
 
 export interface UserType {
@@ -59,7 +59,9 @@ export interface QuizType {
   prizePool: number;
   currency: string;
   basePointsPerQuestion: number;
-  pointsMultiplier: number;
+  pointsMultiplier?: PointsMultiplier;
+  pointsIncrement?: number;
+  batchSize?: number;
   timeBonus: boolean;
   eliminationThreshold: number;
   questionTimeLimit: number;
