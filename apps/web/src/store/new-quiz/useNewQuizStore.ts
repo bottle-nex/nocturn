@@ -161,7 +161,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
             (qs: QuestionType, index: number) => {
                 return {
                     ...qs,
-                    basePoints: points[index]!,
+                    basePoints: points[index] ?? qs.basePoints,
                 };
             },
         );

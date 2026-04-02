@@ -1,7 +1,7 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { Switch } from '@/components/ui/switch';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { Input } from '@/components/ui/input';
@@ -31,38 +31,73 @@ const MULTIPLIER_OPTIONS: MultiplierOption[] = [
         type: 'Linear',
         icon: RiLineChartLine,
         label: 'Linear',
-        tooltip: 'Select Linear Multiplier (x1.25)',
+        tooltip: 'Points increase evenly per question (e.g. +25 each)',
     },
     {
         type: 'Stepped',
         icon: HiChartBar,
         label: 'Stepped',
-        tooltip: 'Customize your points multiplier',
+        tooltip: 'Points jump in tiers — bigger gaps for later questions',
     },
     {
         type: 'Manual',
         icon: BsKeyboardFill,
         label: 'Manual',
-        tooltip: 'Manually set your points multiplier',
+        tooltip: 'Set each question point individually',
     },
 ];
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, updateQuestionPoints } = useNewQuizStore();
+    const { quiz, updateQuestionPoints, changeQuestionPoint } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
-    const singletonPointsCalculator = getSingletonPointsCalculator(
-        quiz.questions.length,
-        Number(quiz.basePointsPerQuestion),
-    );
     const {
         enablePointMultiplier,
         multiplierType,
         inputPointMultiplier,
+        manualPoints,
         setEnablePointMultiplier,
         setMultiplierType,
         setInputPointMultiplier,
+        setManualPoints,
+        setManualPointAt,
     } = usePointsMultiplierAdvStore();
+
+    const [calculatedPoints, setCalculatedPoints] = useState<number[]>([]);
+
+    // When multiplier type changes OR questions are added, recalculate
+    useEffect(() => {
+        if (!enablePointMultiplier || !multiplierType) return;
+
+        if (multiplierType === 'Manual') {
+            // Initialize/extend manual points from current question basePoints
+            if (manualPoints.length !== quiz.questions.length) {
+                setManualPoints(quiz.questions.map((q) => q.basePoints));
+            }
+            setCalculatedPoints([]);
+            return;
+        }
+
+        const num = Number(inputPointMultiplier);
+        if (isNaN(num) || num < 1) return;
+
+        // The singleton now auto-refreshes when quiz.questions.length changes
+        const calculator = getSingletonPointsCalculator(
+            quiz.questions.length,
+            Number(quiz.basePointsPerQuestion),
+        );
+
+        if (multiplierType === 'Linear') {
+            const points = calculator.calculate_linear_points(num);
+            setCalculatedPoints(points);
+            updateQuestionPoints(points);
+        } else if (multiplierType === 'Stepped') {
+            const points = calculator.calculate_stepped_points(num);
+            setCalculatedPoints(points);
+            updateQuestionPoints(points);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [multiplierType, enablePointMultiplier, quiz.questions.length]);
 
     useEffect(() => {
         if (!multiplierType) {
@@ -75,6 +110,13 @@ export default function AdvancedDraft() {
         if (checked && !multiplierType) {
             setMultiplierType('Linear');
         }
+        if (!checked) {
+            setCalculatedPoints([]);
+            // Reset all question points back to the default basePointsPerQuestion
+            const defaultPoints = Number(quiz.basePointsPerQuestion) || 100;
+            const resetPoints = quiz.questions.map(() => defaultPoints);
+            updateQuestionPoints(resetPoints);
+        }
     }
 
     function handleAutoSaveChangeHandler(checked: boolean) {
@@ -85,21 +127,54 @@ export default function AdvancedDraft() {
         setMultiplierType(multiplierType === type ? null : type);
     }
 
-    function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleLinearChange(e: React.ChangeEvent<HTMLInputElement>) {
         const value = e.target.value;
 
         if (value === '') {
             setInputPointMultiplier('');
+            setCalculatedPoints([]);
             return;
         }
 
         const num = Number(value);
-        if (!isNaN(num) && num >= 1) {
-            setInputPointMultiplier(value);
+        if (isNaN(num) || num < 1) return;
+
+        setInputPointMultiplier(value);
+        const calculator = getSingletonPointsCalculator(
+            quiz.questions.length,
+            Number(quiz.basePointsPerQuestion),
+        );
+        const points = calculator.calculate_linear_points(num);
+        setCalculatedPoints(points);
+        updateQuestionPoints(points);
+    }
+
+    function handleSteppedChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const value = e.target.value;
+
+        if (value === '') {
+            setInputPointMultiplier('');
+            setCalculatedPoints([]);
+            return;
         }
 
-        const points = singletonPointsCalculator.calculate_linear_points(Number(value));
+        const num = Number(value);
+        if (isNaN(num) || num < 1) return;
+
+        setInputPointMultiplier(value);
+        const calculator = getSingletonPointsCalculator(
+            quiz.questions.length,
+            Number(quiz.basePointsPerQuestion),
+        );
+        const points = calculator.calculate_stepped_points(num);
+        setCalculatedPoints(points);
         updateQuestionPoints(points);
+    }
+
+    function handleManualPointChange(index: number, value: number) {
+        if (isNaN(value) || value < 0) return;
+        setManualPointAt(index, value);
+        changeQuestionPoint(index, value);
     }
 
     return (
@@ -137,7 +212,7 @@ export default function AdvancedDraft() {
                     <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Points Multiplier
                     </span>
-                    <ToolTipComponent content="Do you want to use point multiplier?">
+                    <ToolTipComponent content="Scale question points progressively so later questions are worth more.">
                         <AiOutlineQuestionCircle size={15} />
                     </ToolTipComponent>
                 </div>
@@ -204,21 +279,103 @@ export default function AdvancedDraft() {
                                 })}
                             </div>
 
-                            {multiplierType && (
-                                <div className="flex flex-col space-y-2 mt-2">
+                            {/* ---- Linear Mode ---- */}
+                            {multiplierType === 'Linear' && (
+                                <div className="flex flex-col space-y-3 mt-2">
                                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                        Customize
+                                        Multiplier — points increase evenly per question
                                     </span>
-
                                     <Input
                                         min={1}
-                                        step="0.1"
+                                        step="0.05"
                                         type="number"
+                                        placeholder="1.25"
                                         value={inputPointMultiplier}
-                                        onChange={handleOnChange}
-                                        className="appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none
-"
+                                        onChange={handleLinearChange}
+                                        className="appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                     />
+                                    {calculatedPoints.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 mt-1">
+                                            {calculatedPoints.map((pts, i) => (
+                                                <span
+                                                    key={i}
+                                                    className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-medium"
+                                                >
+                                                    Q{i + 1}: {pts}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* ---- Stepped Mode ---- */}
+                            {multiplierType === 'Stepped' && (
+                                <div className="flex flex-col space-y-3 mt-2">
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                        Multiplier — points jump in tiers (Q1-3, Q4-6, Q7+)
+                                    </span>
+                                    <Input
+                                        min={1}
+                                        step="0.05"
+                                        type="number"
+                                        placeholder="1.5"
+                                        value={inputPointMultiplier}
+                                        onChange={handleSteppedChange}
+                                        className="appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    />
+                                    {calculatedPoints.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 mt-1">
+                                            {calculatedPoints.map((pts, i) => (
+                                                <span
+                                                    key={i}
+                                                    className={cn(
+                                                        'text-[10px] px-2 py-0.5 rounded-full font-medium',
+                                                        i <= 2
+                                                            ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
+                                                            : i <= 5
+                                                              ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                                                              : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
+                                                    )}
+                                                >
+                                                    Q{i + 1}: {pts}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* ---- Manual Mode ---- */}
+                            {multiplierType === 'Manual' && (
+                                <div className="flex flex-col space-y-3 mt-2">
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                        Set points for each question individually
+                                    </span>
+                                    <div className="flex flex-col gap-y-2 max-h-52 overflow-y-auto custom-scrollbar pr-1">
+                                        {quiz.questions.map((q, i) => (
+                                            <div
+                                                key={i}
+                                                className="flex items-center gap-x-3"
+                                            >
+                                                <span className="text-xs text-neutral-500 dark:text-neutral-400 w-8 shrink-0 font-medium">
+                                                    Q{i + 1}
+                                                </span>
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    value={manualPoints[i] ?? q.basePoints}
+                                                    onChange={(e) =>
+                                                        handleManualPointChange(
+                                                            i,
+                                                            Number(e.target.value),
+                                                        )
+                                                    }
+                                                    className="h-8 text-sm appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

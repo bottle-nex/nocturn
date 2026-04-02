@@ -27,7 +27,7 @@ export default function QuestionsDraft() {
 
     // Local states
     const [timerError, setTimerError] = useState<string | null>(null);
-    const [basePoints, setBasePoints] = useState<string>(currentQ?.basePoints.toString() || '0');
+    const [basePoints, setBasePoints] = useState<string>(currentQ?.basePoints?.toString() ?? '0');
     const singletonPointsCalculator = getSingletonPointsCalculator(quiz.questions.length);
     const [wrongBasePoints, setWrongBasePoints] = useState<boolean>(false);
     const [timerEdit, setTimerEdit] = useState<'READING_TIME' | 'ACTIVE_TIME'>('ACTIVE_TIME');
@@ -139,7 +139,7 @@ export default function QuestionsDraft() {
     }, [timerEdit, currentQ?.readingTime, currentQ?.timeLimit]);
 
     useEffect(() => {
-        setBasePoints(currentQ?.basePoints.toString() || '0');
+        setBasePoints(currentQ?.basePoints?.toString() ?? '0');
         setExplanation(currentQ?.explanation || '');
         setHint(currentQ?.hint || '');
     }, [currentQ?.basePoints, currentQ?.explanation, currentQ?.hint]);
