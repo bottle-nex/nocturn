@@ -10,6 +10,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:setup": "pnpm prisma migrate && pnpm prisma generate && pnpm db:seed",
     "format": "prisma format",
     "generate": "prisma generate",
     "predev": "pnpm generate",

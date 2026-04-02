@@ -188,3 +188,10 @@ enum ClaimStatus {
     EXPIRED
     REFUNDED
 }
+
+enum PointsMultiplier {
+    LINEAR
+    STEPPED
+    MANUAL
+    NONE
+}
