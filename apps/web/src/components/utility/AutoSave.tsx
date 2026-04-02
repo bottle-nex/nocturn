@@ -4,12 +4,24 @@ import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftR
 import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { useAutoSaveStatusStore, SaveStatus } from '@/hooks/useAutoSave';
+
+const statusConfig: Record<SaveStatus, { color: string; label: string; pulse: boolean }> = {
+    idle: { color: 'bg-neutral-400', label: 'auto save', pulse: false },
+    saved: { color: 'bg-green-600', label: 'all changes saved', pulse: false },
+    saving: { color: 'bg-yellow-500', label: 'saving...', pulse: true },
+    unsaved: { color: 'bg-orange-500', label: 'unsaved changes', pulse: true },
+};
 
 export default function AutoSaveComponent({ className }: { className?: string }) {
     const { setState } = useDraftRendererStore();
     const underlineRef = useRef<HTMLDivElement>(null);
-
     const { quiz } = useNewQuizStore();
+    const { status } = useAutoSaveStatusStore();
+
+    const config = quiz.autoSave
+        ? statusConfig[status]
+        : { color: 'bg-red-500', label: 'auto save is off', pulse: false };
 
     useEffect(() => {
         const underline = underlineRef.current;
@@ -54,12 +66,10 @@ export default function AutoSaveComponent({ className }: { className?: string })
             className={`hidden lg:inline-flex items-center gap-x-2 whitespace-nowrap max-w-full cursor-pointer ${className} `}
         >
             <div
-                className={`h-2 w-2 rounded-full shrink-0 animate-pulse ${
-                    quiz.autoSave ? 'bg-green-600' : 'bg-red-500'
-                }`}
+                className={`h-2 w-2 rounded-full shrink-0 ${config.color} ${config.pulse ? 'animate-pulse' : ''}`}
             />
             <span className="relative text-neutral-500 dark:text-neutral-400 text-xs">
-                {quiz.autoSave ? 'auto save every 30s' : 'auto save is off'}
+                {config.label}
                 <div
                     ref={underlineRef}
                     className="absolute bottom-0 left-0 w-full h-px bg-current"

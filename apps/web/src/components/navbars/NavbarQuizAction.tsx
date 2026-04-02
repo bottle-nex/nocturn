@@ -17,6 +17,7 @@ import QuizStatusTicker from '../tickers/QuizstatusTicker';
 import { useRouter } from 'next/navigation';
 import AutoSaveComponent from '../utility/AutoSave';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
+import { useAutoSave } from '@/hooks/useAutoSave';
 import { Button } from '../ui/button';
 import RevisePanel from './RevisePanel';
 
@@ -38,6 +39,9 @@ export default function NavbarQuizAction() {
     const { updateQuiz: updateAllQuiz } = useAllQuizsStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const router = useRouter();
+
+    // Activate Google Docs-style auto-save (IndexedDB + lifecycle server sync)
+    useAutoSave();
 
     useEffect(() => {
         if (!currentAction) return;
@@ -169,7 +173,7 @@ export default function NavbarQuizAction() {
             {quiz.status !== QuizStatusEnum.NULL && (
                 <QuizStatusTicker className="" status={quiz?.status} />
             )}
-            <ToolTipComponent content={'this will be saved every 30sec'}>
+            <ToolTipComponent content={'auto saves to local, syncs on tab switch'}>
                 <Button
                     onClick={() => setActionsPanel((prev) => !prev)}
                     disabled={isLoading}
