@@ -13,7 +13,7 @@ export default function PremiumPage() {
             <SectionDivider />
             <PremiumFeaturesComponent />
             <SectionDivider />
-            <PremiumSubscriptionCards/>
+            <PremiumSubscriptionCards />
             <LandingFooter />
         </div>
     );

@@ -372,7 +372,10 @@ export default function LandingHeroSection() {
                                             initial={{ x: '-100%' }}
                                             animate={{ x: '100%' }}
                                             exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                            transition={{
+                                                duration: 0.8,
+                                                ease: [0.25, 0.46, 0.45, 0.94],
+                                            }}
                                         />
                                     )}
                                 </AnimatePresence>
@@ -388,7 +391,10 @@ export default function LandingHeroSection() {
                                             initial={{ opacity: 0, y: 6 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                            transition={{
+                                                duration: 0.5,
+                                                ease: [0.25, 0.46, 0.45, 0.94],
+                                            }}
                                         >
                                             <div className="flex items-center gap-x-2">
                                                 <div className="h-6 w-6 shrink-0 rounded-md bg-alpha/10 flex items-center justify-center text-alpha">
@@ -420,7 +426,10 @@ export default function LandingHeroSection() {
                                     { src: '/images/card-2.jpg', label: 'Orbits', stage: 2 },
                                     { src: '/images/card-3.jpg', label: 'Black Holes', stage: 2 },
                                 ].map((card, i) => (
-                                    <div key={card.label} className="flex-1 min-w-0 h-full rounded-lg overflow-hidden">
+                                    <div
+                                        key={card.label}
+                                        className="flex-1 min-w-0 h-full rounded-lg overflow-hidden"
+                                    >
                                         <AnimatePresence mode="wait">
                                             {quizStage >= card.stage ? (
                                                 <motion.div
@@ -469,7 +478,10 @@ export default function LandingHeroSection() {
                                             initial={{ opacity: 0, y: 6 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                            transition={{
+                                                duration: 0.5,
+                                                ease: [0.25, 0.46, 0.45, 0.94],
+                                            }}
                                         >
                                             <div className="flex items-center gap-x-1.5">
                                                 <div className="flex -space-x-1.5">

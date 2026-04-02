@@ -296,7 +296,7 @@ export default function PrizeDistributionConfig({
                             )}
                             onClose={onClose}
                         >
-                            <section className='w-full h-56 shrink-0 relative'>
+                            <section className="w-full h-56 shrink-0 relative">
                                 <Image
                                     src={'/images/landing/buttonPressYellow.png'}
                                     alt="sign-in image"
@@ -305,9 +305,7 @@ export default function PrizeDistributionConfig({
                                     unoptimized
                                 />
                             </section>
-                            <div
-                                className="grid grid-cols-[1fr_1fr] flex-1 min-h-0 overflow-hidden"
-                            >
+                            <div className="grid grid-cols-[1fr_1fr] flex-1 min-h-0 overflow-hidden">
                                 <div className="p-8 flex flex-col min-h-0 overflow-hidden">
                                     <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
                                         <div>
@@ -333,8 +331,8 @@ export default function PrizeDistributionConfig({
                                                 distributed to.
                                             </div>
                                             <div>
-                                                3. Edit the percentage for every rank — keep total at
-                                                100%.
+                                                3. Edit the percentage for every rank — keep total
+                                                at 100%.
                                             </div>
                                             <div>
                                                 4. Once you confirm, changes cannot be reverted.

@@ -17,7 +17,7 @@ const socialIcons = [
 
 export default function LandingFooter() {
     return (
-        <main className='max-w-270 mx-auto w-full'>
+        <main className="max-w-270 mx-auto w-full">
             <PerspectiveCard className="w-full mt-15 mb-3 pb-0! rounded-3xl!">
                 <footer className="w-full  pb-0">
                     <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
@@ -31,9 +31,9 @@ export default function LandingFooter() {
                                     />
                                 </div>
                                 <p className="text-sm leading-relaxed text-light-base/50 max-w-sm">
-                                    Nocturn is a live quiz platform where knowledge pays off. Compete in
-                                    real-time multiplayer quizzes, collaborate on quiz creation, and win
-                                    prizes from blockchain-powered prize pools.
+                                    Nocturn is a live quiz platform where knowledge pays off.
+                                    Compete in real-time multiplayer quizzes, collaborate on quiz
+                                    creation, and win prizes from blockchain-powered prize pools.
                                 </p>
                             </section>
 
@@ -75,10 +75,10 @@ export default function LandingFooter() {
                     </main>
                 </footer>
             </PerspectiveCard>
-            <section className='max-w-270 mx-auto w-full space-y-2 mb-4'>
-                <div className='w-[95%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-1' />
-                <div className='w-[90%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-2 [animation-delay:0.3s]' />
-                <div className='w-[85%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-3 [animation-delay:0.6s]' />
+            <section className="max-w-270 mx-auto w-full space-y-2 mb-4">
+                <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-1" />
+                <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-2 [animation-delay:0.3s]" />
+                <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-3 [animation-delay:0.6s]" />
             </section>
         </main>
     );

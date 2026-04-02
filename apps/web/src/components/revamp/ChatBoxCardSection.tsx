@@ -11,8 +11,6 @@ import InstructionSectionHoverCard from '../test/InstructionSectionCards/Instruc
 import { PublishCardContent } from '../test/InstructionSectionCards/PublishCardContent';
 import StakeSolanaCardContent from '../test/InstructionSectionCards/StakeSolanaCardContent';
 import { ManageCardContent } from '../test/InstructionSectionCards/ManageCardContent';
-import InstructionSectionChatBox from '../test/InstructionSectionCards/InstructionSectionChatBox';
-import InformationHeadingSection from './InformationHeadingSection';
 
 export default function ChatBoxCardSection(): JSX.Element {
     const controls = useAnimation();
@@ -34,7 +32,6 @@ export default function ChatBoxCardSection(): JSX.Element {
             onViewportEnter={startSequence}
             className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-5xl mt-10"
         >
-           
             <div className="h-150 w-full bg-[#e9ecef] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}
                 <div className="relative w-full max-w-216 h-65 z-20 -top-18 -left-5">

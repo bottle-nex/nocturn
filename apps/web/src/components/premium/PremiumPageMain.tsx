@@ -1,7 +1,5 @@
 'use client';
 import { JSX } from 'react';
-import { Button } from '../ui/button';
-import { MdKeyboardArrowRight } from 'react-icons/md';
 import { useMotionValue } from 'framer-motion';
 import LandingSectionLeftCard from '../test/LandingSectionCards/LandingSectionLeftCard';
 import LandingSectionMidCard from '../test/LandingSectionCards/LandingSectionMidCard';

@@ -96,10 +96,7 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
                         <MetricCell label="Questions" value={String(questionCount)} />
                         <MetricCell label="Duration" value={formatTime(totalTime)} accent />
                         <MetricCell label="Total Pts" value={totalPoints.toLocaleString()} />
-                        <MetricCell
-                            label="Multiplier"
-                            value={`${quiz.pointsMultiplier || 1}x`}
-                        />
+                        <MetricCell label="Multiplier" value={`${quiz.pointsMultiplier || 1}x`} />
                     </div>
 
                     {/* Two-column body */}
@@ -234,15 +231,7 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
     );
 }
 
-function MetricCell({
-    label,
-    value,
-    accent,
-}: {
-    label: string;
-    value: string;
-    accent?: boolean;
-}) {
+function MetricCell({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
     return (
         <div
             className={`rounded-xl p-3.5 border ${

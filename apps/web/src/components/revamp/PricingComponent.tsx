@@ -30,7 +30,6 @@ import { toast } from '@/lib/toast';
 import axios from 'axios';
 import LandingSectionHeader from '../refactor/LandingSectionHeader';
 import PerspectiveCard from '../utility/PerspectiveCard';
-import NotFoundDiagonalGrid from '../notFound/NotFoundDiagonalGrid';
 
 interface PricingComponentProps {
     showHeading?: boolean;

@@ -1,7 +1,7 @@
-import AICreateCard from "./HeroSectionCards/AICreateCard";
-import BeginnerGuideCard from "./HeroSectionCards/BeginnerGuideCard";
-import DifficultyCard from "./HeroSectionCards/DifficultyCard";
-import ManualEditCard from "./HeroSectionCards/ManualEditCard";
+import AICreateCard from './HeroSectionCards/AICreateCard';
+import BeginnerGuideCard from './HeroSectionCards/BeginnerGuideCard';
+import DifficultyCard from './HeroSectionCards/DifficultyCard';
+import ManualEditCard from './HeroSectionCards/ManualEditCard';
 
 export default function AIGenHeroSection() {
     return (
@@ -15,9 +15,9 @@ export default function AIGenHeroSection() {
                     Your shortcut to host quick quizzes in less time
                 </div>
                 <div className="text-[18px] text-dark-base/60 max-w-xl leading-[1.2]">
-                    In nocturn you can create quizzes either manually, or use Nocturn AI to
-                    create instant quizzes and serve you on your table with all the tweaks that
-                    you need. This thing is addictive.
+                    In nocturn you can create quizzes either manually, or use Nocturn AI to create
+                    instant quizzes and serve you on your table with all the tweaks that you need.
+                    This thing is addictive.
                 </div>
             </div>
         </div>
