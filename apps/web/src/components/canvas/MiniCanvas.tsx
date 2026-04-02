@@ -55,7 +55,6 @@ export default function MiniCanvas({
 
     function handleRemoveQuestion() {
         removeQuestion?.(orderIndex);
-        handleQuestionChange?.(orderIndex);
         setOpenMiniCanvasOptions(false);
     }
 

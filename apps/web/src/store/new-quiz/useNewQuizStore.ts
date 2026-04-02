@@ -145,13 +145,27 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
 
     removeQuestion: (index: number) => {
         const quiz = get().quiz;
+        if (quiz.questions.length <= 1) return;
+        const currentIdx = get().currentQuestionIndex;
         const updatedQuestions = quiz.questions
             .filter((_, i) => i !== index)
             .map((q, i) => ({ ...q, orderIndex: i }));
 
+        // Determine the new current question index
+        let newIndex: number;
+        if (updatedQuestions.length === 0) {
+            newIndex = 0;
+        } else if (currentIdx >= updatedQuestions.length) {
+            newIndex = updatedQuestions.length - 1;
+        } else if (index < currentIdx) {
+            newIndex = currentIdx - 1;
+        } else {
+            newIndex = Math.min(currentIdx, updatedQuestions.length - 1);
+        }
+
         set({
             quiz: { ...quiz, questions: updatedQuestions },
-            currentQuestionIndex: Math.min(get().currentQuestionIndex, updatedQuestions.length - 1),
+            currentQuestionIndex: Math.max(0, newIndex),
         });
     },
 
