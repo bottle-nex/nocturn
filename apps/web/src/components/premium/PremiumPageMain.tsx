@@ -24,28 +24,6 @@ export default function PremiumPageMain(): JSX.Element {
             onMouseMove={handleMouseMove}
             className="w-full z-10 relative min-h-screen flex flex-col items-center justify-center"
         >
-            <div className="flex flex-col items-center px-6 text-center z-10 w-full h-full mt-40">
-                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">
-                    Unlock premium quizzes
-                </h1>
-                <h1 className="text-4xl md:text-8xl font-semibold animated-gradient-text text-nowrap">
-                    & exclusive experiences
-                </h1>
-                <p className="block text-center mt-8 max-w-5xl">
-                    Elevate your quiz game with Nocturn Premium. Get access to AI-powered quiz
-                    generation, unlimited participants, advanced analytics, and Solana prize pools
-                    to make every quiz unforgettable.
-                </p>
-                <section className="mt-8 flex items-center justify-center">
-                    <Button className="px-8 py-4.75 bg-dark-base hover:bg-dark-alpha dark:bg-light-base dark:hover:bg-light-alpha font-medium rounded-xl shadow-[inset_0_1.5px_0_rgba(255,255,255,0.15)] transition-all cursor-pointer flex items-center gap-3 border border-dark-base">
-                        Explore premium
-                    </Button>
-                    <Button className="px-8 py-5 bg-white hover:bg-light-alpha dark:bg-dark-base text-dark-base dark:text-light-base font-medium rounded-xl transition-all cursor-pointer flex items-center gap-3 ml-4">
-                        Start creating quiz
-                        <MdKeyboardArrowRight className="text-neutral-500 text-xl" />
-                    </Button>
-                </section>
-            </div>
             <div className="w-full flex justify-center items-center mt-20 relative">
                 <div className="flex items-center justify-center gap-8 flex-wrap ">
                     <LandingSectionLeftCard />

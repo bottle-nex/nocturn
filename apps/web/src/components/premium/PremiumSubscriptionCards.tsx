@@ -14,12 +14,12 @@ const iconMap: Record<string, LucideIcon> = {
 
 export default function PremiumSubscriptionCards() {
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-15 pb-10">
             <LandingSectionHeader
-                heading=""
-                subheading=""
+                heading="Unlock Premium Features"
+                subheading="Upgrade your experience with powerful tools and benefits."
             />
-            <div className="flex gap-x-10 justify-between w-full max-w-5xl">
+            <div className="flex gap-x-10 justify-between w-full max-w-5xl mt-15">
                 {premium_features.map((tier) => {
                     const isDark = tier.id === "pro";
                     const BadgeIcon = tier.badge ? iconMap[tier.badge.icon] : null;

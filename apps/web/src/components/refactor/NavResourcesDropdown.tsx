@@ -45,7 +45,7 @@ const resourceItems: ResourceItem[] = [
         description: 'Generate quizzes with AI in seconds.',
         color: '#7c3aed',
         bgColor: '#f5f3ff',
-        href: '',
+        href: '/resources/ai-generation',
     },
 ];
 

@@ -17,7 +17,7 @@ export default function PremiumFeaturesComponent() {
                 subheading="Try it free. Stay for the control, speed, and experience."
             />
 
-            <div className="flex flex-col mt-5">
+            <div className="flex flex-col mt-10">
                 <div className="text-dark-base font-semibold text-4xl mb-6 mt-10 px-4">
                     Free Perks
                 </div>
