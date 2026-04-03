@@ -8,7 +8,6 @@ import { FaHeart, FaLightbulb } from 'react-icons/fa6';
 import { BsFillHandThumbsUpFill } from 'react-icons/bs';
 import { MdEmojiEmotions } from 'react-icons/md';
 import { PiCurrencyCircleDollarFill } from 'react-icons/pi';
-import { usePointsMultiplierAdvStore } from '@/store/new-quiz/usePointsMultiplierAdvStore';
 
 interface RevisePanelProps {
     onBackgroundClick: () => void;
@@ -26,7 +25,6 @@ const interactionIcons = {
 
 export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }: RevisePanelProps) {
     const { quiz } = useNewQuizStore();
-    const { inputPointMultiplier, multiplierType } = usePointsMultiplierAdvStore();
 
     const questionCount = quiz.questions.length;
     const totalAnswerTime = quiz.questions.reduce(
@@ -52,35 +50,28 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
 
     return (
         <OpacityBackground onBackgroundClick={onBackgroundClick} escapeClosing>
-            <UtilityCard className="max-w-sm w-full bg-white dark:bg-[#0D0D0D] rounded-xl p-0 border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden">
-                {/* Header */}
+            <UtilityCard className="max-w-sm w-full bg-white dark:bg-[#0D0D0D] rounded-lg p-0 border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden">
                 <div className="px-6 pt-6 pb-4">
-                    <div className="w-full flex justify-between items-center">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 mb-1">
-                            Final Review
-                        </p>
-                        <p className="text-red-500/60 text-xs">
-                            You wont be able to make changes after this
+                    <div className="w-full flex flex-col items-start">
+                        <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mb-1 flex justify-between gap-x-1.5">
+                            <span className='uppercase font-semibold tracking-wider'>Final Review</span> 
+                            <span>
+                                {"("}You won't be able to make any changes after this{")"}
+                            </span>
                         </p>
                     </div>
-                    <h1 className="text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-                        {quiz.title || 'Untitled Quiz'}
+                    <h1 className="text-xl font-semibold tracking-normal text-neutral-900 dark:text-neutral-100">
+                        Quiz Title:{" "} {quiz.title || 'Untitled Quiz'}
                     </h1>
                 </div>
 
-                <div className="px-6 pb-6 flex flex-col gap-y-5">
-                    {/* theme,  */}
+                <div className="px-6 pb-6 flex flex-col gap-y-4">
 
                     <section className="space-y-2">
                         <SectionLabel label="General" />
                         <div className="space-y-1.5">
                             <Row label="Questions" value={questionCount} />
                             <Row label="Duration" value={formatTime(totalTime)} />
-                            <Row label="Points" value={totalPoints.toLocaleString()} />
-                            <Row label="Points Multiplier" value={`${inputPointMultiplier}x`} />
-                            {multiplierType && (
-                                <Row label="Multiplier Type" value={multiplierType!} />
-                            )}
                         </div>
                     </section>
 
@@ -137,11 +128,10 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
                     </section>
                 </div>
 
-                {/* Footer */}
                 <div className="px-6 py-4 bg-neutral-50 dark:bg-neutral-900/20 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
                     <button
                         onClick={onBackgroundClick}
-                        className="text-[12px] font-medium text-neutral-400 hover:text-neutral-600 transition-colors"
+                        className="text-[12px] font-medium text-neutral-400 hover:text-neutral-500 transition-colors cursor-pointer"
                     >
                         Go back
                     </button>
@@ -149,14 +139,14 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
                     <Button
                         onClick={onConfirm}
                         disabled={isLoading || isAlreadyPublished}
-                        className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all shadow-sm ${
+                        className={`px-5 py-2 rounded-sm text-[12px] font-semibold transition-all shadow-sm ${
                             isAlreadyPublished
                                 ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
                                 : 'bg-neutral-900 dark:bg-white text-white dark:text-black hover:opacity-90'
                         }`}
                     >
                         {isLoading && <PiSpinnerThin className="animate-spin size-3 mr-2 inline" />}
-                        {isAlreadyPublished ? 'Published' : 'Confirm Launch'}
+                        {isAlreadyPublished ? 'Published' : 'Confirm Publish'}
                     </Button>
                 </div>
             </UtilityCard>
