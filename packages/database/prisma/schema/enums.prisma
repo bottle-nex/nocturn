@@ -19,6 +19,7 @@ enum TemplateEnum {
     YELLOW
     GREEN
     BLUE
+    CUSTOM
 }
 
 enum Interactions {

@@ -1,6 +1,6 @@
 model Template {
     id              String       @id @default(cuid())
-    name            TemplateEnum @unique @default(CLASSIC)
+    name            TemplateEnum @default(CLASSIC)
     backgroundColor String       @map("background_color")
     textColor       String       @map("text_color")
     borderColor     String       @map("border_color")
@@ -8,6 +8,9 @@ model Template {
     accentColor     String       @map("accent_color")
     bars            String[]
     src             String
+
+    userId          String?
+    user            User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

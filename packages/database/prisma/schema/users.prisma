@@ -16,6 +16,7 @@ model User {
     lastLoginAt DateTime @default(now())
 
     Quiz Quiz[]
+    templates Template[]
 
     reviews   Review[]
     quizViews QuizViews[]
