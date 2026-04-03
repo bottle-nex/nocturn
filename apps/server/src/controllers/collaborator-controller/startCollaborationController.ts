@@ -84,6 +84,9 @@ export default async function startCollaborationController(req: Request, res: Re
                     userId: user.id.toString(),
                     role: CollabRole.HOST,
                     joinedAt: new Date(),
+                    color: `#${Math.floor(Math.random() * 16777215)
+                        .toString(16)
+                        .padStart(6, '0')}`,
                 },
             });
 
