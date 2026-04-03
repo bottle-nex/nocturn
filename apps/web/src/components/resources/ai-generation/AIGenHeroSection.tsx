@@ -11,7 +11,7 @@ export default function AIGenHeroSection() {
             <DifficultyCard />
             <ManualEditCard />
             <div className="absolute bottom-8 left-0 text-7xl text-dark-base flex flex-col gap-y-6">
-                <div className="max-w-200 font-semibold">
+                <div className="max-w-200 font-bold">
                     Your shortcut to host quick quizzes in less time
                 </div>
                 <div className="text-[18px] text-dark-base/60 max-w-xl leading-[1.2]">

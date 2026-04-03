@@ -1,65 +1,74 @@
-function EditWidget() {
-    return (
-        <div className="flex flex-col gap-y-2 px-3 mt-3">
-            <div className="bg-light-alpha ring-1 ring-black/5 rounded-lg p-2.5 flex flex-col gap-y-1.5">
-                <div className="text-[10px] font-semibold text-dark-base/70">
-                    Q3. What is a blockchain?
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full ring-1 ring-black/20 shrink-0" />
-                    <div className="h-1.5 flex-1 bg-dark-base/10 rounded-full" />
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full bg-dark-base shrink-0 flex items-center justify-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                    </div>
-                    <div className="h-1.5 w-[55%] bg-dark-base/20 rounded-full" />
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full ring-1 ring-black/20 shrink-0" />
-                    <div className="h-1.5 w-[40%] bg-dark-base/10 rounded-full" />
-                </div>
-            </div>
-            <div className="bg-light-alpha ring-1 ring-black/5 rounded-lg p-2.5 flex flex-col gap-y-1.5">
-                <div className="text-[10px] font-semibold text-dark-base/70">
-                    Q3. Which is best quiz platform?
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full ring-1 ring-black/20 shrink-0" />
-                    <div className="h-1.5 flex-1 bg-dark-base/10 rounded-full" />
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full bg-dark-base shrink-0 flex items-center justify-center">
-                        <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                    </div>
-                    <div className="h-1.5 w-[55%] bg-dark-base/20 rounded-full" />
-                </div>
-                <div className="flex items-center gap-x-1.5">
-                    <div className="h-3 w-3 rounded-full ring-1 ring-black/20 shrink-0" />
-                    <div className="h-1.5 w-[40%] bg-dark-base/10 rounded-full" />
-                </div>
-            </div>
-            {/* <div className="flex items-center gap-x-1.5 bg-light-alpha rounded-lg px-2.5 py-1.5 ring-1 ring-black/5">
-                <PenLine className="size-3 text-dark-base/50 shrink-0" />
-                <span className="text-[10px] text-dark-base/50">Click any field to edit inline</span>
-            </div> */}
-        </div>
-    );
-}
+'use client';
+import { Edit3, MousePointer2, Layers, Wand2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { TbTemplate } from 'react-icons/tb';
 
 export default function ManualEditCard() {
     return (
-        <div className="h-65 w-65 ring-1 ring-black/10 rounded-xl flex flex-col overflow-hidden shadow-sm shadow-black/10 absolute bg-[#fffaf9] -right-4 -rotate-4 select-none">
-            <div className="bg-[#FF3200] h-9 w-full text-light-base text-sm px-3.5 flex items-center shrink-0">
-                Fine-tune your quiz
-            </div>
-            <div className="flex flex-col py-3 px-4">
-                <div className="text-dark-base/60 text-base font-semibold">Manual Edit</div>
-                <div className="text-[13px] text-dark-base/60">
-                    Tweak questions after AI generates them
+        <motion.div
+            initial={{ opacity: 0, rotate: -4, x: 20 }}
+            animate={{ opacity: 1, rotate: -4, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+            className="h-72 w-65 rounded-2xl bg-[#C2410C] border border-white/20 shadow-[0_30px_60px_rgba(194,65,12,0.3)] absolute -right-4 top-30 overflow-hidden flex flex-col p-6 select-none"
+        >
+            <div className="flex items-center justify-between mb-6">
+                <div className="size-9 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
+                    <Edit3 className="size-4 text-white" />
                 </div>
             </div>
-            <EditWidget />
-        </div>
+
+            <div className="mb-4">
+                <div className="text-white text-[18px] font-black tracking-tight leading-none mb-1">
+                    Flexible Edit
+                </div>
+                <div className="text-white/60 text-[11px] font-medium leading-tight">
+                    Refine your questions on a <br />
+                    <span className="text-white">limitless digital canvas.</span>
+                </div>
+            </div>
+
+            <div className="relative flex-1 bg-black/20 rounded-xl border border-white/10 p-4 overflow-hidden">
+                <div className="space-y-2">
+                    <div className="h-1.5 w-20 bg-white/40 rounded-full" />
+                    <div className="h-1.5 w-full bg-white/10 rounded-full" />
+                </div>
+
+                <motion.div
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="absolute bottom-2 right-2 bg-white rounded-md p-2 shadow-xl flex items-center gap-2"
+                >
+                    <div className="size-5 rounded bg-[#C2410C]/10 flex items-center justify-center text-[#C2410C]">
+                        <TbTemplate className="size-3" />
+                    </div>
+                    <div className="flex flex-col pr-1">
+                        <span className="text-[7px] font-bold text-black/30 uppercase leading-none">
+                            THEME
+                        </span>
+                        <span className="text-[9px] font-black text-black leading-none">
+                            MODERN
+                        </span>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    animate={{ x: [0, 30, 10], y: [0, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4 }}
+                    className="absolute top-1/2 left-1/3"
+                >
+                    <MousePointer2 className="size-4 text-white fill-white drop-shadow-lg" />
+                </motion.div>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between opacity-40">
+                <div className="flex gap-2.5 text-white">
+                    <Layers className="size-3.5" />
+                    <Wand2 className="size-3.5" />
+                </div>
+                <span className="text-[9px] font-black text-white tracking-widest uppercase">
+                    Nocturn AI
+                </span>
+            </div>
+        </motion.div>
     );
 }

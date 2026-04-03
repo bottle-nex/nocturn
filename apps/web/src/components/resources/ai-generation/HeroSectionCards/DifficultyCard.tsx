@@ -1,47 +1,62 @@
-import { MdSignalCellular1Bar, MdSignalCellular2Bar, MdSignalCellular4Bar } from 'react-icons/md';
+'use client';
+import { ImStatsBars } from 'react-icons/im';
+import { motion } from 'framer-motion';
 
 export default function DifficultyCard() {
     return (
-        <div className="h-65 w-65 ring-1 ring-black/10 rounded-xl flex flex-col overflow-hidden shadow-sm shadow-black/10 absolute rotate-6 bg-[#f9fcff] right-[23%] top-40 select-none">
-            <div
-                className="absolute inset-0 opacity-[0.025] pointer-events-none"
-                style={{
-                    backgroundImage: 'radial-gradient(circle, black 1px, transparent 1px)',
-                    backgroundSize: '16px 16px',
-                }}
-            />
-            <div className="bg-[#008AFF] h-9 w-full text-light-base text-sm px-3.5 flex items-center shrink-0 z-10">
-                Control the challenge
-            </div>
+        <motion.div
+            initial={{ opacity: 0, rotate: 6, y: 20 }}
+            animate={{ opacity: 1, rotate: 6, y: 0 }}
+            className="h-72 w-65 rounded-2xl bg-dark-base border border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.4)] absolute right-[23%] top-40 overflow-hidden flex flex-col p-6 select-none group"
+        >
+            {/* Subtle Gradient Glow */}
+            <div className="absolute top-0 right-0 size-24 bg-[#FF3200]/10 blur-[50px] pointer-events-none" />
 
-            <div className="flex flex-col py-3 px-4 z-10">
-                <div className="text-dark-base/60 text-base font-semibold">Set Difficulty</div>
-                <div className="text-[13px] text-dark-base/60 leading-[1.1]">
-                    Feel the quiz is easy, upgrade the difficulty
+            <div className="flex items-center justify-between mb-6 z-10">
+                <div className="size-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <ImStatsBars className="size-4 text-[#ff4c1f]" />
+                </div>
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 text-[9px] font-bold text-white/40 tracking-widest uppercase">
+                    LEVEL_SYNC
                 </div>
             </div>
 
-            <div className="w-full flex justify-between gap-x-2 px-3.5 mt-4 z-10">
-                <div className="h-8 w-22 rounded-sm flex gap-x-1 px-2 items-center text-sm text-neutral-500 hover:bg-black/3 transition cursor-pointer">
-                    <MdSignalCellular1Bar className="text-emerald-500" />
-                    Easy
+            <div className="mb-4 z-10">
+                <div className="text-white text-[18px] font-black tracking-tighter leading-none mb-1">
+                    Difficulty
                 </div>
-
-                <div className="h-8 w-22 rounded-sm flex gap-x-1 px-2 items-center text-sm text-neutral-700 bg-white ring-1 ring-black/10 shadow-sm shadow-black/5 -translate-y-1 -rotate-3 cursor-pointer">
-                    <MdSignalCellular2Bar className="text-amber-500" />
-                    Medium
-                </div>
-
-                <div className="h-8 w-22 rounded-sm flex gap-x-1 px-2 items-center text-sm text-neutral-500 hover:bg-black/3 transition cursor-pointer">
-                    <MdSignalCellular4Bar className="text-rose-500" />
-                    Hard
+                <div className="text-white/40 text-[11px] font-medium leading-tight">
+                    Scale the challenge to <br />
+                    <span className="text-[#FF3200]/80 italic font-semibold">
+                        maximize your rewards.
+                    </span>
                 </div>
             </div>
 
-            {/* very subtle bottom hint (no push effect) */}
-            <div className="px-4 mt-3 text-[11px] text-dark-base/30 z-10">
-                More difficulty → more reward
+            {/* Abstract Dial Metaphor */}
+            <div className="relative flex-1 flex flex-col justify-center gap-4 z-10">
+                <div className="flex items-end justify-between h-12 gap-1.5 px-1">
+                    {[0.3, 0.5, 1.0, 0.6, 0.4].map((h, i) => (
+                        <div
+                            key={i}
+                            style={{ height: `${h * 100}%` }}
+                            className={`w-full rounded-t-sm transition-all duration-500 ${i === 2 ? 'bg-[#FF3200] shadow-[0_0_20px_rgba(255,50,0,0.5)]' : 'bg-white/10'}`}
+                        />
+                    ))}
+                </div>
+
+                <div className="h-11 bg-white/5 border border-white/10 rounded-lg p-1 flex gap-1">
+                    <div className="flex-1 flex items-center justify-center text-[9px] font-semibold tracking-wider text-white/20">
+                        EASY
+                    </div>
+                    <div className="flex-1 bg-[#ff4213] rounded-md flex items-center justify-center text-[10px] text-white shadow-[0_0_15px_rgba(255,50,0,0.3)] uppercase tracking-wider font-semibold">
+                        Medium
+                    </div>
+                    <div className="flex-1 flex items-center justify-center text-[9px] font-semibold tracking-wider text-white/20">
+                        HARD
+                    </div>
+                </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
