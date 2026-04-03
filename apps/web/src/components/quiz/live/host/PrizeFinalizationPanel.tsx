@@ -4,25 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import axios from 'axios';
-import { GET_PRIZE_CLAIMS_URL, AUTHORIZE_CONFIRM_URL } from 'routes/api_routes';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { motion } from 'framer-motion';
-import { getProgram } from '@/lib/solana/program';
-import { buildAuthorizePlatformTx } from '@/lib/solana/transactions';
-
-interface PrizeClaim {
-    id: string;
-    rank: number;
-    amount: number;
-    amountBaseUnits: string;
-    status: string;
-    participant: {
-        nickname: string;
-        avatar: string | null;
-        email: string;
-    };
-}
+import SolanaAction, { type PrizeClaim } from '@/lib/solana/SolanaAction';
 
 type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'complete' | 'error';
 
@@ -51,12 +35,11 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
 
     const fetchClaims = useCallback(async () => {
         try {
-            const res = await axios.get(`${GET_PRIZE_CLAIMS_URL}/${quizId}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                },
-            });
-            setClaims(res.data.data);
+            const claims = await SolanaAction.fetchPrizeClaims(
+                localStorage.getItem('accessToken')!,
+                quizId,
+            );
+            setClaims(claims);
             setStep('ready');
         } catch {
             setError('Failed to fetch prize claims');
@@ -80,30 +63,27 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
             const platformPubkey = new PublicKey(
                 process.env.NEXT_PUBLIC_PLATFORM_AUTHORITY_PUBKEY!,
             );
-            const program = getProgram(connection, anchorWallet);
+            const program = SolanaAction.getProgram(connection, anchorWallet);
 
-            const tx = await buildAuthorizePlatformTx(program, quizId, platformPubkey, publicKey);
-            tx.feePayer = publicKey;
-            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-            tx.recentBlockhash = blockhash;
-
-            const signed = await signTransaction(tx);
-            const txSignature = await connection.sendRawTransaction(signed.serialize());
-            await connection.confirmTransaction(
-                { signature: txSignature, blockhash, lastValidBlockHeight },
-                'confirmed',
+            const tx = await SolanaAction.buildAuthorizePlatformTx(
+                program,
+                quizId,
+                platformPubkey,
+                publicKey,
+            );
+            const txSignature = await SolanaAction.signSendAndConfirm(
+                connection,
+                tx,
+                publicKey,
+                signTransaction,
             );
 
             setStep('finalizing');
 
-            await axios.post(
-                `${AUTHORIZE_CONFIRM_URL}/${quizId}`,
-                { txSignature },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                    },
-                },
+            await SolanaAction.authorizeConfirm(
+                localStorage.getItem('accessToken')!,
+                quizId,
+                txSignature,
             );
 
             setStep('complete');

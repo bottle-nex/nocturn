@@ -12,6 +12,11 @@ import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import UtilityCard from '@/components/utility/UtilityCard';
 import { AnimatePresence, motion } from 'motion/react';
+import axios from 'axios';
+import { SET_PRIZE_DISTRIBUTION_URL } from 'routes/api_routes';
+import { toast } from '@/lib/toast';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
+import SolanaAction from '@/lib/solana/SolanaAction';
 
 const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     1: [100],
@@ -197,10 +202,12 @@ export default function StakeConfigModal({
     onClose: () => void;
 }) {
     const { quiz, updateQuiz } = useNewQuizStore();
+    const { session } = useUserSessionStore();
     const [winnerCount, setWinnerCount] = useState(3);
     const [percentages, setPercentages] = useState<number[]>([50, 30, 20]);
 
     const [prizePool, setPrizePool] = useState(quiz.prizePool || 0);
+    const [confirming, setConfirming] = useState(false);
 
     useEffect(() => {
         setPrizePool(quiz.prizePool || 0);
@@ -260,12 +267,26 @@ export default function StakeConfigModal({
         autoSave(newPercentages);
     };
 
-    const handlePercentageChange = (index: number, value: number) => {
+    function handlePercentageChange(index: number, value: number) {
         const updated = [...percentages];
         updated[index] = isNaN(value) ? 0 : value;
         setPercentages(updated);
         autoSave(updated);
-    };
+    }
+
+    async function handleConfirm() {
+        if (!quiz.id || !isValid || !session?.user?.token) return;
+        setConfirming(true);
+        try {
+            await SolanaAction.configureDistribution(session.user.token, quiz.id, percentages);
+            toast.success('Prize distribution saved');
+            onClose();
+        } catch {
+            toast.error('Failed to save prize distribution');
+        } finally {
+            setConfirming(false);
+        }
+    }
 
     if (prizePool <= 0) return null;
 
@@ -289,7 +310,7 @@ export default function StakeConfigModal({
                             )}
                             onClose={onClose}
                         >
-                            <section className='w-full h-56 shrink-0 relative'>
+                            <section className="w-full h-56 shrink-0 relative">
                                 <Image
                                     src={'/images/landing/buttonPressYellow.png'}
                                     alt="sign-in image"
@@ -298,11 +319,12 @@ export default function StakeConfigModal({
                                     unoptimized
                                 />
                             </section>
-                            <div
-                                className="grid grid-cols-[1fr_1fr] flex-1 min-h-0 overflow-hidden"
-                            >
+                            <div className="grid grid-cols-[1fr_1fr] flex-1 min-h-0 overflow-hidden">
                                 <div className="p-8 flex flex-col min-h-0 overflow-hidden">
-                                    <div className="flex-1 min-h-0 overflow-y-auto space-y-6">
+                                    <div
+                                        className="flex-1 min-h-0 overflow-y-auto space-y-6 custom-scrollbar"
+                                        data-lenis-prevent
+                                    >
                                         <div>
                                             <div className="text-lg dark:text-white text-neutral-900 font-medium">
                                                 Configure Stake
@@ -326,8 +348,8 @@ export default function StakeConfigModal({
                                                 distributed to.
                                             </div>
                                             <div>
-                                                3. Edit the percentage for every rank — keep total at
-                                                100%.
+                                                3. Edit the percentage for every rank — keep total
+                                                at 100%.
                                             </div>
                                             <div>
                                                 4. Once you confirm, changes cannot be reverted.
@@ -337,14 +359,17 @@ export default function StakeConfigModal({
 
                                     <div className="shrink-0 pt-4">
                                         <Button
+                                            onClick={handleConfirm}
+                                            disabled={!isValid || confirming}
                                             className={cn(
                                                 'dark:bg-light-base dark:hover:bg-light-base bg-dark-alpha hover:bg-neutral-800',
                                                 'active:scale-[0.98] cursor-pointer',
                                                 'w-full dark:text-dark-base text-white py-5.5 rounded-xl!',
                                                 'inset-shadow-xs inset-shadow-white/30 ring-1 ring-dark-alpha',
+                                                'disabled:opacity-50 disabled:cursor-not-allowed',
                                             )}
                                         >
-                                            Confirm Configuration
+                                            {confirming ? 'Saving...' : 'Confirm Distribution'}
                                         </Button>
                                     </div>
                                 </div>

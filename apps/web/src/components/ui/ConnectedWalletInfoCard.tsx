@@ -5,8 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import AppLogo from '../app/AppLogo';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { USDC_MINT } from '@/lib/solana/program';
+import SolanaAction from '@/lib/solana/SolanaAction';
 
 export function ConnectedWalletInfoCard() {
     const { publicKey, wallet, connected, disconnect } = useWallet();
@@ -17,27 +16,10 @@ export function ConnectedWalletInfoCard() {
 
     const showAccountInfo = !!(publicKey && connected && balance !== null);
 
-    // Fetch SOL balance
     useEffect(() => {
         if (publicKey) {
-            connection.getBalance(publicKey).then((lamports) => {
-                setBalance(lamports / 1e9); // lamports → SOL
-            });
-
-            // Fetch USDC balance
-            try {
-                const ata = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
-                connection
-                    .getTokenAccountBalance(ata)
-                    .then((res) => {
-                        setUsdcBalance(Number(res.value.uiAmount ?? 0));
-                    })
-                    .catch(() => {
-                        setUsdcBalance(0);
-                    });
-            } catch {
-                setUsdcBalance(0);
-            }
+            SolanaAction.getSolBalance(connection, publicKey).then(setBalance);
+            SolanaAction.getUsdcBalance(connection, publicKey).then(setUsdcBalance);
         }
     }, [publicKey, connection]);
 

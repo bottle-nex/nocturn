@@ -7,6 +7,7 @@ import StakeAmountSection from '@/components/utility/StakeAmountSection';
 import ShowWalletInfo from '@/components/utility/ShowWalletInfo';
 import { useEffect, useState } from 'react';
 import StakeConfigModal from '@/components/utility/StakeConfigModal';
+import StakeConfirmButton from '@/components/quiz/new/StakeConfirmButton';
 
 export default function StakeDraft() {
     const { setState } = useDraftRendererStore();
@@ -49,6 +50,7 @@ export default function StakeDraft() {
             </div>
 
             <StakeAmountSection onConfigure={openModal} />
+            <StakeConfirmButton />
             <StakeConfigModal open={openConfig} onClose={closeModal} />
         </div>
     );

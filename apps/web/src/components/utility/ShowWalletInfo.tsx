@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { IoWalletOutline } from 'react-icons/io5';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -7,11 +7,8 @@ import { MdOutlineKey } from 'react-icons/md';
 import { PiCurrencyDollar } from 'react-icons/pi';
 import { LuCopy } from 'react-icons/lu';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-
-import { useEffect } from 'react';
 import { WalletPanel } from './WalletPanel';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { USDC_MINT } from '@/lib/solana/program';
+import SolanaAction from '@/lib/solana/SolanaAction';
 
 export default function ShowInfoToggle() {
     const [showInfo, setShowInfo] = useState(false);
@@ -28,21 +25,7 @@ export default function ShowInfoToggle() {
             setBalance(null);
             return;
         }
-
-        // Fetch USDC balance for staking display
-        try {
-            const ata = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
-            connection
-                .getTokenAccountBalance(ata)
-                .then((res) => {
-                    setBalance(Number(res.value.uiAmount ?? 0));
-                })
-                .catch(() => {
-                    setBalance(0);
-                });
-        } catch {
-            setBalance(0);
-        }
+        SolanaAction.getUsdcBalance(connection, publicKey).then(setBalance);
     }, [publicKey, connected, connection]);
 
     const handleCopy = () => {

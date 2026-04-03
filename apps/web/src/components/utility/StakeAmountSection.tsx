@@ -17,6 +17,7 @@ export default function StakeAmountSection({
 }) {
     const { quiz, updateQuiz } = useNewQuizStore();
     const [triggerError, setTriggerError] = useState<boolean>(false);
+    const alreadyStaked = !!quiz.escrowPda;
 
     const handleTriggerError = () => {
         setTriggerError(true);
@@ -62,7 +63,9 @@ export default function StakeAmountSection({
                     min={1}
                     max={10000}
                     step={0.01}
+                    readOnly={alreadyStaked}
                     onChange={(e) => {
+                        if (alreadyStaked) return;
                         const value = parseFloat(e.target.value);
                         updateQuiz({ prizePool: isNaN(value) ? 0 : value });
                     }}

@@ -5,15 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
-import axios from 'axios';
-import { GET_CLAIM_URL, CONFIRM_CLAIM_URL } from 'routes/api_routes';
-import { getProgram, USDC_MINT } from '@/lib/solana/program';
-import { buildClaimPrizeTx } from '@/lib/solana/transactions';
-import {
-    createAssociatedTokenAccountInstruction,
-    getAssociatedTokenAddressSync,
-    getAccount,
-} from '@solana/spl-token';
+import SolanaAction from '@/lib/solana/SolanaAction';
 
 function getRankLabel(rank: number): string {
     if (rank === 1) return '1st Place';
@@ -44,8 +36,7 @@ export default function ClaimPage() {
         }
 
         try {
-            const res = await axios.get(`${GET_CLAIM_URL}/${token}`);
-            const data = res.data.data;
+            const data = await SolanaAction.fetchClaimDetails(token);
             setClaimData(data);
 
             if (data.status === 'CLAIMED') {
@@ -70,42 +61,31 @@ export default function ClaimPage() {
         setPageStatus('claiming');
 
         try {
-            const program = getProgram(connection, anchorWallet);
+            const program = SolanaAction.getProgram(connection, anchorWallet);
 
-            // Ensure claimer has a USDC ATA, create if missing
-            const claimerAta = getAssociatedTokenAddressSync(USDC_MINT, publicKey);
-            let needsAta = false;
-            try {
-                await getAccount(connection, claimerAta);
-            } catch {
-                needsAta = true;
+            const { createInstruction } = await SolanaAction.ensureUsdcAta(connection, publicKey);
+
+            const tx = await SolanaAction.buildClaimPrizeTx(
+                program,
+                claimData.quizId,
+                token,
+                publicKey,
+            );
+
+            if (createInstruction) {
+                tx.instructions.unshift(createInstruction);
             }
 
-            const tx = await buildClaimPrizeTx(program, claimData.quizId, token, publicKey);
+            const txSignature = await SolanaAction.signSendAndConfirm(
+                connection,
+                tx,
+                publicKey,
+                signTransaction,
+            );
 
-            if (needsAta) {
-                const createAtaIx = createAssociatedTokenAccountInstruction(
-                    publicKey,
-                    claimerAta,
-                    publicKey,
-                    USDC_MINT,
-                );
-                tx.instructions.unshift(createAtaIx);
-            }
+            const res = await SolanaAction.confirmClaim(token, txSignature, publicKey.toBase58());
 
-            tx.feePayer = publicKey;
-            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-            const signed = await signTransaction(tx);
-            const txSignature = await connection.sendRawTransaction(signed.serialize());
-            await connection.confirmTransaction(txSignature, 'confirmed');
-
-            const res = await axios.post(`${CONFIRM_CLAIM_URL}/${token}/confirm`, {
-                txSignature,
-                claimerWallet: publicKey.toBase58(),
-            });
-
-            if (res.data.success) {
+            if (res.success) {
                 setPageStatus('claimed');
                 setClaimData({ ...claimData, status: 'CLAIMED', txSignature });
             }

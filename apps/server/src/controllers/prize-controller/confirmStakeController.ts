@@ -34,6 +34,17 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
+        if (quiz.escrowPda) {
+            ResponseWriter.error(
+                res,
+                'ALREADY_STAKED',
+                'Quiz already has an active stake',
+                undefined,
+                409,
+            );
+            return;
+        }
+
         // Verify the transaction on-chain
         const isValid = await solanaServiceInstance.verify_stake_tx(txSignature, escrowPda);
         if (!isValid.valid) {

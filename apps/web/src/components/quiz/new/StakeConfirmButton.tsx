@@ -4,11 +4,8 @@ import { useState } from 'react';
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { BN } from '@nocturn/contract';
-import axios from 'axios';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
-import { CONFIRM_STAKE_URL } from 'routes/api_routes';
-import { getProgram, getQuizPda, getEscrowPda } from '@/lib/solana/program';
-import { buildCreateQuizTx } from '@/lib/solana/transactions';
+import SolanaAction from '@/lib/solana/SolanaAction';
 import { Button } from '@/components/ui/button';
 
 type StakeStatus = 'idle' | 'signing' | 'confirming' | 'done' | 'error';
@@ -22,13 +19,15 @@ export default function StakeConfirmButton() {
     const anchorWallet = useAnchorWallet();
     const { connection } = useConnection();
 
+    const alreadyStaked = !!quiz.escrowPda;
     const isReady =
         publicKey &&
         signTransaction &&
         anchorWallet &&
         quiz.id &&
         quiz.prizePool > 0 &&
-        (quiz.prizeDistributions?.length ?? 0) > 0;
+        (quiz.prizeDistributions?.length ?? 0) > 0 &&
+        !alreadyStaked;
 
     async function handleStake() {
         if (!isReady) return;
@@ -37,10 +36,10 @@ export default function StakeConfirmButton() {
         setError(null);
 
         try {
-            const program = getProgram(connection, anchorWallet);
+            const program = SolanaAction.getProgram(connection, anchorWallet);
             const amountBaseUnits = new BN(Math.floor(quiz.prizePool * 1e6));
 
-            const tx = await buildCreateQuizTx(
+            const tx = await SolanaAction.buildCreateQuizTx(
                 program,
                 quiz.id,
                 quiz.hostId || '',
@@ -48,37 +47,23 @@ export default function StakeConfirmButton() {
                 publicKey,
             );
 
-            tx.feePayer = publicKey;
-            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-            tx.recentBlockhash = blockhash;
-
-            const signed = await signTransaction(tx);
-            const txSignature = await connection.sendRawTransaction(signed.serialize());
-
             setStatus('confirming');
-            await connection.confirmTransaction(
-                { signature: txSignature, blockhash, lastValidBlockHeight },
-                'confirmed',
+            const txSignature = await SolanaAction.signSendAndConfirm(
+                connection,
+                tx,
+                publicKey,
+                signTransaction,
             );
 
-            // Compute PDAs to send to backend
-            const [quizAccountPda] = getQuizPda(quiz.id, publicKey);
-            const [escrowPda] = getEscrowPda(quizAccountPda);
+            const [quizAccountPda] = SolanaAction.getQuizPda(quiz.id, publicKey);
+            const [escrowPda] = SolanaAction.getEscrowPda(quizAccountPda);
 
-            await axios.post(
-                `${CONFIRM_STAKE_URL}/${quiz.id}`,
-                {
-                    txSignature,
-                    escrowPda: escrowPda.toBase58(),
-                    quizAccountPda: quizAccountPda.toBase58(),
-                    hostWalletPubkey: publicKey.toBase58(),
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-                    },
-                },
-            );
+            await SolanaAction.confirmStake(localStorage.getItem('accessToken')!, quiz.id, {
+                txSignature,
+                escrowPda: escrowPda.toBase58(),
+                quizAccountPda: quizAccountPda.toBase58(),
+                hostWalletPubkey: publicKey.toBase58(),
+            });
 
             setStatus('done');
         } catch {
@@ -87,7 +72,7 @@ export default function StakeConfirmButton() {
         }
     }
 
-    if (status === 'done') {
+    if (status === 'done' || alreadyStaked) {
         return (
             <div className="w-full px-2 mt-4">
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-center">

@@ -75,7 +75,12 @@ export default async function setDistributionController(req: Request, res: Respo
             orderBy: { rank: 'asc' },
         });
 
-        ResponseWriter.success(res, created, 'Prize distribution saved');
+        const serializable = created.map((d) => ({
+            ...d,
+            amountBaseUnits: d.amountBaseUnits?.toString() ?? null,
+        }));
+
+        ResponseWriter.success(res, serializable, 'Prize distribution saved');
     } catch (error) {
         console.error('Failed to set prize distribution:', error);
         ResponseWriter.system_error(res);
