@@ -12,8 +12,6 @@ import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import OpacityBackground from '@/components/utility/OpacityBackground';
 import UtilityCard from '@/components/utility/UtilityCard';
 import { AnimatePresence, motion } from 'motion/react';
-import axios from 'axios';
-import { SET_PRIZE_DISTRIBUTION_URL } from 'routes/api_routes';
 import { toast } from '@/lib/toast';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import SolanaAction from '@/lib/solana/SolanaAction';
