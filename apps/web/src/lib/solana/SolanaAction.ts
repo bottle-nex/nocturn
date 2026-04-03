@@ -21,8 +21,6 @@ import {
 } from '@solana/spl-token';
 import type { AnchorWallet } from '@solana/wallet-adapter-react';
 
-// ─── Supporting Types ────────────────────────────────────────────────
-
 export interface ConfirmStakePayload {
     txSignature: string;
     escrowPda: string;
@@ -61,26 +59,19 @@ export interface ClaimData {
     expiresAt: string;
 }
 
-// ─── SolanaAction Class ──────────────────────────────────────────────
-
 export default class SolanaAction {
-    // ── 1. Constants ─────────────────────────────────────────────────
-
     public static readonly PROGRAM_ID = new PublicKey(
         '8Gj7Nuc8uQZjA9h4XrfQ7RCbuKFW74mhk6nbQ8cdjZue',
     );
-
     public static readonly NOCTURN_FEE_WALLET = new PublicKey(
         'DsGpvUYdJs7SRpXfST2N4EebKLsXq4SyoYvN3cyJ7uBR',
     );
-
     public static readonly USDC_MINT = new PublicKey(
         process.env.NEXT_PUBLIC_USDC_MINT ?? 'FNvGsacFM6ApWceMkqyg3NWoZZqeHizZk9Q3ZSJMmkja',
     );
-
     public static readonly USDC_DECIMALS = 6;
 
-    // ── 2. Program Setup ─────────────────────────────────────────────
+    // ── Program Setup ─────────────────────────────────────────────
 
     public static getProgram(connection: Connection, wallet: AnchorWallet): Program<Contract> {
         const provider = new AnchorProvider(connection, wallet, {
@@ -89,7 +80,7 @@ export default class SolanaAction {
         return createProgram(provider);
     }
 
-    // ── 3. PDA Derivations ───────────────────────────────────────────
+    // ── PDA Derivations ───────────────────────────────────────────
 
     public static getQuizPda(quizId: string, hostPubkey: PublicKey): [PublicKey, number] {
         return PublicKey.findProgramAddressSync(
@@ -119,7 +110,7 @@ export default class SolanaAction {
         );
     }
 
-    // ── 4. Transaction Builders ──────────────────────────────────────
+    // ── Transaction Builders ──────────────────────────────────────
 
     public static async buildCreateQuizTx(
         program: Program<Contract>,
@@ -178,7 +169,7 @@ export default class SolanaAction {
             .transaction();
     }
 
-    // ── 5. Transaction Helper ────────────────────────────────────────
+    // ── Transaction Helper ────────────────────────────────────────
 
     public static async signSendAndConfirm(
         connection: Connection,
@@ -201,7 +192,7 @@ export default class SolanaAction {
         return txSignature;
     }
 
-    // ── 6. Balance Queries ───────────────────────────────────────────
+    // ── Balance Queries ───────────────────────────────────────────
 
     public static async getSolBalance(
         connection: Connection,
@@ -224,7 +215,7 @@ export default class SolanaAction {
         }
     }
 
-    // ── 7. API Calls ─────────────────────────────────────────────────
+    // ── API Calls ─────────────────────────────────────────────────
 
     private static authHeaders(token: string) {
         return { headers: { Authorization: `Bearer ${token}` } };
