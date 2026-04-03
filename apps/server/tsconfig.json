@@ -10,7 +10,7 @@
   },
   "include": [
     "src"
-, "../orchestrator/src/services/email/templates/email.templates.ts"  ],
+  ],
   "exclude": [
     "node_modules",
     "dist"
