@@ -9,7 +9,7 @@ export default function ManualEditCard() {
             initial={{ opacity: 0, rotate: -4, x: 20 }}
             animate={{ opacity: 1, rotate: -4, x: 0 }}
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            className="h-72 w-65 rounded-2xl bg-[#C2410C] border border-white/20 shadow-[0_30px_60px_rgba(194,65,12,0.3)] absolute -right-4 top-30 overflow-hidden flex flex-col p-6 select-none"
+            className="h-72 w-65 shrink-0 rounded-2xl bg-[#C2410C] border border-white/20 shadow-[0_30px_60px_rgba(194,65,12,0.3)] mt-30 overflow-hidden flex flex-col p-6 select-none"
         >
             <div className="flex items-center justify-between mb-6">
                 <div className="size-9 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">

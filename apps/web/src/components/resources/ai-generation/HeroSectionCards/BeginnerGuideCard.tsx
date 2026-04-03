@@ -8,7 +8,7 @@ export default function BeginnerGuideCard() {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="h-72 w-65 rounded-2xl bg-[#004D40] border border-white/5 shadow-[0_25px_50px_rgba(0,0,0,0.3)] absolute left-[26%] rotate-2 top-30 overflow-hidden flex flex-col p-6 select-none group"
+            className="h-72 w-65 shrink-0 rounded-2xl bg-[#004D40] border border-white/5 shadow-[0_25px_50px_rgba(0,0,0,0.3)] rotate-2 mt-30 -mr-6 overflow-hidden flex flex-col p-6 select-none group"
         >
             <div className="absolute top-0 right-0 size-32 bg-emerald-400/5 blur-[35px] pointer-events-none" />
 

@@ -7,13 +7,12 @@ export default function DifficultyCard() {
         <motion.div
             initial={{ opacity: 0, rotate: 6, y: 20 }}
             animate={{ opacity: 1, rotate: 6, y: 0 }}
-            className="h-72 w-65 rounded-2xl bg-dark-base border border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.4)] absolute right-[23%] top-40 overflow-hidden flex flex-col p-6 select-none group"
+            className="h-72 w-65 shrink-0 rounded-2xl bg-dark-base border border-white/10 shadow-[0_25px_50px_rgba(0,0,0,0.4)] mt-40 -mr-6 overflow-hidden flex flex-col p-6 select-none group"
         >
-            {/* Subtle Gradient Glow */}
             <div className="absolute top-0 right-0 size-24 bg-[#FF3200]/10 blur-[50px] pointer-events-none" />
 
             <div className="flex items-center justify-between mb-6 z-10">
-                <div className="size-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                <div className="size-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
                     <ImStatsBars className="size-4 text-[#ff4c1f]" />
                 </div>
                 <div className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 text-[9px] font-bold text-white/40 tracking-widest uppercase">
@@ -33,7 +32,6 @@ export default function DifficultyCard() {
                 </div>
             </div>
 
-            {/* Abstract Dial Metaphor */}
             <div className="relative flex-1 flex flex-col justify-center gap-4 z-10">
                 <div className="flex items-end justify-between h-12 gap-1.5 px-1">
                     {[0.3, 0.5, 1.0, 0.6, 0.4].map((h, i) => (

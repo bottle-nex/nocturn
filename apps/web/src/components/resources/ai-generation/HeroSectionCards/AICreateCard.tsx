@@ -29,7 +29,7 @@ export default function AICreateCard() {
             initial={{ opacity: 0, rotate: -6, y: 20 }}
             animate={{ opacity: 1, rotate: -6, y: 0 }}
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            className="h-72 w-65 rounded-2xl flex flex-col overflow-hidden shadow-[0_35px_70px_rgba(0,73,138,0.2)] absolute bg-[#00498A] -rotate-2 top-35 select-none border border-white/10"
+            className="h-72 w-65 shrink-0 rounded-2xl flex flex-col overflow-hidden shadow-[0_35px_70px_rgba(0,73,138,0.2)] bg-[#00498A] mt-35 -mr-6 select-none border border-white/10"
         >
             <div className="pt-6 px-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
