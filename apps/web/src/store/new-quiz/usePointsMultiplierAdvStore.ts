@@ -39,11 +39,16 @@ export const usePointsMultiplierAdvStore = create<PointMultiplierAdvanced>((set,
     initializeFromQuiz: (quiz) => {
         const type = quiz.pointsMultiplier ?? PointsMultiplier.NONE;
         const isEnabled = type !== PointsMultiplier.NONE;
-        set({
+        const updates: Partial<PointMultiplierAdvanced> = {
             enablePointMultiplier: isEnabled,
             multiplierType: type,
             steppedIncrement: quiz.pointsIncrement ?? 10,
             steppedBatchSize: quiz.batchSize ?? 3,
-        });
+        };
+        // For Manual mode, populate manualPoints directly from question basePoints
+        if (type === PointsMultiplier.MANUAL && quiz.questions?.length) {
+            updates.manualPoints = quiz.questions.map((q) => q.basePoints);
+        }
+        set(updates);
     },
 }));

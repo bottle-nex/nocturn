@@ -1,7 +1,7 @@
 import ToolTipComponent from '@/components/utility/TooltipComponent';
 import { DraftRenderer, useDraftRendererStore } from '@/store/new-quiz/useDraftRendererStore';
 import { Switch } from '@/components/ui/switch';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
@@ -24,15 +24,17 @@ export default function AdvancedDraft() {
         initializeFromQuiz,
     } = usePointsMultiplierAdvStore();
 
+    const hydratedRef = useRef(false);
+
     // Hydrate multiplier store from server quiz data on load
     useEffect(() => {
-        if (quiz.pointsMultiplier && quiz.pointsMultiplier !== PointsMultiplierEnum.NONE) {
-            setEnablePointMultiplier(true);
-            setMultiplierType(quiz.pointsMultiplier);
+        if (hydratedRef.current) return;
+        if (!quiz.id || !quiz.pointsMultiplier) return;
+        if (quiz.pointsMultiplier !== PointsMultiplierEnum.NONE) {
+            hydratedRef.current = true;
             initializeFromQuiz(quiz);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quiz.id]);
+    }, [quiz.id, quiz.pointsMultiplier, initializeFromQuiz]);
 
     useEffect(() => {
         if (!multiplierType) {
