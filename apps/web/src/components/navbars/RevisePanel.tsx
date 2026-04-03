@@ -34,10 +34,10 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
     const totalReadingTime = quiz.questions.reduce((acc, q) => acc + (q.readingTime || 0), 0);
     const totalBreakTime = Math.max(0, questionCount - 1) * quiz.breakBetweenQuestions;
     const totalTime = totalAnswerTime + totalReadingTime + totalBreakTime;
-    const totalPoints = quiz.questions.reduce(
-        (acc, q) => acc + (q.basePoints || quiz.basePointsPerQuestion),
-        0,
-    );
+    // const totalPoints = quiz.questions.reduce(
+    //     (acc, q) => acc + (q.basePoints || quiz.basePointsPerQuestion),
+    //     0,
+    // );
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
@@ -54,19 +54,20 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
                 <div className="px-6 pt-6 pb-4">
                     <div className="w-full flex flex-col items-start">
                         <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mb-1 flex justify-between gap-x-1.5">
-                            <span className='uppercase font-semibold tracking-wider'>Final Review</span> 
+                            <span className="uppercase font-semibold tracking-wider">
+                                Final Review
+                            </span>
                             <span>
-                                {"("}You won't be able to make any changes after this{")"}
+                                {'('}You won&apos;t be able to make any changes after this{')'}
                             </span>
                         </p>
                     </div>
                     <h1 className="text-xl font-semibold tracking-normal text-neutral-900 dark:text-neutral-100">
-                        Quiz Title:{" "} {quiz.title || 'Untitled Quiz'}
+                        Quiz Title: {quiz.title || 'Untitled Quiz'}
                     </h1>
                 </div>
 
                 <div className="px-6 pb-6 flex flex-col gap-y-4">
-
                     <section className="space-y-2">
                         <SectionLabel label="General" />
                         <div className="space-y-1.5">
