@@ -106,7 +106,7 @@ async function seedTemplates() {
   console.log("Seeding templates...");
   for (const t of templates) {
     await prisma.template.upsert({
-      where: { name: t.name as TemplateEnum },
+      where: { id: t.id },
       update: {
         id: t.id,
         backgroundColor: t.backgroundColor,

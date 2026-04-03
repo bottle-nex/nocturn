@@ -45,7 +45,9 @@ export default class QuizController {
 
             const parsed = createQuizSchema.safeParse(req.body);
 
-            if (!parsed.success) return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+            if (!parsed.success) {
+                return ResponseWriter.invalid_data(res, 'Invalid quiz format');
+            }
 
             const { questions, ...quiz_data } = parsed.data;
             const user_subscription = await Subscription.get_user_subscription(user.id);
@@ -354,7 +356,9 @@ export default class QuizController {
                             : undefined,
                         questions: { create: questions },
                     };
-                    if (!createData.templateId) delete createData.templateId;
+                    if (!createData.templateId || createData.templateId === 'CUSTOM') {
+                        delete createData.templateId;
+                    }
 
                     const created = await tx.quiz.create({
                         data: createData,
@@ -424,7 +428,9 @@ export default class QuizController {
                         questions: { create: questions },
                     };
 
-                    if (updateData.templateId === undefined) delete updateData.templateId;
+                    if (updateData.templateId === undefined || updateData.templateId === 'CUSTOM') {
+                        delete updateData.templateId;
+                    }
                     delete updateData.template;
 
                     const updated = await tx.quiz.update({
@@ -582,7 +588,9 @@ export default class QuizController {
             questions: { create: questions },
         };
 
-        if (!createData.templateId) delete createData.templateId;
+        if (!createData.templateId || createData.templateId === 'CUSTOM') {
+            delete createData.templateId;
+        }
 
         return prisma.quiz.create({ data: createData });
     }
@@ -612,7 +620,9 @@ export default class QuizController {
                 questions: { create: questions },
             };
 
-            if (updateData.templateId === undefined) delete updateData.templateId;
+            if (updateData.templateId === undefined || updateData.templateId === 'CUSTOM') {
+                delete updateData.templateId;
+            }
             delete updateData.template;
 
             return tx.quiz.update({

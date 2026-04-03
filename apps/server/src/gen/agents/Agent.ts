@@ -140,7 +140,6 @@ export default class Agent {
     static async planner_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const topicInstruction = state.originalTopic || state.instruction;
 
-        // ✅ Fix: load difficulty from DB if not in state (change requests skip compute_difficulty)
         let difficulty = state.difficulty;
         if (difficulty === undefined) {
             const session = await prisma.aiQuizChatSession.findUnique({
@@ -150,7 +149,6 @@ export default class Agent {
             difficulty = session?.difficulty ?? 3;
         }
 
-        // ✅ Fix: fetch existing questions for context
         let existingQuestionsContext = 'none';
         let existingQuestionsCount = 0;
 
@@ -180,7 +178,6 @@ export default class Agent {
         console.log(chalk.red('planner node quiz state: '), state);
         console.log(chalk.blue('planner node response: '), response);
 
-        // ✅ Fix: only delete if it's a replace, not an append
         const operationType = response.operationType ?? 'replace';
 
         if (state.intent === INTENT.CHANGE_REQUEST && state.existingQuizId) {
@@ -265,13 +262,12 @@ export default class Agent {
     static async executor_node(state: QuizAgentState): Promise<Partial<QuizAgentState>> {
         const response = await model.executor.invoke({
             instruction: state.plan || state.instruction,
-            difficulty: state.difficulty ?? 3, // ✅ Fix: pass difficulty
+            difficulty: state.difficulty ?? 3,
         });
 
         console.log(chalk.red('executor node quiz state: '), state);
         console.log(chalk.blue('executor node response: '), response);
 
-        // ✅ Fix: offset orderIndex for appends so existing questions aren't displaced
         const startIndex = state.existingQuestionsCount ?? 0;
 
         const parsed_questions = response.questions.map(
