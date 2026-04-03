@@ -411,20 +411,25 @@ export default class QuizController {
                 ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
                     await tx.question.deleteMany({ where: { quizId } });
 
+                    const updateData: any = {
+                        ...quiz_data,
+                        status: 'LIVE',
+                        startedAt: new Date(),
+                        participantCode,
+                        spectatorCode,
+                        spectatorLink,
+                        scheduledAt: quiz_data.scheduledAt
+                            ? new Date(quiz_data.scheduledAt)
+                            : undefined,
+                        questions: { create: questions },
+                    };
+                    
+                    if (updateData.templateId === undefined) delete updateData.templateId;
+                    delete updateData.template;
+
                     const updated = await tx.quiz.update({
                         where: { id: quizId },
-                        data: {
-                            ...quiz_data,
-                            status: 'LIVE',
-                            startedAt: new Date(),
-                            participantCode,
-                            spectatorCode,
-                            spectatorLink,
-                            scheduledAt: quiz_data.scheduledAt
-                                ? new Date(quiz_data.scheduledAt)
-                                : undefined,
-                            questions: { create: questions },
-                        },
+                        data: updateData,
                         include: {
                             questions: true,
                             template: true,
@@ -600,18 +605,21 @@ export default class QuizController {
         return prisma.$transaction(async (tx) => {
             await tx.question.deleteMany({ where: { quizId } });
 
-            const { template, ...quizDataDb } = quiz_data;
+            const updateData: any = {
+                ...quiz_data,
+                ...(status && { status }),
+                scheduledAt: quiz_data.scheduledAt
+                    ? new Date(quiz_data.scheduledAt)
+                    : undefined,
+                questions: { create: questions },
+            };
+
+            if (updateData.templateId === undefined) delete updateData.templateId;
+            delete updateData.template;
 
             return tx.quiz.update({
                 where: { id: quizId },
-                data: {
-                    ...quizDataDb,
-                    ...(status && { status }),
-                    scheduledAt: quizDataDb.scheduledAt
-                        ? new Date(quizDataDb.scheduledAt)
-                        : undefined,
-                    questions: { create: questions },
-                },
+                data: updateData,
                 include: { template: true },
             });
         });
