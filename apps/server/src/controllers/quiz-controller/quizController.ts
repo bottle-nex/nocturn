@@ -218,11 +218,45 @@ export default class QuizController {
                 ? quiz_data.liveChat
                 : false;
 
+            const { template, ...quizDataDb } = quiz_data;
+            if (template && template.name === 'CUSTOM') {
+                if (template.id && template.id !== 'CUSTOM' && template.id !== 'NEW_CUSTOM') {
+                    await prisma.template.update({
+                        where: { id: template.id },
+                        data: {
+                            backgroundColor: template.backgroundColor,
+                            textColor: template.textColor,
+                            borderColor: template.borderColor,
+                            accentType: template.accentType,
+                            accentColor: template.accentColor,
+                            bars: template.bars,
+                            src: template.src,
+                        }
+                    });
+                    quizDataDb.templateId = template.id;
+                } else {
+                    const created = await prisma.template.create({
+                        data: {
+                            name: 'CUSTOM',
+                            backgroundColor: template.backgroundColor,
+                            textColor: template.textColor,
+                            borderColor: template.borderColor,
+                            accentType: template.accentType,
+                            accentColor: template.accentColor,
+                            bars: template.bars,
+                            src: template.src,
+                            userId: hostId,
+                        }
+                    });
+                    quizDataDb.templateId = created.id;
+                }
+            }
+
             if (!existing) {
                 const quiz = await QuizController.createQuiz(
                     quizId,
                     hostId,
-                    quiz_data,
+                    quizDataDb,
                     questions,
                     'PUBLISHED',
                 );
@@ -233,7 +267,7 @@ export default class QuizController {
 
             const quiz = await QuizController.updateQuizDataWithStatus(
                 quizId,
-                quiz_data,
+                quizDataDb,
                 questions,
                 'PUBLISHED',
             );
@@ -305,8 +339,9 @@ export default class QuizController {
 
             if (!existing) {
                 ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
+                    const { template, ...quizDataDb } = quiz_data;
                     const createData: any = {
-                        ...quiz_data,
+                        ...quizDataDb,
                         id: quizId,
                         hostId,
                         status: 'LIVE',
@@ -532,12 +567,13 @@ export default class QuizController {
         questions: QuestionType[],
         status: QuizStatus,
     ): Promise<Quiz> {
+        const { template, ...quizDataDb } = quiz_data;
         const createData: any = {
-            ...quiz_data,
+            ...quizDataDb,
             id: quizId,
             hostId,
             status,
-            scheduledAt: quiz_data.scheduledAt ? new Date(quiz_data.scheduledAt) : undefined,
+            scheduledAt: quizDataDb.scheduledAt ? new Date(quizDataDb.scheduledAt) : undefined,
             questions: { create: questions },
         };
 
@@ -564,13 +600,15 @@ export default class QuizController {
         return prisma.$transaction(async (tx) => {
             await tx.question.deleteMany({ where: { quizId } });
 
+            const { template, ...quizDataDb } = quiz_data;
+
             return tx.quiz.update({
                 where: { id: quizId },
                 data: {
-                    ...quiz_data,
+                    ...quizDataDb,
                     ...(status && { status }),
-                    scheduledAt: quiz_data.scheduledAt
-                        ? new Date(quiz_data.scheduledAt)
+                    scheduledAt: quizDataDb.scheduledAt
+                        ? new Date(quizDataDb.scheduledAt)
                         : undefined,
                     questions: { create: questions },
                 },

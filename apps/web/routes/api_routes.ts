@@ -33,6 +33,7 @@ export const GET_UN_ASKED_QUESTION_URL = QUIZ_URL + '/get-un-asked-question';
 
 // template routes
 export const GET_QUIZ_TEMPLATES = QUIZ_URL + '/get-templates';
+export const UPSERT_QUIZ_TEMPLATE = QUIZ_URL + '/upsert-template';
 
 // favourite quiz routes
 export const TOGGLE_FAVOURITE_QUIZ_URL = QUIZ_URL + '/toggle-favourite-quiz';

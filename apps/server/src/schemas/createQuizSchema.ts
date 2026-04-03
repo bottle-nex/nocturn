@@ -8,6 +8,7 @@ export enum TemplateEnum {
     YELLOW = 'YELLOW',
     GREEN = 'GREEN',
     BLUE = 'BLUE',
+    CUSTOM = 'CUSTOM',
 }
 
 export enum Interactions {
@@ -54,6 +55,19 @@ export const createQuizSchema = z.object({
     spectatorMode: z.coerce.boolean().optional(),
     questions: z.array(questionSchema),
     interactions: z.array(z.enum(Interactions)).optional().default([Interactions.THUMBS_UP]),
+    template: z
+        .object({
+            id: z.string().optional(),
+            name: z.string(),
+            backgroundColor: z.string(),
+            textColor: z.string(),
+            borderColor: z.string(),
+            accentType: z.string(),
+            accentColor: z.string(),
+            bars: z.array(z.string()),
+            src: z.string(),
+        })
+        .optional(),
 });
 
 export type QuestionType = z.infer<typeof questionSchema>;

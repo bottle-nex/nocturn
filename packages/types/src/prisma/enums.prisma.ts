@@ -115,6 +115,7 @@ export enum TemplateEnum {
   GREEN = "GREEN",
   PASTEL = "PASTEL",
   BLUE = "BLUE",
+  CUSTOM = "CUSTOM",
 }
 
 export enum SubscriptionEnum {

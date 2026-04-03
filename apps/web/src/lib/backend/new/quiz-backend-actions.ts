@@ -1,8 +1,8 @@
 import { toast } from '@/lib/toast';
-import { QuizType } from '@nocturn/types';
+import { QuizType, TemplateType } from '@nocturn/types';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL } from 'routes/api_routes';
+import { CREATE_QUIZ_URL, LAUNCH_QUIZ_URL, PUBLISH_QUIZ_URL, UPSERT_QUIZ_TEMPLATE } from 'routes/api_routes';
 
 export default class BackendActions {
     static async createQuiz(token: string): Promise<QuizType | null> {
@@ -24,6 +24,24 @@ export default class BackendActions {
             return null;
         } catch (error) {
             console.error('failed to create quiz', error);
+            return null;
+        }
+    }
+
+    static async upsertTemplateAction(template: TemplateType, token: string): Promise<TemplateType | null> {
+        if (!token || !template) return null;
+        try {
+            const { data } = await axios.post(UPSERT_QUIZ_TEMPLATE, template, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (data.success) {
+                return data.data as TemplateType;
+            }
+            return null;
+        } catch (err) {
+            console.error('[UPSERT_TEMPLATE_ERROR]', err);
             return null;
         }
     }

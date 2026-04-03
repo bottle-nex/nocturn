@@ -9,14 +9,22 @@ import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import { cn } from '@/lib/utils';
 import { useQuizTemplatesStore } from '@/store/templates/useQuizTemplatesStore';
 import ThemePreview from './ThemePreview';
+import { FaCrown } from 'react-icons/fa6';
+import { useState } from 'react';
+import CustomThemeEditor from './CustomThemeEditor';
+import { createPortal } from 'react-dom';
+import { useSubscription } from '@/hooks/subscription/useSubscription';
+import { FEATURE } from '@nocturn/premium';
 
 export default function ThemesDraft() {
     const { setState } = useDraftRendererStore();
     const { quiz, setIsHoveringTemplate } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const { templates } = useQuizTemplatesStore();
+    const { isEnabled } = useSubscription();
 
     const selectedTemplateId = quiz.templateId;
+    const [isCustomEditorOpen, setIsCustomEditorOpen] = useState(false);
 
     const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,6 +42,27 @@ export default function ThemesDraft() {
             template: template,
             templateId: template.id,
         });
+        if (template.id !== 'CUSTOM') {
+            setIsCustomEditorOpen(false);
+        }
+    }
+
+    function createCustomThemeHandler() {
+        if (!isEnabled(FEATURE.CUSTOM_THEME)) return;
+        
+        const base = selectedTemplateId === 'CUSTOM' ? quiz.template : (templates.find(t => t.id === selectedTemplateId) || templates[0]);
+        
+        const customTemplate: TemplateType = {
+            ...base,
+            id: 'NEW_CUSTOM', // Let backend know it's a new or existing custom template instance
+            name: 'CUSTOM', 
+        };
+
+        updateQuizAndBroadcast({
+            template: customTemplate,
+            templateId: 'CUSTOM', // Standard UI mapping
+        });
+        setIsCustomEditorOpen(true);
     }
 
     return (
@@ -93,7 +122,36 @@ export default function ThemesDraft() {
                         );
                     })}
                 </div>
+
+                <div className="mt-8 flex flex-col items-start px-1 gap-y-2">
+                    <div className="flex items-center gap-x-2">
+                        <span className="text-sm font-medium">Custom Theme</span>
+                        <FaCrown className="text-yellow-500" size={14} />
+                    </div>
+                    <button
+                        onClick={createCustomThemeHandler}
+                        disabled={!isEnabled(FEATURE.CUSTOM_THEME)}
+                        className={cn(
+                            "w-full text-sm font-medium py-2 rounded-md outline-1 outline outline-neutral-300 dark:outline-neutral-700 bg-white dark:bg-neutral-800 transition-all text-neutral-800 dark:text-neutral-200",
+                            isEnabled(FEATURE.CUSTOM_THEME) 
+                                ? "hover:bg-neutral-100 hover:dark:bg-neutral-700 cursor-pointer" 
+                                : "opacity-50 cursor-not-allowed"
+                        )}
+                    >
+                        Create your own
+                    </button>
+                    {!isEnabled(FEATURE.CUSTOM_THEME) && (
+                        <p className="text-xs text-neutral-500 mt-1">Upgrade to Premium to create custom themes.</p>
+                    )}
+                </div>
             </div>
+
+            {isCustomEditorOpen && typeof document !== 'undefined' && 
+                createPortal(
+                    <CustomThemeEditor onClose={() => setIsCustomEditorOpen(false)} />,
+                    document.body
+                )
+            }
         </div>
     );
 }

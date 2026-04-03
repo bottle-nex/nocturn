@@ -10,6 +10,7 @@ export const FEATURES = {
   [FEATURE.MAX_CONCURRENT_SESSIONS]: numeric(0, 5),
   [FEATURE.LIVE_CHAT]: gate(false, true),
   [FEATURE.SESSIONS_PER_DAY]: rate(ONE_DAY, 20, null),
+  [FEATURE.CUSTOM_THEME]: gate(true, true),
 };
 
 export type FeatureLimit = (typeof FEATURES)[FEATURE][SubscriptionEnum];

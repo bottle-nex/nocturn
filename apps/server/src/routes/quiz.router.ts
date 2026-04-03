@@ -22,6 +22,7 @@ import authMiddleware from '../middlewares/auth.middleware';
 import getSharedQuizController from '../controllers/quiz-controller/get_shared_quiz_controller';
 import getRecentlyViewedController from '../controllers/quiz-controller/get_recently_viewed_controller';
 import getAllTemplatesController from '../controllers/template-controller/getAllTemplatesController';
+import upsertCustomTemplateController from '../controllers/template-controller/upsertCustomTemplateController';
 import QuizController, {
     QuizControllerAction,
 } from '../controllers/quiz-controller/quizController';
@@ -75,5 +76,6 @@ router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsContr
 
 // <---------------------- TEMPLATE-ROUTES ---------------------->
 router.get('/quiz/get-templates', authMiddleware, getAllTemplatesController);
+router.post('/quiz/upsert-template', authMiddleware, upsertCustomTemplateController);
 
 export default router;

@@ -10,6 +10,12 @@ export default async function getAllTemplatesController(req: Request, res: Respo
 
     try {
         const templates = await prisma.template.findMany({
+            where: {
+                OR: [
+                    { userId: null },
+                    { userId: req.user.id },
+                ]
+            },
             select: {
                 id: true,
                 name: true,
@@ -20,6 +26,7 @@ export default async function getAllTemplatesController(req: Request, res: Respo
                 accentColor: true,
                 bars: true,
                 src: true,
+                userId: true,
             },
         });
 

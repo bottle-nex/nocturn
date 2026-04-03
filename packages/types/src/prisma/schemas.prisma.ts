@@ -44,6 +44,8 @@ export interface TemplateType {
   accentColor: string;
   bars: string[];
   src: string;
+  userId?: string | null;
+  user?: UserType | null;
   createdAt: Date;
   updatedAt: Date;
 }
