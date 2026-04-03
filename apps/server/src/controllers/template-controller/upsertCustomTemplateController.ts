@@ -15,7 +15,8 @@ export default async function upsertCustomTemplateController(req: Request, res: 
         return;
     }
 
-    const { id, backgroundColor, textColor, borderColor, accentType, accentColor, bars, src } = parseBody.data;
+    const { id, backgroundColor, textColor, borderColor, accentType, accentColor, bars, src } =
+        parseBody.data;
 
     try {
         let template;
@@ -23,7 +24,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
         if (id && id !== 'NEW_CUSTOM') {
             // Check if template exists and belongs to the user
             const existingTemplate = await prisma.template.findUnique({
-                where: { id }
+                where: { id },
             });
 
             if (existingTemplate && existingTemplate.userId === req.user.id) {
@@ -37,7 +38,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
                         accentColor,
                         bars,
                         src: src || 'custom-template',
-                    }
+                    },
                 });
             } else {
                 // If it doesn't exist or doesn't belong to user, create a new one instead of failing
@@ -52,7 +53,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
                         bars,
                         src: src || 'custom-template',
                         userId: req.user.id,
-                    }
+                    },
                 });
             }
         } else {
@@ -68,7 +69,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
                     bars,
                     src: src || 'custom-template',
                     userId: req.user.id,
-                }
+                },
             });
         }
 

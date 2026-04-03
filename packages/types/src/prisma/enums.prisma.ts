@@ -131,8 +131,8 @@ export enum ClaimStatusEnum {
 }
 
 export enum PointsMultiplier {
-    LINEAR = "LINEAR",
-    STEPPED = "STEPPED",
-    MANUAL = "MANUAL",
-    NONE = "NONE",
+  LINEAR = "LINEAR",
+  STEPPED = "STEPPED",
+  MANUAL = "MANUAL",
+  NONE = "NONE",
 }

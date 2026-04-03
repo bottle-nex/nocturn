@@ -119,14 +119,31 @@ export default function PremiumSubscriptionCards() {
                     const billedLabel = isFree ? 'Get started for free' : 'Billed monthly';
 
                     const displayedFeatures = [
-                        { icon: 'CalendarCheck', label: `${tier.maxQuizzesPerMonth} quizzes/month` },
+                        {
+                            icon: 'CalendarCheck',
+                            label: `${tier.maxQuizzesPerMonth} quizzes/month`,
+                        },
                         { icon: 'Layers', label: `${tier.maxActiveQuizzes} active quizzes` },
-                        { icon: 'Users', label: `${tier.maxCollaborators} collaborator${tier.maxCollaborators !== 1 ? 's' : ''}` },
-                        { icon: 'BarChart3', label: `${tier.maxAiGenerationsPerMonth} AI generations/month` },
-                        ...(tier.advancedAnalytics ? [{ icon: 'BarChart3', label: 'Advanced analytics' }] : []),
-                        ...(tier.advancedTemplates ? [{ icon: 'Layers', label: 'Advanced templates' }] : []),
-                        ...(tier.customBranding ? [{ icon: 'Palette', label: 'Custom branding' }] : []),
-                        ...(tier.prioritySupport ? [{ icon: 'Users2', label: 'Priority support' }] : []),
+                        {
+                            icon: 'Users',
+                            label: `${tier.maxCollaborators} collaborator${tier.maxCollaborators !== 1 ? 's' : ''}`,
+                        },
+                        {
+                            icon: 'BarChart3',
+                            label: `${tier.maxAiGenerationsPerMonth} AI generations/month`,
+                        },
+                        ...(tier.advancedAnalytics
+                            ? [{ icon: 'BarChart3', label: 'Advanced analytics' }]
+                            : []),
+                        ...(tier.advancedTemplates
+                            ? [{ icon: 'Layers', label: 'Advanced templates' }]
+                            : []),
+                        ...(tier.customBranding
+                            ? [{ icon: 'Palette', label: 'Custom branding' }]
+                            : []),
+                        ...(tier.prioritySupport
+                            ? [{ icon: 'Users2', label: 'Priority support' }]
+                            : []),
                     ].slice(0, 6);
 
                     return (
@@ -163,7 +180,11 @@ export default function PremiumSubscriptionCards() {
                                         className={`flex items-end gap-1 ${isDark ? 'text-[#f0ede8]' : 'text-[#1a1a1a]'}`}
                                     >
                                         <span className="text-[36px] font-bold tracking-tight leading-none">
-                                            {tier.currency === 'INR' ? '₹' : tier.currency === 'EUR' ? '€' : '$'}
+                                            {tier.currency === 'INR'
+                                                ? '₹'
+                                                : tier.currency === 'EUR'
+                                                  ? '€'
+                                                  : '$'}
                                             {price}
                                         </span>
                                         <span
@@ -187,7 +208,11 @@ export default function PremiumSubscriptionCards() {
                                                 : 'bg-black/7 text-[#1a1a1a]/50 cursor-default'
                                         }`}
                                     >
-                                        {isLoading ? 'Loading...' : isFree ? 'Current Plan' : 'Upgrade Now'}
+                                        {isLoading
+                                            ? 'Loading...'
+                                            : isFree
+                                              ? 'Current Plan'
+                                              : 'Upgrade Now'}
                                     </Button>
                                 </div>
                             </div>

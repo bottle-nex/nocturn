@@ -122,7 +122,7 @@ export default function ParticipantMainScreen() {
 
     function requestFullscreen() {
         if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(() => { });
+            document.documentElement.requestFullscreen().catch(() => {});
         }
     }
 

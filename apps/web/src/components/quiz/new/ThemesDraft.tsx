@@ -49,13 +49,16 @@ export default function ThemesDraft() {
 
     function createCustomThemeHandler() {
         if (!isEnabled(FEATURE.CUSTOM_THEME)) return;
-        
-        const base = selectedTemplateId === 'CUSTOM' ? quiz.template : (templates.find(t => t.id === selectedTemplateId) || templates[0]);
-        
+
+        const base =
+            selectedTemplateId === 'CUSTOM'
+                ? quiz.template
+                : templates.find((t) => t.id === selectedTemplateId) || templates[0];
+
         const customTemplate: TemplateType = {
             ...base,
             id: 'NEW_CUSTOM', // Let backend know it's a new or existing custom template instance
-            name: 'CUSTOM', 
+            name: 'CUSTOM',
         };
 
         updateQuizAndBroadcast({
@@ -132,26 +135,28 @@ export default function ThemesDraft() {
                         onClick={createCustomThemeHandler}
                         disabled={!isEnabled(FEATURE.CUSTOM_THEME)}
                         className={cn(
-                            "w-full text-sm font-medium py-2 rounded-md outline-1 outline outline-neutral-300 dark:outline-neutral-700 bg-white dark:bg-neutral-800 transition-all text-neutral-800 dark:text-neutral-200",
-                            isEnabled(FEATURE.CUSTOM_THEME) 
-                                ? "hover:bg-neutral-100 hover:dark:bg-neutral-700 cursor-pointer" 
-                                : "opacity-50 cursor-not-allowed"
+                            'w-full text-sm font-medium py-2 rounded-md outline-1 outline outline-neutral-300 dark:outline-neutral-700 bg-white dark:bg-neutral-800 transition-all text-neutral-800 dark:text-neutral-200',
+                            isEnabled(FEATURE.CUSTOM_THEME)
+                                ? 'hover:bg-neutral-100 hover:dark:bg-neutral-700 cursor-pointer'
+                                : 'opacity-50 cursor-not-allowed',
                         )}
                     >
                         Create your own
                     </button>
                     {!isEnabled(FEATURE.CUSTOM_THEME) && (
-                        <p className="text-xs text-neutral-500 mt-1">Upgrade to Premium to create custom themes.</p>
+                        <p className="text-xs text-neutral-500 mt-1">
+                            Upgrade to Premium to create custom themes.
+                        </p>
                     )}
                 </div>
             </div>
 
-            {isCustomEditorOpen && typeof document !== 'undefined' && 
+            {isCustomEditorOpen &&
+                typeof document !== 'undefined' &&
                 createPortal(
                     <CustomThemeEditor onClose={() => setIsCustomEditorOpen(false)} />,
-                    document.body
-                )
-            }
+                    document.body,
+                )}
         </div>
     );
 }

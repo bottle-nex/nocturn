@@ -1,6 +1,6 @@
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { FiMinus, FiPlus } from 'react-icons/fi';
 
 interface SteppedModeProps {
     steppedIncrement: number;
@@ -10,7 +10,13 @@ interface SteppedModeProps {
     onBatchSizeChange: (size: number) => void;
 }
 
-export function SteppedMode({ steppedIncrement, calculatedPoints, batchSize, onIncrementChange, onBatchSizeChange }: SteppedModeProps) {
+export function SteppedMode({
+    steppedIncrement,
+    calculatedPoints,
+    batchSize,
+    onIncrementChange,
+    onBatchSizeChange,
+}: SteppedModeProps) {
     return (
         <div className="flex flex-col space-y-3 mt-2">
             <span className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -28,9 +34,7 @@ export function SteppedMode({ steppedIncrement, calculatedPoints, batchSize, onI
 
             {/* Batch Size Control */}
             <div className="flex items-center justify-between">
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Batch size
-                </span>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">Batch size</span>
                 <div className="flex items-center gap-x-2">
                     <button
                         onClick={() => onBatchSizeChange(batchSize - 1)}
@@ -76,8 +80,8 @@ export function SteppedMode({ steppedIncrement, calculatedPoints, batchSize, onI
                                     tier === 0
                                         ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
                                         : tier === 1
-                                            ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
-                                            : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
+                                          ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                                          : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300',
                                 )}
                             >
                                 Q{i + 1}: {pts}

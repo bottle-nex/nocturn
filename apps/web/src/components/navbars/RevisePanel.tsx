@@ -96,7 +96,15 @@ export default function RevisePanel({ onBackgroundClick, onConfirm, isLoading }:
                         <MetricCell label="Questions" value={String(questionCount)} />
                         <MetricCell label="Duration" value={formatTime(totalTime)} accent />
                         <MetricCell label="Total Pts" value={totalPoints.toLocaleString()} />
-                        <MetricCell label="Multiplier" value={quiz.pointsMultiplier && quiz.pointsMultiplier !== 'NONE' ? quiz.pointsMultiplier.charAt(0) + quiz.pointsMultiplier.slice(1).toLowerCase() : 'Off'} />
+                        <MetricCell
+                            label="Multiplier"
+                            value={
+                                quiz.pointsMultiplier && quiz.pointsMultiplier !== 'NONE'
+                                    ? quiz.pointsMultiplier.charAt(0) +
+                                      quiz.pointsMultiplier.slice(1).toLowerCase()
+                                    : 'Off'
+                            }
+                        />
                     </div>
 
                     {/* Two-column body */}

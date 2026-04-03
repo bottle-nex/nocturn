@@ -231,7 +231,7 @@ export default class QuizController {
                             accentColor: template.accentColor,
                             bars: template.bars,
                             src: template.src,
-                        }
+                        },
                     });
                     quizDataDb.templateId = template.id;
                 } else {
@@ -246,7 +246,7 @@ export default class QuizController {
                             bars: template.bars,
                             src: template.src,
                             userId: hostId,
-                        }
+                        },
                     });
                     quizDataDb.templateId = created.id;
                 }
@@ -339,7 +339,7 @@ export default class QuizController {
 
             if (!existing) {
                 ({ quiz, gameSession } = await prisma.$transaction(async (tx) => {
-                    const { template, ...quizDataDb } = quiz_data;
+                    const { template: _template, ...quizDataDb } = quiz_data;
                     const createData: any = {
                         ...quizDataDb,
                         id: quizId,
@@ -423,7 +423,7 @@ export default class QuizController {
                             : undefined,
                         questions: { create: questions },
                     };
-                    
+
                     if (updateData.templateId === undefined) delete updateData.templateId;
                     delete updateData.template;
 
@@ -572,7 +572,7 @@ export default class QuizController {
         questions: QuestionType[],
         status: QuizStatus,
     ): Promise<Quiz> {
-        const { template, ...quizDataDb } = quiz_data;
+        const { template: _template, ...quizDataDb } = quiz_data;
         const createData: any = {
             ...quizDataDb,
             id: quizId,
@@ -608,9 +608,7 @@ export default class QuizController {
             const updateData: any = {
                 ...quiz_data,
                 ...(status && { status }),
-                scheduledAt: quiz_data.scheduledAt
-                    ? new Date(quiz_data.scheduledAt)
-                    : undefined,
+                scheduledAt: quiz_data.scheduledAt ? new Date(quiz_data.scheduledAt) : undefined,
                 questions: { create: questions },
             };
 

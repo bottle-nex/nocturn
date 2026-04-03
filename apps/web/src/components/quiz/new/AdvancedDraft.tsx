@@ -8,7 +8,7 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { usePointsMultiplierAdvStore } from '@/store/new-quiz/usePointsMultiplierAdvStore';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 import PointsMultiplier from './pointsMultiplier/PointsMultiplier';
-import { PointsMultiplier as PointsMultiplierEnum } from "@nocturn/types";
+import { PointsMultiplier as PointsMultiplierEnum } from '@nocturn/types';
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
@@ -34,6 +34,7 @@ export default function AdvancedDraft() {
             hydratedRef.current = true;
             initializeFromQuiz(quiz);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quiz.id, quiz.pointsMultiplier, initializeFromQuiz]);
 
     useEffect(() => {

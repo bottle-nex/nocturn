@@ -1,20 +1,20 @@
-import ToolTipComponent from "@/components/utility/TooltipComponent";
-import { usePointsMultiplierAdvStore } from "@/store/new-quiz/usePointsMultiplierAdvStore";
-import { IconType } from "react-icons";
-import { AiOutlineQuestionCircle } from "react-icons/ai";
+import ToolTipComponent from '@/components/utility/TooltipComponent';
+import { usePointsMultiplierAdvStore } from '@/store/new-quiz/usePointsMultiplierAdvStore';
+import { IconType } from 'react-icons';
+import { AiOutlineQuestionCircle } from 'react-icons/ai';
 import { RiLineChartLine } from 'react-icons/ri';
 import { HiChartBar } from 'react-icons/hi';
 import { BsKeyboardFill } from 'react-icons/bs';
-import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import { useNewQuizStore } from "@/store/new-quiz/useNewQuizStore";
-import { getSingletonPointsCalculator } from "@/lib/singleton-points-calculator";
-import { LinearMode } from "./LinearMode";
-import { SteppedMode } from "./SteppedMode";
-import { ManualMode } from "./ManualMode";
-import { cn } from "@/lib/utils";
-import { PointsMultiplier as PointsMultiplierEnum } from "@nocturn/types";
-import { useCollaborativeEdit } from "@/hooks/useCollaborativeEdit";
+import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
+import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
+import { getSingletonPointsCalculator } from '@/lib/singleton-points-calculator';
+import { LinearMode } from './LinearMode';
+import { SteppedMode } from './SteppedMode';
+import { ManualMode } from './ManualMode';
+import { cn } from '@/lib/utils';
+import { PointsMultiplier as PointsMultiplierEnum } from '@nocturn/types';
+import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 interface MultiplierOption {
     type: PointsMultiplierEnum;
@@ -49,8 +49,10 @@ interface PointsMultiplierProps {
     setCalculatedPoints: (calPoints: number[]) => void;
 }
 
-export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints }: PointsMultiplierProps) {
-
+export default function PointsMultiplier({
+    calculatedPoints,
+    setCalculatedPoints,
+}: PointsMultiplierProps) {
     const { quiz, updateQuestionPoints, changeQuestionPoint } = useNewQuizStore();
     const { updateQuizAndBroadcast } = useCollaborativeEdit();
     const {
@@ -99,7 +101,13 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
             updateQuestionPoints(points);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [multiplierType, enablePointMultiplier, quiz.questions.length, steppedBatchSize, steppedIncrement]);
+    }, [
+        multiplierType,
+        enablePointMultiplier,
+        quiz.questions.length,
+        steppedBatchSize,
+        steppedIncrement,
+    ]);
 
     function handleMultiplierTypeClick(type: PointsMultiplierEnum) {
         const newType = multiplierType === type ? PointsMultiplierEnum.NONE : type;
@@ -176,7 +184,7 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
                         onChange={handleLinearChange}
                     />
                 );
-            };
+            }
             case PointsMultiplierEnum.STEPPED: {
                 return (
                     <SteppedMode
@@ -205,7 +213,6 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
             setEnablePointMultiplier(false);
         }
     }, [multiplierType, setEnablePointMultiplier]);
-
 
     return (
         <div className="flex flex-col space-y-3 mt-6">
@@ -253,5 +260,5 @@ export default function PointsMultiplier({ calculatedPoints, setCalculatedPoints
 
             {renderMultiplier()}
         </div>
-    )
+    );
 }
