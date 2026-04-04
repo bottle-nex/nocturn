@@ -1,6 +1,9 @@
 import { JSX } from "react";
 import GrayscaleHoverImage from "./GrayscaleHoverImage";
 import LandingSectionHeader from "../refactor/LandingSectionHeader";
+import { IconWrapper } from "../ui/IconWrapper";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function AboutFounderSection(): JSX.Element {
     return (
@@ -9,13 +12,39 @@ export default function AboutFounderSection(): JSX.Element {
                 heading="The Nocturn Story"
                 subheading="Discover the journey of Nocturn, from its inception to its mission of empowering creators and revolutionizing the digital landscape."
             />
-            {/* Rishi - Image Left */}
+            {/* Rishi */}
             <section className="w-full grid grid-cols-[1fr_2fr] gap-x-8 mx-auto max-w-270 mt-16">
                 <div className="">
                     <GrayscaleHoverImage height={450} width={420} className="rounded-xl" src="/images/founders/rishi.JPG" alt="Rishi" />
                 </div>
                 <div className="">
-                    <p className="text-3xl text-black">Rishi Kant (Founder and Ceo)</p>
+                    <div className="w-full flex items-center justify-between">
+                        <p className="text-3xl text-black">Rishi Kant (Founder and Ceo)</p>
+                        <div className="inline-flex space-x-2">
+                            <Link href="https://www.linkedin.com/in/kant-linked/" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/linkedin.webp"}
+                                        alt="LinkedIn"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                            <Link href="https://x.com/khairrishi" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/x.webp"}
+                                        alt="X"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                        </div>
+                    </div>
                     <section>
                         <p className="text-base text-dark-base/80 leading-relaxed mt-3.5">
                             I tried twice to get into Super 30, a six-month bootcamp by <b>Harkirat Singh</b> focused on nurturing software engineers. Didn&apos;t make it either time.
@@ -36,10 +65,36 @@ export default function AboutFounderSection(): JSX.Element {
                 </div>
             </section>
 
-            {/* Anjan - Image Right */}
+            {/* Anjan */}
             <section className="w-full grid grid-cols-[2fr_1fr] gap-x-8 mx-auto max-w-270 mt-24">
                 <div className="">
-                    <p className="text-3xl text-black">Anjan Suman (Co-Founder)</p>
+                    <div className="w-full flex items-center justify-between">
+                        <p className="text-3xl text-black">Anjan Suman (Co-Founder)</p>
+                        <div className="inline-flex space-x-2">
+                            <Link href="https://www.linkedin.com/in/anjanstwt/" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/linkedin.webp"}
+                                        alt="LinkedIn"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                            <Link href="https://x.com/anjanstwt" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/x.webp"}
+                                        alt="X"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                        </div>
+                    </div>
                     <section>
                         <p className="text-base text-dark-base/80 leading-relaxed mt-3.5">
                             I started the journey back in 2024 with a question in mind, will I make it or leave it halfway?
@@ -66,13 +121,39 @@ export default function AboutFounderSection(): JSX.Element {
                 </div>
             </section>
 
-            {/* Piyush - Image Left */}
+            {/* Piyush betichod */}
             <section className="w-full grid grid-cols-[1fr_2fr] gap-x-8 mx-auto max-w-270 mt-24">
                 <div className="">
                     <GrayscaleHoverImage height={450} width={420} className="rounded-xl" src="/images/founders/piyush.jpeg" alt="Piyush" />
                 </div>
                 <div className="">
-                    <p className="text-3xl text-black">Piyush Raj (Co-Founder)</p>
+                    <div className="w-full flex items-center justify-between">
+                        <p className="text-3xl text-black">Piyush Raj (Co-Founder)</p>
+                        <div className="inline-flex space-x-2">
+                            <Link href="https://www.linkedin.com/in/piyush-rj/" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/linkedin.webp"}
+                                        alt="LinkedIn"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                            <Link href="https://x.com/PiyushC2P" target="_blank">
+                                <IconWrapper>
+                                    <Image
+                                        src={"/icons/socials/x.webp"}
+                                        alt="X"
+                                        width={32}
+                                        height={32}
+                                        className=""
+                                    />
+                                </IconWrapper>
+                            </Link>
+                        </div>
+                    </div>
                     <section>
                         <p className="text-base text-dark-base/80 leading-relaxed mt-3.5">
                             It started in my third year of college, when I realised things had to change. That&apos;s when I decided to try a different path and got into development.
