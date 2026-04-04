@@ -2,13 +2,16 @@
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
 import SettingsHeaderComponent from './SettingsUtility/SettingsHeaderComponent';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import LogoutModal from '@/components/utility/LogoutModal';
 
 export function Divider() {
     return <div className="h-px bg-dark-base/10 dark:bg-light-base/10" />;
 }
 
 export default function ProfileSettingsComponent() {
-    const { session } = useUserSessionStore();
+    const { session, setOpenLogoutModal } = useUserSessionStore();
 
     const avatarSrc = session?.user?.image ?? null;
     const displayName = session?.user?.name ?? 'Unknown User';
@@ -37,29 +40,40 @@ export default function ProfileSettingsComponent() {
                         <p className="text-xs font-semibold uppercase tracking-wider text-dark-base/35 dark:text-white/25">
                             Avatar
                         </p>
-                        <div className="flex items-center gap-4">
-                            <div className="relative shrink-0 h-10 w-10 rounded-full overflow-hidden ring-1 ring-black/8 dark:ring-white/8 bg-neutral-100 dark:bg-neutral-800">
-                                {avatarSrc ? (
-                                    <Image
-                                        src={avatarSrc}
-                                        alt={displayName}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full flex items-center justify-center text-xs font-semibold text-dark-base/45 dark:text-white/35 select-none">
-                                        {initials}
-                                    </div>
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 ">
+                                <div className="relative shrink-0 h-10 w-10 rounded-full overflow-hidden ring-1 ring-black/8 dark:ring-white/8 bg-neutral-100 dark:bg-neutral-800">
+                                    {avatarSrc ? (
+                                        <Image
+                                            src={avatarSrc}
+                                            alt={displayName}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full flex items-center justify-center text-xs font-semibold text-dark-base/45 dark:text-white/35 select-none">
+                                            {initials}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex flex-col gap-0.5 min-w-0">
+                                    <p className="text-sm font-medium text-dark-base dark:text-white truncate">
+                                        {displayName}
+                                    </p>
+                                    <p className="text-xs text-dark-base/40 dark:text-white/30 truncate">
+                                        {session?.user.email}
+                                    </p>
+                                </div>
+                            </div>
+                            <Button
+                                size={'sm'}
+                                className={cn(
+                                    'dark:bg-red-500/40 bg-red-500/70 hover:bg-red-500/70 border border-red-500/80 dark:border-red-500/60 text-white ',
                                 )}
-                            </div>
-                            <div className="flex flex-col gap-0.5 min-w-0">
-                                <p className="text-sm font-medium text-dark-base dark:text-white truncate">
-                                    {displayName}
-                                </p>
-                                <p className="text-xs text-dark-base/40 dark:text-white/30 truncate">
-                                    {session?.user.email}
-                                </p>
-                            </div>
+                                onClick={() => setOpenLogoutModal(true)}
+                            >
+                                Logout
+                            </Button>
                             {/* TODO: add upload feature */}
                             {/* <Button
                                 className={cn(
@@ -113,6 +127,7 @@ export default function ProfileSettingsComponent() {
                         </div>
                     </div>
                 </div>
+                <LogoutModal />
             </div>
         </>
     );

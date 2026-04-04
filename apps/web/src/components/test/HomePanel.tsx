@@ -93,9 +93,8 @@ export default function HomePanel() {
                 <div className="flex justify-between items-center">
                     <div className="text-4xl dark:text-light-base text-dark-base">Home</div>
                     <div className="relative" ref={dropdownRef}>
-                        <div className="flex">
+                        <div className="flex" id="tour-new-quiz">
                             <Button
-                                id="tour-new-quiz"
                                 onClick={handleCreateQuiz}
                                 disabled={creating}
                                 className="relative px-3! py-4.75 bg-nprimary dark:text-light-base font-medium rounded-l-lg rounded-r-none shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-shadow cursor-pointer flex items-center gap-3 border border-nprimary border-r-0 after:absolute after:right-0 after:top-px after:bottom-px after:w-px after:bg-[rgba(255,255,255,0.15)]"

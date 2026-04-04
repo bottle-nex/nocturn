@@ -204,6 +204,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                     ))}
 
                     <div
+                        id="tour-trash"
                         ref={trashRef}
                         onClick={openTrash}
                         className={cn(
@@ -226,7 +227,6 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         </span>
 
                         <span
-                            id="tour-trash"
                             className={cn(
                                 'text-sm dark:text-white/80 text-black/90 transition-colors',
                                 isOverTrash &&

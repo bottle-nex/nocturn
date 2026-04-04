@@ -1,6 +1,5 @@
 'use client';
 import PreviewQuiz from '@/components/home/AiChat/PreviewQuiz';
-import HomeTour from '@/components/home/HomeTour';
 import HomeSidebar from '@/components/test/HomeSidebar';
 import HomeTrashPanel from '@/components/test/HomeTrashPanel';
 import SidebarPanelRenderer from '@/components/test/SidebarPanelRenderer';
@@ -113,7 +112,6 @@ export default function Home() {
 
     return (
         <div className="tracking-wider dark:bg-neutral-950 h-screen w-screen overflow-hidden relative select-none flex flex-col">
-            {session?.user && tutorialComplete === false && <HomeTour />}
             <AnimatePresence>
                 {showBanner && (
                     <motion.section

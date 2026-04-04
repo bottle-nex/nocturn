@@ -16,6 +16,7 @@ const default_template: TemplateType = {
     borderColor: '#000000',
     accentType: 'mountains',
     accentColor: '#00000010',
+    itemsColor: '#000000',
     bars: ['#E2C275', '#6886C5', '#CD5656', '#AEDADD', '#BCBAB8'],
     src: 'classic-template',
     createdAt: new Date(),
