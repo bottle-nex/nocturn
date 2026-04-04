@@ -7,6 +7,8 @@ import FavouriteQuizzesPanel from './FavouriteQuizzesPanel';
 import SharedQuizPanel from './SharedQuizPanel';
 import SettingsPanel from './SettingsPanel';
 import AIChatBoxRevamp from '../home/AiChat/AIChatBoxrevamp';
+import HomeTour from '../home/HomeTour';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 
 function renderPanel(activeTab: SidebarTab) {
     switch (activeTab) {
@@ -27,11 +29,13 @@ function renderPanel(activeTab: SidebarTab) {
 
 export default function SidebarPanelRenderer() {
     const { activeTab } = useHomeSidebarStore();
+    const { session, tutorialComplete } = useUserSessionStore();
 
     return (
         <div className="relative flex-1 h-full overflow-hidden">
             <AIChatBoxRevamp />
             {renderPanel(activeTab)}
+            {session?.user && tutorialComplete === false && <HomeTour />}
         </div>
     );
 }
