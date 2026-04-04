@@ -41,7 +41,7 @@ export default function ProfileSettingsComponent() {
                             Avatar
                         </p>
                         <div className="flex items-center justify-between gap-4">
-                            <div className='flex items-center gap-4 '>
+                            <div className="flex items-center gap-4 ">
                                 <div className="relative shrink-0 h-10 w-10 rounded-full overflow-hidden ring-1 ring-black/8 dark:ring-white/8 bg-neutral-100 dark:bg-neutral-800">
                                     {avatarSrc ? (
                                         <Image
@@ -66,7 +66,7 @@ export default function ProfileSettingsComponent() {
                                 </div>
                             </div>
                             <Button
-                                size={"sm"}
+                                size={'sm'}
                                 className={cn(
                                     'dark:bg-red-500/40 bg-red-500/70 hover:bg-red-500/70 border border-red-500/80 dark:border-red-500/60 text-white ',
                                 )}
