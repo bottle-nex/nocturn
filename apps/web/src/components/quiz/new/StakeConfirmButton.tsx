@@ -7,7 +7,6 @@ import { BN } from '@nocturn/contract';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import SolanaAction from '@/lib/solana/SolanaAction';
 import { Button } from '@/components/ui/button';
-import { AiOutlineConsoleSql } from 'react-icons/ai';
 
 type StakeStatus = 'idle' | 'signing' | 'confirming' | 'done' | 'error';
 
@@ -21,8 +20,6 @@ export default function StakeConfirmButton() {
     const { connection } = useConnection();
 
     const alreadyStaked = !!quiz.escrowPda;
-    console.log('already staked : ', alreadyStaked);
-    console.log("distibution lenfth : ", quiz.prizeDistributions);
     const isReady =
         publicKey &&
         signTransaction &&
@@ -31,7 +28,6 @@ export default function StakeConfirmButton() {
         quiz.prizePool > 0 &&
         (quiz.prizeDistributions?.length ?? 0) > 0 &&
         !alreadyStaked;
-    console.log("is ready : ", isReady);
     async function handleStake() {
         if (!isReady) return;
 

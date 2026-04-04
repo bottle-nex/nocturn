@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { RiCoinsFill, RiTeamFill, RiFileCodeFill, RiSparklingFill } from 'react-icons/ri';
+import { RiCoinsFill, RiSparklingFill } from 'react-icons/ri';
 import type { IconType } from 'react-icons';
 
 interface ResourceItem {
