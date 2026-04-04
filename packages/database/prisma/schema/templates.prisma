@@ -6,6 +6,7 @@ model Template {
     borderColor     String       @map("border_color")
     accentType      String       @map("accent_type")
     accentColor     String       @map("accent_color")
+    itemsColor      String       @map("items_color")
     bars            String[]
     src             String
 
