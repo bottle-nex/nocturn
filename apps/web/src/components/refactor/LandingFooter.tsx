@@ -75,7 +75,7 @@ export default function LandingFooter() {
                     </main>
                 </footer>
             </PerspectiveCard>
-            <section className="max-w-270 mx-auto w-full space-y-2 mb-4">
+            <section className="max-w-270 mx-auto w-full space-y-2 mb-8 mt-4">
                 <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-1" />
                 <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-2 [animation-delay:0.3s]" />
                 <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-3 [animation-delay:0.6s]" />

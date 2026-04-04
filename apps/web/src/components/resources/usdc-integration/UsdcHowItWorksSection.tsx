@@ -88,12 +88,13 @@ export default function UsdcHowItWorksSection() {
                     <PerspectiveCard
                         sticky={false}
                         delay={0.05}
-                        className="rounded-2xl bg-[#f8f7ff] ring-1 ring-alpha/8 p-8 flex flex-col gap-y-5"
+                        className="rounded-2xl bg-[#00498A] ring-1 ring-white/10 p-8 flex flex-col gap-y-5 overflow-hidden relative"
                     >
-                        <div className="text-[17px] font-semibold text-dark-base/90">
+                        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-sky-400/8 blur-[60px] pointer-events-none" />
+                        <div className="text-[17px] font-semibold text-white/95 relative z-10">
                             What happens under the hood
                         </div>
-                        <div className="flex flex-col gap-y-0">
+                        <div className="flex flex-col gap-y-0 relative z-10">
                             {[
                                 {
                                     label: 'Host signs one transaction',
@@ -108,22 +109,26 @@ export default function UsdcHowItWorksSection() {
                                     detail: 'Stores the quiz ID, prize amount, host identity, and finalization status',
                                 },
                             ].map((item, i) => (
-                                <div
+                                <motion.div
                                     key={i}
-                                    className="flex gap-x-4 py-3.5 border-b border-dark-base/5 last:border-0"
+                                    initial={{ opacity: 0, x: -8 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.35, delay: i * 0.08 + 0.15, ease: 'easeOut' }}
+                                    className="flex gap-x-4 py-3.5 border-b border-white/8 last:border-0 group/item"
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-alpha/10 text-alpha text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                                    <div className="w-6 h-6 rounded-full bg-sky-300/15 text-sky-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 transition-colors duration-300 group-hover/item:bg-sky-300/25">
                                         {i + 1}
                                     </div>
                                     <div>
-                                        <div className="text-[14px] font-semibold text-dark-base/80">
+                                        <div className="text-[14px] font-semibold text-white/85 transition-colors duration-300 group-hover/item:text-white">
                                             {item.label}
                                         </div>
-                                        <div className="text-[13px] text-dark-base/40 mt-0.5">
+                                        <div className="text-[13px] text-white/35 mt-0.5">
                                             {item.detail}
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </PerspectiveCard>
@@ -133,31 +138,39 @@ export default function UsdcHowItWorksSection() {
             <div className="mt-28 grid grid-cols-[1fr_1fr] gap-8 items-start">
                 <PerspectiveCard
                     sticky={false}
-                    shadowColor="13,148,136"
-                    className="rounded-2xl bg-[#f0fdfa] ring-1 ring-teal-200/40 p-8 h-80 flex flex-col justify-between"
+                    shadowColor="0,77,64"
+                    className="rounded-2xl bg-[#004D40] ring-1 ring-white/8 p-8 h-80 flex flex-col justify-between overflow-hidden relative"
                 >
-                    <div>
-                        <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-teal-600/60 mb-1">
+                    <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-emerald-400/6 blur-[50px] pointer-events-none" />
+                    <div className="relative z-10">
+                        <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-emerald-300/50 mb-1">
                             During the Quiz
                         </p>
-                        <p className="text-lg font-semibold text-dark-base/85">
+                        <p className="text-lg font-semibold text-white/90">
                             Scores update in real time
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-y-2">
+                    <div className="flex flex-col gap-y-2 relative z-10">
                         {[
                             { name: 'Sarah K.', score: 4820, w: '100%' },
                             { name: 'Mike T.', score: 4650, w: '96%' },
                             { name: 'Alex R.', score: 3900, w: '81%' },
                         ].map((p, i) => (
-                            <div key={i} className="flex items-center gap-x-3">
-                                <span className="text-[12px] font-semibold text-dark-base/40 w-5">
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -6 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.3, delay: i * 0.08 + 0.1 }}
+                                className="flex items-center gap-x-3 group/row"
+                            >
+                                <span className="text-[12px] font-semibold text-emerald-300/40 w-5">
                                     {i + 1}
                                 </span>
-                                <div className="flex-1 h-7 bg-teal-100/60 rounded-md overflow-hidden">
+                                <div className="flex-1 h-7 bg-white/5 rounded-md overflow-hidden">
                                     <motion.div
-                                        className="h-full bg-teal-500/20 rounded-md"
+                                        className="h-full bg-emerald-400/20 rounded-md transition-colors duration-300 group-hover/row:bg-emerald-400/30"
                                         initial={{ width: 0 }}
                                         whileInView={{ width: p.w }}
                                         viewport={{ once: true }}
@@ -168,17 +181,17 @@ export default function UsdcHowItWorksSection() {
                                         }}
                                     />
                                 </div>
-                                <span className="text-[12px] font-medium text-dark-base/50 w-16 truncate">
+                                <span className="text-[12px] font-medium text-white/45 w-16 truncate">
                                     {p.name}
                                 </span>
-                                <span className="text-[12px] font-bold text-dark-base/70 w-10 text-right font-mono">
+                                <span className="text-[12px] font-bold text-white/70 w-10 text-right font-mono">
                                     {p.score}
                                 </span>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
-                    <div className="text-[12px] text-dark-base/30">
+                    <div className="text-[12px] text-white/25 relative z-10">
                         Tied players at the same rank split the combined prize equally
                     </div>
                 </PerspectiveCard>
@@ -230,61 +243,67 @@ export default function UsdcHowItWorksSection() {
 
                 <PerspectiveCard
                     sticky={false}
-                    shadowColor="180,83,9"
-                    className="rounded-2xl bg-[#fffbeb] ring-1 ring-amber-200/40 p-8 flex flex-col gap-y-5"
+                    shadowColor="194,65,12"
+                    className="rounded-2xl bg-[#C2410C] ring-1 ring-white/12 p-8 flex flex-col gap-y-5 overflow-hidden relative"
                 >
-                    <div>
-                        <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-amber-600/60 mb-1">
+                    <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-orange-300/8 blur-[50px] pointer-events-none" />
+                    <div className="relative z-10">
+                        <p className="text-[11px] font-medium tracking-[0.2em] uppercase text-white/40 mb-1">
                             After Quiz Ends
                         </p>
-                        <p className="text-lg font-semibold text-dark-base/85">
+                        <p className="text-lg font-semibold text-white/95">
                             Claims are created on-chain
                         </p>
                     </div>
 
-                    <div className="flex flex-col gap-y-3">
+                    <div className="flex flex-col gap-y-3 relative z-10">
                         {[
                             {
                                 rank: '1st',
                                 amount: '125.00',
                                 status: 'Ready to claim',
-                                color: 'text-amber-700',
                             },
                             {
                                 rank: '2nd',
                                 amount: '75.00',
                                 status: 'Ready to claim',
-                                color: 'text-amber-600',
                             },
                             {
                                 rank: '3rd',
                                 amount: '50.00',
                                 status: 'Ready to claim',
-                                color: 'text-amber-500',
                             },
                         ].map((claim, i) => (
-                            <div
+                            <motion.div
                                 key={i}
-                                className="flex items-center justify-between py-3 px-4 bg-white/60 rounded-xl ring-1 ring-amber-100"
+                                initial={{ opacity: 0, y: 6 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.3, delay: i * 0.08 + 0.1 }}
+                                className="flex items-center justify-between py-3 px-4 bg-black/15 rounded-xl ring-1 ring-white/8 transition-colors duration-300 hover:bg-black/20 group/claim"
                             >
                                 <div className="flex items-center gap-x-3">
-                                    <span className={`text-[13px] font-bold ${claim.color} w-6`}>
+                                    <span className="text-[13px] font-bold text-orange-200/80 w-6">
                                         {claim.rank}
                                     </span>
-                                    <span className="text-[14px] font-semibold text-dark-base/80 font-mono">
+                                    <span className="text-[14px] font-semibold text-white/85 font-mono">
                                         {claim.amount} USDC
                                     </span>
                                 </div>
-                                <span className="text-[11px] tracking-wide text-green-600/70 font-medium">
+                                <span className="text-[11px] tracking-wide text-emerald-300/60 font-medium transition-colors duration-300 group-hover/claim:text-emerald-300/80">
                                     {claim.status}
                                 </span>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
-                    <div className="flex items-center gap-x-3 pt-3 border-t border-amber-200/40">
-                        <div className="w-2 h-2 rounded-full bg-green-500/60" />
-                        <span className="text-[12px] text-dark-base/40">
+                    <div className="flex items-center gap-x-3 pt-3 border-t border-white/10 relative z-10">
+                        <motion.div
+                            animate={{ scale: [1, 1.3, 1] }}
+                            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                            className="w-2 h-2 rounded-full bg-emerald-400/60"
+                        />
+                        <span className="text-[12px] text-white/35">
                             Quiz sealed · 7-day claim window active · results immutable
                         </span>
                     </div>

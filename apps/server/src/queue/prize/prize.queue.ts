@@ -49,7 +49,7 @@ export default class PrizeQueue {
     }
 
     private async process_finalization(data: FinalizationJobData) {
-        const { quizId, claims, quizTitle } = data;
+        const { quizId, hostWalletPubkey, claims, quizTitle } = data;
 
         console.log(
             `[PrizeQueue] Starting finalization for quiz ${quizId} with ${claims.length} claims`,
@@ -70,6 +70,7 @@ export default class PrizeQueue {
                         BigInt(claim.amountBaseUnits),
                         claim.rank,
                         Math.floor(new Date(claim.expiresAt).getTime() / 1000),
+                        hostWalletPubkey,
                     );
                     console.log(`[PrizeQueue] Finalized claim ${claim.id} on-chain: ${txSig}`);
                 } catch (onChainErr: unknown) {
@@ -113,7 +114,7 @@ export default class PrizeQueue {
         }
 
         // Seal the quiz on-chain after all claims are finalized
-        const sealTx = await solanaServiceInstance.seal_quiz_onchain(quizId);
+        const sealTx = await solanaServiceInstance.seal_quiz_onchain(quizId, hostWalletPubkey);
         console.log(`[PrizeQueue] Quiz ${quizId} sealed on-chain: ${sealTx}`);
 
         // Update quiz status to indicate finalization is complete

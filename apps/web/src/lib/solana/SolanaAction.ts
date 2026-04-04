@@ -45,8 +45,18 @@ export interface ClaimData {
     id: string;
     quizId: string;
     quizTitle: string;
+    quizDescription: string | null;
+    quizStatus: string;
+    quizStartedAt: string | null;
+    quizEndedAt: string | null;
+    quizCreatedAt: string;
+    quizHostName: string | null;
+    quizHostAvatar: string | null;
+    quizParticipantCount: number;
+    quizQuestionCount: number;
+    totalPrizePool: number;
     currency: string;
-    hostWalletPubkey: string;
+    hostWalletPubkey: string | null;
     participantName: string;
     participantAvatar: string | null;
     rank: number;
@@ -154,17 +164,27 @@ export default class SolanaAction {
         quizId: string,
         claimToken: string,
         claimerPubkey: PublicKey,
+        hostWalletPubkey: PublicKey,
     ) {
         const claimerTokenAccount = getAssociatedTokenAddressSync(
             SolanaAction.USDC_MINT,
             claimerPubkey,
         );
 
+        const [quizAccountPda] = SolanaAction.getQuizPda(quizId, hostWalletPubkey);
+        const [escrowAuthority] = SolanaAction.getEscrowAuthorityPda(quizAccountPda);
+        const [escrowTokenAccount] = SolanaAction.getEscrowPda(quizAccountPda);
+        const [claimAccount] = SolanaAction.getClaimPda(quizId, claimToken);
+
         return program.methods
             .claimPrize(quizId, claimToken)
-            .accounts({
-                claimer: claimerPubkey,
+            .accountsPartial({
+                quizAccount: quizAccountPda,
+                escrowAuthority,
+                escrowTokenAccount,
+                claimAccount,
                 claimerTokenAccount,
+                claimer: claimerPubkey,
             })
             .transaction();
     }

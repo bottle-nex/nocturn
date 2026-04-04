@@ -30,7 +30,7 @@ function seededRandom(row: number, col: number) {
 }
 
 function shouldAnimate(row: number, col: number) {
-    return seededRandom(row, col) < 0.4; // ~40% of cards animate
+    return seededRandom(row, col) < 0.4;
 }
 
 function getAnimationDelay(row: number, col: number) {

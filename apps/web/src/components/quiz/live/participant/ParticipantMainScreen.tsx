@@ -78,26 +78,26 @@ export default function ParticipantMainScreen() {
         return () => document.removeEventListener('fullscreenchange', handleChange);
     }, []);
 
-    useEffect(() => {
-        function handleVisibilityChange() {
-            if (document.visibilityState === 'hidden') {
-                if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
-                    toast.error(
-                        'Do not switch tabs. When quiz starts, you may be kicked based on warnings.',
-                    );
-                } else {
-                    handleAddParticipantWarningCount({});
-                }
-            }
-        }
+    // useEffect(() => {
+    //     function handleVisibilityChange() {
+    //         if (document.visibilityState === 'hidden') {
+    //             if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
+    //                 toast.error(
+    //                     'Do not switch tabs. When quiz starts, you may be kicked based on warnings.',
+    //                 );
+    //             } else {
+    //                 handleAddParticipantWarningCount({});
+    //             }
+    //         }
+    //     }
 
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gameSession?.participantScreen]);
+    //     return () => {
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [gameSession?.participantScreen]);
 
     const [allowed, setAllowed] = useState(false);
 
@@ -110,6 +110,7 @@ export default function ParticipantMainScreen() {
     }, [currentUserType, fullscreenAccepted, isFullscreen]);
 
     function accept() {
+        alert("sdvbsdv")
         requestFullscreen();
         setFullscreenAccepted(true);
     }

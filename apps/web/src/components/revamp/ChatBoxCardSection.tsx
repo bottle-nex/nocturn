@@ -30,7 +30,7 @@ export default function ChatBoxCardSection(): JSX.Element {
             initial="hidden"
             viewport={{ once: true, amount: 0.35 }}
             onViewportEnter={startSequence}
-            className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-5xl mt-10"
+            className="relative min-h-screen w-full flex flex-col items-center justify-around font-sans text-dark-base overflow-x-hidden pt-6 max-w-270 mt-10"
         >
             <div className="h-150 w-full bg-[#e9ecef] mt-10 rounded-3xl flex justify-center items-center shadow-xs shadow-black/5">
                 {/* cards */}

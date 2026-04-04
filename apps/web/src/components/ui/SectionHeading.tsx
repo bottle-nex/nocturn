@@ -50,7 +50,7 @@ export default function SectionHeading({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.4 }}
-            className={cn('w-full flex flex-col items-center gap-y-2 max-w-5xl', className)}
+            className={cn('w-full flex flex-col items-center gap-y-2 max-w-270', className)}
         >
             <motion.div variants={child}>
                 <UnclickableTicker>

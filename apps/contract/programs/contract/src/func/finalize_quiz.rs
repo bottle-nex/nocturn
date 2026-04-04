@@ -62,13 +62,6 @@ pub struct FinalizeQuiz<'info> {
     )]
     pub claim_account: Account<'info, ClaimAccount>,
 
-    /// CHECK: Escrow PDA holding the prize pool SOL
-    #[account(
-        seeds = [b"escrow", quiz_account.key().as_ref()],
-        bump,
-    )]
-    pub escrow_account: SystemAccount<'info>,
-
     #[account(mut)]
     pub platform_authority: Signer<'info>,
 

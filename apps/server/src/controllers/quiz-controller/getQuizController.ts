@@ -39,6 +39,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
             include: {
                 template: true,
                 questions: true,
+                prizeDistributions: true,
                 CollabSession: {
                     include: {
                         collaborators: {
@@ -116,11 +117,17 @@ export default async function getQuizController(req: Request, res: Response): Pr
             res.clearCookie(NOCTURN_COOKIE_NAME);
         }
 
+        const serializedQuiz = JSON.parse(
+            JSON.stringify(quiz, (_key, value) =>
+                typeof value === 'bigint' ? value.toString() : value,
+            ),
+        );
+
         ResponseWriter.success(
             res,
             {
                 type: QuizResponseType.QUIZ_FOUND,
-                quiz: quiz,
+                quiz: serializedQuiz,
             },
             'Quiz retrieved successfully',
         );

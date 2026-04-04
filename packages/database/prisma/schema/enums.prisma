@@ -196,3 +196,8 @@ enum PointsMultiplier {
     MANUAL
     NONE
 }
+
+enum Currency {
+    USDC
+    NONE
+}

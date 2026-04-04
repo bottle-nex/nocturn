@@ -64,7 +64,7 @@ export default function FounderBase() {
                 <AppLogo />
             </div>
 
-            <div className="w-full max-w-4xl xl:max-w-5xl 2xl:max-w-5xl dark:border-l dark:border-r border-l border-r dark:border-gray-700 border-gray-200 pt-[80px] flex flex-col mx-auto px-2 sm:px-0">
+            <div className="w-full max-w-4xl xl:max-w-270 2xl:max-w-270 dark:border-l dark:border-r border-l border-r dark:border-gray-700 border-gray-200 pt-[80px] flex flex-col mx-auto px-2 sm:px-0">
                 <div
                     className="h-16 sm:h-20 w-full dark:border-b border-b dark:border-gray-700 border-gray-200 flex p-3 sm:p-6 text-sm sm:text-md items-center justify-between font-light"
                     style={{ animation: 'slideDownFade 1.2s ease-out forwards' }}

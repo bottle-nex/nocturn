@@ -1,10 +1,11 @@
 'use client';
-import { ReactNode, useRef } from 'react';
+import { CSSProperties, ReactNode, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface PerspectiveCardProps {
     children?: ReactNode;
     className?: string;
+    style?: CSSProperties;
     shadowColor?: string;
     sticky?: boolean;
     stickyTop?: number;
@@ -14,6 +15,7 @@ interface PerspectiveCardProps {
 export default function PerspectiveCard({
     children,
     className = '',
+    style,
     shadowColor = '0,0,0',
     sticky = true,
     stickyTop = 10,
@@ -42,7 +44,7 @@ export default function PerspectiveCard({
     const opacity = useTransform(scrollYProgress, [d, d + 0.3, d + 0.5], [0.5, 1, 1]);
 
     const wrapper = (
-        <motion.div ref={ref} style={{ y, scale, boxShadow, opacity }} className={className}>
+        <motion.div ref={ref} style={{ y, scale, boxShadow, opacity, ...style }} className={className}>
             {children}
         </motion.div>
     );

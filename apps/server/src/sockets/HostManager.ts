@@ -691,7 +691,7 @@ export default class HostManager {
 
             if (!participant) continue;
 
-            const claimToken = crypto.randomBytes(32).toString('hex');
+            const claimToken = crypto.randomBytes(16).toString('hex');
             const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
             const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
 

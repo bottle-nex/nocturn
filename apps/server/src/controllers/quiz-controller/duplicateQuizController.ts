@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma, TemplateEnum } from '@nocturn/database';
+import { Currency } from '@nocturn/types';
 
 export default async function duplicateQuizController(req: Request, res: Response) {
     const user = req.user;
@@ -40,7 +41,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                 description: quiz.description,
                 templateId: TemplateEnum.CLASSIC,
                 prizePool: 0,
-                currency: 'SOL',
+                currency: Currency.NONE,
                 isFavourite: false,
                 allowNewSpectator: true,
                 hostId: req.user.id,

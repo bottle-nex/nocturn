@@ -39,7 +39,6 @@ export default async function createQuizController(req: Request, res: Response) 
                 title: sample.title,
                 templateId: template.id,
                 prizePool: 0,
-                currency: 'SOL',
                 hostId: req.user.id,
                 questions: {
                     create: [

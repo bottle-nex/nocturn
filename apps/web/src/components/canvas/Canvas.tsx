@@ -45,7 +45,7 @@ export default function Canvas({ className }: CanvasProps): JSX.Element {
             }}
             onClick={canvasTapHandler}
             className={cn(
-                'w-full md:max-w-5xl aspect-video rounded-lg relative overflow-hidden',
+                'w-full md:max-w-270 aspect-video rounded-lg relative overflow-hidden',
                 currentOn === SELECTION_MODE.CANVAS && selectedStyles,
                 className,
             )}

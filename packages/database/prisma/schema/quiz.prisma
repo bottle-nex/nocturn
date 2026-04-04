@@ -13,7 +13,7 @@ model Quiz {
     isFavourite Boolean?
 
     prizePool Float
-    currency  String @default("USDC")
+    currency  Currency @default(NONE)
 
     basePointsPerQuestion Int              @default(100)
     pointsMultiplier      PointsMultiplier @default(NONE)

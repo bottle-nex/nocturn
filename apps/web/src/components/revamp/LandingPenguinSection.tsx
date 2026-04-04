@@ -104,7 +104,7 @@ export default function LandingPenguinSection() {
     ];
 
     return (
-        <div className="w-full flex flex-col items-center py-5 pt-15 max-w-5xl scale-90">
+        <div className="w-full flex flex-col items-center py-5 pt-15 max-w-270 scale-90">
             <div className="w-screen h-screen flex flex-col justify-center items-center relative pt-20 select-none -mt-10 overflow-hidden">
                 <div className="max-h-screen w-full h-full flex flex-col items-center justify-center pt-30 max-w-6xl">
                     <div className="w-320 h-320 aspect-square border border-dark-base/1 flex justify-center items-center rounded-[21rem] shadow-xs -mt-50 ">
@@ -181,7 +181,7 @@ export default function LandingPenguinSection() {
                                                                                             p.color,
                                                                                         borderRadius:
                                                                                             Math.random() >
-                                                                                            0.5
+                                                                                                0.5
                                                                                                 ? 2
                                                                                                 : 999,
                                                                                     }}

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
 import { solanaServiceInstance } from '../../services/init.services';
+import { Currency } from '@nocturn/types';
 
 export default async function confirmStakeController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -16,8 +17,6 @@ export default async function confirmStakeController(req: Request, res: Response
         quizAccountPda: string;
         hostWalletPubkey: string;
     };
-
-    console.log('req body: ', req.body);
 
     if (!quizId || !txSignature || !escrowPda || !quizAccountPda || !hostWalletPubkey) {
         ResponseWriter.invalid_data(res, 'All fields are required');
@@ -45,7 +44,6 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        // Verify the transaction on-chain
         const isValid = await solanaServiceInstance.verify_stake_tx(txSignature, escrowPda);
         if (!isValid.valid) {
             ResponseWriter.error(
@@ -58,7 +56,6 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        // Update quiz with on-chain data
         const updated = await prisma.quiz.update({
             where: { id: quizId },
             data: {
@@ -67,6 +64,7 @@ export default async function confirmStakeController(req: Request, res: Response
                 onChainTxSignature: txSignature,
                 hostWalletPubkey,
                 prizePool: isValid.baseUnits ? Number(isValid.baseUnits) / 1e6 : quiz.prizePool,
+                currency: Currency.USDC,
             },
         });
 

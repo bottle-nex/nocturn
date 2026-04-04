@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 export default function SectionDivider({ className }: { className?: string }) {
     return (
-        <div className={cn('flex items-center gap-x-8 w-full max-w-5xl mx-auto', className)}>
+        <div className={cn('flex items-center gap-x-8 w-full max-w-270 mx-auto', className)}>
             <div className="w-40 h-px bg-neutral-400/60 shrink-0" />
             <div className="flex-1 flex flex-col items-center justify-center gap-y-1.5 overflow-hidden">
                 {[0, 1].map((row) => (

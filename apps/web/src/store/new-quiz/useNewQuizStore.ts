@@ -5,6 +5,7 @@ import {
     InteractionEnum,
     TemplateType,
     PointsMultiplier,
+    Currency,
 } from '@nocturn/types';
 import { create } from 'zustand';
 
@@ -53,7 +54,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
         templateId: '',
         template: default_template,
         prizePool: 0,
-        currency: '',
+        currency: Currency.NONE,
         basePointsPerQuestion: 100,
         pointsMultiplier: PointsMultiplier.NONE,
         pointsIncrement: 1,
@@ -234,7 +235,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
                 templateId: '',
                 template: default_template,
                 prizePool: 0,
-                currency: '',
+                currency: Currency.NONE,
                 basePointsPerQuestion: 100,
                 pointsMultiplier: PointsMultiplier.NONE,
                 pointsIncrement: 1,

@@ -14,6 +14,16 @@ interface ClaimData {
     id: string;
     quizId: string;
     quizTitle: string;
+    quizDescription: string | null;
+    quizStatus: string;
+    quizStartedAt: string | null;
+    quizEndedAt: string | null;
+    quizCreatedAt: string;
+    quizHostName: string | null;
+    quizHostAvatar: string | null;
+    quizParticipantCount: number;
+    quizQuestionCount: number;
+    totalPrizePool: number;
     currency: string;
     hostWalletPubkey: string | null;
     participantName: string;

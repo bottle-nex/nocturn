@@ -44,7 +44,7 @@ export default function LandingSectionHeader({
                 ))}
             </h1>
             <motion.p
-                className="text-lg text-center text-dark-base/50 mt-3 max-w-120"
+                className="text-lg text-center text-dark-base/60 mt-3 max-w-180"
                 initial={{ y: 12, opacity: 0, filter: 'blur(4px)' }}
                 whileInView={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
                 viewport={{ once: true, margin: '-50px' }}

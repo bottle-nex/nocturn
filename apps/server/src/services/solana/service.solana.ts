@@ -1,4 +1,4 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { env } from '../../configs/env';
 import {
@@ -117,7 +117,20 @@ export default class SolanaService {
         amountBaseUnits: bigint,
         rank: number,
         expiresAt: number,
+        hostWalletPubkey: string,
     ): Promise<string> {
+        const hostPubkey = new PublicKey(hostWalletPubkey);
+
+        const [quizAccountPda] = PublicKey.findProgramAddressSync(
+            [Buffer.from('quiz'), Buffer.from(quizId), hostPubkey.toBytes()],
+            this.program.programId,
+        );
+
+        const [claimAccountPda] = PublicKey.findProgramAddressSync(
+            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(claimToken)],
+            this.program.programId,
+        );
+
         const tx = await this.program.methods
             .finalizeQuiz(
                 quizId,
@@ -127,18 +140,29 @@ export default class SolanaService {
                 rank,
                 new BN(expiresAt),
             )
-            .accounts({
+            .accountsPartial({
+                quizAccount: quizAccountPda,
+                claimAccount: claimAccountPda,
                 platformAuthority: this.platformPublicKey,
+                systemProgram: SystemProgram.programId,
             })
             .rpc();
 
         return tx;
     }
 
-    public async seal_quiz_onchain(quizId: string): Promise<string> {
+    public async seal_quiz_onchain(quizId: string, hostWalletPubkey: string): Promise<string> {
+        const hostPubkey = new PublicKey(hostWalletPubkey);
+
+        const [quizAccountPda] = PublicKey.findProgramAddressSync(
+            [Buffer.from('quiz'), Buffer.from(quizId), hostPubkey.toBytes()],
+            this.program.programId,
+        );
+
         const tx = await this.program.methods
             .sealQuiz(quizId)
-            .accounts({
+            .accountsPartial({
+                quizAccount: quizAccountPda,
                 platformAuthority: this.platformPublicKey,
             })
             .rpc();

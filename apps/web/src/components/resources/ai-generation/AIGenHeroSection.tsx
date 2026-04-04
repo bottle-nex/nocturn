@@ -8,7 +8,7 @@ import LandingSectionHeader from '@/components/refactor/LandingSectionHeader';
 export default function AIGenHeroSection() {
     return (
         <main className="">
-            <div className="flex flex-row items-start justify-center w-full max-w-5xl mt-32">
+            <div className="flex flex-row items-start justify-center w-full max-w-270 mt-32">
                 <AICreateCard />
                 <BeginnerGuideCard />
                 <DifficultyCard />

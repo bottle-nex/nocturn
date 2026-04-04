@@ -86,7 +86,7 @@ function BigHomeNavbar({
     onWalletClick,
 }: HomeNavbar) {
     return (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 py-4 rounded-2xl shadow-lg border bg-linear-to-b dark:from-[#1c1c1c] dark:via-neutral-900 dark:to-[#1c1c1c] from-neutral-200 via-neutral-100 to-neutral-200 hidden xl:flex">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-270 px-4 py-4 rounded-2xl shadow-lg border bg-linear-to-b dark:from-[#1c1c1c] dark:via-neutral-900 dark:to-[#1c1c1c] from-neutral-200 via-neutral-100 to-neutral-200 hidden xl:flex">
             <div className="px-4 flex items-center justify-between w-full">
                 <AppLogo />
 

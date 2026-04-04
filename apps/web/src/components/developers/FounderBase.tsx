@@ -40,7 +40,7 @@
 //             >
 //                 <AppLogo />
 //             </div>
-//             <div className="w-full max-w-4xl xl:max-w-5xl 2xl:max-w-5xl h-screen border-l border-r pt-[80px] flex flex-col mx-auto px-2 sm:px-0">
+//             <div className="w-full max-w-4xl xl:max-w-270 2xl:max-w-270 h-screen border-l border-r pt-[80px] flex flex-col mx-auto px-2 sm:px-0">
 //                 <div
 //                     className="h-16 sm:h-20 w-full border-b flex p-3 sm:p-6 text-sm sm:text-md items-center justify-between font-light"
 //                     style={{ animation: 'slideDownFade 1.2s ease-out forwards' }}
