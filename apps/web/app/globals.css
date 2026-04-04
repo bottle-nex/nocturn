@@ -72,8 +72,12 @@
     --radius-beta: 6px;
 
     @keyframes gradient-slide {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 200% 50%; }
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 200% 50%;
+        }
     }
 
     @keyframes cell-ripple {
