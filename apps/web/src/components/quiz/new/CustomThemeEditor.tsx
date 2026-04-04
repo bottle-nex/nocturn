@@ -10,10 +10,6 @@ import { toast } from '@/lib/toast';
 import { FaPalette } from 'react-icons/fa6';
 import { HexColorPicker, HexColorInput } from 'react-colorful';
 
-interface Props {
-    onClose: () => void;
-}
-
 function hexToAlpha(hex: string): number {
     if (hex.length === 9) {
         return Math.round(parseInt(hex.slice(7, 9), 16) / 2.55);
@@ -28,6 +24,9 @@ function applyAlphaToHex(hex: string, alphaPercent: number): string {
         .padStart(2, '0')
         .toUpperCase();
     return base + alphaHex;
+}
+interface Props {
+    onClose: () => void;
 }
 
 export default function CustomThemeEditor({ onClose }: Props) {
@@ -214,6 +213,14 @@ export default function CustomThemeEditor({ onClose }: Props) {
                             </span>
                         </div>
                     </div>
+
+                    <ColorPickerRow
+                        label="Items"
+                        value={template.itemsColor}
+                        isOpen={activePickerId === 'itemsColor'}
+                        onToggle={() => togglePicker('itemsColor')}
+                        onChange={(v) => handleColorChange('itemsColor', v)}
+                    />
                 </div>
 
                 <hr className="border-neutral-200 dark:border-neutral-800" />

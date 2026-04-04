@@ -8,6 +8,7 @@ export interface Template {
   borderColor: string;
   accentType: string;
   accentColor: string;
+  itemsColor: string;
   bars: string[];
   src: string;
 }
@@ -21,6 +22,7 @@ export const templates: Template[] = [
     borderColor: "#000000",
     accentType: "mountains",
     accentColor: "#00000010",
+    itemsColor: "",
     bars: ["#E2C275", "#6886C5", "#CD5656", "#AEDADD", "#BCBAB8"],
     src: "classic-template",
   },
@@ -32,6 +34,7 @@ export const templates: Template[] = [
     borderColor: "#D1D5DB",
     accentType: "wave",
     accentColor: "#EEEEEE",
+    itemsColor: "",
     bars: ["#196cff", "#ffd439", "#FF2929", "#0e6b45", "#1A73E8"],
     src: "pink-template",
   },
@@ -43,6 +46,7 @@ export const templates: Template[] = [
     borderColor: "#000000",
     accentType: "staircase",
     accentColor: "#EEEEEE",
+    itemsColor: "",
     bars: ["#FF6500", "#0A5EB0", "#FFE5CF", "#FFE700", "#7A1CAC"],
     src: "neon-template",
   },
@@ -54,6 +58,7 @@ export const templates: Template[] = [
     borderColor: "#000000",
     accentType: "circle",
     accentColor: "#000000",
+    itemsColor: "",
     bars: ["#EB5B00", "#347433", "#C5172E", "#547792", "#F7CFD8"],
     src: "yellow-template",
   },
@@ -65,6 +70,7 @@ export const templates: Template[] = [
     borderColor: "#000000",
     accentType: "staircase",
     accentColor: "#000000",
+    itemsColor: "",
     bars: ["#feb9d0", "#ff403d", "#196cff", "#ffc739", "#C886E5"],
     src: "green-template",
   },
@@ -76,6 +82,7 @@ export const templates: Template[] = [
     borderColor: "#000000",
     accentType: "donut",
     accentColor: "#000000",
+    itemsColor: "",
     bars: ["#DA6C6C", "#687FE5", "#A7C1A8", "#9B7EBD", "#E6B2BA"],
     src: "pastel-template",
   },
@@ -87,6 +94,7 @@ export const templates: Template[] = [
     borderColor: "#EEEEEE",
     accentType: "slash",
     accentColor: "#EEEEEE",
+    itemsColor: "",
     bars: ["#C5172E", "#FDFAF6", "#FFCC00", "#1DCD9F", "#000000"],
     src: "blue-template",
   },
