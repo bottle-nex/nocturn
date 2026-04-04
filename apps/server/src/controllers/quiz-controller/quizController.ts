@@ -245,6 +245,7 @@ export default class QuizController {
                             borderColor: template.borderColor,
                             accentType: template.accentType,
                             accentColor: template.accentColor,
+                            itemsColor: template.itemsColor,
                             bars: template.bars,
                             src: template.src,
                             userId: hostId,

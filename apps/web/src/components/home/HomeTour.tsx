@@ -11,12 +11,12 @@ export default function HomeTour() {
 
     useEffect(() => {
         const driverObj = driver({
-            showProgress: false,
+            showProgress: true,
             allowClose: false,
-            overlayOpacity: 0.25,
+            overlayOpacity: 0.6,
             smoothScroll: true,
-            stagePadding: 8,
-            popoverClass: 'vercel-tour',
+            stagePadding: 12,
+            popoverClass: 'nocturn-tour',
             disableActiveInteraction: true,
             showButtons: ['previous', 'next'],
 
@@ -43,10 +43,18 @@ export default function HomeTour() {
 
             steps: [
                 {
+                    popover: {
+                        title: 'Welcome to Nocturn',
+                        description:
+                            "Let's take a quick tour to help you get started with creating and managing your AI-powered quizzes here.",
+                    },
+                },
+                {
                     element: '#tour-new-quiz',
                     popover: {
-                        title: 'New Quiz',
-                        description: 'Create a new quiz.',
+                        title: 'Create Your First Quiz',
+                        description:
+                            'Click here to start generating a new quiz using AI. You can customize the topic, difficulty, and add PDF materials.',
                         side: 'bottom',
                         align: 'start',
                     },
@@ -54,32 +62,36 @@ export default function HomeTour() {
                 {
                     element: '#tour-my-quizzes',
                     popover: {
-                        title: 'My Quizzes',
-                        description: 'All your quizzes live here.',
+                        title: 'Manage Your Workspace',
+                        description:
+                            "Access all the quizzes you've created. You can review, edit, share, or delete them from this dashboard seamlessly.",
                         side: 'right',
                     },
                 },
                 {
                     element: '#tour-shared-with-me',
                     popover: {
-                        title: 'Shared',
-                        description: 'Quizzes shared with you.',
+                        title: 'Shared with You',
+                        description:
+                            'Find all the quizzes that others have shared with you here. You can jump directly into collaborating and taking quizzes.',
                         side: 'right',
                     },
                 },
                 {
                     element: '#tour-favourites',
                     popover: {
-                        title: 'Favourites',
-                        description: 'Quick access to saved quizzes.',
+                        title: 'Quick Access',
+                        description:
+                            'Star your most important quizzes to keep them handy and find them quickly in your favourites section.',
                         side: 'right',
                     },
                 },
                 {
                     element: '#tour-trash',
                     popover: {
-                        title: 'Trash',
-                        description: 'Deleted quizzes appear here.',
+                        title: 'Trash Can',
+                        description:
+                            'Accidentally deleted a quiz? You can find and easily restore your recently deleted items here before they are gone permanently.',
                         side: 'right',
                     },
                 },
