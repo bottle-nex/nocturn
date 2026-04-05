@@ -70,7 +70,13 @@ export default function DifficultyCard() {
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.95, duration: 0.25, type: 'spring', stiffness: 400, damping: 15 }}
+                        transition={{
+                            delay: 0.95,
+                            duration: 0.25,
+                            type: 'spring',
+                            stiffness: 400,
+                            damping: 15,
+                        }}
                         className="flex-1 bg-[#ff4213] rounded-md flex items-center justify-center text-[10px] text-white shadow-[0_0_15px_rgba(255,50,0,0.3)] uppercase tracking-wider font-semibold"
                     >
                         Medium

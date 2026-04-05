@@ -110,7 +110,7 @@ export default function ParticipantMainScreen() {
     }, [currentUserType, fullscreenAccepted, isFullscreen]);
 
     function accept() {
-        alert("sdvbsdv")
+        alert('sdvbsdv');
         requestFullscreen();
         setFullscreenAccepted(true);
     }

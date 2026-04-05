@@ -64,7 +64,13 @@ export default function ManualEditCard() {
                 <motion.div
                     initial={{ y: 10, opacity: 0, scale: 0.9 }}
                     animate={{ y: 0, opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, duration: 0.3, type: 'spring', stiffness: 400, damping: 15 }}
+                    transition={{
+                        delay: 0.8,
+                        duration: 0.3,
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 15,
+                    }}
                     className="absolute bottom-2 right-2 bg-white rounded-md p-2 shadow-xl flex items-center gap-2"
                 >
                     <div className="size-5 rounded bg-[#C2410C]/10 flex items-center justify-center text-[#C2410C]">
@@ -83,7 +89,11 @@ export default function ManualEditCard() {
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, x: [0, 30, 10], y: [0, -10, 0] }}
-                    transition={{ opacity: { delay: 0.65, duration: 0.3 }, x: { repeat: Infinity, duration: 4, delay: 0.65 }, y: { repeat: Infinity, duration: 4, delay: 0.65 } }}
+                    transition={{
+                        opacity: { delay: 0.65, duration: 0.3 },
+                        x: { repeat: Infinity, duration: 4, delay: 0.65 },
+                        y: { repeat: Infinity, duration: 4, delay: 0.65 },
+                    }}
                     className="absolute top-1/2 left-1/3"
                 >
                     <MousePointer2 className="size-4 text-white fill-white drop-shadow-lg" />

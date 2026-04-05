@@ -53,7 +53,13 @@ export default function BeginnerGuideCard() {
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            transition={{ delay: 0.55, duration: 0.25, type: 'spring', stiffness: 400, damping: 15 }}
+                            transition={{
+                                delay: 0.55,
+                                duration: 0.25,
+                                type: 'spring',
+                                stiffness: 400,
+                                damping: 15,
+                            }}
                             className="size-4 rounded-full bg-emerald-400 flex items-center justify-center shadow-[0_0_8px_rgba(52,211,153,0.3)]"
                         >
                             <Check className="size-2.5 text-[#004D40] stroke-[4px]" />

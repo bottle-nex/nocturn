@@ -114,7 +114,11 @@ export default function UsdcHowItWorksSection() {
                                     initial={{ opacity: 0, x: -8 }}
                                     whileInView={{ opacity: 1, x: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{ duration: 0.35, delay: i * 0.08 + 0.15, ease: 'easeOut' }}
+                                    transition={{
+                                        duration: 0.35,
+                                        delay: i * 0.08 + 0.15,
+                                        ease: 'easeOut',
+                                    }}
                                     className="flex gap-x-4 py-3.5 border-b border-white/8 last:border-0 group/item"
                                 >
                                     <div className="w-6 h-6 rounded-full bg-sky-300/15 text-sky-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 transition-colors duration-300 group-hover/item:bg-sky-300/25">

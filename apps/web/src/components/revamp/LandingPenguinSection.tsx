@@ -181,7 +181,7 @@ export default function LandingPenguinSection() {
                                                                                             p.color,
                                                                                         borderRadius:
                                                                                             Math.random() >
-                                                                                                0.5
+                                                                                            0.5
                                                                                                 ? 2
                                                                                                 : 999,
                                                                                     }}

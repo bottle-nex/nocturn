@@ -94,8 +94,8 @@ export default function StakeConfirmButton() {
                 {status === 'signing'
                     ? 'Awaiting signature...'
                     : status === 'confirming'
-                        ? 'Confirming on-chain...'
-                        : `Stake ${quiz.prizePool || 0} USDC`}
+                      ? 'Confirming on-chain...'
+                      : `Stake ${quiz.prizePool || 0} USDC`}
             </Button>
 
             {!publicKey && (

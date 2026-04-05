@@ -1,10 +1,10 @@
-import AboutFounderSection from "@/components/about/AboutFounderSection";
-import AboutHeroSection from "@/components/about/AboutHeroSection";
-import LandingFaqSection from "@/components/refactor/LandingFaqSection";
+import AboutFounderSection from '@/components/about/AboutFounderSection';
+import AboutHeroSection from '@/components/about/AboutHeroSection';
+import LandingFaqSection from '@/components/refactor/LandingFaqSection';
 import LandingFooter from '@/components/refactor/LandingFooter';
-import LandingNavbarComponent from "@/components/refactor/LandingNavbarComponent";
-import GooeyGallery from "@/components/ui/GooeyGallery";
-import SectionDivider from "@/components/utility/SectionDivider";
+import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
+import GooeyGallery from '@/components/ui/GooeyGallery';
+import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function ClaimRevampPage() {
     return (

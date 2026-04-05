@@ -31,10 +31,37 @@ function getRankLabel(rank: number): string {
 }
 
 function getRankIcon(rank: number) {
-    if (rank === 1) return { emoji: '1', bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-700', ring: 'ring-amber-200' };
-    if (rank === 2) return { emoji: '2', bg: 'bg-slate-50', border: 'border-slate-300', text: 'text-slate-600', ring: 'ring-slate-200' };
-    if (rank === 3) return { emoji: '3', bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700', ring: 'ring-orange-200' };
-    return { emoji: `${rank}`, bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700', ring: 'ring-indigo-200' };
+    if (rank === 1)
+        return {
+            emoji: '1',
+            bg: 'bg-amber-50',
+            border: 'border-amber-300',
+            text: 'text-amber-700',
+            ring: 'ring-amber-200',
+        };
+    if (rank === 2)
+        return {
+            emoji: '2',
+            bg: 'bg-slate-50',
+            border: 'border-slate-300',
+            text: 'text-slate-600',
+            ring: 'ring-slate-200',
+        };
+    if (rank === 3)
+        return {
+            emoji: '3',
+            bg: 'bg-orange-50',
+            border: 'border-orange-300',
+            text: 'text-orange-700',
+            ring: 'ring-orange-200',
+        };
+    return {
+        emoji: `${rank}`,
+        bg: 'bg-indigo-50',
+        border: 'border-indigo-300',
+        text: 'text-indigo-700',
+        ring: 'ring-indigo-200',
+    };
 }
 
 function useCountdown(expiresAt: string) {
@@ -60,8 +87,19 @@ function truncateAddress(addr: string) {
 function Spinner() {
     return (
         <svg className="animate-spin size-4" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-            <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            <circle
+                className="opacity-20"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="3"
+            />
+            <path
+                className="opacity-80"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
         </svg>
     );
 }
@@ -72,7 +110,9 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
             <span className="text-2xl font-semibold text-dark-base/90 tabular-nums leading-none">
                 {String(value).padStart(2, '0')}
             </span>
-            <span className="text-[11px] uppercase tracking-widest text-dark-base/40 mt-1">{label}</span>
+            <span className="text-[11px] uppercase tracking-widest text-dark-base/40 mt-1">
+                {label}
+            </span>
         </div>
     );
 }
@@ -91,7 +131,17 @@ function LoadingPulse() {
     );
 }
 
-function RankAmountCard({ rank, amount, currency, quizTitle }: { rank: number; amount: number; currency: string; quizTitle: string }) {
+function RankAmountCard({
+    rank,
+    amount,
+    currency,
+    quizTitle,
+}: {
+    rank: number;
+    amount: number;
+    currency: string;
+    quizTitle: string;
+}) {
     const style = getRankIcon(rank);
     return (
         <motion.div
@@ -100,18 +150,28 @@ function RankAmountCard({ rank, amount, currency, quizTitle }: { rank: number; a
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         >
             <div className="flex items-center gap-3">
-                <div className={`size-12 rounded-full ${style.bg} ${style.border} border flex items-center justify-center ring-2 ${style.ring} shrink-0`}>
+                <div
+                    className={`size-12 rounded-full ${style.bg} ${style.border} border flex items-center justify-center ring-2 ${style.ring} shrink-0`}
+                >
                     <span className={`text-base font-bold ${style.text}`}>#{style.emoji}</span>
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <p className="text-xs uppercase tracking-wide text-dark-base/40 leading-none mb-1">{getRankLabel(rank)}</p>
-                    <p className="text-[15px] text-dark-base/60 truncate leading-tight">{quizTitle}</p>
+                    <p className="text-xs uppercase tracking-wide text-dark-base/40 leading-none mb-1">
+                        {getRankLabel(rank)}
+                    </p>
+                    <p className="text-[15px] text-dark-base/60 truncate leading-tight">
+                        {quizTitle}
+                    </p>
                 </div>
 
                 <div className="text-right shrink-0">
-                    <p className="text-2xl font-semibold text-dark-base/90 leading-none tabular-nums">{amount.toFixed(2)}</p>
-                    <p className="text-[11px] uppercase tracking-widest text-dark-base/40 mt-0.5">{currency}</p>
+                    <p className="text-2xl font-semibold text-dark-base/90 leading-none tabular-nums">
+                        {amount.toFixed(2)}
+                    </p>
+                    <p className="text-[11px] uppercase tracking-widest text-dark-base/40 mt-0.5">
+                        {currency}
+                    </p>
                 </div>
             </div>
         </motion.div>
@@ -126,7 +186,9 @@ function CountdownBar({ expiresAt }: { expiresAt: string }) {
             animate={{ opacity: 1, height: 'auto' }}
             className="rounded-lg border border-neutral-200 bg-white p-3"
         >
-            <p className="text-[11px] uppercase tracking-widest text-dark-base/35 text-center mb-2">Claim expires in</p>
+            <p className="text-[11px] uppercase tracking-widest text-dark-base/35 text-center mb-2">
+                Claim expires in
+            </p>
             <div className="flex items-center justify-center gap-2">
                 <CountdownUnit value={days} label="days" />
                 <CountdownSeparator />
@@ -142,9 +204,18 @@ function CountdownBar({ expiresAt }: { expiresAt: string }) {
 
 function ExpiredNotice() {
     return (
-        <motion.div {...FADE_UP} className="rounded-lg border border-red-200 bg-red-50/60 p-4 text-center">
+        <motion.div
+            {...FADE_UP}
+            className="rounded-lg border border-red-200 bg-red-50/60 p-4 text-center"
+        >
             <div className="size-8 rounded-full bg-red-100 border border-red-200 flex items-center justify-center mx-auto mb-2">
-                <svg className="size-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <svg
+                    className="size-4 text-red-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </div>
@@ -156,11 +227,26 @@ function ExpiredNotice() {
     );
 }
 
-function ClaimedNotice({ claimerWallet, txSignature }: { claimerWallet: string | null; txSignature: string | null }) {
+function ClaimedNotice({
+    claimerWallet,
+    txSignature,
+}: {
+    claimerWallet: string | null;
+    txSignature: string | null;
+}) {
     return (
-        <motion.div {...FADE_UP} className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 text-center space-y-2">
+        <motion.div
+            {...FADE_UP}
+            className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-4 text-center space-y-2"
+        >
             <div className="size-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center mx-auto">
-                <svg className="size-4 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <svg
+                    className="size-4 text-emerald-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.5}
+                    stroke="currentColor"
+                >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
             </div>
@@ -178,8 +264,18 @@ function ClaimedNotice({ claimerWallet, txSignature }: { claimerWallet: string |
                     className="inline-flex items-center gap-1 text-[13px] text-emerald-700 hover:text-emerald-900 font-medium transition-colors"
                 >
                     View on Solana Explorer
-                    <svg className="size-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-4.5h6m0 0v6m0-6L9.75 14.25" />
+                    <svg
+                        className="size-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-4.5h6m0 0v6m0-6L9.75 14.25"
+                        />
                     </svg>
                 </a>
             )}
@@ -189,10 +285,23 @@ function ClaimedNotice({ claimerWallet, txSignature }: { claimerWallet: string |
 
 function ErrorNotice({ error, onRetry }: { error: string | null; onRetry: () => void }) {
     return (
-        <motion.div {...FADE_UP} className="rounded-lg border border-red-200 bg-red-50/60 p-4 text-center space-y-2">
+        <motion.div
+            {...FADE_UP}
+            className="rounded-lg border border-red-200 bg-red-50/60 p-4 text-center space-y-2"
+        >
             <div className="size-8 rounded-full bg-red-100 border border-red-200 flex items-center justify-center mx-auto">
-                <svg className="size-4 text-red-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                <svg
+                    className="size-4 text-red-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                    />
                 </svg>
             </div>
             <p className="text-[15px] font-medium text-red-700">Claim failed</p>
@@ -227,22 +336,43 @@ function WalletSection({
         <div className="space-y-3">
             {!connected ? (
                 <motion.div {...FADE_UP} className="space-y-2">
-                    <p className="text-xs uppercase tracking-wide text-dark-base/40 text-center">Connect wallet</p>
+                    <p className="text-xs uppercase tracking-wide text-dark-base/40 text-center">
+                        Connect wallet
+                    </p>
                     {installedWallets.length > 0 ? (
                         <div className="space-y-1.5">
                             {installedWallets.map((wallet) => (
                                 <button
                                     type="button"
                                     key={wallet.adapter.name}
-                                    onClick={() => onSelectWallet(wallet.adapter.name as WalletName)}
+                                    onClick={() =>
+                                        onSelectWallet(wallet.adapter.name as WalletName)
+                                    }
                                     className="w-full flex items-center gap-3 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 hover:border-neutral-300 p-3 transition-all duration-150 cursor-pointer group"
                                 >
-                                    <Image src={wallet.adapter.icon} alt={wallet.adapter.name} width={24} height={24} className="rounded" unoptimized />
+                                    <Image
+                                        src={wallet.adapter.icon}
+                                        alt={wallet.adapter.name}
+                                        width={24}
+                                        height={24}
+                                        className="rounded"
+                                        unoptimized
+                                    />
                                     <span className="text-[15px] text-dark-base/70 group-hover:text-dark-base/90 transition-colors">
                                         {wallet.adapter.name}
                                     </span>
-                                    <svg className="size-3.5 text-dark-base/20 group-hover:text-dark-base/40 ml-auto transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    <svg
+                                        className="size-3.5 text-dark-base/20 group-hover:text-dark-base/40 ml-auto transition-colors"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={2}
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                                        />
                                     </svg>
                                 </button>
                             ))}
@@ -251,10 +381,24 @@ function WalletSection({
                         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-center">
                             <p className="text-sm text-dark-base/50 leading-relaxed">
                                 No wallet detected. Install{' '}
-                                <a href="https://phantom.app" target="_blank" rel="noopener noreferrer" className="text-alpha font-medium hover:underline">Phantom</a>
-                                {' '}or{' '}
-                                <a href="https://solflare.com" target="_blank" rel="noopener noreferrer" className="text-alpha font-medium hover:underline">Solflare</a>
-                                {' '}to continue.
+                                <a
+                                    href="https://phantom.app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-alpha font-medium hover:underline"
+                                >
+                                    Phantom
+                                </a>{' '}
+                                or{' '}
+                                <a
+                                    href="https://solflare.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-alpha font-medium hover:underline"
+                                >
+                                    Solflare
+                                </a>{' '}
+                                to continue.
                             </p>
                         </div>
                     )}
@@ -264,8 +408,12 @@ function WalletSection({
                     <div className="rounded-lg border border-neutral-200 bg-white p-3 flex items-center gap-2.5">
                         <div className="size-2 rounded-full bg-emerald-400 shrink-0" />
                         <div className="flex-1 min-w-0">
-                            <p className="text-[11px] uppercase tracking-wide text-dark-base/35 leading-none mb-0.5">Connected</p>
-                            <p className="text-[13px] text-dark-base/70 font-mono truncate">{publicKey?.toBase58()}</p>
+                            <p className="text-[11px] uppercase tracking-wide text-dark-base/35 leading-none mb-0.5">
+                                Connected
+                            </p>
+                            <p className="text-[13px] text-dark-base/70 font-mono truncate">
+                                {publicKey?.toBase58()}
+                            </p>
                         </div>
                     </div>
 
@@ -334,9 +482,20 @@ export default function ClaimRevampPage() {
             const program = SolanaAction.getProgram(connection, anchorWallet);
             const { createInstruction } = await SolanaAction.ensureUsdcAta(connection, publicKey);
             const hostPubkey = new PublicKey(claimData.hostWalletPubkey!);
-            const tx = await SolanaAction.buildClaimPrizeTx(program, claimData.quizId, token, publicKey, hostPubkey);
+            const tx = await SolanaAction.buildClaimPrizeTx(
+                program,
+                claimData.quizId,
+                token,
+                publicKey,
+                hostPubkey,
+            );
             if (createInstruction) tx.instructions.unshift(createInstruction);
-            const txSignature = await SolanaAction.signSendAndConfirm(connection, tx, publicKey, signTransaction);
+            const txSignature = await SolanaAction.signSendAndConfirm(
+                connection,
+                tx,
+                publicKey,
+                signTransaction,
+            );
             const res = await SolanaAction.confirmClaim(token, txSignature, publicKey.toBase58());
             if (res.success) {
                 setPageStatus('claimed');
@@ -373,11 +532,18 @@ export default function ClaimRevampPage() {
 
             <section className="w-full flex-1 pt-40 pb-10 text-black relative z-10 flex items-center justify-center px-4">
                 <UtilityCard className="rounded-xl w-full max-w-[420px] !px-6 !py-5 -mt-12">
-                    <LandingCardHeader title={getHeaderTitle()} description={getHeaderDescription()} />
+                    <LandingCardHeader
+                        title={getHeaderTitle()}
+                        description={getHeaderDescription()}
+                    />
 
                     <AnimatePresence mode="wait">
                         {pageStatus === 'loading' && (
-                            <motion.div key="loading" {...FADE_UP} className="mt-5 flex flex-col items-center gap-3">
+                            <motion.div
+                                key="loading"
+                                {...FADE_UP}
+                                className="mt-5 flex flex-col items-center gap-3"
+                            >
                                 <LoadingPulse />
                             </motion.div>
                         )}
@@ -387,7 +553,8 @@ export default function ClaimRevampPage() {
                                 <div className="rounded-lg bg-neutral-50 border border-neutral-200 p-4 text-center">
                                     <div className="text-3xl mb-2 opacity-40">?</div>
                                     <p className="text-sm text-dark-base/50 leading-relaxed">
-                                        Double-check the link you received or contact the quiz host for a new one.
+                                        Double-check the link you received or contact the quiz host
+                                        for a new one.
                                     </p>
                                 </div>
                             </motion.div>
@@ -395,9 +562,16 @@ export default function ClaimRevampPage() {
 
                         {claimData && pageStatus !== 'loading' && pageStatus !== 'not_found' && (
                             <motion.div key="claim-content" {...FADE_UP} className="mt-5 space-y-4">
-                                <RankAmountCard rank={claimData.rank} amount={claimData.amount} currency={claimData.currency} quizTitle={claimData.quizTitle} />
+                                <RankAmountCard
+                                    rank={claimData.rank}
+                                    amount={claimData.amount}
+                                    currency={claimData.currency}
+                                    quizTitle={claimData.quizTitle}
+                                />
 
-                                {(pageStatus === 'pending' || pageStatus === 'connecting' || pageStatus === 'claiming') && (
+                                {(pageStatus === 'pending' ||
+                                    pageStatus === 'connecting' ||
+                                    pageStatus === 'claiming') && (
                                     <CountdownBar expiresAt={claimData.expiresAt} />
                                 )}
 
@@ -411,10 +585,15 @@ export default function ClaimRevampPage() {
                                 )}
 
                                 {pageStatus === 'error' && (
-                                    <ErrorNotice error={error} onRetry={() => setPageStatus('pending')} />
+                                    <ErrorNotice
+                                        error={error}
+                                        onRetry={() => setPageStatus('pending')}
+                                    />
                                 )}
 
-                                {(pageStatus === 'pending' || pageStatus === 'connecting' || pageStatus === 'claiming') && (
+                                {(pageStatus === 'pending' ||
+                                    pageStatus === 'connecting' ||
+                                    pageStatus === 'claiming') && (
                                     <WalletSection
                                         connected={connected}
                                         publicKey={publicKey}
@@ -427,7 +606,10 @@ export default function ClaimRevampPage() {
 
                                 <div className="pt-3 border-t border-neutral-200/80">
                                     <p className="text-[13px] text-dark-base/35 text-center tracking-wide">
-                                        Winner: <span className="text-dark-base/55 font-medium">{claimData.participantName}</span>
+                                        Winner:{' '}
+                                        <span className="text-dark-base/55 font-medium">
+                                            {claimData.participantName}
+                                        </span>
                                     </p>
                                 </div>
                             </motion.div>

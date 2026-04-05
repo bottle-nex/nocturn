@@ -44,7 +44,11 @@ export default function PerspectiveCard({
     const opacity = useTransform(scrollYProgress, [d, d + 0.3, d + 0.5], [0.5, 1, 1]);
 
     const wrapper = (
-        <motion.div ref={ref} style={{ y, scale, boxShadow, opacity, ...style }} className={className}>
+        <motion.div
+            ref={ref}
+            style={{ y, scale, boxShadow, opacity, ...style }}
+            className={className}
+        >
             {children}
         </motion.div>
     );

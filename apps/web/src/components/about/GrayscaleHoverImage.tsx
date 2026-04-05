@@ -1,5 +1,5 @@
-import Image from "next/image";
-import PerspectiveCard from "../utility/PerspectiveCard";
+import Image from 'next/image';
+import PerspectiveCard from '../utility/PerspectiveCard';
 
 interface GrayscaleHoverImageProps {
     src: string;
@@ -9,9 +9,18 @@ interface GrayscaleHoverImageProps {
     className?: string;
 }
 
-export default function GrayscaleHoverImage({ src, alt, width = 400, height = 400, className }: GrayscaleHoverImageProps) {
+export default function GrayscaleHoverImage({
+    src,
+    alt,
+    width = 400,
+    height = 400,
+    className,
+}: GrayscaleHoverImageProps) {
     return (
-        <PerspectiveCard style={{ width: `${width}px`, height: `${height}px` }} className={`group relative overflow-hidden ${className ?? ""}`}>
+        <PerspectiveCard
+            style={{ width: `${width}px`, height: `${height}px` }}
+            className={`group relative overflow-hidden ${className ?? ''}`}
+        >
             <Image
                 src={src}
                 alt={alt}

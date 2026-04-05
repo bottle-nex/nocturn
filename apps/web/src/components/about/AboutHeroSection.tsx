@@ -1,7 +1,7 @@
-import { JSX } from "react";
-import LandingSectionHeader from "../refactor/LandingSectionHeader";
-import GrayscaleHoverImage from "./GrayscaleHoverImage";
-import NotFoundDiagonalGrid from "../notFound/NotFoundDiagonalGrid";
+import { JSX } from 'react';
+import LandingSectionHeader from '../refactor/LandingSectionHeader';
+import GrayscaleHoverImage from './GrayscaleHoverImage';
+import NotFoundDiagonalGrid from '../notFound/NotFoundDiagonalGrid';
 
 export default function AboutHeroSection(): JSX.Element {
     return (
@@ -13,9 +13,15 @@ export default function AboutHeroSection(): JSX.Element {
                     subheading="Discover the journey of Nocturn, from its inception to its mission of empowering creators and revolutionizing the digital landscape."
                 />
                 <section className="relative">
-                    <GrayscaleHoverImage height={500} width={800} className="rounded-xl" src="/images/founders/founders.jpeg" alt="The Nocturn Team" />
+                    <GrayscaleHoverImage
+                        height={500}
+                        width={800}
+                        className="rounded-xl"
+                        src="/images/founders/founders.jpeg"
+                        alt="The Nocturn Team"
+                    />
                 </section>
             </div>
         </main>
-    )
+    );
 }
