@@ -43,6 +43,7 @@ export interface TemplateType {
   borderColor: string;
   accentType: string;
   accentColor: string;
+  itemsColor: string;
   bars: string[];
   src: string;
   userId?: string | null;

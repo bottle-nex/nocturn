@@ -1,7 +1,7 @@
 {
     "extends": "@nocturn/typescript-config/nextjs.json",
     "compilerOptions": {
-        "ignoreDeprecations": "6.0",
+        "ignoreDeprecations": "5.0",
         "forceConsistentCasingInFileNames": true,
         "baseUrl": ".",
         "paths": {
