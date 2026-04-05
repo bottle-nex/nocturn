@@ -9,6 +9,7 @@ COPY apps/server/ ./apps/server/
 COPY packages/database/ ./packages/database/
 COPY packages/types/ ./packages/types/
 COPY packages/premium/ ./packages/premium/
+COPY packages/contract/ ./packages/contract/
 COPY packages/typescript-config/ ./packages/typescript-config/
 COPY packages/eslint-config/ ./packages/eslint-config/
 
