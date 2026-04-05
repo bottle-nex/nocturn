@@ -59,7 +59,7 @@ const cards = [
         className: 'bg-[#004D40] [&_h2]:text-white',
         config: {
             y: 20,
-            x: 180,
+            x: 210,
             rotate: 8,
             zIndex: 3,
         },
