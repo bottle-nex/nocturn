@@ -3,6 +3,7 @@ import AboutHeroSection from "@/components/about/AboutHeroSection";
 import LandingFaqSection from "@/components/refactor/LandingFaqSection";
 import LandingFooter from '@/components/refactor/LandingFooter';
 import LandingNavbarComponent from "@/components/refactor/LandingNavbarComponent";
+import GooeyGallery from "@/components/ui/GooeyGallery";
 import SectionDivider from "@/components/utility/SectionDivider";
 
 export default function ClaimRevampPage() {
@@ -12,6 +13,8 @@ export default function ClaimRevampPage() {
             <AboutHeroSection />
             <SectionDivider />
             <AboutFounderSection />
+            <SectionDivider />
+            <GooeyGallery />
             <SectionDivider />
             <LandingFaqSection />
             <SectionDivider />
