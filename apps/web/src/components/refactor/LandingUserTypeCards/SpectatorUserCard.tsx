@@ -5,7 +5,7 @@ import { RiSpyLine } from 'react-icons/ri';
 
 export default function SpectatorUserCard() {
     return (
-        <PerspectiveCard className="relative w-full h-80 bg-[#FAFAFA] rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+        <PerspectiveCard className="relative w-full h-80 bg-amber-200/95 rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
             <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 whileInView={{ opacity: 1, scale: 1 }}
