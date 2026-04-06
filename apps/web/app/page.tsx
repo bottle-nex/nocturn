@@ -7,6 +7,7 @@ import LandingHeroSection from '@/components/refactor/LandingHeroSection';
 import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent';
 import LandingUsdcSection from '@/components/refactor/LandingUsdcSection';
 import LandingUserType from '@/components/refactor/LandingUserType';
+import LandingCTASection from '@/components/revamp/LandingCTASection';
 import PricingComponent from '@/components/revamp/PricingComponent';
 import SectionDivider from '@/components/utility/SectionDivider';
 
@@ -29,6 +30,8 @@ export default function Page() {
             <PricingComponent />
             <SectionDivider />
             <LandingFaqSection />
+            <SectionDivider />
+            <LandingCTASection />
             <SectionDivider />
             <LandingFooter />
         </div>

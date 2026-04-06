@@ -18,7 +18,7 @@ const socialIcons = [
 export default function LandingFooter() {
     return (
         <main className="max-w-270 mx-auto w-full">
-            <PerspectiveCard className="w-full mt-15 mb-3 pb-0! rounded-3xl!">
+            <PerspectiveCard className="w-full mb-3 pb-0! rounded-3xl!">
                 <footer className="w-full  pb-0">
                     <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
                         <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">

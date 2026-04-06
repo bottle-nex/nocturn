@@ -5,7 +5,7 @@ import { HiOutlineRocketLaunch } from 'react-icons/hi2';
 
 export default function HostUserGridCard() {
     return (
-        <PerspectiveCard className="relative w-full h-80 bg-purple-500 rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-sm">
+        <PerspectiveCard className="relative w-full h-80 bg-purple-300 rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-sm">
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
