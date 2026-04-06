@@ -270,17 +270,16 @@ export default class Subscription {
 
     static async template_creation_limit(req: Request, res: Response, next: NextFunction) {
         try {
-
             const user = req.user;
-            if(!user) {
+            if (!user) {
                 return ResponseWriter.not_authorized(res);
             }
 
-            const tier = await this.get_user_subscription(user.id) || SubscriptionEnum.FREE;
+            const tier = (await this.get_user_subscription(user.id)) || SubscriptionEnum.FREE;
 
             const isEnabled = planManager.isEnabled(tier, FEATURE.CUSTOM_THEME);
-            
-            if(!isEnabled) {
+
+            if (!isEnabled) {
                 return ResponseWriter.error(
                     res,
                     'CANNOT_CREATE_CUSTOM_THEME',
@@ -289,7 +288,6 @@ export default class Subscription {
             }
 
             return next();
-            
         } catch (error) {
             console.error('Error in template creation limit: ', error);
             ResponseWriter.system_error(res);

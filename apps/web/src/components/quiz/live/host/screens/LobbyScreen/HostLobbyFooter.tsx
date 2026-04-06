@@ -23,13 +23,13 @@ export default function HostLobbyFooter() {
             <div
                 className="flex items-center gap-x-2 px-5 py-3 z-[20] bg-light-base dark:bg-dark-base rounded-full"
                 style={{
-                    backgroundColor: theme.itemsColor ?? "#000000"
+                    backgroundColor: theme.itemsColor ?? '#000000',
                 }}
             >
                 <span
                     className="ml-3"
                     style={{
-                        color: theme.textColor 
+                        color: theme.textColor,
                     }}
                 >
                     Ready to begin ?
@@ -62,7 +62,7 @@ export default function HostLobbyFooter() {
             <Button
                 className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-tprime dark:hover:-translate-y-0.5 z-20 cursor-pointer"
                 style={{
-                    backgroundColor: theme.itemsColor ?? "#000000",
+                    backgroundColor: theme.itemsColor ?? '#000000',
                     color: theme.textColor,
                 }}
                 onClick={handleOnClick}
