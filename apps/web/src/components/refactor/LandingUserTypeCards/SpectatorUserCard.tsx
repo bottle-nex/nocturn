@@ -1,65 +1,46 @@
 'use client';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import { motion } from 'framer-motion';
-import { FiBarChart2, FiEye, FiMaximize2, FiRefreshCcw } from 'react-icons/fi';
+import { RiSpyLine } from 'react-icons/ri';
 
 export default function SpectatorUserCard() {
     return (
-        <div className="relative w-full h-full bg-[#F9F9F9] rounded-2xl overflow-hidden border border-neutral-200 flex items-center justify-center group">
-            <div
-                className="absolute inset-0 opacity-[0.02]"
-                style={{
-                    backgroundImage: `linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent)`,
-                    backgroundSize: '4px 4px',
-                }}
-            />
+        <PerspectiveCard className="relative w-full h-80 bg-[#FAFAFA] rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-[80%] h-60 bg-white rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] border border-neutral-200 flex items-center justify-center overflow-hidden"
+            >
+                <div
+                    className="absolute inset-0 opacity-[0.02] pointer-events-none"
+                    style={{
+                        backgroundImage: `radial-gradient(#000 1px, transparent 1px)`,
+                        backgroundSize: '16px 16px',
+                    }}
+                />
 
-            <div className="grid grid-cols-2 gap-4 w-85 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm"
-                >
-                    <div className="flex items-center justify-between mb-4">
-                        <FiEye className="text-neutral-400 size-3" />
-                        <FiMaximize2 className="text-neutral-200 size-3 group-hover:text-neutral-400 transition-colors" />
-                    </div>
-                    <div className="space-y-2">
-                        <div className="h-5 w-12 bg-neutral-900 rounded-md flex items-center justify-center">
-                            <span className="text-[10px] text-white font-mono tracking-tighter">
-                                3.2k
-                            </span>
-                        </div>
-                        <div className="h-1.5 w-full bg-neutral-100 rounded-full" />
-                    </div>
-                </motion.div>
+                <div className="relative size-32 flex items-center justify-center">
+                    {[1, 2, 3].map((i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: [0, 0.2, 0], scale: [0.5, 2] }}
+                            transition={{ repeat: Infinity, duration: 6, delay: i * 3.2 }}
+                            className="absolute inset-0 border border-neutral-900 rounded-full"
+                        />
+                    ))}
 
-                <motion.div
-                    initial={{ opacity: 0, x: 10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm"
-                >
-                    <div className="flex items-center justify-between mb-3">
-                        <FiBarChart2 className="text-blue-500 size-3" />
-                        <div className="h-3 w-8 bg-neutral-50 border border-neutral-100 rounded text-[8px] flex items-center justify-center text-neutral-400">
-                            CHART
-                        </div>
+                    <div className="relative z-10 size-12 bg-neutral-900 rounded-full flex items-center justify-center shadow-2xl">
+                        <RiSpyLine className="text-white size-5" />
                     </div>
-                    <div className="flex items-end gap-1 h-8">
-                        <div className="w-full bg-blue-100 h-[40%] rounded-sm" />
-                        <div className="w-full bg-blue-200 h-[60%] rounded-sm" />
-                        <div className="w-full bg-blue-500 h-[90%] rounded-sm" />
-                        <div className="w-full bg-blue-300 h-[50%] rounded-sm" />
-                    </div>
-                </motion.div>
-
-                <div className="absolute bottom-2 right-[45%] bg-white border border-neutral-200 p-2 rounded-full cursor-pointer hover:rotate-180 transition-transform duration-500">
-                    <FiRefreshCcw className="size-3 text-neutral-500" />
                 </div>
-            </div>
 
-            <div className="absolute top-4 right-4">
-                <div className="size-6 border-t-2 border-r-2 border-neutral-100" />
-            </div>
-        </div>
+                <div className="absolute top-4 left-4 flex items-center gap-2">
+                    <div className="h-1 w-8 bg-neutral-900 rounded-full" />
+                    <div className="h-1 w-4 bg-neutral-200 rounded-full" />
+                </div>
+            </motion.div>
+        </PerspectiveCard>
     );
 }

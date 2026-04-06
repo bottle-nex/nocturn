@@ -1,51 +1,51 @@
 'use client';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import { motion } from 'framer-motion';
-import { FiCheck, FiMousePointer } from 'react-icons/fi';
 
 export default function ParticipantUserCard() {
     return (
-        <div className="relative w-full h-full bg-[#FDFDFD] rounded-2xl overflow-hidden border border-neutral-200 flex items-center justify-center group">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-neutral-100" />
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-[1px] bg-neutral-100" />
+        <PerspectiveCard className="relative w-full h-80 bg-sky-100 rounded-r-2xl overflow-hidden flex items-center justify-center group shadow-sm">
+            <div className="relative w-3/4 h-3/4 bg-white rounded-xl shadow-xl overflow-hidden border border-neutral-100">
+                <div className="absolute top-0 left-0 w-full h-full bg-sky-400/90" />
 
-            <div className="relative">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    className="bg-white border border-neutral-200 p-5 rounded-xl shadow-lg w-64 z-10 relative"
+                    animate={{ x: [0, 20, 0], y: [0, -10, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute top-1/4 left-1/4 z-10"
                 >
-                    <div className="flex gap-1 mb-4">
-                        <div className="size-1.5 bg-neutral-200 rounded-full" />
-                        <div className="size-1.5 bg-neutral-200 rounded-full" />
-                        <div className="size-1.5 bg-neutral-100 rounded-full" />
-                    </div>
-
-                    <div className="h-3 w-32 bg-neutral-900 rounded-full mb-6" />
-
-                    <div className="space-y-2 relative">
-                        <div className="h-10 w-full bg-neutral-50 rounded-lg border border-neutral-200 flex items-center px-4 justify-between">
-                            <div className="h-2 w-20 bg-neutral-300 rounded-full" />
-                            <FiCheck className="text-neutral-300 size-3" />
-                        </div>
-                        <div className="h-10 w-full bg-blue-50 rounded-lg border border-blue-200 flex items-center px-4 justify-between">
-                            <div className="h-2 w-24 bg-blue-500 rounded-full" />
-                            <div className="size-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                <FiCheck className="text-white size-2" strokeWidth={4} />
-                            </div>
-                        </div>
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="text-pink-500 drop-shadow-md"
+                    >
+                        <path d="M5.65 19L3 3L19 11.35L11.85 13.15L5.65 19Z" fill="currentColor" />
+                    </svg>
+                    <div className="ml-4 -mt-2 bg-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded-sm shadow-lg uppercase tracking-wider">
+                        Thomas
                     </div>
                 </motion.div>
 
                 <motion.div
-                    animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                    className="absolute -right-4 bottom-2 z-20 text-neutral-800 drop-shadow-md"
+                    animate={{ x: [0, -30, 0], y: [0, 40, 0] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-1/3 right-1/4 z-10"
                 >
-                    <FiMousePointer className="size-5 fill-current" />
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="text-yellow-400 drop-shadow-md"
+                    >
+                        <path d="M5.65 19L3 3L19 11.35L11.85 13.15L5.65 19Z" fill="currentColor" />
+                    </svg>
+                    <div className="ml-4 -mt-2 bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-sm shadow-lg uppercase tracking-wider">
+                        Louisa
+                    </div>
                 </motion.div>
-
-                <div className="absolute inset-0 bg-neutral-50 border border-neutral-100 rounded-xl translate-x-3 translate-y-3 -z-10" />
             </div>
-        </div>
+        </PerspectiveCard>
     );
 }
