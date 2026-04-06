@@ -15,7 +15,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
         return;
     }
 
-    const { id, backgroundColor, textColor, borderColor, accentType, accentColor, bars, src } =
+    const { id, backgroundColor, textColor, borderColor, accentType, accentColor, bars, src, itemsColor } =
         parseBody.data;
 
     try {
@@ -50,6 +50,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
                         borderColor,
                         accentType,
                         accentColor,
+                        itemsColor,
                         bars,
                         src: src || 'custom-template',
                         userId: req.user.id,
@@ -66,6 +67,7 @@ export default async function upsertCustomTemplateController(req: Request, res: 
                     borderColor,
                     accentType,
                     accentColor,
+                    itemsColor,
                     bars,
                     src: src || 'custom-template',
                     userId: req.user.id,

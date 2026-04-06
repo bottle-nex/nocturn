@@ -268,6 +268,35 @@ export default class Subscription {
         }
     }
 
+    static async template_creation_limit(req: Request, res: Response, next: NextFunction) {
+        try {
+
+            const user = req.user;
+            if(!user) {
+                return ResponseWriter.not_authorized(res);
+            }
+
+            const tier = await this.get_user_subscription(user.id) || SubscriptionEnum.FREE;
+
+            const isEnabled = planManager.isEnabled(tier, FEATURE.CUSTOM_THEME);
+            
+            if(!isEnabled) {
+                return ResponseWriter.error(
+                    res,
+                    'CANNOT_CREATE_CUSTOM_THEME',
+                    'Become a Pro user to create custom templates',
+                );
+            }
+
+            return next();
+            
+        } catch (error) {
+            console.error('Error in template creation limit: ', error);
+            ResponseWriter.system_error(res);
+            return;
+        }
+    }
+
     static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
         try {
             const userData = await prisma.user.findUnique({
