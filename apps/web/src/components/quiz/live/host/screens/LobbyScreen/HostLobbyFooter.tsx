@@ -7,7 +7,7 @@ import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { HostScreenEnum } from '@nocturn/types';
 
 export default function HostLobbyFooter() {
-    const { updateGameSession } = useLiveQuizStore();
+    const { updateGameSession, quiz } = useLiveQuizStore();
     const { participants } = useLiveParticipantsStore();
     const { handleHostQuestionPreviewPageChange } = useWebSocket();
 
@@ -16,10 +16,24 @@ export default function HostLobbyFooter() {
         updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
     }
 
+    const theme = quiz.template;
+
     return (
         <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit">
-            <div className="flex items-center gap-x-2 px-5 py-3 z-[20] bg-light-base dark:bg-dark-base rounded-full">
-                <span className="text-dark-alpha dark:text-light-base ml-3">Ready to begin ?</span>
+            <div
+                className="flex items-center gap-x-2 px-5 py-3 z-[20] bg-light-base dark:bg-dark-base rounded-full"
+                style={{
+                    backgroundColor: theme.itemsColor ?? "#000000"
+                }}
+            >
+                <span
+                    className="ml-3"
+                    style={{
+                        color: theme.textColor 
+                    }}
+                >
+                    Ready to begin ?
+                </span>
                 <div className="flex -space-x-2">
                     {participants.slice(0, 3).map((participant, idx) => (
                         <div
@@ -47,6 +61,10 @@ export default function HostLobbyFooter() {
 
             <Button
                 className="dark:bg-dark-base dark:text-neutral-100 bg-neutral-300 text-tprime dark:hover:-translate-y-0.5 z-20 cursor-pointer"
+                style={{
+                    backgroundColor: theme.itemsColor ?? "#000000",
+                    color: theme.textColor,
+                }}
                 onClick={handleOnClick}
             >
                 Get Started

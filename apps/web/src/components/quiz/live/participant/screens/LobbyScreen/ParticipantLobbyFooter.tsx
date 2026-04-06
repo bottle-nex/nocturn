@@ -1,12 +1,20 @@
 import Image from 'next/image';
 import LiveQuizInteractionTicker from '../../../common/LiveQuizInteractionTicker';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 
 export default function ParticipantLobbyFooter() {
     const { participants } = useLiveParticipantsStore();
+    const { quiz } = useLiveQuizStore();
+    const theme = quiz.template;
     return (
         <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4">
-            <div className="flex items-center gap-x-2 px-5 py-3 z-[20] bg-light-base dark:bg-dark-base rounded-full">
+            <div
+            className="flex items-center gap-x-2 px-5 py-3 z-20 rounded-full"
+            style={{
+                backgroundColor: theme.itemsColor ?? "#000000"
+            }}
+            >
                 <span className="text-dark-alpha dark:text-light-base ml-3">Ready to begin ?</span>
                 <div className="flex -space-x-2">
                     {participants.slice(0, 3).map((participant, idx) => (
