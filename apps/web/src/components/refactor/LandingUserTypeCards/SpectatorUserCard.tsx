@@ -1,10 +1,11 @@
 'use client';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import { motion } from 'framer-motion';
 import { RiSpyLine } from 'react-icons/ri';
 
 export default function SpectatorUserCard() {
     return (
-        <div className="relative w-full h-80 bg-[#FAFAFA] rounded-l-2xl overflow-hidden border border-neutral-200 flex items-center justify-center group shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+        <PerspectiveCard className="relative w-full h-80 bg-[#FAFAFA] rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
             <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -40,6 +41,6 @@ export default function SpectatorUserCard() {
                     <div className="h-1 w-4 bg-neutral-200 rounded-full" />
                 </div>
             </motion.div>
-        </div>
+        </PerspectiveCard>
     );
 }

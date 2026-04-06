@@ -1,9 +1,10 @@
 'use client';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import { motion } from 'framer-motion';
 
 export default function ParticipantUserCard() {
     return (
-        <div className="relative w-full h-80 bg-sky-100 rounded-r-2xl overflow-hidden border border-neutral-200/50 flex items-center justify-center group shadow-sm">
+        <PerspectiveCard className="relative w-full h-80 bg-sky-100 rounded-r-2xl overflow-hidden flex items-center justify-center group shadow-sm">
             <div className="relative w-3/4 h-3/4 bg-white rounded-xl shadow-xl overflow-hidden border border-neutral-100">
                 <div className="absolute top-0 left-0 w-full h-full bg-sky-400/90" />
 
@@ -45,6 +46,6 @@ export default function ParticipantUserCard() {
                     </div>
                 </motion.div>
             </div>
-        </div>
+        </PerspectiveCard>
     );
 }

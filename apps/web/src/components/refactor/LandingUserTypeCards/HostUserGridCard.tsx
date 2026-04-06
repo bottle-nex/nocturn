@@ -1,10 +1,11 @@
 'use client';
+import PerspectiveCard from '@/components/utility/PerspectiveCard';
 import { motion } from 'framer-motion';
 import { HiOutlineRocketLaunch } from 'react-icons/hi2';
 
 export default function HostUserGridCard() {
     return (
-        <div className="relative w-full h-80 bg-purple-500 rounded-l-2xl overflow-hidden border border-neutral-200/50 flex items-center justify-center group shadow-sm">
+        <PerspectiveCard className="relative w-full h-80 bg-purple-500 rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-sm">
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -38,6 +39,6 @@ export default function HostUserGridCard() {
             </motion.div>
 
             <div className="absolute -bottom-10 left-20 right-20 h-40 bg-white/20 rounded-t-3xl blur-sm" />
-        </div>
+        </PerspectiveCard>
     );
 }
