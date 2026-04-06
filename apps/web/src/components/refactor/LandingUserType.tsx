@@ -2,19 +2,21 @@
 import { JSX, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import LandingSectionHeader from './LandingSectionHeader';
-import PerspectiveCard from '../utility/PerspectiveCard';
+import HostUserGridCard from './LandingUserTypeCards/HostUserGridCard';
+import ParticipantUserCard from './LandingUserTypeCards/ParticipantUserCard';
+import SpectatorUserCard from './LandingUserTypeCards/SpectatorUserCard';
 
 function UserTypeSection({ heading, description }: { heading: string; description: string }) {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, margin: '-60px' });
 
     return (
-        <section ref={ref} className="flex flex-col justify-center px-10 h-full mt-15">
+        <section ref={ref} className="flex flex-col justify-center px-10 h-full">
             <motion.h2
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="text-3xl font-semibold text-dark-base/90"
+                className="text-3xl font-bold text-neutral-900 tracking-tighter"
             >
                 {heading}
             </motion.h2>
@@ -22,13 +24,13 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
                 initial={{ opacity: 0, scaleX: 0 }}
                 animate={inView ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
                 transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
-                className="w-full border-t border-dark-base/20 mt-3 origin-left"
+                className="w-full border-t border-neutral-200 mt-4 origin-left"
             />
             <motion.p
-                initial={{ opacity: 0, y: 24 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                 transition={{ duration: 0.5, delay: 0.12, ease: 'easeOut' }}
-                className="text-base text-dark-base/50 mt-2 max-w-sm"
+                className="text-base text-neutral-600 mt-3 max-w-sm leading-relaxed"
             >
                 {description}
             </motion.p>
@@ -38,49 +40,36 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
 
 export default function LandingUserType(): JSX.Element {
     return (
-        <main className="w-full max-w-270 mx-auto py-15 pb-30">
+        <main className="w-full max-w-270 mx-auto py-24 pb-32 px-6">
             <LandingSectionHeader
                 heading="Built for Every Role"
                 subheading="Whether you're hosting, playing, or building together — Nocturn adapts to how you work."
             />
-            <div className="space-y-20">
-                <main className="grid grid-cols-2 w-full h-68">
-                    <PerspectiveCard className="bg-pink-300 rounded-l-xl h-full mt-15">
-                        <div className="flex items-center justify-center h-full">
-                            <span className="text-6xl font-bold text-white/30 tracking-widest">
-                                HOST
-                            </span>
-                        </div>
-                    </PerspectiveCard>
+
+            <div className="space-y-32 mt-20">
+                <main className="grid grid-cols-1 md:grid-cols-2 w-full h-auto md:h-72 items-center gap-12 md:gap-0">
+                    <HostUserGridCard />
                     <UserTypeSection
                         heading="Host Live Quizzes"
                         description="Create and launch real-time quizzes with full control. Set the pace, manage participants, and watch your audience compete — live."
                     />
                 </main>
-                <main className="grid grid-cols-2 w-full h-68">
-                    <UserTypeSection
-                        heading="Jump In and Play"
-                        description="Join any live quiz in seconds. Answer questions in real time, get instant feedback, and compete for the top spot on the leaderboard."
-                    />
-                    <PerspectiveCard className="bg-[#7fc8f8] rounded-r-xl h-full mt-15">
-                        <div className="flex items-center justify-center h-full">
-                            <span className="text-6xl font-bold text-white/30 tracking-widest">
-                                PLAYER
-                            </span>
-                        </div>
-                    </PerspectiveCard>
+
+                <main className="grid grid-cols-1 md:grid-cols-2 w-full h-auto md:h-72 items-center gap-12 md:gap-0">
+                    <div className="">
+                        <UserTypeSection
+                            heading="Jump In and Play"
+                            description="Join any live quiz in seconds. Answer questions in real time, get instant feedback, and compete for the top spot on the leaderboard."
+                        />
+                    </div>
+                    <ParticipantUserCard />
                 </main>
-                <main className="grid grid-cols-2 w-full h-68">
-                    <PerspectiveCard className="bg-[#ffd671] rounded-l-xl h-full mt-15">
-                        <div className="flex items-center justify-center h-full">
-                            <span className="text-6xl font-bold text-white/30 tracking-widest">
-                                COLLAB
-                            </span>
-                        </div>
-                    </PerspectiveCard>
+
+                <main className="grid grid-cols-1 md:grid-cols-2 w-full h-auto md:h-72 items-center gap-12 md:gap-0">
+                    <SpectatorUserCard />
                     <UserTypeSection
-                        heading="Build Together"
-                        description="Invite teammates to co-create quizzes in real time. Edit simultaneously, stay aligned, and publish when everyone's ready."
+                        heading="Watch over the Game"
+                        description="Monitor the game, help participants through lifelines, and engage with real-time audience polls without the risk."
                     />
                 </main>
             </div>
