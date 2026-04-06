@@ -7,6 +7,7 @@ export const upsertCustomTemplateSchema = z.object({
     borderColor: z.string(),
     accentType: z.string(),
     accentColor: z.string(),
+    itemsColor: z.string(),
     bars: z.array(z.string()),
     src: z.string().optional(),
 });
