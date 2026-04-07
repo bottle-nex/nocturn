@@ -8,7 +8,7 @@ import { HostScreenEnum } from '@nocturn/types';
 import useLiveTemplate from '@/hooks/useLiveTemplate';
 
 export default function HostLobbyFooter() {
-  const { updateGameSession, quiz } = useLiveQuizStore();
+  const { updateGameSession } = useLiveQuizStore();
   const { participants } = useLiveParticipantsStore();
   const { handleHostQuestionPreviewPageChange } = useWebSocket();
   const template = useLiveTemplate();
@@ -17,8 +17,6 @@ export default function HostLobbyFooter() {
     handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
     updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
   }
-
-  const theme = quiz.template;
 
   return (
     <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit">

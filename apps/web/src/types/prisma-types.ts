@@ -26,6 +26,9 @@ export interface TemplateType {
     accentType: string;
     accentColor: string;
     itemsColor: string;
+    itemsTextColor: string;
+    buttonColor: string;
+    buttonTextColor: string;
     bars: string[];
     src: string;
     createdAt: Date;
