@@ -1,4 +1,13 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: nocturn-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
   server:
     image: ghcr.io/bottle-nex/nocturn-server:latest
     container_name: nocturn-server
@@ -9,6 +18,8 @@ services:
       - .env
     environment:
       - SERVER_NODE_ENV=production
+    depends_on:
+      - redis
 
   orchestrator:
     image: ghcr.io/bottle-nex/nocturn-orchestrator:latest
@@ -18,3 +29,8 @@ services:
       - .env
     environment:
       - NODE_ENV=production
+    depends_on:
+      - redis
+
+volumes:
+  redis-data:
