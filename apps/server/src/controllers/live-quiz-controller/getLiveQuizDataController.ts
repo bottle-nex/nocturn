@@ -19,7 +19,6 @@ import { redisCacheInstance } from '../../services/init.services';
 import { QuestionType } from '../../schemas/createQuizSchema';
 
 export default async function getLiveQuizDataController(req: Request, res: Response) {
-    const now = Date.now();
     const cookieHeader = req.headers.cookie;
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const token = cookies[NOCTURN_COOKIE_NAME];
@@ -203,7 +202,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
-        console.log('total time taken to get live quiz data is : ', Date.now() - now, 'ms');
         ResponseWriter.secure_success(res, {
             type: ApiResponse.GET_LIVE_QUIZ_DATA,
             data: responseData as unknown as getLiveQuizDataResponse,

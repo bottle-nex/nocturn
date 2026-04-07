@@ -1,4 +1,4 @@
-import { Prisma, prisma, TemplateEnum } from "../src";
+import { prisma, TemplateEnum } from "../src";
 import { templates } from "../src/utils/templates";
 
 // <---------------- SUBSCRIPTION TIERS ---------------->
@@ -115,6 +115,9 @@ async function seedTemplates() {
         accentType: t.accentType,
         accentColor: t.accentColor,
         itemsColor: t.itemsColor,
+        itemsTextColor: t.itemsTextColor,
+        buttonColor: t.buttonColor,
+        buttonTextColor: t.buttonTextColor,
         bars: t.bars,
         src: t.src,
       },
@@ -127,6 +130,9 @@ async function seedTemplates() {
         accentType: t.accentType,
         accentColor: t.accentColor,
         itemsColor: t.itemsColor,
+        itemsTextColor: t.itemsTextColor,
+        buttonColor: t.buttonColor,
+        buttonTextColor: t.buttonTextColor,
         bars: t.bars,
         src: t.src,
       },

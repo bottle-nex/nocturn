@@ -1,3 +1,4 @@
+import PremiumSubscriptionCards from '@/components/premium/PremiumSubscriptionCards';
 import LandingCardsComponent from '@/components/refactor/LandingCardsComponent';
 import LandingCollaborateComponent from '@/components/refactor/LandingCollaborateComponent';
 import LandingFaqSection from '@/components/refactor/LandingFaqSection';
@@ -8,32 +9,31 @@ import LandingNavbarComponent from '@/components/refactor/LandingNavbarComponent
 import LandingUsdcSection from '@/components/refactor/LandingUsdcSection';
 import LandingUserType from '@/components/refactor/LandingUserType';
 import LandingCTASection from '@/components/revamp/LandingCTASection';
-import PricingComponent from '@/components/revamp/PricingComponent';
 import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Page() {
-    return (
-        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
-            <LandingNavbarComponent />
-            <LandingHeroSection />
-            <SectionDivider />
-            <LandingFeaturesComponent />
-            <SectionDivider />
-            <LandingCardsComponent />
-            <SectionDivider />
-            <LandingCollaborateComponent />
-            <SectionDivider />
-            <LandingUsdcSection />
-            <SectionDivider />
-            <LandingUserType />
-            <SectionDivider />
-            <PricingComponent />
-            <SectionDivider />
-            <LandingFaqSection />
-            <SectionDivider />
-            <LandingCTASection />
-            <SectionDivider />
-            <LandingFooter />
-        </div>
-    );
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
+      <LandingNavbarComponent />
+      <LandingHeroSection />
+      <SectionDivider />
+      <LandingFeaturesComponent />
+      <SectionDivider />
+      <LandingCardsComponent />
+      <SectionDivider />
+      <LandingCollaborateComponent />
+      <SectionDivider />
+      <LandingUsdcSection />
+      <SectionDivider />
+      <LandingUserType />
+      <SectionDivider />
+      <PremiumSubscriptionCards />
+      <SectionDivider />
+      <LandingFaqSection />
+      <SectionDivider />
+      <LandingCTASection />
+      <SectionDivider />
+      <LandingFooter />
+    </div>
+  );
 }

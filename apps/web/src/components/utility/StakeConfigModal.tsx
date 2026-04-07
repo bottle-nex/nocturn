@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { toast } from '@/lib/toast';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import SolanaAction from '@/lib/solana/SolanaAction';
+import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 
 const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     1: [100],
@@ -276,7 +277,17 @@ export default function StakeConfigModal({
         if (!quiz.id || !isValid || !session?.user?.token) return;
         setConfirming(true);
         try {
-            await SolanaAction.configureDistribution(session.user.token, quiz.id, percentages);
+            const saved = await BackendActions.upsertQuizAction(quiz, session.user.token);
+            if (!saved) {
+                toast.error('Failed to save quiz before configuring distribution');
+                return;
+            }
+            const savedDistributions = await SolanaAction.configureDistribution(
+                session.user.token,
+                quiz.id,
+                percentages,
+            );
+            updateQuiz({ prizeDistributions: savedDistributions });
             toast.success('Prize distribution saved');
             onClose();
         } catch {

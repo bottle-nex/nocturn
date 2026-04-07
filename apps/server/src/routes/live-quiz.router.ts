@@ -16,6 +16,7 @@ import getUnAskedQuestionController from '../controllers/live-quiz-controller/ge
 import getLiveQuizDataController from '../controllers/live-quiz-controller/getLiveQuizDataController';
 import Subscription from '../middlewares/subscription.middleware';
 import JoinQuizController from '../controllers/live-quiz-controller/joinQuizController';
+import GetLivePrizePoolController from '../controllers/live-quiz-controller/getLivePrizePoolController';
 
 // <---------------------- LIVE-QUIZ-ROUTES ---------------------->
 router.post('/quiz/host-join-quiz', authMiddleware, JoinQuizController.host);
@@ -48,5 +49,6 @@ router.get('/quiz/get-un-asked-question/:quizId', authMiddleware, getUnAskedQues
 router.get('/quiz/spectators/:quizId', authMiddleware, getSpectatorOnCall);
 router.get('/quiz/participants/:quizId', authMiddleware, getParticipantsOnCall);
 router.get('/quiz/get-question-results', getQuestionResults);
+router.get('/quiz/get-live-prize-pool/:quizId', GetLivePrizePoolController.process);
 
 export default router;

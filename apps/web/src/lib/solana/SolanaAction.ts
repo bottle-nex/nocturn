@@ -20,6 +20,7 @@ import {
     createAssociatedTokenAccountInstruction,
 } from '@solana/spl-token';
 import type { AnchorWallet } from '@solana/wallet-adapter-react';
+import type { PrizeDistributionType } from '@nocturn/types';
 
 export interface ConfirmStakePayload {
     txSignature: string;
@@ -245,13 +246,14 @@ export default class SolanaAction {
         token: string,
         quizId: string,
         percentages: number[],
-    ): Promise<void> {
+    ): Promise<PrizeDistributionType[]> {
         const distributions = percentages.map((p, i) => ({ rank: i + 1, percentage: p }));
-        await axios.post(
+        const { data } = await axios.post(
             `${SET_PRIZE_DISTRIBUTION_URL}/${quizId}`,
             { distributions },
             SolanaAction.authHeaders(token),
         );
+        return data.data as PrizeDistributionType[];
     }
 
     public static async confirmStake(

@@ -19,6 +19,7 @@ export default async function getAllTemplatesController(req: Request, res: Respo
                 backgroundColor: true,
                 textColor: true,
                 borderColor: true,
+                itemsColor: true,
                 accentType: true,
                 accentColor: true,
                 itemsColor: true,

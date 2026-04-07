@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "Template" ADD COLUMN     "items_color" TEXT NOT NULL;
+ALTER TABLE "Template" ADD COLUMN     "items_color" TEXT NOT NULL DEFAULT '';

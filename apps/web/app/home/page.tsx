@@ -146,7 +146,7 @@ export default function Home() {
                                                 ease: 'easeInOut',
                                                 delay: 0.2,
                                             }}
-                                            className="bg-dark-alpha rounded-full hover:bg-dark-base h-11 px-6! text-light-base dark:text-light-base flex items-center justify-center gap-x-2"
+                                            className="bg-dark-alpha rounded-full hover:bg-dark-base h-11 px-6! text-light-base dark:text-light-base flex items-center justify-center gap-x-2 cursor-pointer"
                                         >
                                             <RiVipCrownFill />
                                             Get Premium
