@@ -1,5 +1,4 @@
 'use client';
-import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -45,11 +44,16 @@ export default function StakeAmountPill() {
     }
 
     function rankColor(rank: number) {
-        if (rank === 1) return 'text-amber-400';
-        if (rank === 2) return 'text-zinc-300';
-        if (rank === 3) return 'text-amber-600';
-        return 'text-zinc-400';
+        if (rank === 1) return '#2100c7';
+        if (rank === 2) return '#ff4d6d';
+        if (rank === 3) return '#1b035e';
+        return `${template.itemsTextColor}80`;
     }
+
+    if (quiz.prizePool <= 0) {
+        return null;
+    }
+
     return (
         <div className="absolute right-3.5 top-1.5 z-50" ref={containerRef}>
             <motion.div
@@ -108,9 +112,18 @@ export default function StakeAmountPill() {
                             }}
                             className="overflow-hidden"
                         >
-                            <div className="border-t border-zinc-800/60 mx-3" />
-                            <div className="px-4 pt-3 pb-4 space-y-3">
-                                <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-500">
+                            <div
+                                className="border-t mx-3"
+                                style={{ borderColor: `${template.itemsTextColor}20` }}
+                            />
+                            <div
+                                data-lenis-prevent
+                                className="px-4 pt-3 pb-4 space-y-3 max-h-52 overflow-y-auto custom-scrollbar"
+                            >
+                                <span
+                                    className="text-[11px] font-bold uppercase tracking-widest"
+                                    style={{ color: `${template.itemsTextColor}80` }}
+                                >
                                     Distribution
                                 </span>
                                 {distributions
@@ -121,10 +134,8 @@ export default function StakeAmountPill() {
                                             className="flex items-center justify-between"
                                         >
                                             <span
-                                                className={cn(
-                                                    'text-base font-semibold',
-                                                    rankColor(d.rank),
-                                                )}
+                                                className="text-base font-semibold"
+                                                style={{ color: rankColor(d.rank) }}
                                             >
                                                 {rankLabel(d.rank)}
                                             </span>
@@ -132,8 +143,10 @@ export default function StakeAmountPill() {
                                                 <span className="text-sm">{d.percentage}%</span>
                                                 {d.amount != null && (
                                                     <span
-                                                        style={{ color: template.itemsTextColor }}
-                                                        className="text-base font-medium opacity-60"
+                                                        style={{
+                                                            color: `${template.itemsTextColor}99`,
+                                                        }}
+                                                        className="text-base font-medium"
                                                     >
                                                         ${d.amount.toFixed(2)}
                                                     </span>

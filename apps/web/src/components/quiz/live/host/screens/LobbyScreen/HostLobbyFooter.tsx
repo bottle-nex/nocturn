@@ -8,56 +8,56 @@ import { HostScreenEnum } from '@nocturn/types';
 import useLiveTemplate from '@/hooks/useLiveTemplate';
 
 export default function HostLobbyFooter() {
-  const { updateGameSession } = useLiveQuizStore();
-  const { participants } = useLiveParticipantsStore();
-  const { handleHostQuestionPreviewPageChange } = useWebSocket();
-  const template = useLiveTemplate();
+    const { updateGameSession } = useLiveQuizStore();
+    const { participants } = useLiveParticipantsStore();
+    const { handleHostQuestionPreviewPageChange } = useWebSocket();
+    const template = useLiveTemplate();
 
-  function handleOnClick() {
-    handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
-    updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
-  }
+    function handleOnClick() {
+        handleHostQuestionPreviewPageChange(HostScreenEnum.QUESTION_PREVIEW);
+        updateGameSession?.({ hostScreen: HostScreenEnum.QUESTION_PREVIEW });
+    }
 
-  return (
-    <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit">
-      <div
-        style={{ backgroundColor: template.buttonColor, color: template.buttonTextColor }}
-        className="flex items-center gap-x-2 px-5 py-3 z-[20] rounded-full"
-      >
-        <span className="ml-3">Ready to begin ?</span>
-        <div className="flex -space-x-2">
-          {participants.slice(0, 3).map((participant, idx) => (
+    return (
+        <div className="absolute bottom-4 left-4 z-100 flex items-center justify-start gap-x-4 w-fit">
             <div
-              key={idx}
-              className="w-8 h-8 rounded-full border-2 border-white overflow-hidden"
+                style={{ backgroundColor: template.buttonColor, color: template.buttonTextColor }}
+                className="flex items-center gap-x-2 px-5 py-3 z-[20] rounded-full"
             >
-              {participant.avatar && (
-                <Image
-                  src={participant.avatar}
-                  alt={'participant'}
-                  width={32}
-                  height={32}
-                  className="object-cover w-full h-full"
-                />
-              )}
+                <span className="ml-3">Ready to begin ?</span>
+                <div className="flex -space-x-2">
+                    {participants.slice(0, 3).map((participant, idx) => (
+                        <div
+                            key={idx}
+                            className="w-8 h-8 rounded-full border-2 border-white overflow-hidden"
+                        >
+                            {participant.avatar && (
+                                <Image
+                                    src={participant.avatar}
+                                    alt={'participant'}
+                                    width={32}
+                                    height={32}
+                                    className="object-cover w-full h-full"
+                                />
+                            )}
+                        </div>
+                    ))}
+                    {participants.length > 3 && (
+                        <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
+                            +{participants.length - 3}
+                        </div>
+                    )}
+                </div>
             </div>
-          ))}
-          {participants.length > 3 && (
-            <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
-              +{participants.length - 3}
-            </div>
-          )}
-        </div>
-      </div>
 
-      <Button
-        style={{ backgroundColor: template.buttonColor, color: template.buttonTextColor }}
-        className="z-20 cursor-pointer hover:-translate-y-0.5"
-        onClick={handleOnClick}
-      >
-        Get Started
-      </Button>
-      <LiveQuizInteractionTicker className="" />
-    </div>
-  );
+            <Button
+                style={{ backgroundColor: template.buttonColor, color: template.buttonTextColor }}
+                className="z-20 cursor-pointer hover:-translate-y-0.5"
+                onClick={handleOnClick}
+            >
+                Get Started
+            </Button>
+            <LiveQuizInteractionTicker className="" />
+        </div>
+    );
 }
