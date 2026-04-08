@@ -40,7 +40,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         if (!quizId || !gameSessionId || !role || !quizIdParams || quizIdParams !== quizId) {
             return ResponseWriter.not_authorized(res);
         }
-        return await fallbackToDatabase(res, quizId, gameSessionId, role, userId);
 
         const [batchResult] = await Promise.all([
             redisCacheInstance.get_live_quiz_batch(
