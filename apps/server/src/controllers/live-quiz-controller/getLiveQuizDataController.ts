@@ -23,6 +23,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const token = cookies[NOCTURN_COOKIE_NAME];
     const { quizId: quizIdParams } = req.params;
+    console.log('toke here is : ', token);
 
     if (!token) {
         ResponseWriter.not_authorized(res);
@@ -31,6 +32,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
     try {
         const decoded = QuizAction.verifyCookie(token);
+        console.log('decoded is : ', decoded);
         if (typeof decoded !== 'object' || !decoded) return ResponseWriter.not_authorized(res);
 
         const { quizId, gameSessionId, role, userId } = decoded as LiveGameTokenPayload;
@@ -38,6 +40,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         if (!quizId || !gameSessionId || !role || !quizIdParams || quizIdParams !== quizId) {
             return ResponseWriter.not_authorized(res);
         }
+        return await fallbackToDatabase(res, quizId, gameSessionId, role, userId);
 
         const [batchResult] = await Promise.all([
             redisCacheInstance.get_live_quiz_batch(

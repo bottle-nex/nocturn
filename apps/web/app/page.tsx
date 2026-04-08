@@ -12,28 +12,28 @@ import LandingCTASection from '@/components/revamp/LandingCTASection';
 import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Page() {
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
-      <LandingNavbarComponent />
-      <LandingHeroSection />
-      <SectionDivider />
-      <LandingFeaturesComponent />
-      <SectionDivider />
-      <LandingCardsComponent />
-      <SectionDivider />
-      <LandingCollaborateComponent />
-      <SectionDivider />
-      <LandingUsdcSection />
-      <SectionDivider />
-      <LandingUserType />
-      <SectionDivider />
-      <PremiumSubscriptionCards />
-      <SectionDivider />
-      <LandingFaqSection />
-      <SectionDivider />
-      <LandingCTASection />
-      <SectionDivider />
-      <LandingFooter />
-    </div>
-  );
+    return (
+        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha">
+            <LandingNavbarComponent />
+            <LandingHeroSection />
+            <SectionDivider />
+            <LandingFeaturesComponent />
+            <SectionDivider />
+            <LandingCardsComponent />
+            <SectionDivider />
+            <LandingCollaborateComponent />
+            <SectionDivider />
+            <LandingUsdcSection />
+            <SectionDivider />
+            <LandingUserType />
+            <SectionDivider />
+            <PremiumSubscriptionCards />
+            <SectionDivider />
+            <LandingFaqSection />
+            <SectionDivider />
+            <LandingCTASection />
+            <SectionDivider />
+            <LandingFooter />
+        </div>
+    );
 }

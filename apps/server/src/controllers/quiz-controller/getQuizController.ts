@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
 import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType, QuizStatusEnum } from '@nocturn/types';
+import { parse } from 'cookie';
 import { env } from '../../configs/env';
 
 export default async function getQuizController(req: Request, res: Response): Promise<void> {
@@ -114,7 +115,23 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 maxAge: 24 * 60 * 60 * 1000,
             });
         } else {
-            res.clearCookie(NOCTURN_COOKIE_NAME);
+            const cookieHeader = req.headers.cookie;
+            const existingToken = cookieHeader
+                ? parse(cookieHeader)[NOCTURN_COOKIE_NAME]
+                : undefined;
+            const isLiveGameToken =
+                existingToken &&
+                (() => {
+                    try {
+                        const decoded = QuizAction.verifyCookie(existingToken);
+                        return decoded && typeof decoded === 'object' && 'gameSessionId' in decoded;
+                    } catch {
+                        return false;
+                    }
+                })();
+            if (!isLiveGameToken) {
+                res.clearCookie(NOCTURN_COOKIE_NAME);
+            }
         }
 
         const serializedQuiz = JSON.parse(
