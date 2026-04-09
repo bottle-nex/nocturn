@@ -2,7 +2,7 @@ import SolanaIphoneComponent from './SolanaIphoneComponent';
 
 export default function SolanaFeatureCardComponent() {
     return (
-        <div className="flex flex-col ring-1 ring-black/10 h-75 w-110 rounded-xl overflow-hidden">
+        <div className="flex flex-col ring-1 ring-black/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
             <div className="h-55 bg-[#A7E9FC] relative flex justify-center pt-7 shrink-0 overflow-hidden group">
                 <SolanaIphoneComponent />
             </div>

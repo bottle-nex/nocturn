@@ -137,7 +137,7 @@ function LiveActivityCard() {
     );
 
     return (
-        <section className="h-auto pb-4 w-60 z-1 flex flex-col gap-y-2 p-2 px-3 absolute bottom-0 left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
+        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
             <div className="flex gap-x-1.5 px-1 py-px text-dark-base/80 items-center">
                 <FaGamepad size={28} />
                 Nocturn
@@ -319,12 +319,12 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-screen w-full max-w-270 flex flex-col gap-y-3 pt-40 items-center select-none">
-            <div className="text-5xl font-semibold max-w-xl text-dark-base text-center">
+        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
                 Knowledge that pays off
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-2xl text-center">
+            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
                 Nocturn is a real-time quiz app made for people who love learning and friendly
                 competition.
             </div>
@@ -336,7 +336,7 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-full w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col">
+                <div className="absolute shadow-xs shadow-black/5 h-full w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />

@@ -11,9 +11,9 @@ const footerLinks = {
 };
 
 const socialIcons = [
-    { icon: FaXTwitter, label: 'X' },
-    { icon: FaLinkedinIn, label: 'LinkedIn' },
-    { icon: FaGithub, label: 'GitHub' },
+    { icon: FaXTwitter, label: 'X', link: "https://x.com" },
+    { icon: FaLinkedinIn, label: 'LinkedIn', link: "#" },
+    { icon: FaGithub, label: 'GitHub', link: "https://github.com/bottle-nex/nocturn" },
 ];
 
 export default function LandingFooter(): JSX.Element {
@@ -62,11 +62,12 @@ export default function LandingFooter(): JSX.Element {
                         </div>
 
                         <div className="flex items-center gap-5 mt-16 mb-8 px-10 md:px-14">
-                            {socialIcons.map(({ icon: Icon, label }) => (
+                            {socialIcons.map(({ icon: Icon, label, link }) => (
                                 <a
                                     key={label}
-                                    href="#"
+                                    href={link}
                                     aria-label={label}
+                                    target="_blank"
                                     className="text-light-alpha/40 hover:text-light-base transition-colors duration-200"
                                 >
                                     <Icon className="w-5 h-5" />

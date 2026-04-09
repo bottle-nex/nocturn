@@ -82,15 +82,15 @@ export default function LandingUsdcSection(): JSX.Element {
     const [leftRenderType, setLeftRenderType] = useState<LeftRenderType>(LeftRenderType.COIN);
 
     return (
-        <main className="max-w-270 mx-auto w-full py-15">
+        <main className="max-w-270 mx-auto w-full py-15 px-6 xl:px-0">
             <LandingSectionHeader
                 heading="USDC Support"
                 subheading="Learn more about our USDC integration."
             />
 
-            <div className="w-full h-150 flex items-center justify-center rounded-2xl overflow-hidden mt-16">
-                <section className="text-dark-alpha grid grid-cols-[40%_60%] w-full h-full">
-                    <main className="bg-dark-alpha w-full h-full block relative overflow-hidden">
+            <div className="w-full h-auto lg:h-150 flex items-center justify-center rounded-2xl overflow-hidden mt-16">
+                <section className="text-dark-alpha flex flex-col lg:grid lg:grid-cols-[40%_60%] w-full h-full">
+                    <main className="bg-dark-alpha w-full h-120 lg:h-full block relative overflow-hidden shrink-0">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={leftRenderType}
@@ -108,7 +108,7 @@ export default function LandingUsdcSection(): JSX.Element {
                             </motion.div>
                         </AnimatePresence>
                     </main>
-                    <main className="bg-dark-base w-full h-full block overflow-y-auto custom-scrollbar p-8 text-light-base">
+                    <main className="bg-dark-base w-full h-120 lg:h-full block overflow-y-auto custom-scrollbar p-6 lg:p-8 text-light-base">
                         <h1 className="text-center text-2xl mb-12">Quiz Leaderboards</h1>
                         <div className="flex items-center justify-center gap-x-8 pt-10 pb-6">
                             {[...topThree]
