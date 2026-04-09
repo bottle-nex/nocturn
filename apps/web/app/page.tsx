@@ -26,7 +26,6 @@ export default function Page() {
             <LandingUsdcSection />
             <SectionDivider />
             <LandingUserType />
-            <SectionDivider />
             <PremiumSubscriptionCards />
             <SectionDivider />
             <LandingFaqSection />
