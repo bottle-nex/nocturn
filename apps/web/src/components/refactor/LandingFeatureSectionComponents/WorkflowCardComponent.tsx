@@ -17,7 +17,7 @@ export default function WorkflowCardComponent() {
                 />
                 <LaunchGameCard />
             </div>
-            <div className="h-20 shrink-0 flex flex-col justify-center px-4 gap-y-1">
+            <div className="h-fit sm:h-20 shrink-0 flex flex-col justify-center px-4 py-2 gap-y-1">
                 <div className="text-dark-base/80 text-base">Workflow</div>
                 <div className="text-dark-base/50 text-[13px] leading-[1.1]">
                     Not like any other mid quiz applications, nocturn is the one you choose when you

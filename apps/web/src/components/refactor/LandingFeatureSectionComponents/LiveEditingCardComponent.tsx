@@ -115,7 +115,7 @@ export default function LiveEditingCardComponent() {
                     </div>
                 </div>
             </div>
-            <div className="h-20 shrink-0 flex flex-col justify-center px-4 gap-y-1">
+            <div className="h-fit sm:h-20 shrink-0 flex flex-col justify-center px-4 py-2 gap-y-1">
                 <div className="text-dark-base/80 text-base">Live Editing</div>
                 <div className="text-dark-base/50 text-[13px] leading-[1.1]">
                     Have too much to handle, bring those majdoors {'(collaborators)'} and make them

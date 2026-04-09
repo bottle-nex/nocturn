@@ -336,7 +336,7 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-full w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
