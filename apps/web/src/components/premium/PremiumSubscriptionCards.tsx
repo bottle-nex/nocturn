@@ -108,7 +108,7 @@ export default function PremiumSubscriptionCards() {
                 subheading="Upgrade your experience with powerful tools and benefits."
             />
             {/* Increased max-width to 7xl for a wider layout */}
-            <div className="flex gap-x-10 justify-center w-full max-w-270 mt-15 px-6">
+            <div className="flex flex-col lg:flex-row gap-y-10 lg:gap-x-10 justify-center w-full max-w-270 mt-15 px-6 xl:px-0">
                 {tiers.map((tier) => {
                     const isDark = tier.name === 'PRO';
                     const isLoading = loadingTier === tier.id;
@@ -150,7 +150,7 @@ export default function PremiumSubscriptionCards() {
                         <PerspectiveCard
                             key={tier.id}
                             /* Increased height to h-72 to match the wider look */
-                            className={`w-full h-72 rounded-2xl flex overflow-hidden relative
+                            className={`w-full h-auto md:h-72 rounded-2xl flex flex-col md:flex-row overflow-hidden relative
                             ${
                                 isDark
                                     ? 'bg-[#111110] border border-white/7 shadow-[0_8px_40px_rgba(0,0,0,0.4)]'
@@ -159,8 +159,8 @@ export default function PremiumSubscriptionCards() {
                         >
                             {/* Increased sidebar width from w-52 to w-64 */}
                             <div
-                                className={`w-64 shrink-0 flex flex-col justify-between p-8
-                                ${isDark ? 'border-r border-white/7' : 'border-r border-black/7'}`}
+                                className={`w-full md:w-64 shrink-0 flex flex-col justify-between p-8 gap-y-4 md:gap-y-0
+                                ${isDark ? 'border-b md:border-b-0 md:border-r border-white/7' : 'border-b md:border-b-0 md:border-r border-black/7'}`}
                             >
                                 <div className="flex flex-col">
                                     <span

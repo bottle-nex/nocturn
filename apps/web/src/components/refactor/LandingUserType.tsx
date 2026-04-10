@@ -11,7 +11,7 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
     const inView = useInView(ref, { once: true, margin: '-60px' });
 
     return (
-        <section ref={ref} className="flex flex-col justify-center px-10 h-full">
+        <section ref={ref} className="flex flex-col justify-center px-4 md:px-10 h-full">
             <motion.h2
                 initial={{ opacity: 0, y: 15 }}
                 animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}

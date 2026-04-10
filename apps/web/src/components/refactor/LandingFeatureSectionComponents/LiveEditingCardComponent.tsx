@@ -55,7 +55,7 @@ export default function LiveEditingCardComponent() {
     }, []);
 
     return (
-        <div className="flex flex-col ring-1 ring-black/10 h-75 w-110 rounded-xl overflow-hidden">
+        <div className="flex flex-col ring-1 ring-black/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
             <div className="h-55 bg-[#83EDE8] relative flex justify-center pt-7 shrink-0">
                 <div className="absolute bottom-12 right-31 z-2 -rotate-90">
                     <FaLocationArrow className="text-dark-base" />
@@ -115,7 +115,7 @@ export default function LiveEditingCardComponent() {
                     </div>
                 </div>
             </div>
-            <div className="h-20 shrink-0 flex flex-col justify-center px-4 gap-y-1">
+            <div className="h-fit sm:h-20 shrink-0 flex flex-col justify-center px-4 py-2 gap-y-1">
                 <div className="text-dark-base/80 text-base">Live Editing</div>
                 <div className="text-dark-base/50 text-[13px] leading-[1.1]">
                     Have too much to handle, bring those majdoors {'(collaborators)'} and make them
