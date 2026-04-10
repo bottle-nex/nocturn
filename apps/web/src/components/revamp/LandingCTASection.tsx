@@ -90,7 +90,7 @@ export default function LandingCTASection(): JSX.Element {
                 <div className="mt-9">
                     <a
                         href="#"
-                        className="group relative inline-flex cursor-pointer items-center gap-x-2 overflow-hidden rounded-xl px-7 py-3 text-sm font-medium text-white transition-all duration-200 ease-out hover:scale-[1.02]"
+                        className="group relative inline-flex cursor-pointer items-center gap-x-2 overflow-hidden rounded-xl px-7 py-3 text-sm font-medium text-white transition-all duration-200 ease-out hover:scale-[1.02] inset-shadow-xs inset-shadow-white/50"
                         style={{
                             background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
                             boxShadow: '0 1px 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)',
