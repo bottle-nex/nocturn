@@ -6,7 +6,6 @@ import { LeftCoinContent } from './UsdcSupportSection/LeftCoinContent';
 import { LeftInputsContent } from './UsdcSupportSection/LeftInputsContent';
 import RightLeaderboardsComponent from './UsdcSupportSection/RightLeaderboardsComponent';
 
-
 export enum LeftRenderType {
     COIN = 'COIN',
     INPUTS = 'INPUTS',

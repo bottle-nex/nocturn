@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction } from "react";
-import { LeftRenderType } from "../LandingUsdcSection";
+import { Dispatch, SetStateAction } from 'react';
+import { LeftRenderType } from '../LandingUsdcSection';
 import { motion } from 'framer-motion';
-import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import Image from 'next/image';
+import { ChevronRight } from 'lucide-react';
 
 export function LeftCoinContent({
     setLeftRenderType,

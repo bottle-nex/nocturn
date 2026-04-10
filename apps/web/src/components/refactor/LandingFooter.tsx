@@ -11,9 +11,9 @@ const footerLinks = {
 };
 
 const socialIcons = [
-    { icon: FaXTwitter, label: 'X', link: "https://x.com" },
-    { icon: FaLinkedinIn, label: 'LinkedIn', link: "#" },
-    { icon: FaGithub, label: 'GitHub', link: "https://github.com/bottle-nex/nocturn" },
+    { icon: FaXTwitter, label: 'X', link: 'https://x.com' },
+    { icon: FaLinkedinIn, label: 'LinkedIn', link: '#' },
+    { icon: FaGithub, label: 'GitHub', link: 'https://github.com/bottle-nex/nocturn' },
 ];
 
 export default function LandingFooter(): JSX.Element {
@@ -66,6 +66,7 @@ export default function LandingFooter(): JSX.Element {
                                 <a
                                     key={label}
                                     href={link}
+                                    rel={"noreferrer"}
                                     aria-label={label}
                                     target="_blank"
                                     className="text-light-alpha/40 hover:text-light-base transition-colors duration-200"

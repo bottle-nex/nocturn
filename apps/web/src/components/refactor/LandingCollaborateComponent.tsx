@@ -29,9 +29,7 @@ export default function LandingCollaborateComponent() {
                         </div>
                     </div>
 
-                    <div
-                        className="col-span-1 flex flex-col sm:flex-row gap-x-4 items-center justify-center sm:p-4 lg:p-0 w-full max-w-[280px] sm:max-w-[360px] lg:max-w-none mx-auto origin-center lg:origin-left"
-                    >
+                    <div className="col-span-1 flex flex-col sm:flex-row gap-x-4 items-center justify-center sm:p-4 lg:p-0 w-full max-w-[280px] sm:max-w-[360px] lg:max-w-none mx-auto origin-center lg:origin-left">
                         {/* card 1 */}
                         <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
                             <div className="text-sm text-light-base/70 flex items-center gap-x-3">

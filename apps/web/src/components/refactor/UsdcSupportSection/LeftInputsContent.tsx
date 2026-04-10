@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
-import { LeftRenderType } from "../LandingUsdcSection";
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Dispatch, SetStateAction } from 'react';
+import { LeftRenderType } from '../LandingUsdcSection';
+import { motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const rankColors = ['text-yellow-400', 'text-neutral-300', 'text-amber-600', 'text-neutral-400'];
 const defaultPercentages = [50, 30, 20];
@@ -33,7 +33,9 @@ export function LeftInputsContent({
                 <div className="flex flex-col gap-y-5">
                     {/* Stake Amount */}
                     <motion.div className="space-y-2" {...staggerItem(1)}>
-                        <span className="text-sm sm:text-base font-normal text-white/90">Stake Amount</span>
+                        <span className="text-sm sm:text-base font-normal text-white/90">
+                            Stake Amount
+                        </span>
                         <p className="text-xs sm:text-sm text-white/40">
                             Minimum stake: 1 USDC · Maximum: 10,000 USDC
                         </p>
@@ -61,7 +63,9 @@ export function LeftInputsContent({
                         </motion.span>
 
                         <motion.div className="flex items-center gap-x-2" {...staggerItem(3)}>
-                            <label className="text-xs sm:text-sm text-white/40">Number of winners:</label>
+                            <label className="text-xs sm:text-sm text-white/40">
+                                Number of winners:
+                            </label>
                             <Input
                                 type="text"
                                 readOnly
@@ -82,7 +86,10 @@ export function LeftInputsContent({
                                         {...staggerItem(4 + i)}
                                     >
                                         <span
-                                            className={cn('text-xs sm:text-sm font-medium w-7', rankColors[i])}
+                                            className={cn(
+                                                'text-xs sm:text-sm font-medium w-7',
+                                                rankColors[i],
+                                            )}
                                         >
                                             {rankLabel}
                                         </span>

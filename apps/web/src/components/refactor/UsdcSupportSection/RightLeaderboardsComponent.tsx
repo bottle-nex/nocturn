@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { motion } from "framer-motion";
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 const users = [
     { avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg' },
@@ -74,18 +74,11 @@ export default function RightLeaderboardsComponent() {
             <h1 className="text-center text-2xl mb-12">Quiz Leaderboards</h1>
             <div className="flex items-center justify-center gap-x-8 pt-10 pb-6">
                 {[...topThree]
-                    .sort(
-                        (a, b) =>
-                            (a.position % 2) - (b.position % 2) ||
-                            a.position - b.position,
-                    )
+                    .sort((a, b) => (a.position % 2) - (b.position % 2) || a.position - b.position)
                     .map((item) => (
                         <div
                             key={item.position}
-                            className={cn(
-                                'relative',
-                                item.position === 1 && '-translate-y-4',
-                            )}
+                            className={cn('relative', item.position === 1 && '-translate-y-4')}
                         >
                             {item.position === 1 && (
                                 <Image
@@ -149,9 +142,7 @@ export default function RightLeaderboardsComponent() {
                                     className="h-8 rounded-r-full shrink-0"
                                     style={{
                                         backgroundColor:
-                                            barColors[
-                                            (item.position - 1) % barColors.length
-                                            ],
+                                            barColors[(item.position - 1) % barColors.length],
                                     }}
                                 />
                                 <div className="relative w-9 h-9 shrink-0 -translate-x-6 rounded-full bg-white border-2 border-white">
