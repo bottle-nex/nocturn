@@ -24,7 +24,7 @@ export default function AppLogo({
                 {withText && (
                     <div
                         className={cn(
-                            'absolute text-dark-alpha  dark:text-light-alpha flex flex-col -right-7 -space-y-1 h-9 -mt-3',
+                            'absolute text-dark-alpha  dark:text-light-alpha flex flex-col -right-12 -space-y-1 h-9 -mt-3',
                             textColor,
                         )}
                     >

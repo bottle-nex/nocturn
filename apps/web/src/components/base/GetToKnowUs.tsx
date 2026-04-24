@@ -9,6 +9,7 @@ import axios from 'axios';
 import { LEARNING_JOURNEY_URL } from 'routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import GetToKnowNocturnSkeleton from '../skeletons/GetToKnowNocturnSkeleton';
+import { useEscape } from '@/hooks/useKeyPress';
 
 interface ParagraphSection {
     title: string;
@@ -185,6 +186,8 @@ export default function GetToKnowUs(): JSX.Element {
 
         fetchLearningJourney();
     }, [session?.user.token]);
+
+    useEscape(() => setOpenCard(null), !!openCard);
 
     function handleCardClick(id: number) {
         if (openCard === id) {

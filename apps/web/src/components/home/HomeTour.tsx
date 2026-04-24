@@ -199,7 +199,7 @@ export default function HomeTour() {
     return (
         <div
             ref={containerRef}
-            className={`absolute inset-0 z-[100] flex items-center justify-center ${containerPadding} bg-black/60 dark:bg-black/70 backdrop-blur-md transition-all duration-300 pointer-events-auto`}
+            className={`absolute inset-0 z-100 flex items-center justify-center ${containerPadding} bg-black/60 dark:bg-black/70 backdrop-blur-md transition-all duration-300 pointer-events-auto`}
             style={{ clipPath: overlayClipPath }}
         >
             <AnimatePresence mode="wait">
@@ -210,7 +210,7 @@ export default function HomeTour() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: -10 }}
                     transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-full max-w-4xl h-[600px] flex overflow-hidden rounded-3xl auto-cols-auto shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/20 dark:border-white/10 bg-white dark:bg-neutral-900"
+                    className="w-full max-w-4xl h-150 flex overflow-hidden rounded-3xl auto-cols-auto shadow-[0_30px_80px_rgba(0,0,0,0.6)] border border-white/20 dark:border-white/10 bg-white dark:bg-neutral-900"
                 >
                     {/* Left side: The Graphic */}
                     <div

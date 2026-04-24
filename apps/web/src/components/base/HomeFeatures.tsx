@@ -4,6 +4,7 @@ import { JSX, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import UtilityCard from '../utility/UtilityCard';
 import HomeFeatureSkeleton from '../skeletons/HomeFeaturesSkeleton';
+import { useEscape } from '@/hooks/useKeyPress';
 
 interface HomeFeaturesCard {
     id: number;
@@ -49,6 +50,8 @@ export default function HomeFeatures(): JSX.Element {
     const [openCard, setOpenCard] = useState<number | null>(null);
     const [loadedIds, setLoadedIds] = useState<Set<number>>(new Set());
     const selectedFeature = feature_array.find((f) => f.id === openCard);
+
+    useEscape(() => setOpenCard(null), !!openCard);
 
     function handleImageLoad(id: number) {
         setLoadedIds((prev) => new Set(prev).add(id));

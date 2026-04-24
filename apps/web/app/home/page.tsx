@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { RxCross1 } from 'react-icons/rx';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useSeenOnce } from '@/hooks/useSeenOnce';
 
 export default function Home() {
     const [showBanner, setShowBanner] = useState<boolean>(true);
@@ -25,6 +26,7 @@ export default function Home() {
     const { quiz, preview, setPreview, setQuiz, setMessages, setSessionId } = useAiChatStore();
     const [trashOpen, setTrashOpen] = useState<boolean>(false);
     const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
+    const [showTooltip, dismissTooltip] = useSeenOnce('premiumTooltipSeen');
 
     useEffect(() => {
         async function getTutorialStatus() {
@@ -121,7 +123,7 @@ export default function Home() {
                         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                         onAnimationComplete={() => {
                             setTimeout(() => {
-                                if (showBanner) setTooltipOpen(true);
+                                if (showTooltip) setTooltipOpen(true);
                             }, 2000);
                         }}
                         className="bg-alpha flex items-center justify-end w-full px-12 overflow-hidden"
@@ -168,7 +170,10 @@ export default function Home() {
                                             </p>
                                             <div className="space-x-6 mt-5 w-full flex justify-end">
                                                 <Button
-                                                    onClick={() => setTooltipOpen(false)}
+                                                    onClick={() => {
+                                                        setTooltipOpen(false);
+                                                        dismissTooltip();
+                                                    }}
                                                     className="hover:bg-transparent bg-transparent shadow-none p-0!"
                                                 >
                                                     Got it
@@ -185,12 +190,15 @@ export default function Home() {
                                 </TooltipContent>
                             </Tooltip>
                         </div>
-                        <span className="rounded-xl ring-0 ring-white/70 hover:ring-3 p-3 cursor-pointer transition duration-100">
-                            <RxCross1
-                                onClick={() => setShowBanner(false)}
-                                className="text-light-alpha"
-                            />
-                        </span>
+                        <Button
+                            onClick={() => {
+                                setShowBanner(false);
+                                dismissTooltip();
+                            }}
+                            className="rounded-xl ring-0 ring-white/70 hover:ring-3 p-3 cursor-pointer transition duration-100"
+                        >
+                            <RxCross1 className="text-light-alpha" />
+                        </Button>
                     </motion.section>
                 )}
             </AnimatePresence>
