@@ -131,7 +131,7 @@ export default function MyQuizzesGridView({
                     question={quiz.questions[0].question}
                     options={quiz.questions[0].options}
                     className={cn(
-                        'w-full aspect-video rounded-[8px] outline select-none transition-all duration-200',
+                        'w-full aspect-video rounded-lg outline select-none transition-all duration-200',
                         isSelected
                             ? 'outline-indigo-600'
                             : 'outline-black/40 dark:outline-white/40',

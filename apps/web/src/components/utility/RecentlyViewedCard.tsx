@@ -47,7 +47,7 @@ export default function RecentlyViewedCard({
             <div
                 ref={cardRef}
                 className={cn(
-                    'w-88 rounded-sm',
+                    'w-full rounded-sm',
                     className,
                     isDeleting && 'animate-pulse animation-duration-[2s] pointer-events-none',
                 )}
