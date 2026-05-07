@@ -148,7 +148,12 @@ export default function LiveQuizInteractionTicker({ className }: LiveQuizInterac
             className={cn('flex items-center gap-x-2 z-[20] relative', className)}
         >
             {allowedEmojiTypes.map((emojiType) => (
-                <div key={emojiType} className="relative">
+                <motion.div
+                    key={emojiType}
+                    className="relative"
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                >
                     <div onClick={() => handleClick(emojiType)}>{renderIcon(emojiType)}</div>
 
                     <AnimatePresence>
@@ -194,7 +199,7 @@ export default function LiveQuizInteractionTicker({ className }: LiveQuizInterac
                                 </motion.div>
                             ))}
                     </AnimatePresence>
-                </div>
+                </motion.div>
             ))}
         </div>
     );

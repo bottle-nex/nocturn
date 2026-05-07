@@ -60,13 +60,13 @@ export default function LandingNavbarComponent() {
         <motion.div
             animate={{ height: atTop ? 80 : 56 }}
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-            className={`w-full bg-white max-w-270 mx-auto fixed top-0 flex items-center justify-between z-30 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
+            className={`w-full bg-white max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
         >
-            <AppLogo size={105} className="-left-10 top-1 text-dark-base" />
+            <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
             <div className="flex items-center gap-x-3 text-dark-base/90">
                 <div
                     ref={containerRef}
-                    className="relative flex items-center gap-x-3"
+                    className="relative hidden md:flex items-center gap-x-3"
                     onMouseLeave={() => setHoveredIdx(null)}
                 >
                     <AnimatePresence>

@@ -76,6 +76,11 @@ router.get('/quiz/get-quiz-questions/:quizId', authMiddleware, getQuestionsContr
 
 // <---------------------- TEMPLATE-ROUTES ---------------------->
 router.get('/quiz/get-templates', authMiddleware, getAllTemplatesController);
-router.post('/quiz/upsert-template', authMiddleware, upsertCustomTemplateController);
+router.post(
+    '/quiz/upsert-template',
+    authMiddleware,
+    Subscription.template_creation_limit,
+    upsertCustomTemplateController,
+);
 
 export default router;

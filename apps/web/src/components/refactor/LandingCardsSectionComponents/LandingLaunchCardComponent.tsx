@@ -8,7 +8,7 @@ export default function LandingLaunchCardComponent() {
     return (
         <PerspectiveCard
             delay={0.09}
-            className="mt-20 relative w-full h-100 rounded-xl bg-[#7fc8f8] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6"
+            className="mt-20 relative w-full h-100 rounded-xl bg-[#00AEFF] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6"
         >
             <style>{`
                 @keyframes orbit-a {

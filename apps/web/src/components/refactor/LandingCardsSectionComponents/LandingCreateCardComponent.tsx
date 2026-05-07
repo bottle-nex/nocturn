@@ -5,7 +5,7 @@ import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function LandingCreateCardComponent() {
     return (
-        <PerspectiveCard className="relative mt-20 w-85 h-100 rounded-xl bg-[#c4b6ff] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6">
+        <PerspectiveCard className="relative mt-20 w-full max-w-85 xs:max-w-full h-100 rounded-xl bg-[#9896FF] ring-1 ring-black/10 shadow-xs shadow-black/5 overflow-hidden p-6">
             <LandingCardHeader
                 title="Create quiz"
                 description="Design structured quizzes with intelligent assistance"

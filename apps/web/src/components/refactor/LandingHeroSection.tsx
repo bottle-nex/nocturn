@@ -137,7 +137,7 @@ function LiveActivityCard() {
     );
 
     return (
-        <section className="h-auto pb-4 w-60 z-1 flex flex-col gap-y-2 p-2 px-3 absolute bottom-0 left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
+        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
             <div className="flex gap-x-1.5 px-1 py-px text-dark-base/80 items-center">
                 <FaGamepad size={28} />
                 Nocturn
@@ -319,12 +319,12 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-screen w-full max-w-270 flex flex-col gap-y-3 pt-40 items-center select-none">
-            <div className="text-5xl font-semibold max-w-xl text-dark-base text-center">
+        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
                 Knowledge that pays off
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-2xl text-center">
+            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
                 Nocturn is a real-time quiz app made for people who love learning and friendly
                 competition.
             </div>
@@ -336,7 +336,7 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-full w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col">
+                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
@@ -419,54 +419,6 @@ export default function LandingHeroSection() {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Image Cards */}
-                            <div className="flex-1 w-full flex gap-x-2.5 min-h-0">
-                                {[
-                                    { src: '/images/card-1.jpg', label: 'Planets', stage: 1 },
-                                    { src: '/images/card-2.jpg', label: 'Orbits', stage: 2 },
-                                    { src: '/images/card-3.jpg', label: 'Black Holes', stage: 2 },
-                                ].map((card, i) => (
-                                    <div
-                                        key={card.label}
-                                        className="flex-1 min-w-0 h-full rounded-lg overflow-hidden"
-                                    >
-                                        <AnimatePresence mode="wait">
-                                            {quizStage >= card.stage ? (
-                                                <motion.div
-                                                    key="card"
-                                                    className="relative w-full h-full rounded-lg overflow-hidden"
-                                                    initial={{ opacity: 0, scale: 0.92 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    transition={{
-                                                        duration: 0.5,
-                                                        ease: [0.25, 0.46, 0.45, 0.94],
-                                                        delay: i * 0.1,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        src={card.src}
-                                                        alt={card.label}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                    <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-black/50 to-transparent" />
-                                                    <span className="absolute bottom-1.5 left-2 text-white/90 text-[10px] font-medium">
-                                                        {card.label}
-                                                    </span>
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    key="skeleton"
-                                                    className="w-full h-full bg-light-base rounded-lg animate-pulse"
-                                                    exit={{ opacity: 0 }}
-                                                    transition={{ duration: 0.2 }}
-                                                />
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                ))}
-                            </div>
 
                             {/* Action Bar */}
                             <div className="h-9 w-full rounded-lg overflow-hidden shrink-0">

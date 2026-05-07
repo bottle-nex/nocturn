@@ -1,38 +1,112 @@
 'use client';
-import { Button } from '../ui/button';
-import RiveComponent from '../ui/Rives/RIveComponent';
-import { FiArrowUpRight } from 'react-icons/fi';
+import { JSX } from 'react';
+import { IoArrowForward } from 'react-icons/io5';
 
-export default function LandingCTASection() {
+const CARD_COLORS = [
+    'bg-neutral-100/5',
+    'bg-neutral-200/40',
+    'bg-stone-100/60',
+    'bg-zinc-100/50',
+    'bg-neutral-50/80',
+    'bg-stone-200/30',
+    'bg-zinc-200/25',
+    'bg-neutral-100/5',
+];
+
+const ROWS = 8;
+const COLS = 14;
+
+function getCardColor(row: number, col: number) {
+    return CARD_COLORS[(row * 3 + col * 7) % CARD_COLORS.length]!;
+}
+
+export default function LandingCTASection(): JSX.Element {
     return (
-        <section className="h-130 w-full relative mt-30">
-            <div className="relative h-full overflow-hidden flex justify-between p-8 gap-8 ring-1 ring-black/10 shadow-xs shadow-black/5 bg-[#FFD400]">
-                <div className="h-full w-full bg-[#FFD400] p-10 flex justify-between rounded-[10px]">
-                    <article className="w-[60%] h-full flex flex-col justify-between">
-                        <div className="flex flex-col gap-y-5">
-                            <h2 className="text-7xl font-bold text-dark-alpha leading-none tracking-tight">
-                                Ready to create
-                                <br />
-                                your first quiz?
-                            </h2>
-                            <p className="text-dark-base/60 text-xl max-w-sm leading-relaxed">
-                                Build engaging quizzes in minutes, share with anyone, and watch the
-                                scores roll in. No setup needed.
-                            </p>
-                        </div>
-                        <Button className="w-50 h-15 text-xl rounded-full flex items-center gap-x-2 bg-light-alpha hover:bg-light-alpha hover:-translate-y-0.5 active:scale-95 text-dark-base transition-all transform duration-200">
-                            Start for free
-                            <FiArrowUpRight className="size-5" />
-                        </Button>
-                    </article>
-                    <aside className="relative h-full w-[50%] flex flex-col p-10 gap-y-3">
-                        <div className="absolute -bottom-110 left-1/2 -translate-x-1/2 h-300 w-300">
-                            <RiveComponent
-                                url="/rive/meeples.riv"
-                                animationName={['Clouds', 'Meeples']}
-                            />
-                        </div>
-                    </aside>
+        <section className="relative flex w-full max-w-270 items-center justify-center overflow-hidden px-6">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div
+                    className="absolute top-1/2 left-1/2"
+                    style={{
+                        transform: 'translate(-50%, -50%) rotate(-12deg)',
+                        width: '200%',
+                        height: '200%',
+                    }}
+                >
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-3">
+                        {Array.from({ length: ROWS }).map((_, row) => (
+                            <div
+                                key={row}
+                                className="flex gap-3"
+                                style={{
+                                    marginLeft: row % 2 === 0 ? 0 : 80,
+                                }}
+                            >
+                                {Array.from({ length: COLS }).map((_, col) => (
+                                    <div
+                                        key={col}
+                                        className={`h-20 w-36 rounded-xl border border-neutral-300/25 ${getCardColor(row, col)}`}
+                                    />
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="absolute inset-0 bg-linear-to-b from-light-alpha from-5% via-transparent via-50% to-light-alpha to-95%" />
+                <div className="absolute inset-0 bg-linear-to-r from-light-alpha from-5% via-transparent via-50% to-light-alpha to-95%" />
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center py-14">
+                <div
+                    className="mb-6 flex items-center gap-x-1.5 rounded-full px-3.5 py-1 ring-1 ring-alpha/15"
+                    style={{
+                        background: 'rgba(79, 70, 229, 0.06)',
+                        color: 'rgba(79, 70, 229, 0.7)',
+                    }}
+                >
+                    <span className="text-xs font-medium tracking-wide">
+                        Mom was right, Knowledge pays
+                    </span>
+                </div>
+
+                <h2
+                    className="text-center text-4xl font-bold leading-[1.1] tracking-tight text-dark-base md:text-5xl"
+                    style={{ letterSpacing: '-0.025em' }}
+                >
+                    Start playing
+                    <br />
+                    <span style={{ color: 'rgba(22, 22, 22, 0.75)' }}>something great</span>
+                </h2>
+
+                <p
+                    className="mt-5 max-w-sm text-center text-[15px] leading-relaxed"
+                    style={{ color: 'rgba(22, 22, 22, 0.45)' }}
+                >
+                    Simple, focused quiz to make learning more fun.
+                    <br className="hidden sm:inline" />
+                    Get started in seconds, no setup needed.
+                </p>
+
+                <div className="mt-9">
+                    <a
+                        href="#"
+                        className="group relative inline-flex cursor-pointer items-center gap-x-2 overflow-hidden rounded-xl px-7 py-3 text-sm font-medium text-white transition-all duration-200 ease-out hover:scale-[1.02] inset-shadow-xs inset-shadow-white/50"
+                        style={{
+                            background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)',
+                        }}
+                    >
+                        <span
+                            className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                            style={{
+                                background:
+                                    'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+                            }}
+                        />
+
+                        <span className="relative z-10">Get started</span>
+                        <IoArrowForward className="relative z-10 size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </a>
                 </div>
             </div>
         </section>

@@ -19,11 +19,11 @@ import { redisCacheInstance } from '../../services/init.services';
 import { QuestionType } from '../../schemas/createQuizSchema';
 
 export default async function getLiveQuizDataController(req: Request, res: Response) {
-    const now = Date.now();
     const cookieHeader = req.headers.cookie;
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const token = cookies[NOCTURN_COOKIE_NAME];
     const { quizId: quizIdParams } = req.params;
+    console.log('toke here is : ', token);
 
     if (!token) {
         ResponseWriter.not_authorized(res);
@@ -32,6 +32,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
     try {
         const decoded = QuizAction.verifyCookie(token);
+        console.log('decoded is : ', decoded);
         if (typeof decoded !== 'object' || !decoded) return ResponseWriter.not_authorized(res);
 
         const { quizId, gameSessionId, role, userId } = decoded as LiveGameTokenPayload;
@@ -203,7 +204,6 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
-        console.log('total time taken to get live quiz data is : ', Date.now() - now, 'ms');
         ResponseWriter.secure_success(res, {
             type: ApiResponse.GET_LIVE_QUIZ_DATA,
             data: responseData as unknown as getLiveQuizDataResponse,

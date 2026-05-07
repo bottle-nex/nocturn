@@ -3,6 +3,7 @@ import { JSX, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LandingSectionHeader from './LandingSectionHeader';
 import LandingFaqFloatingBubbleComponent from './LandingFaqFloatingBubbleComponent';
+import RipplingPillStack from '../resources/ai-generation/RipplingPillStack';
 
 interface FaqItem {
     index: number;
@@ -53,7 +54,7 @@ export default function LandingFaqSection(): JSX.Element {
                 subheading="Find answers to common questions about Nocturn."
             />
             <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
-                <LandingFaqFloatingBubbleComponent />
+                <RipplingPillStack />
                 <section className="w-full space-y-2">
                     {faqItems.map((item) => (
                         <motion.div

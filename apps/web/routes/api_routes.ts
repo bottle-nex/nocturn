@@ -27,6 +27,7 @@ export const HOST_JOIN_QUIZ_URL = QUIZ_URL + '/host-join-quiz';
 export const PARTICIPANT_JOIN_QUIZ_URL = QUIZ_URL + '/participant-join-quiz';
 export const SPECTATOR_JOIN_QUIZ_URL = QUIZ_URL + '/spectator-join-quiz';
 export const LIVE_QUIZ_DATA_URL = QUIZ_URL + '/get-live-quiz-data';
+export const GET_LIVE_PRIZE_POOL_URL = QUIZ_URL + '/get-live-prize-pool';
 export const CREATE_REVIEW_URL = API_URL + '/user/create-review';
 export const GET_REVIEW_URL = API_URL + '/user/get-review';
 export const GET_UN_ASKED_QUESTION_URL = QUIZ_URL + '/get-un-asked-question';

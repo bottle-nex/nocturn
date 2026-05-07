@@ -7,21 +7,21 @@ import { cn } from '@/lib/utils';
 
 export default function LandingCollaborateComponent() {
     return (
-        <div className="h-screen w-full max-w-270 flex flex-col items-center mx-auto py-15 gap-y-6 p-5">
+        <div className="h-auto lg:h-screen w-full max-w-270 flex flex-col items-center mx-auto py-15 gap-y-6 px-6 xl:px-0">
             <LandingSectionHeader
                 heading="Add collaborators and work seamlessly"
                 subheading="Add collaborators, share ideas, and edit quizzes in real time. Keep everything aligned from creation to launch."
             />
 
-            <div className="h-full flex items-center pt-10">
-                <div className="h-120 w-full ring-1 ring-black/20 rounded-xl grid grid-cols-2 overflow-hidden bg-light-base">
-                    <div className="col-span-1 flex flex-col justify-between p-10">
-                        <div className="text-dark-base/90 text-5xl font-semibold">
+            <div className="h-full w-full flex items-center pt-10">
+                <div className="h-auto lg:h-120 w-full ring-1 ring-black/20 rounded-xl flex flex-col lg:grid lg:grid-cols-2 overflow-hidden bg-light-base">
+                    <div className="col-span-1 flex flex-col justify-between p-8 lg:p-10 gap-y-4 sm:gap-y-8">
+                        <div className="text-dark-base/90 text-3xl sm:text-4xl lg:text-5xl font-semibold">
                             Too many cooks? Perfect for the kitchen
                         </div>
 
                         <div className="flex flex-col gap-y-5">
-                            <div className="text-dark-base/60 text-base">
+                            <div className="text-dark-base/60 text-sm sm:text-base">
                                 Every great quiz needs more than one chef. Some bring the spice,
                                 some bring the structure, and some just taste-test everything—but
                                 together, you create something truly delicious.
@@ -29,7 +29,7 @@ export default function LandingCollaborateComponent() {
                         </div>
                     </div>
 
-                    <div className="col-span-1 flex gap-x-4 items-center">
+                    <div className="col-span-1 flex flex-col sm:flex-row gap-x-4 items-center justify-center sm:p-4 lg:p-0 w-full max-w-[280px] sm:max-w-[360px] lg:max-w-none mx-auto origin-center lg:origin-left">
                         {/* card 1 */}
                         <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
                             <div className="text-sm text-light-base/70 flex items-center gap-x-3">

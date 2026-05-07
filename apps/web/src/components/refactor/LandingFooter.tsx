@@ -1,6 +1,7 @@
 import { FaXTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import AppLogo from '../app/AppLogo';
 import PerspectiveCard from '../utility/PerspectiveCard';
+import { JSX } from 'react';
 
 const footerLinks = {
     Resources: ['Blog', 'Brand', 'FAQ', 'Help & Support', 'Community'],
@@ -10,15 +11,15 @@ const footerLinks = {
 };
 
 const socialIcons = [
-    { icon: FaXTwitter, label: 'X' },
-    { icon: FaLinkedinIn, label: 'LinkedIn' },
-    { icon: FaGithub, label: 'GitHub' },
+    { icon: FaXTwitter, label: 'X', link: 'https://x.com' },
+    { icon: FaLinkedinIn, label: 'LinkedIn', link: '#' },
+    { icon: FaGithub, label: 'GitHub', link: 'https://github.com/bottle-nex/nocturn' },
 ];
 
-export default function LandingFooter() {
+export default function LandingFooter(): JSX.Element {
     return (
         <main className="max-w-270 mx-auto w-full">
-            <PerspectiveCard className="w-full mt-15 mb-3 pb-0! rounded-3xl!">
+            <PerspectiveCard className="w-full mb-3 pb-0! rounded-3xl!">
                 <footer className="w-full  pb-0">
                     <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
                         <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">
@@ -61,11 +62,13 @@ export default function LandingFooter() {
                         </div>
 
                         <div className="flex items-center gap-5 mt-16 mb-8 px-10 md:px-14">
-                            {socialIcons.map(({ icon: Icon, label }) => (
+                            {socialIcons.map(({ icon: Icon, label, link }) => (
                                 <a
                                     key={label}
-                                    href="#"
+                                    href={link}
+                                    rel={"noreferrer"}
                                     aria-label={label}
+                                    target="_blank"
                                     className="text-light-alpha/40 hover:text-light-base transition-colors duration-200"
                                 >
                                     <Icon className="w-5 h-5" />
@@ -75,10 +78,10 @@ export default function LandingFooter() {
                     </main>
                 </footer>
             </PerspectiveCard>
-            <section className="max-w-270 mx-auto w-full space-y-2 mb-8 mt-4">
-                <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-1" />
-                <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-2 [animation-delay:0.3s]" />
-                <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[length:200%_100%] animate-gradient-slide gradient-bar-3 [animation-delay:0.6s]" />
+            <section className="max-w-270 mx-auto w-full space-y-2 mb-8 mt-3">
+                <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]" />
+                <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.3s] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] opacity-80" />
+                <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.6s] [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] opacity-50" />
             </section>
         </main>
     );
