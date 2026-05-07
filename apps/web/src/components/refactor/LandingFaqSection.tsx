@@ -2,7 +2,6 @@
 import { JSX, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LandingSectionHeader from './LandingSectionHeader';
-import LandingFaqFloatingBubbleComponent from './LandingFaqFloatingBubbleComponent';
 import RipplingPillStack from '../resources/ai-generation/RipplingPillStack';
 
 interface FaqItem {
