@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function ParticipantUserCard() {
     return (
-        <PerspectiveCard className="relative w-full h-80 bg-[#38BEB8] rounded-r-2xl flex flex-col overflow-hidden group shadow-sm">
+        <PerspectiveCard className="relative w-full h-80 bg-[#38BEB8] rounded-2xl flex flex-col overflow-hidden group shadow-sm">
             <motion.div
                 animate={{
                     x: ['-100%', '20%', '20%', '-100%', '100%', '27%', '27%', '100%', '-100%'],

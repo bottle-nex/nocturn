@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
 import SigninModal from '../utility/SigninModal';
+import Link from 'next/link';
 
 export default function Footer() {
     const { session, openSigninModal, setOpenSigninModal } = useUserSessionStore();
@@ -32,9 +33,9 @@ export default function Footer() {
                                     damping: 20,
                                 }}
                             >
-                                <a href="">
+                                <Link href="">
                                     <FaXTwitter className="size-20" />
-                                </a>
+                                </Link>
                             </motion.div>
 
                             <motion.div

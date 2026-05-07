@@ -10,7 +10,7 @@ export default function SpectatorUserCard() {
     };
 
     return (
-        <PerspectiveCard className="relative w-full h-80 bg-[#B9BCFE] rounded-l-2xl overflow-hidden flex group ">
+        <PerspectiveCard className="relative w-full h-80 bg-[#B9BCFE] rounded-2xl overflow-hidden flex group ">
             <div className="absolute w-full h-full flex">
                 <div className="w-full h-full" />
                 <div className="h-full w-full bg-[#9798FD]" />

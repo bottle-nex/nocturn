@@ -15,7 +15,7 @@ model User {
     updatedAt   DateTime @updatedAt
     lastLoginAt DateTime @default(now())
 
-    Quiz Quiz[]
+    Quiz      Quiz[]
     templates Template[]
 
     reviews   Review[]

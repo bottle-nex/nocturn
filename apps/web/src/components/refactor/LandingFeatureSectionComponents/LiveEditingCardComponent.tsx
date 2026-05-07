@@ -56,14 +56,14 @@ export default function LiveEditingCardComponent() {
 
     return (
         <div className="flex flex-col ring-1 ring-black/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
-            <div className="h-55 bg-[#83EDE8] relative flex justify-center pt-7 shrink-0">
+            <div className="h-55 bg-[#39BEB7] relative flex justify-center pt-7 shrink-0">
                 <div className="absolute bottom-12 right-31 z-2 -rotate-90">
                     <FaLocationArrow className="text-dark-base" />
                 </div>
                 <div className="absolute bottom-6 right-10 h-7 w-22 bg-dark-base z-2 flex items-center justify-center text-sm text-light-base rounded-full">
                     Red John
                 </div>
-                <div className="h-45 w-70 shadow-xs shadow-black/5 bg-linear-to-b from-light-alpha via-light-alpha/80 to-[#83EDE8] rounded-t-xl absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col py-3">
+                <div className="h-45 w-70 shadow-xs shadow-black/5 bg-linear-to-b from-light-alpha via-light-alpha/80 to-[#39BEB7] rounded-t-xl absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col py-3">
                     <div className="flex gap-x-3 items-center p-4 px-5">
                         <AnimatePresence mode="wait">
                             {stage >= 1 ? (

@@ -419,54 +419,6 @@ export default function LandingHeroSection() {
                                 </AnimatePresence>
                             </div>
 
-                            {/* Image Cards */}
-                            <div className="flex-1 w-full flex gap-x-2.5 min-h-0">
-                                {[
-                                    { src: '/images/card-1.jpg', label: 'Planets', stage: 1 },
-                                    { src: '/images/card-2.jpg', label: 'Orbits', stage: 2 },
-                                    { src: '/images/card-3.jpg', label: 'Black Holes', stage: 2 },
-                                ].map((card, i) => (
-                                    <div
-                                        key={card.label}
-                                        className="flex-1 min-w-0 h-full rounded-lg overflow-hidden"
-                                    >
-                                        <AnimatePresence mode="wait">
-                                            {quizStage >= card.stage ? (
-                                                <motion.div
-                                                    key="card"
-                                                    className="relative w-full h-full rounded-lg overflow-hidden"
-                                                    initial={{ opacity: 0, scale: 0.92 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    transition={{
-                                                        duration: 0.5,
-                                                        ease: [0.25, 0.46, 0.45, 0.94],
-                                                        delay: i * 0.1,
-                                                    }}
-                                                >
-                                                    <Image
-                                                        src={card.src}
-                                                        alt={card.label}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                    <div className="absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-black/50 to-transparent" />
-                                                    <span className="absolute bottom-1.5 left-2 text-white/90 text-[10px] font-medium">
-                                                        {card.label}
-                                                    </span>
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    key="skeleton"
-                                                    className="w-full h-full bg-light-base rounded-lg animate-pulse"
-                                                    exit={{ opacity: 0 }}
-                                                    transition={{ duration: 0.2 }}
-                                                />
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                ))}
-                            </div>
 
                             {/* Action Bar */}
                             <div className="h-9 w-full rounded-lg overflow-hidden shrink-0">

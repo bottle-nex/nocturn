@@ -3,7 +3,7 @@ import LaunchGameCard from './LaunchGameCardComponent';
 export default function WorkflowCardComponent() {
     return (
         <div className="flex flex-col ring-1 ring-black/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
-            <div className="h-55 bg-[#BDBBFF] relative flex justify-center pt-7 shrink-0">
+            <div className="h-55 bg-[#9896FF] relative flex justify-center pt-7 shrink-0">
                 <div
                     className="absolute inset-0"
                     style={{

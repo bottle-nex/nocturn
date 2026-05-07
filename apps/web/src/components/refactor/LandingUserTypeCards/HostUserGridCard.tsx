@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function HostUserGridCard() {
     return (
-        <PerspectiveCard className="relative w-full h-80 bg-[#A5EAFC] rounded-l-2xl overflow-hidden flex items-center justify-center group shadow-sm">
+        <PerspectiveCard className="relative w-full h-80 bg-[#A5EAFC] rounded-2xl overflow-hidden flex items-center justify-center group shadow-sm">
             <motion.div
                 animate={{
                     rotate: [-3, 10, 10, -10, -10, 10, 10, -25, -25, -3],
