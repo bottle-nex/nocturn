@@ -66,7 +66,7 @@ export default function LandingFooter(): JSX.Element {
                                 <a
                                     key={label}
                                     href={link}
-                                    rel={"noreferrer"}
+                                    rel={'noreferrer'}
                                     aria-label={label}
                                     target="_blank"
                                     className="text-light-alpha/40 hover:text-light-base transition-colors duration-200"

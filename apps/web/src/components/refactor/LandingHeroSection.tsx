@@ -419,7 +419,6 @@ export default function LandingHeroSection() {
                                 </AnimatePresence>
                             </div>
 
-
                             {/* Action Bar */}
                             <div className="h-9 w-full rounded-lg overflow-hidden shrink-0">
                                 <AnimatePresence mode="wait">
