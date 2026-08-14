@@ -35,6 +35,11 @@ const faqItems = [
         question: 'What does "sealed" mean?',
         answer: 'After a quiz ends, the platform writes each winner\'s claim to Solana and then "seals" the quiz. Sealing means the results become immutable.no one can change who won, alter prize amounts, or add new winners. It also starts the 7-day claim countdown.',
     },
+    {
+        index: 6,
+        question: 'Which wallets are supported for claiming a prize?',
+        answer: 'We support the most popular Solana wallets, including Phantom and Solflare. Any wallet that supports SPL tokens and can hold USDC on Solana will work for claiming your prize.',
+    },
 ];
 
 export default function UsdcFaqSection() {

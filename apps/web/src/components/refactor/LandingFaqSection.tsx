@@ -41,6 +41,11 @@ const faqItems: FaqItem[] = [
         question: 'Can I integrate Nocturn with other tools?',
         answer: 'Yes, Nocturn offers integrations with a variety of popular tools such as Slack, Google Calendar, and Trello. This allows you to streamline your workflow and keep all your work in sync across different platforms.',
     },
+    {
+        index: 6,
+        question: 'How do I get support if I run into an issue?',
+        answer: 'Our support team is available through in-app chat and email for all users, with priority response times for premium subscribers. You can also browse our help center for guides and answers to common questions.',
+    },
 ];
 
 export default function LandingFaqSection(): JSX.Element {
