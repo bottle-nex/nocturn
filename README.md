@@ -142,3 +142,5 @@ This file is for internal use by the dev team. Keep it open while working.
 <a href="https://github.com/celestium-x/triangulum-x/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=celestium-x/triangulum-x&max=400&columns=20" />
 </a>
+
+Rishi Kant
