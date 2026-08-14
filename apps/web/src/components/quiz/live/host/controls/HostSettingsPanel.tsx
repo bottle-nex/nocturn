@@ -60,7 +60,7 @@ export default function HostSettingsPanel() {
                             key={tab}
                             onClick={() => setView(tab)}
                             className={cn(
-                                'px-4 py-2 rounded-xl text-xs font-medium transition-all bg-transparent dark:bg-transparent col-span-1 lowercase',
+                                'px-4 py-2 rounded-xl text-xs font-medium transition-all bg-red-500 dark:bg-red-500 col-span-1 lowercase',
                                 {
                                     'bg-white/30 dark:bg-neutral-950/50 text-dark-base dark:text-white shadow':
                                         view === tab,
