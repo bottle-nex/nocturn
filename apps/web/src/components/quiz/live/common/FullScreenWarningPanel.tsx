@@ -53,13 +53,13 @@ export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarni
                 <div className="w-full flex justify-end items-center gap-x-3 pt-2">
                     <Button
                         variant="outline"
-                        className="bg-transparent border-neutral-600 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-100 px-6"
+                        className="bg-transparent border-neutral-600 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-100 px-6 bg-red-500! hover:bg-red-500!"
                         onClick={deny}
                     >
                         Cancel
                     </Button>
                     <Button
-                        className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 px-6 font-medium"
+                        className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 px-6 font-medium bg-red-500! hover:bg-red-500!"
                         onClick={accept}
                     >
                         I Understand

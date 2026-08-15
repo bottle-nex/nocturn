@@ -80,7 +80,7 @@ export default function SpectatorChatPanel() {
                 </span>
                 <ToolTipComponent content="Click to expand">
                     <Button
-                        className="text-dark-base dark:text-light-base cursor-pointer dark:bg-neutral-600/30"
+                        className="text-dark-base dark:text-light-base cursor-pointer dark:bg-neutral-600/30 bg-red-500! hover:bg-red-500!"
                         variant="ghost"
                         onClick={handleToggleExpand}
                     >

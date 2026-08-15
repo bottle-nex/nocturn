@@ -93,6 +93,7 @@ export default function HostQuestionResultsRenderer() {
                     'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha text-xs',
                     'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
                     'hover:-translate-y-0.5 transition-all transform duration-150',
+                    'bg-red-500! hover:bg-red-500!',
                 )}
                 onClick={handleOnNextQuestion}
             >
