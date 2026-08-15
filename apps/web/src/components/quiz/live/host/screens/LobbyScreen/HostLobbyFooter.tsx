@@ -51,8 +51,8 @@ export default function HostLobbyFooter() {
             </div>
 
             <Button
-                style={{ backgroundColor: template.buttonColor, color: template.buttonTextColor }}
-                className="z-20 cursor-pointer hover:-translate-y-0.5"
+                style={{ backgroundColor: '#22c55e', color: template.buttonTextColor }}
+                className="z-20 cursor-pointer hover:-translate-y-0.5 bg-green-500 hover:bg-green-600"
                 onClick={handleOnClick}
             >
                 Get Started

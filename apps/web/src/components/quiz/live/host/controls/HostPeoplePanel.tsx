@@ -35,7 +35,7 @@ export default function HostPeoplePanel() {
                             key={tab}
                             onClick={() => setView(tab)}
                             className={cn(
-                                'px-4 py-2 rounded-xl text-xs font-medium transition-all bg-transparent dark:bg-transparent col-span-1 lowercase  cursor-pointer',
+                                'px-4 py-2 rounded-xl text-xs font-medium transition-all col-span-1 lowercase cursor-pointer bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600',
                                 {
                                     'bg-white/30 dark:bg-neutral-950/50 text-dark-base dark:text-white shadow':
                                         view === tab,

@@ -83,7 +83,7 @@ function Body(props: ExpandablePanel) {
                     <ToolTipComponent content="Click to expand">
                         <div>
                             <Button
-                                className="text-dark-base dark:text-dark-base cursor-pointer dark:bg-neutral-600/30 "
+                                className="text-dark-base dark:text-dark-base cursor-pointer bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600"
                                 variant={'ghost'}
                                 onClick={props.onToggleExpand}
                             >

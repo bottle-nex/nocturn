@@ -55,7 +55,7 @@ export default function ParticipantControls({
                         style={{ color: quiz.template.textColor }}
                         variant="ghost"
                         onClick={control.onClick}
-                        className="hover:scale-105 dark:hover:bg-transparent hover:bg-transparent transition-all duration-300 dark:hover"
+                        className="hover:scale-105 transition-all duration-300 dark:hover bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600"
                     >
                         {control.icon}
                     </Button>

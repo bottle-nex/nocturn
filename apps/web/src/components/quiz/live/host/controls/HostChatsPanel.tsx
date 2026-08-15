@@ -113,7 +113,7 @@ export default function HostChatsPanel() {
                 <span className="text-sm dark:text-light-base text-dark-alpha">Chat</span>
                 <ToolTipComponent content="Click to expand">
                     <Button
-                        className="text-dark-base dark:text-light-base cursor-pointer dark:bg-neutral-600/30"
+                        className="text-dark-base dark:text-light-base cursor-pointer bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600"
                         variant="ghost"
                         onClick={() => setIsExpanded(!isExpanded)}
                     >

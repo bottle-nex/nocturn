@@ -90,9 +90,10 @@ export default function HostQuestionResultsRenderer() {
             <Button
                 className={cn(
                     'absolute bottom-4 left-5 cursor-pointer z-50 flex items-center justify-center gap-x-1 group',
-                    'bg-light-base dark:bg-dark-alpha dark:text-light-base text-dark-alpha text-xs',
+                    'dark:text-light-base text-dark-alpha text-xs',
                     'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
                     'hover:-translate-y-0.5 transition-all transform duration-150',
+                    'bg-green-500 hover:bg-green-600 dark:bg-green-500 dark:hover:bg-green-600',
                 )}
                 onClick={handleOnNextQuestion}
             >
