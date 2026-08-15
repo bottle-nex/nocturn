@@ -59,7 +59,7 @@ export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarni
                         Cancel
                     </Button>
                     <Button
-                        className="bg-neutral-100 text-neutral-900 hover:bg-neutral-200 px-6 font-medium"
+                        className="bg-green-600 text-white hover:bg-green-700 px-6 font-medium"
                         onClick={accept}
                     >
                         I Understand
