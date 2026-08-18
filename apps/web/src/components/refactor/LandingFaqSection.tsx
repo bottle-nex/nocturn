@@ -61,7 +61,7 @@ export default function LandingFaqSection(): JSX.Element {
                             onClick={() =>
                                 setSelectedFaq(selectedFaq === item.index ? -1 : item.index)
                             }
-                            className="bg-light-base/70 text-lg font-normal text-dark-base/90 rounded-xl cursor-pointer"
+                            className="bg-dark-base/90 text-lg font-normal text-light-base/90 rounded-xl cursor-pointer"
                         >
                             <section className="flex items-center justify-between px-4 py-4">
                                 <h3 className="font-normal">{item.question}</h3>
@@ -106,9 +106,9 @@ export default function LandingFaqSection(): JSX.Element {
                                         animate={{ height: 'auto', opacity: 1 }}
                                         exit={{ height: 0, opacity: 0 }}
                                         transition={{ duration: 0.2, ease: 'easeInOut' }}
-                                        className="overflow-hidden bg-light-alpha px-4"
+                                        className="overflow-hidden bg-dark-alpha px-4"
                                     >
-                                        <p className="text-base font-normal pt-3 leading-relaxed text-dark-base/60">
+                                        <p className="text-base font-normal pt-3 leading-relaxed text-light-base/60">
                                             {item.answer}
                                         </p>
                                     </motion.div>
