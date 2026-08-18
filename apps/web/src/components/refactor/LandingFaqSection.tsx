@@ -47,10 +47,11 @@ export default function LandingFaqSection(): JSX.Element {
     const [selectedFaq, setSelectedFaq] = useState<number>(0);
 
     return (
-        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none py-15">
+        <main className="max-w-270 mx-auto w-full text-light-base select-none py-15 px-8 bg-dark-alpha rounded-3xl">
             <LandingSectionHeader
                 heading="Frequently Asked Questions"
                 subheading="Find answers to common questions about Nocturn."
+                variant="dark"
             />
             <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
                 <RipplingPillStack />
