@@ -52,8 +52,7 @@ export default function LandingFaqSection(): JSX.Element {
                 heading="Frequently Asked Questions"
                 subheading="Find answers to common questions about Nocturn."
             />
-            <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
-                <RipplingPillStack />
+            <main className="w-full grid grid-cols-[3fr_2fr] gap-x-10 mt-16 items-start">
                 <section className="w-full space-y-2">
                     {faqItems.map((item) => (
                         <motion.div
@@ -117,6 +116,7 @@ export default function LandingFaqSection(): JSX.Element {
                         </motion.div>
                     ))}
                 </section>
+                <RipplingPillStack />
             </main>
         </main>
     );
