@@ -46,8 +46,7 @@ export default function UsdcFaqSection() {
                 heading="Common Questions"
                 subheading="Everything you need to know about prize pools on Nocturn."
             />
-            <main className="w-full grid grid-cols-[2fr_3fr] gap-x-10 mt-16 items-start">
-                <LandingFaqFloatingBubbleComponent />
+            <main className="w-full grid grid-cols-[3fr_2fr] gap-x-10 mt-16 items-start">
                 <section className="w-full space-y-2">
                     {faqItems.map((item) => (
                         <motion.div
@@ -111,6 +110,7 @@ export default function UsdcFaqSection() {
                         </motion.div>
                     ))}
                 </section>
+                <LandingFaqFloatingBubbleComponent />
             </main>
         </main>
     );
