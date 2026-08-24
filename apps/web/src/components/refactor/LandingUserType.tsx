@@ -16,7 +16,7 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
                 initial={{ opacity: 0, y: 15 }}
                 animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                 transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="text-3xl font-bold text-neutral-900 tracking-tighter"
+                className="text-3xl font-bold text-dark-base/90 tracking-tighter"
             >
                 {heading}
             </motion.h2>
@@ -24,13 +24,13 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
                 initial={{ opacity: 0, scaleX: 0 }}
                 animate={inView ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
                 transition={{ duration: 0.4, delay: 0.08, ease: 'easeOut' }}
-                className="w-full border-t border-neutral-200 mt-4 origin-left"
+                className="w-full border-t border-dark-base/10 mt-4 origin-left"
             />
             <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
                 transition={{ duration: 0.5, delay: 0.12, ease: 'easeOut' }}
-                className="text-base text-neutral-600 mt-3 max-w-sm leading-relaxed"
+                className="text-base text-dark-base/60 mt-3 max-w-sm leading-relaxed"
             >
                 {description}
             </motion.p>

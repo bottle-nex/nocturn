@@ -65,7 +65,7 @@ export default function LandingCTASection(): JSX.Element {
                     }}
                 >
                     <span className="text-xs font-medium tracking-wide">
-                        Mom was right, Knowledge pays
+                        Real-time. Global. Rewarding.
                     </span>
                 </div>
 
@@ -73,7 +73,7 @@ export default function LandingCTASection(): JSX.Element {
                     className="text-center text-4xl font-bold leading-[1.1] tracking-tight text-dark-base md:text-5xl"
                     style={{ letterSpacing: '-0.025em' }}
                 >
-                    Start playing
+                    Start hosting
                     <br />
                     <span style={{ color: 'rgba(22, 22, 22, 0.75)' }}>something great</span>
                 </h2>
@@ -82,9 +82,9 @@ export default function LandingCTASection(): JSX.Element {
                     className="mt-5 max-w-sm text-center text-[15px] leading-relaxed"
                     style={{ color: 'rgba(22, 22, 22, 0.45)' }}
                 >
-                    Simple, focused quiz to make learning more fun.
+                    Create your first live quiz in minutes.
                     <br className="hidden sm:inline" />
-                    Get started in seconds, no setup needed.
+                    No credit card, no setup — just play.
                 </p>
 
                 <div className="mt-9">

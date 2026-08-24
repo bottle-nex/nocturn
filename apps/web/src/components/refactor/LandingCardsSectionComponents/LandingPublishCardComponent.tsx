@@ -58,7 +58,7 @@ export default function LandingPublishCardComponent() {
     return (
         <PerspectiveCard
             delay={0.04}
-            className="mt-20 relative w-full h-100 rounded-xl bg-[#FFD400] shadow-xs shadow-black/5 overflow-hidden p-6"
+            className="mt-20 relative w-full h-100 rounded-xl bg-linear-to-br from-[#1aa89f] to-[#0b5f5a] shadow-xs shadow-black/5 overflow-hidden p-6"
         >
             <LandingCardHeader
                 title="Publish quiz"
