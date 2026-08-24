@@ -60,7 +60,7 @@ export default function LandingNavbarComponent() {
         <motion.div
             animate={{ height: atTop ? 80 : 56 }}
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-            className={`w-full bg-white max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
+            className={`w-full max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 transition-colors duration-300 ${atTop ? 'bg-white/70 backdrop-blur-md' : 'bg-white/90 backdrop-blur-md border-b border-px border-dark-alpha/7 shadow-[0_1px_0_0_rgba(0,0,0,0.02)]'}`}
         >
             <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
             <div className="flex items-center gap-x-3 text-dark-base/90">

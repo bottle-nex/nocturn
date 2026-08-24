@@ -79,9 +79,9 @@ export default function LandingFooter(): JSX.Element {
                 </footer>
             </PerspectiveCard>
             <section className="max-w-270 mx-auto w-full space-y-2 mb-8 mt-3">
-                <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]" />
-                <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.3s] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] opacity-80" />
-                <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.6s] [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] opacity-50" />
+                <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#2b2e4a,#4f46e5,#53354a,#2b2e4a)] bg-[length:200%_100%] animate-gradient-slide [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]" />
+                <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#2b2e4a,#4f46e5,#53354a,#2b2e4a)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.3s] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] opacity-70" />
+                <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#2b2e4a,#4f46e5,#53354a,#2b2e4a)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.6s] [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] opacity-40" />
             </section>
         </main>
     );

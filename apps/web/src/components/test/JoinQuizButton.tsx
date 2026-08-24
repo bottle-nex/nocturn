@@ -4,9 +4,9 @@ import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import { RxCross2 } from 'react-icons/rx';
+import { VscSymbolStructure } from 'react-icons/vsc';
 import userQuizAction from '@/lib/backend/base/user-quiz-action';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import z from 'zod';
@@ -92,21 +92,15 @@ function JoinQuizOverlay({
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="relative bg-light-alpha dark:bg-dark-base border-2 border-black w-100 max-w-[90vw] rounded-md overflow-hidden shadow-sm"
+                className="relative bg-light-alpha dark:bg-dark-base ring-1 ring-black/10 w-100 max-w-[90vw] rounded-2xl overflow-hidden shadow-2xl"
             >
-                <div className="bg-ndarkest border-b-2 border-black relative h-40 w-full">
-                    <Image
-                        src="/images/landing/buttonPressGreen.png"
-                        alt="join quiz"
-                        className="object-cover"
-                        fill
-                        unoptimized
-                    />
+                <div className="bg-gradient-to-br from-alpha to-delta relative h-32 w-full flex items-center justify-center">
+                    <VscSymbolStructure className="size-9 text-light-alpha/70" />
                     <motion.button
                         type="button"
                         aria-label="Close modal"
                         onClick={onClose}
-                        className="text-ndarkest cursor-pointer absolute right-3 top-3 bg-nlighter rounded-full p-1 hover:bg-ndarkest hover:text-nlighter shadow-xs transition-colors duration-250 z-10"
+                        className="text-dark-base cursor-pointer absolute right-3 top-3 bg-light-alpha rounded-full p-1 hover:bg-light-base shadow-xs transition-colors duration-250 z-10"
                     >
                         <RxCross2 size={15} strokeWidth={0.8} />
                     </motion.button>

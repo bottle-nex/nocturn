@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import LandingSectionHeader from './LandingSectionHeader';
-import { PiChefHat } from 'react-icons/pi';
+import { HiOutlineUserGroup } from 'react-icons/hi2';
 import PerspectiveCard from '../utility/PerspectiveCard';
 import { cn } from '@/lib/utils';
 
@@ -17,14 +17,14 @@ export default function LandingCollaborateComponent() {
                 <div className="h-auto lg:h-120 w-full ring-1 ring-black/20 rounded-xl flex flex-col lg:grid lg:grid-cols-2 overflow-hidden bg-light-base">
                     <div className="col-span-1 flex flex-col justify-between p-8 lg:p-10 gap-y-4 sm:gap-y-8">
                         <div className="text-dark-base/90 text-3xl sm:text-4xl lg:text-5xl font-semibold">
-                            Too many cooks? Perfect for the kitchen
+                            Built for teams that move together
                         </div>
 
                         <div className="flex flex-col gap-y-5">
                             <div className="text-dark-base/60 text-sm sm:text-base">
-                                Every great quiz needs more than one chef. Some bring the spice,
-                                some bring the structure, and some just taste-test everything—but
-                                together, you create something truly delicious.
+                                Bring your whole team into the same quiz. Assign roles, review
+                                changes as they happen, and ship a polished quiz without the
+                                back-and-forth.
                             </div>
                         </div>
                     </div>
@@ -40,9 +40,9 @@ export default function LandingCollaborateComponent() {
                                         'prem-surface',
                                     )}
                                 >
-                                    <PiChefHat className="size-6 text-light-base/60" />
+                                    <HiOutlineUserGroup className="size-6 text-light-base/60" />
                                 </div>
-                                Cause every great quiz needs more than one chef.
+                                Invite collaborators and stay in sync as you build.
                             </div>
 
                             <div className="w-full flex flex-col gap-y-3">

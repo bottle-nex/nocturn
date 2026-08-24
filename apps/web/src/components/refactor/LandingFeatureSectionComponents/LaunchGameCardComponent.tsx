@@ -106,7 +106,7 @@ export default function LaunchGameCard() {
                 Add Questions
             </div>
 
-            <div className="h-9 w-40 bg-[#BDBBFF] border border-dashed border-light-base rounded-sm" />
+            <div className="h-9 w-40 bg-white/15 border border-dashed border-white/40 rounded-sm" />
 
             <motion.div
                 id="launch-card"

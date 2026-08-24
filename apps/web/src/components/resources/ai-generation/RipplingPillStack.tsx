@@ -6,7 +6,7 @@ import PerspectiveCard from '@/components/utility/PerspectiveCard';
 
 export default function RipplingPillStack(): JSX.Element {
     return (
-        <PerspectiveCard className="w-full rounded-xl bg-[#FF8130] relative overflow-hidden flex flex-col h-126">
+        <PerspectiveCard className="w-full rounded-xl bg-delta relative overflow-hidden flex flex-col h-126">
             <motion.div
                 initial="hidden"
                 whileInView="visible"
@@ -39,7 +39,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 0 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 0 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>
@@ -69,7 +69,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 0 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 0 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>
@@ -96,7 +96,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 0 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 0 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>
@@ -126,7 +126,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>
@@ -153,7 +153,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 0 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 0 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>
@@ -180,7 +180,7 @@ export default function RipplingPillStack(): JSX.Element {
                             className="h-full w-full rounded-full"
                             style={{
                                 background:
-                                    'linear-gradient(to right, #FFC38B 0 50%, #FF3200 50% 100%)',
+                                    'linear-gradient(to right, #7c74ea 0 50%, #4f46e5 50% 100%)',
                             }}
                         />
                     </motion.div>

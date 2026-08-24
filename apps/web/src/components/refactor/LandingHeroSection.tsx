@@ -137,7 +137,7 @@ function LiveActivityCard() {
     );
 
     return (
-        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
+        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-2 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-lg shadow-black/10">
             <div className="flex gap-x-1.5 px-1 py-px text-dark-base/80 items-center">
                 <FaGamepad size={28} />
                 Nocturn
@@ -319,14 +319,21 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-4 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+            <div className="flex items-center gap-x-1.5 rounded-full px-3.5 py-1 ring-1 ring-alpha/15 bg-alpha/6">
+                <span className="h-1.5 w-1.5 rounded-full bg-alpha" />
+                <span className="text-xs font-medium tracking-wide text-alpha">
+                    Real-time quizzes, reimagined
+                </span>
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
-                Nocturn is a real-time quiz app made for people who love learning and friendly
-                competition.
+            <div className="text-5xl md:text-6xl font-semibold max-w-2xl text-dark-base text-center tracking-tight leading-[1.05]">
+                Knowledge that <span className="text-alpha">pays off</span>
+            </div>
+
+            <div className="text-dark-base/55 w-full max-w-xl text-lg md:text-xl text-center leading-relaxed">
+                Create, host, and play real-time quizzes with your team or community — built for
+                speed, collaboration, and friendly competition.
             </div>
 
             <div className="mt-2">
@@ -336,7 +343,7 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                <div className="absolute shadow-2xl shadow-black/15 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />

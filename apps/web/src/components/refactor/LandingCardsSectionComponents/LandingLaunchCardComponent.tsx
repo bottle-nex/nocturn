@@ -8,7 +8,7 @@ export default function LandingLaunchCardComponent() {
     return (
         <PerspectiveCard
             delay={0.09}
-            className="mt-20 relative w-full h-100 rounded-xl bg-[#00AEFF] shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6"
+            className="mt-20 relative w-full h-100 rounded-xl bg-gradient-to-br from-delta to-dark-alpha shadow-[0_8px_30px_rgba(0,0,0,0.05)] overflow-hidden p-6"
         >
             <style>{`
                 @keyframes orbit-a {
@@ -26,16 +26,17 @@ export default function LandingLaunchCardComponent() {
             `}</style>
 
             <LandingCardHeader
+                light
                 title="Launch quiz"
                 description="Configure everything before your quiz goes live"
             />
 
             <div
-                className="h-55 w-55 rounded-full absolute left-1/2 -translate-x-1/2 flex justify-center items-center ring-1 ring-black/10 bg-light-base/30 shadow-[0_0_35px_rgba(0,0,0,0.03)]"
+                className="h-55 w-55 rounded-full absolute left-1/2 -translate-x-1/2 flex justify-center items-center ring-1 ring-white/10 bg-light-base/10 shadow-[0_0_35px_rgba(79,70,229,0.15)]"
                 style={{ top: '8.25rem' }}
             >
-                <div className="h-35 w-35 rounded-full flex justify-center items-center ring-1 ring-black/10 bg-light-base/50 shadow-[0_0_25px_rgba(0,0,0,0.08)]">
-                    <div className="h-15 w-15 rounded-full flex justify-center items-center bg-light-base/80 ring-1 ring-black/10 shadow-[0_0_15px_rgba(0,0,0,0.10)]">
+                <div className="h-35 w-35 rounded-full flex justify-center items-center ring-1 ring-white/10 bg-light-base/15 shadow-[0_0_25px_rgba(79,70,229,0.12)]">
+                    <div className="h-15 w-15 rounded-full flex justify-center items-center bg-light-base/90 ring-1 ring-white/10 shadow-[0_0_15px_rgba(79,70,229,0.2)]">
                         <MdOutlineRocketLaunch className="size-5 text-dark-base" />
                     </div>
                 </div>
@@ -60,7 +61,7 @@ export default function LandingLaunchCardComponent() {
             ].map(({ anim, flip, src }, i) => (
                 <div
                     key={i}
-                    className={`rounded-full ring-1 ring-black/20 shadow-[0_0_12px_rgba(0,0,0,0.08)] bg-light-base overflow-hidden absolute ${flip ? '-scale-x-[1]' : ''}`}
+                    className={`rounded-full ring-1 ring-white/20 shadow-[0_0_12px_rgba(0,0,0,0.25)] bg-light-base overflow-hidden absolute ${flip ? '-scale-x-[1]' : ''}`}
                     style={{
                         width: '2rem',
                         height: '2rem',
