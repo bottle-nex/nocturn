@@ -10,6 +10,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: false,
+    experimental: {
+        cpus: 1,
+    },
     images: {
         unoptimized: true,
         remotePatterns: [
