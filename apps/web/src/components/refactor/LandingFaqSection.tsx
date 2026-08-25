@@ -43,6 +43,26 @@ const faqItems: FaqItem[] = [
     },
 ];
 
+const listVariants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.09,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 28, filter: 'blur(6px)' },
+    visible: {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
+    },
+};
+
 export default function LandingFaqSection(): JSX.Element {
     const [selectedFaq, setSelectedFaq] = useState<number>(0);
 
@@ -53,69 +73,99 @@ export default function LandingFaqSection(): JSX.Element {
                 subheading="Find answers to common questions about Nocturn."
             />
             <main className="w-full grid grid-cols-[3fr_2fr] gap-x-10 mt-16 items-start">
-                <section className="w-full space-y-2">
-                    {faqItems.map((item) => (
-                        <motion.div
-                            key={item.index}
-                            onClick={() =>
-                                setSelectedFaq(selectedFaq === item.index ? -1 : item.index)
-                            }
-                            className="bg-light-base/70 text-lg font-normal text-dark-base/90 rounded-xl cursor-pointer"
-                        >
-                            <section className="flex items-center justify-between px-4 py-4">
-                                <h3 className="font-normal">{item.question}</h3>
-                                <motion.svg
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 14 14"
-                                    className="shrink-0"
-                                    animate={{
-                                        rotateX: selectedFaq === item.index ? 180 : 0,
-                                        rotateY: selectedFaq === item.index ? 180 : 0,
-                                    }}
-                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                                >
-                                    <motion.line
-                                        x1="1"
-                                        y1="7"
-                                        x2="13"
-                                        y2="7"
-                                        stroke="#4f46e5"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                    />
-                                    <motion.line
-                                        x1="7"
-                                        y1="1"
-                                        x2="7"
-                                        y2="13"
-                                        stroke="#4f46e5"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        animate={{ scaleY: selectedFaq === item.index ? 0 : 1 }}
-                                        transition={{ duration: 0.1, ease: 'easeInOut' }}
-                                        style={{ originX: '50%', originY: '50%' }}
-                                    />
-                                </motion.svg>
-                            </section>
-                            <AnimatePresence initial={false}>
-                                {selectedFaq === item.index && (
+                <motion.section
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    variants={listVariants}
+                    className="w-full space-y-3"
+                >
+                    {faqItems.map((item) => {
+                        const isOpen = selectedFaq === item.index;
+
+                        return (
+                            <motion.div
+                                key={item.index}
+                                variants={itemVariants}
+                                onClick={() => setSelectedFaq(isOpen ? -1 : item.index)}
+                                whileHover={{ scale: 1.008 }}
+                                whileTap={{ scale: 0.99 }}
+                                className="relative overflow-hidden text-lg font-normal text-dark-base/90 rounded-xl cursor-pointer"
+                            >
+                                {isOpen ? (
                                     <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: 'auto', opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.2, ease: 'easeInOut' }}
-                                        className="overflow-hidden bg-light-alpha px-4"
-                                    >
-                                        <p className="text-base font-normal pt-3 leading-relaxed text-dark-base/60">
-                                            {item.answer}
-                                        </p>
-                                    </motion.div>
+                                        layoutId="faq-active-bg"
+                                        transition={{ type: 'spring', stiffness: 350, damping: 32 }}
+                                        className="absolute inset-0 rounded-xl bg-light-base shadow-[0_0_0_1px_rgba(79,70,229,0.25),0_10px_28px_-10px_rgba(79,70,229,0.4)]"
+                                    />
+                                ) : (
+                                    <div className="absolute inset-0 rounded-xl bg-light-base/70" />
                                 )}
-                            </AnimatePresence>
-                        </motion.div>
-                    ))}
-                </section>
+                                <section className="relative flex items-center gap-4 px-4 py-4">
+                                    <span
+                                        className={`text-xs font-mono tracking-widest transition-colors duration-300 ${
+                                            isOpen ? 'text-alpha' : 'text-dark-base/30'
+                                        }`}
+                                    >
+                                        {String(item.index + 1).padStart(2, '0')}
+                                    </span>
+                                    <h3 className="font-normal flex-1">{item.question}</h3>
+                                    <motion.div
+                                        animate={{
+                                            rotate: isOpen ? 135 : 0,
+                                            backgroundColor: isOpen
+                                                ? 'rgba(79,70,229,1)'
+                                                : 'rgba(79,70,229,0)',
+                                        }}
+                                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                                        className="shrink-0 h-7 w-7 rounded-full border border-alpha/40 flex items-center justify-center"
+                                    >
+                                        <svg width="12" height="12" viewBox="0 0 14 14">
+                                            <line
+                                                x1="1"
+                                                y1="7"
+                                                x2="13"
+                                                y2="7"
+                                                stroke={isOpen ? '#ffffff' : '#4f46e5'}
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                            <line
+                                                x1="7"
+                                                y1="1"
+                                                x2="7"
+                                                y2="13"
+                                                stroke={isOpen ? '#ffffff' : '#4f46e5'}
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                            />
+                                        </svg>
+                                    </motion.div>
+                                </section>
+                                <AnimatePresence initial={false}>
+                                    {isOpen && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                                            className="relative overflow-hidden px-4"
+                                        >
+                                            <motion.p
+                                                initial={{ y: -8, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.05 }}
+                                                className="text-base font-normal pb-4 pt-1 leading-relaxed text-dark-base/60"
+                                            >
+                                                {item.answer}
+                                            </motion.p>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+                        );
+                    })}
+                </motion.section>
                 <RipplingPillStack />
             </main>
         </main>
