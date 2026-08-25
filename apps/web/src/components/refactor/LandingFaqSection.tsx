@@ -1,6 +1,6 @@
 'use client';
 import { JSX, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import LandingSectionHeader from './LandingSectionHeader';
 import RipplingPillStack from '../resources/ai-generation/RipplingPillStack';
 
@@ -43,81 +43,143 @@ const faqItems: FaqItem[] = [
     },
 ];
 
+const listVariants: Variants = {
+    hidden: {},
+    visible: {
+        transition: { staggerChildren: 0.09, delayChildren: 0.05 },
+    },
+};
+
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 26, filter: 'blur(6px)' },
+    visible: {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        transition: { duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] },
+    },
+};
+
 export default function LandingFaqSection(): JSX.Element {
     const [selectedFaq, setSelectedFaq] = useState<number>(0);
 
     return (
-        <main className="max-w-270 mx-auto w-full text-dark-alpha select-none py-15">
-            <LandingSectionHeader
-                heading="Frequently Asked Questions"
-                subheading="Find answers to common questions about Nocturn."
+        <main className="relative max-w-270 mx-auto w-full text-dark-alpha select-none py-15 overflow-hidden">
+            <motion.div
+                aria-hidden
+                className="pointer-events-none absolute -top-24 -left-16 h-80 w-80 rounded-full bg-indigo-500/15 blur-3xl"
+                animate={{ x: [0, 36, 0], y: [0, 24, 0], scale: [1, 1.12, 1] }}
+                transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <main className="w-full grid grid-cols-[3fr_2fr] gap-x-10 mt-16 items-start">
-                <section className="w-full space-y-2">
-                    {faqItems.map((item) => (
-                        <motion.div
-                            key={item.index}
-                            onClick={() =>
-                                setSelectedFaq(selectedFaq === item.index ? -1 : item.index)
-                            }
-                            className="bg-light-base/70 text-lg font-normal text-dark-base/90 rounded-xl cursor-pointer"
-                        >
-                            <section className="flex items-center justify-between px-4 py-4">
-                                <h3 className="font-normal">{item.question}</h3>
-                                <motion.svg
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 14 14"
-                                    className="shrink-0"
-                                    animate={{
-                                        rotateX: selectedFaq === item.index ? 180 : 0,
-                                        rotateY: selectedFaq === item.index ? 180 : 0,
-                                    }}
-                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+            <motion.div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-28 -right-20 h-96 w-96 rounded-full bg-[#FF8130]/15 blur-3xl"
+                animate={{ x: [0, -30, 0], y: [0, -20, 0], scale: [1, 1.15, 1] }}
+                transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+            />
+
+            <div className="relative z-10">
+                <LandingSectionHeader
+                    heading="Frequently Asked Questions"
+                    subheading="Find answers to common questions about Nocturn."
+                />
+                <main className="w-full grid grid-cols-[3fr_2fr] gap-x-10 mt-16 items-start">
+                    <motion.section
+                        className="w-full space-y-2"
+                        variants={listVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: '-80px' }}
+                    >
+                        {faqItems.map((item) => {
+                            const isActive = selectedFaq === item.index;
+                            return (
+                                <motion.div
+                                    key={item.index}
+                                    layout
+                                    variants={itemVariants}
+                                    whileHover={{ y: -2 }}
+                                    whileTap={{ scale: 0.99 }}
+                                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                    onClick={() => setSelectedFaq(isActive ? -1 : item.index)}
+                                    className={`rounded-xl cursor-pointer text-lg font-normal text-dark-base/90 border transition-colors duration-300 ${
+                                        isActive
+                                            ? 'bg-light-base border-indigo-500/30 shadow-lg shadow-indigo-500/10'
+                                            : 'bg-light-base/70 border-transparent hover:bg-light-base/90'
+                                    }`}
                                 >
-                                    <motion.line
-                                        x1="1"
-                                        y1="7"
-                                        x2="13"
-                                        y2="7"
-                                        stroke="#4f46e5"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                    />
-                                    <motion.line
-                                        x1="7"
-                                        y1="1"
-                                        x2="7"
-                                        y2="13"
-                                        stroke="#4f46e5"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        animate={{ scaleY: selectedFaq === item.index ? 0 : 1 }}
-                                        transition={{ duration: 0.1, ease: 'easeInOut' }}
-                                        style={{ originX: '50%', originY: '50%' }}
-                                    />
-                                </motion.svg>
-                            </section>
-                            <AnimatePresence initial={false}>
-                                {selectedFaq === item.index && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: 'auto', opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.2, ease: 'easeInOut' }}
-                                        className="overflow-hidden bg-light-alpha px-4"
-                                    >
-                                        <p className="text-base font-normal pt-3 leading-relaxed text-dark-base/60">
-                                            {item.answer}
-                                        </p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </motion.div>
-                    ))}
-                </section>
-                <RipplingPillStack />
-            </main>
+                                    <section className="flex items-center justify-between px-4 py-4">
+                                        <h3 className="font-normal">{item.question}</h3>
+                                        <motion.svg
+                                            width="14"
+                                            height="14"
+                                            viewBox="0 0 14 14"
+                                            className="shrink-0"
+                                            animate={{ rotate: isActive ? 135 : 0 }}
+                                            transition={{
+                                                type: 'spring',
+                                                stiffness: 300,
+                                                damping: 20,
+                                            }}
+                                        >
+                                            <motion.line
+                                                x1="1"
+                                                y1="7"
+                                                x2="13"
+                                                y2="7"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                animate={{
+                                                    stroke: isActive ? '#4f46e5' : '#6b7280',
+                                                }}
+                                                transition={{ duration: 0.3 }}
+                                            />
+                                            <motion.line
+                                                x1="7"
+                                                y1="1"
+                                                x2="7"
+                                                y2="13"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                animate={{
+                                                    scaleY: isActive ? 0 : 1,
+                                                    stroke: isActive ? '#4f46e5' : '#6b7280',
+                                                }}
+                                                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                                                style={{ originX: '50%', originY: '50%' }}
+                                            />
+                                        </motion.svg>
+                                    </section>
+                                    <AnimatePresence initial={false}>
+                                        {isActive && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{
+                                                    duration: 0.25,
+                                                    ease: [0.25, 0.46, 0.45, 0.94],
+                                                }}
+                                                className="overflow-hidden bg-light-alpha px-4"
+                                            >
+                                                <motion.p
+                                                    initial={{ y: -6, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    transition={{ duration: 0.25, delay: 0.05 }}
+                                                    className="text-base font-normal pt-3 leading-relaxed text-dark-base/60"
+                                                >
+                                                    {item.answer}
+                                                </motion.p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            );
+                        })}
+                    </motion.section>
+                    <RipplingPillStack />
+                </main>
+            </div>
         </main>
     );
 }
