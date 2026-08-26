@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { IoCloseOutline } from 'react-icons/io5';
 import { VscSymbolStructure } from 'react-icons/vsc';
 import JoinQuizButton from '../test/JoinQuizButton';
@@ -290,6 +290,20 @@ function MockChat({
     );
 }
 
+const heroStagger: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+};
+
+const heroItem: Variants = {
+    hidden: { opacity: 0, y: 14 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+    },
+};
+
 export default function LandingHeroSection() {
     const [visibleCount, setVisibleCount] = useState(0);
     const [revealedText, setRevealedText] = useState<Set<number>>(new Set());
@@ -319,24 +333,57 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <div className="relative h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 -z-10">
+                <div className="absolute -top-32 left-1/2 h-90 w-190 -translate-x-1/2 rounded-full bg-alpha/10 blur-3xl" />
+                <div className="absolute top-32 -right-24 h-72 w-72 rounded-full bg-[#ec4899]/10 blur-3xl" />
+                <div className="absolute top-10 -left-24 h-72 w-72 rounded-full bg-[#f6c453]/10 blur-3xl" />
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
-                Nocturn is a real-time quiz app made for people who love learning and friendly
-                competition.
-            </div>
+            <motion.div
+                variants={heroStagger}
+                initial="hidden"
+                animate="show"
+                className="flex flex-col gap-y-3 items-center"
+            >
+                <motion.div
+                    variants={heroItem}
+                    className="flex items-center gap-x-2 rounded-full bg-light-alpha px-3 py-1 ring-1 ring-black/10 shadow-xs shadow-black/5 text-xs font-medium text-dark-base/70"
+                >
+                    <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-alpha/60" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-alpha" />
+                    </span>
+                    Live quizzes, happening right now
+                </motion.div>
 
-            <div className="mt-2">
-                <JoinQuizButton />
-            </div>
+                <motion.div
+                    variants={heroItem}
+                    className="text-4xl md:text-6xl font-semibold tracking-tight max-w-xl text-dark-base text-center"
+                >
+                    Knowledge that{' '}
+                    <span className="bg-linear-to-r from-[#4f46e5] via-[#7c3aed] to-[#ec4899] bg-clip-text text-transparent">
+                        pays off
+                    </span>
+                </motion.div>
+
+                <motion.div
+                    variants={heroItem}
+                    className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center"
+                >
+                    Nocturn is a real-time quiz app made for people who love learning and friendly
+                    competition.
+                </motion.div>
+
+                <motion.div variants={heroItem} className="mt-2">
+                    <JoinQuizButton />
+                </motion.div>
+            </motion.div>
 
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                <div className="absolute shadow-2xl shadow-black/10 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 inset-shadow-2xs inset-shadow-white/60 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
