@@ -319,12 +319,38 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-4 pt-24 md:pt-36 px-6 xl:px-0 items-center select-none overflow-hidden relative">
+            <div className="absolute inset-0 -z-10 pointer-events-none">
+                <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 h-140 w-140 rounded-full bg-alpha/10 blur-[120px]" />
+                <div className="absolute top-[10%] right-[5%] h-80 w-80 rounded-full bg-eta/15 blur-[100px]" />
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage:
+                            'radial-gradient(circle, rgba(10,10,10,0.08) 1px, transparent 1px)',
+                        backgroundSize: '28px 28px',
+                        maskImage: 'linear-gradient(to bottom, black, transparent 70%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 70%)',
+                    }}
+                />
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
+            <div className="flex items-center gap-x-2 rounded-full bg-light-base/80 backdrop-blur-sm ring-1 ring-black/10 px-3.5 py-1.5 text-xs font-medium text-dark-base/70 shadow-xs shadow-black/5">
+                <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-alpha opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-alpha" />
+                </span>
+                Live now &middot; join a quiz in seconds
+            </div>
+
+            <div className="text-4xl md:text-5xl lg:text-6xl font-semibold max-w-2xl text-dark-base text-center tracking-tight leading-[1.1]">
+                Knowledge that{' '}
+                <span className="bg-linear-to-r from-alpha to-eta bg-clip-text text-transparent">
+                    pays off
+                </span>
+            </div>
+
+            <div className="text-dark-base/60 w-full max-w-2xl text-lg md:text-xl text-center leading-relaxed">
                 Nocturn is a real-time quiz app made for people who love learning and friendly
                 competition.
             </div>
@@ -336,7 +362,7 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                <div className="absolute shadow-2xl shadow-black/10 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-2xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
