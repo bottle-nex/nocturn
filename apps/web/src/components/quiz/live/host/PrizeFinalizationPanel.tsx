@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import SolanaAction, { type PrizeClaim } from '@/lib/solana/SolanaAction';
 import { QueuedStatusIcon } from '@/components/ui/status-icons';
 
-type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'complete' | 'error';
+type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'queued' | 'error';
 
 function getRankLabel(rank: number): string {
     if (rank === 1) return '1st';
@@ -87,7 +87,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                 txSignature,
             );
 
-            setStep('complete');
+            setStep('queued');
         } catch {
             setError('Authorization failed');
             setStep('error');
@@ -170,10 +170,11 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                     </div>
                 )}
 
-                {step === 'complete' && (
-                    <div className="text-center space-y-1">
-                        <p className="text-xs text-green-400 font-medium">
-                            Distribution complete! Emails sent to winners.
+                {step === 'queued' && (
+                    <div className="text-center space-y-1 flex flex-col items-center">
+                        <QueuedStatusIcon className="size-4 text-[#F3ECE7]/60" />
+                        <p className="text-xs text-[#F3ECE7]/60 font-medium">
+                            Distribution queued! Winners will be paid and emailed shortly.
                         </p>
                     </div>
                 )}
