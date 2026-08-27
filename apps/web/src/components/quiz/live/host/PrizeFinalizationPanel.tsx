@@ -134,9 +134,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                                       : 'bg-neutral-500/20 text-neutral-400'
                             }`}
                         >
-                            {claim.status !== 'CLAIMED' && claim.status !== 'EXPIRED' && (
-                                <QueuedStatusIcon />
-                            )}
+                            {claim.status === 'PENDING' && <QueuedStatusIcon />}
                             {claim.status}
                         </span>
                     </div>
