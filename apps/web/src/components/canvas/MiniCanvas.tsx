@@ -78,9 +78,11 @@ export default function MiniCanvas({
 
         if (buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
+            const dropdownWidth = 128; // 8rem
+            const overflowsRight = rect.right + 8 + dropdownWidth > window.innerWidth;
             setDropdownPosition({
                 top: rect.top,
-                left: rect.right + 8,
+                left: overflowsRight ? rect.left - 8 - dropdownWidth : rect.right + 8,
             });
         }
 

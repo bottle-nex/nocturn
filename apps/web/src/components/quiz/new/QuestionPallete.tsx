@@ -82,7 +82,7 @@ function BigQuestionPallete({
     const canAddQuestions = maxQuestions ? maxQuestions > quiz.questions.length : true;
 
     return (
-        <UtilityCard className="hidden lg:flex max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full">
+        <UtilityCard className="hidden lg:flex shrink-0 max-w-40 w-full shadow-none rounded-sm bg-neutral-200 dark:bg-dark-alpha p-0 flex-col items-center px-1 border-none h-full my-4 mr-4 ml-3">
             <ToolTipComponent
                 content={
                     canAddQuestions
@@ -113,7 +113,7 @@ function BigQuestionPallete({
                 {quiz.questions.map((question, idx) => (
                     <div key={idx} className="gap-x-2 shrink-0 grid grid-cols-[8%_auto] items-end">
                         <div className="text-xs pb-2">{idx + 1}.</div>
-                        <ToolTipComponent side="right" content={idx + 1}>
+                        <ToolTipComponent side="left" content={idx + 1}>
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
@@ -146,7 +146,7 @@ function SmallQuestionPallete({
             gsap.fromTo(
                 sidebarRef.current,
                 {
-                    x: -300,
+                    x: 300,
                 },
                 {
                     x: 0,
@@ -164,7 +164,7 @@ function SmallQuestionPallete({
                 x: 0,
             },
             {
-                x: -300,
+                x: 300,
                 duration: 0.2,
                 ease: 'power2.inOut',
                 onComplete: () => setAppearing(false),
@@ -178,7 +178,7 @@ function SmallQuestionPallete({
         <UtilityCard
             ref={sidebarRef}
             className={cn(
-                'absolute left-0 top-0 z-40 flex max-w-44 w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
+                'absolute right-0 top-0 z-40 flex max-w-44 w-full shadow-none rounded-sm bg-neutral-200/80 dark:bg-dark-alpha/80 backdrop-blur-lg p-0 flex-col items-center px-1 border-none h-full',
                 `${appearing ? '' : 'hidden'}`,
             )}
         >
@@ -215,7 +215,7 @@ function SmallQuestionPallete({
                 {quiz.questions.map((question, idx) => (
                     <div key={idx} className="flex items-end gap-x-2 shrink-0">
                         <div className="text-xs">{idx + 1}.</div>
-                        <ToolTipComponent side="right" content={idx + 1}>
+                        <ToolTipComponent side="left" content={idx + 1}>
                             <MiniCanvas
                                 removeQuestion={removeQuestion}
                                 currentQuestionIndex={currentQuestionIndex}
