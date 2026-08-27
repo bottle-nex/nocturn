@@ -7,6 +7,7 @@ import { PublicKey } from '@solana/web3.js';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { motion } from 'framer-motion';
 import SolanaAction, { type PrizeClaim } from '@/lib/solana/SolanaAction';
+import { QueuedStatusIcon } from '@/components/ui/status-icons';
 
 type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'complete' | 'error';
 
@@ -125,7 +126,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                             {claim.amount.toFixed(2)} USDC
                         </span>
                         <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded ${
+                            className={`flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded ${
                                 claim.status === 'CLAIMED'
                                     ? 'bg-green-500/20 text-green-400'
                                     : claim.status === 'EXPIRED'
@@ -133,6 +134,9 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                                       : 'bg-neutral-500/20 text-neutral-400'
                             }`}
                         >
+                            {claim.status !== 'CLAIMED' && claim.status !== 'EXPIRED' && (
+                                <QueuedStatusIcon />
+                            )}
                             {claim.status}
                         </span>
                     </div>
