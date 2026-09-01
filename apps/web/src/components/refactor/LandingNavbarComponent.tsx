@@ -159,8 +159,8 @@ export default function LandingNavbarComponent() {
 }
 
 const navItems = [
-    { name: 'Resources', redirectUrl: '' },
     { name: 'Features', redirectUrl: '' },
     { name: 'About', redirectUrl: 'about' },
     { name: 'Premium', redirectUrl: 'premium' },
+    { name: 'Resources', redirectUrl: '' },
 ];
