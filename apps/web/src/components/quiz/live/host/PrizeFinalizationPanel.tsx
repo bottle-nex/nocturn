@@ -7,8 +7,9 @@ import { PublicKey } from '@solana/web3.js';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { motion } from 'framer-motion';
 import SolanaAction, { type PrizeClaim } from '@/lib/solana/SolanaAction';
+import { QueuedStatusIcon } from '@/components/ui/status-icons';
 
-type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'complete' | 'error';
+type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'queued' | 'error';
 
 function getRankLabel(rank: number): string {
     if (rank === 1) return '1st';
@@ -86,7 +87,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                 txSignature,
             );
 
-            setStep('complete');
+            setStep('queued');
         } catch {
             setError('Authorization failed');
             setStep('error');
@@ -125,7 +126,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                             {claim.amount.toFixed(2)} USDC
                         </span>
                         <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded ${
+                            className={`flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded ${
                                 claim.status === 'CLAIMED'
                                     ? 'bg-green-500/20 text-green-400'
                                     : claim.status === 'EXPIRED'
@@ -133,6 +134,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                                       : 'bg-neutral-500/20 text-neutral-400'
                             }`}
                         >
+                            {claim.status === 'PENDING' && <QueuedStatusIcon />}
                             {claim.status}
                         </span>
                     </div>
@@ -168,10 +170,11 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                     </div>
                 )}
 
-                {step === 'complete' && (
-                    <div className="text-center space-y-1">
-                        <p className="text-xs text-green-400 font-medium">
-                            Distribution complete! Emails sent to winners.
+                {step === 'queued' && (
+                    <div className="text-center space-y-1 flex flex-col items-center">
+                        <QueuedStatusIcon className="size-4 text-[#F3ECE7]/60" />
+                        <p className="text-xs text-[#F3ECE7]/60 font-medium">
+                            Distribution queued! Winners will be paid and emailed shortly.
                         </p>
                     </div>
                 )}
