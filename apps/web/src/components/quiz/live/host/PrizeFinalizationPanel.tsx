@@ -4,11 +4,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
+import { Clock } from 'lucide-react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { motion } from 'framer-motion';
 import SolanaAction, { type PrizeClaim } from '@/lib/solana/SolanaAction';
 
-type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'complete' | 'error';
+type FinalizationStep = 'loading' | 'ready' | 'authorizing' | 'finalizing' | 'queued' | 'error';
+
+export const QueuedStatusIcon = ({ className = '' }: { className?: string }) => (
+    <Clock className={`w-4 h-4 animate-pulse ${className}`} />
+);
 
 function getRankLabel(rank: number): string {
     if (rank === 1) return '1st';
@@ -86,7 +91,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                 txSignature,
             );
 
-            setStep('complete');
+            setStep('queued');
         } catch {
             setError('Authorization failed');
             setStep('error');
@@ -168,10 +173,11 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                     </div>
                 )}
 
-                {step === 'complete' && (
-                    <div className="text-center space-y-1">
+                {step === 'queued' && (
+                    <div className="text-center space-y-1 flex flex-col items-center">
+                        <QueuedStatusIcon className="text-[#F3ECE7]/60" />
                         <p className="text-xs text-green-400 font-medium">
-                            Distribution complete! Emails sent to winners.
+                            Distribution queued! Winners will be paid and emailed shortly.
                         </p>
                     </div>
                 )}
