@@ -1,19 +1,20 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { MdOutlineFolderShared, MdOutlineHomeMax } from 'react-icons/md';
+import { MdOutlineFolderShared } from 'react-icons/md';
 import { cn } from '@/lib/utils';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import Image from 'next/image';
 import { useHomeSidebarStore } from '@/store/home/useHomeSidebarStore';
 import { SidebarTab } from '@/constants/SidebarTabConstants';
-import { GoPeople } from 'react-icons/go';
+import { GoHome, GoPeople } from 'react-icons/go';
 import { PiTrashSimple } from 'react-icons/pi';
 import { RiSettings6Line } from 'react-icons/ri';
 import { FaRegHeart } from 'react-icons/fa6';
 import { useDragQuizStore } from '@/store/home/useDragQuizStore';
 import { RiVipCrownLine } from 'react-icons/ri';
 import AppLogo from '../app/AppLogo';
+import { audio } from './LandingFooter';
 
 export interface SidebarItem {
     id?: string;
@@ -22,6 +23,51 @@ export interface SidebarItem {
     icon?: React.ReactNode;
     className?: string;
     onClick: () => void;
+}
+
+const ITEM_BASE =
+    'group relative flex w-full items-center gap-x-3 rounded-lg px-3 py-2 text-sm cursor-pointer outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-neutral-300 dark:focus-visible:ring-neutral-700';
+
+function SidebarLabel({ children }: { children: React.ReactNode }) {
+    return (
+        <span className="block px-3 pb-2 text-[11px] font-medium uppercase tracking-[0.08em] text-neutral-400 dark:text-neutral-500">
+            {children}
+        </span>
+    );
+}
+
+function SidebarNavItem({ item, active }: { item: SidebarItem; active: boolean }) {
+    return (
+        <div
+            id={item.id}
+            role="button"
+            tabIndex={0}
+            aria-current={active ? 'page' : undefined}
+            onClick={item.onClick}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    item.onClick();
+                }
+            }}
+            className={cn(
+                ITEM_BASE,
+                active
+                    ? 'bg-neutral-100 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-50'
+                    : 'text-neutral-600 hover:bg-neutral-100/70 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900/60 dark:hover:text-neutral-100',
+                item.className,
+            )}
+        >
+            <span
+                className={cn(
+                    'absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-neutral-900 transition-opacity duration-200 dark:bg-neutral-100',
+                    active ? 'opacity-100' : 'opacity-0',
+                )}
+            />
+            <span className="flex size-5 shrink-0 items-center justify-center">{item.icon}</span>
+            <span className="truncate font-medium">{item.label}</span>
+        </div>
+    );
 }
 
 export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
@@ -74,11 +120,11 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
         setActiveTab(tab);
     }
 
-    const sidebarItems: SidebarItem[] = [
+    const workspaceItems: SidebarItem[] = [
         {
             tab: SidebarTab.HOME,
             label: 'Home',
-            icon: <MdOutlineHomeMax size={18} />,
+            icon: <GoHome size={18} />,
             onClick: () => handleTabChange(SidebarTab.HOME),
         },
         {
@@ -95,11 +141,14 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             icon: <MdOutlineFolderShared size={18} />,
             onClick: () => handleTabChange(SidebarTab.SHARED_WITH_ME),
         },
+    ];
+
+    const libraryItems: SidebarItem[] = [
         {
             id: 'tour-favourites',
             tab: SidebarTab.FAVORITES,
             label: 'Favorites',
-            icon: <FaRegHeart size={17} />,
+            icon: <FaRegHeart size={16} />,
             onClick: () => handleTabChange(SidebarTab.FAVORITES),
         },
         {
@@ -108,152 +157,114 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
             icon: <RiSettings6Line size={18} />,
             onClick: () => handleTabChange(SidebarTab.SETTINGS),
         },
-        {
-            tab: SidebarTab.PREMIUM,
-            label: 'Premium',
-            icon: <RiVipCrownLine size={18} />,
-            onClick: () => router.push('/premium'),
-        },
     ];
+
+    const premiumItem: SidebarItem = {
+        tab: SidebarTab.PREMIUM,
+        label: 'Premium',
+        icon: <RiVipCrownLine size={18} />,
+        onClick: () => router.push('/premium'),
+    };
 
     return (
         <aside
-            className="w-80 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-hidden shrink-0 pt-4 flex flex-col justify-between"
+            className="flex h-full w-64 shrink-0 flex-col border-r border-neutral-200/70 bg-white dark:border-neutral-800/60 dark:bg-neutral-950"
             data-lenis-prevent
         >
-            <div>
-                <div className="-mt-9 -ml-4">
-                    <AppLogo size={130} withText textColor="dark:text-light-base text-dark-base" />
-                </div>
-                <section className="ml-4 -mt-10">
-                    <span className="block px-4 text-xs font-bold mt-4">MENU</span>
-
-                    <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(0, 3).map((item) => (
-                            <div
-                                id={item.id}
-                                key={item.tab}
-                                onClick={item.onClick}
-                                className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                                )}
-                            >
-                                {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                                )}
-
-                                <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
-                                    {item.label}
-                                </span>
-                            </div>
-                        ))}
-                    </section>
-                </section>
-
-                <section className="ml-4 mt-8">
-                    <span className="block text-xs font-normal mt-2 px-8.25">utility</span>
-
-                    <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(3, 5).map((item) => (
-                            <div
-                                id={item.id}
-                                key={item.tab}
-                                onClick={item.onClick}
-                                className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                                )}
-                            >
-                                {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                                )}
-
-                                <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
-                                    {item.label}
-                                </span>
-                            </div>
-                        ))}
-                    </section>
-                </section>
+            <div className="flex h-16 items-center gap-x-2.5 px-4">
+                <AppLogo size={32} />
+                <span
+                    className={cn(
+                        'text-[15px] font-semibold tracking-wide text-neutral-900 dark:text-neutral-50',
+                        audio.className,
+                    )}
+                >
+                    Nocturn
+                </span>
             </div>
 
-            <section className="ml-4 mt-8">
-                <section className="flex flex-col gap-y-2 mt-2 px-4">
-                    {sidebarItems.slice(5).map((item) => (
-                        <div
-                            id={item.id}
-                            key={item.tab}
-                            onClick={item.onClick}
-                            className={cn(
-                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                            )}
-                        >
-                            {activeTab === item.tab && (
-                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                            )}
-
-                            <span className="p-1 rounded">{item.icon}</span>
-                            <span className="text-[14px] dark:text-white/80 text-black/90">
-                                {item.label}
-                            </span>
-                        </div>
-                    ))}
-
-                    <div
-                        id="tour-trash"
-                        ref={trashRef}
-                        onClick={openTrash}
-                        className={cn(
-                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5 transition-all duration-200',
-                            'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                            isDragging &&
-                                'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
-                            isOverTrash &&
-                                isDragging &&
-                                'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
-                        )}
-                    >
-                        <span
-                            className={cn(
-                                'p-1 rounded transition-colors',
-                                isOverTrash && isDragging && 'text-red-600 dark:text-red-400',
-                            )}
-                        >
-                            <PiTrashSimple size={18} />
-                        </span>
-
-                        <span
-                            className={cn(
-                                'text-sm dark:text-white/80 text-black/90 transition-colors',
-                                isOverTrash &&
-                                    isDragging &&
-                                    'text-red-600 dark:text-red-400 font-semibold',
-                            )}
-                        >
-                            {isOverTrash && isDragging ? 'Drop here' : 'Trash'}
-                        </span>
+            <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2 custom-scrollbar">
+                <section>
+                    <SidebarLabel>Workspace</SidebarLabel>
+                    <div className="flex flex-col gap-y-0.5">
+                        {workspaceItems.map((item) => (
+                            <SidebarNavItem
+                                key={item.tab}
+                                item={item}
+                                active={activeTab === item.tab}
+                            />
+                        ))}
                     </div>
                 </section>
 
-                {session?.user.email && (
-                    <div className="flex justify-between items-center my-3">
-                        <section className="flex items-center justify-start gap-x-3 text-black dark:text-white px-4 py-2">
-                            <Image
-                                src={session.user.image}
-                                width={28}
-                                height={28}
-                                alt="user-logo"
-                                className="rounded-full"
+                <section>
+                    <SidebarLabel>Library</SidebarLabel>
+                    <div className="flex flex-col gap-y-0.5">
+                        {libraryItems.map((item) => (
+                            <SidebarNavItem
+                                key={item.tab}
+                                item={item}
+                                active={activeTab === item.tab}
                             />
-                            <span className="text-base font">{session.user.name}</span>
-                        </section>
+                        ))}
                     </div>
-                )}
-            </section>
+                </section>
+            </nav>
+
+            <div className="flex flex-col gap-y-0.5 px-3 pb-2">
+                <SidebarNavItem item={premiumItem} active={activeTab === premiumItem.tab} />
+
+                <div
+                    id="tour-trash"
+                    ref={trashRef}
+                    role="button"
+                    tabIndex={0}
+                    onClick={openTrash}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openTrash();
+                        }
+                    }}
+                    className={cn(
+                        ITEM_BASE,
+                        'text-neutral-600 hover:bg-neutral-100/70 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-900/60 dark:hover:text-neutral-100',
+                        isDragging && 'border border-dashed border-red-400/60',
+                        isOverTrash &&
+                            isDragging &&
+                            'border-red-500 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400',
+                    )}
+                >
+                    <span className="flex size-5 shrink-0 items-center justify-center">
+                        <PiTrashSimple size={18} />
+                    </span>
+                    <span className="truncate font-medium">
+                        {isOverTrash && isDragging ? 'Drop to delete' : 'Trash'}
+                    </span>
+                </div>
+            </div>
+
+            {session?.user.email && (
+                <div className="border-t border-neutral-200/70 px-3 py-3 dark:border-neutral-800/60">
+                    <div className="flex items-center gap-x-3 rounded-lg px-2 py-1.5">
+                        <Image
+                            src={session.user.image}
+                            width={32}
+                            height={32}
+                            alt="user-logo"
+                            className="size-8 shrink-0 rounded-full object-cover ring-1 ring-neutral-200 dark:ring-neutral-800"
+                        />
+                        <div className="flex min-w-0 flex-col leading-tight">
+                            <span className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                {session.user.name}
+                            </span>
+                            <span className="truncate text-xs text-neutral-500 dark:text-neutral-500">
+                                {session.user.email}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </aside>
     );
 }
