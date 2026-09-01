@@ -118,86 +118,129 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
 
     return (
         <aside
-            className="w-80 h-full bg-white dark:bg-neutral-950 text-neutral-600 dark:text-neutral-400 overflow-hidden shrink-0 pt-4 flex flex-col justify-between"
+            className="w-72 h-full bg-white dark:bg-neutral-950 border-r border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 overflow-hidden shrink-0 flex flex-col justify-between"
             data-lenis-prevent
         >
             <div>
-                <div className="-mt-9 -ml-4">
-                    <AppLogo size={130} withText textColor="dark:text-light-base text-dark-base" />
+                <div className="px-5 pt-5 pb-2">
+                    <AppLogo size={110} withText textColor="dark:text-light-base text-dark-base" />
                 </div>
-                <section className="ml-4 -mt-10">
-                    <span className="block px-4 text-xs font-bold mt-4">MENU</span>
 
-                    <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(0, 3).map((item) => (
-                            <div
-                                id={item.id}
-                                key={item.tab}
-                                onClick={item.onClick}
-                                className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                                )}
-                            >
-                                {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                                )}
+                <nav className="mt-4 flex flex-col gap-y-6 px-3">
+                    <div>
+                        <span className="block px-3 text-[11px] font-semibold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase">
+                            Menu
+                        </span>
 
-                                <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
-                                    {item.label}
-                                </span>
-                            </div>
-                        ))}
-                    </section>
-                </section>
+                        <div className="flex flex-col gap-y-1 mt-2">
+                            {sidebarItems.slice(0, 3).map((item) => (
+                                <div
+                                    id={item.id}
+                                    key={item.tab}
+                                    onClick={item.onClick}
+                                    className={cn(
+                                        'flex items-center gap-x-3 py-2 px-3 rounded-lg cursor-pointer transition-colors',
+                                        activeTab === item.tab
+                                            ? 'bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400'
+                                            : 'hover:bg-neutral-100 dark:hover:bg-neutral-900',
+                                    )}
+                                >
+                                    <span
+                                        className={cn(
+                                            'shrink-0',
+                                            activeTab !== item.tab && 'text-neutral-500 dark:text-neutral-400',
+                                        )}
+                                    >
+                                        {item.icon}
+                                    </span>
+                                    <span
+                                        className={cn(
+                                            'text-sm text-nowrap',
+                                            activeTab === item.tab
+                                                ? 'font-medium'
+                                                : 'text-black/80 dark:text-white/75',
+                                        )}
+                                    >
+                                        {item.label}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                <section className="ml-4 mt-8">
-                    <span className="block text-xs font-normal mt-2 px-8.25">utility</span>
+                    <div>
+                        <span className="block px-3 text-[11px] font-semibold tracking-wider text-neutral-400 dark:text-neutral-500 uppercase">
+                            Utility
+                        </span>
 
-                    <section className="flex flex-col gap-y-2 mt-2 px-4">
-                        {sidebarItems.slice(3, 5).map((item) => (
-                            <div
-                                id={item.id}
-                                key={item.tab}
-                                onClick={item.onClick}
-                                className={cn(
-                                    'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                    'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
-                                )}
-                            >
-                                {activeTab === item.tab && (
-                                    <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                                )}
-
-                                <span className="p-1 rounded">{item.icon}</span>
-                                <span className="text-[14px] dark:text-white/80 text-black/90 text-nowrap">
-                                    {item.label}
-                                </span>
-                            </div>
-                        ))}
-                    </section>
-                </section>
+                        <div className="flex flex-col gap-y-1 mt-2">
+                            {sidebarItems.slice(3, 5).map((item) => (
+                                <div
+                                    id={item.id}
+                                    key={item.tab}
+                                    onClick={item.onClick}
+                                    className={cn(
+                                        'flex items-center gap-x-3 py-2 px-3 rounded-lg cursor-pointer transition-colors',
+                                        activeTab === item.tab
+                                            ? 'bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400'
+                                            : 'hover:bg-neutral-100 dark:hover:bg-neutral-900',
+                                    )}
+                                >
+                                    <span
+                                        className={cn(
+                                            'shrink-0',
+                                            activeTab !== item.tab && 'text-neutral-500 dark:text-neutral-400',
+                                        )}
+                                    >
+                                        {item.icon}
+                                    </span>
+                                    <span
+                                        className={cn(
+                                            'text-sm text-nowrap',
+                                            activeTab === item.tab
+                                                ? 'font-medium'
+                                                : 'text-black/80 dark:text-white/75',
+                                        )}
+                                    >
+                                        {item.label}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </nav>
             </div>
 
-            <section className="ml-4 mt-8">
-                <section className="flex flex-col gap-y-2 mt-2 px-4">
+            <div className="px-3 pb-3">
+                <div className="flex flex-col gap-y-1">
                     {sidebarItems.slice(5).map((item) => (
                         <div
                             id={item.id}
                             key={item.tab}
                             onClick={item.onClick}
                             className={cn(
-                                'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5',
-                                'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
+                                'flex items-center gap-x-3 py-2 px-3 rounded-lg cursor-pointer transition-colors',
+                                activeTab === item.tab
+                                    ? 'bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400'
+                                    : 'hover:bg-neutral-100 dark:hover:bg-neutral-900',
                             )}
                         >
-                            {activeTab === item.tab && (
-                                <div className="absolute left-px top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full bg-indigo-600 dark:bg-indigo-600 transition-all duration-500 ease-out" />
-                            )}
-
-                            <span className="p-1 rounded">{item.icon}</span>
-                            <span className="text-[14px] dark:text-white/80 text-black/90">
+                            <span
+                                className={cn(
+                                    'shrink-0',
+                                    activeTab !== item.tab && 'text-neutral-500 dark:text-neutral-400',
+                                )}
+                            >
+                                {item.icon}
+                            </span>
+                            <span
+                                className={cn(
+                                    'text-sm',
+                                    activeTab === item.tab
+                                        ? 'font-medium'
+                                        : 'text-black/80 dark:text-white/75',
+                                )}
+                            >
                                 {item.label}
                             </span>
                         </div>
@@ -208,18 +251,18 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                         ref={trashRef}
                         onClick={openTrash}
                         className={cn(
-                            'relative flex items-center gap-x-2 py-1 px-3 rounded cursor-pointer w-4/5 transition-all duration-200',
-                            'hover:bg-indigo-600/5 dark:hover:bg-indigo-600/10',
+                            'flex items-center gap-x-3 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
+                            'hover:bg-neutral-100 dark:hover:bg-neutral-900',
                             isDragging &&
                                 'ring-2 ring-red-500/50 ring-offset-2 dark:ring-offset-neutral-950',
                             isOverTrash &&
                                 isDragging &&
-                                'bg-red-500/20 dark:bg-red-500/30 scale-110 ring-red-600',
+                                'bg-red-500/20 dark:bg-red-500/30 scale-105 ring-red-600',
                         )}
                     >
                         <span
                             className={cn(
-                                'p-1 rounded transition-colors',
+                                'shrink-0 text-neutral-500 dark:text-neutral-400 transition-colors',
                                 isOverTrash && isDragging && 'text-red-600 dark:text-red-400',
                             )}
                         >
@@ -228,7 +271,7 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
 
                         <span
                             className={cn(
-                                'text-sm dark:text-white/80 text-black/90 transition-colors',
+                                'text-sm text-black/80 dark:text-white/75 transition-colors',
                                 isOverTrash &&
                                     isDragging &&
                                     'text-red-600 dark:text-red-400 font-semibold',
@@ -237,23 +280,23 @@ export default function HomeSidebar({ openTrash }: { openTrash: () => void }) {
                             {isOverTrash && isDragging ? 'Drop here' : 'Trash'}
                         </span>
                     </div>
-                </section>
+                </div>
 
                 {session?.user.email && (
-                    <div className="flex justify-between items-center my-3">
-                        <section className="flex items-center justify-start gap-x-3 text-black dark:text-white px-4 py-2">
-                            <Image
-                                src={session.user.image}
-                                width={28}
-                                height={28}
-                                alt="user-logo"
-                                className="rounded-full"
-                            />
-                            <span className="text-base font">{session.user.name}</span>
-                        </section>
+                    <div className="flex items-center gap-x-3 mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-800 px-3">
+                        <Image
+                            src={session.user.image}
+                            width={28}
+                            height={28}
+                            alt="user-logo"
+                            className="rounded-full"
+                        />
+                        <span className="text-sm font-medium text-black/90 dark:text-white/90 truncate">
+                            {session.user.name}
+                        </span>
                     </div>
                 )}
-            </section>
+            </div>
         </aside>
     );
 }
