@@ -18,11 +18,11 @@ export default function LandingSectionHeader({
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-4xl sm:text-5xl text-dark-base/90 text-center font-semibold flex flex-wrap justify-center ">
+            <h1 className="text-4xl sm:text-5xl text-light-base/90 text-center font-semibold flex flex-wrap justify-center ">
                 {words.map((word, wi) => (
                     <span
                         key={wi}
-                        className="inline-block whitespace-nowrap overflow-hidden mr-[0.3em] last:mr-0 text-dark-alpha pb-2 -mb-2 px-1 -mx-1"
+                        className="inline-block whitespace-nowrap overflow-hidden mr-[0.3em] last:mr-0 text-light-alpha pb-2 -mb-2 px-1 -mx-1"
                     >
                         {word.split('').map((char, ci) => (
                             <motion.span
@@ -44,7 +44,7 @@ export default function LandingSectionHeader({
                 ))}
             </h1>
             <motion.p
-                className="text-base sm:text-lg text-center text-dark-base/60 mt-3 max-w-180"
+                className="text-base sm:text-lg text-center text-light-base/60 mt-3 max-w-180"
                 initial={{ y: 12, opacity: 0, filter: 'blur(4px)' }}
                 whileInView={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
                 viewport={{ once: true, margin: '-50px' }}

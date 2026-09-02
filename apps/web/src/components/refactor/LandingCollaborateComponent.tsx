@@ -14,14 +14,14 @@ export default function LandingCollaborateComponent() {
             />
 
             <div className="h-full w-full flex items-center pt-10">
-                <div className="h-auto lg:h-120 w-full ring-1 ring-black/20 rounded-xl flex flex-col lg:grid lg:grid-cols-2 overflow-hidden bg-light-base">
+                <div className="h-auto lg:h-120 w-full ring-1 ring-white/10 rounded-xl flex flex-col lg:grid lg:grid-cols-2 overflow-hidden bg-dark-base">
                     <div className="col-span-1 flex flex-col justify-between p-8 lg:p-10 gap-y-4 sm:gap-y-8">
-                        <div className="text-dark-base/90 text-3xl sm:text-4xl lg:text-5xl font-semibold">
+                        <div className="text-light-base/90 text-3xl sm:text-4xl lg:text-5xl font-semibold">
                             Too many cooks? Perfect for the kitchen
                         </div>
 
                         <div className="flex flex-col gap-y-5">
-                            <div className="text-dark-base/60 text-sm sm:text-base">
+                            <div className="text-light-base/60 text-sm sm:text-base">
                                 Every great quiz needs more than one chef. Some bring the spice,
                                 some bring the structure, and some just taste-test everything—but
                                 together, you create something truly delicious.
@@ -31,12 +31,11 @@ export default function LandingCollaborateComponent() {
 
                     <div className="col-span-1 flex flex-col sm:flex-row gap-x-4 items-center justify-center sm:p-4 lg:p-0 w-full max-w-[280px] sm:max-w-[360px] lg:max-w-none mx-auto origin-center lg:origin-left">
                         {/* card 1 */}
-                        <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-black/10 rounded-2xl bg-dark-base flex flex-col justify-between p-6">
+                        <PerspectiveCard className="mt-15 h-90 w-70 ring-1 ring-white/10 rounded-2xl bg-dark-faded flex flex-col justify-between p-6">
                             <div className="text-sm text-light-base/70 flex items-center gap-x-3">
                                 <div
                                     className={cn(
                                         'h-9 w-9 -rotate-2 flex justify-center items-center shrink-0 rounded-sm',
-                                        // 'bg-light-base/5 ring-1 ring-white/5 shadow-sm shadow-black/10',
                                         'prem-surface',
                                     )}
                                 >
@@ -138,9 +137,9 @@ export default function LandingCollaborateComponent() {
                         {/* card 2 */}
                         <PerspectiveCard
                             delay={0.01}
-                            className="mt-15 h-90 w-70 shrink-0 shadow-sm shadow-black/10 ring-1 ring-black/10 rounded-2xl bg-light-alpha flex flex-col justify-end p-6"
+                            className="mt-15 h-90 w-70 shrink-0 shadow-sm shadow-black/20 ring-1 ring-white/10 rounded-2xl bg-dark-alpha flex flex-col justify-end p-6"
                         >
-                            <div className="relative shrink-0 h-12 w-12 bg-light-base top-25 right-2 rounded-full overflow-hidden -rotate-10 ring-2 ring-white shadow-sm shadow-black">
+                            <div className="relative shrink-0 h-12 w-12 bg-dark-base top-25 right-2 rounded-full overflow-hidden -rotate-10 ring-2 ring-dark-faded shadow-sm shadow-black">
                                 <Image
                                     src={
                                         'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-4.jpg'
@@ -151,7 +150,7 @@ export default function LandingCollaborateComponent() {
                                     unoptimized
                                 />
                             </div>
-                            <div className="relative shrink-0 h-22 w-22 bg-light-base top-4 -right-37 rounded-full overflow-hidden -rotate-15 -scale-x-[1] ring-2 ring-white shadow-sm shadow-black">
+                            <div className="relative shrink-0 h-22 w-22 bg-dark-base top-4 -right-37 rounded-full overflow-hidden -rotate-15 -scale-x-[1] ring-2 ring-dark-faded shadow-sm shadow-black">
                                 <Image
                                     src={
                                         'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg'
@@ -162,7 +161,7 @@ export default function LandingCollaborateComponent() {
                                     unoptimized
                                 />
                             </div>
-                            <div className="relative shrink-0 h-13 w-13 bg-light-base -top-25 -right-14 rounded-full overflow-hidden rotate-5 ring-2 ring-white shadow-sm shadow-black">
+                            <div className="relative shrink-0 h-13 w-13 bg-dark-base -top-25 -right-14 rounded-full overflow-hidden rotate-5 ring-2 ring-dark-faded shadow-sm shadow-black">
                                 <Image
                                     src={
                                         'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-16.jpg'
@@ -175,15 +174,15 @@ export default function LandingCollaborateComponent() {
                             </div>
 
                             <div className="flex flex-col gap-y-2">
-                                <div className="text-dark-base/60 tracking-wide text-[14px]">
+                                <div className="text-light-base/60 tracking-wide text-[14px]">
                                     Eliminate the load
                                 </div>
 
-                                <div className="text-dark-base/80 tracking-wide text-[19px] leading-[1.1] font-semibold">
+                                <div className="text-light-base/80 tracking-wide text-[19px] leading-[1.1] font-semibold">
                                     Made specifically for people who value time
                                 </div>
 
-                                <div className="text-dark-base/60 flex items-center gap-x-3 leading-none text-[14px]">
+                                <div className="text-light-base/60 flex items-center gap-x-3 leading-none text-[14px]">
                                     No hard flow, just invite people through emails, and quickly
                                     wrap up the quizzes.
                                 </div>

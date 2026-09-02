@@ -21,7 +21,7 @@ export default function LandingFooter(): JSX.Element {
         <main className="max-w-270 mx-auto w-full">
             <PerspectiveCard className="w-full mb-3 pb-0! rounded-3xl!">
                 <footer className="w-full  pb-0">
-                    <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
+                    <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden border border-white/5">
                         <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">
                             <section className="lg:w-[38%] flex flex-col gap-5">
                                 <div className="-ml-12 -mt-12">

@@ -6,8 +6,8 @@ interface LandingCardHeaderProps {
 export default function LandingCardHeader({ title, description }: LandingCardHeaderProps) {
     return (
         <>
-            <div className="text-dark-base/90 text-[17px] font-semibold">{title}</div>
-            <div className="text-dark-base/50 text-[14px] leading-[1.2]">{description}</div>
+            <div className="text-light-base/90 text-[17px] font-semibold">{title}</div>
+            <div className="text-light-base/50 text-[14px] leading-[1.2]">{description}</div>
         </>
     );
 }

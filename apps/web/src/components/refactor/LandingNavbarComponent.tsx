@@ -60,10 +60,10 @@ export default function LandingNavbarComponent() {
         <motion.div
             animate={{ height: atTop ? 80 : 56 }}
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-            className={`w-full bg-white max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
+            className={`w-full bg-dark-alpha/80 backdrop-blur-xl max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-white/7'}`}
         >
-            <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
-            <div className="flex items-center gap-x-3 text-dark-base/90">
+            <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-light-base" />
+            <div className="flex items-center gap-x-3 text-light-base/90">
                 <div
                     ref={containerRef}
                     className="relative hidden md:flex items-center gap-x-3"
@@ -73,7 +73,7 @@ export default function LandingNavbarComponent() {
                         {hoveredIdx !== null && (
                             <motion.div
                                 key="nav-hover-bg"
-                                className="absolute top-0 h-full bg-light-base rounded-full pointer-events-none"
+                                className="absolute top-0 h-full bg-white/8 rounded-full pointer-events-none"
                                 initial={{
                                     left: bgStyle.left,
                                     width: bgStyle.width,
@@ -148,7 +148,7 @@ export default function LandingNavbarComponent() {
                         y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
                     }}
                     onClick={handleAuth}
-                    className="bg-dark-base text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
+                    className="bg-white/10 text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/10 prem-surface"
                 >
                     {session ? 'Go to Home' : 'Log in'}
                 </motion.button>
