@@ -62,11 +62,12 @@ export default function LandingNavbarComponent() {
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
             className={`w-full bg-white max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
         >
-            <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
-            <div className="flex items-center gap-x-3 text-dark-base/90">
+            <div className="flex items-center">
+                <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
+
                 <div
                     ref={containerRef}
-                    className="relative hidden md:flex items-center gap-x-3"
+                    className="relative hidden md:flex items-center gap-x-3 ml-6 text-dark-base/90"
                     onMouseLeave={() => setHoveredIdx(null)}
                 >
                     <AnimatePresence>
@@ -138,21 +139,21 @@ export default function LandingNavbarComponent() {
                         </div>
                     ))}
                 </div>
-
-                <motion.button
-                    initial={{ opacity: 0, scale: 0.9, y: 16 }}
-                    animate={{ opacity: 1, scale: [0.9, 1.06, 1], y: [16, -6, 0] }}
-                    transition={{
-                        opacity: { duration: 0.15 },
-                        scale: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
-                        y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
-                    }}
-                    onClick={handleAuth}
-                    className="bg-dark-base text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
-                >
-                    {session ? 'Go to Home' : 'Log in'}
-                </motion.button>
             </div>
+
+            <motion.button
+                initial={{ opacity: 0, scale: 0.9, y: 16 }}
+                animate={{ opacity: 1, scale: [0.9, 1.06, 1], y: [16, -6, 0] }}
+                transition={{
+                    opacity: { duration: 0.15 },
+                    scale: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
+                    y: { duration: 0.45, ease: ['easeOut', 'easeInOut'] },
+                }}
+                onClick={handleAuth}
+                className="bg-dark-base text-light-base text-[15px] h-8.5 w-28 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
+            >
+                {session ? 'Go to Home' : 'Log in'}
+            </motion.button>
             <SigninModal />
         </motion.div>
     );
