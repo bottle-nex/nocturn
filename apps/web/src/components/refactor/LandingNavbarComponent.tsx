@@ -62,81 +62,83 @@ export default function LandingNavbarComponent() {
             transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
             className={`w-full bg-white max-w-270 mx-auto fixed inset-x-0 top-0 flex items-center justify-between z-30 px-6 xl:px-0 ${atTop ? '' : 'border-b border-px border-dark-alpha/7'}`}
         >
-            <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
+            <div className="flex items-center">
+                <AppLogo size={105} className="relative -left-2 md:-left-10 top-1 text-dark-base" />
 
-            <div
-                ref={containerRef}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-x-3 text-dark-base/90"
-                onMouseLeave={() => setHoveredIdx(null)}
-            >
-                <AnimatePresence>
-                    {hoveredIdx !== null && (
-                        <motion.div
-                            key="nav-hover-bg"
-                            className="absolute top-0 h-full bg-light-base rounded-full pointer-events-none"
-                            initial={{
-                                left: bgStyle.left,
-                                width: bgStyle.width,
-                                opacity: 0,
-                                scale: 0.8,
-                            }}
-                            animate={{
-                                left: bgStyle.left,
-                                width: bgStyle.width,
-                                opacity: 1,
-                                scale: 1,
-                            }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                        />
-                    )}
-                </AnimatePresence>
-
-                {navItems.map((item, idx) => (
-                    <div
-                        key={idx}
-                        onClick={() => router.push(`/${item.redirectUrl}`)}
-                        onMouseEnter={(e) => {
-                            setHoveredIdx(idx);
-                            handleMouseEnter(e);
-                            if (item.name === 'Resources') {
-                                if (resourcesTimeoutRef.current)
-                                    clearTimeout(resourcesTimeoutRef.current);
-                                setShowResources(true);
-                            }
-                        }}
-                        onMouseLeave={() => {
-                            if (item.name === 'Resources') {
-                                resourcesTimeoutRef.current = setTimeout(
-                                    () => setShowResources(false),
-                                    150,
-                                );
-                            }
-                        }}
-                        className="relative text-[15px] tracking-wide h-8 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10"
-                    >
-                        {item.name}
-                        {item.name === 'Resources' && (
-                            <AnimatePresence>
-                                {showResources && (
-                                    <NavResourcesDropdown
-                                        onMouseEnter={() => {
-                                            if (resourcesTimeoutRef.current)
-                                                clearTimeout(resourcesTimeoutRef.current);
-                                            setShowResources(true);
-                                        }}
-                                        onMouseLeave={() => {
-                                            resourcesTimeoutRef.current = setTimeout(
-                                                () => setShowResources(false),
-                                                150,
-                                            );
-                                        }}
-                                    />
-                                )}
-                            </AnimatePresence>
+                <div
+                    ref={containerRef}
+                    className="relative hidden md:flex items-center gap-x-3 ml-6 text-dark-base/90"
+                    onMouseLeave={() => setHoveredIdx(null)}
+                >
+                    <AnimatePresence>
+                        {hoveredIdx !== null && (
+                            <motion.div
+                                key="nav-hover-bg"
+                                className="absolute top-0 h-full bg-light-base rounded-full pointer-events-none"
+                                initial={{
+                                    left: bgStyle.left,
+                                    width: bgStyle.width,
+                                    opacity: 0,
+                                    scale: 0.8,
+                                }}
+                                animate={{
+                                    left: bgStyle.left,
+                                    width: bgStyle.width,
+                                    opacity: 1,
+                                    scale: 1,
+                                }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                            />
                         )}
-                    </div>
-                ))}
+                    </AnimatePresence>
+
+                    {navItems.map((item, idx) => (
+                        <div
+                            key={idx}
+                            onClick={() => router.push(`/${item.redirectUrl}`)}
+                            onMouseEnter={(e) => {
+                                setHoveredIdx(idx);
+                                handleMouseEnter(e);
+                                if (item.name === 'Resources') {
+                                    if (resourcesTimeoutRef.current)
+                                        clearTimeout(resourcesTimeoutRef.current);
+                                    setShowResources(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (item.name === 'Resources') {
+                                    resourcesTimeoutRef.current = setTimeout(
+                                        () => setShowResources(false),
+                                        150,
+                                    );
+                                }
+                            }}
+                            className="relative text-[15px] tracking-wide h-8 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10"
+                        >
+                            {item.name}
+                            {item.name === 'Resources' && (
+                                <AnimatePresence>
+                                    {showResources && (
+                                        <NavResourcesDropdown
+                                            onMouseEnter={() => {
+                                                if (resourcesTimeoutRef.current)
+                                                    clearTimeout(resourcesTimeoutRef.current);
+                                                setShowResources(true);
+                                            }}
+                                            onMouseLeave={() => {
+                                                resourcesTimeoutRef.current = setTimeout(
+                                                    () => setShowResources(false),
+                                                    150,
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
 
             <motion.button
