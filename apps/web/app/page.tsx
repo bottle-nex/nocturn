@@ -13,7 +13,7 @@ import SectionDivider from '@/components/utility/SectionDivider';
 
 export default function Page() {
     return (
-        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha overflow-x-hidden">
+        <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-dark-alpha overflow-x-hidden">
             <LandingNavbarComponent />
             <LandingHeroSection />
             <SectionDivider />

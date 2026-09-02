@@ -104,7 +104,7 @@ export function LeftCoinContent({
             />
             <div
                 onClick={() => setLeftRenderType(LeftRenderType.INPUTS)}
-                className="absolute bottom-8 left-8 right-8 h-10 w-10 rounded-full bg-light-alpha flex items-center justify-center -rotate-45 cursor-pointer"
+                className="absolute bottom-8 left-8 right-8 h-10 w-10 rounded-full bg-white/10 flex items-center justify-center -rotate-45 cursor-pointer"
             >
                 <ChevronRight />
             </div>
