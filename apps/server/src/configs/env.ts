@@ -22,7 +22,7 @@ const envSchema = z.object({
     SERVER_REDIS_URL: z.url('Invalid Redis URL'),
     SERVER_WEB_URL: z.string().min(1, 'Web URL is required'),
     DATABASE_URL: z.string().min(1, 'Database URL is required'),
-    SERVER_GEMINI_API_KEY: z.string().min(1, 'Gemini API Key is required'),
+    SERVER_OPENROUTER_API_KEY: z.string().min(1, 'OpenRouter API Key is required'),
     SERVER_DODO_API_KEY: z.string().min(1, 'Dodo API Key is required'),
     SERVER_DODO_WEBHOOK_SECRET: z.string().min(1, 'Dodo Webhook Secret is required'),
     SERVER_DODO_ENVIRONMENT: z.enum(['test', 'production']).default('test'),
