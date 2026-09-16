@@ -50,8 +50,8 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
     return (
         <main className="w-full flex items-center justify-center">
             <section className="max-w-7xl mx-auto h-[80dvh] w-full rounded-xl relative overflow-hidden bg-white z-10">
-                <div className="absolute -top-2 -left-2 z-10">
-                    <AppLogo withText size={120} textColor="text-dark-base dark:text-dark-base" />
+                <div className="absolute top-4 left-4 z-10">
+                    <AppLogo withText textColor="text-dark-base dark:text-dark-base" />
                 </div>
                 <AnimatePresence mode="wait">
                     {gameSession?.quizEndScreen === QuizEndScreen.ARE_YOU_UP && (

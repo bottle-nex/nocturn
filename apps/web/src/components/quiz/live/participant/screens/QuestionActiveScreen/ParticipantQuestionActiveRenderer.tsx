@@ -45,9 +45,8 @@ export default function ParticipantQuestionActiveRenderer() {
             <section className="relative z-10 w-full max-w-6xl mx-auto h-[80dvh] flex flex-col bg-light-alpha rounded-xl overflow-hidden items-center">
                 <div className="flex items-center justify-between px-7 pb-4 shrink-0 w-full">
                     <AppLogo
-                        size={100}
-                        className="-left-7.5 pointer-events-none"
-                        textColor="-right-9 text-black dark:text-black"
+                        className="pointer-events-none"
+                        textColor="text-black dark:text-black"
                         withText
                     />
 

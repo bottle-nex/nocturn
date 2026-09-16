@@ -14,7 +14,7 @@ export default function CreateQuizNavBar() {
     const { appearing, setAppearing } = useSideBarStore();
 
     return (
-        <div className="w-full h-20 bg-light-base dark:bg-dark-base/30 flex items-center justify-between pl-12">
+        <div className="w-full h-20 bg-light-base dark:bg-dark-base/30 flex items-center justify-between">
             <div className="px-4 flex items-center justify-between w-full">
                 <div className="flex justify-center items-center gap-x-2">
                     <FiMenu
@@ -22,13 +22,7 @@ export default function CreateQuizNavBar() {
                         className={`lg:hidden cursor-pointer `}
                         onClick={() => setAppearing(!appearing)}
                     />
-                    <div className="-ml-22">
-                        <AppLogo
-                            withText
-                            size={120}
-                            textColor="text-dark-base dark:text-light-base"
-                        />
-                    </div>
+                    <AppLogo withText textColor="text-dark-base dark:text-light-base" />
                 </div>
                 <div className="flex items-center gap-x-5">
                     <UserStack />

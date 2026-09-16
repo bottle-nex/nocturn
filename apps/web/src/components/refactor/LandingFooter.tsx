@@ -24,13 +24,7 @@ export default function LandingFooter(): JSX.Element {
                     <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
                         <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 px-10 md:px-14">
                             <section className="lg:w-[38%] flex flex-col gap-5">
-                                <div className="-ml-12 -mt-12">
-                                    <AppLogo
-                                        withText
-                                        size={120}
-                                        textColor="text-light-base dark:text-light-base"
-                                    />
-                                </div>
+                                <AppLogo withText textColor="text-light-base dark:text-light-base" />
                                 <p className="text-sm leading-relaxed text-light-base/50 max-w-sm">
                                     Nocturn is a live quiz platform where knowledge pays off.
                                     Compete in real-time multiplayer quizzes, collaborate on quiz

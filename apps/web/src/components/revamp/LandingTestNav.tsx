@@ -65,9 +65,7 @@ export default function LandingTestNav() {
                     : '-translate-y-[calc(100%+1rem)] pointer-events-none',
             )}
         >
-            <div className="-ml-12">
-                <AppLogo withText size={120} />
-            </div>
+            <AppLogo withText />
 
             <div className="absolute left-1/2 -translate-x-1/2">
                 <NavCenter />
