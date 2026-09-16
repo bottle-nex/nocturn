@@ -265,7 +265,7 @@ export default class QuizAction {
             quizId,
         };
         const token = jwt.sign(payload, env.SERVER_JWT_SECRET);
-        return `http://localhost:3000/join/${quizId}?spectator_token=${token}`;
+        return `${env.SERVER_WEB_URL}/join/${quizId}?spectator_token=${token}`;
     }
 
     public static verifyCookie(token: string): CookiePayload | null {
