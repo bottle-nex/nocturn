@@ -191,7 +191,7 @@ export function PublishCardContent(): React.JSX.Element {
                     className="h-9 w-9 ring-1 ring-black/10 shadow-sm shadow-black/10 rounded-full relative overflow-hidden z-4"
                 >
                     <Image
-                        // src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-9.jpg'}
+                        // src={'/avatars/avatar-9.png'}
                         src={'/images/landing/avatar1.png'}
                         alt=""
                         fill

@@ -14,7 +14,7 @@ export default function LandingCardChatArea() {
                 </div>
                 <div className="relative h-7 w-7 rounded-full overflow-hidden ring-1 ring-black/5 shadow-xs shadow-black/5">
                     <Image
-                        src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg'}
+                        src={'/avatars/avatar-1.png'}
                         alt=""
                         fill
                         unoptimized

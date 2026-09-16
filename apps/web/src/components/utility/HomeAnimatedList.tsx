@@ -73,7 +73,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Alice Johnson',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-1.jpg',
+            image: '/avatars/avatar-1.png',
         },
         comment: 'Absolutely loved the UI!',
         createdAt: '2025-09-20T12:00:00Z',
@@ -81,7 +81,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Bob xsith',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg',
+            image: '/avatars/avatar-2.png',
         },
         comment: 'Great experience overall.',
         createdAt: '2025-09-19T10:15:00Z',
@@ -89,7 +89,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Clara Lee',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-3.jpg',
+            image: '/avatars/avatar-3.png',
         },
         comment: 'Support team was super helpful!',
         createdAt: '2025-09-18T08:45:00Z',
@@ -97,7 +97,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Daniel Kim',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-4.jpg',
+            image: '/avatars/avatar-4.png',
         },
         comment: 'Fast and easy setup process.',
         createdAt: '2025-09-17T14:00:00Z',
@@ -105,7 +105,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Eva Martinez',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-5.jpg',
+            image: '/avatars/avatar-5.png',
         },
         comment: 'Design feels super modern.',
         createdAt: '2025-09-15T09:30:00Z',
@@ -113,7 +113,7 @@ const reviews: Review[] = [
     {
         user: {
             name: 'Frank Yang',
-            image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-6.jpg',
+            image: '/avatars/avatar-6.png',
         },
         comment: 'Easy to navigate and well-built.',
         createdAt: '2025-09-14T11:20:00Z',

@@ -18,7 +18,7 @@ export default function LeaderboardTest({ className }: { className?: string }) {
                     <div className="flex gap-x-15 ">
                         <WinnerCard
                             primaryColor="#e1dee9"
-                            imgUrl="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-11.jpg"
+                            imgUrl="/avatars/avatar-11.png"
                             points={200}
                             name="Piyush Raj"
                             className="scale-90 mt-10"
@@ -27,7 +27,7 @@ export default function LeaderboardTest({ className }: { className?: string }) {
                         <WinnerCard
                             isWinner
                             primaryColor="#fca320"
-                            imgUrl="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg"
+                            imgUrl="/avatars/avatar-2.png"
                             points={300}
                             name="Prakash Pawar"
                             className="scale-105"
@@ -35,7 +35,7 @@ export default function LeaderboardTest({ className }: { className?: string }) {
 
                         <WinnerCard
                             primaryColor="#d58936"
-                            imgUrl="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-3.jpg"
+                            imgUrl="/avatars/avatar-3.png"
                             points={200}
                             name="Piyush Raj"
                             className="scale-90 mt-10"

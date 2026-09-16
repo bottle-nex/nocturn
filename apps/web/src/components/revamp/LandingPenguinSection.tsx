@@ -84,19 +84,19 @@ export default function LandingPenguinSection() {
 
     const avatars = [
         {
-            src: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-16.jpg',
+            src: '/avatars/avatar-16.png',
             x: -50,
             y: 0,
             delay: 0,
         },
         {
-            src: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-15.jpg',
+            src: '/avatars/avatar-15.png',
             x: -10,
             y: -5,
             delay: 0.05,
         },
         {
-            src: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg',
+            src: '/avatars/avatar-10.png',
             x: 30,
             y: 0,
             delay: 0.1,
@@ -594,7 +594,7 @@ export default function LandingPenguinSection() {
 
                                                         <div className="w-50 h-50 aspect-square flex justify-center items-center rounded-[3rem] relative overflow-hidden bg-dark-base ring-1 ring-black/10 shadow-md shadow-black/5">
                                                             <Image
-                                                                src="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-17.jpg"
+                                                                src="/avatars/avatar-17.png"
                                                                 alt="logo"
                                                                 fill
                                                                 unoptimized

@@ -9,19 +9,19 @@ interface TiersProps {
 const rankers = [
     {
         rank: 2,
-        image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-10.jpg',
+        image: '/avatars/avatar-10.png',
         name: 'Luffy',
         points: 157,
     },
     {
         rank: 1,
-        image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-17.jpg',
+        image: '/avatars/avatar-17.png',
         name: 'Zoro',
         points: 201,
     },
     {
         rank: 3,
-        image: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-7.jpg',
+        image: '/avatars/avatar-7.png',
         name: 'Sanji',
         points: 123,
     },

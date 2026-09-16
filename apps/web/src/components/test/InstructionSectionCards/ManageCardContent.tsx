@@ -60,23 +60,23 @@ export function ManageCardContent(): JSX.Element {
                 className="w-55 h-55 ring-2 ring-black/10  shadow-xs shadow-black/5 rounded-2xl bg-light-alpha flex flex-col justify-center gap-y-4 px-4 select-none"
             >
                 <LeaderRow
-                    img="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg"
+                    img="/avatars/avatar-2.png"
                     pts={280}
                     value={100}
                     active
                 />
                 <LeaderRow
-                    img="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-5.jpg"
+                    img="/avatars/avatar-5.png"
                     pts={75}
                     value={75}
                 />
                 <LeaderRow
-                    img="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-3.jpg"
+                    img="/avatars/avatar-3.png"
                     pts={90}
                     value={35}
                 />
                 <LeaderRow
-                    img="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-4.jpg"
+                    img="/avatars/avatar-4.png"
                     pts={90}
                     value={35}
                 />

@@ -49,7 +49,7 @@ export default function LandingSectionMidCard() {
                 <div className="absolute h-16 w-48 bg-[#f8f8f8] dark:bg-dark-alpha rounded-xl ring-1 ring-black/5 dark:ring-white/2 shadow-xs shadow-black/10 top-13 left-3 flex gap-x-1 items-center px-3 -rotate-3 z-3 group-hover:scale-105 group-hover:rotate-1 transition-all transform duration-250">
                     <div className="relative h-11 w-11 rounded-full overflow-hidden shrink-0 ring-1 ring-black/30 shadow-xs shadow-black/5">
                         <Image
-                            src={'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-14.jpg'}
+                            src={'/avatars/avatar-14.png'}
                             alt=""
                             fill
                             unoptimized

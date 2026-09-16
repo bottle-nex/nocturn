@@ -70,7 +70,7 @@ export default function LandingCollaborateComponent() {
                                             <div className="flex items-center gap-x-2">
                                                 <div className="relative h-5 w-5 rounded-full overflow-hidden ring-1 ring-white/20 shadow-[0_0_0_2px_rgba(255,255,255,0.04)]">
                                                     <Image
-                                                        src="https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg"
+                                                        src="/avatars/avatar-2.png"
                                                         alt="Patrick Jane"
                                                         className="object-cover"
                                                         fill
@@ -143,7 +143,7 @@ export default function LandingCollaborateComponent() {
                             <div className="relative shrink-0 h-12 w-12 bg-light-base top-25 right-2 rounded-full overflow-hidden -rotate-10 ring-2 ring-white shadow-sm shadow-black">
                                 <Image
                                     src={
-                                        'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-4.jpg'
+                                        '/avatars/avatar-4.png'
                                     }
                                     alt=""
                                     className="object-cover"
@@ -154,7 +154,7 @@ export default function LandingCollaborateComponent() {
                             <div className="relative shrink-0 h-22 w-22 bg-light-base top-4 -right-37 rounded-full overflow-hidden -rotate-15 -scale-x-[1] ring-2 ring-white shadow-sm shadow-black">
                                 <Image
                                     src={
-                                        'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-2.jpg'
+                                        '/avatars/avatar-2.png'
                                     }
                                     alt=""
                                     className="object-cover"
@@ -165,7 +165,7 @@ export default function LandingCollaborateComponent() {
                             <div className="relative shrink-0 h-13 w-13 bg-light-base -top-25 -right-14 rounded-full overflow-hidden rotate-5 ring-2 ring-white shadow-sm shadow-black">
                                 <Image
                                     src={
-                                        'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-16.jpg'
+                                        '/avatars/avatar-16.png'
                                     }
                                     alt=""
                                     className="object-cover"

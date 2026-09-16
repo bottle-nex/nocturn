@@ -26,19 +26,19 @@ interface Person {
 const people: Person[] = [
     {
         id: 'sophia',
-        avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-3.jpg',
+        avatar: '/avatars/avatar-3.png',
         name: 'Sophia Thomas',
         role: 'spectator',
     },
     {
         id: 'emily',
-        avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-7.jpg',
+        avatar: '/avatars/avatar-7.png',
         name: 'Emily Davis',
         role: 'participant',
     },
     {
         id: 'ethan',
-        avatar: 'https://dejbzabt9zak1.cloudfront.net/avatars/avatar-12.jpg',
+        avatar: '/avatars/avatar-12.png',
         name: 'Ethan Lee',
         role: 'spectator',
     },
