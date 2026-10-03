@@ -15,7 +15,7 @@ export default function LandingUsdcSection(): JSX.Element {
     const [leftRenderType, setLeftRenderType] = useState<LeftRenderType>(LeftRenderType.COIN);
 
     return (
-        <main className="max-w-270 mx-auto w-full py-15 px-6 xl:px-0">
+        <main className="max-w-7xl mx-auto w-full py-15 px-6 xl:px-0">
             <LandingSectionHeader
                 heading="USDC Support"
                 subheading="Learn more about our USDC integration."

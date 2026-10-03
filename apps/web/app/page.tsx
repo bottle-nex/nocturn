@@ -16,22 +16,22 @@ export default function Page() {
         <div className="min-h-screen w-full flex flex-col items-center gap-y-10 bg-light-alpha overflow-x-hidden">
             <LandingNavbarComponent />
             <LandingHeroSection />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingFeaturesComponent />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingCardsComponent />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingCollaborateComponent />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingUsdcSection />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingUserType />
             <PremiumSubscriptionCards />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingFaqSection />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingCTASection />
-            <SectionDivider />
+            <SectionDivider className="max-w-7xl" />
             <LandingFooter />
         </div>
     );

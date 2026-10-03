@@ -108,7 +108,7 @@ export default function PremiumSubscriptionCards() {
                 subheading="Upgrade your experience with powerful tools and benefits."
             />
             {/* Increased max-width to 7xl for a wider layout */}
-            <div className="flex flex-col lg:flex-row gap-y-10 lg:gap-x-10 justify-center w-full max-w-270 mt-15 px-6 xl:px-0">
+            <div className="flex flex-col lg:flex-row gap-y-10 lg:gap-x-10 justify-center w-full max-w-7xl mt-15 px-6 xl:px-0">
                 {tiers.map((tier) => {
                     const isDark = tier.name === 'PRO';
                     const isLoading = loadingTier === tier.id;

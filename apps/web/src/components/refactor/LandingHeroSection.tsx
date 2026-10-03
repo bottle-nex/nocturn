@@ -319,7 +319,7 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+        <div className="h-[90vh] md:h-screen w-full max-w-7xl flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
             <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
                 Knowledge that pays off
             </div>
