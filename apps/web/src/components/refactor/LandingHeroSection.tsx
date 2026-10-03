@@ -2,18 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IoCloseOutline } from 'react-icons/io5';
+import { IoCloseOutline, IoLockClosedOutline } from 'react-icons/io5';
 import { VscSymbolStructure } from 'react-icons/vsc';
 import JoinQuizButton from '../test/JoinQuizButton';
 import { cn } from '@/lib/utils';
 import { audio } from '../test/LandingFooter';
 import { GoPlus } from 'react-icons/go';
-import { FiArrowUp } from 'react-icons/fi';
+import { FiArrowUp, FiCheck, FiClock } from 'react-icons/fi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaHeart } from 'react-icons/fa6';
 import { BsFillHandThumbsUpFill } from 'react-icons/bs';
 import { FaGamepad } from 'react-icons/fa';
-import { HiFire } from 'react-icons/hi2';
+import { HiFire, HiSparkles } from 'react-icons/hi2';
 import Image from 'next/image';
 
 interface Person {
@@ -290,6 +290,135 @@ function MockChat({
     );
 }
 
+function QuizCoverArt({ revealed, shimmer }: { revealed: boolean; shimmer: boolean }) {
+    return (
+        <div className="h-36 w-full shrink-0 rounded-xl relative overflow-hidden bg-linear-to-br from-[#1e1b4b] via-[#4338ca] to-[#6d5ef0]">
+            {/* orbit rings */}
+            <div className="absolute -top-20 -right-12 h-64 w-64 rounded-full border border-white/10" />
+            <div className="absolute -top-10 -right-4 h-44 w-44 rounded-full border border-white/15" />
+            <div className="absolute -bottom-24 -left-16 h-56 w-56 rounded-full border border-white/5" />
+
+            {/* ringed planet */}
+            <div className="absolute right-10 top-7">
+                <div className="h-12 w-12 rounded-full bg-linear-to-br from-[#fcd34d] via-[#fb923c] to-[#ea580c] shadow-lg shadow-black/30" />
+                <div className="absolute top-1/2 left-1/2 h-4 w-20 -translate-x-1/2 -translate-y-1/2 -rotate-12 rounded-[100%] border-2 border-white/35" />
+            </div>
+
+            {/* moon + stars */}
+            <div className="absolute right-32 top-16 h-3 w-3 rounded-full bg-indigo-200/70" />
+            <div className="absolute left-10 top-6 h-1 w-1 rounded-full bg-white/70" />
+            <div className="absolute left-24 top-14 h-0.5 w-0.5 rounded-full bg-white/50" />
+            <div className="absolute left-40 top-4 h-1 w-1 rounded-full bg-white/40" />
+            <div className="absolute left-56 top-20 h-0.5 w-0.5 rounded-full bg-white/60" />
+            <div className="absolute right-20 bottom-8 h-1 w-1 rounded-full bg-white/50" />
+
+            <div className="absolute bottom-3 left-3.5 right-3.5 flex flex-col gap-y-1.5 items-start">
+                <span className="flex items-center gap-x-1 rounded-full bg-white/15 px-2 py-0.5 text-[9px] font-medium uppercase tracking-widest text-white/90 backdrop-blur-sm">
+                    <HiSparkles size={9} />
+                    AI generated
+                </span>
+                <AnimatePresence mode="wait">
+                    {revealed ? (
+                        <motion.span
+                            key="title"
+                            className="text-white text-xl font-semibold leading-none"
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        >
+                            Solar System Explorer
+                        </motion.span>
+                    ) : (
+                        <motion.span
+                            key="skeleton"
+                            className="h-5 w-40 rounded-md bg-white/15 animate-pulse"
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        />
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <AnimatePresence>
+                {shimmer && (
+                    <motion.div
+                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
+                        initial={{ x: '-100%' }}
+                        animate={{ x: '100%' }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    />
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+function QuizQuestionCard({
+    index,
+    question,
+    options,
+    correctIndex,
+    showTimer,
+}: {
+    index: number;
+    question: string;
+    options: string[];
+    correctIndex: number;
+    showTimer: boolean;
+}) {
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="w-full shrink-0 rounded-xl bg-light-alpha ring-1 ring-black/5 shadow-xs shadow-black/5 p-2.5 flex flex-col gap-y-2"
+        >
+            <div className="flex items-center justify-between gap-x-2">
+                <div className="flex items-center gap-x-1.5 min-w-0">
+                    <span className="h-4.5 w-4.5 shrink-0 rounded-md bg-alpha/10 text-alpha text-[9px] font-semibold flex items-center justify-center">
+                        {index}
+                    </span>
+                    <span className="text-dark-base/80 text-[11px] font-medium truncate">
+                        {question}
+                    </span>
+                </div>
+                <AnimatePresence>
+                    {showTimer && (
+                        <motion.span
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex shrink-0 items-center gap-x-1 rounded-full bg-light-base px-1.5 py-0.5 text-[9px] font-medium text-dark-base/50"
+                        >
+                            <FiClock size={9} />
+                            30s
+                        </motion.span>
+                    )}
+                </AnimatePresence>
+            </div>
+            <div className="flex gap-x-1.5">
+                {options.map((option, i) => (
+                    <span
+                        key={option}
+                        className={cn(
+                            'flex items-center gap-x-1 rounded-md px-2 py-1 text-[10px]',
+                            i === correctIndex
+                                ? 'bg-green-500/10 text-green-700 ring-1 ring-green-500/20 font-medium'
+                                : 'bg-light-base text-dark-base/50',
+                        )}
+                    >
+                        {i === correctIndex && <FiCheck size={10} />}
+                        {option}
+                    </span>
+                ))}
+            </div>
+        </motion.div>
+    );
+}
+
 export default function LandingHeroSection() {
     const [visibleCount, setVisibleCount] = useState(0);
     const [revealedText, setRevealedText] = useState<Set<number>>(new Set());
@@ -336,15 +465,18 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
-                    <div className="h-12 w-full flex justify-between items-center">
+                <div className="absolute bg-light-alpha shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                    <div className="h-12 w-full shrink-0 flex justify-between items-center border-b border-black/5">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
                             <div className="h-3 w-3 rounded-full bg-[#FFCC01]" />
                             <div className="h-3 w-3 rounded-full bg-[#66E035]" />
 
                             <div className="text-dark-base/80 ml-3 text-sm flex items-center gap-x-3 bg-light-base px-3 py-1 rounded-sm">
-                                nocturn.app
+                                <span className="flex items-center gap-x-1.5">
+                                    <IoLockClosedOutline className="size-3 text-dark-base/40" />
+                                    nocturn.app
+                                </span>
                                 <IoCloseOutline className="size-3.5" />
                             </div>
                         </div>
@@ -356,38 +488,17 @@ export default function LandingHeroSection() {
                         </div>
                     </div>
 
-                    <div className="h-full min-h-0 w-full flex gap-x-3 px-3 pb-3">
-                        <section className="w-[60%] h-full flex flex-col gap-y-3">
-                            <div className="h-50 w-full rounded-xl bg-light-base relative overflow-hidden">
-                                <Image
-                                    src="/images/hero-img.jpg"
-                                    alt="Chat preview"
-                                    fill
-                                    className="object-cover"
-                                />
-                                <AnimatePresence>
-                                    {quizStage === 1 && (
-                                        <motion.div
-                                            className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
-                                            initial={{ x: '-100%' }}
-                                            animate={{ x: '100%' }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{
-                                                duration: 0.8,
-                                                ease: [0.25, 0.46, 0.45, 0.94],
-                                            }}
-                                        />
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                    <div className="h-full min-h-0 w-full flex gap-x-3 p-3">
+                        <section className="w-[60%] h-full min-h-0 flex flex-col gap-y-2.5">
+                            <QuizCoverArt revealed={quizStage >= 1} shimmer={quizStage === 1} />
 
-                            {/* Quiz Title Row */}
-                            <div className="h-8 w-full flex items-center justify-between px-1 overflow-hidden">
+                            {/* Topic + question count row */}
+                            <div className="h-6 w-full shrink-0 flex items-center justify-between px-0.5 overflow-hidden">
                                 <AnimatePresence mode="wait">
                                     {quizStage >= 1 ? (
                                         <motion.div
-                                            key="title"
-                                            className="flex items-center justify-between w-full"
+                                            key="topics"
+                                            className="flex items-center gap-x-1.5"
                                             initial={{ opacity: 0, y: 6 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0 }}
@@ -396,27 +507,78 @@ export default function LandingHeroSection() {
                                                 ease: [0.25, 0.46, 0.45, 0.94],
                                             }}
                                         >
-                                            <div className="flex items-center gap-x-2">
-                                                <div className="h-6 w-6 shrink-0 rounded-md bg-alpha/10 flex items-center justify-center text-alpha">
-                                                    <HiFire size={13} />
-                                                </div>
-                                                <span className="text-dark-base/80 text-[13px] font-semibold">
-                                                    Solar System Explorer
-                                                </span>
+                                            <div className="h-5 w-5 shrink-0 rounded-md bg-alpha/10 flex items-center justify-center text-alpha">
+                                                <HiFire size={11} />
                                             </div>
-                                            <span className="text-dark-base/30 text-[10px]">
-                                                10 questions &middot; 30s
-                                            </span>
+                                            {['Planets', 'Orbits', 'The Sun'].map((topic) => (
+                                                <span
+                                                    key={topic}
+                                                    className="rounded-full bg-light-base px-2 py-0.5 text-[9px] font-medium text-dark-base/50"
+                                                >
+                                                    {topic}
+                                                </span>
+                                            ))}
+                                            <AnimatePresence>
+                                                {quizStage >= 2 && (
+                                                    <motion.span
+                                                        initial={{ opacity: 0, scale: 0.8 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        className="rounded-full bg-alpha/10 px-2 py-0.5 text-[9px] font-medium text-alpha"
+                                                    >
+                                                        Black holes
+                                                    </motion.span>
+                                                )}
+                                            </AnimatePresence>
                                         </motion.div>
                                     ) : (
                                         <motion.div
                                             key="skeleton"
-                                            className="h-5 w-3/4 bg-light-base rounded-md animate-pulse"
+                                            className="h-4 w-1/2 bg-light-base rounded-md animate-pulse"
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.2 }}
                                         />
                                     )}
                                 </AnimatePresence>
+                                {quizStage >= 1 && (
+                                    <motion.span
+                                        key={quizStage >= 2 ? 'count-10' : 'count-8'}
+                                        initial={{ opacity: 0, y: -4 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="text-[10px] text-dark-base/35 shrink-0"
+                                    >
+                                        {quizStage >= 2 ? '10' : '8'} questions
+                                        {quizStage >= 3 && <> &middot; 30s each</>}
+                                    </motion.span>
+                                )}
+                            </div>
+
+                            {/* Question cards */}
+                            <div className="flex-1 min-h-0 flex flex-col gap-y-2 overflow-hidden">
+                                {quizStage >= 1 ? (
+                                    <>
+                                        <QuizQuestionCard
+                                            index={1}
+                                            question="Which planet is known as the Red Planet?"
+                                            options={['Venus', 'Mars', 'Jupiter']}
+                                            correctIndex={1}
+                                            showTimer={quizStage >= 3}
+                                        />
+                                        {quizStage >= 2 && (
+                                            <QuizQuestionCard
+                                                index={9}
+                                                question="What lies at the heart of most galaxies?"
+                                                options={['A nebula', 'A black hole']}
+                                                correctIndex={1}
+                                                showTimer={quizStage >= 3}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="h-16 w-full shrink-0 bg-light-base rounded-xl animate-pulse" />
+                                        <div className="h-16 w-full shrink-0 bg-light-base rounded-xl animate-pulse [animation-delay:150ms]" />
+                                    </>
+                                )}
                             </div>
 
                             {/* Action Bar */}
@@ -483,24 +645,36 @@ export default function LandingHeroSection() {
                         </section>
 
                         <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border border-dashed border-alpha rounded-xl">
-                            <div
-                                className={cn(
-                                    'text-dark-base/60 font-semibold text-base shrink-0',
-                                    audio.className,
-                                )}
-                            >
-                                nocturn
+                            <div className="flex items-center justify-between shrink-0">
+                                <div
+                                    className={cn(
+                                        'text-dark-base/60 font-semibold text-base',
+                                        audio.className,
+                                    )}
+                                >
+                                    nocturn
+                                </div>
+                                <div className="flex items-center gap-x-1 rounded-full bg-light-base px-1.5 py-0.5">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                                    <span className="text-[9px] text-dark-base/50 font-medium">
+                                        AI online
+                                    </span>
+                                </div>
                             </div>
 
                             <MockChat visibleCount={visibleCount} revealedText={revealedText} />
 
                             <div className="min-h-10 w-full shrink-0 flex flex-col justify-between p-2 px-2.5 text-sm rounded-lg ring-1 ring-black/5 shadow-sm shadow-black/5">
-                                <div className="w-full flex justify-between items-center">
-                                    <div className="h-6 w-6 text-dark-base/70 ring-1 ring-black/5 rounded-full bg-light-base flex justify-center items-center">
+                                <div className="w-full flex justify-between items-center gap-x-2">
+                                    <div className="h-6 w-6 shrink-0 text-dark-base/70 ring-1 ring-black/5 rounded-full bg-light-base flex justify-center items-center">
                                         <GoPlus />
                                     </div>
 
-                                    <div className="h-6 w-6 rounded-md bg-alpha text-light-base flex justify-center items-center">
+                                    <span className="flex-1 text-[11px] text-dark-base/30 truncate">
+                                        Ask nocturn to build a quiz&hellip;
+                                    </span>
+
+                                    <div className="h-6 w-6 shrink-0 rounded-md bg-alpha text-light-base flex justify-center items-center">
                                         <FiArrowUp />
                                     </div>
                                 </div>
