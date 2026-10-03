@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import NavResourcesDropdown from './NavResourcesDropdown';
 import SigninModal from '../utility/SigninModal';
+import { RiArrowDownSLine } from 'react-icons/ri';
 
 export default function LandingNavbarComponent() {
     const { session, openSigninModal, setOpenSigninModal } = useUserSessionStore();
@@ -132,6 +133,15 @@ export default function LandingNavbarComponent() {
                                 className="relative text-[14.5px] font-medium tracking-wide h-9 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-alpha/60"
                             >
                                 {item.name}
+                                {item.name === 'Resources' && (
+                                    <RiArrowDownSLine
+                                        size={16}
+                                        aria-hidden
+                                        className={`ml-0.5 -mr-1 transition-transform duration-200 ${
+                                            showResources ? 'rotate-180' : ''
+                                        }`}
+                                    />
+                                )}
                                 {item.name === 'Resources' && (
                                     <AnimatePresence>
                                         {showResources && (
