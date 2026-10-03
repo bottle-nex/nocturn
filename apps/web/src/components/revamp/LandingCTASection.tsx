@@ -22,7 +22,7 @@ function getCardColor(row: number, col: number) {
 
 export default function LandingCTASection(): JSX.Element {
     return (
-        <section className="relative flex w-full max-w-270 items-center justify-center overflow-hidden px-6">
+        <section className="relative flex w-full max-w-7xl items-center justify-center overflow-hidden px-6">
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div
                     className="absolute top-1/2 left-1/2"

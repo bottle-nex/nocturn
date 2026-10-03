@@ -40,7 +40,7 @@ function UserTypeSection({ heading, description }: { heading: string; descriptio
 
 export default function LandingUserType(): JSX.Element {
     return (
-        <main className="w-full max-w-270 mx-auto py-24 pb-32 px-6">
+        <main className="w-full max-w-7xl mx-auto py-24 pb-32 px-6">
             <LandingSectionHeader
                 heading="Built for Every Role"
                 subheading="Whether you're hosting, playing, or building together — Nocturn adapts to how you work."
