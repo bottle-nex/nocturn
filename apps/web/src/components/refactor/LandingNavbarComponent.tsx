@@ -1,5 +1,6 @@
 'use client';
-import AppLogo from '../app/AppLogo';
+import Link from 'next/link';
+import { audio } from '../test/LandingFooter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { useRouter } from 'next/navigation';
@@ -77,7 +78,26 @@ export default function LandingNavbarComponent() {
                         : 'max-w-3xl rounded-2xl md:rounded-full bg-white/75 backdrop-blur-xl border border-dark-alpha/8 shadow-[0_8px_32px_rgba(12,12,12,0.08),0_1px_2px_rgba(12,12,12,0.04)]'
                 }`}
             >
-                <AppLogo size={96} className="relative -ml-6 text-dark-base" />
+                <Link
+                    href="/"
+                    aria-label="Nocturn home"
+                    className="inline-flex items-center gap-x-2 text-dark-alpha"
+                >
+                    {/* Crescent moon + sparkle mark, drawn in a single color so the
+                        reviewer-requested black comes from the text color. */}
+                    <svg
+                        width={26}
+                        height={26}
+                        viewBox="0 0 32 32"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        className="shrink-0"
+                    >
+                        <path d="M16 2A14 14 0 1 0 30 16 14 14 0 0 1 16 2Z" />
+                        <path d="M25.5 2.5Q26.1 5.9 29.5 6.5Q26.1 7.1 25.5 10.5Q24.9 7.1 21.5 6.5Q24.9 5.9 25.5 2.5Z" />
+                    </svg>
+                    <span className={`${audio.className} text-[17px] leading-none`}>Nocturn</span>
+                </Link>
 
                 <div className="flex items-center gap-x-2 sm:gap-x-3 text-dark-base/90">
                     <div
