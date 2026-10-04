@@ -99,92 +99,92 @@ export default function LandingNavbarComponent() {
                     <span className={`${audio.className} text-[17px] leading-none`}>Nocturn</span>
                 </Link>
 
-                <div className="flex items-center gap-x-2 sm:gap-x-3 text-dark-base/90">
-                    <div
-                        ref={containerRef}
-                        className="relative hidden md:flex items-center gap-x-1"
-                        onMouseLeave={() => setHoveredIdx(null)}
-                    >
-                        <AnimatePresence>
-                            {hoveredIdx !== null && (
-                                <motion.div
-                                    key="nav-hover-bg"
-                                    className="absolute top-0 h-full bg-dark-alpha/6 rounded-full pointer-events-none"
-                                    initial={{
-                                        left: bgStyle.left,
-                                        width: bgStyle.width,
-                                        opacity: 0,
-                                        scale: 0.8,
-                                    }}
-                                    animate={{
-                                        left: bgStyle.left,
-                                        width: bgStyle.width,
-                                        opacity: 1,
-                                        scale: 1,
-                                    }}
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                <div
+                    ref={containerRef}
+                    className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-x-1 text-dark-base/90"
+                    onMouseLeave={() => setHoveredIdx(null)}
+                >
+                    <AnimatePresence>
+                        {hoveredIdx !== null && (
+                            <motion.div
+                                key="nav-hover-bg"
+                                className="absolute top-0 h-full bg-dark-alpha/6 rounded-full pointer-events-none"
+                                initial={{
+                                    left: bgStyle.left,
+                                    width: bgStyle.width,
+                                    opacity: 0,
+                                    scale: 0.8,
+                                }}
+                                animate={{
+                                    left: bgStyle.left,
+                                    width: bgStyle.width,
+                                    opacity: 1,
+                                    scale: 1,
+                                }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    {navItems.map((item, idx) => (
+                        <button
+                            key={idx}
+                            type="button"
+                            onClick={() => router.push(`/${item.redirectUrl}`)}
+                            onMouseEnter={(e) => {
+                                setHoveredIdx(idx);
+                                handleMouseEnter(e);
+                                if (item.name === 'Resources') {
+                                    if (resourcesTimeoutRef.current)
+                                        clearTimeout(resourcesTimeoutRef.current);
+                                    setShowResources(true);
+                                }
+                            }}
+                            onMouseLeave={() => {
+                                if (item.name === 'Resources') {
+                                    resourcesTimeoutRef.current = setTimeout(
+                                        () => setShowResources(false),
+                                        150,
+                                    );
+                                }
+                            }}
+                            className="relative text-[14.5px] font-medium tracking-wide h-9 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-alpha/60"
+                        >
+                            {item.name}
+                            {item.name === 'Resources' && (
+                                <RiArrowDownSLine
+                                    size={16}
+                                    aria-hidden
+                                    className={`ml-0.5 -mr-1 transition-transform duration-200 ${
+                                        showResources ? 'rotate-180' : ''
+                                    }`}
                                 />
                             )}
-                        </AnimatePresence>
+                            {item.name === 'Resources' && (
+                                <AnimatePresence>
+                                    {showResources && (
+                                        <NavResourcesDropdown
+                                            onMouseEnter={() => {
+                                                if (resourcesTimeoutRef.current)
+                                                    clearTimeout(resourcesTimeoutRef.current);
+                                                setShowResources(true);
+                                            }}
+                                            onMouseLeave={() => {
+                                                resourcesTimeoutRef.current = setTimeout(
+                                                    () => setShowResources(false),
+                                                    150,
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            )}
+                        </button>
+                    ))}
+                </div>
 
-                        {navItems.map((item, idx) => (
-                            <button
-                                key={idx}
-                                type="button"
-                                onClick={() => router.push(`/${item.redirectUrl}`)}
-                                onMouseEnter={(e) => {
-                                    setHoveredIdx(idx);
-                                    handleMouseEnter(e);
-                                    if (item.name === 'Resources') {
-                                        if (resourcesTimeoutRef.current)
-                                            clearTimeout(resourcesTimeoutRef.current);
-                                        setShowResources(true);
-                                    }
-                                }}
-                                onMouseLeave={() => {
-                                    if (item.name === 'Resources') {
-                                        resourcesTimeoutRef.current = setTimeout(
-                                            () => setShowResources(false),
-                                            150,
-                                        );
-                                    }
-                                }}
-                                className="relative text-[14.5px] font-medium tracking-wide h-9 w-fit flex items-center justify-center px-4 rounded-full cursor-pointer z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-alpha/60"
-                            >
-                                {item.name}
-                                {item.name === 'Resources' && (
-                                    <RiArrowDownSLine
-                                        size={16}
-                                        aria-hidden
-                                        className={`ml-0.5 -mr-1 transition-transform duration-200 ${
-                                            showResources ? 'rotate-180' : ''
-                                        }`}
-                                    />
-                                )}
-                                {item.name === 'Resources' && (
-                                    <AnimatePresence>
-                                        {showResources && (
-                                            <NavResourcesDropdown
-                                                onMouseEnter={() => {
-                                                    if (resourcesTimeoutRef.current)
-                                                        clearTimeout(resourcesTimeoutRef.current);
-                                                    setShowResources(true);
-                                                }}
-                                                onMouseLeave={() => {
-                                                    resourcesTimeoutRef.current = setTimeout(
-                                                        () => setShowResources(false),
-                                                        150,
-                                                    );
-                                                }}
-                                            />
-                                        )}
-                                    </AnimatePresence>
-                                )}
-                            </button>
-                        ))}
-                    </div>
-
+                <div className="flex items-center gap-x-2 sm:gap-x-3 text-dark-base/90">
                     <motion.button
                         initial={{ opacity: 0, scale: 0.9, y: 16 }}
                         animate={{ opacity: 1, scale: [0.9, 1.06, 1], y: [16, -6, 0] }}
@@ -196,7 +196,7 @@ export default function LandingNavbarComponent() {
                         onClick={handleAuth}
                         className="bg-dark-base text-light-base text-[14.5px] font-medium h-9 px-5 rounded-full shadow-xs cursor-pointer! transition-all transform duration-200 ease-in-out hover:bg-dark-alpha active:scale-102 inset-shadow-xs inset-shadow-white/30 dark:prem-surface"
                     >
-                        {session ? 'Go to Home' : 'Log in'}
+                        {session ? 'Go to Home' : 'Signup'}
                     </motion.button>
 
                     <button
