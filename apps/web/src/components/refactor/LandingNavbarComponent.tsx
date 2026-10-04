@@ -72,10 +72,10 @@ export default function LandingNavbarComponent() {
             <motion.nav
                 animate={{ height: atTop ? 72 : 56, marginTop: atTop ? 8 : 12 }}
                 transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-                className={`relative w-full flex items-center justify-between px-4 sm:px-5 transition-[max-width,background-color,border-radius,box-shadow,backdrop-filter] duration-400 ease-out ${
+                className={`relative w-full flex items-center justify-between px-4 sm:px-5 bg-white/75 backdrop-blur-xl border border-dark-alpha/8 shadow-[0_8px_32px_rgba(12,12,12,0.08),0_1px_2px_rgba(12,12,12,0.04)] transition-[max-width,border-radius] duration-400 ease-out ${
                     atTop && !mobileOpen
-                        ? 'max-w-270 rounded-2xl bg-transparent border border-transparent'
-                        : 'max-w-3xl rounded-2xl md:rounded-full bg-white/75 backdrop-blur-xl border border-dark-alpha/8 shadow-[0_8px_32px_rgba(12,12,12,0.08),0_1px_2px_rgba(12,12,12,0.04)]'
+                        ? 'max-w-270 rounded-2xl'
+                        : 'max-w-3xl rounded-2xl md:rounded-full'
                 }`}
             >
                 <Link
