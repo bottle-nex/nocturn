@@ -153,23 +153,23 @@ export default function PremiumSubscriptionCards() {
                             className={`w-full h-auto md:h-72 rounded-2xl flex flex-col md:flex-row overflow-hidden relative
                             ${
                                 isDark
-                                    ? 'bg-[#111110] border border-white/7 shadow-[0_8px_40px_rgba(0,0,0,0.4)]'
+                                    ? 'bg-nprimary border border-white/15 shadow-[0_8px_40px_rgba(79,70,229,0.35)]'
                                     : 'bg-white/88 border border-black/9 shadow-[0_4px_20px_rgba(0,0,0,0.06)]'
                             }`}
                         >
                             {/* Increased sidebar width from w-52 to w-64 */}
                             <div
                                 className={`w-full md:w-64 shrink-0 flex flex-col justify-between p-8 gap-y-4 md:gap-y-0
-                                ${isDark ? 'border-b md:border-b-0 md:border-r border-white/7' : 'border-b md:border-b-0 md:border-r border-black/7'}`}
+                                ${isDark ? 'border-b md:border-b-0 md:border-r border-white/15' : 'border-b md:border-b-0 md:border-r border-black/7'}`}
                             >
                                 <div className="flex flex-col">
                                     <span
-                                        className={`text-[24px] font-bold tracking-tight leading-none ${isDark ? 'text-[#f0ede8]' : 'text-[#1a1a1a]'}`}
+                                        className={`text-[24px] font-bold tracking-tight leading-none ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}
                                     >
                                         {tier.displayName}
                                     </span>
                                     <span
-                                        className={`text-[14px] mt-1 ${isDark ? 'text-[#f0ede8]/45' : 'text-[#1a1a1a]/60'}`}
+                                        className={`text-[14px] mt-1 ${isDark ? 'text-white/70' : 'text-[#1a1a1a]/60'}`}
                                     >
                                         membership
                                     </span>
@@ -177,7 +177,7 @@ export default function PremiumSubscriptionCards() {
 
                                 <div>
                                     <div
-                                        className={`flex items-end gap-1 ${isDark ? 'text-[#f0ede8]' : 'text-[#1a1a1a]'}`}
+                                        className={`flex items-end gap-1 ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}
                                     >
                                         <span className="text-[36px] font-bold tracking-tight leading-none">
                                             {tier.currency === 'INR'
@@ -188,13 +188,13 @@ export default function PremiumSubscriptionCards() {
                                             {price}
                                         </span>
                                         <span
-                                            className={`text-sm pb-1 ${isDark ? 'text-[#f0ede8]/60' : ''}`}
+                                            className={`text-sm pb-1 ${isDark ? 'text-white/75' : ''}`}
                                         >
                                             {priceLabel}
                                         </span>
                                     </div>
                                     <div
-                                        className={`text-[12px] mt-1 ${isDark ? 'text-[#f0ede8]/40' : 'text-[#1a1a1a]/45'}`}
+                                        className={`text-[12px] mt-1 ${isDark ? 'text-white/60' : 'text-[#1a1a1a]/45'}`}
                                     >
                                         {billedLabel}
                                     </div>
@@ -204,7 +204,7 @@ export default function PremiumSubscriptionCards() {
                                         className={`mt-4 w-full py-2.5 text-[13px] font-semibold tracking-wide transition-all
                                         ${
                                             isDark
-                                                ? 'bg-[#f0ede8] hover:bg-white text-[#111110] shadow-sm'
+                                                ? 'bg-white hover:bg-white/90 text-nprimary shadow-sm'
                                                 : 'bg-black/7 text-[#1a1a1a]/50 cursor-default'
                                         }`}
                                     >
@@ -225,17 +225,17 @@ export default function PremiumSubscriptionCards() {
                                         <div key={i} className="flex items-center gap-3.5">
                                             <div
                                                 className={`size-7 shrink-0 rounded-lg flex items-center justify-center
-                                                ${isDark ? 'bg-white/8' : 'bg-black/6'}`}
+                                                ${isDark ? 'bg-white/15' : 'bg-black/6'}`}
                                             >
                                                 {Icon && (
                                                     <Icon
-                                                        className={`size-[14px] ${isDark ? 'text-[#d6d2ca]' : 'text-[#1a1a1a]'}`}
+                                                        className={`size-[14px] ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}
                                                         strokeWidth={2}
                                                     />
                                                 )}
                                             </div>
                                             <div
-                                                className={`text-[13px] font-medium leading-tight ${isDark ? 'text-[#e8e4dc]' : 'text-[#1a1a1a]'}`}
+                                                className={`text-[13px] font-medium leading-tight ${isDark ? 'text-white' : 'text-[#1a1a1a]'}`}
                                             >
                                                 {feature.label}
                                             </div>
