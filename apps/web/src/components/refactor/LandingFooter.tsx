@@ -18,7 +18,7 @@ const socialIcons = [
 
 export default function LandingFooter(): JSX.Element {
     return (
-        <main className="max-w-270 mx-auto w-full">
+        <main className="max-w-7xl mx-auto w-full">
             <PerspectiveCard className="w-full mb-3 pb-0! rounded-3xl!">
                 <footer className="w-full  pb-0">
                     <main className="rounded-3xl bg-dark-base pt-14 pb-0 overflow-hidden">
@@ -72,7 +72,7 @@ export default function LandingFooter(): JSX.Element {
                     </main>
                 </footer>
             </PerspectiveCard>
-            <section className="max-w-270 mx-auto w-full space-y-2 mb-8 mt-3">
+            <section className="max-w-7xl mx-auto w-full space-y-2 mb-8 mt-3">
                 <div className="w-[95%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]" />
                 <div className="w-[90%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.3s] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] opacity-80" />
                 <div className="w-[85%] mx-auto h-1.25 rounded-full bg-[linear-gradient(to_right,#4b6cb7,#7db9e8,#eab308,#ef4444,#8b5cf6,#4b6cb7)] bg-[length:200%_100%] animate-gradient-slide [animation-delay:0.6s] [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] opacity-50" />
