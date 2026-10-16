@@ -22,7 +22,7 @@ export default function LandingUsdcSection(): JSX.Element {
             />
 
             <div className="w-full h-auto lg:h-150 flex items-center justify-center rounded-2xl overflow-hidden mt-16">
-                <section className="text-dark-alpha flex flex-col lg:grid lg:grid-cols-[40%_60%] w-full h-full">
+                <section className="text-white flex flex-col lg:grid lg:grid-cols-[40%_60%] w-full h-full">
                     <main className="bg-dark-alpha w-full h-120 lg:h-full block relative overflow-hidden shrink-0">
                         <AnimatePresence mode="wait">
                             <motion.div

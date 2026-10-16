@@ -55,7 +55,7 @@ export default function LiveEditingCardComponent() {
     }, []);
 
     return (
-        <div className="flex flex-col ring-1 ring-black/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
+        <div className="flex flex-col ring-1 ring-white/10 h-auto sm:h-75 w-full max-w-[440px] rounded-xl overflow-hidden">
             <div className="h-55 bg-[#39BEB7] relative flex justify-center pt-7 shrink-0">
                 <div className="absolute bottom-12 right-31 z-2 -rotate-90">
                     <FaLocationArrow className="text-dark-base" />
@@ -63,7 +63,7 @@ export default function LiveEditingCardComponent() {
                 <div className="absolute bottom-6 right-10 h-7 w-22 bg-dark-base z-2 flex items-center justify-center text-sm text-light-base rounded-full">
                     Red John
                 </div>
-                <div className="h-45 w-70 shadow-xs shadow-black/5 bg-linear-to-b from-light-alpha via-light-alpha/80 to-[#39BEB7] rounded-t-xl absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col py-3">
+                <div className="h-45 w-70 shadow-xs shadow-black/20 bg-linear-to-b from-dark-faded via-dark-faded/80 to-[#39BEB7] rounded-t-xl absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col py-3">
                     <div className="flex gap-x-3 items-center p-4 px-5">
                         <AnimatePresence mode="wait">
                             {stage >= 1 ? (
@@ -86,7 +86,7 @@ export default function LiveEditingCardComponent() {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        <div className="h-5 w-full bg-neutral-200/40 rounded-full" />
+                        <div className="h-5 w-full bg-neutral-700/40 rounded-full" />
                     </div>
 
                     <div className="flex gap-x-3 items-center p-4 px-5">
@@ -111,13 +111,13 @@ export default function LiveEditingCardComponent() {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        <div className="h-5 w-full bg-neutral-200/40 rounded-full" />
+                        <div className="h-5 w-full bg-neutral-700/40 rounded-full" />
                     </div>
                 </div>
             </div>
             <div className="h-fit sm:h-20 shrink-0 flex flex-col justify-center px-4 py-2 gap-y-1">
-                <div className="text-dark-base/80 text-base">Live Editing</div>
-                <div className="text-dark-base/50 text-[13px] leading-[1.1]">
+                <div className="text-light-base/80 text-base">Live Editing</div>
+                <div className="text-light-base/50 text-[13px] leading-[1.1]">
                     Have too much to handle, bring those majdoors {'(collaborators)'} and make them
                     work with you in real time.
                 </div>

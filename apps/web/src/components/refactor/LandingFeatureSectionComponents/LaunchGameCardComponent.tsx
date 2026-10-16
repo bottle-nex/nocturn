@@ -106,11 +106,11 @@ export default function LaunchGameCard() {
                 Add Questions
             </div>
 
-            <div className="h-9 w-40 bg-[#BDBBFF] border border-dashed border-light-base rounded-sm" />
+            <div className="h-9 w-40 bg-[#BDBBFF] border border-dashed border-dark-base rounded-sm" />
 
             <motion.div
                 id="launch-card"
-                className="absolute top-11 right-0 h-9 w-40 bg-light-alpha rounded-sm flex justify-between px-5 items-center text-dark-base/80 text-sm ring-1 ring-alpha shadow-md shadow-alpha/50"
+                className="absolute top-11 right-0 h-9 w-40 bg-dark-faded rounded-sm flex justify-between px-5 items-center text-light-base/80 text-sm ring-1 ring-alpha shadow-md shadow-alpha/50"
                 style={{ transformOrigin: 'center center' }}
             >
                 Launch game
@@ -133,10 +133,10 @@ export default function LaunchGameCard() {
                 alt="hand cursor"
             />
 
-            <div className="h-9 w-40 bg-light-alpha shadow-xs shadow-black/5 rounded-sm flex justify-start px-5 items-center text-dark-base/80 text-sm">
+            <div className="h-9 w-40 bg-dark-faded shadow-xs shadow-black/20 rounded-sm flex justify-start px-5 items-center text-light-base/80 text-sm">
                 Select Interactions
             </div>
-            <div className="h-9 w-40 bg-light-alpha shadow-xs shadow-black/5 rounded-sm flex justify-start px-5 items-center text-dark-base/80 text-sm">
+            <div className="h-9 w-40 bg-dark-faded shadow-xs shadow-black/20 rounded-sm flex justify-start px-5 items-center text-light-base/80 text-sm">
                 Define prize pool
             </div>
         </div>

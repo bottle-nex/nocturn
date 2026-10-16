@@ -89,7 +89,7 @@ export default function NavResourcesDropdown({
             className="absolute top-full right-0 mt-3 z-50"
         >
             <div
-                className="relative w-75 bg-white rounded-xl p-1.75 overflow-hidden"
+                className="relative w-75 bg-dark-base rounded-xl p-1.75 overflow-hidden"
                 style={{
                     boxShadow: '0 4px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)',
                 }}
@@ -103,7 +103,7 @@ export default function NavResourcesDropdown({
                         {hoveredIdx !== null && (
                             <motion.div
                                 key="dropdown-hover-bg"
-                                className="absolute left-0 w-full bg-light-base rounded-[10px] pointer-events-none"
+                                className="absolute left-0 w-full bg-dark-faded rounded-[10px] pointer-events-none"
                                 initial={{
                                     top: bgStyle.top,
                                     height: bgStyle.height,
@@ -141,17 +141,17 @@ export default function NavResourcesDropdown({
                                 <div
                                     className="shrink-0 w-9 h-9 rounded-[10px] flex items-center justify-center mt-0.5 transition-all duration-200"
                                     style={{
-                                        backgroundColor: isHovered ? item.bgColor : '#f5f5f5',
+                                        backgroundColor: isHovered ? item.bgColor : '#242a2a',
                                         color: isHovered ? item.color : '#9ca3af',
                                     }}
                                 >
                                     <Icon size={18} />
                                 </div>
                                 <div className="flex flex-col gap-0.5 min-w-0">
-                                    <span className="text-[14px] font-semibold text-dark-base/90 tracking-[-0.01em] leading-tight">
+                                    <span className="text-[14px] font-semibold text-light-base/90 tracking-[-0.01em] leading-tight">
                                         {item.title}
                                     </span>
-                                    <span className="text-[12.5px] text-dark-base/45 leading-snug">
+                                    <span className="text-[12.5px] text-light-base/45 leading-snug">
                                         {item.description}
                                     </span>
                                 </div>

@@ -3,14 +3,14 @@ import { JSX } from 'react';
 import { IoArrowForward } from 'react-icons/io5';
 
 const CARD_COLORS = [
-    'bg-neutral-100/5',
-    'bg-neutral-200/40',
-    'bg-stone-100/60',
-    'bg-zinc-100/50',
-    'bg-neutral-50/80',
-    'bg-stone-200/30',
-    'bg-zinc-200/25',
-    'bg-neutral-100/5',
+    'bg-neutral-800/5',
+    'bg-neutral-700/40',
+    'bg-stone-800/60',
+    'bg-zinc-800/50',
+    'bg-neutral-800/80',
+    'bg-stone-700/30',
+    'bg-zinc-700/25',
+    'bg-neutral-800/5',
 ];
 
 const ROWS = 8;
@@ -44,7 +44,7 @@ export default function LandingCTASection(): JSX.Element {
                                 {Array.from({ length: COLS }).map((_, col) => (
                                     <div
                                         key={col}
-                                        className={`h-20 w-36 rounded-xl border border-neutral-300/25 ${getCardColor(row, col)}`}
+                                        className={`h-20 w-36 rounded-xl border border-neutral-700/25 ${getCardColor(row, col)}`}
                                     />
                                 ))}
                             </div>
@@ -52,8 +52,8 @@ export default function LandingCTASection(): JSX.Element {
                     </div>
                 </div>
 
-                <div className="absolute inset-0 bg-linear-to-b from-light-alpha from-5% via-transparent via-50% to-light-alpha to-95%" />
-                <div className="absolute inset-0 bg-linear-to-r from-light-alpha from-5% via-transparent via-50% to-light-alpha to-95%" />
+                <div className="absolute inset-0 bg-linear-to-b from-dark-alpha from-5% via-transparent via-50% to-dark-alpha to-95%" />
+                <div className="absolute inset-0 bg-linear-to-r from-dark-alpha from-5% via-transparent via-50% to-dark-alpha to-95%" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center py-14">
@@ -70,17 +70,17 @@ export default function LandingCTASection(): JSX.Element {
                 </div>
 
                 <h2
-                    className="text-center text-4xl font-bold leading-[1.1] tracking-tight text-dark-base md:text-5xl"
+                    className="text-center text-4xl font-bold leading-[1.1] tracking-tight text-light-base md:text-5xl"
                     style={{ letterSpacing: '-0.025em' }}
                 >
                     Start playing
                     <br />
-                    <span style={{ color: 'rgba(22, 22, 22, 0.75)' }}>something great</span>
+                    <span style={{ color: 'rgba(245, 245, 245, 0.75)' }}>something great</span>
                 </h2>
 
                 <p
                     className="mt-5 max-w-sm text-center text-[15px] leading-relaxed"
-                    style={{ color: 'rgba(22, 22, 22, 0.45)' }}
+                    style={{ color: 'rgba(245, 245, 245, 0.45)' }}
                 >
                     Simple, focused quiz to make learning more fun.
                     <br className="hidden sm:inline" />
