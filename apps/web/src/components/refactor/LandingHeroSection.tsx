@@ -319,21 +319,86 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <div className="relative h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
+            <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+                <div className="absolute -top-24 left-1/2 -translate-x-[70%] h-100 w-100 rounded-full bg-alpha/15 blur-[120px]" />
+                <div className="absolute -top-10 left-1/2 translate-x-[5%] h-90 w-90 rounded-full bg-eta/20 blur-[120px]" />
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
+            <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="flex items-center gap-x-2 rounded-full bg-light-alpha ring-1 ring-black/10 shadow-xs shadow-black/5 px-4 py-1.5 text-sm text-dark-base/70"
+            >
+                <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                </span>
+                Live quizzes happening right now
+            </motion.div>
+
+            <motion.h1
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+                className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center"
+            >
+                Knowledge that{' '}
+                <span className="bg-clip-text text-transparent bg-linear-to-r from-alpha to-beta">
+                    pays off
+                </span>
+            </motion.h1>
+
+            <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.15, ease: 'easeOut' }}
+                className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center"
+            >
                 Nocturn is a real-time quiz app made for people who love learning and friendly
                 competition.
-            </div>
+            </motion.p>
 
-            <div className="mt-2">
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+                className="mt-2 flex flex-col items-center gap-y-3"
+            >
                 <JoinQuizButton />
-            </div>
 
-            <div className="h-full w-full relative mt-5">
+                <div className="flex items-center gap-x-2">
+                    <div className="flex -space-x-2">
+                        {people.map((person) => (
+                            <div
+                                key={person.id}
+                                className="h-6 w-6 rounded-full ring-2 ring-light-alpha overflow-hidden relative"
+                            >
+                                <Image
+                                    src={person.avatar}
+                                    alt={person.name}
+                                    fill
+                                    unoptimized
+                                    className="object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                    <span className="text-xs text-dark-base/40">
+                        Trusted by 10,000+ curious minds
+                    </span>
+                </div>
+            </motion.div>
+
+            <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
+                className="h-full w-full relative mt-5"
+            >
+                <div className="absolute left-1/2 top-10 -translate-x-1/2 h-80 w-190 max-w-full bg-alpha/10 blur-[100px] rounded-full -z-10" />
+
                 <LiveActivityCard />
 
                 <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
@@ -508,7 +573,7 @@ export default function LandingHeroSection() {
                         </section>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }
