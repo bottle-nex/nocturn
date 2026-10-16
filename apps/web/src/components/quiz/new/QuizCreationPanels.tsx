@@ -1,6 +1,7 @@
 'use client';
 import QuizDashboardLeft from '@/components/quiz/new/QuizLeft';
 import QuizDashboardRight from '@/components/quiz/new/QuizRight';
+import QuestionPallete from '@/components/quiz/new/QuestionPallete';
 import { useSubscribeEventHandlers } from '@/hooks/sockets/useSubscribeEventHandlers';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
@@ -23,6 +24,7 @@ export default function QuizCreationPanels({ quizId }: QuizCreationPanelsProps) 
         <div className="w-full h-full flex flex-row flex-1 dark:bg-dark-alpha bg-neutral-200 overflow-hidden">
             <QuizDashboardLeft />
             <QuizDashboardRight />
+            <QuestionPallete />
         </div>
     );
 }

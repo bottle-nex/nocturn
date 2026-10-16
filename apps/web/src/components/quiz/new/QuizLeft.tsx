@@ -6,7 +6,6 @@ import { SmallQuizRight } from './QuizRight';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import Canvas from '@/components/canvas/Canvas';
 import UtilityCard from '@/components/utility/UtilityCard';
-import QuestionPallete from './QuestionPallete';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
 
 export default function QuizLeft() {
@@ -29,7 +28,6 @@ export default function QuizLeft() {
 
     return (
         <div className="flex-1 h-full flex justify-center p-4 gap-x-4 min-w-0">
-            <QuestionPallete />
             <div className="flex flex-col items-start justify-start flex-1 gap-y-2 min-w-0">
                 <UtilityCard className="bg-light-base dark:bg-dark-base/30 py-x-6 border border-neutral-300 dark:border-neutral-800 w-full min-h-16 shadow-none rounded-sm flex items-center">
                     <div className="flex items-center justify-between w-full gap-4 relative">
