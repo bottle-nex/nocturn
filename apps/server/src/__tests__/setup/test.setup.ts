@@ -30,6 +30,16 @@ dotenv.config({
 // Individual tests override specific methods with vi.mocked(...).mockResolvedValueOnce()
 // ---------------------------------------------------------------------------
 vi.mock('@nocturn/database', () => ({
+    // Socket managers compare against QuizPhase at runtime; the generated
+    // Prisma enums are string enums whose values equal their names.
+    QuizPhase: {
+        QUESTION_READING: 'QUESTION_READING',
+        QUESTION_ACTIVE: 'QUESTION_ACTIVE',
+        SHOW_RESULTS: 'SHOW_RESULTS',
+        WAITING_NEXT: 'WAITING_NEXT',
+        QUIZ_RESULTS: 'QUIZ_RESULTS',
+        TEST: 'TEST',
+    },
     prisma: {
         quiz: {
             create: vi.fn(),
@@ -38,6 +48,24 @@ vi.mock('@nocturn/database', () => ({
             update: vi.fn(),
             delete: vi.fn(),
             deleteMany: vi.fn(),
+        },
+        participant: {
+            findUnique: vi.fn(),
+            findFirst: vi.fn(),
+            update: vi.fn(),
+        },
+        prizeClaim: {
+            create: vi.fn(),
+            findFirst: vi.fn(),
+            findUnique: vi.fn(),
+            findMany: vi.fn(),
+            update: vi.fn(),
+        },
+        prizeDistribution: {
+            findMany: vi.fn().mockResolvedValue([]),
+        },
+        template: {
+            findFirst: vi.fn().mockResolvedValue({ id: 'CLASSIC', name: 'Classic' }),
         },
         user: {
             findUnique: vi.fn(),
@@ -64,6 +92,60 @@ vi.mock('@nocturn/database', () => ({
             }),
         ),
         $queryRawUnsafe: vi.fn().mockResolvedValue([]),
+    },
+    Participant: {},
+    Quiz: {},
+    Question: {},
+    Response: {},
+    Spectator: {},
+    GameSession: {},
+    QuizStatus: {
+        CREATED: 'CREATED',
+        SCHEDULED: 'SCHEDULED',
+        PUBLISHED: 'PUBLISHED',
+        LIVE: 'LIVE',
+        COMPLETED: 'COMPLETED',
+        TIMED_OUT: 'TIMED_OUT',
+        CANCELLED: 'CANCELLED',
+        PAYOUT_PENDING: 'PAYOUT_PENDING',
+        PAYOUT_COMPLETED: 'PAYOUT_COMPLETED',
+    },
+    SessionStatus: {
+        WAITING: 'WAITING',
+        LIVE: 'LIVE',
+        COMPLETED: 'COMPLETED',
+        PAUSED: 'PAUSED',
+        TIMED_OUT: 'TIMED_OUT',
+    },
+    HostScreen: {
+        LOBBY: 'LOBBY',
+        QUESTION_PREVIEW: 'QUESTION_PREVIEW',
+        QUESTION_READING: 'QUESTION_READING',
+        QUESTION_ACTIVE: 'QUESTION_ACTIVE',
+        QUESTION_RESULTS: 'QUESTION_RESULTS',
+        QUIZ_RESULTS: 'QUIZ_RESULTS',
+    },
+    ParticipantScreen: {
+        LOBBY: 'LOBBY',
+        COUNTDOWN: 'COUNTDOWN',
+        QUESTION_MOTIVATION: 'QUESTION_MOTIVATION',
+        QUESTION_READING: 'QUESTION_READING',
+        QUESTION_ACTIVE: 'QUESTION_ACTIVE',
+        QUESTION_RESULTS: 'QUESTION_RESULTS',
+        QUIZ_RESULTS: 'QUIZ_RESULTS',
+    },
+    SpectatorScreen: {
+        LOBBY: 'LOBBY',
+        QUESTION_MOTIVATION: 'QUESTION_MOTIVATION',
+        QUESTION_READING: 'QUESTION_READING',
+        QUESTION_ACTIVE: 'QUESTION_ACTIVE',
+        QUESTION_RESULTS: 'QUESTION_RESULTS',
+        QUIZ_RESULTS: 'QUIZ_RESULTS',
+    },
+    QuizEndScreen: {
+        ARE_YOU_UP: 'ARE_YOU_UP',
+        READY_TO_ANNOUNCE: 'READY_TO_ANNOUNCE',
+        ANNOUNCED: 'ANNOUNCED',
     },
 }));
 
@@ -94,6 +176,13 @@ vi.mock('../../services/init.services.ts', () => ({
     email_service_queue_instance: {
         email_send_otp: vi.fn().mockResolvedValue(undefined),
         email_to_add_collaborators: vi.fn().mockResolvedValue(undefined),
+        email_to_invite_collaborators: vi.fn().mockResolvedValue(undefined),
+        email_winner_notification: vi.fn().mockResolvedValue(undefined),
+    },
+    solanaServiceInstance: {
+        finalize_quiz_onchain: vi.fn().mockResolvedValue('test-signature'),
+        seal_quiz_onchain: vi.fn().mockResolvedValue('test-seal-signature'),
+        verify_transaction: vi.fn().mockResolvedValue(true),
     },
     phaseQueueInstance: {},
     quizManagerInstance: {},

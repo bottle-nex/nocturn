@@ -239,6 +239,27 @@ export default class HostManager {
             return;
         }
 
+        // Atomically claim the launch so a double tap or a replayed message
+        // cannot start the same question twice while the isAsked flag is
+        // still propagating to the quiz cache through the database queue.
+        const is_new_launch = await this.redis_cache.mark_question_launched(
+            game_session_id,
+            question.id,
+        );
+        if (!is_new_launch) {
+            const pub_sub_message_to_host: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
+                payload: {
+                    error: 'Question is already asked',
+                    questionId: questionId,
+                    questionIndex: questionIndex,
+                },
+                only_socket_id: ws.id,
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_host);
+            return;
+        }
+
         const now = Date.now();
         const buffer = 2 * SECONDS;
         const question_reading_time = question.readingTime * SECONDS;
@@ -467,12 +488,20 @@ export default class HostManager {
             return !isKicked;
         });
 
-        // Assign final ranks with tie handling (same score = same rank)
+        // Assign final ranks with tie handling (same score = same rank).
+        // This single ranking drives both the winners shown on screen and the
+        // prize claims that decide who gets paid, so the two cannot disagree.
+        const ranked: { id: string; totalScore: number; finalRank: number }[] = [];
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
             if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
+            ranked.push({
+                id: rankable[i]!.id,
+                totalScore: rankable[i]!.totalScore,
+                finalRank: currentRank,
+            });
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
@@ -483,16 +512,31 @@ export default class HostManager {
             );
         }
 
-        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
+        // Display data comes from the same kicked-filtered, tie-aware list
+        const participants_meta = (await this.redis_cache.get_all_participants(game_session_id, [
+            'nickname',
+            'avatar',
+        ])) as unknown as { id: string; nickname?: string; avatar?: string | null }[];
+        const meta_by_id = new Map(participants_meta.map((entry) => [entry.id, entry]));
+        const display_nickname = (id: string) => meta_by_id.get(id)?.nickname ?? 'Unknown';
+        const display_avatar = (id: string) => meta_by_id.get(id)?.avatar ?? null;
 
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
+        const top_scores = ranked.slice(0, 10).map((entry) => ({
             id: entry.id,
             totalScore: entry.totalScore,
-            finalRank: index + 1,
-            nickname: entry.nickname,
-            avatar: entry.avatar,
+            rank: entry.finalRank,
+            nickname: display_nickname(entry.id),
+            avatar: display_avatar(entry.id),
+        }));
+
+        const total_participants = ranked.length;
+
+        const rankers = ranked.slice(0, 3).map((entry) => ({
+            id: entry.id,
+            totalScore: entry.totalScore,
+            finalRank: entry.finalRank,
+            nickname: display_nickname(entry.id),
+            avatar: display_avatar(entry.id),
         }));
 
         const event_data: PubSubMessageTypes = {
@@ -534,7 +578,7 @@ export default class HostManager {
 
         // Create prize claims for winners if prize pool exists
         if (quiz.prizePool && quiz.prizePool > 0) {
-            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
+            this.create_prize_claims(quiz_id, game_session_id, ranked).catch((err) => {
                 console.error('Failed to create prize claims:', err);
             });
         }
@@ -601,8 +645,30 @@ export default class HostManager {
     private async create_prize_claims(
         quiz_id: string,
         game_session_id: string,
-        rankable: { id: string; totalScore: number }[],
+        ranked: { id: string; totalScore: number; finalRank: number }[],
     ) {
+        // Money is paid per claim record: a replayed results event (double
+        // tap, re-render, reconnect) must never create a second set of claims
+        // with a second wave of "you won" emails.
+        const existing_claim = await prisma.prizeClaim.findFirst({
+            where: { quizId: quiz_id },
+            select: { id: true },
+        });
+        if (existing_claim) {
+            return;
+        }
+
+        // Close the window where two concurrent results events both pass the
+        // database check before either has written its claims
+        const claims_lock_acquired = await this.redis_cache.try_acquire_lock(
+            `game_session:${game_session_id}:prize_claims_created`,
+            quiz_id,
+            300,
+        );
+        if (!claims_lock_acquired) {
+            return;
+        }
+
         const distributions = await prisma.prizeDistribution.findMany({
             where: { quizId: quiz_id },
             orderBy: { rank: 'asc' },
@@ -617,17 +683,13 @@ export default class HostManager {
 
         if (!quiz || !quiz.prizePool) return;
 
-        // Assign finalRanks to rankable (already done in handle_quiz_results)
-        // Build rank-to-participants mapping with tie handling
+        // Build rank-to-participants mapping from the same tie-aware ranks
+        // that were shown on the results screen
         const rankMap = new Map<number, string[]>();
-        let currentRank = 1;
-        for (let i = 0; i < rankable.length; i++) {
-            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
-                currentRank = i + 1;
-            }
-            const existing = rankMap.get(currentRank) || [];
-            existing.push(rankable[i]!.id);
-            rankMap.set(currentRank, existing);
+        for (const entry of ranked) {
+            const existing = rankMap.get(entry.finalRank) || [];
+            existing.push(entry.id);
+            rankMap.set(entry.finalRank, existing);
         }
 
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days

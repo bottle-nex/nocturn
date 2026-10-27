@@ -344,6 +344,49 @@ export default class RedisCache {
         }
     }
 
+    // Atomically claims the answer slot for a participant on a question.
+    // Returns true only for the caller that claimed it first; everyone else
+    // must be rejected. HSETNX is a single Redis command, so two taps that
+    // race cannot both win - unlike a get-then-set across the database queue,
+    // which only records the response a second or more after the first tap.
+    public async set_participant_response_if_absent(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Partial<Response>,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_participant_response_key(game_session_id);
+            const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+
+            const result = await this.redis_cache.hsetnx(key, unique_key, JSON.stringify(response));
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+            return result === 1;
+        } catch (error) {
+            console.error('Error while claiming participant response in cache: ', error);
+            return false;
+        }
+    }
+
+    // Atomically marks a question as launched for a game session. Returns true
+    // only for the first caller, so a double tap on "start" cannot run the
+    // launch pipeline twice while the isAsked flag is still propagating
+    // through the database queue.
+    public async mark_question_launched(
+        game_session_id: string,
+        question_id: string,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_launched_questions_key(game_session_id);
+            const result = await this.redis_cache.hsetnx(key, question_id, Date.now());
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+            return result === 1;
+        } catch (error) {
+            console.error('Error while marking question as launched: ', error);
+            return false;
+        }
+    }
+
     public async get_all_question_responses(
         game_session_id: string,
         question_id: string,
@@ -391,6 +434,10 @@ export default class RedisCache {
 
     private get_participant_response_key(game_session_id: string) {
         return `game_session:${game_session_id}:responses`;
+    }
+
+    private get_launched_questions_key(game_session_id: string) {
+        return `game_session:${game_session_id}:launched_questions`;
     }
 
     //  <------------------ SPECTATOR ------------------>
@@ -908,7 +955,9 @@ export default class RedisCache {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
-            pipeline.zadd(leaderboard_key, 0, participant_id);
+            // NX: participants (re)connect mid-quiz; overwriting an existing
+            // member's score with 0 would wipe the points they already earned
+            pipeline.zadd(leaderboard_key, 'NX', 0, participant_id);
             pipeline.expire(leaderboard_key, 60 * 60 * 24);
             await pipeline.exec();
         } catch (err) {
