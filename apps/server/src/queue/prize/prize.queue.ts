@@ -88,24 +88,34 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
+                // Send the winner notification email only once per claim:
+                // Bull retries the whole job when a later claim fails, and a
+                // winner must not receive the "you won" email twice.
+                const claim_record = await prisma.prizeClaim.findUnique({
                     where: { id: claim.id },
-                    data: { emailSentAt: new Date() },
+                    select: { emailSentAt: true },
                 });
 
-                // Send winner notification email
-                if (claim.participantEmail) {
-                    const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
-                    await email_service_queue_instance.email_winner_notification({
-                        email: claim.participantEmail,
-                        participantName: claim.participantName,
-                        quizTitle: quizTitle,
-                        rank: claim.rank,
-                        prizeAmount: Number(claim.amountBaseUnits) / 1e6,
-                        claimUrl,
-                        expiresAt: claim.expiresAt,
+                if (!claim_record?.emailSentAt) {
+                    // Record the send before queueing the email so a retry of
+                    // this job cannot double-send it
+                    await prisma.prizeClaim.update({
+                        where: { id: claim.id },
+                        data: { emailSentAt: new Date() },
                     });
+
+                    if (claim.participantEmail) {
+                        const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
+                        await email_service_queue_instance.email_winner_notification({
+                            email: claim.participantEmail,
+                            participantName: claim.participantName,
+                            quizTitle: quizTitle,
+                            rank: claim.rank,
+                            prizeAmount: Number(claim.amountBaseUnits) / 1e6,
+                            claimUrl,
+                            expiresAt: claim.expiresAt,
+                        });
+                    }
                 }
             } catch (error) {
                 console.error(`[PrizeQueue] Failed to finalize claim ${claim.id}:`, error);

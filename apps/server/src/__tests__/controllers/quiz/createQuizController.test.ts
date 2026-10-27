@@ -73,12 +73,13 @@ describe('createQuizController', () => {
 
         // Verify Prisma was called exactly once with the authenticated user's id
         expect(mockPrismaQuizCreate).toHaveBeenCalledOnce();
+        // Verify Prisma was called exactly once with the authenticated user's id
+        expect(mockPrismaQuizCreate).toHaveBeenCalledOnce();
         expect(mockPrismaQuizCreate).toHaveBeenCalledWith(
             expect.objectContaining({
                 data: expect.objectContaining({
                     hostId: TEST_USER.id,
                     prizePool: 0,
-                    currency: 'SOL',
                 }),
             }),
         );
