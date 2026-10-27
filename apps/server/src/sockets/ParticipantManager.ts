@@ -496,24 +496,6 @@ export default class ParticipantManager {
             return;
         }
 
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
-            return;
-        }
-
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
         if (!quiz || !participant) {
@@ -529,15 +511,42 @@ export default class ParticipantManager {
             return;
         }
 
+        // Atomic claim: only the first of several fast taps gets scored
+        const is_first_response = await this.redis_cache.claim_participant_response(
+            game_session_id,
+            question.id,
+            participant_id,
+        );
+
+        if (!is_first_response) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: {
+                    error: 'Already opted an option.',
+                },
+                only_socket_id: ws.id,
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            return;
+        }
+
         const answeredAt = Date.now();
         const question_active_time = new Date(game_session.phaseStartTime!).getTime();
         const timeToAnswer = answeredAt - question_active_time;
 
         const isCorrectAnswer = selectedAnswer === question.correctAnswer;
 
-        // Streak
-        const newCurrentStreak = isCorrectAnswer ? (participant.currentStreak ?? 0) + 1 : 0;
-        const newLongestStreak = Math.max(participant.longestStreak ?? 0, newCurrentStreak);
+        // Streak (the cached participant row may still be behind the database worker)
+        const { currentStreak: newCurrentStreak, longestStreak: newLongestStreak } =
+            await this.redis_cache.record_participant_streak(
+                game_session_id,
+                participant_id,
+                isCorrectAnswer,
+                {
+                    currentStreak: participant.currentStreak ?? 0,
+                    longestStreak: participant.longestStreak ?? 0,
+                },
+            );
 
         // Time bonus: up to 50% of basePoints for instant answer, 0 at deadline
         let timeBonus = 0;
@@ -569,10 +578,9 @@ export default class ParticipantManager {
         await this.database_queue.update_participant(
             participant_id,
             {
-                totalScore: (participant.totalScore ?? 0) + pointsEarned,
-                correctAnswers: isCorrectAnswer
-                    ? (participant.correctAnswers ?? 0) + 1
-                    : (participant.correctAnswers ?? 0),
+                // increments, not absolute values: the cached totals can be stale
+                totalScore: { increment: pointsEarned },
+                correctAnswers: { increment: isCorrectAnswer ? 1 : 0 },
                 currentStreak: newCurrentStreak,
                 longestStreak: newLongestStreak,
             },

@@ -385,6 +385,73 @@ export default class RedisCache {
         }
     }
 
+    /**
+     * Atomically marks a participant as having answered a question. Returns true only
+     * for the first caller, so concurrent taps cannot both be scored. The response
+     * itself is cached later by the database worker, which is too late to dedupe on.
+     */
+    public async claim_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_answered_key(game_session_id);
+            const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+            const claimed = await this.redis_cache.hsetnx(key, unique_key, '1');
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+            return claimed === 1;
+        } catch (error) {
+            console.error('Error while claiming participant response: ', error);
+            return false;
+        }
+    }
+
+    private get_answered_key(game_session_id: string) {
+        return `game_session:${game_session_id}:answered`;
+    }
+
+    //  <------------------ STREAK ------------------>
+
+    /**
+     * Streaks live in their own hash that only the answer handler writes, so they are
+     * never rolled back by the database worker re-caching an older participant row.
+     */
+    public async record_participant_streak(
+        game_session_id: string,
+        participant_id: string,
+        is_correct: boolean,
+        fallback: { currentStreak: number; longestStreak: number },
+    ): Promise<{ currentStreak: number; longestStreak: number }> {
+        const key = this.get_streak_key(game_session_id);
+        const [current_raw, longest_raw] = await this.redis_cache.hmget(
+            key,
+            `${participant_id}:current`,
+            `${participant_id}:longest`,
+        );
+        const previous_current =
+            current_raw !== null ? Number(current_raw) : fallback.currentStreak;
+        const previous_longest =
+            longest_raw !== null ? Number(longest_raw) : fallback.longestStreak;
+
+        const currentStreak = is_correct ? previous_current + 1 : 0;
+        const longestStreak = Math.max(previous_longest, currentStreak);
+
+        await this.redis_cache.hset(
+            key,
+            `${participant_id}:current`,
+            String(currentStreak),
+            `${participant_id}:longest`,
+            String(longestStreak),
+        );
+        await this.redis_cache.expire(key, 60 * 60 * 24);
+        return { currentStreak, longestStreak };
+    }
+
+    private get_streak_key(game_session_id: string) {
+        return `game_session:${game_session_id}:streaks`;
+    }
+
     private get_unique_key_to_response(question_id: string, participant_id: string) {
         return `${question_id}_${participant_id}`;
     }
@@ -908,7 +975,8 @@ export default class RedisCache {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
-            pipeline.zadd(leaderboard_key, 0, participant_id);
+            // NX: a reconnecting participant must keep the score they already have
+            pipeline.zadd(leaderboard_key, 'NX', 0, participant_id);
             pipeline.expire(leaderboard_key, 60 * 60 * 24);
             await pipeline.exec();
         } catch (err) {
