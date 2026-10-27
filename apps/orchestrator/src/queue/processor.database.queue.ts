@@ -129,11 +129,9 @@ export class DatabaseQueueProcessors {
                 updatedParticipant,
             );
 
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            // The live leaderboard is owned by the server (ZINCRBY per answer). Writing the
+            // database total back here would roll it back while jobs lag behind, and would
+            // re-add participants who were kicked off it.
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {

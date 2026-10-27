@@ -88,14 +88,15 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
-                    where: { id: claim.id },
+                // Mark the email as sent only if no earlier attempt did. Bull retries the
+                // whole job, so without this every retry re-emails the claims already done.
+                const { count: newly_marked } = await prisma.prizeClaim.updateMany({
+                    where: { id: claim.id, emailSentAt: null },
                     data: { emailSentAt: new Date() },
                 });
 
                 // Send winner notification email
-                if (claim.participantEmail) {
+                if (newly_marked === 1 && claim.participantEmail) {
                     const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
                     await email_service_queue_instance.email_winner_notification({
                         email: claim.participantEmail,
