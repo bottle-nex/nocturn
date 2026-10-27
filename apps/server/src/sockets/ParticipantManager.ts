@@ -521,6 +521,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (participant.isKicked) {
+            console.error('Kicked participant attempted to answer');
+            return;
+        }
+
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
         console.log('question is : ', question);
 
@@ -641,7 +646,15 @@ export default class ParticipantManager {
                     { isKicked: true },
                     game_session_id,
                 );
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                });
                 await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+
+                ws.close(
+                    socket_codes.PARTICIPANT_KICKED,
+                    'You have been kicked for leaving full-screen mode too many times',
+                );
                 return;
             }
 
@@ -704,10 +717,11 @@ export default class ParticipantManager {
         quizId: string,
         participantId: string,
     ): Promise<boolean> {
-        const participant = await prisma.participant.findUnique({
+        const participant = await prisma.participant.findFirst({
             where: {
                 id: participantId,
                 quizId: quizId,
+                isKicked: false,
             },
         });
         return !!participant;
