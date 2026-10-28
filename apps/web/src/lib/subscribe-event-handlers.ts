@@ -61,10 +61,12 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null || !('userId' in payload)) return;
         const message = payload as { userId: string };
 
-        const { participantData } = useLiveParticipantStore.getState();
+        const { participantData, updateParticipantData } = useLiveParticipantStore.getState();
         const { removeParticipant } = useLiveParticipantsStore.getState();
         removeParticipant(message.userId);
-        if (message.userId === participantData?.id) participantData.isKicked = true;
+        if (participantData && message.userId === participantData.id) {
+            updateParticipantData({ id: participantData.id, isKicked: true });
+        }
     }
 
     // <---------------------- GAME-SESSION-EVENTS ---------------------->

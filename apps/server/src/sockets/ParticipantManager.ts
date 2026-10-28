@@ -472,6 +472,11 @@ export default class ParticipantManager {
     private async handle_participant_response(payload: any, ws: GameWebSocket) {
         const { userId: participant_id, gameSessionId: game_session_id } = ws.user;
 
+        if (await this.is_participant_kicked(game_session_id, participant_id)) {
+            ws.close();
+            return;
+        }
+
         const { selectedAnswer } = payload;
 
         if (typeof selectedAnswer !== 'number') {
@@ -617,10 +622,24 @@ export default class ParticipantManager {
         // this.database_queue.delete_participant(user_id, game_session_id);
     }
 
+    private async is_participant_kicked(
+        game_session_id: string,
+        participant_id: string,
+    ): Promise<boolean> {
+        const participants_key = this.redis_cache.get_participants_key(game_session_id);
+        const value = await this.redis_cache.redis_cache.hget(
+            participants_key,
+            `${participant_id}:isKicked`,
+        );
+        return value ? JSON.parse(value) === true : false;
+    }
+
     private async handle_participant_warning_count(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
         const { userId: participant_id } = ws.user;
         const participants_key = this.redis_cache.get_participants_key(game_session_id);
+
+        if (await this.is_participant_kicked(game_session_id, participant_id)) return;
 
         try {
             const new_warning_count = await this.redis_cache.redis_cache.hincrby(
@@ -630,6 +649,11 @@ export default class ParticipantManager {
             );
 
             if (new_warning_count >= 5) {
+                await this.redis_cache.redis_cache.hset(
+                    participants_key,
+                    `${participant_id}:isKicked`,
+                    JSON.stringify(true),
+                );
                 const event_data: PubSubMessageTypes = {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
@@ -642,6 +666,7 @@ export default class ParticipantManager {
                     game_session_id,
                 );
                 await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+                ws.close();
                 return;
             }
 
@@ -710,7 +735,7 @@ export default class ParticipantManager {
                 quizId: quizId,
             },
         });
-        return !!participant;
+        return !!participant && !participant.isKicked;
     }
 
     private generateSocketId(): string {
