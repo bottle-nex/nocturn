@@ -907,6 +907,15 @@ export default class RedisCache {
         }
     }
 
+    public async remove_from_leaderboard(game_session_id: string, participant_id: string) {
+        try {
+            const leaderboard_key = this.get_leaderboard_key(game_session_id);
+            await this.redis_cache.zrem(leaderboard_key, participant_id);
+        } catch (err) {
+            console.error('Error in remove_from_leaderboard:', err);
+        }
+    }
+
     public get_leaderboard_key(game_session_id: string): string {
         return `game_session:${game_session_id}:leaderboard`;
     }
