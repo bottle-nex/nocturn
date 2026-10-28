@@ -55,12 +55,22 @@ export default class ParticipantManager {
         ws: GameWebSocket,
         decoded_cookie_payload: LiveGameTokenPayload,
     ) {
-        const is_valid_participant = await this.validate_participant_in_db(
+        const db_participant = await this.get_participant_from_db(
             decoded_cookie_payload.quizId,
             decoded_cookie_payload.userId,
         );
-        if (!is_valid_participant) {
+        if (!db_participant) {
             ws.close();
+            return;
+        }
+
+        // the cache is updated as soon as a participant is kicked, the db only once the queue job runs
+        const cached_participant = await this.redis_cache.get_participant(
+            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.userId,
+        );
+        if (db_participant.isKicked || cached_participant?.isKicked) {
+            ws.close(socket_codes.KICKED, 'You have been kicked from this quiz');
             return;
         }
 
@@ -521,6 +531,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (participant.isKicked) {
+            console.error('Kicked participant tried to respond');
+            return;
+        }
+
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
         console.log('question is : ', question);
 
@@ -630,9 +645,17 @@ export default class ParticipantManager {
             );
 
             if (new_warning_count >= 5) {
+                // mark the kick in the cache right away so responses and reconnects are rejected
+                // before the queued db update is processed
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                });
+                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+
                 const event_data: PubSubMessageTypes = {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
+                    exclude_socket_id: ws.id,
                 };
                 this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
@@ -641,7 +664,17 @@ export default class ParticipantManager {
                     { isKicked: true },
                     game_session_id,
                 );
-                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+
+                // tell the kicked participant directly, then drop their connection
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.send(
+                        JSON.stringify({
+                            type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
+                            payload: { userId: participant_id },
+                        }),
+                    );
+                    ws.close(socket_codes.KICKED, 'You have been kicked from this quiz');
+                }
                 return;
             }
 
@@ -700,17 +733,14 @@ export default class ParticipantManager {
         }
     }
 
-    private async validate_participant_in_db(
-        quizId: string,
-        participantId: string,
-    ): Promise<boolean> {
-        const participant = await prisma.participant.findUnique({
+    private async get_participant_from_db(quizId: string, participantId: string) {
+        return await prisma.participant.findUnique({
             where: {
                 id: participantId,
                 quizId: quizId,
             },
+            select: { id: true, isKicked: true },
         });
-        return !!participant;
     }
 
     private generateSocketId(): string {
