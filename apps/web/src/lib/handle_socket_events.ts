@@ -1,4 +1,5 @@
 import { LivePage, useSocketActionStore } from '@/store/socket.actions/useSocketActionStore';
+import { useLiveParticipantStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import { socket_codes } from '@nocturn/types';
 
 export default class WebSocketEvents {
@@ -7,8 +8,18 @@ export default class WebSocketEvents {
             case socket_codes.SPECTATOR_LIMIT_REACHED:
                 this.handle_spectator_limit_reached();
                 break;
+            case socket_codes.PARTICIPANT_KICKED:
+                this.handle_participant_kicked();
+                break;
             default:
                 break;
+        }
+    }
+
+    static handle_participant_kicked() {
+        const { participantData, updateParticipantData } = useLiveParticipantStore.getState();
+        if (participantData) {
+            updateParticipantData({ id: participantData.id, isKicked: true });
         }
     }
 

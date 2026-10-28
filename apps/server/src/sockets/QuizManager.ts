@@ -35,7 +35,7 @@ export default class QuizManager {
             decoded_cookie_payload.gameSessionId,
             particpant_id,
         );
-        if (!particicpant_cache) {
+        if (!particicpant_cache || particicpant_cache.isKicked) {
             return;
         }
         await this.redis_cache.init_leaderboard_entry(

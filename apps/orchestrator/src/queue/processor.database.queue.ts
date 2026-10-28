@@ -129,11 +129,18 @@ export class DatabaseQueueProcessors {
                 updatedParticipant,
             );
 
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            if (updatedParticipant.isKicked) {
+                await this.redis_cache.remove_from_leaderboard(
+                    game_session_id,
+                    updatedParticipant.id,
+                );
+            } else {
+                await this.redis_cache.set_leaderboard_score(
+                    game_session_id,
+                    updatedParticipant.id,
+                    updatedParticipant.totalScore,
+                );
+            }
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {

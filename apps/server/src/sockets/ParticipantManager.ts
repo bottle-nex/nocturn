@@ -64,6 +64,15 @@ export default class ParticipantManager {
             return;
         }
 
+        const is_valid_participant_in_cache = await this.validate_participant_in_cache(
+            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.userId,
+        );
+        if (!is_valid_participant_in_cache) {
+            ws.close(socket_codes.PARTICIPANT_KICKED, 'Kicked participants cannot rejoin');
+            return;
+        }
+
         this.cleanup_existing_partiicpant_socket(
             decoded_cookie_payload.userId,
             decoded_cookie_payload.gameSessionId,
@@ -521,6 +530,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (participant.isKicked) {
+            console.error('Kicked participant attempted to answer');
+            return;
+        }
+
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
         console.log('question is : ', question);
 
@@ -634,7 +648,11 @@ export default class ParticipantManager {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
                 };
-                this.quizManager.publish_event_to_redis(game_session_id, event_data);
+                await this.quizManager.publish_event_to_redis(game_session_id, event_data);
+
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                });
 
                 await this.database_queue.update_participant(
                     participant_id,
@@ -642,6 +660,11 @@ export default class ParticipantManager {
                     game_session_id,
                 );
                 await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+
+                ws.close(
+                    socket_codes.PARTICIPANT_KICKED,
+                    'Kicked after repeated full-screen violations',
+                );
                 return;
             }
 
@@ -710,7 +733,15 @@ export default class ParticipantManager {
                 quizId: quizId,
             },
         });
-        return !!participant;
+        return !!participant && !participant.isKicked;
+    }
+
+    private async validate_participant_in_cache(
+        gameSessionId: string,
+        participantId: string,
+    ): Promise<boolean> {
+        const participant = await this.redis_cache.get_participant(gameSessionId, participantId);
+        return !participant?.isKicked;
     }
 
     private generateSocketId(): string {
