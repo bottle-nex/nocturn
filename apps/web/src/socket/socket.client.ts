@@ -1,4 +1,5 @@
 import WebSocketEvents from '@/lib/handle_socket_events';
+import { useSocketConnectionStore } from '@/store/socket.actions/useSocketConnectionStore';
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
 
 export interface MessagePayload {
@@ -42,6 +43,7 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            useSocketConnectionStore.getState().onSocketOpen();
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
@@ -55,6 +57,7 @@ export default class WebSocketClient {
 
         this.ws.onclose = (event: CloseEvent) => {
             this.is_connected = false;
+            useSocketConnectionStore.getState().onSocketClose();
 
             if (this.reconnect_timeout) {
                 clearTimeout(this.reconnect_timeout);

@@ -150,6 +150,14 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             return;
         }
 
+        const [topScores, totalParticipants, myRank] = await Promise.all([
+            redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+            redisCacheInstance.get_leaderboard_count(gameSessionId),
+            role === USER_TYPE.PARTICIPANT
+                ? redisCacheInstance.get_participant_rank(gameSessionId, userId)
+                : Promise.resolve(null),
+        ]);
+
         const sanitizedGameSession = QuizAction.sanitizeGameSession(gameSession, role);
 
         let currentQuestion: Partial<QuestionType> | null = null;
@@ -202,6 +210,11 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            ...(topScores.length > 0 && { topScores, totalParticipants }),
+            ...(role === USER_TYPE.PARTICIPANT && {
+                myRank,
+                myScore: (userData as Partial<ParticipantType>).totalScore ?? 0,
+            }),
         };
 
         ResponseWriter.secure_success(res, {
@@ -242,6 +255,7 @@ async function fallbackToDatabase(
                 currentPhase: true,
                 phaseEndTime: true,
                 phaseStartTime: true,
+                quizEndScreen: true,
             },
         });
 
@@ -319,6 +333,33 @@ async function fallbackToDatabase(
             select: { id: true, nickname: true, avatar: true },
         });
 
+        const leaderboardRows = await tx.participant.findMany({
+            where: { quizId, isKicked: false },
+            orderBy: [{ totalScore: 'desc' }],
+            select: { id: true, nickname: true, avatar: true, totalScore: true },
+            take: 10,
+        });
+        const topScores = leaderboardRows.map(
+            (
+                participant: {
+                    id: string;
+                    nickname: string;
+                    avatar: string | null;
+                    totalScore: number;
+                },
+                index: number,
+            ) => ({
+                id: participant.id,
+                totalScore: participant.totalScore,
+                rank: index + 1,
+                nickname: participant.nickname,
+                avatar: participant.avatar,
+            }),
+        );
+        const totalParticipants = await tx.participant.count({
+            where: { quizId, isKicked: false },
+        });
+
         let userData = null;
         let participantResponse = null;
 
@@ -380,6 +421,26 @@ async function fallbackToDatabase(
                 break;
         }
 
+        let myRank: number | null = null;
+        let myScore: number | null = null;
+        const participantUserData = userData as {
+            id?: string;
+            totalScore?: number;
+            finalRank?: number | null;
+        } | null;
+        if (role === USER_TYPE.PARTICIPANT && participantUserData?.id) {
+            const participantScore = participantUserData.totalScore ?? 0;
+            myScore = participantScore;
+            if (participantUserData.finalRank) {
+                myRank = participantUserData.finalRank;
+            } else {
+                const greaterCount = await tx.participant.count({
+                    where: { quizId, isKicked: false, totalScore: { gt: participantScore } },
+                });
+                myRank = greaterCount + 1;
+            }
+        }
+
         return {
             gameSession,
             quiz,
@@ -389,6 +450,10 @@ async function fallbackToDatabase(
             userData,
             participantResponse,
             askedQuestionCount,
+            topScores,
+            totalParticipants,
+            myRank,
+            myScore,
         };
     });
 
@@ -423,6 +488,11 @@ async function fallbackToDatabase(
         role,
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
+        ...(result.topScores.length > 0 && {
+            topScores: result.topScores,
+            totalParticipants: result.totalParticipants,
+        }),
+        ...(result.myRank !== null && { myRank: result.myRank, myScore: result.myScore }),
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
