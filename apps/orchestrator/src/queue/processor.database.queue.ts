@@ -129,11 +129,14 @@ export class DatabaseQueueProcessors {
                 updatedParticipant,
             );
 
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            // a kicked participant must not be put back on the leaderboard
+            if (!updatedParticipant.isKicked) {
+                await this.redis_cache.set_leaderboard_score(
+                    game_session_id,
+                    updatedParticipant.id,
+                    updatedParticipant.totalScore,
+                );
+            }
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {
