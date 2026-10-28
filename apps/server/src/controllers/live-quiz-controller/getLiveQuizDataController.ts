@@ -192,6 +192,14 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             quizResponse.participantCode = quiz.participantCode;
         }
 
+        const resultsSnapshot = await getResultsSnapshot(
+            gameSessionId,
+            role,
+            userId,
+            gameSession.hostScreen as HostScreen,
+            gameSession.currentQuestionId ?? null,
+        );
+
         const responseData = {
             quiz: quizResponse,
             gameSession: sanitizedGameSession,
@@ -202,6 +210,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            ...resultsSnapshot,
         };
 
         ResponseWriter.secure_success(res, {
@@ -413,6 +422,13 @@ async function fallbackToDatabase(
     }
 
     const chatData = await getChatsController(role, gameSessionId, quizId);
+    const resultsSnapshot = await getResultsSnapshot(
+        gameSessionId,
+        role,
+        userId,
+        result.gameSession.hostScreen,
+        result.gameSession.currentQuestionId ?? null,
+    );
     const responseData = {
         quiz: result.quiz,
         gameSession: sanitizedGameSession,
@@ -424,10 +440,51 @@ async function fallbackToDatabase(
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
         ...(chatData.messages && { messages: chatData.messages }),
+        ...resultsSnapshot,
     };
 
     ResponseWriter.secure_success(res, {
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+// Results data is otherwise only delivered by the QUESTION_RESULTS / QUIZ_RESULTS socket
+// events, so a client that refreshes or reconnects after those events would render an empty
+// results screen. Mirror what those events carry so the snapshot is complete on its own.
+async function getResultsSnapshot(
+    gameSessionId: string,
+    role: USER_TYPE,
+    userId: string,
+    hostScreen: HostScreen | null | undefined,
+    currentQuestionId: string | null,
+): Promise<Pick<getLiveQuizDataResponse, 'leaderboard' | 'responses'>> {
+    const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+        role === USER_TYPE.PARTICIPANT
+            ? redisCacheInstance.get_participant_rank(gameSessionId, userId)
+            : Promise.resolve(null),
+        role === USER_TYPE.PARTICIPANT
+            ? redisCacheInstance.get_participant_score(gameSessionId, userId)
+            : Promise.resolve(null),
+    ]);
+
+    let responses: getLiveQuizDataResponse['responses'];
+    if (
+        hostScreen === HostScreen.QUESTION_RESULTS &&
+        currentQuestionId &&
+        role !== USER_TYPE.HOST
+    ) {
+        responses = await redisCacheInstance.get_all_question_responses(
+            gameSessionId,
+            currentQuestionId,
+            ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+        );
+    }
+
+    return {
+        leaderboard: { topScores, totalParticipants, myRank, myScore },
+        ...(responses && { responses }),
+    };
 }
