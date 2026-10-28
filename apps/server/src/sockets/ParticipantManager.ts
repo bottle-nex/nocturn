@@ -59,7 +59,12 @@ export default class ParticipantManager {
             decoded_cookie_payload.quizId,
             decoded_cookie_payload.userId,
         );
-        if (!is_valid_participant) {
+        // the database update for a kick is queued, so check the cache as well
+        const cached_participant = await this.redis_cache.get_participant(
+            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.userId,
+        );
+        if (!is_valid_participant || cached_participant?.isKicked) {
             ws.close();
             return;
         }
@@ -521,6 +526,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (participant.isKicked) {
+            console.error('Kicked participant cannot respond');
+            return;
+        }
+
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
         console.log('question is : ', question);
 
@@ -630,6 +640,14 @@ export default class ParticipantManager {
             );
 
             if (new_warning_count >= 5) {
+                // mark the kick in the cache right away so answers, refreshes and
+                // reconnects are rejected before the database queue catches up
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                    warningCount: new_warning_count,
+                });
+                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+
                 const event_data: PubSubMessageTypes = {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
@@ -638,10 +656,9 @@ export default class ParticipantManager {
 
                 await this.database_queue.update_participant(
                     participant_id,
-                    { isKicked: true },
+                    { isKicked: true, warningCount: new_warning_count },
                     game_session_id,
                 );
-                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
                 return;
             }
 
@@ -709,8 +726,9 @@ export default class ParticipantManager {
                 id: participantId,
                 quizId: quizId,
             },
+            select: { isKicked: true },
         });
-        return !!participant;
+        return !!participant && !participant.isKicked;
     }
 
     private generateSocketId(): string {
