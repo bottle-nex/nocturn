@@ -204,7 +204,11 @@ export default class SubscriberManager {
                 this.broadcast_to_session(session_id, message, [USER_TYPE.SPECTATOR]);
                 break;
             case MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT:
-                this.broadcast_to_session(session_id, message, [USER_TYPE.PARTICIPANT]);
+                this.send_to_participants(
+                    session_id,
+                    { type: message.type, payload: message.payload },
+                    message.requestingParticipants ?? [],
+                );
                 break;
             case MESSAGE_TYPES.SPECTATOR_LIFELINE_RESPONSE:
                 this.broadcast_to_session(
@@ -258,6 +262,24 @@ export default class SubscriberManager {
             const collaborator_socket = this.socket_mapping.get(socket_id);
             if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
                 collaborator_socket.send(JSON.stringify(message));
+            }
+        });
+    }
+
+    private send_to_participants(game_session_id: string, message: any, participant_ids: string[]) {
+        const participant_socket_ids = this.session_participants_mapping.get(game_session_id);
+        if (!participant_socket_ids || participant_ids.length === 0) {
+            return;
+        }
+
+        participant_socket_ids.forEach((socket_id: string) => {
+            const participant_socket = this.socket_mapping.get(socket_id);
+            if (
+                participant_socket?.user &&
+                participant_ids.includes(participant_socket.user.userId) &&
+                participant_socket.readyState === WebSocket.OPEN
+            ) {
+                participant_socket.send(JSON.stringify(message));
             }
         });
     }

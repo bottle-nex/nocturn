@@ -39,12 +39,18 @@ export class DatabaseQueueProcessors {
     async lifeline_expiry_processor(job: Bull.Job): Promise<{ success: boolean }> {
         const { game_session_id, question_id } = job.data;
 
+        const session = await this.redis_cache.get_active_lifeline_session(
+            game_session_id,
+            question_id,
+        );
         const results = await this.redis_cache.get_lifeline_results(game_session_id, question_id);
 
-        if (results) {
+        if (session && results) {
             await this.redis_cache.delete_active_lifeline_session(game_session_id, question_id);
             this.publisher.publish_event_to_redis(game_session_id, {
                 type: MESSAGE_TYPES.LIFELINE_RESULT_TO_PARTICIPANT,
+                // only the participants who asked for the lifeline should receive the result
+                requestingParticipants: session.requestingParticipants,
                 payload: {
                     questionId: question_id,
                     mostPopularOption: results.mostPopularOption,
