@@ -59,7 +59,11 @@ export default class ParticipantManager {
             decoded_cookie_payload.quizId,
             decoded_cookie_payload.userId,
         );
-        if (!is_valid_participant) {
+        const cached_participant = await this.redis_cache.get_participant(
+            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.userId,
+        );
+        if (!is_valid_participant || cached_participant?.isKicked) {
             ws.close();
             return;
         }
@@ -521,6 +525,11 @@ export default class ParticipantManager {
             return;
         }
 
+        if (participant.isKicked) {
+            console.error('Kicked participant tried to respond');
+            return;
+        }
+
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
         console.log('question is : ', question);
 
@@ -630,6 +639,11 @@ export default class ParticipantManager {
             );
 
             if (new_warning_count >= 5) {
+                // mark kicked in cache first so responses, reconnects and live data reject them
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                });
+
                 const event_data: PubSubMessageTypes = {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
@@ -708,6 +722,7 @@ export default class ParticipantManager {
             where: {
                 id: participantId,
                 quizId: quizId,
+                isKicked: false,
             },
         });
         return !!participant;
