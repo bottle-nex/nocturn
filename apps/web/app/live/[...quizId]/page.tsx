@@ -18,6 +18,8 @@ import {
 } from '@nocturn/types';
 
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
+import { SOCKET_RECONNECTED_EVENT } from '@/socket/socket.client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
@@ -45,11 +47,14 @@ export default function New({ params }: NewProps) {
     const { setSpectatorData } = useLiveSpectatorStore();
     const { setCurrentUserType } = useUserRoleStore();
     const { setChatMessages } = useLiveQuizGlobalChatStore();
-    const { setParticipants, setResponse } = useLiveParticipantsStore();
+    const { setParticipants, setResponse, resetResponse, setResponses } =
+        useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
 
+    const { setTopLeaderboard, setMyRank } = useLeaderboardStore();
+
     useEffect(() => {
-        async function getLiveData() {
+        async function getLiveData(isResync: boolean) {
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
                     `${LIVE_QUIZ_DATA_URL}/${quizId}`,
@@ -59,18 +64,51 @@ export default function New({ params }: NewProps) {
                 );
                 if (response.success && response.data) {
                     const data = response.data;
+                    const previousQuestionId =
+                        useLiveQuizStore.getState().gameSession?.currentQuestionId;
                     updateQuiz(data.quiz);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
-                    setChatMessages(data.messages || []);
+                    // the cache path does not return chats; keep the ones already loaded
+                    if (!isResync || data.messages) {
+                        setChatMessages(data.messages || []);
+                    }
+                    // the store merges question fields, so drop the stale question first
+                    // when we missed a question change while disconnected
+                    if (isResync) {
+                        useLiveQuizStore.setState({ currentQuestion: null });
+                        if (previousQuestionId !== data.gameSession.currentQuestionId) {
+                            const { resetLiveResponses, clearLifelineData } =
+                                useLiveQuizStore.getState();
+                            resetLiveResponses();
+                            clearLifelineData();
+                        }
+                    }
                     // if not found meand all questions asked
                     if (data.currentQuestion) {
-                        updateCurrentQuestion(data.currentQuestion);
+                        updateCurrentQuestion({
+                            ...(data.gameSession.currentQuestionId && {
+                                id: data.gameSession.currentQuestionId,
+                            }),
+                            ...data.currentQuestion,
+                        });
                     }
                     if (data.response) {
                         setResponse(data.response);
+                    } else if (isResync) {
+                        resetResponse();
+                    }
+                    if (data.responses) {
+                        setResponses(data.responses);
+                    }
+                    if (data.leaderboard) {
+                        const { topScores, totalParticipants, myRank, myScore } = data.leaderboard;
+                        setTopLeaderboard(topScores);
+                        if (myRank !== null) {
+                            setMyRank(myRank, myScore ?? 0, totalParticipants);
+                        }
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
@@ -94,7 +132,13 @@ export default function New({ params }: NewProps) {
                 console.error('Error fetching live data:', error);
             }
         }
-        getLiveData();
+        getLiveData(false);
+
+        // phase events broadcast while the socket was down are never replayed, so pull the
+        // current state again instead of waiting for the next phase change
+        const handleReconnect = () => getLiveData(true);
+        window.addEventListener(SOCKET_RECONNECTED_EVENT, handleReconnect);
+        return () => window.removeEventListener(SOCKET_RECONNECTED_EVENT, handleReconnect);
     }, [
         quizId,
         updateGameSession,
@@ -109,6 +153,10 @@ export default function New({ params }: NewProps) {
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
         setResponse,
+        resetResponse,
+        setResponses,
+        setTopLeaderboard,
+        setMyRank,
         router,
     ]);
 
