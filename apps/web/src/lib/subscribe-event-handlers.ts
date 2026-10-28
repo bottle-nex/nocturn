@@ -61,10 +61,12 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null || !('userId' in payload)) return;
         const message = payload as { userId: string };
 
-        const { participantData } = useLiveParticipantStore.getState();
+        const { participantData, updateParticipantData } = useLiveParticipantStore.getState();
         const { removeParticipant } = useLiveParticipantsStore.getState();
         removeParticipant(message.userId);
-        if (message.userId === participantData?.id) participantData.isKicked = true;
+        if (message.userId === participantData?.id) {
+            updateParticipantData({ id: message.userId, isKicked: true });
+        }
     }
 
     // <---------------------- GAME-SESSION-EVENTS ---------------------->
@@ -152,10 +154,12 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null || !('userId' in payload)) return;
         const { userId } = payload as { userId: string };
         const { removeSpectator } = useLiveSpectatorsStore.getState();
-        const { spectatorData } = useLiveSpectatorStore.getState();
+        const { spectatorData, updateSpectatorData } = useLiveSpectatorStore.getState();
 
         removeSpectator(userId);
-        if (userId === spectatorData?.id) spectatorData.isKicked = true;
+        if (userId === spectatorData?.id) {
+            updateSpectatorData({ id: userId, isKicked: true });
+        }
     }
 
     static handleSpectatorIncomingReadingPhase(payload: unknown) {

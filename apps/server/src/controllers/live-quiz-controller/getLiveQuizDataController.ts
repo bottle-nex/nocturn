@@ -44,7 +44,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
         const [batchResult] = await Promise.all([
             redisCacheInstance.get_live_quiz_batch(
                 gameSessionId,
-                ['id', 'nickname', 'avatar', 'totalScore', 'finalRank'],
+                ['id', 'nickname', 'avatar', 'totalScore', 'finalRank', 'isKicked'],
                 ['id', 'nickname', 'avatar'],
             ),
         ]);
@@ -196,7 +196,9 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             quiz: quizResponse,
             gameSession: sanitizedGameSession,
             userData,
-            participants: cachedParticipants.slice(0, 20),
+            participants: cachedParticipants
+                .filter((participant) => !participant.isKicked)
+                .slice(0, 20),
             spectators: cachedSpectators,
             currentQuestion,
             role,
