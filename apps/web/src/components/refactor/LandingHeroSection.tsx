@@ -95,7 +95,7 @@ function LiveActivityCard() {
                         type="button"
                         title="React"
                         onClick={() => triggerReaction(personId, index)}
-                        className="p-1 rounded-full transition-transform duration-150 ease-in-out hover:scale-125 active:scale-90 cursor-pointer"
+                        className="p-1 rounded-sm bg-white border-2 border-black shadow-[2px_2px_0_0_#000] transition-all duration-150 ease-in-out hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none cursor-pointer"
                     >
                         <Icon size={12} style={{ color }} />
                     </button>
@@ -137,10 +137,15 @@ function LiveActivityCard() {
     );
 
     return (
-        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
-            <div className="flex gap-x-1.5 px-1 py-px text-dark-base/80 items-center">
-                <FaGamepad size={28} />
-                Nocturn
+        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-[#FFF4D6] rounded-lg border-[3px] border-black shadow-[6px_6px_0_0_#000]">
+            <div className="flex gap-x-1.5 px-2 py-0.5 -mx-1 items-center justify-between text-dark-base font-bold border-b-[3px] border-black">
+                <span className="flex items-center gap-x-1.5">
+                    <FaGamepad size={24} />
+                    Nocturn
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-wider bg-[#FF6B6B] text-black border-2 border-black px-1.5 py-px rounded-sm">
+                    Live
+                </span>
             </div>
 
             {order.map((person, index) => {
@@ -154,29 +159,16 @@ function LiveActivityCard() {
                         className={cn(
                             'flex gap-x-2 items-center relative',
                             index === 0 && 'mt-4',
-                            isParticipant && 'mt-2 rounded-xl p-1',
+                            isParticipant &&
+                                'mt-2 rounded-md p-1 bg-[#B8F2D0] border-2 border-black shadow-[3px_3px_0_0_#000]',
                             index === 2 && 'mt-3',
                         )}
-                        {...(isParticipant && {
-                            animate: {
-                                boxShadow: [
-                                    '0 0 0 1px rgba(79,70,229,0.3)',
-                                    '0 0 0 3px rgba(79,70,229,0.15)',
-                                    '0 0 0 1px rgba(79,70,229,0.3)',
-                                ],
-                            },
-                        })}
-                        {...(!isParticipant && {
-                            animate: { boxShadow: '0 0 0 0px rgba(0,0,0,0)' },
-                        })}
                     >
                         <motion.div
                             layout
                             className={cn(
-                                'shrink-0 overflow-hidden relative',
-                                isParticipant
-                                    ? 'h-10 w-10 rounded-[10px] ring-1 ring-alpha'
-                                    : 'h-12 w-12 rounded-xl',
+                                'shrink-0 overflow-hidden relative border-2 border-black',
+                                isParticipant ? 'h-10 w-10 rounded-md' : 'h-12 w-12 rounded-md',
                             )}
                         >
                             <Image
@@ -189,23 +181,25 @@ function LiveActivityCard() {
                         </motion.div>
 
                         <div className="flex flex-col min-w-0 flex-1">
-                            <span className="text-dark-base/80 text-xs font-medium truncate">
+                            <span className="text-dark-base text-xs font-bold truncate">
                                 {person.name}
                             </span>
                             {isParticipant ? (
                                 <div className="flex items-center gap-x-1">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                                    <span className="text-green-600/80 text-[10px] font-medium">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-green-600 border border-black animate-pulse" />
+                                    <span className="text-dark-base text-[10px] font-semibold">
                                         Playing
                                     </span>
                                 </div>
                             ) : (
-                                <span className="text-dark-base/40 text-[10px]">Spectator</span>
+                                <span className="text-dark-base/60 text-[10px] font-medium">
+                                    Spectator
+                                </span>
                             )}
                         </div>
 
                         {isParticipant ? (
-                            <BsThreeDotsVertical className="text-dark-base/10 size-6" />
+                            <BsThreeDotsVertical className="text-dark-base/60 size-5" />
                         ) : (
                             renderReactionButtons(person.id)
                         )}
@@ -248,7 +242,7 @@ function MockChat({
 }) {
     return (
         <div className="flex-1 min-h-0 flex flex-col gap-y-3 justify-end overflow-hidden py-2 relative">
-            <div className="absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-[#FFE1EC] to-transparent z-10 pointer-events-none" />
             {chatMessages.slice(0, visibleCount).map((msg, i) => {
                 const isUser = msg.side === 'user';
                 const hasText = revealedText.has(i);
@@ -268,10 +262,8 @@ function MockChat({
                     >
                         <div
                             className={cn(
-                                'rounded-lg text-[12px] leading-tight max-w-[80%] px-2.5 py-1.5 overflow-hidden',
-                                isUser
-                                    ? 'bg-alpha text-light-alpha'
-                                    : 'bg-light-base text-dark-base/70',
+                                'rounded-md text-[12px] leading-tight max-w-[80%] px-2.5 py-1.5 overflow-hidden border-2 border-black shadow-[3px_3px_0_0_#000] font-medium',
+                                isUser ? 'bg-alpha text-light-alpha' : 'bg-white text-dark-base',
                             )}
                         >
                             <motion.span
@@ -319,15 +311,50 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <div className="relative isolate h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-36 px-6 xl:px-0 items-center select-none overflow-hidden">
+            {/* Dotted grid backdrop, faded towards the edges */}
+            <div
+                aria-hidden
+                className="absolute inset-0 -z-10 pointer-events-none [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]"
+                style={{
+                    backgroundImage: 'radial-gradient(#161616 1.2px, transparent 1.2px)',
+                    backgroundSize: '22px 22px',
+                    opacity: 0.18,
+                }}
+            />
+
+            {/* Floating stickers */}
+            <div
+                aria-hidden
+                className="hidden lg:flex absolute top-36 left-6 -rotate-12 items-center gap-x-1.5 bg-[#B8F2D0] border-[3px] border-black shadow-[4px_4px_0_0_#000] rounded-md px-3 py-1.5 text-sm font-black text-black"
+            >
+                <HiFire size={16} />
+                +120 pts
+            </div>
+            <div
+                aria-hidden
+                className="hidden lg:flex absolute top-52 right-8 rotate-[10deg] items-center gap-x-1.5 bg-[#FF8FB1] border-[3px] border-black shadow-[4px_4px_0_0_#000] rounded-md px-3 py-1.5 text-sm font-black text-black"
+            >
+                <FaHeart size={14} />
+                Streak x5
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
+            <div className="flex items-center gap-x-2 bg-white border-2 border-black shadow-[3px_3px_0_0_#000] rounded-full px-3 py-1 text-xs md:text-sm font-bold text-dark-base">
+                <span className="h-2 w-2 rounded-full bg-[#FF6B6B] border border-black animate-pulse" />
+                Real-time quizzes, live leaderboards
+            </div>
+
+            <h1 className="mt-2 text-4xl md:text-6xl font-black tracking-tight max-w-3xl text-dark-base text-center leading-[1.1]">
+                Knowledge that{' '}
+                <span className="relative inline-block whitespace-nowrap -rotate-2 bg-[#FFD84D] border-[3px] border-black shadow-[5px_5px_0_0_#000] rounded-md px-3 md:px-4 py-0.5 mt-2">
+                    pays off
+                </span>
+            </h1>
+
+            <p className="mt-3 text-dark-base/80 font-medium w-full max-w-2xl text-lg md:text-2xl text-center">
                 Nocturn is a real-time quiz app made for people who love learning and friendly
                 competition.
-            </div>
+            </p>
 
             <div className="mt-2">
                 <JoinQuizButton />
@@ -336,29 +363,29 @@ export default function LandingHeroSection() {
             <div className="h-full w-full relative mt-5">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
-                    <div className="h-12 w-full flex justify-between items-center">
+                <div className="absolute bg-white h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-lg overflow-hidden border-[3px] border-black shadow-[10px_10px_0_0_#000] left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                    <div className="h-12 w-full flex justify-between items-center bg-[#FFD84D] border-b-[3px] border-black shrink-0">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
-                            <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
-                            <div className="h-3 w-3 rounded-full bg-[#FFCC01]" />
-                            <div className="h-3 w-3 rounded-full bg-[#66E035]" />
+                            <div className="h-3.5 w-3.5 rounded-full bg-[#FE3A30] border-2 border-black" />
+                            <div className="h-3.5 w-3.5 rounded-full bg-[#FFCC01] border-2 border-black" />
+                            <div className="h-3.5 w-3.5 rounded-full bg-[#66E035] border-2 border-black" />
 
-                            <div className="text-dark-base/80 ml-3 text-sm flex items-center gap-x-3 bg-light-base px-3 py-1 rounded-sm">
+                            <div className="text-dark-base font-bold ml-3 text-sm flex items-center gap-x-3 bg-white border-2 border-black px-3 py-0.5 rounded-sm">
                                 nocturn.app
                                 <IoCloseOutline className="size-3.5" />
                             </div>
                         </div>
 
                         <div className="flex gap-x-2 pr-3">
-                            <div className="h-7 w-7 rounded-full bg-alpha/10 flex justify-center items-center text-alpha">
+                            <div className="h-7 w-7 rounded-md bg-white border-2 border-black shadow-[2px_2px_0_0_#000] flex justify-center items-center text-alpha">
                                 <VscSymbolStructure />
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-full min-h-0 w-full flex gap-x-3 px-3 pb-3">
+                    <div className="h-full min-h-0 w-full flex gap-x-3 p-3">
                         <section className="w-[60%] h-full flex flex-col gap-y-3">
-                            <div className="h-50 w-full rounded-xl bg-light-base relative overflow-hidden">
+                            <div className="h-50 w-full rounded-md border-[3px] border-black bg-light-base relative overflow-hidden">
                                 <Image
                                     src="/images/hero-img.jpg"
                                     alt="Chat preview"
@@ -397,21 +424,21 @@ export default function LandingHeroSection() {
                                             }}
                                         >
                                             <div className="flex items-center gap-x-2">
-                                                <div className="h-6 w-6 shrink-0 rounded-md bg-alpha/10 flex items-center justify-center text-alpha">
+                                                <div className="h-6 w-6 shrink-0 rounded-sm bg-[#FF8FB1] border-2 border-black flex items-center justify-center text-black">
                                                     <HiFire size={13} />
                                                 </div>
-                                                <span className="text-dark-base/80 text-[13px] font-semibold">
+                                                <span className="text-dark-base text-[13px] font-black">
                                                     Solar System Explorer
                                                 </span>
                                             </div>
-                                            <span className="text-dark-base/30 text-[10px]">
+                                            <span className="text-dark-base text-[10px] font-bold bg-[#B8F2D0] border-2 border-black rounded-sm px-1.5 py-px">
                                                 10 questions &middot; 30s
                                             </span>
                                         </motion.div>
                                     ) : (
                                         <motion.div
                                             key="skeleton"
-                                            className="h-5 w-3/4 bg-light-base rounded-md animate-pulse"
+                                            className="h-5 w-3/4 bg-light-base border-2 border-black/20 rounded-sm animate-pulse"
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.2 }}
                                         />
@@ -420,7 +447,7 @@ export default function LandingHeroSection() {
                             </div>
 
                             {/* Action Bar */}
-                            <div className="h-9 w-full rounded-lg overflow-hidden shrink-0">
+                            <div className="h-10 w-full rounded-md overflow-hidden shrink-0">
                                 <AnimatePresence mode="wait">
                                     {quizStage >= 3 ? (
                                         <motion.div
@@ -439,7 +466,7 @@ export default function LandingHeroSection() {
                                                     {people.slice(0, 3).map((p) => (
                                                         <div
                                                             key={p.id}
-                                                            className="h-5 w-5 rounded-full ring-1 ring-white overflow-hidden relative"
+                                                            className="h-5 w-5 rounded-full border-2 border-black overflow-hidden relative"
                                                         >
                                                             <Image
                                                                 src={p.avatar}
@@ -451,12 +478,12 @@ export default function LandingHeroSection() {
                                                         </div>
                                                     ))}
                                                 </div>
-                                                <span className="text-[10px] text-dark-base/35 ml-1">
+                                                <span className="text-[10px] font-bold text-dark-base ml-1">
                                                     3 joined
                                                 </span>
                                             </div>
                                             <motion.div
-                                                className="h-7 px-3 rounded-md bg-alpha text-light-alpha text-[11px] font-medium flex items-center gap-x-1 cursor-default"
+                                                className="h-7 px-3 rounded-sm bg-alpha text-light-alpha text-[11px] font-bold border-2 border-black shadow-[3px_3px_0_0_#000] flex items-center gap-x-1 cursor-default"
                                                 initial={{ scale: 0.9 }}
                                                 animate={{ scale: 1 }}
                                                 transition={{
@@ -473,7 +500,7 @@ export default function LandingHeroSection() {
                                     ) : (
                                         <motion.div
                                             key="skeleton"
-                                            className="h-full w-full bg-light-base rounded-lg animate-pulse"
+                                            className="h-full w-full bg-light-base border-2 border-black/20 rounded-md animate-pulse"
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.2 }}
                                         />
@@ -482,10 +509,10 @@ export default function LandingHeroSection() {
                             </div>
                         </section>
 
-                        <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border border-dashed border-alpha rounded-xl">
+                        <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden bg-[#FFE1EC] border-[3px] border-black rounded-md">
                             <div
                                 className={cn(
-                                    'text-dark-base/60 font-semibold text-base shrink-0',
+                                    'text-dark-base font-bold text-base shrink-0',
                                     audio.className,
                                 )}
                             >
@@ -494,13 +521,13 @@ export default function LandingHeroSection() {
 
                             <MockChat visibleCount={visibleCount} revealedText={revealedText} />
 
-                            <div className="min-h-10 w-full shrink-0 flex flex-col justify-between p-2 px-2.5 text-sm rounded-lg ring-1 ring-black/5 shadow-sm shadow-black/5">
+                            <div className="min-h-10 w-full shrink-0 flex flex-col justify-between p-2 px-2.5 mb-1.5 text-sm rounded-md bg-white border-2 border-black shadow-[3px_3px_0_0_#000]">
                                 <div className="w-full flex justify-between items-center">
-                                    <div className="h-6 w-6 text-dark-base/70 ring-1 ring-black/5 rounded-full bg-light-base flex justify-center items-center">
+                                    <div className="h-6 w-6 text-dark-base border-2 border-black rounded-sm bg-[#FFD84D] flex justify-center items-center">
                                         <GoPlus />
                                     </div>
 
-                                    <div className="h-6 w-6 rounded-md bg-alpha text-light-base flex justify-center items-center">
+                                    <div className="h-6 w-6 rounded-sm bg-alpha text-light-base border-2 border-black flex justify-center items-center">
                                         <FiArrowUp />
                                     </div>
                                 </div>

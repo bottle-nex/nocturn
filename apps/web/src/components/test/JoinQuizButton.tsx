@@ -21,7 +21,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 const container: Variants = {
     closed: {
         width: 160,
-        backgroundColor: '#4f46e5',
+        backgroundColor: '#16a34a',
         color: '#f5f5f5',
         transition: { type: 'spring', stiffness: 500, damping: 35 },
     },
@@ -219,7 +219,7 @@ function JoinQuizPill({
                 </div>
             ) : (
                 <motion.div
-                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#4f47e6' : '#f5f5f5' }}
+                    animate={{ x: isOpen ? 2 : 0, backgroundColor: isOpen ? '#16a34a' : '#f5f5f5' }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                     onClick={
                         isOpen
