@@ -6,6 +6,9 @@ export interface MessagePayload {
     payload: unknown;
 }
 
+// client-only event, dispatched to handlers when the socket opens again after a drop
+export const SOCKET_RECONNECTED = 'SOCKET_RECONNECTED';
+
 export type MessageHandler = (payload: MessagePayload) => void;
 export type ParsedMessage = {
     type: string;
@@ -25,6 +28,7 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private has_connected_once: boolean = false;
 
     constructor(url: string) {
         this.url = url;
@@ -42,6 +46,13 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+
+            if (this.has_connected_once) {
+                this.handlers
+                    .get(SOCKET_RECONNECTED)
+                    ?.forEach((handler) => handler(null as unknown as MessagePayload));
+            }
+            this.has_connected_once = true;
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {

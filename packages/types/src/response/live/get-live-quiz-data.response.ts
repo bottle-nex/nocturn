@@ -10,6 +10,21 @@ import {
 } from "../../prisma/schemas.prisma";
 import { ChatMessageType } from "../../socket/socket.types";
 
+export interface LiveLeaderboardEntry {
+  id: string;
+  totalScore: number;
+  rank: number;
+  nickname: string;
+  avatar: string | null;
+}
+
+export interface LiveLeaderboardSnapshot {
+  topScores: LiveLeaderboardEntry[];
+  totalParticipants: number;
+  myRank: number | null;
+  myScore: number | null;
+}
+
 export interface getLiveQuizDataResponse {
   quiz: Partial<QuizType>;
   gameSession: Partial<GameSessionType>;
@@ -21,4 +36,7 @@ export interface getLiveQuizDataResponse {
   messages?: ChatMessageType[];
   response?: Partial<ResponseType>;
   askedQuestionCount: number | null;
+  leaderboard: LiveLeaderboardSnapshot;
+  // responses to the current question, only sent while its results are showing
+  questionResponses: Partial<ResponseType>[];
 }
