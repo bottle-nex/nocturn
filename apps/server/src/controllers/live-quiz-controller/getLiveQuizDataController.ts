@@ -2,6 +2,7 @@ import {
     ApiResponse,
     getLiveQuizDataResponse,
     LiveGameTokenPayload,
+    LiveLeaderboardSnapshot,
     NOCTURN_COOKIE_NAME,
     ParticipantType,
     ResponseType,
@@ -150,6 +151,30 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             return;
         }
 
+        const leaderboard = await getCachedLeaderboard(
+            gameSessionId,
+            role,
+            userId,
+            role === USER_TYPE.PARTICIPANT
+                ? ((userData as Partial<ParticipantType>).finalRank ?? null)
+                : null,
+        );
+
+        // participants who come back while results are showing need everyone's
+        // answers again, the same list QUESTION_RESULTS_PHASE_TO_PARTICIPANT carries
+        let questionResponses: Partial<ResponseType>[] | undefined;
+        if (
+            role === USER_TYPE.PARTICIPANT &&
+            gameSession.hostScreen === HostScreen.QUESTION_RESULTS &&
+            gameSession.currentQuestionId
+        ) {
+            questionResponses = (await redisCacheInstance.get_all_question_responses(
+                gameSessionId,
+                gameSession.currentQuestionId,
+                ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+            )) as Partial<ResponseType>[];
+        }
+
         const sanitizedGameSession = QuizAction.sanitizeGameSession(gameSession, role);
 
         let currentQuestion: Partial<QuestionType> | null = null;
@@ -202,6 +227,8 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            leaderboard,
+            ...(questionResponses && { responses: questionResponses }),
         };
 
         ResponseWriter.secure_success(res, {
@@ -412,6 +439,30 @@ async function fallbackToDatabase(
         );
     }
 
+    const participantData =
+        role === USER_TYPE.PARTICIPANT
+            ? (result.userData as { id: string; totalScore: number; finalRank: number | null })
+            : null;
+    const leaderboard = await getDatabaseLeaderboard(quizId, participantData);
+
+    let questionResponses: Partial<ResponseType>[] | undefined;
+    if (
+        role === USER_TYPE.PARTICIPANT &&
+        result.gameSession.hostScreen === HostScreen.QUESTION_RESULTS &&
+        result.gameSession.currentQuestionId
+    ) {
+        questionResponses = await prisma.response.findMany({
+            where: { gameSessionId, questionId: result.gameSession.currentQuestionId },
+            select: {
+                id: true,
+                participantId: true,
+                isCorrect: true,
+                selectedAnswer: true,
+                pointsEarned: true,
+            },
+        });
+    }
+
     const chatData = await getChatsController(role, gameSessionId, quizId);
     const responseData = {
         quiz: result.quiz,
@@ -423,6 +474,8 @@ async function fallbackToDatabase(
         role,
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
+        leaderboard,
+        ...(questionResponses && { responses: questionResponses }),
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
@@ -430,4 +483,62 @@ async function fallbackToDatabase(
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+async function getCachedLeaderboard(
+    gameSessionId: string,
+    role: USER_TYPE,
+    userId: string,
+    finalRank: number | null,
+): Promise<LiveLeaderboardSnapshot> {
+    const [topScores, totalParticipants] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+    ]);
+
+    let myRank: number | null = null;
+    let myScore: number | null = null;
+    if (role === USER_TYPE.PARTICIPANT) {
+        const [rank, score] = await Promise.all([
+            redisCacheInstance.get_participant_rank(gameSessionId, userId),
+            redisCacheInstance.get_participant_score(gameSessionId, userId),
+        ]);
+        // finalRank is only set once the quiz results are out and accounts for ties
+        myRank = finalRank ?? rank;
+        myScore = score;
+    }
+
+    return { topScores, totalParticipants, myRank, myScore };
+}
+
+async function getDatabaseLeaderboard(
+    quizId: string,
+    participant: { id: string; totalScore: number; finalRank: number | null } | null,
+): Promise<LiveLeaderboardSnapshot> {
+    const where = { quizId, isKicked: false };
+    const [top, totalParticipants] = await Promise.all([
+        prisma.participant.findMany({
+            where,
+            orderBy: { totalScore: 'desc' },
+            take: 10,
+            select: { id: true, nickname: true, avatar: true, totalScore: true },
+        }),
+        prisma.participant.count({ where }),
+    ]);
+
+    let myRank: number | null = null;
+    if (participant) {
+        myRank =
+            participant.finalRank ??
+            (await prisma.participant.count({
+                where: { ...where, totalScore: { gt: participant.totalScore } },
+            })) + 1;
+    }
+
+    return {
+        topScores: top.map((entry, index) => ({ ...entry, rank: index + 1 })),
+        totalParticipants,
+        myRank,
+        myScore: participant?.totalScore ?? null,
+    };
 }

@@ -12,6 +12,10 @@ export type ParsedMessage = {
     payload: MessagePayload;
 };
 
+// fired on window when the socket comes back after a drop, so screens can resync
+// with whatever happened on the server while this client was away
+export const SOCKET_RECONNECTED_EVENT = 'nocturn:socket-reconnected';
+
 export default class WebSocketClient {
     private ws!: WebSocket;
     public is_connected: boolean = false;
@@ -25,6 +29,7 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private has_connected_before: boolean = false;
 
     constructor(url: string) {
         this.url = url;
@@ -42,6 +47,11 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+
+            if (this.has_connected_before && typeof window !== 'undefined') {
+                window.dispatchEvent(new Event(SOCKET_RECONNECTED_EVENT));
+            }
+            this.has_connected_before = true;
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {

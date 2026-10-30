@@ -21,4 +21,21 @@ export interface getLiveQuizDataResponse {
   messages?: ChatMessageType[];
   response?: Partial<ResponseType>;
   askedQuestionCount: number | null;
+  leaderboard?: LiveLeaderboardSnapshot;
+  responses?: Partial<ResponseType>[];
+}
+
+export interface LiveLeaderboardEntry {
+  id: string;
+  totalScore: number;
+  rank: number;
+  nickname: string;
+  avatar: string | null;
+}
+
+export interface LiveLeaderboardSnapshot {
+  topScores: LiveLeaderboardEntry[];
+  totalParticipants: number;
+  myRank: number | null;
+  myScore: number | null;
 }
