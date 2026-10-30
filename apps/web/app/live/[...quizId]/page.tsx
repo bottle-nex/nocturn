@@ -21,6 +21,8 @@ import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
+import { SOCKET_RECONNECTED_EVENT } from '@/socket/socket.client';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
 
@@ -47,6 +49,7 @@ export default function New({ params }: NewProps) {
     const { setChatMessages } = useLiveQuizGlobalChatStore();
     const { setParticipants, setResponse } = useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
+    const { setTopLeaderboard, setMyRank } = useLeaderboardStore();
 
     useEffect(() => {
         async function getLiveData() {
@@ -72,6 +75,16 @@ export default function New({ params }: NewProps) {
                     if (data.response) {
                         setResponse(data.response);
                     }
+                    if (data.leaderboard) {
+                        setTopLeaderboard(data.leaderboard.topScores);
+                    }
+                    if (data.myRank) {
+                        setMyRank(
+                            data.myRank.myRank,
+                            data.myRank.myScore,
+                            data.myRank.totalParticipants,
+                        );
+                    }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
                         case USER_TYPE.HOST:
@@ -95,7 +108,12 @@ export default function New({ params }: NewProps) {
             }
         }
         getLiveData();
+        // resync with the server after a dropped connection comes back
+        window.addEventListener(SOCKET_RECONNECTED_EVENT, getLiveData);
+        return () => window.removeEventListener(SOCKET_RECONNECTED_EVENT, getLiveData);
     }, [
+        setTopLeaderboard,
+        setMyRank,
         quizId,
         updateGameSession,
         updateQuiz,
