@@ -12,6 +12,8 @@ export type ParsedMessage = {
     payload: MessagePayload;
 };
 
+export const SOCKET_RECONNECTED_EVENT = 'nocturn:socket-reconnected';
+
 export default class WebSocketClient {
     private ws!: WebSocket;
     public is_connected: boolean = false;
@@ -25,6 +27,7 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private has_connected_before: boolean = false;
 
     constructor(url: string) {
         this.url = url;
@@ -39,9 +42,14 @@ export default class WebSocketClient {
 
         this.ws = new WebSocket(this.url);
         this.ws.onopen = () => {
+            const is_reconnect = this.has_connected_before;
+            this.has_connected_before = true;
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            if (is_reconnect && typeof window !== 'undefined') {
+                window.dispatchEvent(new Event(SOCKET_RECONNECTED_EVENT));
+            }
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {

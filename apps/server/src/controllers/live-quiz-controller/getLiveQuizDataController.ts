@@ -192,7 +192,33 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             quizResponse.participantCode = quiz.participantCode;
         }
 
+        let leaderboard: {
+            topScores: Awaited<ReturnType<typeof redisCacheInstance.get_top_leaderboards>>;
+            totalParticipants: number;
+        } | null = null;
+        let myRank: { myRank: number; myScore: number; totalParticipants: number } | null = null;
+
+        if (gameSession.hostScreen !== HostScreen.LOBBY) {
+            const [topScores, totalParticipants] = await Promise.all([
+                redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+                redisCacheInstance.get_leaderboard_count(gameSessionId),
+            ]);
+            leaderboard = { topScores, totalParticipants };
+
+            if (role === USER_TYPE.PARTICIPANT && userData.id) {
+                const [rank, score] = await Promise.all([
+                    redisCacheInstance.get_participant_rank(gameSessionId, userData.id),
+                    redisCacheInstance.get_participant_score(gameSessionId, userData.id),
+                ]);
+                if (rank !== null && score !== null) {
+                    myRank = { myRank: rank, myScore: score, totalParticipants };
+                }
+            }
+        }
+
         const responseData = {
+            leaderboard,
+            myRank,
             quiz: quizResponse,
             gameSession: sanitizedGameSession,
             userData,
