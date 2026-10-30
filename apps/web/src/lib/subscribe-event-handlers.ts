@@ -64,7 +64,11 @@ export class SubscribeEventHandlers {
         const { participantData } = useLiveParticipantStore.getState();
         const { removeParticipant } = useLiveParticipantsStore.getState();
         removeParticipant(message.userId);
-        if (message.userId === participantData?.id) participantData.isKicked = true;
+        if (participantData && message.userId === participantData.id) {
+            useLiveParticipantStore
+                .getState()
+                .setParticipantData({ ...participantData, isKicked: true });
+        }
     }
 
     // <---------------------- GAME-SESSION-EVENTS ---------------------->

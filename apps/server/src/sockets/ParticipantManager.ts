@@ -140,8 +140,13 @@ export default class ParticipantManager {
         });
     }
 
-    private handle_participant_message(ws: GameWebSocket, message: any) {
+    private async handle_participant_message(ws: GameWebSocket, message: any) {
         const { type, payload } = message;
+        const kicked = await this.redis_cache.redis_cache.hget(
+            this.redis_cache.get_participants_key(ws.user.gameSessionId),
+            `${ws.user.userId}:isKicked`,
+        );
+        if (kicked && JSON.parse(kicked) === true) return;
         switch (type) {
             case MESSAGE_TYPES.PARTICIPANT_NAME_CHANGE:
                 this.handle_participant_name_change(payload, ws);
@@ -630,6 +635,12 @@ export default class ParticipantManager {
             );
 
             if (new_warning_count >= 5) {
+                // persist the kick in redis so rejoin and further messages are rejected
+                await this.redis_cache.redis_cache.hset(
+                    participants_key,
+                    `${participant_id}:isKicked`,
+                    JSON.stringify(true),
+                );
                 const event_data: PubSubMessageTypes = {
                     type: MESSAGE_TYPES.PARTICIPANT_LEAVE_GAME_SESSION,
                     payload: { userId: participant_id },
