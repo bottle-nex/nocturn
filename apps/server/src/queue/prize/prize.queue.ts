@@ -40,7 +40,17 @@ export default class PrizeQueue {
     }
 
     public async enqueue_finalization(data: FinalizationJobData) {
+        // One finalization job per quiz: a repeated authorize-confirm request must not
+        // start a second run that emails every winner again. A job that failed for good is
+        // removed so the host can retry it.
+        const jobId = `finalize_${data.quizId}`;
+        const existing = await this.queue.getJob(jobId);
+        if (existing && (await existing.isFailed())) {
+            await existing.remove();
+        }
+
         return this.queue.add('FINALIZE_PRIZE_ON_CHAIN', data, {
+            jobId,
             attempts: 3,
             backoff: { type: 'exponential', delay: 5000 },
             removeOnComplete: 20,
@@ -88,24 +98,34 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
-                    where: { id: claim.id },
+                // Claim the email slot atomically. Bull retries re-run the whole job, so
+                // without this every claim before a failing one was emailed again.
+                const { count: email_claimed } = await prisma.prizeClaim.updateMany({
+                    where: { id: claim.id, emailSentAt: null },
                     data: { emailSentAt: new Date() },
                 });
 
                 // Send winner notification email
-                if (claim.participantEmail) {
+                if (email_claimed === 1 && claim.participantEmail) {
                     const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
-                    await email_service_queue_instance.email_winner_notification({
-                        email: claim.participantEmail,
-                        participantName: claim.participantName,
-                        quizTitle: quizTitle,
-                        rank: claim.rank,
-                        prizeAmount: Number(claim.amountBaseUnits) / 1e6,
-                        claimUrl,
-                        expiresAt: claim.expiresAt,
-                    });
+                    try {
+                        await email_service_queue_instance.email_winner_notification({
+                            email: claim.participantEmail,
+                            participantName: claim.participantName,
+                            quizTitle: quizTitle,
+                            rank: claim.rank,
+                            prizeAmount: Number(claim.amountBaseUnits) / 1e6,
+                            claimUrl,
+                            expiresAt: claim.expiresAt,
+                        });
+                    } catch (emailErr) {
+                        // Release the slot so the retry can send it
+                        await prisma.prizeClaim.update({
+                            where: { id: claim.id },
+                            data: { emailSentAt: null },
+                        });
+                        throw emailErr;
+                    }
                 }
             } catch (error) {
                 console.error(`[PrizeQueue] Failed to finalize claim ${claim.id}:`, error);

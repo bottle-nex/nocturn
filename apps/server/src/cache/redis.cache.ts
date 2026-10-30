@@ -327,6 +327,61 @@ export default class RedisCache {
         }
     }
 
+    /**
+     * Atomically records a participant's answer (HSETNX). Returns true only for the
+     * first answer to a question, so rapid double taps cannot be scored twice.
+     */
+    public async claim_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Partial<Response>,
+    ): Promise<boolean> {
+        const key = this.get_participant_response_key(game_session_id);
+        const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+
+        const [[, created]] = (await this.redis_cache
+            .multi()
+            .hsetnx(key, unique_key, JSON.stringify(response))
+            .expire(key, 60 * 60 * 24)
+            .exec()) as [[Error | null, number], [Error | null, number]];
+
+        return created === 1;
+    }
+
+    /**
+     * Applies an answer's score to the live participant cache and leaderboard in one
+     * MULTI, using increments so concurrent or queued writes never lose points.
+     */
+    public async apply_participant_score(
+        game_session_id: string,
+        participant_id: string,
+        score: {
+            pointsEarned: number;
+            isCorrect: boolean;
+            currentStreak: number;
+            longestStreak: number;
+        },
+    ): Promise<{ totalScore: number; correctAnswers: number }> {
+        const participant_key = this.get_participants_key(game_session_id);
+        const results = (await this.redis_cache
+            .multi()
+            .hincrby(participant_key, `${participant_id}:totalScore`, score.pointsEarned)
+            .hincrby(participant_key, `${participant_id}:correctAnswers`, score.isCorrect ? 1 : 0)
+            .hset(participant_key, `${participant_id}:currentStreak`, String(score.currentStreak))
+            .hset(participant_key, `${participant_id}:longestStreak`, String(score.longestStreak))
+            .zincrby(this.get_leaderboard_key(game_session_id), score.pointsEarned, participant_id)
+            .exec()) as [Error | null, unknown][];
+
+        const failed = results.find(([err]) => err);
+        if (failed) throw failed[0];
+
+        return {
+            totalScore: Number(results[0]![1]),
+            correctAnswers: Number(results[1]![1]),
+        };
+    }
+
     public async get_participant_response(
         game_session_id: string,
         question_id: string,
@@ -651,6 +706,28 @@ export default class RedisCache {
     }
 
     //  <------------------ PHASE ------------------>
+
+    /**
+     * Atomically marks a one-time game action (question launch, final results) as done.
+     * Returns true only for the first caller.
+     */
+    public async try_claim_once(game_session_id: string, action: string): Promise<boolean> {
+        const key = `game_session:${game_session_id}:once`;
+        const [[, created]] = (await this.redis_cache
+            .multi()
+            .hsetnx(key, action, String(Date.now()))
+            .expire(key, 60 * 60 * 24)
+            .exec()) as [[Error | null, number], [Error | null, number]];
+        return created === 1;
+    }
+
+    public async release_once(game_session_id: string, action: string) {
+        try {
+            await this.redis_cache.hdel(`game_session:${game_session_id}:once`, action);
+        } catch (err) {
+            console.error('Error in release_once:', err);
+        }
+    }
 
     public async try_acquire_lock(lock_key: string, lock_value: string, ttl_seconds: number) {
         try {
