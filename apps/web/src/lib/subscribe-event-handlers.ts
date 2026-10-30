@@ -363,6 +363,8 @@ export class SubscribeEventHandlers {
 
         updateGameSession({
             hostScreen: resultsPhasePayload.hostScreen,
+            currentPhase: QuizPhaseEnum.SHOW_RESULTS,
+            phaseStartTime: resultsPhasePayload.startTime,
         });
     }
 
