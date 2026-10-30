@@ -474,6 +474,14 @@ export default class ParticipantManager {
 
         const { selectedAnswer } = payload;
 
+        const kicked_val = await this.redis_cache.redis_cache.hget(
+            this.redis_cache.get_participants_key(game_session_id),
+            `${participant_id}:isKicked`,
+        );
+        if (kicked_val === 'true') {
+            return;
+        }
+
         if (typeof selectedAnswer !== 'number') {
             console.error('Invalid type of selected answer');
             return;
@@ -636,12 +644,18 @@ export default class ParticipantManager {
                 };
                 this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
+                await this.redis_cache.redis_cache.hset(
+                    participants_key,
+                    `${participant_id}:isKicked`,
+                    'true',
+                );
                 await this.database_queue.update_participant(
                     participant_id,
                     { isKicked: true },
                     game_session_id,
                 );
                 await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+                ws.close();
                 return;
             }
 
@@ -710,7 +724,7 @@ export default class ParticipantManager {
                 quizId: quizId,
             },
         });
-        return !!participant;
+        return !!participant && !participant.isKicked;
     }
 
     private generateSocketId(): string {
