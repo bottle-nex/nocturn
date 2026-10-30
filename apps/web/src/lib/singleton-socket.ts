@@ -2,6 +2,7 @@ import WebSocketClient from '@/socket/socket.client';
 
 let client: WebSocketClient | null = null;
 let currentQuizId: string | null = null;
+const reconnectListeners = new Set<() => void>();
 
 function getWsUrl(quizId: string): string {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
@@ -21,7 +22,9 @@ export function getWebSocketClient(quizId: string) {
         client.close();
         client = null;
     }
-    client = new WebSocketClient(getWsUrl(quizId));
+    client = new WebSocketClient(getWsUrl(quizId), () => {
+        reconnectListeners.forEach((listener) => listener());
+    });
     currentQuizId = quizId;
     return client;
 }
@@ -36,4 +39,11 @@ export function cleanWebSocketClient() {
 
 export function getCurrentQuizId() {
     return currentQuizId;
+}
+
+export function onWebSocketReconnect(listener: () => void) {
+    reconnectListeners.add(listener);
+    return () => {
+        reconnectListeners.delete(listener);
+    };
 }

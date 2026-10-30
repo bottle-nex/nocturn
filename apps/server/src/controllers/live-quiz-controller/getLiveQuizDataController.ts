@@ -2,6 +2,7 @@ import {
     ApiResponse,
     getLiveQuizDataResponse,
     LiveGameTokenPayload,
+    LiveLeaderboardSnapshot,
     NOCTURN_COOKIE_NAME,
     ParticipantType,
     ResponseType,
@@ -13,7 +14,7 @@ import { parse } from 'cookie';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import QuizAction from '../../class/quizAction';
-import { HostScreen, prisma, Question } from '@nocturn/database';
+import { HostScreen, prisma, Question, QuizPhase } from '@nocturn/database';
 import getChatsController from '../chat-controller/getChatsController';
 import { redisCacheInstance } from '../../services/init.services';
 import { QuestionType } from '../../schemas/createQuizSchema';
@@ -150,6 +151,17 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             return;
         }
 
+        const [leaderboard, responses] = await Promise.all([
+            getLeaderboardSnapshot(gameSessionId, role, userId),
+            gameSession.currentPhase === QuizPhase.SHOW_RESULTS && gameSession.currentQuestionId
+                ? redisCacheInstance.get_all_question_responses(
+                      gameSessionId,
+                      gameSession.currentQuestionId,
+                      ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+                  )
+                : Promise.resolve([]),
+        ]);
+
         const sanitizedGameSession = QuizAction.sanitizeGameSession(gameSession, role);
 
         let currentQuestion: Partial<QuestionType> | null = null;
@@ -202,6 +214,8 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            leaderboard,
+            responses,
         };
 
         ResponseWriter.secure_success(res, {
@@ -319,8 +333,35 @@ async function fallbackToDatabase(
             select: { id: true, nickname: true, avatar: true },
         });
 
+        const leaderboardRows = await tx.participant.findMany({
+            where: { quizId, isKicked: false },
+            orderBy: { totalScore: 'desc' },
+            select: { id: true, nickname: true, avatar: true, totalScore: true },
+            take: 10,
+        });
+
+        const leaderboardCount = await tx.participant.count({
+            where: { quizId, isKicked: false },
+        });
+
+        const responses =
+            gameSession?.currentPhase === QuizPhase.SHOW_RESULTS && gameSession.currentQuestionId
+                ? await tx.response.findMany({
+                      where: { gameSessionId, questionId: gameSession.currentQuestionId },
+                      select: {
+                          id: true,
+                          participantId: true,
+                          isCorrect: true,
+                          selectedAnswer: true,
+                          pointsEarned: true,
+                      },
+                  })
+                : [];
+
         let userData = null;
         let participantResponse = null;
+        let myRank: number | null = null;
+        let myScore: number | null = null;
 
         switch (role) {
             case USER_TYPE.HOST:
@@ -354,6 +395,17 @@ async function fallbackToDatabase(
                         walletAddress: true,
                     },
                 });
+                if (userData) {
+                    myScore = userData.totalScore;
+                    const ahead = await tx.participant.count({
+                        where: {
+                            quizId,
+                            isKicked: false,
+                            totalScore: { gt: userData.totalScore },
+                        },
+                    });
+                    myRank = ahead + 1;
+                }
                 if (gameSession?.currentQuestionId && userData?.id) {
                     participantResponse = await tx.response.findFirst({
                         where: {
@@ -389,6 +441,19 @@ async function fallbackToDatabase(
             userData,
             participantResponse,
             askedQuestionCount,
+            responses,
+            leaderboard: {
+                topScores: leaderboardRows.map((row, index) => ({
+                    id: row.id,
+                    nickname: row.nickname,
+                    avatar: row.avatar ?? null,
+                    totalScore: row.totalScore ?? 0,
+                    rank: index + 1,
+                })),
+                totalParticipants: leaderboardCount,
+                myRank,
+                myScore,
+            } as LiveLeaderboardSnapshot,
         };
     });
 
@@ -423,6 +488,8 @@ async function fallbackToDatabase(
         role,
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
+        leaderboard: result.leaderboard,
+        responses: result.responses,
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
@@ -430,4 +497,21 @@ async function fallbackToDatabase(
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+// The results events carry the leaderboard only once, so a client that refreshes or reconnects
+// while results are showing has to read it again from the leaderboard ZSET.
+async function getLeaderboardSnapshot(
+    gameSessionId: string,
+    role: USER_TYPE,
+    userId: string,
+): Promise<LiveLeaderboardSnapshot> {
+    const isParticipant = role === USER_TYPE.PARTICIPANT;
+    const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+        isParticipant ? redisCacheInstance.get_participant_rank(gameSessionId, userId) : null,
+        isParticipant ? redisCacheInstance.get_participant_score(gameSessionId, userId) : null,
+    ]);
+    return { topScores, totalParticipants, myRank, myScore };
 }

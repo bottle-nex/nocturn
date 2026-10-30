@@ -1,5 +1,6 @@
 'use client';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import { useLiveQuizGlobalChatStore } from '@/store/live-quiz/useLiveQuizGlobalChatStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import {
@@ -23,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
+import { onWebSocketReconnect } from '@/lib/singleton-socket';
 
 export interface NewProps {
     params: Promise<{ quizId: string }>;
@@ -39,17 +41,21 @@ export default function New({ params }: NewProps) {
         updateGameSession,
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
+        resetLiveResponses,
+        clearLifelineData,
     } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
     const { setParticipantData } = useLiveParticipantStore();
     const { setSpectatorData } = useLiveSpectatorStore();
     const { setCurrentUserType } = useUserRoleStore();
     const { setChatMessages } = useLiveQuizGlobalChatStore();
-    const { setParticipants, setResponse } = useLiveParticipantsStore();
+    const { setParticipants, setResponse, resetResponse, setResponses } =
+        useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
+    const { setTopLeaderboard, setMyRank } = useLeaderboardStore();
 
     useEffect(() => {
-        async function getLiveData() {
+        async function getLiveData(isResync = false) {
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
                     `${LIVE_QUIZ_DATA_URL}/${quizId}`,
@@ -59,18 +65,39 @@ export default function New({ params }: NewProps) {
                 );
                 if (response.success && response.data) {
                     const data = response.data;
+                    const previousQuestionId = useLiveQuizStore.getState().currentQuestion?.id;
+                    if (previousQuestionId && previousQuestionId !== data.currentQuestion?.id) {
+                        resetLiveResponses();
+                        clearLifelineData();
+                    }
                     updateQuiz(data.quiz);
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
-                    setChatMessages(data.messages || []);
+                    // the cached path sends no messages; keep the chat we already have on resync
+                    if (!isResync || data.messages) {
+                        setChatMessages(data.messages || []);
+                    }
+                    // replace rather than merge, so fields of an earlier phase don't linger
+                    updateCurrentQuestion(null);
                     // if not found meand all questions asked
                     if (data.currentQuestion) {
                         updateCurrentQuestion(data.currentQuestion);
                     }
                     if (data.response) {
                         setResponse(data.response);
+                    } else {
+                        resetResponse();
+                    }
+                    setResponses(data.responses ?? []);
+                    if (data.leaderboard) {
+                        setTopLeaderboard(data.leaderboard.topScores);
+                        setMyRank(
+                            data.leaderboard.myRank,
+                            data.leaderboard.myScore,
+                            data.leaderboard.totalParticipants,
+                        );
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
@@ -95,6 +122,8 @@ export default function New({ params }: NewProps) {
             }
         }
         getLiveData();
+        // the socket missed whatever was published while it was down, so fetch the state again
+        return onWebSocketReconnect(() => getLiveData(true));
     }, [
         quizId,
         updateGameSession,
@@ -109,6 +138,12 @@ export default function New({ params }: NewProps) {
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
         setResponse,
+        resetResponse,
+        setResponses,
+        setTopLeaderboard,
+        setMyRank,
+        resetLiveResponses,
+        clearLifelineData,
         router,
     ]);
 

@@ -40,7 +40,7 @@ interface LiveQuizStore {
     updateQuiz: (updatedFields: Partial<QuizType>) => void;
     removeQuestionFromQuiz: (id: string) => void;
     updateGameSession: (updatedFields: Partial<GameSessionType>) => void;
-    updateCurrentQuestion: (updatedFields: Partial<QuestionType>) => void;
+    updateCurrentQuestion: (updatedFields: Partial<QuestionType> | null) => void;
     updateNextQuestion: (updatedFields: Partial<QuestionType>) => void;
     setQuestionCount: (count: number) => void;
     setAskedQuestionCount: (count: number) => void;

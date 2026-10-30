@@ -15,7 +15,7 @@ interface LeaderboardStoreProps {
     myRank: number | null;
     myScore: number | null;
     totalParticipants: number;
-    setMyRank: (rank: number, score: number, total: number) => void;
+    setMyRank: (rank: number | null, score: number | null, total: number) => void;
 
     resetLeaderboard: () => void;
 }

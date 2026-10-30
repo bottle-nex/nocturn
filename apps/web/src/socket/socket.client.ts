@@ -25,9 +25,12 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private has_connected: boolean = false;
+    private on_reconnect?: () => void;
 
-    constructor(url: string) {
+    constructor(url: string, on_reconnect?: () => void) {
         this.url = url;
+        this.on_reconnect = on_reconnect;
         this.is_manually_closed = false;
         this.initialize_connection();
     }
@@ -42,6 +45,11 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            // events published while we were offline are lost, so let the app resync its state
+            if (this.has_connected) {
+                this.on_reconnect?.();
+            }
+            this.has_connected = true;
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
