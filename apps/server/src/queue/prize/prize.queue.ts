@@ -40,7 +40,17 @@ export default class PrizeQueue {
     }
 
     public async enqueue_finalization(data: FinalizationJobData) {
+        // One finalization job per quiz: Bull ignores an add with an existing jobId, so a
+        // repeated confirm can't start a parallel run. A failed job is removed so the host
+        // can still retry after all attempts are exhausted.
+        const job_id = `finalize_${data.quizId}`;
+        const existing_job = await this.queue.getJob(job_id);
+        if (existing_job && (await existing_job.isFailed())) {
+            await existing_job.remove();
+        }
+
         return this.queue.add('FINALIZE_PRIZE_ON_CHAIN', data, {
+            jobId: job_id,
             attempts: 3,
             backoff: { type: 'exponential', delay: 5000 },
             removeOnComplete: 20,
@@ -88,14 +98,16 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
-                    where: { id: claim.id },
+                // Mark the email as sent only if it hasn't been yet. Bull retries the whole
+                // job (e.g. when sealing fails) and the host can confirm twice, so an
+                // unconditional update re-sent the winner email on every run.
+                const { count: email_claimed } = await prisma.prizeClaim.updateMany({
+                    where: { id: claim.id, emailSentAt: null },
                     data: { emailSentAt: new Date() },
                 });
 
                 // Send winner notification email
-                if (claim.participantEmail) {
+                if (email_claimed === 1 && claim.participantEmail) {
                     const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
                     await email_service_queue_instance.email_winner_notification({
                         email: claim.participantEmail,

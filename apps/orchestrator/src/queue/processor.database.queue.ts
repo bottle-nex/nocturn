@@ -123,16 +123,20 @@ export class DatabaseQueueProcessors {
                 },
                 data: participant,
             });
+            // Live score fields and the leaderboard are owned by the server, which updates
+            // them in Redis atomically when an answer is scored. Writing the DB values back
+            // here would overwrite newer points with a stale total (jobs run >= 1s later).
+            const {
+                totalScore: _totalScore,
+                correctAnswers: _correctAnswers,
+                currentStreak: _currentStreak,
+                longestStreak: _longestStreak,
+                ...cacheable
+            } = updatedParticipant;
             await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
-                updatedParticipant,
-            );
-
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
+                cacheable,
             );
 
             return { success: true, participant: updatedParticipant };

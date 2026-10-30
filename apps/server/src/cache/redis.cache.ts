@@ -327,6 +327,45 @@ export default class RedisCache {
         }
     }
 
+    // Atomically records the first response of a participant for a question.
+    // Returns false when a response already exists, so concurrent taps can't both score.
+    public async claim_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Record<string, unknown>,
+    ): Promise<boolean> {
+        const key = this.get_participant_response_key(game_session_id);
+        const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+
+        const created = await this.redis_cache.hsetnx(key, unique_key, JSON.stringify(response));
+        await this.redis_cache.expire(key, 60 * 60 * 24);
+        return created === 1;
+    }
+
+    // Applies a scored answer to the cached participant atomically. The server is the only
+    // writer of these live fields, so the next answer always reads up-to-date totals.
+    public async apply_participant_score(
+        game_session_id: string,
+        participant_id: string,
+        score: {
+            pointsEarned: number;
+            isCorrect: boolean;
+            currentStreak: number;
+            longestStreak: number;
+        },
+    ) {
+        const participant_key = this.get_participants_key(game_session_id);
+        await this.redis_cache
+            .multi()
+            .hincrby(participant_key, `${participant_id}:totalScore`, score.pointsEarned)
+            .hincrby(participant_key, `${participant_id}:correctAnswers`, score.isCorrect ? 1 : 0)
+            .hset(participant_key, `${participant_id}:currentStreak`, String(score.currentStreak))
+            .hset(participant_key, `${participant_id}:longestStreak`, String(score.longestStreak))
+            .zincrby(this.get_leaderboard_key(game_session_id), score.pointsEarned, participant_id)
+            .exec();
+    }
+
     public async get_participant_response(
         game_session_id: string,
         question_id: string,
