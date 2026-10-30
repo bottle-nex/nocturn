@@ -41,6 +41,9 @@ export default class PrizeQueue {
 
     public async enqueue_finalization(data: FinalizationJobData) {
         return this.queue.add('FINALIZE_PRIZE_ON_CHAIN', data, {
+            // One finalization per quiz: Bull ignores an add whose jobId already exists,
+            // so a repeated confirm request cannot queue a second payout run.
+            jobId: `finalize:${data.quizId}`,
             attempts: 3,
             backoff: { type: 'exponential', delay: 5000 },
             removeOnComplete: 20,
@@ -88,16 +91,18 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
-                    where: { id: claim.id },
+                // Atomically mark the email as sent. When the job is retried after a later
+                // claim failed, claims that were already emailed match zero rows here and
+                // are skipped, so each winner gets the email once.
+                const { count: newly_marked } = await prisma.prizeClaim.updateMany({
+                    where: { id: claim.id, emailSentAt: null },
                     data: { emailSentAt: new Date() },
                 });
 
                 // Send winner notification email
-                if (claim.participantEmail) {
+                if (newly_marked === 1 && claim.participantEmail) {
                     const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
-                    await email_service_queue_instance.email_winner_notification({
+                    const email_job = await email_service_queue_instance.email_winner_notification({
                         email: claim.participantEmail,
                         participantName: claim.participantName,
                         quizTitle: quizTitle,
@@ -106,6 +111,14 @@ export default class PrizeQueue {
                         claimUrl,
                         expiresAt: claim.expiresAt,
                     });
+                    if (!email_job) {
+                        // Enqueue failed: release the marker so a retry can send it.
+                        await prisma.prizeClaim.update({
+                            where: { id: claim.id },
+                            data: { emailSentAt: null },
+                        });
+                        throw new Error(`Failed to enqueue winner email for claim ${claim.id}`);
+                    }
                 }
             } catch (error) {
                 console.error(`[PrizeQueue] Failed to finalize claim ${claim.id}:`, error);
