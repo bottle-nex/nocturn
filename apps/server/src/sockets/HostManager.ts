@@ -225,7 +225,16 @@ export default class HostManager {
         //check this line proeprly
         if (!question) throw new Error("Questions doesn't exist in quiz");
 
-        if (question.isAsked) {
+        // `isAsked` is only written back to the cache once the database job runs, so a
+        // double tap (or a retry reaching another server instance) could pass the check
+        // below twice. The NX lock makes the launch happen exactly once per question.
+        const launch_lock_acquired = await this.redis_cache.try_acquire_lock(
+            `game_session:${game_session_id}:question_launch:${question.id}`,
+            ws.id,
+            60 * 60 * 24,
+        );
+
+        if (question.isAsked || !launch_lock_acquired) {
             const pub_sub_message_to_host: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
                 payload: {
@@ -444,6 +453,18 @@ export default class HostManager {
             return;
         }
 
+        // Final ranking and prize claim creation must happen once. A repeated tap would
+        // otherwise create a second set of prize claims (and a second round of emails).
+        const results_lock_acquired = await this.redis_cache.try_acquire_lock(
+            `game_session:${game_session_id}:quiz_results`,
+            ws.id,
+            60 * 60 * 24,
+        );
+        if (!results_lock_acquired) {
+            console.error('quiz results already finalized for game session', game_session_id);
+            return;
+        }
+
         // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
         const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
 
@@ -468,11 +489,13 @@ export default class HostManager {
         });
 
         // Assign final ranks with tie handling (same score = same rank)
+        const ranked: { id: string; totalScore: number; rank: number }[] = [];
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
             if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
+            ranked.push({ ...rankable[i]!, rank: currentRank });
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
@@ -483,14 +506,18 @@ export default class HostManager {
             );
         }
 
-        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
+        // Build the on-screen winners from the same snapshot that prize claims are created
+        // from, so kicked players and tied ranks are treated identically on both sides.
+        const top_scores = await this.redis_cache.attach_participant_profiles(
+            game_session_id,
+            ranked.slice(0, 10),
+        );
+        const total_participants = ranked.length;
 
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
+        const rankers = top_scores.slice(0, 3).map((entry) => ({
             id: entry.id,
             totalScore: entry.totalScore,
-            finalRank: index + 1,
+            finalRank: entry.rank,
             nickname: entry.nickname,
             avatar: entry.avatar,
         }));
@@ -609,6 +636,13 @@ export default class HostManager {
         });
 
         if (distributions.length === 0) return;
+
+        // Claims are money: never create a second set for the same quiz.
+        const existing_claims = await prisma.prizeClaim.count({ where: { quizId: quiz_id } });
+        if (existing_claims > 0) {
+            console.error(`Prize claims already exist for quiz ${quiz_id}, skipping`);
+            return;
+        }
 
         const quiz = await prisma.quiz.findUnique({
             where: { id: quiz_id },

@@ -129,11 +129,10 @@ export class DatabaseQueueProcessors {
                 updatedParticipant,
             );
 
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            // The live leaderboard ZSET is owned by the server, which bumps it atomically
+            // with ZINCRBY when an answer is scored. Overwriting it here with the database
+            // total rolled scores back while later jobs were still queued, and re-added
+            // kicked participants whenever their warning count or final rank was saved.
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {

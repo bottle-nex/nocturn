@@ -327,6 +327,34 @@ export default class RedisCache {
         }
     }
 
+    /**
+     * Atomically reserves the (question, participant) response slot.
+     * Returns true only for the first caller, so a burst of taps scores once.
+     * The orchestrator later overwrites the placeholder with the stored response.
+     */
+    public async claim_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Partial<Response>,
+    ): Promise<boolean> {
+        try {
+            const key = this.get_participant_response_key(game_session_id);
+            const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+
+            const created = await this.redis_cache.hsetnx(
+                key,
+                unique_key,
+                JSON.stringify(response),
+            );
+            await this.redis_cache.expire(key, 60 * 60 * 24);
+            return created === 1;
+        } catch (error) {
+            console.error('Error while claiming participant response in cache: ', error);
+            return false;
+        }
+    }
+
     public async get_participant_response(
         game_session_id: string,
         question_id: string,
@@ -908,7 +936,9 @@ export default class RedisCache {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
-            pipeline.zadd(leaderboard_key, 0, participant_id);
+            // NX: this runs on every (re)connect, and a plain ZADD reset a reconnecting
+            // participant's earned score back to 0.
+            pipeline.zadd(leaderboard_key, 'NX', 0, participant_id);
             pipeline.expire(leaderboard_key, 60 * 60 * 24);
             await pipeline.exec();
         } catch (err) {
@@ -974,44 +1004,50 @@ export default class RedisCache {
                     rank: i / 2 + 1,
                 });
             }
-            const participants_key = this.get_participants_key(game_session_id);
-            const pipeline = this.redis_cache.pipeline();
-
-            for (const entry of entries) {
-                pipeline.hget(participants_key, `${entry.id}:nickname`);
-                pipeline.hget(participants_key, `${entry.id}:avatar`);
-            }
-            const nick_name_results = await pipeline.exec();
-
-            return entries.map((entry, index) => {
-                const nickname_raw = nick_name_results?.[index * 2]?.[1] as string | null;
-                const avatar_raw = nick_name_results?.[index * 2 + 1]?.[1] as string | null;
-
-                let nickname = nickname_raw ?? 'Unknown';
-                let avatar: string | null = avatar_raw ?? null;
-
-                try {
-                    nickname = JSON.parse(nickname) ?? nickname;
-                } catch {
-                    // ignore JSON parse errors
-                }
-                try {
-                    avatar = avatar_raw ? JSON.parse(avatar_raw) : null;
-                } catch {
-                    // ignore JSON parse errors
-                }
-                return {
-                    id: entry.id,
-                    totalScore: entry.totalScore,
-                    rank: entry.rank,
-                    nickname,
-                    avatar,
-                };
-            });
+            return await this.attach_participant_profiles(game_session_id, entries);
         } catch (err) {
             console.error('Error in get_top_leaderboard:', err);
             return [];
         }
+    }
+
+    /**
+     * Adds nickname and avatar from the participants hash to leaderboard entries,
+     * preserving the order and every other field of the entries passed in.
+     */
+    public async attach_participant_profiles<T extends { id: string }>(
+        game_session_id: string,
+        entries: T[],
+    ): Promise<(T & { nickname: string; avatar: string | null })[]> {
+        if (entries.length === 0) return [];
+        const participants_key = this.get_participants_key(game_session_id);
+        const pipeline = this.redis_cache.pipeline();
+
+        for (const entry of entries) {
+            pipeline.hget(participants_key, `${entry.id}:nickname`);
+            pipeline.hget(participants_key, `${entry.id}:avatar`);
+        }
+        const nick_name_results = await pipeline.exec();
+
+        return entries.map((entry, index) => {
+            const nickname_raw = nick_name_results?.[index * 2]?.[1] as string | null;
+            const avatar_raw = nick_name_results?.[index * 2 + 1]?.[1] as string | null;
+
+            let nickname = nickname_raw ?? 'Unknown';
+            let avatar: string | null = avatar_raw ?? null;
+
+            try {
+                nickname = JSON.parse(nickname) ?? nickname;
+            } catch {
+                // ignore JSON parse errors
+            }
+            try {
+                avatar = avatar_raw ? JSON.parse(avatar_raw) : null;
+            } catch {
+                // ignore JSON parse errors
+            }
+            return { ...entry, nickname, avatar };
+        });
     }
 
     public async get_participant_rank(
