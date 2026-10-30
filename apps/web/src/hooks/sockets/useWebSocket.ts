@@ -2,7 +2,7 @@ import { cleanWebSocketClient, getWebSocketClient } from '@/lib/singleton-socket
 import WebSocketClient, { MessagePayload } from '@/socket/socket.client';
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 export const useWebSocket = () => {
     const socket = useRef<WebSocketClient | null>(null);
@@ -47,6 +47,15 @@ export const useWebSocket = () => {
         }
         socket.current.unsubscribe_to_handlers(type, handler);
     }
+
+    // stable identity so callers can list it as an effect dependency without resubscribing
+    const subscribeToReconnect = useCallback((listener: () => void) => {
+        if (!socket.current) {
+            console.warn('Attempting to watch reconnects but no socket connection available');
+            return () => {};
+        }
+        return socket.current.on_reconnect(listener);
+    }, []);
 
     function handleParticipantNameChangeMessage(payload: unknown) {
         const message: MessagePayload = {
@@ -259,6 +268,7 @@ export const useWebSocket = () => {
         isConnected: socket.current?.is_connected || false,
         subscribeToHandler,
         unsubscribeToHandler,
+        subscribeToReconnect,
         handleParticipantNameChangeMessage,
         handleSpectatorNameChangeMessage,
         handleHostQuestionPreviewPageChange,
