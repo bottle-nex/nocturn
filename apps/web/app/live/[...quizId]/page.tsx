@@ -18,6 +18,8 @@ import {
 } from '@nocturn/types';
 
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
+import { SOCKET_RECONNECTED_EVENT } from '@/socket/socket.client';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
@@ -45,8 +47,10 @@ export default function New({ params }: NewProps) {
     const { setSpectatorData } = useLiveSpectatorStore();
     const { setCurrentUserType } = useUserRoleStore();
     const { setChatMessages } = useLiveQuizGlobalChatStore();
-    const { setParticipants, setResponse } = useLiveParticipantsStore();
+    const { setParticipants, setResponse, resetResponse, setResponses } =
+        useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
+    const { setLeaderboardSnapshot } = useLeaderboardStore();
 
     useEffect(() => {
         async function getLiveData() {
@@ -67,10 +71,20 @@ export default function New({ params }: NewProps) {
                     setChatMessages(data.messages || []);
                     // if not found meand all questions asked
                     if (data.currentQuestion) {
+                        // replace rather than merge, a reconnect may land on a different question
+                        updateCurrentQuestion(null);
                         updateCurrentQuestion(data.currentQuestion);
                     }
                     if (data.response) {
                         setResponse(data.response);
+                    } else {
+                        resetResponse();
+                    }
+                    if (data.responses) {
+                        setResponses(data.responses);
+                    }
+                    if (data.leaderboard) {
+                        setLeaderboardSnapshot(data.leaderboard);
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
@@ -95,6 +109,10 @@ export default function New({ params }: NewProps) {
             }
         }
         getLiveData();
+
+        // events published while the socket was down are lost, so pull the current state again
+        window.addEventListener(SOCKET_RECONNECTED_EVENT, getLiveData);
+        return () => window.removeEventListener(SOCKET_RECONNECTED_EVENT, getLiveData);
     }, [
         quizId,
         updateGameSession,
@@ -109,6 +127,9 @@ export default function New({ params }: NewProps) {
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
         setResponse,
+        resetResponse,
+        setResponses,
+        setLeaderboardSnapshot,
         router,
     ]);
 

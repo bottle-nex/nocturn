@@ -16,6 +16,12 @@ interface LeaderboardStoreProps {
     myScore: number | null;
     totalParticipants: number;
     setMyRank: (rank: number, score: number, total: number) => void;
+    setLeaderboardSnapshot: (snapshot: {
+        topScores: LeaderboardEntry[];
+        totalParticipants: number;
+        myRank: number | null;
+        myScore: number | null;
+    }) => void;
 
     resetLeaderboard: () => void;
 }
@@ -29,6 +35,13 @@ export const useLeaderboardStore = create<LeaderboardStoreProps>((set) => ({
     totalParticipants: 0,
     setMyRank: (rank, score, total) =>
         set({ myRank: rank, myScore: score, totalParticipants: total }),
+    setLeaderboardSnapshot: (snapshot) =>
+        set({
+            topLeaderboard: snapshot.topScores,
+            totalParticipants: snapshot.totalParticipants,
+            myRank: snapshot.myRank,
+            myScore: snapshot.myScore,
+        }),
 
     resetLeaderboard: () =>
         set({
