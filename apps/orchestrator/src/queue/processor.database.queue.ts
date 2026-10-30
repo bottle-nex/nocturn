@@ -123,16 +123,20 @@ export class DatabaseQueueProcessors {
                 },
                 data: participant,
             });
+            // The server owns the live score fields and leaderboard in Redis (atomic
+            // increments on each answer). Writing this possibly-stale DB row back over them
+            // used to drop points and re-add kicked players to the leaderboard.
+            const {
+                totalScore: _totalScore,
+                correctAnswers: _correctAnswers,
+                currentStreak: _currentStreak,
+                longestStreak: _longestStreak,
+                ...non_score_fields
+            } = updatedParticipant;
             await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
-                updatedParticipant,
-            );
-
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
+                non_score_fields,
             );
 
             return { success: true, participant: updatedParticipant };

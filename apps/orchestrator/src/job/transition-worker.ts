@@ -61,19 +61,20 @@ export default class TransitionWorker {
         const start_time = now + buffer;
         const end_time = start_time + question_active_time;
 
+        const phase_update = {
+            hostScreen: HostScreen.QUESTION_ACTIVE,
+            spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
+            participantScreen: ParticipantScreen.QUESTION_ACTIVE,
+            currentPhase: QuizPhase.QUESTION_ACTIVE,
+            phaseStartTime: new Date(start_time),
+            phaseEndTime: new Date(end_time),
+        };
+        // Write the phase to Redis now; answers are validated against it, and the queued
+        // DB write only lands after the queue delay.
+        await this.redis_cache.set_game_session(data.gameSessionId, phase_update);
+
         this.database_queue
-            .update_game_session(
-                data.gameSessionId,
-                {
-                    hostScreen: HostScreen.QUESTION_ACTIVE,
-                    spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
-                    participantScreen: ParticipantScreen.QUESTION_ACTIVE,
-                    currentPhase: QuizPhase.QUESTION_ACTIVE,
-                    phaseStartTime: new Date(start_time),
-                    phaseEndTime: new Date(end_time),
-                },
-                data.gameSessionId,
-            )
+            .update_game_session(data.gameSessionId, phase_update, data.gameSessionId)
             .catch((err) => {
                 console.error('Failed to enqueue question active phase:', err);
             });
@@ -141,19 +142,20 @@ export default class TransitionWorker {
 
         const start_time = now + buffer;
 
+        const phase_update = {
+            hostScreen: HostScreen.QUESTION_RESULTS,
+            spectatorScreen: SpectatorScreen.QUESTION_RESULTS,
+            participantScreen: ParticipantScreen.QUESTION_RESULTS,
+            currentPhase: QuizPhase.SHOW_RESULTS,
+            phaseStartTime: new Date(start_time),
+            phaseEndTime: null, // will be controlled by host to choose to go to next question
+        };
+        // Write the phase to Redis now; answers are validated against it, and the queued
+        // DB write only lands after the queue delay.
+        await this.redis_cache.set_game_session(data.gameSessionId, phase_update);
+
         this.database_queue
-            .update_game_session(
-                data.gameSessionId,
-                {
-                    hostScreen: HostScreen.QUESTION_RESULTS,
-                    spectatorScreen: SpectatorScreen.QUESTION_RESULTS,
-                    participantScreen: ParticipantScreen.QUESTION_RESULTS,
-                    currentPhase: QuizPhase.SHOW_RESULTS,
-                    phaseStartTime: new Date(start_time),
-                    phaseEndTime: null, // will be controlled by host to choose to go to next question
-                },
-                data.gameSessionId,
-            )
+            .update_game_session(data.gameSessionId, phase_update, data.gameSessionId)
             .catch((err) => {
                 console.error('Failed to enqueue show result phase:', err);
             });

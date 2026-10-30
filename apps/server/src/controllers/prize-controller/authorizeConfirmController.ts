@@ -33,6 +33,11 @@ export default async function authorizeConfirmController(req: Request, res: Resp
             return;
         }
 
+        if (quiz.status === 'COMPLETED') {
+            ResponseWriter.invalid_data(res, 'Prizes for this quiz have already been finalized');
+            return;
+        }
+
         if (!quiz.escrowPda || !quiz.quizAccountPda) {
             ResponseWriter.invalid_data(res, 'Quiz has not been staked on-chain');
             return;

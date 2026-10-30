@@ -225,7 +225,13 @@ export default class HostManager {
         //check this line proeprly
         if (!question) throw new Error("Questions doesn't exist in quiz");
 
-        if (question.isAsked) {
+        // `isAsked` in the cached quiz is only refreshed after the queued DB write, so two
+        // quick taps both passed it. Claim the launch atomically in Redis instead.
+        const is_first_launch =
+            !question.isAsked &&
+            (await this.redis_cache.try_claim_once(game_session_id, `question:${question.id}`));
+
+        if (!is_first_launch) {
             const pub_sub_message_to_host: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
                 payload: {
@@ -246,22 +252,22 @@ export default class HostManager {
         const start_time = now + buffer;
         const end_time = start_time + question_reading_time;
 
-        this.database_queue.update_game_session(
-            game_session_id,
-            {
-                currentQuestionIndex: questionIndex,
-                currentQuestionId: questionId,
-                hostScreen: HostScreen.QUESTION_READING,
-                spectatorScreen: SpectatorScreen.QUESTION_READING,
-                participantScreen: ParticipantScreen.QUESTION_READING,
-                phaseStartTime: new Date(start_time),
-                phaseEndTime: new Date(end_time),
-                currentPhase: QuizPhase.QUESTION_READING,
-            },
-            game_session_id,
-        );
+        const reading_phase = {
+            currentQuestionIndex: questionIndex,
+            currentQuestionId: question.id,
+            hostScreen: HostScreen.QUESTION_READING,
+            spectatorScreen: SpectatorScreen.QUESTION_READING,
+            participantScreen: ParticipantScreen.QUESTION_READING,
+            phaseStartTime: new Date(start_time),
+            phaseEndTime: new Date(end_time),
+            currentPhase: QuizPhase.QUESTION_READING,
+        };
+        // Update the live cache now so answers are validated against the new question,
+        // not whatever the cache held before the queued DB write lands.
+        await this.redis_cache.set_game_session(game_session_id, reading_phase);
+        this.database_queue.update_game_session(game_session_id, reading_phase, game_session_id);
 
-        this.database_queue.update_question(game_session_id, questionId, { isAsked: true });
+        this.database_queue.update_question(game_session_id, question.id, { isAsked: true });
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_PARTICIPANT,
@@ -307,7 +313,7 @@ export default class HostManager {
 
         await this.phase_queue.schedule_phase_transition({
             gameSessionId: game_session_id,
-            questionId,
+            questionId: question.id,
             questionIndex,
             fromPhase: QuizPhase.QUESTION_READING,
             toPhase: QuizPhase.QUESTION_ACTIVE,
@@ -444,6 +450,25 @@ export default class HostManager {
             return;
         }
 
+        // Final ranking and prize claims must be produced exactly once; repeated taps used to
+        // create duplicate PrizeClaim rows (and so duplicate payouts and winner emails).
+        if (!(await this.redis_cache.try_claim_once(game_session_id, 'quiz_results'))) {
+            return;
+        }
+
+        try {
+            await this.compute_quiz_results(game_session_id, quiz_id, quiz);
+        } catch (err) {
+            await this.redis_cache.release_once(game_session_id, 'quiz_results');
+            throw err;
+        }
+    }
+
+    private async compute_quiz_results(
+        game_session_id: string,
+        quiz_id: string,
+        quiz: NonNullable<Awaited<ReturnType<RedisCache['get_quiz']>>>,
+    ) {
         // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
         const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
 
@@ -468,11 +493,13 @@ export default class HostManager {
         });
 
         // Assign final ranks with tie handling (same score = same rank)
+        const final_ranks = new Map<string, number>();
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
             if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
+            final_ranks.set(rankable[i]!.id, currentRank);
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
@@ -487,13 +514,18 @@ export default class HostManager {
         const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
         const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
 
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
-            id: entry.id,
-            totalScore: entry.totalScore,
-            finalRank: index + 1,
-            nickname: entry.nickname,
-            avatar: entry.avatar,
-        }));
+        // Rankers shown on screen use the same ranking (kicked players excluded, ties share a
+        // rank) that create_prize_claims pays out on, so the announced winners match payouts.
+        const rankers = top_scores
+            .filter((entry) => final_ranks.has(entry.id))
+            .slice(0, 3)
+            .map((entry) => ({
+                id: entry.id,
+                totalScore: entry.totalScore,
+                finalRank: final_ranks.get(entry.id)!,
+                nickname: entry.nickname,
+                avatar: entry.avatar,
+            }));
 
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
@@ -616,6 +648,13 @@ export default class HostManager {
         });
 
         if (!quiz || !quiz.prizePool) return;
+
+        // Never create a second set of claims for the same quiz.
+        const existing_claims = await prisma.prizeClaim.count({ where: { quizId: quiz_id } });
+        if (existing_claims > 0) {
+            console.error(`Prize claims already exist for quiz ${quiz_id}, skipping`);
+            return;
+        }
 
         // Assign finalRanks to rankable (already done in handle_quiz_results)
         // Build rank-to-participants mapping with tie handling
