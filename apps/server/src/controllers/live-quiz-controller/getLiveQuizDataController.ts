@@ -2,6 +2,7 @@ import {
     ApiResponse,
     getLiveQuizDataResponse,
     LiveGameTokenPayload,
+    LiveLeaderboardSnapshot,
     NOCTURN_COOKIE_NAME,
     ParticipantType,
     ResponseType,
@@ -152,6 +153,22 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
         const sanitizedGameSession = QuizAction.sanitizeGameSession(gameSession, role);
 
+        const [leaderboard, questionResponses] = await Promise.all([
+            get_cached_leaderboard_snapshot(
+                gameSessionId,
+                role === USER_TYPE.PARTICIPANT ? (userData.id ?? null) : null,
+            ),
+            gameSession.hostScreen === HostScreen.QUESTION_RESULTS &&
+            gameSession.currentQuestionId &&
+            role !== USER_TYPE.HOST
+                ? redisCacheInstance.get_all_question_responses(
+                      gameSessionId,
+                      gameSession.currentQuestionId,
+                      ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+                  )
+                : Promise.resolve(undefined),
+        ]);
+
         let currentQuestion: Partial<QuestionType> | null = null;
         if (question) {
             currentQuestion = QuizAction.sanitizeCurrentQuestion(
@@ -202,6 +219,8 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            leaderboard,
+            ...(questionResponses && { questionResponses }),
         };
 
         ResponseWriter.secure_success(res, {
@@ -319,8 +338,19 @@ async function fallbackToDatabase(
             select: { id: true, nickname: true, avatar: true },
         });
 
+        const topParticipants = await tx.participant.findMany({
+            where: { quizId, isKicked: false },
+            select: { id: true, nickname: true, avatar: true, totalScore: true },
+            orderBy: { totalScore: 'desc' },
+            take: 10,
+        });
+        const totalParticipants = await tx.participant.count({
+            where: { quizId, isKicked: false },
+        });
+
         let userData = null;
         let participantResponse = null;
+        let questionResponses: Partial<ResponseType>[] | undefined;
 
         switch (role) {
             case USER_TYPE.HOST:
@@ -380,10 +410,52 @@ async function fallbackToDatabase(
                 break;
         }
 
+        if (
+            role !== USER_TYPE.HOST &&
+            gameSession?.hostScreen === 'QUESTION_RESULTS' &&
+            gameSession.currentQuestionId
+        ) {
+            questionResponses = await tx.response.findMany({
+                where: { gameSessionId, questionId: gameSession.currentQuestionId },
+                select: {
+                    id: true,
+                    participantId: true,
+                    isCorrect: true,
+                    selectedAnswer: true,
+                    pointsEarned: true,
+                },
+            });
+        }
+
+        let myRank: number | null = null;
+        let myScore: number | null = null;
+        if (role === USER_TYPE.PARTICIPANT && userData && 'totalScore' in userData) {
+            myScore = userData.totalScore ?? 0;
+            const ahead = await tx.participant.count({
+                where: { quizId, isKicked: false, totalScore: { gt: myScore } },
+            });
+            myRank = ahead + 1;
+        }
+
+        const leaderboard: LiveLeaderboardSnapshot = {
+            topScores: topParticipants.map((p, index) => ({
+                id: p.id,
+                nickname: p.nickname,
+                avatar: p.avatar ?? null,
+                totalScore: p.totalScore ?? 0,
+                rank: index + 1,
+            })),
+            totalParticipants,
+            myRank,
+            myScore,
+        };
+
         return {
             gameSession,
             quiz,
             question,
+            leaderboard,
+            questionResponses,
             participants,
             spectators,
             userData,
@@ -423,6 +495,8 @@ async function fallbackToDatabase(
         role,
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
+        leaderboard: result.leaderboard,
+        ...(result.questionResponses && { questionResponses: result.questionResponses }),
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
@@ -430,4 +504,21 @@ async function fallbackToDatabase(
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+async function get_cached_leaderboard_snapshot(
+    gameSessionId: string,
+    participantId: string | null,
+): Promise<LiveLeaderboardSnapshot> {
+    const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+        participantId
+            ? redisCacheInstance.get_participant_rank(gameSessionId, participantId)
+            : Promise.resolve(null),
+        participantId
+            ? redisCacheInstance.get_participant_score(gameSessionId, participantId)
+            : Promise.resolve(null),
+    ]);
+    return { topScores, totalParticipants, myRank, myScore };
 }
