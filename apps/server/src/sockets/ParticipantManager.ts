@@ -496,24 +496,6 @@ export default class ParticipantManager {
             return;
         }
 
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
-            return;
-        }
-
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
         if (!quiz || !participant) {
@@ -555,7 +537,8 @@ export default class ParticipantManager {
         const pointsEarned = isCorrectAnswer
             ? (question.basePoints ?? 0) + timeBonus + streakBonus
             : 0;
-        await this.database_queue.create_participant_response(participant_id, game_session_id, {
+
+        const response = {
             selectedAnswer,
             isCorrect: isCorrectAnswer,
             timeToAnswer,
@@ -563,25 +546,55 @@ export default class ParticipantManager {
             timeBonus,
             streakBonus,
             answeredAt: new Date(answeredAt),
-            questionId: game_session.currentQuestionId!,
+            questionId: question.id,
+        };
+
+        // Claim the (question, participant) slot atomically before scoring. Checking the
+        // response hash and writing it later (from the orchestrator) let fast double taps
+        // both pass the check and score twice.
+        const is_first_response = await this.redis_cache.claim_participant_response(
+            game_session_id,
+            question.id,
+            participant_id,
+            response,
+        );
+
+        if (!is_first_response) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: {
+                    error: 'Already opted an option.',
+                },
+                only_socket_id: ws.id,
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            return;
+        }
+
+        // Redis (score + leaderboard) is updated first and atomically; the database only
+        // receives increments, so a lagging queue can never overwrite points with a stale total.
+        await this.redis_cache.apply_participant_score(game_session_id, participant_id, {
+            pointsEarned,
+            isCorrect: isCorrectAnswer,
+            currentStreak: newCurrentStreak,
+            longestStreak: newLongestStreak,
         });
+
+        await this.database_queue.create_participant_response(
+            participant_id,
+            game_session_id,
+            response,
+        );
 
         await this.database_queue.update_participant(
             participant_id,
             {
-                totalScore: (participant.totalScore ?? 0) + pointsEarned,
-                correctAnswers: isCorrectAnswer
-                    ? (participant.correctAnswers ?? 0) + 1
-                    : (participant.correctAnswers ?? 0),
+                totalScore: { increment: pointsEarned },
+                correctAnswers: { increment: isCorrectAnswer ? 1 : 0 },
                 currentStreak: newCurrentStreak,
                 longestStreak: newLongestStreak,
             },
             game_session_id,
-        );
-        await this.redis_cache.update_leaderboard_score(
-            game_session_id,
-            participant_id,
-            pointsEarned,
         );
 
         const event_data: PubSubMessageTypes = {

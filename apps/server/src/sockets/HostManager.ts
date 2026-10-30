@@ -40,6 +40,10 @@ export interface HostManagerDependencies {
     phase_queue: PhaseQueue;
 }
 
+// Locks live for the whole session. Their keys must NOT start with `game_session:`:
+// the server treats any expiring `game_session:*` key as the end of the session.
+const SESSION_LOCK_TTL_SECONDS = 60 * 60 * 24;
+
 export default class HostManager {
     private socketMapping: Map<string, CustomWebSocket>;
     private sessionHostMapping: Map<string, string>;
@@ -225,7 +229,16 @@ export default class HostManager {
         //check this line proeprly
         if (!question) throw new Error("Questions doesn't exist in quiz");
 
-        if (question.isAsked) {
+        // `isAsked` in the cached quiz is only refreshed by the orchestrator after the DB
+        // write (>= 1s later), so a double tap passes that check twice. The SET NX lock
+        // lets exactly one launch per question through.
+        const launch_lock_acquired = await this.redis_cache.try_acquire_lock(
+            this.get_session_lock_key(game_session_id, `question_launch:${question.id}`),
+            ws.id,
+            SESSION_LOCK_TTL_SECONDS,
+        );
+
+        if (question.isAsked || !launch_lock_acquired) {
             const pub_sub_message_to_host: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
                 payload: {
@@ -444,35 +457,60 @@ export default class HostManager {
             return;
         }
 
+        // Final results must be computed exactly once: a second run would re-rank on a
+        // moved leaderboard and create a second set of prize claims (double payouts/emails).
+        const results_lock_acquired = await this.redis_cache.try_acquire_lock(
+            this.get_session_lock_key(game_session_id, 'quiz_results'),
+            ws.id,
+            SESSION_LOCK_TTL_SECONDS,
+        );
+        if (!results_lock_acquired) return;
+
         // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
         const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
 
-        // Check isKicked for each participant via pipeline
+        // Read isKicked + display fields for each participant via one pipeline
         const participants_key = this.redis_cache.get_participants_key(game_session_id);
-        const kicked_pipeline = this.redis_cache.redis_cache.pipeline();
+        const fields = ['isKicked', 'nickname', 'avatar'] as const;
+        const participant_pipeline = this.redis_cache.redis_cache.pipeline();
         for (const entry of sorted_leaderboard) {
-            kicked_pipeline.hget(participants_key, `${entry.id}:isKicked`);
+            for (const field of fields) {
+                participant_pipeline.hget(participants_key, `${entry.id}:${field}`);
+            }
         }
-        const kicked_results = await kicked_pipeline.exec();
+        const participant_results = await participant_pipeline.exec();
+
+        const parse_field = (raw: unknown) => {
+            if (typeof raw !== 'string') return null;
+            try {
+                return JSON.parse(raw);
+            } catch {
+                return raw;
+            }
+        };
 
         // Filter out kicked participants
-        const rankable = sorted_leaderboard.filter((_, index) => {
-            const kicked_val = kicked_results?.[index]?.[1] as string | null;
-            let isKicked = false;
-            try {
-                isKicked = kicked_val ? JSON.parse(kicked_val) : false;
-            } catch {
-                // ignore parse errors
-            }
-            return !isKicked;
-        });
+        const rankable = sorted_leaderboard
+            .map((entry, index) => {
+                const base = index * fields.length;
+                return {
+                    ...entry,
+                    isKicked: parse_field(participant_results?.[base]?.[1]) === true,
+                    nickname: (parse_field(participant_results?.[base + 1]?.[1]) ??
+                        'Unknown') as string,
+                    avatar: parse_field(participant_results?.[base + 2]?.[1]) as string | null,
+                };
+            })
+            .filter((entry) => !entry.isKicked);
 
         // Assign final ranks with tie handling (same score = same rank)
+        const ranked: ((typeof rankable)[number] & { finalRank: number })[] = [];
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
             if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
+            ranked.push({ ...rankable[i]!, finalRank: currentRank });
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
@@ -483,14 +521,21 @@ export default class HostManager {
             );
         }
 
-        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
-
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
+        // Display the same ranking the prize claims are built from (kicked players
+        // excluded, ties sharing a rank), so the winners on screen are the ones paid.
+        const top_scores = ranked.slice(0, 10).map((entry) => ({
             id: entry.id,
             totalScore: entry.totalScore,
-            finalRank: index + 1,
+            rank: entry.finalRank,
+            nickname: entry.nickname,
+            avatar: entry.avatar,
+        }));
+        const total_participants = ranked.length;
+
+        const rankers = ranked.slice(0, 3).map((entry) => ({
+            id: entry.id,
+            totalScore: entry.totalScore,
+            finalRank: entry.finalRank,
             nickname: entry.nickname,
             avatar: entry.avatar,
         }));
@@ -534,7 +579,7 @@ export default class HostManager {
 
         // Create prize claims for winners if prize pool exists
         if (quiz.prizePool && quiz.prizePool > 0) {
-            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
+            this.create_prize_claims(quiz_id, game_session_id, ranked).catch((err) => {
                 console.error('Failed to create prize claims:', err);
             });
         }
@@ -601,7 +646,7 @@ export default class HostManager {
     private async create_prize_claims(
         quiz_id: string,
         game_session_id: string,
-        rankable: { id: string; totalScore: number }[],
+        ranked: { id: string; finalRank: number }[],
     ) {
         const distributions = await prisma.prizeDistribution.findMany({
             where: { quizId: quiz_id },
@@ -617,17 +662,13 @@ export default class HostManager {
 
         if (!quiz || !quiz.prizePool) return;
 
-        // Assign finalRanks to rankable (already done in handle_quiz_results)
-        // Build rank-to-participants mapping with tie handling
+        // Build rank-to-participants mapping from the finalRanks assigned in
+        // handle_quiz_results (the same ranks shown on screen)
         const rankMap = new Map<number, string[]>();
-        let currentRank = 1;
-        for (let i = 0; i < rankable.length; i++) {
-            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
-                currentRank = i + 1;
-            }
-            const existing = rankMap.get(currentRank) || [];
-            existing.push(rankable[i]!.id);
-            rankMap.set(currentRank, existing);
+        for (const entry of ranked) {
+            const existing = rankMap.get(entry.finalRank) || [];
+            existing.push(entry.id);
+            rankMap.set(entry.finalRank, existing);
         }
 
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
@@ -682,32 +723,46 @@ export default class HostManager {
             }
         }
 
-        // Create PrizeClaim records in the database
-        for (const claim of claimsToCreate) {
-            const participant = await prisma.participant.findUnique({
-                where: { id: claim.participantId },
-                select: { email: true, nickname: true },
-            });
+        const participants = await prisma.participant.findMany({
+            where: { id: { in: claimsToCreate.map((claim) => claim.participantId) } },
+            select: { id: true, email: true },
+        });
+        const email_by_participant = new Map(participants.map((p) => [p.id, p.email]));
 
-            if (!participant) continue;
+        // Create PrizeClaim records in one transaction, and only if this quiz has none yet,
+        // so a repeated results run can never produce a second set of claims.
+        const created = await prisma.$transaction(async (tx) => {
+            const existing_claims = await tx.prizeClaim.count({ where: { quizId: quiz_id } });
+            if (existing_claims > 0) return false;
 
-            const claimToken = crypto.randomBytes(16).toString('hex');
-            const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
-            const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
+            for (const claim of claimsToCreate) {
+                const email = email_by_participant.get(claim.participantId);
+                if (email === undefined) continue;
 
-            await prisma.prizeClaim.create({
-                data: {
-                    quizId: quiz_id,
-                    participantId: claim.participantId,
-                    rank: claim.rank,
-                    amount: claim.amount,
-                    amountBaseUnits: claim.amountBaseUnits,
-                    claimToken,
-                    claimTokenHash,
-                    emailHash,
-                    expiresAt,
-                },
-            });
+                const claimToken = crypto.randomBytes(16).toString('hex');
+                const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
+                const emailHash = crypto.createHash('sha256').update(email).digest('hex');
+
+                await tx.prizeClaim.create({
+                    data: {
+                        quizId: quiz_id,
+                        participantId: claim.participantId,
+                        rank: claim.rank,
+                        amount: claim.amount,
+                        amountBaseUnits: claim.amountBaseUnits,
+                        claimToken,
+                        claimTokenHash,
+                        emailHash,
+                        expiresAt,
+                    },
+                });
+            }
+            return true;
+        });
+
+        if (!created) {
+            console.warn(`Prize claims already exist for quiz ${quiz_id}, skipping creation`);
+            return;
         }
 
         // Notify host via WebSocket that prize claims are ready
@@ -719,6 +774,10 @@ export default class HostManager {
             },
         };
         await this.quizManager.publish_event_to_redis(game_session_id, event_data);
+    }
+
+    private get_session_lock_key(game_session_id: string, action: string): string {
+        return `lock:${game_session_id}:${action}`;
     }
 
     private generateSocketId(): string {
