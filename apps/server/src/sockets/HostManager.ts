@@ -225,7 +225,17 @@ export default class HostManager {
         //check this line proeprly
         if (!question) throw new Error("Questions doesn't exist in quiz");
 
-        if (question.isAsked) {
+        // isAsked is only flipped by a queued DB job, so two quick "start" taps both saw it
+        // as false. Claim the launch atomically so a question can only start once.
+        const launch_claimed = question.isAsked
+            ? false
+            : await this.redis_cache.try_acquire_lock(
+                  `game_session:${game_session_id}:question_launched:${question.id}`,
+                  ws.id,
+                  60 * 60 * 24,
+              );
+
+        if (!launch_claimed) {
             const pub_sub_message_to_host: PubSubMessageTypes = {
                 type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
                 payload: {
@@ -444,6 +454,14 @@ export default class HostManager {
             return;
         }
 
+        // Final results (ranks + prize claims) must be computed exactly once per session.
+        const results_claimed = await this.redis_cache.try_acquire_lock(
+            `game_session:${game_session_id}:quiz_results`,
+            ws.id,
+            60 * 60 * 24,
+        );
+        if (!results_claimed) return;
+
         // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
         const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
 
@@ -468,11 +486,13 @@ export default class HostManager {
         });
 
         // Assign final ranks with tie handling (same score = same rank)
+        const final_ranks = new Map<string, number>();
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
             if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
                 currentRank = i + 1;
             }
+            final_ranks.set(rankable[i]!.id, currentRank);
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
@@ -483,14 +503,22 @@ export default class HostManager {
             );
         }
 
-        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
+        // Get top 10 for display + top 3 as rankers (already sorted from ZSET). Use the same
+        // kicked-filtered, tie-aware ranks as the prize claims so the winners shown on screen
+        // are exactly the participants who get paid.
+        const kicked_count = sorted_leaderboard.length - rankable.length;
+        const top_scores = (
+            await this.redis_cache.get_top_leaderboards(game_session_id, 10 + kicked_count)
+        )
+            .filter((entry) => final_ranks.has(entry.id))
+            .slice(0, 10)
+            .map((entry) => ({ ...entry, rank: final_ranks.get(entry.id)! }));
+        const total_participants = rankable.length;
 
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
+        const rankers = top_scores.slice(0, 3).map((entry) => ({
             id: entry.id,
             totalScore: entry.totalScore,
-            finalRank: index + 1,
+            finalRank: entry.rank,
             nickname: entry.nickname,
             avatar: entry.avatar,
         }));
@@ -617,6 +645,13 @@ export default class HostManager {
 
         if (!quiz || !quiz.prizePool) return;
 
+        // Prize money cannot be taken back: never create a second set of claims.
+        const existing_claims = await prisma.prizeClaim.count({ where: { quizId: quiz_id } });
+        if (existing_claims > 0) {
+            console.error(`Prize claims already exist for quiz ${quiz_id}, skipping`);
+            return;
+        }
+
         // Assign finalRanks to rankable (already done in handle_quiz_results)
         // Build rank-to-participants mapping with tie handling
         const rankMap = new Map<number, string[]>();
@@ -682,33 +717,42 @@ export default class HostManager {
             }
         }
 
-        // Create PrizeClaim records in the database
-        for (const claim of claimsToCreate) {
-            const participant = await prisma.participant.findUnique({
-                where: { id: claim.participantId },
-                select: { email: true, nickname: true },
-            });
+        // Create PrizeClaim records in the database, all or nothing
+        const participants = await prisma.participant.findMany({
+            where: { id: { in: claimsToCreate.map((claim) => claim.participantId) } },
+            select: { id: true, email: true },
+        });
+        const email_by_id = new Map(participants.map((p) => [p.id, p.email]));
 
-            if (!participant) continue;
+        await prisma.$transaction(
+            claimsToCreate
+                .filter((claim) => email_by_id.has(claim.participantId))
+                .map((claim) => {
+                    const claimToken = crypto.randomBytes(16).toString('hex');
+                    const claimTokenHash = crypto
+                        .createHash('sha256')
+                        .update(claimToken)
+                        .digest('hex');
+                    const emailHash = crypto
+                        .createHash('sha256')
+                        .update(email_by_id.get(claim.participantId)!)
+                        .digest('hex');
 
-            const claimToken = crypto.randomBytes(16).toString('hex');
-            const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
-            const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
-
-            await prisma.prizeClaim.create({
-                data: {
-                    quizId: quiz_id,
-                    participantId: claim.participantId,
-                    rank: claim.rank,
-                    amount: claim.amount,
-                    amountBaseUnits: claim.amountBaseUnits,
-                    claimToken,
-                    claimTokenHash,
-                    emailHash,
-                    expiresAt,
-                },
-            });
-        }
+                    return prisma.prizeClaim.create({
+                        data: {
+                            quizId: quiz_id,
+                            participantId: claim.participantId,
+                            rank: claim.rank,
+                            amount: claim.amount,
+                            amountBaseUnits: claim.amountBaseUnits,
+                            claimToken,
+                            claimTokenHash,
+                            emailHash,
+                            expiresAt,
+                        },
+                    });
+                }),
+        );
 
         // Notify host via WebSocket that prize claims are ready
         const event_data: PubSubMessageTypes = {

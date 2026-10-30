@@ -344,6 +344,45 @@ export default class RedisCache {
         }
     }
 
+    /**
+     * Atomically reserves the participant's single answer slot for a question (HSETNX).
+     * Returns true only for the first caller, so concurrent taps cannot both be scored.
+     * The orchestrator later overwrites the slot with the persisted response row.
+     */
+    public async claim_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Partial<Response>,
+    ): Promise<boolean> {
+        const key = this.get_participant_response_key(game_session_id);
+        const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+
+        const claimed = await this.redis_cache.hsetnx(key, unique_key, JSON.stringify(response));
+        await this.redis_cache.expire(key, 60 * 60 * 24);
+        return claimed === 1;
+    }
+
+    /**
+     * Atomically adds to numeric participant fields (HINCRBYFLOAT) so concurrent
+     * score updates never overwrite each other with stale totals.
+     */
+    public async increment_participant_fields(
+        game_session_id: string,
+        participant_id: string,
+        increments: Partial<Record<keyof Participant, number>>,
+    ) {
+        const participant_key = this.get_participants_key(game_session_id);
+        const pipeline = this.redis_cache.pipeline();
+
+        Object.entries(increments).forEach(([field, value]) => {
+            pipeline.hincrbyfloat(participant_key, `${participant_id}:${field}`, value as number);
+        });
+        pipeline.expire(participant_key, 60 * 60 * 24);
+
+        await pipeline.exec();
+    }
+
     public async get_all_question_responses(
         game_session_id: string,
         question_id: string,

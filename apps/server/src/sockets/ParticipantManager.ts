@@ -496,24 +496,6 @@ export default class ParticipantManager {
             return;
         }
 
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
-            return;
-        }
-
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
         if (!quiz || !participant) {
@@ -522,7 +504,6 @@ export default class ParticipantManager {
         }
 
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
-        console.log('question is : ', question);
 
         if (!question) {
             console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
@@ -555,7 +536,7 @@ export default class ParticipantManager {
         const pointsEarned = isCorrectAnswer
             ? (question.basePoints ?? 0) + timeBonus + streakBonus
             : 0;
-        await this.database_queue.create_participant_response(participant_id, game_session_id, {
+        const response = {
             selectedAnswer,
             isCorrect: isCorrectAnswer,
             timeToAnswer,
@@ -564,24 +545,62 @@ export default class ParticipantManager {
             streakBonus,
             answeredAt: new Date(answeredAt),
             questionId: game_session.currentQuestionId!,
-        });
+        };
 
-        await this.database_queue.update_participant(
-            participant_id,
-            {
-                totalScore: (participant.totalScore ?? 0) + pointsEarned,
-                correctAnswers: isCorrectAnswer
-                    ? (participant.correctAnswers ?? 0) + 1
-                    : (participant.correctAnswers ?? 0),
-                currentStreak: newCurrentStreak,
-                longestStreak: newLongestStreak,
-            },
+        // Reserve the answer slot atomically. The previous read-then-check only saw answers
+        // after the orchestrator had persisted them, so fast repeated taps were all scored.
+        const claimed = await this.redis_cache.claim_participant_response(
             game_session_id,
+            game_session.currentQuestionId!,
+            participant_id,
+            response,
         );
+
+        if (!claimed) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: {
+                    error: 'Already opted an option.',
+                },
+                only_socket_id: ws.id,
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            return;
+        }
+
+        // Keep the live counters in Redis current right away (atomic increments), so the
+        // next answer reads the right streak and no score is computed from a stale total.
+        await this.redis_cache.increment_participant_fields(game_session_id, participant_id, {
+            totalScore: pointsEarned,
+            correctAnswers: isCorrectAnswer ? 1 : 0,
+        });
+        await this.redis_cache.set_participant(game_session_id, participant_id, {
+            currentStreak: newCurrentStreak,
+            longestStreak: newLongestStreak,
+        });
         await this.redis_cache.update_leaderboard_score(
             game_session_id,
             participant_id,
             pointsEarned,
+        );
+
+        await this.database_queue.create_participant_response(
+            participant_id,
+            game_session_id,
+            response,
+        );
+
+        // Increment instead of writing an absolute total: queued jobs built from a cached
+        // participant snapshot used to overwrite each other and drop earned points.
+        await this.database_queue.update_participant(
+            participant_id,
+            {
+                totalScore: { increment: pointsEarned },
+                correctAnswers: { increment: isCorrectAnswer ? 1 : 0 },
+                currentStreak: newCurrentStreak,
+                longestStreak: newLongestStreak,
+            },
+            game_session_id,
         );
 
         const event_data: PubSubMessageTypes = {

@@ -27,6 +27,9 @@ import { MESSAGE_TYPES } from '@nocturn/types';
 import Publisher from '../client/publisher';
 import { PubSubMessageTypes } from '../types/types';
 
+// Participant counters the server updates live in Redis with atomic increments.
+const LIVE_PARTICIPANT_COUNTERS = ['totalScore', 'correctAnswers'] as const;
+
 export class DatabaseQueueProcessors {
     private redis_cache: RedisCache;
     private publisher: Publisher;
@@ -123,17 +126,33 @@ export class DatabaseQueueProcessors {
                 },
                 data: participant,
             });
+            // The server keeps the live score counters (and the leaderboard ZSET) current in
+            // Redis with atomic increments. Jobs run later and can finish out of order, so
+            // writing this row's snapshot back would roll those counters back and make the
+            // leaderboard jump (or re-add a kicked participant). Only copy a counter back
+            // when this job set it to an absolute value.
+            const cache_update: Partial<Participant> = { ...updatedParticipant };
+            const update_data = participant as Record<string, unknown>;
+            const sets_absolute = (field: keyof Participant) =>
+                field in update_data && typeof update_data[field] !== 'object';
+
+            for (const field of LIVE_PARTICIPANT_COUNTERS) {
+                if (!sets_absolute(field)) delete cache_update[field];
+            }
+
             await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
-                updatedParticipant,
+                cache_update,
             );
 
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            if (sets_absolute('totalScore')) {
+                await this.redis_cache.set_leaderboard_score(
+                    game_session_id,
+                    updatedParticipant.id,
+                    updatedParticipant.totalScore,
+                );
+            }
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {
