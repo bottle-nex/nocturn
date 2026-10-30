@@ -2,6 +2,7 @@ import {
     ApiResponse,
     getLiveQuizDataResponse,
     LiveGameTokenPayload,
+    LiveLeaderboardSnapshot,
     NOCTURN_COOKIE_NAME,
     ParticipantType,
     ResponseType,
@@ -154,12 +155,24 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
 
         let currentQuestion: Partial<QuestionType> | null = null;
         if (question) {
-            currentQuestion = QuizAction.sanitizeCurrentQuestion(
-                question as unknown as Partial<QuestionType>,
-                role,
-                gameSession.hostScreen as HostScreen,
+            currentQuestion = withQuestionId(
+                QuizAction.sanitizeCurrentQuestion(
+                    question as unknown as Partial<QuestionType>,
+                    role,
+                    gameSession.hostScreen as HostScreen,
+                ),
+                question.id,
             );
         }
+
+        const [leaderboard, responses] = await Promise.all([
+            getCachedLeaderboard(gameSessionId, role, userData.id as string),
+            getResultsPhaseResponses(
+                gameSessionId,
+                gameSession.hostScreen as HostScreen,
+                gameSession.currentQuestionId,
+            ),
+        ]);
 
         const quizResponse: Record<string, unknown> = {
             id: quiz.id,
@@ -202,6 +215,8 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             role,
             response: participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
+            leaderboard,
+            responses,
         };
 
         ResponseWriter.secure_success(res, {
@@ -311,6 +326,7 @@ async function fallbackToDatabase(
                 totalScore: true,
                 finalRank: true,
             },
+            orderBy: { totalScore: 'desc' },
             take: 20,
         });
 
@@ -405,14 +421,37 @@ async function fallbackToDatabase(
     const sanitizedGameSession = QuizAction.sanitizeGameSession(result.gameSession, role);
     let currentQuestion: Partial<QuestionType> | null = null;
     if (result.question) {
-        currentQuestion = QuizAction.sanitizeCurrentQuestion(
-            result.question as unknown as Partial<QuestionType>,
-            role,
-            result.gameSession.hostScreen,
+        currentQuestion = withQuestionId(
+            QuizAction.sanitizeCurrentQuestion(
+                result.question as unknown as Partial<QuestionType>,
+                role,
+                result.gameSession.hostScreen,
+            ),
+            result.question.id,
         );
     }
 
-    const chatData = await getChatsController(role, gameSessionId, quizId);
+    const [chatData, cachedLeaderboard, responses] = await Promise.all([
+        getChatsController(role, gameSessionId, quizId),
+        getCachedLeaderboard(gameSessionId, role, result.userData.id),
+        getResultsPhaseResponses(
+            gameSessionId,
+            result.gameSession.hostScreen,
+            result.gameSession.currentQuestionId,
+        ),
+    ]);
+
+    // the leaderboard ZSET may have been evicted along with the session, rebuild it from the database
+    const leaderboard =
+        cachedLeaderboard.totalParticipants > 0
+            ? cachedLeaderboard
+            : await getDatabaseLeaderboard(
+                  quizId,
+                  role,
+                  result.participants,
+                  result.userData as { id: string; totalScore?: number },
+              );
+
     const responseData = {
         quiz: result.quiz,
         gameSession: sanitizedGameSession,
@@ -423,6 +462,8 @@ async function fallbackToDatabase(
         role,
         response: result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
+        leaderboard,
+        responses,
         ...(chatData.messages && { messages: chatData.messages }),
     };
 
@@ -430,4 +471,77 @@ async function fallbackToDatabase(
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+// sanitizeCurrentQuestion drops the id for non-host roles, but the client needs it to tell
+// whether a resync landed on a different question than the one it had on screen
+function withQuestionId(
+    question: Partial<QuestionType> | null,
+    id: string,
+): (Partial<QuestionType> & { id: string }) | null {
+    return question ? { ...question, id } : null;
+}
+
+async function getCachedLeaderboard(
+    gameSessionId: string,
+    role: USER_TYPE,
+    userId: string,
+): Promise<LiveLeaderboardSnapshot> {
+    const isParticipant = role === USER_TYPE.PARTICIPANT;
+    const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+        isParticipant ? redisCacheInstance.get_participant_rank(gameSessionId, userId) : null,
+        isParticipant ? redisCacheInstance.get_participant_score(gameSessionId, userId) : null,
+    ]);
+    return { topScores, totalParticipants, myRank, myScore };
+}
+
+async function getDatabaseLeaderboard(
+    quizId: string,
+    role: USER_TYPE,
+    participants: {
+        id: string;
+        nickname: string;
+        avatar: string | null;
+        totalScore: number;
+    }[],
+    userData: { id: string; totalScore?: number },
+): Promise<LiveLeaderboardSnapshot> {
+    const topScores = participants.slice(0, 10).map((participant, index) => ({
+        id: participant.id,
+        totalScore: participant.totalScore,
+        rank: index + 1,
+        nickname: participant.nickname,
+        avatar: participant.avatar,
+    }));
+
+    const totalParticipants = await prisma.participant.count({
+        where: { quizId, isKicked: false },
+    });
+
+    let myRank: number | null = null;
+    let myScore: number | null = null;
+    if (role === USER_TYPE.PARTICIPANT) {
+        myScore = userData.totalScore ?? 0;
+        const ahead = await prisma.participant.count({
+            where: { quizId, isKicked: false, totalScore: { gt: myScore } },
+        });
+        myRank = ahead + 1;
+    }
+
+    return { topScores, totalParticipants, myRank, myScore };
+}
+
+async function getResultsPhaseResponses(
+    gameSessionId: string,
+    hostScreen: HostScreen | null | undefined,
+    currentQuestionId: string | null | undefined,
+): Promise<Partial<ResponseType>[] | null> {
+    if (hostScreen !== HostScreen.QUESTION_RESULTS || !currentQuestionId) return null;
+    return redisCacheInstance.get_all_question_responses(gameSessionId, currentQuestionId, [
+        'isCorrect',
+        'selectedAnswer',
+        'pointsEarned',
+    ]);
 }
