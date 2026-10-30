@@ -25,6 +25,8 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private has_connected_once: boolean = false;
+    private reconnect_handlers: Set<() => void> = new Set();
 
     constructor(url: string) {
         this.url = url;
@@ -42,6 +44,11 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            if (this.has_connected_once) {
+                // whatever was broadcast while we were offline is lost, let listeners resync
+                this.reconnect_handlers.forEach((handler) => handler());
+            }
+            this.has_connected_once = true;
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
@@ -100,6 +107,13 @@ export default class WebSocketClient {
         if (handler_list.length === 0) {
             this.handlers.delete(type);
         }
+    }
+
+    public on_reconnect(handler: () => void) {
+        this.reconnect_handlers.add(handler);
+        return () => {
+            this.reconnect_handlers.delete(handler);
+        };
     }
 
     public send_message(message: MessagePayload) {
@@ -161,6 +175,7 @@ export default class WebSocketClient {
 
         this.is_connected = false;
         this.handlers.clear();
+        this.reconnect_handlers.clear();
         this.message_queue = [];
     }
 
