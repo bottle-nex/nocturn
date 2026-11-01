@@ -19,10 +19,11 @@ import {
 
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
 import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
+import { getWebSocketClient } from '@/lib/singleton-socket';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 
 export interface NewProps {
     params: Promise<{ quizId: string }>;
@@ -30,14 +31,14 @@ export interface NewProps {
 
 export default function New({ params }: NewProps) {
     const resolvedParams = use(params);
-    const quizId = resolvedParams.quizId;
-    const router = useRouter();
+    const quizId = String(resolvedParams.quizId);
 
     const {
         quiz,
         updateQuiz,
         updateGameSession,
         updateCurrentQuestion,
+        setAskedQuestionCount,
         setIsNextQuestonAvailable,
     } = useLiveQuizStore();
     const { setHostData } = useLiveHostStore();
@@ -45,11 +46,14 @@ export default function New({ params }: NewProps) {
     const { setSpectatorData } = useLiveSpectatorStore();
     const { setCurrentUserType } = useUserRoleStore();
     const { setChatMessages } = useLiveQuizGlobalChatStore();
-    const { setParticipants, setResponse } = useLiveParticipantsStore();
+    const { setParticipants, setResponse, resetResponse } = useLiveParticipantsStore();
     const { setSpectators } = useLiveSpectatorsStore();
 
     useEffect(() => {
+        let active = true;
+        let requestId = 0;
         async function getLiveData() {
+            const currentRequest = ++requestId;
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
                     `${LIVE_QUIZ_DATA_URL}/${quizId}`,
@@ -57,6 +61,7 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
+                if (!active || currentRequest !== requestId) return;
                 if (response.success && response.data) {
                     const data = response.data;
                     updateQuiz(data.quiz);
@@ -65,14 +70,24 @@ export default function New({ params }: NewProps) {
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
-                    // if not found meand all questions asked
-                    if (data.currentQuestion) {
-                        updateCurrentQuestion(data.currentQuestion);
+                    // Replace the question so fields from a missed question cannot survive.
+                    updateCurrentQuestion(null);
+                    if (data.currentQuestion) updateCurrentQuestion(data.currentQuestion);
+                    resetResponse();
+                    if (data.response) setResponse(data.response);
+                    const leaderboard = data.leaderboard;
+                    useLeaderboardStore.setState({
+                        topLeaderboard: leaderboard?.topScores ?? [],
+                        totalParticipants: leaderboard?.totalParticipants ?? 0,
+                        myRank: leaderboard?.myRank ?? null,
+                        myScore: leaderboard?.myScore ?? null,
+                    });
+                    if (data.askedQuestionCount !== null) {
+                        setAskedQuestionCount(data.askedQuestionCount);
+                        setIsNextQuestonAvailable(
+                            data.askedQuestionCount < (data.quiz._count?.questions ?? 0),
+                        );
                     }
-                    if (data.response) {
-                        setResponse(data.response);
-                    }
-                    // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {
                         case USER_TYPE.HOST:
                             setHostData(data.userData as UserType);
@@ -86,15 +101,18 @@ export default function New({ params }: NewProps) {
                         default:
                             break;
                     }
-                } else {
-                    // router.back();
                 }
             } catch (error) {
-                // router.back();
                 console.error('Error fetching live data:', error);
             }
         }
-        getLiveData();
+        const socket = getWebSocketClient(quizId);
+        const unsubscribe = socket.subscribe_to_open(getLiveData);
+        void getLiveData();
+        return () => {
+            active = false;
+            unsubscribe();
+        };
     }, [
         quizId,
         updateGameSession,
@@ -109,7 +127,8 @@ export default function New({ params }: NewProps) {
         updateCurrentQuestion,
         setIsNextQuestonAvailable,
         setResponse,
-        router,
+        resetResponse,
+        setAskedQuestionCount,
     ]);
 
     if (!quiz) {
