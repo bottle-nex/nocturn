@@ -19,6 +19,16 @@ export interface getLiveQuizDataResponse {
   currentQuestion: Partial<QuestionType> | null;
   role: USER_TYPE;
   messages?: ChatMessageType[];
-  response?: Partial<ResponseType>;
+  response?: Partial<ResponseType> | null;
+  topScores: {
+    id: string;
+    totalScore: number;
+    rank: number;
+    nickname: string;
+    avatar: string | null;
+  }[];
+  totalParticipants: number;
+  myRank: number | null;
+  myScore: number | null;
   askedQuestionCount: number | null;
 }

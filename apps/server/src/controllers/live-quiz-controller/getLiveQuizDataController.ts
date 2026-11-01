@@ -192,6 +192,17 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             quizResponse.participantCode = quiz.participantCode;
         }
 
+        const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+            redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+            redisCacheInstance.get_leaderboard_count(gameSessionId),
+            role === USER_TYPE.PARTICIPANT
+                ? redisCacheInstance.get_participant_rank(gameSessionId, userId)
+                : null,
+            role === USER_TYPE.PARTICIPANT
+                ? redisCacheInstance.get_participant_score(gameSessionId, userId)
+                : null,
+        ]);
+
         const responseData = {
             quiz: quizResponse,
             gameSession: sanitizedGameSession,
@@ -201,6 +212,10 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             currentQuestion,
             role,
             response: participantResponse,
+            topScores,
+            totalParticipants,
+            myRank,
+            myScore,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
@@ -230,6 +245,7 @@ async function fallbackToDatabase(
                 id: true,
                 status: true,
                 hostScreen: true,
+                quizEndScreen: true,
                 participantScreen: true,
                 spectatorScreen: true,
                 totalParticipants: true,
@@ -311,7 +327,7 @@ async function fallbackToDatabase(
                 totalScore: true,
                 finalRank: true,
             },
-            take: 20,
+            orderBy: [{ totalScore: 'desc' }, { id: 'desc' }],
         });
 
         const spectators = await tx.spectator.findMany({
@@ -364,6 +380,7 @@ async function fallbackToDatabase(
                         select: {
                             id: true,
                             selectedAnswer: true,
+                            questionId: true,
                             isCorrect: true,
                             pointsEarned: true,
                             timeToAnswer: true,
@@ -417,7 +434,22 @@ async function fallbackToDatabase(
         quiz: result.quiz,
         gameSession: sanitizedGameSession,
         userData: result.userData,
-        participants: result.participants,
+        participants: result.participants.slice(0, 20),
+        topScores: result.participants.slice(0, 10).map((participant, index) => ({
+            ...participant,
+            rank: index + 1,
+        })),
+        totalParticipants: result.participants.length,
+        myRank:
+            role === USER_TYPE.PARTICIPANT
+                ? result.participants.findIndex((participant) => participant.id === userId) + 1 ||
+                  null
+                : null,
+        myScore:
+            role === USER_TYPE.PARTICIPANT
+                ? (result.participants.find((participant) => participant.id === userId)
+                      ?.totalScore ?? null)
+                : null,
         spectators: result.spectators,
         currentQuestion,
         role,
