@@ -1,3 +1,4 @@
+import type { AnswerConfig, QuestionKind, ResponseType } from '@nocturn/types';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import { useLiveQuizGlobalChatStore } from '@/store/live-quiz/useLiveQuizGlobalChatStore';
@@ -198,12 +199,16 @@ export class SubscribeEventHandlers {
             startTime: number;
             endTime: number;
             questionOptions: string[];
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
         };
 
         const { updateCurrentQuestion, updateGameSession } = useLiveQuizStore.getState();
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            questionType: activePhasePayload.questionType,
+            answerConfig: activePhasePayload.answerConfig,
         });
 
         updateGameSession({
@@ -233,6 +238,8 @@ export class SubscribeEventHandlers {
                 pointsEarned: number;
             }[];
             correctAnswer: number;
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
             explanation: string;
             spectatorScreen: SpectatorScreenEnum;
             startTime: number;
@@ -247,6 +254,8 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             correctAnswer: resultsPhasePayload.correctAnswer,
+            questionType: resultsPhasePayload.questionType,
+            answerConfig: resultsPhasePayload.answerConfig,
             explanation: resultsPhasePayload.explanation,
         });
 
@@ -322,6 +331,8 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
             hostScreen: HostScreenEnum;
             startTime: number;
             endTime: number;
@@ -337,6 +348,8 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            questionType: activePhasePayload.questionType,
+            answerConfig: activePhasePayload.answerConfig,
         });
     }
 
@@ -352,12 +365,21 @@ export class SubscribeEventHandlers {
             }[];
             totalParticipants: number;
             correctAnswer: number;
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
             hostScreen: HostScreenEnum;
             startTime: number;
+            responses: Partial<ResponseType>[];
         };
 
         const { setTopLeaderboard } = useLeaderboardStore.getState();
-        const { updateGameSession } = useLiveQuizStore.getState();
+        const { updateGameSession, updateCurrentQuestion } = useLiveQuizStore.getState();
+        updateCurrentQuestion({
+            correctAnswer: resultsPhasePayload.correctAnswer,
+            questionType: resultsPhasePayload.questionType,
+            answerConfig: resultsPhasePayload.answerConfig,
+        });
+        useLiveParticipantsStore.getState().setResponses(resultsPhasePayload.responses ?? []);
 
         setTopLeaderboard(resultsPhasePayload.topScores);
 
@@ -405,6 +427,8 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
             participantScreen: string;
             startTime: number;
             endTime: number;
@@ -414,6 +438,8 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            questionType: activePhasePayload.questionType,
+            answerConfig: activePhasePayload.answerConfig,
         });
 
         updateGameSession({
@@ -443,6 +469,8 @@ export class SubscribeEventHandlers {
                 pointsEarned: number;
             }[];
             correctAnswer: number;
+            questionType: QuestionKind;
+            answerConfig: AnswerConfig;
             explanation: string;
             participantScreen: ParticipantScreenEnum;
             startTime: number;
@@ -457,6 +485,8 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             correctAnswer: resultsPhasePayload.correctAnswer,
+            questionType: resultsPhasePayload.questionType,
+            answerConfig: resultsPhasePayload.answerConfig,
             explanation: resultsPhasePayload.explanation,
         });
 
@@ -484,9 +514,13 @@ export class SubscribeEventHandlers {
 
     // <---------------------- RESPONSE-EVENTS ---------------------->
     static handleParticipantIncomingRespondedMessage(payload: unknown) {
-        if (typeof payload !== 'object' || payload === null || !('error' in payload)) return;
-        const message = payload as { error: string };
-        toast.warning(message.error);
+        if (typeof payload !== 'object' || payload === null) return;
+        const message = payload as { error?: string; response?: Partial<ResponseType> };
+        if (message.response) {
+            useLiveParticipantsStore.getState().setResponse(message.response);
+            useLiveQuizStore.getState().setAlreadyResponded(true);
+        }
+        if (message.error) toast.warning(message.error);
     }
 
     static handleHostIncomingResponseMessage(payload: unknown) {

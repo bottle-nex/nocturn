@@ -10,6 +10,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { HostScreenEnum } from '@nocturn/types';
 import { useEffect, useState } from 'react';
 import { MdNavigateNext } from 'react-icons/md';
+import QuestionAnswerSummary from '../../../common/QuestionAnswerSummary';
 import QuestionLeaderboardDisplay from '../../../common/QuestionLeaderboardDisplay';
 
 export default function HostQuestionResultsRenderer() {
@@ -45,7 +46,8 @@ export default function HostQuestionResultsRenderer() {
         if (quizEnded) {
             handleHostQuizResults({});
         } else {
-            if (!quiz.questions || quiz.questions.length === 0) {
+            let question = quiz.questions?.find((q) => !q.isAsked && q.id !== currentQuestion?.id);
+            if (!question) {
                 const data = await LiveQuizBackendActions.getUnAskedQuestion(
                     session.user.token,
                     quiz.id,
@@ -55,10 +57,11 @@ export default function HostQuestionResultsRenderer() {
                     return;
                 }
                 if (data?.question) {
-                    updateQuiz({ questions: [data?.question] });
+                    updateQuiz({ questions: [data.question] });
+                    question = data.question as NonNullable<typeof currentQuestion>;
                 }
             }
-            const question = quiz.questions[0];
+            if (!question) return;
             updateCurrentQuestion(question);
             handleUpdateCurrentQuestion({
                 questionId: question.id,
@@ -77,6 +80,7 @@ export default function HostQuestionResultsRenderer() {
             />
 
             <div className="flex-1 min-h-0">
+                <QuestionAnswerSummary />
                 <QuestionLeaderboardDisplay />
             </div>
 

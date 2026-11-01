@@ -127,6 +127,16 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
                         currentQuestionId,
                         userData.id,
                     );
+                    if (!participantResponse) {
+                        participantResponse = (await prisma.response.findUnique({
+                            where: {
+                                participantId_questionId: {
+                                    participantId: userData.id,
+                                    questionId: currentQuestionId,
+                                },
+                            },
+                        })) as unknown as Partial<ResponseType> | null;
+                    }
                 }
                 break;
             }
@@ -192,7 +202,22 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             quizResponse.participantCode = quiz.participantCode;
         }
 
+        const questionResponses =
+            gameSession.hostScreen === HostScreen.QUESTION_RESULTS && question
+                ? await prisma.response.findMany({
+                      where: { gameSessionId, questionId: question.id },
+                      select: {
+                          participantId: true,
+                          questionId: true,
+                          answer: true,
+                          selectedAnswer: true,
+                          isCorrect: true,
+                          pointsEarned: true,
+                      },
+                  })
+                : [];
         const responseData = {
+            questionResponses,
             quiz: quizResponse,
             gameSession: sanitizedGameSession,
             userData,
@@ -200,7 +225,15 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             spectators: cachedSpectators,
             currentQuestion,
             role,
-            response: participantResponse,
+            response:
+                participantResponse && gameSession.hostScreen !== HostScreen.QUESTION_RESULTS
+                    ? {
+                          selectedAnswer: participantResponse.selectedAnswer,
+                          answer: participantResponse.answer,
+                          questionId: gameSession.currentQuestionId,
+                          participantId: userId,
+                      }
+                    : participantResponse,
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
@@ -364,6 +397,8 @@ async function fallbackToDatabase(
                         select: {
                             id: true,
                             selectedAnswer: true,
+                            answer: true,
+                            questionId: true,
                             isCorrect: true,
                             pointsEarned: true,
                             timeToAnswer: true,
@@ -413,7 +448,22 @@ async function fallbackToDatabase(
     }
 
     const chatData = await getChatsController(role, gameSessionId, quizId);
+    const questionResponses =
+        result.gameSession.hostScreen === HostScreen.QUESTION_RESULTS && result.question
+            ? await prisma.response.findMany({
+                  where: { gameSessionId, questionId: result.question.id },
+                  select: {
+                      participantId: true,
+                      questionId: true,
+                      answer: true,
+                      selectedAnswer: true,
+                      isCorrect: true,
+                      pointsEarned: true,
+                  },
+              })
+            : [];
     const responseData = {
+        questionResponses,
         quiz: result.quiz,
         gameSession: sanitizedGameSession,
         userData: result.userData,
@@ -421,7 +471,16 @@ async function fallbackToDatabase(
         spectators: result.spectators,
         currentQuestion,
         role,
-        response: result.participantResponse,
+        response:
+            result.participantResponse &&
+            result.gameSession.hostScreen !== HostScreen.QUESTION_RESULTS
+                ? {
+                      selectedAnswer: result.participantResponse.selectedAnswer,
+                      answer: result.participantResponse.answer,
+                      questionId: result.gameSession.currentQuestionId,
+                      participantId: userId,
+                  }
+                : result.participantResponse,
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
         ...(chatData.messages && { messages: chatData.messages }),
     };

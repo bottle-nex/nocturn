@@ -24,6 +24,9 @@ export default function ParticipantQuestionActiveRenderer() {
 
     const canRequestLifeline =
         gameSession?.currentPhase === QuizPhaseEnum.QUESTION_ACTIVE &&
+        ['MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(
+            currentQuestion.questionType ?? 'MULTIPLE_CHOICE',
+        ) &&
         !hasUsedLifeline &&
         !alreadyResponded &&
         !lifelineRequested;

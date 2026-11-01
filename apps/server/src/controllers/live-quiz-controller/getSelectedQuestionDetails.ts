@@ -1,3 +1,4 @@
+import { publicQuestion } from '@nocturn/types';
 import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
@@ -44,6 +45,8 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
                         id: true,
                         question: true,
                         options: true,
+                        questionType: true,
+                        answerConfig: true,
                         explanation: true,
                         hint: true,
                         difficulty: true,
@@ -89,7 +92,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
         }
 
         const question = currentQuestion;
-        ResponseWriter.success(res, question);
+        ResponseWriter.success(res, publicQuestion({ ...question, correctAnswer: 0 }));
         return;
     } catch (error) {
         console.error('Unexpected error in getSelectedQuestionDetails: ', error);
