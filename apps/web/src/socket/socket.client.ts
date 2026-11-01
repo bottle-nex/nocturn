@@ -25,6 +25,7 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private open_handlers = new Set<() => void>();
 
     constructor(url: string) {
         this.url = url;
@@ -42,6 +43,7 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            this.open_handlers.forEach((handler) => handler());
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
@@ -79,6 +81,13 @@ export default class WebSocketClient {
         if (handlers) {
             handlers.forEach((handler) => handler(payload));
         }
+    }
+
+    public subscribe_to_open(handler: () => void) {
+        this.open_handlers.add(handler);
+        return () => {
+            this.open_handlers.delete(handler);
+        };
     }
 
     public subscribe_to_handlers(type: string, handler: MessageHandler) {
@@ -161,6 +170,7 @@ export default class WebSocketClient {
 
         this.is_connected = false;
         this.handlers.clear();
+        this.open_handlers.clear();
         this.message_queue = [];
     }
 

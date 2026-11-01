@@ -13,7 +13,7 @@ import { parse } from 'cookie';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import QuizAction from '../../class/quizAction';
-import { HostScreen, prisma, Question } from '@nocturn/database';
+import { HostScreen, prisma, Question, QuizPhase } from '@nocturn/database';
 import getChatsController from '../chat-controller/getChatsController';
 import { redisCacheInstance } from '../../services/init.services';
 import { QuestionType } from '../../schemas/createQuizSchema';
@@ -201,6 +201,7 @@ export default async function getLiveQuizDataController(req: Request, res: Respo
             currentQuestion,
             role,
             response: participantResponse,
+            leaderboard: await restoreLeaderboard(gameSession, quizId, gameSessionId, role, userId),
             askedQuestionCount: role === USER_TYPE.HOST ? askedQuestionCount : null,
         };
 
@@ -239,6 +240,7 @@ async function fallbackToDatabase(
                 totalSpectators: true,
                 avgResponseTime: true,
                 correctAnswerRate: true,
+                quizEndScreen: true,
                 currentPhase: true,
                 phaseEndTime: true,
                 phaseStartTime: true,
@@ -422,6 +424,14 @@ async function fallbackToDatabase(
         currentQuestion,
         role,
         response: result.participantResponse,
+        leaderboard: await restoreLeaderboard(
+            result.gameSession,
+            quizId,
+            gameSessionId,
+            role,
+            userId,
+            true,
+        ),
         askedQuestionCount: role === USER_TYPE.HOST ? result.askedQuestionCount : null,
         ...(chatData.messages && { messages: chatData.messages }),
     };
@@ -430,4 +440,54 @@ async function fallbackToDatabase(
         type: ApiResponse.GET_LIVE_QUIZ_DATA,
         data: responseData as unknown as getLiveQuizDataResponse,
     });
+}
+
+// Restore the same standings as the results broadcast, including participants outside the top ten.
+async function restoreLeaderboard(
+    gameSession: { currentPhase?: QuizPhase | null },
+    quizId: string,
+    gameSessionId: string,
+    role: USER_TYPE,
+    userId: string,
+    fromDatabase = false,
+): Promise<getLiveQuizDataResponse['leaderboard']> {
+    if (
+        gameSession.currentPhase !== QuizPhase.SHOW_RESULTS &&
+        gameSession.currentPhase !== QuizPhase.QUIZ_RESULTS
+    ) {
+        return null;
+    }
+
+    if (fromDatabase) {
+        const standings = await prisma.participant.findMany({
+            where: { quizId },
+            select: { id: true, nickname: true, avatar: true, totalScore: true },
+            // Redis orders tied scores by member ID descending.
+            orderBy: [{ totalScore: 'desc' }, { id: 'desc' }],
+        });
+        const myIndex =
+            role === USER_TYPE.PARTICIPANT
+                ? standings.findIndex((entry) => entry.id === userId)
+                : -1;
+        return {
+            topScores: standings
+                .slice(0, 10)
+                .map((entry, index) => ({ ...entry, rank: index + 1 })),
+            totalParticipants: standings.length,
+            myRank: myIndex < 0 ? null : myIndex + 1,
+            myScore: standings[myIndex]?.totalScore ?? null,
+        };
+    }
+
+    const [topScores, totalParticipants, myRank, myScore] = await Promise.all([
+        redisCacheInstance.get_top_leaderboards(gameSessionId, 10),
+        redisCacheInstance.get_leaderboard_count(gameSessionId),
+        role === USER_TYPE.PARTICIPANT
+            ? redisCacheInstance.get_participant_rank(gameSessionId, userId)
+            : null,
+        role === USER_TYPE.PARTICIPANT
+            ? redisCacheInstance.get_participant_score(gameSessionId, userId)
+            : null,
+    ]);
+    return { topScores, totalParticipants, myRank, myScore };
 }
