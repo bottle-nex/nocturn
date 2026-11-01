@@ -1,7 +1,8 @@
+import { publicQuestion } from '@nocturn/types';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
-import { ApiResponse, QuestionType } from '@nocturn/types';
+import { ApiResponse } from '@nocturn/types';
 import { getUnAskedQuestionSchema } from '../../schemas/getUnAskedQuestionSchema';
 
 export default async function getUnAskedQuestionController(req: Request, res: Response) {
@@ -65,6 +66,8 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                         id: true,
                         question: true,
                         options: true,
+                        questionType: true,
+                        answerConfig: true,
                         hint: true,
                         difficulty: true,
                         basePoints: true,
@@ -78,7 +81,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     },
                 });
 
-                const question: Partial<QuestionType> | null = raw_question
+                const question = raw_question
                     ? {
                           ...raw_question,
                           hint: raw_question.hint ?? undefined,
@@ -104,6 +107,8 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                         id: true,
                         question: true,
                         options: true,
+                        questionType: true,
+                        answerConfig: true,
                         hint: true,
                         difficulty: true,
                         basePoints: true,
@@ -117,7 +122,7 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     },
                 });
 
-                const question: Partial<QuestionType> | null = raw_question
+                const question = raw_question
                     ? {
                           ...raw_question,
                           hint: raw_question.hint ?? undefined,
@@ -138,6 +143,8 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                     id: true,
                     question: true,
                     options: true,
+                    questionType: true,
+                    answerConfig: true,
                     hint: true,
                     difficulty: true,
                     basePoints: true,
@@ -174,7 +181,11 @@ export default async function getUnAskedQuestionController(req: Request, res: Re
                 data: {
                     end: false,
                     question: {
-                        ...question,
+                        ...publicQuestion({
+                            ...question,
+                            options: question.options ?? [],
+                            correctAnswer: 0,
+                        }),
                         hint: question.hint ?? undefined,
                         imageUrl: question.imageUrl ?? undefined,
                     },

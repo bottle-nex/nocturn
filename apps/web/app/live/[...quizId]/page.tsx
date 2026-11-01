@@ -63,6 +63,7 @@ export default function New({ params }: NewProps) {
                     updateGameSession(data.gameSession);
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
+                    useLiveParticipantsStore.getState().setResponses(data.questionResponses ?? []);
                     setSpectators(data.spectators);
                     setChatMessages(data.messages || []);
                     // if not found meand all questions asked
@@ -70,7 +71,11 @@ export default function New({ params }: NewProps) {
                         updateCurrentQuestion(data.currentQuestion);
                     }
                     if (data.response) {
-                        setResponse(data.response);
+                        setResponse({
+                            ...data.response,
+                            questionId: data.gameSession.currentQuestionId ?? undefined,
+                        });
+                        useLiveQuizStore.getState().setAlreadyResponded(true);
                     }
                     // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
                     switch (data.role) {

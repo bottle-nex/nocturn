@@ -1,157 +1,252 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { RxCross1 } from 'react-icons/rx';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useCollaborativeEdit } from '@/hooks/useCollaborativeEdit';
-import { MdOutlineDragIndicator } from 'react-icons/md';
-import ColoredInput from '@/components/utility/ColoredInput';
+import { AnswerConfig, QUESTION_TYPES, QuestionKind } from '@nocturn/types';
+
+const labels: Record<QuestionKind, string> = {
+    MULTIPLE_CHOICE: 'Multiple choice',
+    TRUE_FALSE: 'True or false',
+    MULTI_SELECT: 'Pick all that apply',
+    SHORT_ANSWER: 'Type the answer',
+    ORDERING: 'Put in order',
+    NUMERIC: 'Number guess',
+};
 
 export default function Options() {
     const { quiz, currentQuestionIndex } = useNewQuizStore();
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
-    const currentQ = quiz.questions[currentQuestionIndex];
-
-    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-
-    const bars = quiz?.template.bars ?? [];
-
-    const handleCorrectAnswerChange = (idx: number) => {
-        editQuestionAndBroadcast(currentQuestionIndex, {
-            correctAnswer: idx,
-            id: currentQ?.id,
-        });
-    };
-
-    function handleInputChange(value: string, index: number) {
-        if (!currentQ) return;
-        const newOptions = [...currentQ.options];
-        newOptions[index] = value;
-
-        editQuestionAndBroadcast(
-            currentQuestionIndex,
-            { options: newOptions, id: currentQ.id },
-            { debounce: true },
-        );
+    const q = quiz.questions[currentQuestionIndex];
+    if (!q) return null;
+    const type = q.questionType ?? 'MULTIPLE_CHOICE';
+    const config = q.answerConfig ?? {};
+    const edit = (fields: Partial<typeof q>) =>
+        editQuestionAndBroadcast(currentQuestionIndex, { ...fields, id: q.id });
+    const configure = (fields: Partial<AnswerConfig>) =>
+        edit({ answerConfig: { ...config, ...fields } });
+    function switchType(next: QuestionKind) {
+        const options =
+            next === 'TRUE_FALSE'
+                ? ['True', 'False']
+                : next === 'SHORT_ANSWER' || next === 'NUMERIC'
+                  ? []
+                  : q.options.length >= 2
+                    ? q.options
+                    : ['', ''];
+        const answerConfig: AnswerConfig =
+            next === 'MULTI_SELECT'
+                ? { correctIndices: [0] }
+                : next === 'SHORT_ANSWER'
+                  ? { acceptedAnswers: [''] }
+                  : next === 'ORDERING'
+                    ? { correctOrder: options.map((_, i) => i) }
+                    : next === 'NUMERIC'
+                      ? { min: 0, max: 100, target: 50, tolerance: 50 }
+                      : {};
+        edit({ questionType: next, options, correctAnswer: 0, answerConfig });
     }
-
-    function handleDragStart(index: number) {
-        setDraggedIndex(index);
-    }
-
-    function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
-        e.preventDefault();
-    }
-
-    function handleDrop(dropIndex: number) {
-        if (draggedIndex === null || !currentQ || draggedIndex === dropIndex) return;
-
-        const newOptions = [...currentQ.options];
-        const [draggedItem] = newOptions.splice(draggedIndex, 1);
-
-        if (draggedItem !== undefined) {
-            newOptions.splice(dropIndex, 0, draggedItem);
-        }
-
-        let newCorrectAnswer = currentQ.correctAnswer;
-
-        if (draggedIndex === currentQ.correctAnswer) {
-            newCorrectAnswer = dropIndex;
-        } else if (draggedIndex < currentQ.correctAnswer && dropIndex >= currentQ.correctAnswer) {
-            newCorrectAnswer -= 1;
-        } else if (draggedIndex > currentQ.correctAnswer && dropIndex <= currentQ.correctAnswer) {
-            newCorrectAnswer += 1;
-        }
-
-        editQuestionAndBroadcast(currentQuestionIndex, {
-            options: newOptions,
-            correctAnswer: newCorrectAnswer,
-            id: currentQ.id,
-        });
-
-        setDraggedIndex(null);
-    }
-
-    function handleDeleteOption(index: number) {
-        if (!currentQ || index === currentQ.correctAnswer) return;
-        const newOptions = [...currentQ.options];
-        newOptions.splice(index, 1);
-        let newCorrectAnswer = currentQ.correctAnswer;
-        if (index < currentQ.correctAnswer) {
-            newCorrectAnswer -= 1;
-        }
-
-        editQuestionAndBroadcast(currentQuestionIndex, {
-            options: newOptions,
-            correctAnswer: newCorrectAnswer,
-            id: currentQ.id,
-        });
-    }
-
-    function handleAddOption() {
-        if (!currentQ || currentQ.options.length >= 6) return;
-        const newOptions = [...currentQ.options, ''];
-        editQuestionAndBroadcast(currentQuestionIndex, {
-            options: newOptions,
-            id: currentQ.id,
-        });
-    }
-
-    if (!currentQ?.options) return null;
-
+    const inputClass = 'w-full rounded border p-2 bg-transparent';
     return (
-        <div className="w-full flex flex-col justify-start items-start gap-y-3">
-            {currentQ.options.map((option, idx) => (
-                <div
-                    key={idx}
-                    draggable
-                    onDragStart={() => handleDragStart(idx)}
-                    onDragOver={handleDragOver}
-                    onDrop={() => handleDrop(idx)}
-                    className={cn(
-                        'flex justify-start items-center gap-x-3 w-full transition-all duration-200 ease-out rounded-md',
-                        draggedIndex === idx ? 'opacity-50' : '',
-                    )}
+        <div className="w-full flex flex-col gap-3">
+            <label>
+                Question type
+                <select
+                    className={inputClass}
+                    value={type}
+                    onChange={(e) => switchType(e.target.value as QuestionKind)}
                 >
-                    <MdOutlineDragIndicator
-                        size={26}
-                        className="text-neutral-500 dark:text-neutral-400 cursor-grab"
+                    {QUESTION_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                            {labels[t]}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            {type === 'SHORT_ANSWER' ? (
+                <label>
+                    Accepted answers (one per line; case and extra spaces are ignored)
+                    <textarea
+                        className={inputClass}
+                        value={(config.acceptedAnswers ?? []).join('\n')}
+                        maxLength={4000}
+                        onChange={(e) => configure({ acceptedAnswers: e.target.value.split('\n') })}
                     />
-
-                    <Checkbox
-                        checked={currentQ.correctAnswer === idx}
-                        onCheckedChange={() => handleCorrectAnswerChange(idx)}
-                        className="scale-150 p-px border border-neutral-300 dark:border-neutral-800 cursor-pointer"
-                    />
-
-                    <ColoredInput
-                        color={bars[idx]}
-                        value={option}
-                        onChange={(val) => handleInputChange(val, idx)}
-                    />
-                    <Button
-                        onClick={() => handleDeleteOption(idx)}
-                        disabled={currentQ.options.length === 1 || currentQ.correctAnswer === idx}
-                        className="dark:bg-dark-base bg-neutral-200"
-                        variant={'ghost'}
-                        size={'icon'}
-                    >
-                        <RxCross1 className="size-3" />
-                    </Button>
-                </div>
-            ))}
-            <Button
-                className={cn(
-                    'w-full dark:text-dark-alpha dark:bg-light-alpha hover:bg-light-base',
-                    'text-light-alpha bg-dark-alpha hover:bg-dark-base',
-                    currentQ.options.length >= 6 && 'cursor-not-allowed opacity-50',
-                )}
-                onClick={handleAddOption}
-            >
-                Add Option
-            </Button>
+                </label>
+            ) : type === 'NUMERIC' ? (
+                <>
+                    {(['min', 'max', 'target', 'tolerance'] as const).map((field) => (
+                        <label key={field}>
+                            {
+                                {
+                                    min: 'Slider minimum',
+                                    max: 'Slider maximum',
+                                    target: 'Exact answer',
+                                    tolerance: 'Distance from the answer where points reach zero',
+                                }[field]
+                            }
+                            <input
+                                className={inputClass}
+                                type="number"
+                                step="any"
+                                value={config[field] ?? ''}
+                                onChange={(e) =>
+                                    configure({
+                                        [field]:
+                                            e.target.value === ''
+                                                ? undefined
+                                                : Number(e.target.value),
+                                    })
+                                }
+                            />
+                        </label>
+                    ))}
+                </>
+            ) : (
+                <>
+                    <p>
+                        {type === 'ORDERING'
+                            ? 'Enter items, then choose the correct sequence below.'
+                            : type === 'MULTI_SELECT'
+                              ? 'Check every correct option.'
+                              : 'Select the correct answer.'}
+                    </p>
+                    {q.options.map((option, index) => (
+                        <div className="flex items-center gap-3" key={index}>
+                            {type !== 'ORDERING' && (
+                                <input
+                                    aria-label={`Correct option ${index + 1}`}
+                                    type={type === 'MULTI_SELECT' ? 'checkbox' : 'radio'}
+                                    name="correct-answer"
+                                    checked={
+                                        type === 'MULTI_SELECT'
+                                            ? (config.correctIndices?.includes(index) ?? false)
+                                            : q.correctAnswer === index
+                                    }
+                                    onChange={() =>
+                                        type === 'MULTI_SELECT'
+                                            ? configure({
+                                                  correctIndices: config.correctIndices?.includes(
+                                                      index,
+                                                  )
+                                                      ? config.correctIndices.filter(
+                                                            (i) => i !== index,
+                                                        )
+                                                      : [...(config.correctIndices ?? []), index],
+                                              })
+                                            : edit({ correctAnswer: index })
+                                    }
+                                />
+                            )}
+                            <input
+                                aria-label={`Option ${index + 1}`}
+                                className={inputClass}
+                                value={option}
+                                disabled={type === 'TRUE_FALSE'}
+                                onChange={(e) =>
+                                    edit({
+                                        options: q.options.map((v, i) =>
+                                            i === index ? e.target.value : v,
+                                        ),
+                                    })
+                                }
+                            />
+                            {type !== 'TRUE_FALSE' && (
+                                <button
+                                    type="button"
+                                    disabled={q.options.length <= 2}
+                                    aria-label={`Remove option ${index + 1}`}
+                                    onClick={() => {
+                                        const options = q.options.filter((_, i) => i !== index);
+                                        const remap = (xs: number[]) =>
+                                            xs
+                                                .filter((i) => i !== index)
+                                                .map((i) => (i > index ? i - 1 : i));
+                                        edit({
+                                            options,
+                                            correctAnswer:
+                                                q.correctAnswer === index
+                                                    ? 0
+                                                    : q.correctAnswer > index
+                                                      ? q.correctAnswer - 1
+                                                      : q.correctAnswer,
+                                            answerConfig: {
+                                                ...config,
+                                                ...(type === 'MULTI_SELECT'
+                                                    ? {
+                                                          correctIndices: remap(
+                                                              config.correctIndices ?? [],
+                                                          ),
+                                                      }
+                                                    : type === 'ORDERING'
+                                                      ? {
+                                                            correctOrder: remap(
+                                                                config.correctOrder ?? [],
+                                                            ),
+                                                        }
+                                                      : {}),
+                                            },
+                                        });
+                                    }}
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {type !== 'TRUE_FALSE' && (
+                        <button
+                            type="button"
+                            disabled={q.options.length >= 6}
+                            onClick={() =>
+                                edit({
+                                    options: [...q.options, ''],
+                                    ...(type === 'ORDERING'
+                                        ? {
+                                              answerConfig: {
+                                                  correctOrder: [
+                                                      ...(config.correctOrder ?? []),
+                                                      q.options.length,
+                                                  ],
+                                              },
+                                          }
+                                        : {}),
+                                })
+                            }
+                        >
+                            Add option
+                        </button>
+                    )}
+                    {type === 'ORDERING' && (
+                        <div>
+                            <p>Correct sequence</p>
+                            {(config.correctOrder ?? q.options.map((_, i) => i)).map(
+                                (item, position, order) => (
+                                    <label className="block" key={position}>
+                                        {position + 1}.
+                                        <select
+                                            className={inputClass}
+                                            value={item}
+                                            onChange={(e) => {
+                                                const selected = Number(e.target.value);
+                                                const next = [...order];
+                                                const other = next.indexOf(selected);
+                                                next[position] = selected;
+                                                if (other !== -1) next[other] = item;
+                                                configure({ correctOrder: next });
+                                            }}
+                                        >
+                                            {q.options.map((v, i) => (
+                                                <option key={i} value={i}>
+                                                    {v || `Item ${i + 1}`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                ),
+                            )}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }

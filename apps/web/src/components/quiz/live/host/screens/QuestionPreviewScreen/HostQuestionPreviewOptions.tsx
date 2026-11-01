@@ -1,4 +1,5 @@
 'use client';
+import QuestionAnswerPreview from '../../../common/QuestionAnswerPreview';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { getResponsiveGap } from '@/components/canvas/CanvasOptions';
@@ -9,6 +10,7 @@ export default function HostQuestionPreviewOptions() {
 
     return (
         <div className="w-full flex flex-col items-center justify-center gap-y-5 p-8 rounded-xl z-50">
+            <QuestionAnswerPreview />
             <div
                 className={cn(
                     'w-full h-full flex items-end justify-center',

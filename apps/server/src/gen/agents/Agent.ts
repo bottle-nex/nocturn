@@ -1,3 +1,5 @@
+import { canonicalQuestion } from '@nocturn/types';
+import { question_schema } from '../schemas/createNewQuizSchema';
 import { prisma } from '@nocturn/database';
 import { model } from '../../services/init.services';
 import { QuizAgentState, QuizAgentStateAnnotation } from '../state/quiz-agent.state';
@@ -272,7 +274,7 @@ export default class Agent {
 
         const parsed_questions = response.questions.map(
             (q: generated_question_type, i: number) => ({
-                ...q,
+                ...canonicalQuestion(question_schema.parse(q)),
                 basePoints: 20,
                 timeLimit: 30,
                 readingTime: 7,

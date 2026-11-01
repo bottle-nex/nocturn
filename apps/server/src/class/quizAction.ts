@@ -1,3 +1,4 @@
+import { publicQuestion } from '@nocturn/types';
 import { GameSession, HostScreen, prisma } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
@@ -220,44 +221,14 @@ export default class QuizAction {
         role: USER_TYPE,
         hostScreen: HostScreen,
     ): Partial<QuestionType> | null {
-        switch (role) {
-            case USER_TYPE.HOST: {
-                return question;
-            }
-            default: {
-                switch (hostScreen) {
-                    case HostScreen.QUESTION_READING: {
-                        const rest = this.pick(question, ['imageUrl', 'question', 'readingTime']);
-                        return rest;
-                    }
-                    case HostScreen.QUESTION_ACTIVE: {
-                        const rest = this.pick(question, [
-                            'imageUrl',
-                            'options',
-                            'question',
-                            'timeLimit',
-                            ...(question.hintLaunched ? (['hint'] as const) : []),
-                        ]);
-                        return rest;
-                    }
-                    case HostScreen.QUESTION_RESULTS: {
-                        const rest = this.pick(question, [
-                            'basePoints',
-                            'correctAnswer',
-                            'difficulty',
-                            'explanation',
-                            'hint',
-                            'imageUrl',
-                            'options',
-                            'question',
-                        ]);
-                        return rest;
-                    }
-                    default:
-                        return null;
-                }
-            }
-        }
+        if (hostScreen === HostScreen.QUESTION_RESULTS) return question;
+        // Apply to hosts too: no answer key is sent over the live API before results.
+        void role;
+        return publicQuestion({
+            ...question,
+            options: question.options ?? [],
+            correctAnswer: question.correctAnswer ?? 0,
+        }) as Partial<QuestionType>;
     }
 
     public static createSpectatorLink(quizId: string): string {

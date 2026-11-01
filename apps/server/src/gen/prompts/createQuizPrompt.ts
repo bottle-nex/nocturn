@@ -65,7 +65,14 @@ export const executor_prompt = new PromptTemplate({
         Topic and plan: {instruction}
         Difficulty level: {difficulty}/5
         
-        Generate questions that match the difficulty level precisely.
+        Generate questions that match the difficulty level precisely. Honor requested question types.
+        questionType can be MULTIPLE_CHOICE, TRUE_FALSE, MULTI_SELECT, SHORT_ANSWER, ORDERING, NUMERIC.
+        correctAnswer is a zero-based index for single choice. TRUE_FALSE options are exactly ["True", "False"].
+        MULTI_SELECT uses answerConfig.correctIndices (all correct zero-based option indices).
+        SHORT_ANSWER uses answerConfig.acceptedAnswers (nonempty accepted strings), options [].
+        ORDERING uses answerConfig.correctOrder (a permutation of all option indices). List options alphabetically, not in the answer order.
+        NUMERIC uses answerConfig.min, max, target, tolerance (positive distance where credit reaches zero), options [].
+        Use correctAnswer 0 for types with answerConfig keys. Never put answer keys in question text or hints.
     `,
     inputVariables: ['instruction', 'difficulty'],
 });

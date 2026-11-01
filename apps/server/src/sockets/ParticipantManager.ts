@@ -1,3 +1,4 @@
+import { answerCredit } from '@nocturn/types';
 import Redis from 'ioredis';
 import QuizManager from './QuizManager';
 import {
@@ -195,7 +196,13 @@ export default class ParticipantManager {
         }
 
         const currentQuestion = quiz.questions?.find((question) => question.id === questionId);
-        const options = currentQuestion?.options;
+        if (
+            !currentQuestion ||
+            currentQuestion.id !== gameSession.currentQuestionId ||
+            !['MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(currentQuestion.questionType)
+        )
+            return;
+        const options = currentQuestion.options;
 
         let hasUsedLifeline = await this.redis_cache.get_cached_lifeline_usage(
             gameSessionId,
@@ -474,10 +481,7 @@ export default class ParticipantManager {
 
         const { selectedAnswer } = payload;
 
-        if (typeof selectedAnswer !== 'number') {
-            console.error('Invalid type of selected answer');
-            return;
-        }
+        const answer = payload.answer ?? selectedAnswer;
 
         const game_session = await this.redis_cache.get_game_session(game_session_id);
 
@@ -503,16 +507,22 @@ export default class ParticipantManager {
         );
 
         if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                    payload: {
+                        response: {
+                            answer: old_response.answer,
+                            selectedAnswer: old_response.selectedAnswer,
+                            questionId: game_session.currentQuestionId,
+                            participantId: participant_id,
+                        },
+                    },
+                }),
+            );
             return;
         }
+        if (payload.questionId && payload.questionId !== game_session.currentQuestionId) return;
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
@@ -522,7 +532,6 @@ export default class ParticipantManager {
         }
 
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
-        console.log('question is : ', question);
 
         if (!question) {
             console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
@@ -533,7 +542,18 @@ export default class ParticipantManager {
         const question_active_time = new Date(game_session.phaseStartTime!).getTime();
         const timeToAnswer = answeredAt - question_active_time;
 
-        const isCorrectAnswer = selectedAnswer === question.correctAnswer;
+        const question_end_time = new Date(game_session.phaseEndTime!).getTime();
+        if (
+            participant.isEliminated ||
+            !Number.isFinite(question_active_time) ||
+            !Number.isFinite(question_end_time) ||
+            answeredAt < question_active_time ||
+            answeredAt > question_end_time
+        )
+            return;
+        const credit = answerCredit(question, answer);
+        if (credit === null || !Number.isFinite(credit)) return;
+        const isCorrectAnswer = credit === 1;
 
         // Streak
         const newCurrentStreak = isCorrectAnswer ? (participant.currentStreak ?? 0) + 1 : 0;
@@ -541,7 +561,7 @@ export default class ParticipantManager {
 
         // Time bonus: up to 50% of basePoints for instant answer, 0 at deadline
         let timeBonus = 0;
-        if (isCorrectAnswer && quiz.timeBonus) {
+        if (credit > 0 && quiz.timeBonus) {
             const totalTimeMs = question.timeLimit * 1000;
             const remainingTime = Math.max(totalTimeMs - timeToAnswer, 0);
             timeBonus = Math.round(
@@ -552,42 +572,83 @@ export default class ParticipantManager {
         // Streak bonus: 10 pts per streak, capped at 50
         const streakBonus = isCorrectAnswer ? Math.min(newCurrentStreak * 10, 50) : 0;
 
-        const pointsEarned = isCorrectAnswer
-            ? (question.basePoints ?? 0) + timeBonus + streakBonus
-            : 0;
-        await this.database_queue.create_participant_response(participant_id, game_session_id, {
-            selectedAnswer,
-            isCorrect: isCorrectAnswer,
-            timeToAnswer,
-            pointsEarned,
-            timeBonus,
-            streakBonus,
-            answeredAt: new Date(answeredAt),
-            questionId: game_session.currentQuestionId!,
-        });
-
-        await this.database_queue.update_participant(
-            participant_id,
-            {
-                totalScore: (participant.totalScore ?? 0) + pointsEarned,
-                correctAnswers: isCorrectAnswer
-                    ? (participant.correctAnswers ?? 0) + 1
-                    : (participant.correctAnswers ?? 0),
-                currentStreak: newCurrentStreak,
-                longestStreak: newLongestStreak,
-            },
-            game_session_id,
+        const pointsEarned = Math.round(
+            credit * ((question.basePoints ?? 0) + timeBonus + streakBonus),
         );
-        await this.redis_cache.update_leaderboard_score(
+        // The unique participant/question constraint makes duplicate socket messages idempotent.
+        // Persist the answer and score together so results and prizes see the same total.
+        let saved;
+        try {
+            saved = await prisma.$transaction(async (tx) => {
+                const response = await tx.response.create({
+                    data: {
+                        selectedAnswer:
+                            typeof answer === 'number' &&
+                            Number.isInteger(answer) &&
+                            answer >= -2147483648 &&
+                            answer <= 2147483647
+                                ? answer
+                                : -1,
+                        answer,
+                        isCorrect: isCorrectAnswer,
+                        timeToAnswer: Math.max(0, timeToAnswer),
+                        pointsEarned,
+                        timeBonus: Math.round(credit * timeBonus),
+                        streakBonus,
+                        answeredAt: new Date(answeredAt),
+                        questionId: question.id,
+                        participantId: participant_id,
+                        gameSessionId: game_session_id,
+                    },
+                });
+                const updated = await tx.participant.update({
+                    where: { id: participant_id },
+                    data: {
+                        totalScore: { increment: pointsEarned },
+                        correctAnswers: { increment: Number(isCorrectAnswer) },
+                        currentStreak: newCurrentStreak,
+                        longestStreak: newLongestStreak,
+                    },
+                });
+                return { response, participant: updated };
+            });
+        } catch (error) {
+            if ((error as { code?: string }).code === 'P2002') return;
+            throw error;
+        }
+        await this.redis_cache.set_participant_response(
+            game_session_id,
+            question.id,
+            participant_id,
+            saved.response,
+        );
+        await this.redis_cache.set_participant(game_session_id, participant_id, saved.participant);
+        await this.redis_cache.set_leaderboard_score(
             game_session_id,
             participant_id,
-            pointsEarned,
+            saved.participant.totalScore,
+        );
+        ws.send(
+            JSON.stringify({
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: {
+                    response: {
+                        answer: saved.response.answer,
+                        selectedAnswer: saved.response.selectedAnswer,
+                        questionId: question.id,
+                        participantId: participant_id,
+                    },
+                },
+            }),
         );
 
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE,
             payload: {
-                selectedAnswer: selectedAnswer,
+                participantId: participant_id,
+                ...(['MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(question.questionType)
+                    ? { selectedAnswer: answer }
+                    : {}),
             },
         };
         this.quizManager.publish_event_to_redis(game_session_id, event_data);

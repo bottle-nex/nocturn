@@ -84,6 +84,8 @@ model Question {
     id            String   @id @default(cuid())
     question      String
     options       String[]
+    questionType  String   @default("MULTIPLE_CHOICE")
+    answerConfig  Json     @default("{}")
     correctAnswer Int
     explanation   String?
     hint          String?

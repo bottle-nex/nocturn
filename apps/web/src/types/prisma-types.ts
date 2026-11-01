@@ -1,3 +1,4 @@
+import type { AnswerConfig, QuestionKind, SubmittedAnswer } from '@nocturn/types';
 export interface UserType {
     id: string;
     name: string;
@@ -89,6 +90,8 @@ export interface QuestionType {
     question: string;
     options: string[];
     correctAnswer: number;
+    questionType?: QuestionKind;
+    answerConfig?: AnswerConfig;
     explanation?: string;
     hint?: string;
     difficulty: number;
@@ -176,6 +179,7 @@ export interface GameSessionType {
 export interface ResponseType {
     id: string;
     selectedAnswer: number;
+    answer?: SubmittedAnswer;
     isCorrect: boolean;
     timeToAnswer: number;
     pointsEarned: number;
