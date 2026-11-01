@@ -29,15 +29,16 @@ export default function ParticipantQuestionActiveOptions() {
         lifelineLiveVotes,
     } = useLiveQuizStore();
     const { handleParticipantResponseMessage } = useWebSocket();
-    const { setResponse } = useLiveParticipantsStore();
+    const { response, setResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
     const [selected, setSelected] = useState<number | null>(null);
+    const savedAnswer =
+        response?.questionId === currentQuestion?.id ? response?.selectedAnswer : null;
 
     useEffect(() => {
-        setSelected(null);
-        setAlreadyResponded(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentQuestion?.id]);
+        setSelected(savedAnswer ?? null);
+        setAlreadyResponded(savedAnswer !== null && savedAnswer !== undefined);
+    }, [currentQuestion?.id, savedAnswer, setAlreadyResponded]);
 
     if (!currentQuestion) return null;
 

@@ -18,6 +18,8 @@ import {
 } from '@nocturn/types';
 
 import { useLiveSpectatorsStore } from '@/store/live-quiz/useLiveSpectatorsStore';
+import { getWebSocketClient } from '@/lib/singleton-socket';
+import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { use, useEffect } from 'react';
@@ -25,12 +27,12 @@ import { LIVE_QUIZ_DATA_URL } from 'routes/api_routes';
 import LiveGameScreens from '@/components/quiz/live/LiveGameScreens';
 
 export interface NewProps {
-    params: Promise<{ quizId: string }>;
+    params: Promise<{ quizId: string[] }>;
 }
 
 export default function New({ params }: NewProps) {
     const resolvedParams = use(params);
-    const quizId = resolvedParams.quizId;
+    const quizId = resolvedParams.quizId[0] ?? '';
     const router = useRouter();
 
     const {
@@ -49,7 +51,12 @@ export default function New({ params }: NewProps) {
     const { setSpectators } = useLiveSpectatorsStore();
 
     useEffect(() => {
+        const client = getWebSocketClient(quizId);
+        let active = true;
+        let requestId = 0;
         async function getLiveData() {
+            const currentRequest = ++requestId;
+            const previousSession = useLiveQuizStore.getState().gameSession;
             try {
                 const { data: response } = await axios.get<CustomResponse<getLiveQuizDataResponse>>(
                     `${LIVE_QUIZ_DATA_URL}/${quizId}`,
@@ -57,6 +64,9 @@ export default function New({ params }: NewProps) {
                         withCredentials: true,
                     },
                 );
+                // Phase messages received during the request take precedence over its snapshot.
+                if (!active || currentRequest !== requestId) return;
+                if (useLiveQuizStore.getState().gameSession !== previousSession) return;
                 if (response.success && response.data) {
                     const data = response.data;
                     updateQuiz(data.quiz);
@@ -64,15 +74,26 @@ export default function New({ params }: NewProps) {
                     setCurrentUserType(data.role);
                     setParticipants(data.participants);
                     setSpectators(data.spectators);
-                    setChatMessages(data.messages || []);
-                    // if not found meand all questions asked
+                    if (data.messages) setChatMessages(data.messages);
+                    // Remove fields left over from the previous question before restoring state.
+                    useLiveQuizStore.setState({ currentQuestion: null });
                     if (data.currentQuestion) {
                         updateCurrentQuestion(data.currentQuestion);
                     }
+                    useLiveParticipantsStore.getState().resetResponse();
                     if (data.response) {
                         setResponse(data.response);
                     }
-                    // setIsNextQuestonAvailable(Boolean(data.isNextQuestionAvailable));
+                    useLiveQuizStore.getState().setAlreadyResponded(Boolean(data.response));
+                    if (data.askedQuestionCount !== null) {
+                        useLiveQuizStore.getState().setAskedQuestionCount(data.askedQuestionCount);
+                    }
+                    useLeaderboardStore.setState({
+                        topLeaderboard: data.topScores,
+                        totalParticipants: data.totalParticipants,
+                        myRank: data.myRank,
+                        myScore: data.myScore,
+                    });
                     switch (data.role) {
                         case USER_TYPE.HOST:
                             setHostData(data.userData as UserType);
@@ -94,7 +115,12 @@ export default function New({ params }: NewProps) {
                 console.error('Error fetching live data:', error);
             }
         }
-        getLiveData();
+        const unsubscribe = client.subscribe_to_connection(getLiveData);
+        void getLiveData();
+        return () => {
+            active = false;
+            unsubscribe();
+        };
     }, [
         quizId,
         updateGameSession,

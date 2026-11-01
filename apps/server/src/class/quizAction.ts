@@ -227,11 +227,17 @@ export default class QuizAction {
             default: {
                 switch (hostScreen) {
                     case HostScreen.QUESTION_READING: {
-                        const rest = this.pick(question, ['imageUrl', 'question', 'readingTime']);
+                        const rest = this.pick(question, [
+                            'id',
+                            'imageUrl',
+                            'question',
+                            'readingTime',
+                        ]);
                         return rest;
                     }
                     case HostScreen.QUESTION_ACTIVE: {
                         const rest = this.pick(question, [
+                            'id',
                             'imageUrl',
                             'options',
                             'question',
@@ -242,6 +248,7 @@ export default class QuizAction {
                     }
                     case HostScreen.QUESTION_RESULTS: {
                         const rest = this.pick(question, [
+                            'id',
                             'basePoints',
                             'correctAnswer',
                             'difficulty',
