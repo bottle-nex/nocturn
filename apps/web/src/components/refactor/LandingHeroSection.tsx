@@ -319,25 +319,68 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <section
+            aria-labelledby="landing-hero-title"
+            className="w-full max-w-270 px-5 pt-28 pb-6 sm:px-8 md:pt-36 xl:px-0"
+        >
+            <div className="relative border-[3px] border-dark-base bg-[#f8f3e8] px-5 py-10 text-dark-base shadow-[8px_8px_0_0_#171717] sm:px-10 sm:py-14">
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 opacity-[0.08]"
+                    style={{
+                        backgroundImage: 'radial-gradient(#171717 1px, transparent 1px)',
+                        backgroundSize: '16px 16px',
+                    }}
+                />
+                <div className="relative flex flex-col items-center gap-6 text-center">
+                    <span className="-rotate-2 border-2 border-dark-base bg-[#c4b5fd] px-4 py-2 text-xs font-bold tracking-widest uppercase shadow-[3px_3px_0_0_#171717] sm:text-sm">
+                        Big brains. Friendly competition.
+                    </span>
+                    <h1
+                        id="landing-hero-title"
+                        className="max-w-3xl text-5xl leading-[1.05] font-black tracking-tight sm:text-7xl md:text-8xl"
+                    >
+                        Play smart.
+                        <br />
+                        <span className="mt-3 inline-block -rotate-2 border-[3px] border-dark-base bg-[#fce354] px-3 pb-2 shadow-[5px_5px_0_0_#171717]">
+                            Win big.
+                        </span>
+                    </h1>
+                    <p className="max-w-lg text-base leading-relaxed sm:text-xl">
+                        Turn what you know into your next big moment. Create a quiz, challenge your
+                        friends, and make every answer count.
+                    </p>
+                    <div className="flex w-full min-w-0 flex-col items-center gap-3">
+                        <span className="text-xs font-bold tracking-widest uppercase">
+                            Got a game code? Jump in.
+                        </span>
+                        <JoinQuizButton />
+                    </div>
+                    <ul className="flex flex-wrap justify-center gap-2 text-xs font-bold sm:gap-3 sm:text-sm">
+                        {['AI-powered quizzes', 'Live multiplayer', 'Real rewards'].map(
+                            (feature) => (
+                                <li
+                                    key={feature}
+                                    className="border-2 border-dark-base bg-white px-3 py-2"
+                                >
+                                    {feature}
+                                </li>
+                            ),
+                        )}
+                    </ul>
+                </div>
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
-                Nocturn is a real-time quiz app made for people who love learning and friendly
-                competition.
+            <div className="mt-12 flex items-center gap-3 text-xs font-bold tracking-widest text-dark-base uppercase sm:text-sm">
+                <span className="h-0.5 flex-1 bg-dark-base" />
+                From idea to game night
+                <span className="h-0.5 flex-1 bg-dark-base" />
             </div>
-
-            <div className="mt-2">
-                <JoinQuizButton />
-            </div>
-
-            <div className="h-full w-full relative mt-5">
+            <div className="relative mt-6 h-70 sm:h-110 lg:h-130">
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
-                    <div className="h-12 w-full flex justify-between items-center">
+                <div className="absolute border-[3px] border-dark-base bg-white shadow-[8px_8px_0_0_#171717] h-140 sm:h-170 lg:h-full w-175 sm:w-200 overflow-hidden left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                    <div className="h-12 w-full shrink-0 border-b-[3px] border-dark-base bg-[#c4b5fd] flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
                             <div className="h-3 w-3 rounded-full bg-[#FFCC01]" />
@@ -356,7 +399,7 @@ export default function LandingHeroSection() {
                         </div>
                     </div>
 
-                    <div className="h-full min-h-0 w-full flex gap-x-3 px-3 pb-3">
+                    <div className="h-full min-h-0 w-full flex gap-x-3 p-3">
                         <section className="w-[60%] h-full flex flex-col gap-y-3">
                             <div className="h-50 w-full rounded-xl bg-light-base relative overflow-hidden">
                                 <Image
@@ -482,7 +525,7 @@ export default function LandingHeroSection() {
                             </div>
                         </section>
 
-                        <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border border-dashed border-alpha rounded-xl">
+                        <section className="w-[40%] h-full min-h-0 px-3 py-1.5 flex flex-col overflow-hidden border-2 border-dark-base bg-[#f8f3e8]">
                             <div
                                 className={cn(
                                     'text-dark-base/60 font-semibold text-base shrink-0',
@@ -509,6 +552,6 @@ export default function LandingHeroSection() {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
