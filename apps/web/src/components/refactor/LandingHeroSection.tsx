@@ -137,7 +137,7 @@ function LiveActivityCard() {
     );
 
     return (
-        <section className="hidden md:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-[10%] left-2 scale-105 -rotate-6 bg-light-alpha rounded-xl ring-1 ring-black/10 shadow-xs shadow-black/5">
+        <section className="hidden lg:flex h-auto pb-4 w-60 z-1 flex-col gap-y-2 p-2 px-3 absolute bottom-10 left-4 -rotate-6 bg-[#e4ff80] rounded-sm border-2 border-dark-base shadow-[5px_5px_0_#242424]">
             <div className="flex gap-x-1.5 px-1 py-px text-dark-base/80 items-center">
                 <FaGamepad size={28} />
                 Nocturn
@@ -319,24 +319,52 @@ export default function LandingHeroSection() {
     const quizStage = visibleCount >= 8 ? 3 : visibleCount >= 6 ? 2 : visibleCount >= 4 ? 1 : 0;
 
     return (
-        <div className="h-[90vh] md:h-screen w-full max-w-270 flex flex-col gap-y-3 pt-24 md:pt-40 px-6 xl:px-0 items-center select-none overflow-hidden">
-            <div className="text-4xl md:text-5xl font-semibold max-w-xl text-dark-base text-center">
-                Knowledge that pays off
+        <section
+            aria-labelledby="landing-hero-title"
+            className="w-full max-w-270 px-5 pt-28 pb-5 md:px-8 md:pt-36 xl:px-0 text-dark-base"
+        >
+            <div className="flex flex-col items-center text-center gap-6">
+                <span className="inline-flex items-center gap-2 border-2 border-dark-base bg-[#e4ff80] px-3 py-1.5 text-xs font-bold uppercase tracking-widest shadow-[3px_3px_0_#242424] -rotate-2">
+                    <FaGamepad aria-hidden="true" className="size-4" />
+                    Big brains. Friendly rivalry.
+                </span>
+                <h1
+                    id="landing-hero-title"
+                    className="max-w-4xl text-5xl font-black leading-[1.08] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+                >
+                    Knowledge that
+                    <br />
+                    <span className="relative mt-2 inline-block border-2 border-dark-base bg-[#c4b5fd] px-3 pb-2 shadow-[5px_5px_0_#242424] -rotate-2 md:px-5">
+                        pays off.
+                    </span>
+                </h1>
+                <p className="max-w-xl text-base leading-relaxed text-dark-base/75 sm:text-lg md:text-xl">
+                    Turn what you know into a little friendly competition. Create a quiz, bring your
+                    people, and make learning the main event.
+                </p>
+                <div className="relative z-10 flex flex-col items-center gap-3">
+                    <JoinQuizButton />
+                    <span className="text-xs font-medium text-dark-base/65">
+                        Got a game code? You’re in the right place.
+                    </span>
+                </div>
+                <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-bold uppercase tracking-wide sm:text-sm">
+                    {['Create with AI', 'Play in real time', 'Learn together'].map((label) => (
+                        <li key={label} className="flex items-center gap-2">
+                            <span aria-hidden="true" className="size-2 bg-dark-base" />
+                            {label}
+                        </li>
+                    ))}
+                </ul>
             </div>
 
-            <div className="text-dark-base/60 w-full max-w-2xl text-xl md:text-2xl text-center">
-                Nocturn is a real-time quiz app made for people who love learning and friendly
-                competition.
-            </div>
-
-            <div className="mt-2">
-                <JoinQuizButton />
-            </div>
-
-            <div className="h-full w-full relative mt-5">
+            <div className="relative mt-10 h-[310px] border-2 border-dark-base bg-[#f4f0e8] bg-[radial-gradient(#24242433_1px,transparent_1px)] bg-size-[18px_18px] shadow-[6px_6px_0_#242424] sm:mt-12 sm:h-[405px] lg:h-[560px]">
+                <div className="absolute -top-4 right-4 z-2 rotate-3 border-2 border-dark-base bg-[#e4ff80] px-3 py-2 text-xs font-black uppercase tracking-wide shadow-[3px_3px_0_#242424] sm:right-8">
+                    Your next game night ↙
+                </div>
                 <LiveActivityCard />
 
-                <div className="absolute shadow-xs shadow-black/5 h-140 sm:h-170 lg:h-full w-175 sm:w-200 rounded-xl overflow-hidden ring-1 ring-black/10 left-1/2 -translate-x-1/2 top-0 flex flex-col scale-[0.45] sm:scale-[0.6] lg:scale-100 origin-top">
+                <div className="absolute h-140 w-175 rounded-sm overflow-hidden border-2 border-dark-base bg-white shadow-[8px_8px_0_#242424] left-1/2 -translate-x-1/2 top-9 flex flex-col scale-[0.43] sm:scale-[0.6] lg:scale-[0.85] origin-top">
                     <div className="h-12 w-full flex justify-between items-center">
                         <div className="h-12 w-full px-4 flex items-center gap-x-1.5">
                             <div className="h-3 w-3 rounded-full bg-[#FE3A30]" />
@@ -509,6 +537,6 @@ export default function LandingHeroSection() {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
