@@ -490,6 +490,46 @@ export default class ParticipantManager {
             return;
         }
 
+        if (payload.questionId && payload.questionId !== game_session.currentQuestionId) return;
+        const question_id = game_session.currentQuestionId;
+        if (!question_id) return;
+
+        const find_saved_response = () =>
+            prisma.response.findUnique({
+                where: {
+                    participantId_questionId: {
+                        participantId: participant_id,
+                        questionId: question_id,
+                    },
+                },
+            });
+        const send_receipt = (response: { answer?: unknown; selectedAnswer: number }) =>
+            ws.send(
+                JSON.stringify({
+                    type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                    payload: {
+                        response: {
+                            answer: response.answer,
+                            selectedAnswer: response.selectedAnswer,
+                            questionId: question_id,
+                            participantId: participant_id,
+                        },
+                    },
+                }),
+            );
+
+        // A persisted answer remains authoritative after cache loss or a phase change.
+        const old_response =
+            (await this.redis_cache.get_participant_response(
+                game_session_id,
+                question_id,
+                participant_id,
+            )) ?? (await find_saved_response());
+        if (old_response) {
+            send_receipt(old_response);
+            return;
+        }
+
         if (game_session.currentPhase !== QuizPhase.QUESTION_ACTIVE) {
             console.error('quiz is not in active phase');
             return;
@@ -499,30 +539,6 @@ export default class ParticipantManager {
             console.error('question time has expired');
             return;
         }
-
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            ws.send(
-                JSON.stringify({
-                    type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                    payload: {
-                        response: {
-                            answer: old_response.answer,
-                            selectedAnswer: old_response.selectedAnswer,
-                            questionId: game_session.currentQuestionId,
-                            participantId: participant_id,
-                        },
-                    },
-                }),
-            );
-            return;
-        }
-        if (payload.questionId && payload.questionId !== game_session.currentQuestionId) return;
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
@@ -613,7 +629,11 @@ export default class ParticipantManager {
                 return { response, participant: updated };
             });
         } catch (error) {
-            if ((error as { code?: string }).code === 'P2002') return;
+            if ((error as { code?: string }).code === 'P2002') {
+                const response = await find_saved_response();
+                if (response) send_receipt(response);
+                return;
+            }
             throw error;
         }
         await this.redis_cache.set_participant_response(
@@ -628,19 +648,7 @@ export default class ParticipantManager {
             participant_id,
             saved.participant.totalScore,
         );
-        ws.send(
-            JSON.stringify({
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    response: {
-                        answer: saved.response.answer,
-                        selectedAnswer: saved.response.selectedAnswer,
-                        questionId: question.id,
-                        participantId: participant_id,
-                    },
-                },
-            }),
-        );
+        send_receipt(saved.response);
 
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE,

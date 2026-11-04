@@ -399,6 +399,7 @@ async function fallbackToDatabase(
                             selectedAnswer: true,
                             answer: true,
                             questionId: true,
+                            participantId: true,
                             isCorrect: true,
                             pointsEarned: true,
                             timeToAnswer: true,

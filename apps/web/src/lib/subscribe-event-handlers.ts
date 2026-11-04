@@ -516,7 +516,10 @@ export class SubscribeEventHandlers {
     static handleParticipantIncomingRespondedMessage(payload: unknown) {
         if (typeof payload !== 'object' || payload === null) return;
         const message = payload as { error?: string; response?: Partial<ResponseType> };
-        if (message.response) {
+        if (
+            message.response &&
+            message.response.questionId === useLiveQuizStore.getState().currentQuestion?.id
+        ) {
             useLiveParticipantsStore.getState().setResponse(message.response);
             useLiveQuizStore.getState().setAlreadyResponded(true);
         }
