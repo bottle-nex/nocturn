@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 export const quizJoinSchema = z.object({
-    code: z.string().min(1, 'Quiz code is required'),
+    code: z
+        .string()
+        .trim()
+        .min(1, 'Quiz code is required')
+        .transform((code) => (code.length === 6 ? code.toUpperCase() : code)),
     email: z.email('Invalid email address').optional(),
     name: z
         .string()
