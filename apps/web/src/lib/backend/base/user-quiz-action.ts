@@ -19,9 +19,10 @@ class UserQuizAction {
         name?: string,
         force = false,
     ): Promise<JoinQuizResponse | null> {
+        code = code.trim();
         switch (code.length) {
             case 6:
-                return await this.spectatorJoinQuiz(code, force);
+                return await this.spectatorJoinQuiz(code.toUpperCase(), force);
             case 12:
                 return await this.participantJoinQuiz(code, email!, name, force);
             default:
@@ -145,6 +146,10 @@ class UserQuizAction {
             return null;
         } catch (err) {
             console.error('Error while joining quiz', err);
+            const message = axios.isAxiosError(err)
+                ? err.response?.data?.message
+                : undefined;
+            toast.error(message || 'Failed to join quiz. Please try again.');
             return null;
         }
     }
