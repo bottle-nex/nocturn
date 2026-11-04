@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import Link from 'next/link';
 import AppLogo from '@/components/app/AppLogo';
 import { cn } from '@/lib/utils';
 import FallingAvatars from '@/components/animation/FallingAvatars';
@@ -53,6 +54,14 @@ export default function HostQuizResultsScreensRenderer(): JSX.Element {
                 <div className="absolute top-4 left-4 z-10">
                     <AppLogo withText textColor="text-dark-base dark:text-dark-base" />
                 </div>
+                {gameSession?.quizEndScreen === QuizEndScreen.ANNOUNCED && (
+                    <Link
+                        href={`/home/sessions/${gameSession.quizId}`}
+                        className="absolute top-4 right-4 z-20 rounded-lg bg-alpha px-5 py-3 text-white"
+                    >
+                        Open session report
+                    </Link>
+                )}
                 <AnimatePresence mode="wait">
                     {gameSession?.quizEndScreen === QuizEndScreen.ARE_YOU_UP && (
                         <motion.section

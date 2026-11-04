@@ -528,6 +528,7 @@ export default class HostManager {
             quiz_id,
             {
                 status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
+                endedAt: new Date(),
             },
             game_session_id,
         );

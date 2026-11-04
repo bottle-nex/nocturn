@@ -12,6 +12,8 @@ export const REFRESH_TOKEN_URL = API_URL + '/refresh-token';
 export const INIT_REFRESH_URL = API_URL + '/init-refresh';
 export const LOGOUT_URL = API_URL + '/logout';
 export const QUIZ_URL = API_URL + '/quiz';
+export const SESSION_HISTORY_URL = QUIZ_URL + '/sessions';
+export const SESSION_REPORT_URL = QUIZ_URL + '/session-report';
 export const FOLDER_URL = API_URL + '/folder';
 export const AI_URL = API_URL + '/ai';
 
