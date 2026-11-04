@@ -1,8 +1,4 @@
-export type generated_question_type = {
-    question: string;
-    options: string[];
-    correctAnswer: number;
-    explanation: string;
-    hint: string;
-    difficulty: number;
-};
+import { z } from 'zod';
+import { question_schema } from '../schemas/createNewQuizSchema';
+
+export type generated_question_type = z.infer<typeof question_schema>;

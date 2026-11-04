@@ -1,3 +1,4 @@
+import { QUESTION_TYPES, answerConfigSchema, questionProblem } from '@nocturn/types';
 import z from 'zod';
 
 export const top_level_agent_schema = z.object({
@@ -14,18 +15,25 @@ export const top_level_agent_schema = z.object({
     updatedInstruction: z.string().describe('updated instruction with combining past history'),
 });
 
-export const question_schema = z.object({
-    question: z.string().min(5).max(150).describe('a one liner question'),
-    options: z.array(z.string().min(1).max(60)).length(4),
-    correctAnswer: z.int().min(0).max(3),
-    explanation: z
-        .string()
-        .min(1)
-        .max(100)
-        .describe('a short explanation about why the correct option is correct'),
-    hint: z.string().min(1).max(100).describe('a little hint to get near to correct option'),
-    difficulty: z.int().min(1).max(5).describe('how tough the question is'),
-});
+export const question_schema = z
+    .object({
+        question: z.string().min(5).max(150).describe('a one liner question'),
+        options: z.array(z.string().min(1).max(60)).max(6),
+        questionType: z.enum(QUESTION_TYPES).default('MULTIPLE_CHOICE'),
+        answerConfig: answerConfigSchema.default({}),
+        correctAnswer: z.int().min(0).max(5),
+        explanation: z
+            .string()
+            .min(1)
+            .max(100)
+            .describe('a short explanation about why the correct option is correct'),
+        hint: z.string().min(1).max(100).describe('a little hint to get near to correct option'),
+        difficulty: z.int().min(1).max(5).describe('how tough the question is'),
+    })
+    .superRefine((q, ctx) => {
+        const problem = questionProblem(q);
+        if (problem) ctx.addIssue({ code: 'custom', message: problem });
+    });
 
 export const executor_schema = z.object({
     description: z.string().min(10).max(200).describe('description what this quiz is about'),

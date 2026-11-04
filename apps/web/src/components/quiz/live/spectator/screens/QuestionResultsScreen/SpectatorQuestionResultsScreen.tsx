@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
+import QuestionAnswerSummary from '../../../common/QuestionAnswerSummary';
 import QuestionLeaderboardDisplay from '../../../common/QuestionLeaderboardDisplay';
 
 export default function SpectatorQuestionResultsRenderer() {
@@ -19,6 +20,7 @@ export default function SpectatorQuestionResultsRenderer() {
 
     return (
         <div className="w-full h-full">
+            <QuestionAnswerSummary />
             <QuestionLeaderboardDisplay />
         </div>
     );

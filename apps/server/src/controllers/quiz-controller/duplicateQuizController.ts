@@ -50,6 +50,8 @@ export default async function duplicateQuizController(req: Request, res: Respons
                         question: q.question,
                         options: q.options,
                         correctAnswer: q.correctAnswer,
+                        questionType: q.questionType,
+                        answerConfig: q.answerConfig ?? {},
                         difficulty: q.difficulty,
                         basePoints: q.basePoints,
                         timeLimit: q.timeLimit,

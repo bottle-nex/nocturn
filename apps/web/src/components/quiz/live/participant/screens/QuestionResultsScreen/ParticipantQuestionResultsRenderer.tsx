@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import { useLeaderboardStore } from '@/store/live-quiz/useLeaderboardStore';
+import QuestionAnswerSummary from '../../../common/QuestionAnswerSummary';
 import QuestionLeaderboardDisplay from '../../../common/QuestionLeaderboardDisplay';
 
 export default function ParticipantQuestionResultsRenderer() {
@@ -21,6 +22,7 @@ export default function ParticipantQuestionResultsRenderer() {
 
     return (
         <div className="w-full h-full">
+            <QuestionAnswerSummary />
             <QuestionLeaderboardDisplay
                 showMyRank
                 myRank={myRank}

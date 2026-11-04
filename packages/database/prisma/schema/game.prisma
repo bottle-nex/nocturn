@@ -41,6 +41,7 @@ model GameSession {
 
 model Response {
     id             String  @id @default(cuid())
+    answer         Json?
     selectedAnswer Int
     isCorrect      Boolean
     timeToAnswer   Int

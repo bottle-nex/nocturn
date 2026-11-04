@@ -1,81 +1,51 @@
 import { Request, Response } from 'express';
-import { ParticipantScreen, prisma } from '@nocturn/database';
+import { HostScreen, prisma } from '@nocturn/database';
+import { LiveGameTokenPayload, NOCTURN_COOKIE_NAME } from '@nocturn/types';
+import { parse } from 'cookie';
+import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
 
 export default async function getQuestionResults(req: Request, res: Response) {
     try {
-        const { quizId, questionId } = req.body;
-
-        if (!quizId || !questionId) {
-            ResponseWriter.invalid_data(res, 'Incomplete request data');
-            return;
-        }
-
-        const data = await prisma.$transaction(async (tx) => {
-            const startTime = await tx.gameSession.findUnique({
-                where: {
-                    quizId: quizId,
-                },
-                select: {
-                    phaseStartTime: true,
-                },
-            });
-
-            const question = await tx.question.findUnique({
-                where: {
-                    id: questionId,
-                },
-                select: {
-                    correctAnswer: true,
-                    explanation: true,
-                },
-            });
-
-            const responses = await tx.response.findMany({
-                where: {
-                    questionId: questionId,
-                },
-                select: {
-                    id: true,
-                    participant: true,
-                    isCorrect: true,
-                    selectedAnswer: true,
-                    pointsEarned: true,
-                },
-            });
-
-            const scores = await tx.participant.findMany({
-                where: {
-                    quizId: quizId,
-                },
-                select: {
-                    id: true,
-                    totalScore: true,
-                    finalRank: true,
-                    longestStreak: true,
-                },
-            });
-
-            return {
-                scores: scores,
-                responses: responses,
-                correctAnswer: question?.correctAnswer,
-                explanation: question?.explanation,
-                screen: ParticipantScreen.QUESTION_RESULTS,
-                startTime: startTime,
-            };
+        const token = parse(req.headers.cookie ?? '')[NOCTURN_COOKIE_NAME];
+        const user = token ? (QuizAction.verifyCookie(token) as LiveGameTokenPayload | null) : null;
+        if (!user) return ResponseWriter.not_authorized(res);
+        const { quizId, questionId } = { ...req.query, ...req.body };
+        if (quizId !== user.quizId || typeof questionId !== 'string')
+            return ResponseWriter.not_authorized(res);
+        const session = await prisma.gameSession.findUnique({ where: { id: user.gameSessionId } });
+        if (
+            !session ||
+            (session.currentQuestionId === questionId &&
+                session.hostScreen !== HostScreen.QUESTION_RESULTS &&
+                session.hostScreen !== HostScreen.QUIZ_RESULTS)
+        )
+            return ResponseWriter.not_authorized(res);
+        const question = await prisma.question.findFirst({
+            where: { id: questionId, quizId: user.quizId, isAsked: true },
         });
-
-        ResponseWriter.success(res, data, 'Fetched question results successfully', 200);
-        return;
+        if (!question) return ResponseWriter.not_found(res);
+        const responses = await prisma.response.findMany({
+            where: { questionId, gameSessionId: user.gameSessionId },
+            select: {
+                id: true,
+                participantId: true,
+                questionId: true,
+                answer: true,
+                selectedAnswer: true,
+                isCorrect: true,
+                pointsEarned: true,
+            },
+        });
+        return ResponseWriter.success(res, {
+            responses,
+            correctAnswer: question.correctAnswer,
+            answerConfig: question.answerConfig,
+            questionType: question.questionType,
+            explanation: question.explanation,
+        });
     } catch (error) {
         console.error('Failed to fetch question results: ', error);
-        res.status(500).json({
-            success: false,
-            message: 'failed to fetch question results',
-            value: 'INTERNAL_SERVER_ERROR',
-        });
-        ResponseWriter.system_error(res);
-        return;
+        return ResponseWriter.system_error(res);
     }
 }

@@ -1,3 +1,4 @@
+import { publicQuestion } from '@nocturn/types';
 import RedisCache from '../cache/redis-cache';
 import PhaseQueueProcessor from '../client/phase-queue-processor';
 import Publisher from '../client/publisher';
@@ -82,6 +83,8 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_PARTICIPANT,
             payload: {
                 questionOptions: question.options,
+                questionType: question.questionType,
+                answerConfig: publicQuestion(question).answerConfig,
                 participantScreen: ParticipantScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,
@@ -93,6 +96,8 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_HOST,
             payload: {
                 questionOptions: question.options,
+                questionType: question.questionType,
+                answerConfig: publicQuestion(question).answerConfig,
                 hostScreen: HostScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,
@@ -104,6 +109,8 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_SPECTATOR,
             payload: {
                 questionOptions: question.options,
+                questionType: question.questionType,
+                answerConfig: publicQuestion(question).answerConfig,
                 spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,
@@ -165,7 +172,7 @@ export default class TransitionWorker {
         const response_of_all_participants = await this.redis_cache.get_all_question_responses(
             data.gameSessionId,
             data.questionId,
-            ['isCorrect', 'selectedAnswer', 'pointsEarned'],
+            ['isCorrect', 'selectedAnswer', 'answer', 'pointsEarned'],
         );
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
@@ -175,6 +182,8 @@ export default class TransitionWorker {
                 totalParticipants: total_participants,
                 responses: response_of_all_participants,
                 correctAnswer: question.correctAnswer,
+                questionType: question.questionType,
+                answerConfig: question.answerConfig,
                 explanation: question.explanation,
                 participantScreen: ParticipantScreen.QUESTION_RESULTS,
                 startTime: start_time,
@@ -188,7 +197,10 @@ export default class TransitionWorker {
             payload: {
                 topScores: top_scores,
                 totalParticipants: total_participants,
+                responses: response_of_all_participants,
                 correctAnswer: question.correctAnswer,
+                questionType: question.questionType,
+                answerConfig: question.answerConfig,
                 explanation: question.explanation,
                 hostScreen: HostScreen.QUESTION_RESULTS,
                 startTime: start_time,
@@ -201,7 +213,10 @@ export default class TransitionWorker {
             payload: {
                 topScores: top_scores,
                 totalParticipants: total_participants,
+                responses: response_of_all_participants,
                 correctAnswer: question.correctAnswer,
+                questionType: question.questionType,
+                answerConfig: question.answerConfig,
                 explanation: question.explanation,
                 spectatorScreen: SpectatorScreen.QUESTION_RESULTS,
                 startTime: start_time,

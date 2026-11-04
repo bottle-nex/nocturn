@@ -1,3 +1,4 @@
+import type { AnswerConfig, QuestionKind, SubmittedAnswer } from "../questions";
 import {
   AgentStep,
   AiMessageElement,
@@ -116,6 +117,8 @@ export interface QuestionType {
   question: string;
   options: string[];
   correctAnswer: number;
+  questionType?: QuestionKind;
+  answerConfig?: AnswerConfig;
   explanation?: string;
   hint?: string;
   difficulty: number;
@@ -213,6 +216,7 @@ export interface GameSessionType {
 export interface ResponseType {
   id: string;
   selectedAnswer: number;
+  answer?: SubmittedAnswer;
   isCorrect: boolean;
   timeToAnswer: number;
   pointsEarned: number;

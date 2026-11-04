@@ -28,11 +28,19 @@ export default function CanvasBars({
         >
             <div className="flex items-center justify-center gap-x-1 mb-1 sm:mb-2 w-full">
                 <div className="shrink-0">
-                    {currentQ.correctAnswer === idx ? (
-                        <IoCheckmark className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.25 text-dark-alpha bg-[#cae8ce] rounded-full" />
-                    ) : (
-                        <RxCross1 className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.5 text-dark-alpha bg-red-200 rounded-full" />
-                    )}
+                    {(!currentQ.questionType ||
+                        ['MULTIPLE_CHOICE', 'TRUE_FALSE', 'MULTI_SELECT'].includes(
+                            currentQ.questionType,
+                        )) &&
+                        ((
+                            currentQ.questionType === 'MULTI_SELECT'
+                                ? currentQ.answerConfig?.correctIndices?.includes(idx)
+                                : currentQ.correctAnswer === idx
+                        ) ? (
+                            <IoCheckmark className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.25 text-dark-alpha bg-[#cae8ce] rounded-full" />
+                        ) : (
+                            <RxCross1 className="w-3 h-3 sm:w-5.5 sm:h-5.5 p-1.5 text-dark-alpha bg-red-200 rounded-full" />
+                        ))}
                 </div>
                 <span className="text-xs sm:text-sm lg:text-base font-medium">
                     {Math.round(votes[idx]!)}

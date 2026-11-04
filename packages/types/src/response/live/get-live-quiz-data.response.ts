@@ -20,5 +20,6 @@ export interface getLiveQuizDataResponse {
   role: USER_TYPE;
   messages?: ChatMessageType[];
   response?: Partial<ResponseType>;
+  questionResponses?: Partial<ResponseType>[];
   askedQuestionCount: number | null;
 }

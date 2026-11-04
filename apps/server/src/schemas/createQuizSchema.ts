@@ -1,3 +1,9 @@
+import {
+    QUESTION_TYPES,
+    answerConfigSchema,
+    questionProblem,
+    canonicalQuestion,
+} from '@nocturn/types';
 import { z } from 'zod';
 
 export enum TemplateEnum {
@@ -19,20 +25,28 @@ export enum Interactions {
     SMILE = 'SMILE',
 }
 
-const questionSchema = z.object({
-    question: z.string(),
-    options: z.array(z.string()).min(2),
-    correctAnswer: z.number(),
-    explanation: z.string().nullable().optional(),
-    hint: z.string().nullable().optional(),
-    difficulty: z.number(),
-    basePoints: z.number(),
-    timeLimit: z.number().min(1).max(600),
-    readingTime: z.number().min(1).max(600),
-    orderIndex: z.number(),
-    imageUrl: z.string().nullable().optional(),
-    hintLaunched: z.boolean(),
-});
+const questionSchema = z
+    .object({
+        question: z.string(),
+        options: z.array(z.string()).max(6),
+        questionType: z.enum(QUESTION_TYPES).default('MULTIPLE_CHOICE'),
+        answerConfig: answerConfigSchema.default({}),
+        correctAnswer: z.number(),
+        explanation: z.string().nullable().optional(),
+        hint: z.string().nullable().optional(),
+        difficulty: z.number(),
+        basePoints: z.number(),
+        timeLimit: z.number().min(1).max(600),
+        readingTime: z.number().min(1).max(600),
+        orderIndex: z.number(),
+        imageUrl: z.string().nullable().optional(),
+        hintLaunched: z.boolean(),
+    })
+    .superRefine((q, ctx) => {
+        const problem = questionProblem(q);
+        if (problem) ctx.addIssue({ code: 'custom', message: problem });
+    })
+    .transform(canonicalQuestion);
 
 export const createQuizSchema = z.object({
     id: z.string().optional(),
