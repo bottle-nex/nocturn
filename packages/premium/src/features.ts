@@ -11,6 +11,7 @@ export const FEATURES = {
   [FEATURE.LIVE_CHAT]: gate(false, true),
   [FEATURE.SESSIONS_PER_DAY]: rate(ONE_DAY, 20, null),
   [FEATURE.CUSTOM_THEME]: gate(true, true),
+  [FEATURE.SESSION_INSIGHTS]: gate(false, true),
 };
 
 export type FeatureLimit = (typeof FEATURES)[FEATURE][SubscriptionEnum];

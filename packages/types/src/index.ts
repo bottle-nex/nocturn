@@ -20,3 +20,4 @@ export * from "../src/const/nocturn.const";
 export * from "../src/const/dummyprompt.const";
 export * from "../src/socket/collaborators/collaborators.types";
 export * from "./premium/premium.types";
+export * from "./response/session-report";

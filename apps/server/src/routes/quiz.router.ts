@@ -28,6 +28,13 @@ import QuizController, {
 } from '../controllers/quiz-controller/quizController';
 import permanentDeleteSelectedQuiz from '../controllers/quiz-controller/permanentlyDeleteSelectedQuiz';
 import Subscription from '../middlewares/subscription.middleware';
+import {
+    sessionHistory,
+    sessionReport,
+} from '../controllers/quiz-controller/sessionReportController';
+
+router.get('/quiz/sessions', authMiddleware, sessionHistory);
+router.get('/quiz/session-report/:quizId', authMiddleware, sessionReport);
 
 // <---------------------- FAVOURITE-QUIZ-ROUTES ---------------------->
 router.put('/quiz/toggle-favourite-quiz', authMiddleware, toggle_favourite_quiz_controller);

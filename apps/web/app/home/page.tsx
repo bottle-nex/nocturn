@@ -199,6 +199,13 @@ export default function Home() {
                 <SidebarPanelRenderer />
             </div>
 
+            <Link
+                href="/home/sessions"
+                className="absolute bottom-5 right-6 z-20 rounded-lg bg-alpha px-5 py-3 text-white shadow-lg"
+            >
+                Past sessions & reports
+            </Link>
+
             {preview && <PreviewQuiz quiz={quiz!} onPreviewClose={() => setPreview(false)} />}
             {trashOpen && <HomeTrashPanel onClose={() => setTrashOpen(false)} />}
         </div>
