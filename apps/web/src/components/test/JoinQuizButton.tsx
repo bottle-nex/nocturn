@@ -1,5 +1,5 @@
 'use client';
-import { motion, Variants, AnimatePresence } from 'framer-motion';
+import { motion, Variants, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
@@ -270,7 +270,13 @@ function JoinQuizPill({
     );
 }
 
-export default function JoinQuizButton() {
+export default function JoinQuizButton({
+    appearance = 'default',
+}: {
+    appearance?: 'default' | 'landing';
+}) {
+    const reduceMotion = useReducedMotion();
+    const isLanding = appearance === 'landing';
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string | null>(null);
     const [step, setStep] = useState<0 | 1 | 2>(0);
@@ -336,10 +342,12 @@ export default function JoinQuizButton() {
 
     return (
         <motion.div
-            initial={{ scale: 0.7, opacity: 0, filter: 'blur(6px)' }}
-            animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+            initial={
+                isLanding || reduceMotion ? false : { scale: 0.7, opacity: 0, filter: 'blur(6px)' }
+            }
+            animate={isLanding ? undefined : { scale: 1, opacity: 1, filter: 'blur(0px)' }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="cursor-pointer select-none scale-95"
+            className={isLanding ? 'w-full' : 'cursor-pointer select-none scale-95'}
         >
             {!active && (
                 <>
@@ -360,6 +368,54 @@ export default function JoinQuizButton() {
                             email={email}
                             setEmail={setEmail}
                         />
+                    ) : isLanding ? (
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                handleJoinQuiz();
+                            }}
+                        >
+                            <label
+                                htmlFor="landing-quiz-code"
+                                className="mb-2 block text-xs font-medium text-dark-base/65"
+                            >
+                                Got a code? Join your people.
+                            </label>
+                            <div className="flex min-w-0 items-center gap-2 rounded-full border border-dark-base/20 bg-white p-1.5 pl-4 focus-within:border-ndark focus-within:ring-2 focus-within:ring-nlight">
+                                <input
+                                    id="landing-quiz-code"
+                                    value={code}
+                                    onChange={(event) => setCode(event.target.value)}
+                                    placeholder="Enter quiz code"
+                                    aria-describedby="landing-quiz-code-hint"
+                                    autoComplete="off"
+                                    autoCapitalize="none"
+                                    spellCheck={false}
+                                    maxLength={12}
+                                    disabled={loading}
+                                    required
+                                    className="min-w-0 flex-1 bg-transparent py-2 text-sm text-dark-base outline-none placeholder:text-dark-base/45"
+                                />
+                                <motion.button
+                                    type="submit"
+                                    disabled={loading || ![6, 12].includes(code.trim().length)}
+                                    whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                                    className="inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2 rounded-full bg-nlight px-4 text-sm font-semibold text-ndarkest hover:bg-nlighter focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ndarkest disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    {loading ? 'Joining…' : 'Join'}
+                                    <IoIosArrowForward aria-hidden="true" />
+                                </motion.button>
+                            </div>
+                            <p
+                                id="landing-quiz-code-hint"
+                                className="mt-2 text-[11px] text-dark-base/55"
+                                role="status"
+                            >
+                                {loading
+                                    ? 'Joining your quiz…'
+                                    : '12 characters to play · 6 to spectate'}
+                            </p>
+                        </form>
                     ) : (
                         <JoinQuizPill
                             isOpen={step === 1}
