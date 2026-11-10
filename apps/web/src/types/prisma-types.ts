@@ -85,6 +85,7 @@ export interface QuizType {
 }
 
 export interface QuestionType {
+    format?: 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
     id: string;
     question: string;
     options: string[];

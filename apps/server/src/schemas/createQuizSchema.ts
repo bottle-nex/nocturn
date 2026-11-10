@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { hasValidQuestionOptions, isValidAnswerIndex } from '@nocturn/types';
 
 export enum TemplateEnum {
     CLASSIC = 'CLASSIC',
@@ -19,20 +20,39 @@ export enum Interactions {
     SMILE = 'SMILE',
 }
 
-const questionSchema = z.object({
-    question: z.string(),
-    options: z.array(z.string()).min(2),
-    correctAnswer: z.number(),
-    explanation: z.string().nullable().optional(),
-    hint: z.string().nullable().optional(),
-    difficulty: z.number(),
-    basePoints: z.number(),
-    timeLimit: z.number().min(1).max(600),
-    readingTime: z.number().min(1).max(600),
-    orderIndex: z.number(),
-    imageUrl: z.string().nullable().optional(),
-    hintLaunched: z.boolean(),
-});
+export const questionSchema = z
+    .object({
+        format: z.enum(['MULTIPLE_CHOICE', 'TRUE_FALSE']).default('MULTIPLE_CHOICE'),
+        question: z.string(),
+        options: z.array(z.string()).min(2),
+        correctAnswer: z.number().int().nonnegative(),
+        explanation: z.string().nullable().optional(),
+        hint: z.string().nullable().optional(),
+        difficulty: z.number(),
+        basePoints: z.number(),
+        timeLimit: z.number().min(1).max(600),
+        readingTime: z.number().min(1).max(600),
+        orderIndex: z.number(),
+        imageUrl: z.string().nullable().optional(),
+        hintLaunched: z.boolean(),
+    })
+    .superRefine((question, ctx) => {
+        if (!hasValidQuestionOptions(question)) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['options'],
+                message:
+                    'True/false questions must have exactly the options True and False, in that order.',
+            });
+        }
+        if (!isValidAnswerIndex(question.correctAnswer, question.options)) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['correctAnswer'],
+                message: 'Select a valid correct answer.',
+            });
+        }
+    });
 
 export const createQuizSchema = z.object({
     id: z.string().optional(),

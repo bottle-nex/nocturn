@@ -14,6 +14,12 @@ export function useCollaborativeEdit() {
             partialQuestion: Partial<QuestionType>,
             options?: { debounce?: boolean; debounceMs?: number },
         ) => {
+            if (partialQuestion.format) {
+                // A format change replaces options atomically; discard pending edits to old options.
+                const timerId = debounceTimers.current.get('options');
+                if (timerId) clearTimeout(timerId);
+                debounceTimers.current.delete('options');
+            }
             editQuestion(questionIndex, partialQuestion);
 
             const shouldDebounce = options?.debounce ?? false;

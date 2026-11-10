@@ -1,6 +1,7 @@
 import Redis from 'ioredis';
 import QuizManager from './QuizManager';
 import {
+    isValidAnswerIndex,
     LiveGameTokenPayload,
     MESSAGE_TYPES,
     ParticipantNameChangeEvent,
@@ -474,7 +475,7 @@ export default class ParticipantManager {
 
         const { selectedAnswer } = payload;
 
-        if (typeof selectedAnswer !== 'number') {
+        if (typeof selectedAnswer !== 'number' || !Number.isInteger(selectedAnswer)) {
             console.error('Invalid type of selected answer');
             return;
         }
@@ -522,10 +523,14 @@ export default class ParticipantManager {
         }
 
         const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
-        console.log('question is : ', question);
 
         if (!question) {
             console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
+            return;
+        }
+
+        if (!isValidAnswerIndex(selectedAnswer, question.options)) {
+            console.error('Selected answer is not an option for this question');
             return;
         }
 

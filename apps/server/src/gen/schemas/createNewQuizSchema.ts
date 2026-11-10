@@ -1,4 +1,5 @@
 import z from 'zod';
+import { hasValidQuestionOptions, isValidAnswerIndex } from '@nocturn/types';
 
 export const top_level_agent_schema = z.object({
     intent: z
@@ -14,18 +15,36 @@ export const top_level_agent_schema = z.object({
     updatedInstruction: z.string().describe('updated instruction with combining past history'),
 });
 
-export const question_schema = z.object({
-    question: z.string().min(5).max(150).describe('a one liner question'),
-    options: z.array(z.string().min(1).max(60)).length(4),
-    correctAnswer: z.int().min(0).max(3),
-    explanation: z
-        .string()
-        .min(1)
-        .max(100)
-        .describe('a short explanation about why the correct option is correct'),
-    hint: z.string().min(1).max(100).describe('a little hint to get near to correct option'),
-    difficulty: z.int().min(1).max(5).describe('how tough the question is'),
-});
+export const question_schema = z
+    .object({
+        format: z
+            .enum(['MULTIPLE_CHOICE', 'TRUE_FALSE'])
+            .describe('Use TRUE_FALSE for true/false statements, otherwise MULTIPLE_CHOICE'),
+        question: z.string().min(5).max(150).describe('a one liner question'),
+        options: z
+            .array(z.string().min(1).max(60))
+            .min(2)
+            .max(6)
+            .describe(
+                'For TRUE_FALSE use exactly ["True", "False"]. Otherwise supply 2 to 6 choices.',
+            ),
+        correctAnswer: z.int().min(0).max(5),
+        explanation: z
+            .string()
+            .min(1)
+            .max(100)
+            .describe('a short explanation about why the correct option is correct'),
+        hint: z.string().min(1).max(100).describe('a little hint to get near to correct option'),
+        difficulty: z.int().min(1).max(5).describe('how tough the question is'),
+    })
+    .refine(hasValidQuestionOptions, {
+        path: ['options'],
+        message: 'Invalid options for question format',
+    })
+    .refine((question) => isValidAnswerIndex(question.correctAnswer, question.options), {
+        path: ['correctAnswer'],
+        message: 'Correct answer must refer to an option',
+    });
 
 export const executor_schema = z.object({
     description: z.string().min(10).max(200).describe('description what this quiz is about'),
