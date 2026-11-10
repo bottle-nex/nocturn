@@ -83,6 +83,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
             {
                 id: '',
                 question: '',
+                format: 'MULTIPLE_CHOICE',
                 options: ['', '', ''],
                 correctAnswer: 0,
                 explanation: '',
@@ -120,6 +121,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
         const question: QuestionType = {
             id: '',
             question: 'This is question',
+            format: 'MULTIPLE_CHOICE',
             options: ['One', 'Two ', 'Three'],
             correctAnswer: 0,
             explanation: '',
@@ -264,6 +266,7 @@ export const useNewQuizStore = create<NewQuizStoreTypes>((set, get) => ({
                     {
                         id: '',
                         question: '',
+                        format: 'MULTIPLE_CHOICE',
                         options: ['', '', ''],
                         correctAnswer: 0,
                         explanation: '',

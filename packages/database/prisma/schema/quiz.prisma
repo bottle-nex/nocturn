@@ -83,6 +83,7 @@ model QuizViews {
 model Question {
     id            String   @id @default(cuid())
     question      String
+    format        QuestionFormat @default(MULTIPLE_CHOICE)
     options       String[]
     correctAnswer Int
     explanation   String?

@@ -66,6 +66,9 @@ export const executor_prompt = new PromptTemplate({
         Difficulty level: {difficulty}/5
         
         Generate questions that match the difficulty level precisely.
+        Support MULTIPLE_CHOICE and TRUE_FALSE formats and follow the requested format.
+        For TRUE_FALSE, write a statement and use exactly ["True", "False"] as options.
+        correctAnswer is the zero-based index of the correct option.
     `,
     inputVariables: ['instruction', 'difficulty'],
 });

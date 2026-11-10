@@ -86,6 +86,11 @@ enum ReactorType {
     SPECTATOR
 }
 
+enum QuestionFormat {
+    MULTIPLE_CHOICE
+    TRUE_FALSE
+}
+
 enum ImagePosition {
     RIGHT
     LEFT
