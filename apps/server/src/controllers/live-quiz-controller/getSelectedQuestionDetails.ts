@@ -43,6 +43,7 @@ export default async function getSelectedQuestionDetails(req: Request, res: Resp
                     select: {
                         id: true,
                         question: true,
+                        format: true,
                         options: true,
                         explanation: true,
                         hint: true,

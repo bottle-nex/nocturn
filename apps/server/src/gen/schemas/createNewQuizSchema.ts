@@ -1,4 +1,5 @@
 import z from 'zod';
+import { questionAnswerSchema } from '@nocturn/types';
 
 export const top_level_agent_schema = z.object({
     intent: z
@@ -14,10 +15,15 @@ export const top_level_agent_schema = z.object({
     updatedInstruction: z.string().describe('updated instruction with combining past history'),
 });
 
-export const question_schema = z.object({
+export const question_schema = questionAnswerSchema.safeExtend({
     question: z.string().min(5).max(150).describe('a one liner question'),
-    options: z.array(z.string().min(1).max(60)).length(4),
-    correctAnswer: z.int().min(0).max(3),
+    options: z
+        .array(z.string().min(1).max(60))
+        .min(2)
+        .max(6)
+        .describe(
+            'For TRUE_FALSE use exactly ["True", "False"]. For MULTIPLE_CHOICE use 2 to 6 choices.',
+        ),
     explanation: z
         .string()
         .min(1)

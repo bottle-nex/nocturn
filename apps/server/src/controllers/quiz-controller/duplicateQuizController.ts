@@ -47,6 +47,7 @@ export default async function duplicateQuizController(req: Request, res: Respons
                 hostId: req.user.id,
                 questions: {
                     create: quiz.questions.map((q) => ({
+                        format: q.format,
                         question: q.question,
                         options: q.options,
                         correctAnswer: q.correctAnswer,

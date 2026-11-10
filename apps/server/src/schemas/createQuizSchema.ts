@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { questionAnswerSchema } from '@nocturn/types';
 
 export enum TemplateEnum {
     CLASSIC = 'CLASSIC',
@@ -19,10 +20,8 @@ export enum Interactions {
     SMILE = 'SMILE',
 }
 
-const questionSchema = z.object({
+export const questionSchema = questionAnswerSchema.safeExtend({
     question: z.string(),
-    options: z.array(z.string()).min(2),
-    correctAnswer: z.number(),
     explanation: z.string().nullable().optional(),
     hint: z.string().nullable().optional(),
     difficulty: z.number(),

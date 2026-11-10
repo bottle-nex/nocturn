@@ -14,13 +14,21 @@ export function useCollaborativeEdit() {
             partialQuestion: Partial<QuestionType>,
             options?: { debounce?: boolean; debounceMs?: number },
         ) => {
+            // Cancel pending edits superseded by this update, including old choice text
+            // when a format change replaces the complete set of options.
+            for (const field of Object.keys(partialQuestion)) {
+                const timerKey = `${questionIndex}:${field}`;
+                const timer = debounceTimers.current.get(timerKey);
+                if (timer) clearTimeout(timer);
+                debounceTimers.current.delete(timerKey);
+            }
             editQuestion(questionIndex, partialQuestion);
 
             const shouldDebounce = options?.debounce ?? false;
             const debounceMs = options?.debounceMs ?? 1000;
 
             if (shouldDebounce) {
-                const field = Object.keys(partialQuestion)[0]!;
+                const field = `${questionIndex}:${Object.keys(partialQuestion)[0]!}`;
                 const timerId = debounceTimers.current.get(field);
 
                 if (timerId) clearTimeout(timerId);

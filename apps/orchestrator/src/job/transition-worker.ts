@@ -82,6 +82,7 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_PARTICIPANT,
             payload: {
                 questionOptions: question.options,
+                questionFormat: question.format,
                 participantScreen: ParticipantScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,
@@ -93,6 +94,7 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_HOST,
             payload: {
                 questionOptions: question.options,
+                questionFormat: question.format,
                 hostScreen: HostScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,
@@ -104,6 +106,7 @@ export default class TransitionWorker {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_SPECTATOR,
             payload: {
                 questionOptions: question.options,
+                questionFormat: question.format,
                 spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
                 startTime: start_time,
                 endTime: end_time,

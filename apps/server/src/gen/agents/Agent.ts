@@ -4,6 +4,7 @@ import { QuizAgentState, QuizAgentStateAnnotation } from '../state/quiz-agent.st
 import { StateGraph } from '@langchain/langgraph';
 import { AgentStep, AiMessageElement, AiQuizChatRole, STREAM } from '@nocturn/types';
 import { generated_question_type } from '../types/createNewQuizType';
+import { questionAnswerSchema } from '@nocturn/types';
 import { TemplateEnum } from '../../schemas/createQuizSchema';
 import { NODE, INTENT, OPERATION } from '../types/agentEnums';
 import { Response } from 'express';
@@ -273,6 +274,7 @@ export default class Agent {
         const parsed_questions = response.questions.map(
             (q: generated_question_type, i: number) => ({
                 ...q,
+                ...questionAnswerSchema.parse(q),
                 basePoints: 20,
                 timeLimit: 30,
                 readingTime: 7,

@@ -767,11 +767,15 @@ export default class RedisCache {
             const session = await this.get_active_lifeline_session(game_session_id, question_id);
             if (!session) return null;
 
-            const optionCounts = [0, 0, 0, 0];
+            const quiz = await this.get_quiz(game_session_id);
+            const question = quiz?.questions?.find((q) => q.id === question_id);
+            if (!question) return null;
+
+            const optionCounts: number[] = Array(question.options.length).fill(0);
             let totalResponses = 0;
 
             Object.values(session.responses).forEach((option) => {
-                if (option >= 0 && option <= 3) {
+                if (Number.isInteger(option) && option >= 0 && option < optionCounts.length) {
                     optionCounts[option]!++;
                     totalResponses++;
                 }

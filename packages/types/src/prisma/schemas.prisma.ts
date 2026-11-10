@@ -112,6 +112,7 @@ export interface QuizType {
 }
 
 export interface QuestionType {
+  format?: import("../quiz/question-formats").QuestionFormat;
   id: string;
   question: string;
   options: string[];

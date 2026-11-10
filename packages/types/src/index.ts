@@ -1,4 +1,5 @@
 export * from "./prisma/schemas.prisma";
+export * from "./quiz/question-formats";
 export * from "./prisma/enums.prisma";
 
 export * from "./socket/socket.codes";
