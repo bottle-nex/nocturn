@@ -327,6 +327,22 @@ export default class RedisCache {
         }
     }
 
+    public async try_set_participant_response(
+        game_session_id: string,
+        question_id: string,
+        participant_id: string,
+        response: Partial<Response>,
+    ): Promise<boolean> {
+        const key = this.get_participant_response_key(game_session_id);
+        const unique_key = this.get_unique_key_to_response(question_id, participant_id);
+        const inserted = await this.redis_cache.hsetnx(key, unique_key, JSON.stringify(response));
+
+        if (inserted === 0) return false;
+
+        await this.redis_cache.expire(key, 60 * 60 * 24);
+        return true;
+    }
+
     public async get_participant_response(
         game_session_id: string,
         question_id: string,

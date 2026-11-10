@@ -496,24 +496,6 @@ export default class ParticipantManager {
             return;
         }
 
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
-            return;
-        }
-
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
         if (!quiz || !participant) {
@@ -555,7 +537,7 @@ export default class ParticipantManager {
         const pointsEarned = isCorrectAnswer
             ? (question.basePoints ?? 0) + timeBonus + streakBonus
             : 0;
-        await this.database_queue.create_participant_response(participant_id, game_session_id, {
+        const response = {
             selectedAnswer,
             isCorrect: isCorrectAnswer,
             timeToAnswer,
@@ -564,7 +546,33 @@ export default class ParticipantManager {
             streakBonus,
             answeredAt: new Date(answeredAt),
             questionId: game_session.currentQuestionId!,
-        });
+        };
+
+        // Accept the response atomically before any queued writes or score changes.
+        const accepted = await this.redis_cache.try_set_participant_response(
+            game_session_id,
+            response.questionId,
+            participant_id,
+            response,
+        );
+
+        if (!accepted) {
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: {
+                    error: 'Already opted an option.',
+                },
+                only_socket_id: ws.id,
+            };
+            this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            return;
+        }
+
+        await this.database_queue.create_participant_response(
+            participant_id,
+            game_session_id,
+            response,
+        );
 
         await this.database_queue.update_participant(
             participant_id,
