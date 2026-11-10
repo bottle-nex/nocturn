@@ -70,6 +70,9 @@ export default function ParticipantQuestionActiveOptions() {
 
     return (
         <>
+            {currentQuestion.format === 'TRUE_FALSE' && (
+                <p className="text-sm font-medium">Is this statement true or false?</p>
+            )}
             {showBars && barData && (
                 <div
                     className="fixed top-16 right-4 z-50 w-44 rounded-2xl p-4 space-y-2.5"

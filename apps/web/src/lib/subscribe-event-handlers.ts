@@ -15,6 +15,7 @@ import {
     HostScreenEnum,
     ParticipantScreenEnum,
     ParticipantType,
+    QuestionFormat,
     QuizEndScreen,
     QuizPhaseEnum,
     QuizType,
@@ -198,12 +199,14 @@ export class SubscribeEventHandlers {
             startTime: number;
             endTime: number;
             questionOptions: string[];
+            questionFormat?: QuestionFormat;
         };
 
         const { updateCurrentQuestion, updateGameSession } = useLiveQuizStore.getState();
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            format: activePhasePayload.questionFormat ?? 'MULTIPLE_CHOICE',
         });
 
         updateGameSession({
@@ -322,6 +325,7 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
+            questionFormat?: QuestionFormat;
             hostScreen: HostScreenEnum;
             startTime: number;
             endTime: number;
@@ -337,6 +341,7 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            format: activePhasePayload.questionFormat ?? 'MULTIPLE_CHOICE',
         });
     }
 
@@ -405,6 +410,7 @@ export class SubscribeEventHandlers {
         if (typeof payload !== 'object' || payload === null) return;
         const activePhasePayload = payload as {
             questionOptions: string[];
+            questionFormat?: QuestionFormat;
             participantScreen: string;
             startTime: number;
             endTime: number;
@@ -414,6 +420,7 @@ export class SubscribeEventHandlers {
 
         updateCurrentQuestion({
             options: activePhasePayload.questionOptions,
+            format: activePhasePayload.questionFormat ?? 'MULTIPLE_CHOICE',
         });
 
         updateGameSession({

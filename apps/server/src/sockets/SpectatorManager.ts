@@ -257,6 +257,15 @@ export default class SpectatorManager {
         }
         const optionCount = currentQuestion.options.length;
 
+        if (
+            !Number.isInteger(selectedOption) ||
+            selectedOption < 0 ||
+            selectedOption >= optionCount
+        ) {
+            console.error('Selected spectator option is outside the available options');
+            return;
+        }
+
         const success = await this.redis_cache.add_spectator_lifeline_response(
             gameSessionId,
             questionId,

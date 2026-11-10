@@ -80,8 +80,14 @@ model QuizViews {
     @@map("quiz_views")
 }
 
+enum QuestionFormat {
+    MULTIPLE_CHOICE
+    TRUE_FALSE
+}
+
 model Question {
     id            String   @id @default(cuid())
+    format        QuestionFormat @default(MULTIPLE_CHOICE)
     question      String
     options       String[]
     correctAnswer Int

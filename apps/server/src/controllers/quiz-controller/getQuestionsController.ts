@@ -40,6 +40,7 @@ export default async function getQuestionsController(req: Request, res: Response
                 questions: {
                     select: {
                         question: true,
+                        format: true,
                         options: true,
                         orderIndex: true,
                     },
