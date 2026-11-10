@@ -1,7 +1,19 @@
 import { z } from 'zod';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env' });
+import { existsSync } from 'fs';
+import { dirname, resolve } from 'path';
+
+// Bundling moves this module from src/configs to dist.
+let workspaceDir = __dirname;
+while (!existsSync(resolve(workspaceDir, 'pnpm-workspace.yaml'))) {
+    const parentDir = dirname(workspaceDir);
+    if (parentDir === workspaceDir) {
+        throw new Error('Cannot locate the workspace root to load .env');
+    }
+    workspaceDir = parentDir;
+}
+dotenv.config({ path: resolve(workspaceDir, '.env') });
 
 const envSchema = z.object({
     ORCH_REDIS_URL: z.url(),
