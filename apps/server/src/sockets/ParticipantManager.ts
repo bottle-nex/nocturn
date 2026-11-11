@@ -474,7 +474,7 @@ export default class ParticipantManager {
 
         const { selectedAnswer } = payload;
 
-        if (typeof selectedAnswer !== 'number') {
+        if (!Number.isInteger(selectedAnswer)) {
             console.error('Invalid type of selected answer');
             return;
         }
@@ -526,6 +526,11 @@ export default class ParticipantManager {
 
         if (!question) {
             console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
+            return;
+        }
+
+        if (selectedAnswer < 0 || selectedAnswer >= question.options.length) {
+            console.error('Selected answer does not match a question option');
             return;
         }
 
