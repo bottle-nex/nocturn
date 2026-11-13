@@ -8,7 +8,7 @@ use crate::error::error::ErrorCodes;
 pub fn finalize_quiz(
     ctx: Context<FinalizeQuiz>,
     _quiz_id: String,
-    claim_token: String,
+    claim_token_hash: [u8; 32],
     winner_email_hash: [u8; 32],
     amount: u64,
     rank: u8,
@@ -27,7 +27,7 @@ pub fn finalize_quiz(
 
     let claim_account = &mut ctx.accounts.claim_account;
     claim_account.quiz_id = quiz_account.quiz_id.clone();
-    claim_account.claim_token = claim_token;
+    claim_account.claim_token_hash = claim_token_hash;
     claim_account.winner_email_hash = winner_email_hash;
     claim_account.amount = amount;
     claim_account.rank = rank;
@@ -44,7 +44,7 @@ pub fn finalize_quiz(
 }
 
 #[derive(Accounts)]
-#[instruction(quiz_id: String, claim_token: String)]
+#[instruction(quiz_id: String, claim_token_hash: [u8; 32])]
 pub struct FinalizeQuiz<'info> {
     #[account(
         mut,
@@ -57,7 +57,7 @@ pub struct FinalizeQuiz<'info> {
         init,
         payer = platform_authority,
         space = 8 + ClaimAccount::length(),
-        seeds = [b"claim", quiz_id.as_bytes(), claim_token.as_bytes()],
+        seeds = [b"claim", quiz_id.as_bytes(), claim_token_hash.as_ref()],
         bump,
     )]
     pub claim_account: Account<'info, ClaimAccount>,

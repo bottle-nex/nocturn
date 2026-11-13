@@ -67,7 +67,7 @@ export default async function authorizeConfirmController(req: Request, res: Resp
             hostWalletPubkey: quiz.hostWalletPubkey || '',
             claims: quiz.prizeClaims.map((claim) => ({
                 id: claim.id,
-                claimToken: claim.claimToken,
+                claimTokenHash: claim.claimTokenHash,
                 emailHash: claim.emailHash,
                 amountBaseUnits: claim.amountBaseUnits.toString(),
                 rank: claim.rank,

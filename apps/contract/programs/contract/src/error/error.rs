@@ -24,4 +24,6 @@ pub enum ErrorCodes {
     AlreadyAuthorized,
     #[msg("Invalid token mint")]
     InvalidMint,
+    #[msg("Invalid claim token")]
+    InvalidClaimToken,
 }

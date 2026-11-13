@@ -10,7 +10,7 @@ use crate::error::error::ErrorCodes;
 pub fn reclaim_expired(
     ctx: Context<ReclaimExpired>,
     _quiz_id: String,
-    _claim_token: String,
+    _claim_token_hash: [u8; 32],
 ) -> Result<()> {
     let quiz_account = &mut ctx.accounts.quiz_account;
     let claim_account = &mut ctx.accounts.claim_account;
@@ -74,7 +74,7 @@ pub fn reclaim_expired(
 }
 
 #[derive(Accounts)]
-#[instruction(quiz_id: String, claim_token: String)]
+#[instruction(quiz_id: String, claim_token_hash: [u8; 32])]
 pub struct ReclaimExpired<'info> {
     #[account(
         mut,
@@ -101,7 +101,7 @@ pub struct ReclaimExpired<'info> {
 
     #[account(
         mut,
-        seeds = [b"claim", quiz_id.as_bytes(), claim_token.as_bytes()],
+        seeds = [b"claim", quiz_id.as_bytes(), claim_token_hash.as_ref()],
         bump,
     )]
     pub claim_account: Account<'info, ClaimAccount>,

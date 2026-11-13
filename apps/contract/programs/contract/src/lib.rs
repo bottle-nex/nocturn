@@ -31,13 +31,13 @@ pub mod contract {
     pub fn finalize_quiz(
         ctx: Context<FinalizeQuiz>,
         quiz_id: String,
-        claim_token: String,
+        claim_token_hash: [u8; 32],
         winner_email_hash: [u8; 32],
         amount: u64,
         rank: u8,
         expires_at: i64,
     ) -> Result<()> {
-        func::finalize_quiz::finalize_quiz(ctx, quiz_id, claim_token, winner_email_hash, amount, rank, expires_at)
+        func::finalize_quiz::finalize_quiz(ctx, quiz_id, claim_token_hash, winner_email_hash, amount, rank, expires_at)
     }
 
     pub fn seal_quiz(
@@ -65,8 +65,8 @@ pub mod contract {
     pub fn reclaim_expired(
         ctx: Context<ReclaimExpired>,
         quiz_id: String,
-        claim_token: String,
+        claim_token_hash: [u8; 32],
     ) -> Result<()> {
-        func::reclaim_expired::reclaim_expired(ctx, quiz_id, claim_token)
+        func::reclaim_expired::reclaim_expired(ctx, quiz_id, claim_token_hash)
     }
 }

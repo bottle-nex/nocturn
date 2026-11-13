@@ -192,22 +192,6 @@ export type Contract = {
         {
           name: "claimAccount";
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "const";
-                value: [99, 108, 97, 105, 109];
-              },
-              {
-                kind: "arg";
-                path: "quizId";
-              },
-              {
-                kind: "arg";
-                path: "claimToken";
-              },
-            ];
-          };
         },
         {
           name: "claimerTokenAccount";
@@ -380,7 +364,7 @@ export type Contract = {
               },
               {
                 kind: "arg";
-                path: "claimToken";
+                path: "claimTokenHash";
               },
             ];
           };
@@ -401,8 +385,8 @@ export type Contract = {
           type: "string";
         },
         {
-          name: "claimToken";
-          type: "string";
+          name: "claimTokenHash";
+          type: { array: ["u8", 32] };
         },
         {
           name: "winnerEmailHash";
@@ -495,7 +479,7 @@ export type Contract = {
               },
               {
                 kind: "arg";
-                path: "claimToken";
+                path: "claimTokenHash";
               },
             ];
           };
@@ -521,8 +505,8 @@ export type Contract = {
           type: "string";
         },
         {
-          name: "claimToken";
-          type: "string";
+          name: "claimTokenHash";
+          type: { array: ["u8", 32] };
         },
       ];
     },
@@ -631,6 +615,11 @@ export type Contract = {
       name: "invalidMint";
       msg: "Invalid token mint";
     },
+    {
+      code: 6011;
+      name: "invalidClaimToken";
+      msg: "Invalid claim token";
+    },
   ];
   types: [
     {
@@ -643,8 +632,8 @@ export type Contract = {
             type: "string";
           },
           {
-            name: "claimToken";
-            type: "string";
+            name: "claimTokenHash";
+            type: { array: ["u8", 32] };
           },
           {
             name: "winnerEmailHash";

@@ -318,7 +318,6 @@ export interface PrizeClaimType {
   rank: number;
   amount: number;
   amountBaseUnits: bigint;
-  claimToken: string;
   claimTokenHash: string;
   emailHash: string;
   status: ClaimStatusEnum;

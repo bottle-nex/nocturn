@@ -1,3 +1,4 @@
+import { hashClaimToken } from '../../utils/claim-token';
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
@@ -12,7 +13,7 @@ export default async function getClaimController(req: Request, res: Response) {
 
     try {
         const claim = await prisma.prizeClaim.findUnique({
-            where: { claimToken: token },
+            where: { claimTokenHash: hashClaimToken(token) },
             include: {
                 quiz: {
                     select: {
