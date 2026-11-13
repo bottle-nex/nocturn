@@ -59,6 +59,9 @@ model Quiz {
     prizeDistributions      PrizeDistribution[]
     prizeClaims             PrizeClaim[]
 
+    resultsCreatedAt   DateTime?
+    prizesFinalizedAt  DateTime?
+
     escrowPda          String?
     quizAccountPda     String?
     onChainTxSignature String?
@@ -148,9 +151,22 @@ model PrizeClaim {
     claimerWallet   String?
     txSignature     String?
     expiresAt       DateTime
+    finalizedAt     DateTime?
     emailSentAt     DateTime?
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
+    @@unique([quizId, participantId])
     @@map("prize_claims")
+}
+
+// A signature can prove only one step, even across quizzes and claims.
+model PrizeTransaction {
+    signature   String   @id
+    step        String
+    referenceId String
+    createdAt   DateTime @default(now())
+
+    @@unique([step, referenceId])
+    @@map("prize_transactions")
 }

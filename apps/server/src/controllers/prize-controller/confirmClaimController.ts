@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
+import { consume_prize_transaction, prize_confirmation_error } from './prizeTransaction';
 import { prisma } from '@nocturn/database';
 import { solanaServiceInstance } from '../../services/init.services';
 
@@ -21,6 +22,7 @@ export default async function confirmClaimController(req: Request, res: Response
     try {
         const claim = await prisma.prizeClaim.findUnique({
             where: { claimToken: token },
+            include: { quiz: true },
         });
 
         if (!claim) {
@@ -28,7 +30,7 @@ export default async function confirmClaimController(req: Request, res: Response
             return;
         }
 
-        if (claim.status !== 'PENDING') {
+        if (claim.status !== 'PENDING' && claim.status !== 'EXPIRED') {
             ResponseWriter.error(
                 res,
                 'CLAIM_NOT_PENDING',
@@ -39,17 +41,20 @@ export default async function confirmClaimController(req: Request, res: Response
             return;
         }
 
-        if (new Date() > claim.expiresAt) {
-            await prisma.prizeClaim.update({
-                where: { id: claim.id },
-                data: { status: 'EXPIRED' },
-            });
-            ResponseWriter.error(res, 'CLAIM_EXPIRED', 'This claim has expired', undefined, 400);
+        if (!claim.quiz.hostWalletPubkey) {
+            ResponseWriter.invalid_data(res, 'Quiz has not been staked on-chain');
             return;
         }
 
         // Verify the claim_prize transaction on-chain
-        const isValid = await solanaServiceInstance.verify_transaction(txSignature);
+        const isValid = await solanaServiceInstance.verify_claim_tx(
+            txSignature,
+            claim.quizId,
+            claim.claimToken,
+            claim.quiz.hostWalletPubkey,
+            claimerWallet,
+            claim.amountBaseUnits,
+        );
         if (!isValid) {
             ResponseWriter.error(
                 res,
@@ -62,14 +67,17 @@ export default async function confirmClaimController(req: Request, res: Response
         }
 
         // Update claim status
-        const updated = await prisma.prizeClaim.update({
-            where: { id: claim.id },
-            data: {
-                status: 'CLAIMED',
-                claimedAt: new Date(),
-                claimerWallet,
-                txSignature,
-            },
+        const updated = await prisma.$transaction(async (tx) => {
+            await consume_prize_transaction(tx, txSignature, 'CLAIM', claim.id);
+            return tx.prizeClaim.update({
+                where: { id: claim.id, status: { in: ['PENDING', 'EXPIRED'] } },
+                data: {
+                    status: 'CLAIMED',
+                    claimedAt: new Date(),
+                    claimerWallet,
+                    txSignature,
+                },
+            });
         });
 
         ResponseWriter.success(
@@ -83,6 +91,7 @@ export default async function confirmClaimController(req: Request, res: Response
             'Prize claimed successfully',
         );
     } catch (error) {
+        if (prize_confirmation_error(res, error)) return;
         console.error('Failed to confirm claim:', error);
         ResponseWriter.system_error(res);
     }
