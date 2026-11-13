@@ -1,11 +1,12 @@
 import Bull from 'bull';
+import { createClaimToken, hashClaimToken } from '../../utils/claim-token';
 import { env } from '../../configs/env';
 import { prisma } from '@nocturn/database';
 import { email_service_queue_instance, solanaServiceInstance } from '../../services/init.services';
 
 interface ClaimData {
     id: string;
-    claimToken: string;
+    claimTokenHash: string;
     emailHash: string;
     amountBaseUnits: string;
     rank: number;
@@ -55,17 +56,21 @@ export default class PrizeQueue {
             `[PrizeQueue] Starting finalization for quiz ${quizId} with ${claims.length} claims`,
         );
 
-        // For each claim, we would call finalize_quiz on-chain using the platform keypair.
-        // The actual on-chain calls will be implemented once the contract is deployed.
-        // For now, we mark claims and send notification emails.
-
         for (const claim of claims) {
             try {
+                const claimToken = createClaimToken(
+                    claim.id,
+                    env.SERVER_PLATFORM_AUTHORITY_KEYPAIR,
+                );
+                if (hashClaimToken(claimToken) !== claim.claimTokenHash) {
+                    throw new Error(`Claim ${claim.id} requires credential reissuance`);
+                }
+
                 // Call finalize_quiz instruction on-chain
                 try {
                     const txSig = await solanaServiceInstance.finalize_quiz_onchain(
                         quizId,
-                        claim.claimToken,
+                        claim.claimTokenHash,
                         Array.from(Buffer.from(claim.emailHash, 'hex')),
                         BigInt(claim.amountBaseUnits),
                         claim.rank,
@@ -96,7 +101,7 @@ export default class PrizeQueue {
 
                 // Send winner notification email
                 if (claim.participantEmail) {
-                    const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
+                    const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claimToken}`;
                     await email_service_queue_instance.email_winner_notification({
                         email: claim.participantEmail,
                         participantName: claim.participantName,

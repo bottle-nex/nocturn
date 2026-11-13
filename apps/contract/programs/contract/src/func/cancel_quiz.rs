@@ -21,6 +21,8 @@ pub fn cancel_quiz(
     require!(!quiz_account.is_finalized, ErrorCodes::AlreadyFinalized);
     require!(!quiz_account.is_cancelled, ErrorCodes::QuizCancelled);
 
+    require_platform_not_authorized(quiz_account.platform_authority)?;
+
     // Transfer all USDC from escrow back to host
     let escrow_balance = ctx.accounts.escrow_token_account.amount;
 
@@ -90,4 +92,20 @@ pub struct CancelQuiz<'info> {
     pub host: Signer<'info>,
 
     pub token_program: Program<'info, Token>,
+}
+
+fn require_platform_not_authorized(platform_authority: Pubkey) -> Result<()> {
+    require!(platform_authority == Pubkey::default(), ErrorCodes::AlreadyAuthorized);
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cancellation_is_blocked_after_platform_authorization() {
+        assert!(require_platform_not_authorized(Pubkey::default()).is_ok());
+        assert!(require_platform_not_authorized(Pubkey::new_unique()).is_err());
+    }
 }

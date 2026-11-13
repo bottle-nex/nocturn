@@ -107,9 +107,16 @@ export default class SolanaAction {
         );
     }
 
-    public static getClaimPda(quizId: string, claimToken: string): [PublicKey, number] {
+    public static async getClaimPda(
+        quizId: string,
+        claimToken: string,
+    ): Promise<[PublicKey, number]> {
+        const tokenHash = await crypto.subtle.digest(
+            'SHA-256',
+            new TextEncoder().encode(claimToken),
+        );
         return PublicKey.findProgramAddressSync(
-            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(claimToken)],
+            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(tokenHash)],
             SolanaAction.PROGRAM_ID,
         );
     }
@@ -175,7 +182,7 @@ export default class SolanaAction {
         const [quizAccountPda] = SolanaAction.getQuizPda(quizId, hostWalletPubkey);
         const [escrowAuthority] = SolanaAction.getEscrowAuthorityPda(quizAccountPda);
         const [escrowTokenAccount] = SolanaAction.getEscrowPda(quizAccountPda);
-        const [claimAccount] = SolanaAction.getClaimPda(quizId, claimToken);
+        const [claimAccount] = await SolanaAction.getClaimPda(quizId, claimToken);
 
         return program.methods
             .claimPrize(quizId, claimToken)

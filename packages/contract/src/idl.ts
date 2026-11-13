@@ -186,22 +186,6 @@ export const IDL = {
         {
           name: "claim_account",
           writable: true,
-          pda: {
-            seeds: [
-              {
-                kind: "const",
-                value: [99, 108, 97, 105, 109],
-              },
-              {
-                kind: "arg",
-                path: "quiz_id",
-              },
-              {
-                kind: "arg",
-                path: "claim_token",
-              },
-            ],
-          },
         },
         {
           name: "claimer_token_account",
@@ -374,7 +358,7 @@ export const IDL = {
               },
               {
                 kind: "arg",
-                path: "claim_token",
+                path: "claim_token_hash",
               },
             ],
           },
@@ -395,8 +379,8 @@ export const IDL = {
           type: "string",
         },
         {
-          name: "claim_token",
-          type: "string",
+          name: "claim_token_hash",
+          type: { array: ["u8", 32] },
         },
         {
           name: "winner_email_hash",
@@ -489,7 +473,7 @@ export const IDL = {
               },
               {
                 kind: "arg",
-                path: "claim_token",
+                path: "claim_token_hash",
               },
             ],
           },
@@ -515,8 +499,8 @@ export const IDL = {
           type: "string",
         },
         {
-          name: "claim_token",
-          type: "string",
+          name: "claim_token_hash",
+          type: { array: ["u8", 32] },
         },
       ],
     },
@@ -625,6 +609,11 @@ export const IDL = {
       name: "InvalidMint",
       msg: "Invalid token mint",
     },
+    {
+      code: 6011,
+      name: "InvalidClaimToken",
+      msg: "Invalid claim token",
+    },
   ],
   types: [
     {
@@ -637,8 +626,8 @@ export const IDL = {
             type: "string",
           },
           {
-            name: "claim_token",
-            type: "string",
+            name: "claim_token_hash",
+            type: { array: ["u8", 32] },
           },
           {
             name: "winner_email_hash",

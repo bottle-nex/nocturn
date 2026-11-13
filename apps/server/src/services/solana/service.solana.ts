@@ -112,7 +112,7 @@ export default class SolanaService {
 
     public async finalize_quiz_onchain(
         quizId: string,
-        claimToken: string,
+        claimTokenHash: string,
         winnerEmailHash: number[],
         amountBaseUnits: bigint,
         rank: number,
@@ -127,14 +127,14 @@ export default class SolanaService {
         );
 
         const [claimAccountPda] = PublicKey.findProgramAddressSync(
-            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(claimToken)],
+            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(claimTokenHash, 'hex')],
             this.program.programId,
         );
 
         const tx = await this.program.methods
             .finalizeQuiz(
                 quizId,
-                claimToken,
+                Array.from(Buffer.from(claimTokenHash, 'hex')),
                 winnerEmailHash,
                 new BN(amountBaseUnits.toString()),
                 rank,

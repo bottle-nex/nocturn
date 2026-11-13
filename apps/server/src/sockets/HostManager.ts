@@ -22,6 +22,8 @@ import {
 } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
 import crypto from 'crypto';
+import { env } from '../configs/env';
+import { createClaimToken, hashClaimToken } from '../utils/claim-token';
 import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
@@ -691,8 +693,9 @@ export default class HostManager {
 
             if (!participant) continue;
 
-            const claimToken = crypto.randomBytes(16).toString('hex');
-            const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
+            const claimId = uuid();
+            const claimToken = createClaimToken(claimId, env.SERVER_PLATFORM_AUTHORITY_KEYPAIR);
+            const claimTokenHash = hashClaimToken(claimToken);
             const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
 
             await prisma.prizeClaim.create({
@@ -702,7 +705,7 @@ export default class HostManager {
                     rank: claim.rank,
                     amount: claim.amount,
                     amountBaseUnits: claim.amountBaseUnits,
-                    claimToken,
+                    id: claimId,
                     claimTokenHash,
                     emailHash,
                     expiresAt,

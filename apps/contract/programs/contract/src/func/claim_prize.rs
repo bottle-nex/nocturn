@@ -10,7 +10,7 @@ use crate::error::error::ErrorCodes;
 pub fn claim_prize(
     ctx: Context<ClaimPrize>,
     _quiz_id: String,
-    _claim_token: String,
+    claim_token: String,
 ) -> Result<()> {
     let quiz_account = &mut ctx.accounts.quiz_account;
     let claim_account = &mut ctx.accounts.claim_account;
@@ -18,6 +18,11 @@ pub fn claim_prize(
 
     require!(quiz_account.is_finalized, ErrorCodes::NotFinalized);
     require!(!claim_account.is_claimed, ErrorCodes::AlreadyClaimed);
+
+    require!(
+        claim_account.verifies_token(&claim_token),
+        ErrorCodes::InvalidClaimToken
+    );
 
     let clock = Clock::get()?;
     require!(
@@ -97,7 +102,7 @@ pub struct ClaimPrize<'info> {
 
     #[account(
         mut,
-        seeds = [b"claim", quiz_id.as_bytes(), claim_token.as_bytes()],
+        seeds = [b"claim", quiz_id.as_bytes(), claim_account.claim_token_hash.as_ref()],
         bump,
     )]
     pub claim_account: Account<'info, ClaimAccount>,

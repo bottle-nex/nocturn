@@ -140,8 +140,7 @@ model PrizeClaim {
     rank            Int
     amount          Float
     amountBaseUnits BigInt
-    claimToken      String      @unique
-    claimTokenHash  String
+    claimTokenHash  String      @unique
     emailHash       String
     status          ClaimStatus @default(PENDING)
     claimedAt       DateTime?
