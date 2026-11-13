@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
 import { solanaServiceInstance } from '../../services/init.services';
+import { consume_prize_transaction, prize_confirmation_error } from './prizeTransaction';
 import { Currency } from '@nocturn/types';
 
 export default async function confirmStakeController(req: Request, res: Response) {
@@ -11,14 +12,12 @@ export default async function confirmStakeController(req: Request, res: Response
     }
 
     const { quizId } = req.params;
-    const { txSignature, escrowPda, quizAccountPda, hostWalletPubkey } = req.body as {
+    const { txSignature, hostWalletPubkey } = req.body as {
         txSignature: string;
-        escrowPda: string;
-        quizAccountPda: string;
         hostWalletPubkey: string;
     };
 
-    if (!quizId || !txSignature || !escrowPda || !quizAccountPda || !hostWalletPubkey) {
+    if (!quizId || !txSignature || !hostWalletPubkey) {
         ResponseWriter.invalid_data(res, 'All fields are required');
         return;
     }
@@ -44,7 +43,18 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        const isValid = await solanaServiceInstance.verify_stake_tx(txSignature, escrowPda);
+        const amount = Math.floor(quiz.prizePool * 1e6);
+        if (!Number.isSafeInteger(amount) || amount <= 0) {
+            ResponseWriter.invalid_data(res, 'Quiz must have a positive prize pool');
+            return;
+        }
+        const isValid = await solanaServiceInstance.verify_stake_tx(
+            txSignature,
+            quizId,
+            req.user.id,
+            hostWalletPubkey,
+            BigInt(amount),
+        );
         if (!isValid.valid) {
             ResponseWriter.error(
                 res,
@@ -56,20 +66,24 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        const updated = await prisma.quiz.update({
-            where: { id: quizId },
-            data: {
-                escrowPda,
-                quizAccountPda,
-                onChainTxSignature: txSignature,
-                hostWalletPubkey,
-                prizePool: isValid.baseUnits ? Number(isValid.baseUnits) / 1e6 : quiz.prizePool,
-                currency: Currency.USDC,
-            },
+        const updated = await prisma.$transaction(async (tx) => {
+            await consume_prize_transaction(tx, txSignature, 'STAKE', quizId);
+            return tx.quiz.update({
+                where: { id: quizId, escrowPda: null },
+                data: {
+                    escrowPda: isValid.escrowPda,
+                    quizAccountPda: isValid.quizAccountPda,
+                    onChainTxSignature: txSignature,
+                    hostWalletPubkey,
+                    prizePool: Number(isValid.baseUnits) / 1e6,
+                    currency: Currency.USDC,
+                },
+            });
         });
 
         ResponseWriter.success(res, updated, 'Stake confirmed');
     } catch (error) {
+        if (prize_confirmation_error(res, error)) return;
         console.error('Failed to confirm stake:', error);
         ResponseWriter.system_error(res);
     }

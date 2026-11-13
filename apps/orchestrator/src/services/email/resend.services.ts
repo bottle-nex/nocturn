@@ -4,6 +4,7 @@ import {
     OtpEmailData,
     WinnerNotificationEmailData,
 } from '@nocturn/types';
+import { createHash } from 'crypto';
 import QRCode from 'qrcode';
 import { Resend } from 'resend';
 import { Env } from '../../configs/env';
@@ -80,11 +81,17 @@ export default class ResendService {
                     ? '3rd'
                     : `${data.rank}th`;
 
-        await resend.emails.send({
-            from: 'Nocturn <noreply@nocturn.app>',
-            to: data.email,
-            subject: `🏆 You placed ${rankLabel} in "${data.quizTitle}" — Claim your prize!`,
-            html,
-        });
+        const result = await resend.emails.send(
+            {
+                from: 'Nocturn <noreply@nocturn.app>',
+                to: data.email,
+                subject: `🏆 You placed ${rankLabel} in "${data.quizTitle}" — Claim your prize!`,
+                html,
+            },
+            {
+                idempotencyKey: `winner-${createHash('sha256').update(data.claimUrl).digest('hex')}`,
+            },
+        );
+        if (result.error) throw new Error(result.error.message);
     }
 }

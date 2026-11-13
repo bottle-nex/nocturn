@@ -14,6 +14,7 @@ import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import {
     prisma,
+    Prisma,
     HostScreen,
     ParticipantScreen,
     SpectatorScreen,
@@ -147,7 +148,9 @@ export default class HostManager {
                 break;
 
             case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
-                this.handle_quiz_results(ws);
+                this.handle_quiz_results(ws).catch((error) => {
+                    console.error('Failed to complete quiz results:', error);
+                });
                 break;
 
             case MESSAGE_TYPES.UPDATE_CURRENT_QUESTION:
@@ -467,6 +470,45 @@ export default class HostManager {
             return !isKicked;
         });
 
+        // Persist the result boundary and all claims together. Concurrent results calls
+        // wait for this update and then observe that the quiz was already processed.
+        const created = await prisma.$transaction(async (tx) => {
+            const result = await tx.quiz.updateMany({
+                where: { id: quiz_id, resultsCreatedAt: null },
+                data: {
+                    resultsCreatedAt: new Date(),
+                    status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
+                },
+            });
+            if (!result.count) return false;
+            await tx.gameSession.update({
+                where: { id: game_session_id },
+                data: {
+                    hostScreen: HostScreen.QUIZ_RESULTS,
+                    spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                    participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                    currentPhase: QuizPhase.QUIZ_RESULTS,
+                    quizEndScreen: QuizEndScreen.ARE_YOU_UP,
+                },
+            });
+            let rank = 1;
+            let previousScore: number | undefined;
+            for (const [index, entry] of rankable.entries()) {
+                if (previousScore !== undefined && entry.totalScore < previousScore)
+                    rank = index + 1;
+                previousScore = entry.totalScore;
+                await tx.participant.update({
+                    where: { id: entry.id },
+                    data: { finalRank: rank },
+                });
+            }
+            if (quiz.prizePool && quiz.prizePool > 0) {
+                await this.create_prize_claims(tx, quiz_id, rankable);
+            }
+            return true;
+        });
+        if (!created) return;
+
         // Assign final ranks with tie handling (same score = same rank)
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
@@ -476,11 +518,6 @@ export default class HostManager {
             await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
                 finalRank: currentRank,
             });
-            this.database_queue.update_participant(
-                rankable[i]!.id,
-                { finalRank: currentRank },
-                game_session_id,
-            );
         }
 
         // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
@@ -509,33 +546,23 @@ export default class HostManager {
             },
         };
 
-        await this.database_queue.update_game_session(
-            game_session_id,
-            {
-                hostScreen: HostScreen.QUIZ_RESULTS,
-                spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
-                participantScreen: ParticipantScreen.QUIZ_RESULTS,
-                currentPhase: QuizPhase.QUIZ_RESULTS,
-                quizEndScreen: QuizEndScreen.ARE_YOU_UP,
-                // this is setting the quiz completed if the quiz has no prize
-                // status: quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
-            },
-            game_session_id,
-        );
+        await this.redis_cache.set_game_session(game_session_id, {
+            hostScreen: HostScreen.QUIZ_RESULTS,
+            spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+            participantScreen: ParticipantScreen.QUIZ_RESULTS,
+            currentPhase: QuizPhase.QUIZ_RESULTS,
+            quizEndScreen: QuizEndScreen.ARE_YOU_UP,
+        });
         await this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        this.database_queue.update_quiz(
-            quiz_id,
-            {
-                status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
-            },
-            game_session_id,
-        );
-
-        // Create prize claims for winners if prize pool exists
+        await this.redis_cache.set_quiz(game_session_id, {
+            status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
+        });
         if (quiz.prizePool && quiz.prizePool > 0) {
-            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
-                console.error('Failed to create prize claims:', err);
+            const totalClaims = await prisma.prizeClaim.count({ where: { quizId: quiz_id } });
+            await this.quizManager.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
+                payload: { quizId: quiz_id, totalClaims },
             });
         }
     }
@@ -599,18 +626,18 @@ export default class HostManager {
     }
 
     private async create_prize_claims(
+        tx: Prisma.TransactionClient,
         quiz_id: string,
-        game_session_id: string,
         rankable: { id: string; totalScore: number }[],
     ) {
-        const distributions = await prisma.prizeDistribution.findMany({
+        const distributions = await tx.prizeDistribution.findMany({
             where: { quizId: quiz_id },
             orderBy: { rank: 'asc' },
         });
 
         if (distributions.length === 0) return;
 
-        const quiz = await prisma.quiz.findUnique({
+        const quiz = await tx.quiz.findUnique({
             where: { id: quiz_id },
             select: { prizePool: true, title: true },
         });
@@ -684,7 +711,7 @@ export default class HostManager {
 
         // Create PrizeClaim records in the database
         for (const claim of claimsToCreate) {
-            const participant = await prisma.participant.findUnique({
+            const participant = await tx.participant.findUnique({
                 where: { id: claim.participantId },
                 select: { email: true, nickname: true },
             });
@@ -695,7 +722,7 @@ export default class HostManager {
             const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
             const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
 
-            await prisma.prizeClaim.create({
+            await tx.prizeClaim.create({
                 data: {
                     quizId: quiz_id,
                     participantId: claim.participantId,
@@ -709,16 +736,6 @@ export default class HostManager {
                 },
             });
         }
-
-        // Notify host via WebSocket that prize claims are ready
-        const event_data: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
-            payload: {
-                quizId: quiz_id,
-                totalClaims: claimsToCreate.length,
-            },
-        };
-        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
     private generateSocketId(): string {
