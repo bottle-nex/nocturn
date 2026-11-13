@@ -17,11 +17,11 @@ const points = [
 
 export default function FullScreenWarningPanel({ accept, deny }: FullScreenWarningPanelProps) {
     return (
-        <OpacityBackground className="dark:bg-neutral-900/30 backdrop-blur-[1px]">
+        <OpacityBackground className="dark:bg-neutral-900/30 backdrop-blur-[1px] p-4">
             <UtilityCard
                 className={cn(
                     'bg-neutral-900 border border-neutral-700 shadow-2xl',
-                    'rounded-2xl p-8 max-w-2xl w-full mx-auto',
+                    'rounded-2xl p-4 sm:p-8 max-w-2xl w-full mx-auto max-h-[90dvh] overflow-y-auto',
                     'flex flex-col items-start gap-y-6',
                 )}
             >

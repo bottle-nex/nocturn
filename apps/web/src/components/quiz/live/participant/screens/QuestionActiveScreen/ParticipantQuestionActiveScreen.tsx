@@ -3,7 +3,7 @@ import ParticipantQuestionActiveRenderer from './ParticipantQuestionActiveRender
 
 export default function ParticipantQuestionActiveScreen() {
     return (
-        <div className="flex h-full w-full">
+        <div className="flex flex-col sm:flex-row h-full w-full relative pb-20 sm:pb-0">
             <ParticipantQuestionActiveRenderer />
             <ParticipantQuestionActiveFooter />
         </div>

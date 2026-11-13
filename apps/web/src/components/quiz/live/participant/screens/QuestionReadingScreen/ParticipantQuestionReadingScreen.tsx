@@ -1,15 +1,11 @@
 'use client';
 
 import CountDownClock from '@/components/ui/CountDownClock';
-import { getImageContainerWidth, useWidth } from '@/hooks/useWidth';
 import { cn } from '@/lib/utils';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
 import Image from 'next/image';
-import { useRef } from 'react';
 
 export default function ParticipantQuestionReadingScreen() {
-    const canvasRef = useRef<HTMLDivElement>(null);
-    const canvasWidth = useWidth(canvasRef);
     const { currentQuestion, gameSession } = useLiveQuizStore();
     // const { resetResponse } = useLiveParticipantsStore();
 
@@ -28,21 +24,20 @@ export default function ParticipantQuestionReadingScreen() {
     return (
         <div
             className={cn(
-                'w-full h-full overflow-hidden flex flex-col items-center justify-center',
+                'w-full h-full overflow-y-auto flex flex-col items-center p-4 pb-20 sm:justify-center',
                 'relative',
             )}
         >
-            <div className="min-h-128 w-[90%] flex flex-col justify-between">
+            <div className="min-h-0 sm:min-h-128 w-full sm:w-[90%] my-auto shrink-0 flex flex-col justify-between gap-6">
                 <div
-                    className={cn('w-full text-3xl text-center')}
+                    className={cn('w-full text-xl sm:text-3xl text-center break-words')}
                     dangerouslySetInnerHTML={{ __html: currentQuestion.question }}
                 />
                 <div className="flex flex-row items-center justify-center">
                     {currentQuestion.imageUrl && (
                         <div
                             className={cn(
-                                'h-full flex flex-col justify-end p-2 sm:p-4 relative mb-15',
-                                getImageContainerWidth(canvasWidth),
+                                'w-full max-w-xl flex flex-col justify-end p-2 sm:p-4 relative sm:mb-15',
                             )}
                         >
                             <div className="w-full overflow-hidden relative rounded-sm">
