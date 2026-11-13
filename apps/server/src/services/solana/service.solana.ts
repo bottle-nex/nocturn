@@ -1,4 +1,11 @@
-import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
+import {
+    Connection,
+    Keypair,
+    PublicKey,
+    SystemProgram,
+    Transaction,
+    TransactionInstruction,
+} from '@solana/web3.js';
 import bs58 from 'bs58';
 import { env } from '../../configs/env';
 import {
@@ -104,6 +111,100 @@ export default class SolanaService {
             console.error('Error occurred while verifying stake transaction:', error);
             return { valid: false };
         }
+    }
+
+    private refund_accounts(quizId: string, hostWalletPubkey: string) {
+        const host = new PublicKey(hostWalletPubkey);
+        const [quizAccount] = PublicKey.findProgramAddressSync(
+            [Buffer.from('quiz'), Buffer.from(quizId), host.toBuffer()],
+            this.program.programId,
+        );
+        const [escrowTokenAccount] = PublicKey.findProgramAddressSync(
+            [Buffer.from('escrow'), quizAccount.toBuffer()],
+            this.program.programId,
+        );
+        return { host, quizAccount, escrowTokenAccount };
+    }
+
+    public async get_escrow_state(quizId: string, hostWalletPubkey: string) {
+        const accounts = this.refund_accounts(quizId, hostWalletPubkey);
+        const state = await this.program.account.quizAccountShape.fetch(accounts.quizAccount);
+        const balance = await this.connection.getTokenAccountBalance(accounts.escrowTokenAccount);
+        return {
+            cancelled: state.isCancelled,
+            finalized: state.isFinalized,
+            balanceBaseUnits: balance.value.amount,
+            refundedBaseUnits: state.totalRefunded.toString(),
+        };
+    }
+
+    public async get_refund_claim(quizId: string, claimToken: string) {
+        const [address] = PublicKey.findProgramAddressSync(
+            [Buffer.from('claim'), Buffer.from(quizId), Buffer.from(claimToken)],
+            this.program.programId,
+        );
+        const claim = await this.program.account.claimAccount.fetchNullable(address);
+        return (
+            claim && {
+                claimed: claim.isClaimed,
+                expiresAt: claim.expiresAt.toNumber() * 1000,
+            }
+        );
+    }
+
+    public async refund_instruction(
+        quizId: string,
+        hostWalletPubkey: string,
+        hostTokenAccount: string,
+        claimToken?: string,
+    ): Promise<TransactionInstruction> {
+        const accounts = {
+            ...this.refund_accounts(quizId, hostWalletPubkey),
+            hostTokenAccount: new PublicKey(hostTokenAccount),
+        };
+        const builder = claimToken
+            ? this.program.methods.reclaimExpired(quizId, claimToken)
+            : this.program.methods.cancelQuiz(quizId);
+        return builder.accountsPartial(accounts).instruction();
+    }
+
+    public async build_refund_transaction(instruction: TransactionInstruction, host: string) {
+        const transaction = new Transaction().add(instruction);
+        transaction.feePayer = new PublicKey(host);
+        transaction.recentBlockhash = (await this.connection.getLatestBlockhash()).blockhash;
+        return transaction.serialize({ requireAllSignatures: false }).toString('base64');
+    }
+
+    public async verify_refund_transaction(
+        signature: string,
+        instruction: TransactionInstruction,
+        host: string,
+    ): Promise<boolean> {
+        const tx = await this.connection.getTransaction(signature, {
+            commitment: 'confirmed',
+            maxSupportedTransactionVersion: 0,
+        });
+        if (!tx?.meta || tx.meta.err !== null) return false;
+        const message = tx.transaction.message;
+        const keys = message.getAccountKeys({
+            accountKeysFromLookups: tx.meta.loadedAddresses,
+        });
+        const hostKey = new PublicKey(host);
+        const signedByHost = Array.from(
+            { length: message.header.numRequiredSignatures },
+            (_, index) => keys.get(index),
+        ).some((key) => key?.equals(hostKey));
+        if (!signedByHost) return false;
+        return message.compiledInstructions.some(
+            (ix) =>
+                keys.get(ix.programIdIndex)?.equals(instruction.programId) &&
+                Buffer.from(ix.data).equals(instruction.data) &&
+                ix.accountKeyIndexes.length === instruction.keys.length &&
+                instruction.keys.every((key, index) => {
+                    const accountIndex = ix.accountKeyIndexes[index];
+                    return accountIndex !== undefined && keys.get(accountIndex)?.equals(key.pubkey);
+                }),
+        );
     }
 
     public async get_balance(pubkey: PublicKey): Promise<number> {

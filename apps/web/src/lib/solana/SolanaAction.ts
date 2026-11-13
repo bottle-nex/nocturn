@@ -6,14 +6,10 @@ import {
     GET_PRIZE_CLAIMS_URL,
     GET_CLAIM_URL,
     CONFIRM_CLAIM_URL,
+    PRIZE_URL,
 } from 'routes/api_routes';
 import { AnchorProvider, createProgram, BN, type Program, type Contract } from '@nocturn/contract';
-import {
-    Connection,
-    PublicKey,
-    type Transaction,
-    type TransactionInstruction,
-} from '@solana/web3.js';
+import { Connection, PublicKey, Transaction, type TransactionInstruction } from '@solana/web3.js';
 import {
     getAssociatedTokenAddressSync,
     getAccount,
@@ -21,6 +17,35 @@ import {
 } from '@solana/spl-token';
 import type { AnchorWallet } from '@solana/wallet-adapter-react';
 import type { PrizeDistributionType } from '@nocturn/types';
+
+export interface PendingRefund {
+    blockhash: string;
+    action: 'cancel' | 'reclaim';
+    claimId?: string;
+    hostTokenAccount: string;
+    txSignature: string;
+}
+
+export interface HostEscrow {
+    id: string;
+    title: string;
+    status: string;
+    hostWalletPubkey: string | null;
+    error: string | null;
+    cancelled?: boolean;
+    finalized?: boolean;
+    balanceBaseUnits?: string;
+    refundedBaseUnits?: string;
+    canCancel?: boolean;
+    claims?: {
+        id: string;
+        rank: number;
+        status: string;
+        amountBaseUnits: string;
+        expiresAt: string | null;
+        canReclaim: boolean;
+    }[];
+}
 
 export interface ConfirmStakePayload {
     txSignature: string;
@@ -286,6 +311,34 @@ export default class SolanaAction {
             SolanaAction.authHeaders(token),
         );
         return res.data.data;
+    }
+
+    public static async fetchEscrows(token: string): Promise<HostEscrow[]> {
+        const { data } = await axios.get(`${PRIZE_URL}/escrows`, SolanaAction.authHeaders(token));
+        return data.data;
+    }
+
+    public static async buildRefund(
+        token: string,
+        quizId: string,
+        action: 'cancel' | 'reclaim',
+        hostTokenAccount: string,
+        claimId?: string,
+    ): Promise<Transaction> {
+        const { data } = await axios.post(
+            `${PRIZE_URL}/${action}/${quizId}`,
+            { hostTokenAccount, claimId },
+            SolanaAction.authHeaders(token),
+        );
+        return Transaction.from(Buffer.from(data.data.transaction, 'base64'));
+    }
+
+    public static async confirmRefund(token: string, quizId: string, refund: PendingRefund) {
+        await axios.post(
+            `${PRIZE_URL}/${refund.action}/${quizId}/confirm`,
+            refund,
+            SolanaAction.authHeaders(token),
+        );
     }
 
     public static async fetchClaimDetails(claimToken: string): Promise<ClaimData> {

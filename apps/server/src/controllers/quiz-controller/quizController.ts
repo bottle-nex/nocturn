@@ -7,12 +7,11 @@ import { createQuizSchema } from '../../schemas/createQuizSchema';
 import { CreateQuizType, QuestionType } from '../../schemas/createQuizSchema';
 import {
     NOCTURN_COOKIE_NAME,
-    QuizStatusEnum,
     SessionStatusEnum,
     SubscriptionEnum,
     USER_TYPE,
 } from '@nocturn/types';
-import { redisCacheInstance } from '../../services/init.services';
+import { redisCacheInstance, solanaServiceInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
 import { FEATURE, planManager } from '@nocturn/premium';
 
@@ -297,6 +296,27 @@ export default class QuizController {
                 Subscription.get_user_subscription(hostId),
             ]);
 
+            if (
+                existing?.status === 'CANCELLED' ||
+                (existing?.escrowPda &&
+                    existing.hostWalletPubkey &&
+                    (
+                        await solanaServiceInstance.get_escrow_state(
+                            quizId,
+                            existing.hostWalletPubkey,
+                        )
+                    ).cancelled)
+            ) {
+                ResponseWriter.error(
+                    res,
+                    'QUIZ_CANCELLED',
+                    'Cancelled quizzes cannot be launched',
+                    undefined,
+                    409,
+                );
+                return;
+            }
+
             let spectatorCode: string | undefined = undefined;
             let spectatorLink: string | undefined = undefined;
 
@@ -538,30 +558,33 @@ export default class QuizController {
 
             if (
                 game_session.status === SessionStatusEnum.COMPLETED ||
-                quiz.status === QuizStatusEnum.COMPLETED
+                [
+                    'COMPLETED',
+                    'CANCELLED',
+                    'PAYOUT_PENDING',
+                    'PAYOUT_COMPLETED',
+                    'TIMED_OUT',
+                ].includes(quiz.status)
             ) {
                 // means the session is manually ended no need to proceed
                 return;
             }
 
-            await Promise.allSettled([
-                prisma.gameSession.update({
-                    where: {
-                        id: game_session_id,
-                    },
-                    data: {
-                        status: SessionStatus.TIMED_OUT,
-                    },
-                }),
-                prisma.quiz.update({
-                    where: {
-                        id: quiz.id,
-                    },
-                    data: {
-                        status: QuizStatus.TIMED_OUT,
-                    },
-                }),
-            ]);
+            await prisma.$transaction(async (tx) => {
+                const timedOut = await tx.quiz.updateMany({
+                    where: { id: quiz.id, status: 'LIVE' },
+                    data: { status: QuizStatus.TIMED_OUT, endedAt: new Date() },
+                });
+                if (timedOut.count > 0) {
+                    await tx.gameSession.updateMany({
+                        where: {
+                            id: game_session_id,
+                            status: { in: ['WAITING', 'LIVE', 'PAUSED'] },
+                        },
+                        data: { status: SessionStatus.TIMED_OUT },
+                    });
+                }
+            });
         } catch (error) {
             console.error('error in ending quiz: ', error);
             return;

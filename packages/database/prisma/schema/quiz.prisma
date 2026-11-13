@@ -148,6 +148,7 @@ model PrizeClaim {
     claimerWallet   String?
     txSignature     String?
     expiresAt       DateTime
+    expiryNotifiedAt DateTime?
     emailSentAt     DateTime?
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
