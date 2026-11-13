@@ -1,7 +1,19 @@
 import { AiQuizMessage, QuizType } from '@nocturn/types';
 import { create } from 'zustand';
 
+export interface AiUsage {
+    used: number;
+    limit: number | null;
+    remaining: number | null;
+    resetsAt: string;
+}
+
 interface AiChatStore {
+    usage: AiUsage | null;
+    usageError: string | null;
+    setUsage: (usage: AiUsage | null) => void;
+    setUsageError: (error: string | null) => void;
+
     sessionId: string | null;
     setSessionId: (sessionId: string) => void;
 
@@ -30,6 +42,10 @@ interface AiChatStore {
 }
 
 export const useAiChatStore = create<AiChatStore>((set, get) => ({
+    usage: null,
+    usageError: null,
+    setUsage: (usage) => set({ usage }),
+    setUsageError: (usageError) => set({ usageError }),
     sessionId: null,
     setSessionId: (sessionId: string) => set({ sessionId }),
 

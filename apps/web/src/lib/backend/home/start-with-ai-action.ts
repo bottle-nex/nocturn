@@ -1,9 +1,30 @@
+import { toast } from '@/lib/toast';
 import { useAiChatStore } from '@/store/home/useAiChatStore';
 import { AiQuizMessage, QuizType, STREAM, stream } from '@nocturn/types';
 import axios from 'axios';
-import { ACCEPT_OR_DECLINE_GENERATED_QUIZ, GENERATE_NEW_QUIZ } from 'routes/api_routes';
+import {
+    ACCEPT_OR_DECLINE_GENERATED_QUIZ,
+    AI_USAGE_URL,
+    GENERATE_NEW_QUIZ,
+} from 'routes/api_routes';
 
 export default class AiBackendAction {
+    static async refresh_usage(token: string) {
+        const { setUsage, setUsageError } = useAiChatStore.getState();
+        setUsageError(null);
+        try {
+            const response = await fetch(AI_USAGE_URL, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error('Unable to load AI usage');
+            const body = await response.json();
+            setUsage(body.data);
+        } catch {
+            setUsage(null);
+            setUsageError('Unable to load AI usage. Please try again.');
+        }
+    }
+
     static async create_new_quiz(token: string, sessionId: string | null, instruction: string) {
         const { setLoading } = useAiChatStore.getState();
         try {
@@ -22,7 +43,8 @@ export default class AiBackendAction {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to start chat');
+                const body = await response.json();
+                throw new Error(body.message || 'Failed to start chat');
             }
 
             const reader = response.body?.getReader();
@@ -60,7 +82,9 @@ export default class AiBackendAction {
             }
         } catch (error) {
             console.error('error in streaming data: ', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to start chat');
         } finally {
+            await AiBackendAction.refresh_usage(token);
             setLoading(false);
         }
     }
