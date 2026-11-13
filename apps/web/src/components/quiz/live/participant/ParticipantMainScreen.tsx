@@ -43,7 +43,6 @@ export default function ParticipantMainScreen() {
                 e.key === 'Alt'
             ) {
                 e.preventDefault();
-                toast.error(`Key press: ${e.key}`);
             }
         }
 
