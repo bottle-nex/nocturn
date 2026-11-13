@@ -5,7 +5,7 @@ import FacebookProvider from 'next-auth/providers/facebook';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
-import { SIGNIN_URL, VERIFY_OTP_URL } from 'routes/api_routes';
+import { SIGNIN_URL, VERIFY_OTP_URL } from '../../../../routes/api_routes';
 import { SubscriptionEnum } from '@nocturn/types';
 
 export interface UserType {
@@ -35,10 +35,14 @@ export const authOption: AuthOptions = {
                     account?.provider === 'github' ||
                     account?.provider === 'facebook'
                 ) {
-                    const response = await axios.post(`${SIGNIN_URL}`, {
-                        user,
-                        account,
-                    });
+                    const secret = process.env.AUTH_HANDOFF_SECRET;
+                    if (!secret || secret.length < 32) return false;
+
+                    const response = await axios.post(
+                        SIGNIN_URL,
+                        { user },
+                        { headers: { 'X-Auth-Secret': secret } },
+                    );
 
                     const result = response.data;
 
@@ -55,8 +59,8 @@ export const authOption: AuthOptions = {
                 }
 
                 return false;
-            } catch (err) {
-                console.error(err);
+            } catch {
+                console.error('OAuth sign-in failed');
                 return false;
             }
         },

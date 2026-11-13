@@ -6,6 +6,8 @@ import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
 import crypto from 'crypto';
+import { z } from 'zod';
+import { REQUEST_OTP_SCRIPT, VERIFY_OTP_SCRIPT } from '../../services/otp.scripts';
 import { NOCTURN_REFRESH_COOKIE_NAME, SubscriptionEnum } from '@nocturn/types';
 
 const ACCESS_TOKEN_EXPIRY = '15m';
@@ -52,9 +54,17 @@ export class SigninController {
     }
 
     static async oauth_signin(req: Request, res: Response) {
-        const { user } = req.body;
+        const secret = req.get('X-Auth-Secret');
+        const expected = Buffer.from(env.AUTH_HANDOFF_SECRET);
+        const provided = Buffer.from(secret ?? '');
+        if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
+            ResponseWriter.error(res, 'UNAUTHORIZED', 'Not authorized', undefined, 401);
+            return;
+        }
 
-        if (!user) {
+        const { user } = req.body ?? {};
+
+        if (!user || !z.email().safeParse(user.email).success) {
             ResponseWriter.not_found(res, 'Insufficient data');
             return;
         }
@@ -155,54 +165,88 @@ export class SigninController {
     }
 
     static async send_otp(req: Request, res: Response) {
-        const { email } = req.body;
+        const parsedEmail = z
+            .email()
+            .safeParse(
+                typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : null,
+            );
 
-        if (!email) {
+        if (!parsedEmail.success) {
             ResponseWriter.invalid_data(res, 'Email is required');
             return;
         }
 
+        const email = parsedEmail.data;
         try {
-            const otp = crypto.randomInt(100000, 999999).toString();
-
-            console.log(`Generated OTP for ${email}: ${otp}`);
-
-            await publisherInstance.set(`otp:${email}`, otp, 'EX', 100);
+            const otp = crypto.randomInt(100000, 1000000).toString();
+            const retryAfter = Number(
+                await publisherInstance.eval(
+                    REQUEST_OTP_SCRIPT,
+                    4,
+                    `otp:requests:email:${email}`,
+                    `otp:requests:ip:${req.ip}`,
+                    `otp:attempts:${email}`,
+                    `otp:${email}`,
+                    otp,
+                ),
+            );
+            if (retryAfter > 0) {
+                res.set('Retry-After', String(retryAfter));
+                ResponseWriter.error(res, 'RATE_LIMITED', 'Too many OTP requests', undefined, 429);
+                return;
+            }
 
             await email_service_queue_instance.email_send_otp({ email, otp });
 
             ResponseWriter.success(res, null, 'OTP sent to your email');
-        } catch (err) {
-            console.error(err);
+        } catch {
+            console.error('OTP request failed');
             ResponseWriter.system_error(res);
         }
     }
 
     static async verify_otp(req: Request, res: Response) {
-        const { email, otp } = req.body;
+        const { otp } = req.body ?? {};
+        const parsedEmail = z
+            .email()
+            .safeParse(
+                typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : null,
+            );
 
-        if (!email || !otp) {
+        if (!parsedEmail.success || typeof otp !== 'string' || !otp) {
             ResponseWriter.invalid_data(res, 'Email and OTP are required');
             return;
         }
 
+        const email = parsedEmail.data;
         try {
-            const stored = await publisherInstance.get(`otp:${email}`);
-
-            console.log('stored otp is : ', stored, ' and user entered otp is : ', otp);
-
-            if (!stored || stored !== otp) {
+            const verified = Number(
+                await publisherInstance.eval(
+                    VERIFY_OTP_SCRIPT,
+                    2,
+                    `otp:${email}`,
+                    `otp:attempts:${email}`,
+                    otp,
+                ),
+            );
+            if (verified === -1) {
+                ResponseWriter.error(
+                    res,
+                    'RATE_LIMITED',
+                    'Too many incorrect attempts. Please try again later.',
+                    undefined,
+                    429,
+                );
+                return;
+            }
+            if (verified !== 1) {
                 ResponseWriter.invalid_data(res, 'Invalid or expired OTP');
                 return;
             }
 
-            await publisherInstance.del(`otp:${email}`);
-
             const existingUser = await prisma.user.findUnique({
                 where: { email },
             });
-
-            console.log('existing user is : ', existingUser);
 
             let myUser;
 
@@ -279,8 +323,8 @@ export class SigninController {
                 { user: { ...myUser, subscription }, token: accessToken },
                 'Authentication successful',
             );
-        } catch (err) {
-            console.error(err);
+        } catch {
+            console.error('OTP verification failed');
             ResponseWriter.custom(
                 res,
                 false,

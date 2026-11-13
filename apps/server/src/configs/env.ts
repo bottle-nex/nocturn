@@ -10,6 +10,7 @@ const envSchema = z.object({
         .default('8080')
         .transform((val) => parseInt(val, 10)),
     SERVER_NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+    AUTH_HANDOFF_SECRET: z.string().min(32, 'Auth handoff secret must be at least 32 characters'),
     SERVER_JWT_SECRET: z.string().min(32, 'JWT secret must be at least 32 characters'),
     SERVER_JWT_REFRESH_SECRET: z
         .string()
