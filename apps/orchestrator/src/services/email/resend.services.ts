@@ -54,6 +54,26 @@ export default class ResendService {
         });
     }
 
+    static async send_prize_expired_email(data: {
+        claimId: string;
+        email: string;
+        quizTitle: string;
+        rank: number;
+        amountBaseUnits: bigint;
+    }) {
+        const webUrl = process.env.WEB_URL || process.env.SERVER_WEB_URL || 'http://localhost:3000';
+        const result = await resend.emails.send(
+            {
+                from: 'Nocturn <noreply@nocturn.app>',
+                to: data.email,
+                subject: `An unclaimed prize in "${data.quizTitle}" can be reclaimed`,
+                text: `The rank ${data.rank} prize (${Number(data.amountBaseUnits) / 1e6} USDC) in "${data.quizTitle}" has expired. Open your Nocturn host dashboard, connect your staking wallet, and use Reclaim in the Prizes panel: ${webUrl}/home`,
+            },
+            { idempotencyKey: `prize-expired/${data.claimId}` },
+        );
+        if (result.error) throw new Error(result.error.message);
+    }
+
     static async send_winner_notification_email(data: WinnerNotificationEmailData) {
         const qrCodeDataUrl = await QRCode.toDataURL(data.claimUrl, {
             width: 200,

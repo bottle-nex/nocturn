@@ -5,6 +5,7 @@ import RecentlyViewedCard from '@/components/utility/RecentlyViewedCard';
 import QuizActions from '@/lib/backend/home/quiz-actions';
 import { useRecentlyViewedQuizStore } from '@/store/user/useRecentlyViewedQuizStore';
 import { useAllQuizsStore } from '@/store/user/useAllQuizsStore';
+import HostPrizePanel from '../home/HostPrizePanel';
 import GetToKnowUs from '../base/GetToKnowUs';
 import HomeFeatures from '../base/HomeFeatures';
 import { Button } from '../ui/button';
@@ -176,6 +177,7 @@ export default function HomePanel() {
                     </section>
                 )}
 
+                <HostPrizePanel />
                 <HomeFeatures />
                 <GetToKnowUs />
             </section>

@@ -1,6 +1,7 @@
 import Bull from 'bull';
 import { Env } from '../configs/env';
 import { prisma } from '@nocturn/database';
+import ResendService from '../services/email/resend.services';
 
 export default class PrizeExpiryWorker {
     private queue: Bull.Queue;
@@ -44,6 +45,40 @@ export default class PrizeExpiryWorker {
                 status: 'EXPIRED',
             },
         });
+
+        const expired = await prisma.prizeClaim.findMany({
+            where: {
+                status: 'EXPIRED',
+                expiryNotifiedAt: null,
+                quiz: {
+                    escrowPda: { not: null },
+                    status: { in: ['COMPLETED', 'PAYOUT_COMPLETED'] },
+                },
+            },
+            include: { quiz: { include: { host: { select: { email: true } } } } },
+        });
+        const notifications = await Promise.allSettled(
+            expired.map(async (claim) => {
+                await ResendService.send_prize_expired_email({
+                    claimId: claim.id,
+                    email: claim.quiz.host.email,
+                    quizTitle: claim.quiz.title,
+                    rank: claim.rank,
+                    amountBaseUnits: claim.amountBaseUnits,
+                });
+                await prisma.prizeClaim.update({
+                    where: { id: claim.id },
+                    data: { expiryNotifiedAt: new Date() },
+                });
+            }),
+        );
+        const failures = notifications.filter((notification) => notification.status === 'rejected');
+        if (failures.length > 0) {
+            const messages = failures.map((failure) =>
+                failure.reason instanceof Error ? failure.reason.message : String(failure.reason),
+            );
+            throw new Error(`Failed to notify hosts about expired prizes: ${messages.join('; ')}`);
+        }
 
         if (result.count > 0) {
             console.log(`[PrizeExpiryWorker] Marked ${result.count} claims as EXPIRED`);
