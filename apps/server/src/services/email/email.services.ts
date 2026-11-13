@@ -57,17 +57,11 @@ export default class EmailServiceQueue {
         }
     }
 
-    public async email_send_otp(data: OtpEmailData): Promise<Bull.Job<EmailJob> | undefined> {
-        try {
-            const job = await this.email_queue.add({
-                type: EmailJobType.OTP_EMAIL,
-                data,
-            });
-            return job;
-        } catch (err) {
-            console.error('Error adding OTP email job to queue:', err);
-            return undefined;
-        }
+    public async email_send_otp(data: OtpEmailData): Promise<Bull.Job<EmailJob>> {
+        return this.email_queue.add({
+            type: EmailJobType.OTP_EMAIL,
+            data,
+        });
     }
 
     public async email_winner_notification(
