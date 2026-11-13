@@ -24,11 +24,11 @@ export default async function getParticipantsOnCall(req: Request, res: Response)
                 avatar: true,
                 nickname: true,
             },
-            // orderBy: {
-
-            // },
-            skip: page + limit,
-            take: limit + 1,
+            orderBy: {
+                id: 'asc',
+            },
+            skip: page * limit,
+            take: limit,
         });
 
         const hasMore = (page + 1) * limit < totalParticipants;
