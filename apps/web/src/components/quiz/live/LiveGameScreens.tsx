@@ -36,7 +36,7 @@ export default function LiveGameScreens(): JSX.Element {
                 backgroundColor: quiz.template.backgroundColor,
                 color: quiz.template.textColor,
             }}
-            className="h-screen w-screen relative"
+            className="h-dvh w-screen relative"
         >
             <CanvasAccents
                 design={quiz.template?.accentType}

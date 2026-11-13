@@ -36,14 +36,14 @@ export default function ParticipantQuestionActiveRenderer() {
     return (
         <div
             ref={canvasRef}
-            className="w-full h-full flex justify-center items-center relative overflow-hidden"
+            className="w-full h-full min-h-0 flex-1 flex justify-center items-center relative overflow-hidden px-3 pt-4 sm:px-0 sm:py-0"
         >
             <TopTimerBarCompoment
                 startTime={gameSession.phaseStartTime!}
                 endTime={gameSession.phaseEndTime!}
             />
-            <section className="relative z-10 w-full max-w-6xl mx-auto h-[80dvh] flex flex-col bg-light-alpha rounded-xl overflow-hidden items-center">
-                <div className="flex items-center justify-between px-7 pb-4 shrink-0 w-full">
+            <section className="relative z-10 w-full max-w-6xl mx-auto h-full sm:h-[80dvh] flex flex-col bg-light-alpha rounded-xl overflow-hidden items-center">
+                <div className="flex items-center justify-between flex-wrap gap-3 px-4 py-4 sm:px-7 shrink-0 w-full">
                     <AppLogo
                         className="pointer-events-none"
                         textColor="text-black dark:text-black"
@@ -69,16 +69,16 @@ export default function ParticipantQuestionActiveRenderer() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-center w-2xl gap-y-4">
-                    <div className="px-6 pt-0 pb-5 shrink-0 w-full flex flex-col justify-center items-center">
+                <div className="flex flex-col items-center w-full max-w-2xl min-h-0 flex-1 overflow-y-auto gap-y-4">
+                    <div className="px-4 sm:px-6 pt-0 pb-2 sm:pb-5 shrink-0 w-full flex flex-col justify-center items-center">
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dark-base/40 mb-2">
                             {/* Question */}
                         </p>
-                        <p className="text-dark-base leading-relaxed font-medium text-[32px]">
+                        <p className="text-dark-base leading-relaxed font-medium text-xl sm:text-[32px] break-words w-full">
                             Q. {currentQuestion.question}
                         </p>
                     </div>
-                    <div className="flex-1 min-h-0 px-6 pb-6 flex flex-col w-full">
+                    <div className="shrink-0 px-4 sm:px-6 pb-6 flex flex-col w-full">
                         <ParticipantQuestionActiveOptions />
                     </div>
                 </div>

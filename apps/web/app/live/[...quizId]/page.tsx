@@ -114,14 +114,14 @@ export default function New({ params }: NewProps) {
 
     if (!quiz) {
         return (
-            <div className="h-screen w-full flex items-center justify-center">
+            <div className="h-dvh w-full flex items-center justify-center">
                 <div>Loading...</div>
             </div>
         );
     }
 
     return (
-        <div className="w-full h-screen select-none">
+        <div className="w-full h-dvh select-none">
             <LiveGameScreens />
         </div>
     );

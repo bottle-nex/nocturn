@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { toast } from '@/lib/toast';
 import { useUserRoleStore } from '@/store/live-quiz/useLiveQuizUserStore';
 import FullScreenWarningPanel from '../common/FullScreenWarningPanel';
+import { supportsFullscreen } from '@/lib/fullscreen';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { cleanWebSocketClient } from '@/lib/singleton-socket';
 import { useRouter } from 'next/navigation';
@@ -25,6 +26,7 @@ export default function ParticipantMainScreen() {
 
     const [fullscreenAccepted, setFullscreenAccepted] = useState<boolean>(false);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+    const [fullscreenRequired, setFullscreenRequired] = useState<boolean | null>(null);
 
     const { handleParticipantLeaveGameSession, handleAddParticipantWarningCount } = useWebSocket();
     const router = useRouter();
@@ -55,7 +57,7 @@ export default function ParticipantMainScreen() {
 
     useEffect(() => {
         function handleChange() {
-            if (!document.fullscreenElement) {
+            if (supportsFullscreen(document) && !document.fullscreenElement) {
                 if (gameSession?.participantScreen === ParticipantScreenEnum.LOBBY) {
                     toast.error(
                         'Kindly swtich to full-screen mode, if the quiz starts you will be kicked as per your warnings.',
@@ -74,6 +76,8 @@ export default function ParticipantMainScreen() {
         function handleChange() {
             setIsFullscreen(!!document.fullscreenElement);
         }
+        setFullscreenRequired(supportsFullscreen(document));
+        handleChange();
         document.addEventListener('fullscreenchange', handleChange);
         return () => document.removeEventListener('fullscreenchange', handleChange);
     }, []);
@@ -99,31 +103,24 @@ export default function ParticipantMainScreen() {
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, [gameSession?.participantScreen]);
 
-    const [allowed, setAllowed] = useState(false);
+    const allowed =
+        currentUserType === USER_TYPE.PARTICIPANT &&
+        (fullscreenRequired === false || (fullscreenAccepted && isFullscreen));
 
-    useEffect(() => {
-        if (currentUserType === USER_TYPE.PARTICIPANT && fullscreenAccepted && isFullscreen) {
-            setAllowed(true);
-        } else {
-            setAllowed(false);
+    async function accept() {
+        try {
+            await document.documentElement.requestFullscreen();
+            setFullscreenAccepted(true);
+            setIsFullscreen(!!document.fullscreenElement);
+        } catch {
+            toast.error('Could not enter full-screen mode. Please try again.');
         }
-    }, [currentUserType, fullscreenAccepted, isFullscreen]);
-
-    function accept() {
-        requestFullscreen();
-        setFullscreenAccepted(true);
     }
 
     function deny() {
         handleParticipantLeaveGameSession({});
         cleanWebSocketClient();
         router.back();
-    }
-
-    function requestFullscreen() {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen().catch(() => {});
-        }
     }
 
     function renderHostScreenPanels() {
@@ -150,7 +147,7 @@ export default function ParticipantMainScreen() {
     }
     return (
         <div className="h-full relative w-full flex z-20">
-            {currentUserType === USER_TYPE.PARTICIPANT && !allowed && (
+            {currentUserType === USER_TYPE.PARTICIPANT && fullscreenRequired && !allowed && (
                 <FullScreenWarningPanel accept={accept} deny={deny} />
             )}
             {renderHostScreenPanels()}

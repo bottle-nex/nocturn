@@ -72,7 +72,7 @@ export default function ParticipantQuestionActiveOptions() {
         <>
             {showBars && barData && (
                 <div
-                    className="fixed top-16 right-4 z-50 w-44 rounded-2xl p-4 space-y-2.5"
+                    className="w-full shrink-0 sm:fixed sm:top-16 sm:right-4 z-50 sm:w-44 rounded-2xl p-4 space-y-2.5"
                     style={{
                         background: 'rgba(10,10,15,0.85)',
                         backdropFilter: 'blur(20px)',
@@ -112,7 +112,7 @@ export default function ParticipantQuestionActiveOptions() {
                 </div>
             )}
 
-            <div className="w-full min-h-0 flex-1 overflow-y-auto flex flex-col gap-y-4 py-1 px-0.5">
+            <div className="w-full min-h-0 shrink-0 flex flex-col gap-y-4 py-1 px-0.5">
                 {cells.map((option, idx) => {
                     if (option === null) return <div key={idx} className="w-full" />;
                     const isSelected = selected === idx;
@@ -123,10 +123,13 @@ export default function ParticipantQuestionActiveOptions() {
                     const { label, labelBg, labelBgSelected, cardBg, ring } = getAccent(idx);
 
                     return (
-                        <div
+                        <button
+                            type="button"
                             key={idx}
-                            onClick={() => !isDisabled && handleSelectOption(idx)}
-                            className="w-full rounded-lg flex items-stretch overflow-hidden ring-1 ring-black/10 transition-all duration-150"
+                            disabled={alreadyResponded || selected !== null}
+                            aria-pressed={isSelected}
+                            onClick={() => handleSelectOption(idx)}
+                            className="w-full min-h-14 shrink-0 text-left rounded-lg flex items-stretch overflow-hidden ring-1 ring-black/10 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
                             style={{
                                 background: isSelected
                                     ? cardBg
@@ -155,7 +158,7 @@ export default function ParticipantQuestionActiveOptions() {
                             </div>
                             <div className="flex-1 flex items-center px-4 py-4 gap-x-3 min-w-0">
                                 <span
-                                    className="flex-1 leading-snug text-sm sm:text-base text-dark-base"
+                                    className="flex-1 min-w-0 break-words leading-snug text-sm sm:text-base text-dark-base"
                                     style={{ fontWeight: isSelected ? 500 : 400 }}
                                 >
                                     {option}
@@ -194,7 +197,7 @@ export default function ParticipantQuestionActiveOptions() {
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </button>
                     );
                 })}
             </div>
