@@ -18,20 +18,16 @@ export default class PhaseQueueProcessor {
 
     private start_consuming() {
         this.phase_queue.process('phase_transition', async (job) => {
-            this.transition_worker.handle_transition_phase(job.data);
+            await this.transition_worker.handle_transition_phase(job.data);
         });
     }
 
     public async schedule_phase_transition(data: PhaseTransitionJob): Promise<void> {
         const delay = Math.max(0, data.executeAt - Date.now());
-        try {
-            await this.phase_queue.add('phase_transition', data, {
-                delay,
-                jobId: `${data.gameSessionId}_${data.questionIndex}_${data.fromPhase}_${data.toPhase}`,
-            });
-        } catch (error) {
-            console.error(`Failed to schedule phase transition:`, error);
-        }
+        await this.phase_queue.add('phase_transition', data, {
+            delay,
+            jobId: `${data.gameSessionId}_${data.questionIndex}_${data.fromPhase}_${data.toPhase}`,
+        });
     }
 
     public set_transition_worker(transition_worker: TransitionWorker) {
