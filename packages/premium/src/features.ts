@@ -3,6 +3,7 @@ import { gate, numeric, ONE_DAY, rate } from "./types";
 import { FEATURE } from "./enums";
 
 export const FEATURES = {
+  [FEATURE.AI_GENERATION]: numeric(3, null),
   [FEATURE.MAX_PARTICIPANTS_PER_SESSION]: numeric(10, null),
   [FEATURE.MAX_SPECTATORS_PER_SESSION]: numeric(10, 50),
   [FEATURE.MAX_COLLABORATORS_PER_SESSION]: numeric(0, 4),

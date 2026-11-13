@@ -10,6 +10,8 @@ export default class S3ClientActions {
     constructor() {
         this.s3 = new S3Client({
             region: env.SERVER_AWS_REGION,
+            // The file is sent by the browser, so there is no body to checksum here.
+            requestChecksumCalculation: 'WHEN_REQUIRED',
             credentials: {
                 accessKeyId: env.SERVER_AWS_ACCESS_KEY_ID,
                 secretAccessKey: env.SERVER_AWS_SECRET_ACCESS_KEY,
@@ -19,18 +21,24 @@ export default class S3ClientActions {
 
     async getPresignedUrl(
         fileType: string,
+        fileSize: number,
     ): Promise<{ signedUrl: string; publicUrl: string; key: string }> {
         const fileExt = this.getFileExtension(fileType);
         const fileName = `${uuid()}.${fileExt}`;
-        const key = fileType === 'application/pdf' ? 'ai-chat-pdfs' : `quiz-images/${fileName}`;
+        const key =
+            fileType === 'application/pdf' ? `ai-chat-pdfs/${fileName}` : `quiz-images/${fileName}`;
 
         const command = new PutObjectCommand({
             Bucket: env.SERVER_AWS_BUCKET_NAME,
             Key: key,
             ContentType: fileType,
+            ContentLength: fileSize,
         });
 
-        const signedUrl = await getSignedUrl(this.s3, command, { expiresIn: 60 });
+        const signedUrl = await getSignedUrl(this.s3, command, {
+            expiresIn: 60,
+            signableHeaders: new Set(['content-length', 'content-type']),
+        });
         const publicUrl = `https://${cloudFrontDomain}/${key}`;
 
         return { signedUrl, publicUrl, key };

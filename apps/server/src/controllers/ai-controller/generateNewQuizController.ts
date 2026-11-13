@@ -56,11 +56,16 @@ export default async function generateNewQuizController(req: Request, res: Respo
         // get chat history
         const messages = await prisma.aiQuizMessage.findMany({
             where: { aiQuizChatSessionId: session.id },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
+            take: 20,
             select: { role: true, content: true },
         });
 
-        const conversationHistory = messages.map((m) => `${m.role}: ${m.content}`).join('\n');
+        const conversationHistory = messages
+            .reverse()
+            .map((m) => `${m.role}: ${m.content.slice(0, 4000)}`)
+            .join('\n')
+            .slice(-16000);
 
         Agent.create_stream(res);
 
@@ -78,7 +83,7 @@ export default async function generateNewQuizController(req: Request, res: Respo
                 conversationHistory,
                 currentStep: session.step,
                 existingQuizId: session.quizId || undefined,
-                originalTopic: session.instruction || undefined,
+                originalTopic: session.instruction?.slice(0, 4000) || undefined,
                 sseMessages: [],
             },
             { streamMode: 'updates' },

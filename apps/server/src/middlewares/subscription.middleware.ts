@@ -3,8 +3,48 @@ import ResponseWriter from '../class/response_writer';
 import { FEATURE, planManager } from '@nocturn/premium';
 import { SubscriptionEnum } from '@nocturn/types';
 import { prisma } from '@nocturn/database';
+import AiUsage from '../services/ai-usage.service';
+import { generateNewQuizSchema } from '../schemas/generateNewQuizSchema';
 
 export default class Subscription {
+    static checkUsageLimit(feature: FEATURE.AI_GENERATION) {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                if (!req.user) return ResponseWriter.not_authorized(res);
+                if (!generateNewQuizSchema.safeParse(req.body).success) {
+                    return ResponseWriter.invalid_data(
+                        res,
+                        'Instruction must contain 1 to 4000 characters',
+                    );
+                }
+                const { allowed, resetsAt } = await AiUsage.reserve(req.user.id);
+                if (!allowed) {
+                    return ResponseWriter.error(
+                        res,
+                        'USAGE_LIMIT_REACHED',
+                        `AI generation limit reached. Upgrade your plan or try again after ${resetsAt.toISOString()}.`,
+                        feature,
+                        429,
+                    );
+                }
+                next();
+            } catch (error) {
+                console.error('Error checking AI usage:', error);
+                ResponseWriter.system_error(res);
+            }
+        };
+    }
+
+    static async ai_usage(req: Request, res: Response) {
+        try {
+            if (!req.user) return ResponseWriter.not_authorized(res);
+            ResponseWriter.success(res, await AiUsage.get_usage(req.user.id));
+        } catch (error) {
+            console.error('Error fetching AI usage:', error);
+            ResponseWriter.system_error(res);
+        }
+    }
+
     static async spectator_limit_via_code(req: Request, res: Response, next: NextFunction) {
         const code = req.body?.code as string | undefined;
 

@@ -27,6 +27,7 @@ model User {
     aiChats                 AiQuizChatSession[]
 
     // Premium relationships
+    usageRecords     UsageRecord[]
     subscriptions    UserSubscription[]
     payments         Payment[]
     checkoutSessions CheckoutSession[]

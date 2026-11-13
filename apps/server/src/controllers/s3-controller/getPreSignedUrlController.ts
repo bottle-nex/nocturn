@@ -2,19 +2,27 @@ import { Request, Response } from 'express';
 import S3ClientActions from '../../class/s3Client';
 import ResponseWriter from '../../class/response_writer';
 
+const ALLOWED_FILE_TYPES = new Set([
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'application/pdf',
+]);
 const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default async function getPreSignedUrlController(req: Request, res: Response) {
     try {
         const { fileType, fileSize } = req.body;
 
-        if (!fileType) {
-            ResponseWriter.invalid_data(res, 'File type is required');
+        if (typeof fileType !== 'string' || !ALLOWED_FILE_TYPES.has(fileType)) {
+            ResponseWriter.invalid_data(res, 'Unsupported file type');
             return;
         }
 
-        if (!fileSize) {
-            ResponseWriter.invalid_data(res, 'file size is required');
+        if (typeof fileSize !== 'number' || !Number.isSafeInteger(fileSize) || fileSize <= 0) {
+            ResponseWriter.invalid_data(res, 'File size must be a positive integer');
             return;
         }
 
@@ -29,16 +37,8 @@ export default async function getPreSignedUrlController(req: Request, res: Respo
             return;
         }
 
-        if (!fileType.includes('/')) {
-            ResponseWriter.invalid_data(
-                res,
-                "Invalid file type format. Expected format: 'image/png'",
-            );
-            return;
-        }
-
         const s3Actions = new S3ClientActions();
-        const { signedUrl, publicUrl, key } = await s3Actions.getPresignedUrl(fileType);
+        const { signedUrl, publicUrl, key } = await s3Actions.getPresignedUrl(fileType, fileSize);
 
         ResponseWriter.success(
             res,

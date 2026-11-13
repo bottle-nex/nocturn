@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GET_PRESIGNED_URL } from 'routes/api_routes';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
 
 export default class S3 {
@@ -10,12 +11,18 @@ export default class S3 {
         }
 
         try {
-            const { data } = await axios.post(GET_PRESIGNED_URL, {
-                fileType: file.type,
-                fileSize: file.size,
-            });
+            const { data } = await axios.post(
+                GET_PRESIGNED_URL,
+                { fileType: file.type, fileSize: file.size },
+                {
+                    headers: {
+                        Authorization: `Bearer ${useUserSessionStore.getState().session?.user.token}`,
+                    },
+                    withCredentials: true,
+                },
+            );
 
-            const { uploadUrl, publicUrl } = data;
+            const { uploadUrl, publicUrl } = data.data;
             if (!uploadUrl) {
                 throw new Error('No upload URL received from backend');
             }
@@ -28,8 +35,13 @@ export default class S3 {
             });
 
             return publicUrl;
-        } catch {
-            console.error('Error while uploading image');
+        } catch (error) {
+            console.error('Error while uploading image', error);
+            toast.error(
+                axios.isAxiosError(error)
+                    ? error.response?.data?.message || 'Unable to upload file. Please try again.'
+                    : 'Unable to upload file. Please try again.',
+            );
         }
     }
 }

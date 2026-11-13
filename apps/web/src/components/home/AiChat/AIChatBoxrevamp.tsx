@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { toast } from '@/lib/toast';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { v7 as uuid } from 'uuid';
@@ -33,6 +35,8 @@ export default function AIChatBoxRevamp() {
     const { templates } = useQuizTemplatesStore();
 
     const {
+        usage,
+        usageError,
         quiz,
         messages,
         sessionId,
@@ -69,6 +73,13 @@ export default function AIChatBoxRevamp() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading]);
 
+    useEffect(() => {
+        if (expanded && session?.user.token) {
+            useAiChatStore.getState().setUsage(null);
+            void AiBackendAction.refresh_usage(session.user.token);
+        }
+    }, [expanded, session?.user.token]);
+
     function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
         setValue(e.target.value);
         const el = e.target;
@@ -78,7 +89,12 @@ export default function AIChatBoxRevamp() {
 
     async function handleSubmit() {
         const finalPrompt = `${value} ${prompt}`.trim();
-        if (!finalPrompt) return;
+        if (!finalPrompt || loading || !usage || usage.remaining === 0 || !session?.user.token)
+            return;
+        if (finalPrompt.length > 4000) {
+            toast.error('Instruction must contain at most 4000 characters');
+            return;
+        }
 
         stop();
 
@@ -215,11 +231,45 @@ export default function AIChatBoxRevamp() {
                                 ))}
                             </div>
                         )}
+                        <div
+                            className="mb-2 px-1 text-xs text-dark-alpha/60 dark:text-light-alpha/60"
+                            role="status"
+                        >
+                            {usageError ? (
+                                <button
+                                    onClick={() =>
+                                        session?.user.token &&
+                                        AiBackendAction.refresh_usage(session.user.token)
+                                    }
+                                >
+                                    {usageError}
+                                </button>
+                            ) : !usage ? (
+                                'Loading AI usage…'
+                            ) : (
+                                <>
+                                    {usage.remaining === null
+                                        ? 'Unlimited AI generations'
+                                        : `${usage.remaining} of ${usage.limit} AI generations left this month`}
+                                    {usage.remaining === 0 && (
+                                        <span>
+                                            {' '}
+                                            Resets {new Date(
+                                                usage.resetsAt,
+                                            ).toLocaleDateString()}.{' '}
+                                            <Link href="/premium" className="underline">
+                                                Upgrade your plan
+                                            </Link>
+                                        </span>
+                                    )}
+                                </>
+                            )}
+                        </div>
                         <InputBox
                             textareaRef={textareaRef}
                             value={value}
                             isFocused={isFocused}
-                            hasContent={hasContent}
+                            hasContent={hasContent && !loading && !!usage && usage.remaining !== 0}
                             listening={listening}
                             interimTranscript={interimTranscript}
                             animatedPlaceholders={animatedPlaceholders}
@@ -291,6 +341,7 @@ function InputBox({
                 <textarea
                     ref={textareaRef}
                     rows={1}
+                    maxLength={4000}
                     value={value}
                     onChange={onChange}
                     onKeyDown={onKeyDown}
