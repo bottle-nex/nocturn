@@ -231,7 +231,9 @@ export const useWebSocket = () => {
         };
         if (socket.current) {
             socket.current.send_message(message);
+            return true;
         }
+        return false;
     }
 
     function handleCollaboratorQuizUpdate(payload: unknown) {

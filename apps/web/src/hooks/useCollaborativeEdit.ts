@@ -2,6 +2,8 @@ import { useNewQuizStore } from '@/store/new-quiz/useNewQuizStore';
 import { useWebSocket } from './sockets/useWebSocket';
 import { QuestionType, QuizType } from '@nocturn/types';
 import { useRef, useCallback } from 'react';
+import CollaboratorsHandlers from '@/lib/collaborators.handlers';
+import { broadcastQuestionPoints } from '@/lib/question-point-edits';
 
 export function useCollaborativeEdit() {
     const { editQuestion, updateQuiz } = useNewQuizStore();
@@ -12,34 +14,18 @@ export function useCollaborativeEdit() {
         (
             questionIndex: number,
             partialQuestion: Partial<QuestionType>,
-            options?: { debounce?: boolean; debounceMs?: number },
+            _options?: { debounce?: boolean; debounceMs?: number },
         ) => {
-            editQuestion(questionIndex, partialQuestion);
-
-            const shouldDebounce = options?.debounce ?? false;
-            const debounceMs = options?.debounceMs ?? 1000;
-
-            if (shouldDebounce) {
-                const field = Object.keys(partialQuestion)[0]!;
-                const timerId = debounceTimers.current.get(field);
-
-                if (timerId) clearTimeout(timerId);
-
-                const newTimerId = setTimeout(() => {
-                    handleCollaboratorQuestionUpdate({
-                        questionIndex,
-                        question: partialQuestion,
-                    });
-                    debounceTimers.current.delete(field);
-                }, debounceMs);
-
-                debounceTimers.current.set(field, newTimerId);
-            } else {
-                handleCollaboratorQuestionUpdate({
-                    questionIndex,
-                    question: partialQuestion,
-                });
-            }
+            const base = useNewQuizStore.getState().quiz.questions[questionIndex];
+            if (!base) return;
+            editQuestion(questionIndex, { ...partialQuestion, id: base.id });
+            // Send each edit with the values it was made against. Delaying a patch
+            // lets remote changes erase the user's unbroadcast keystrokes.
+            CollaboratorsHandlers.sendQuestionEdit(
+                base,
+                partialQuestion,
+                handleCollaboratorQuestionUpdate,
+            );
         },
         [editQuestion, handleCollaboratorQuestionUpdate],
     );
@@ -70,5 +56,16 @@ export function useCollaborativeEdit() {
         [updateQuiz, handleCollaboratorQuizUpdate],
     );
 
-    return { editQuestionAndBroadcast, updateQuizAndBroadcast };
+    const updateQuestionPointsAndBroadcast = useCallback(
+        (points: number[]) => {
+            broadcastQuestionPoints(
+                useNewQuizStore.getState().quiz.questions,
+                points,
+                editQuestionAndBroadcast,
+            );
+        },
+        [editQuestionAndBroadcast],
+    );
+
+    return { editQuestionAndBroadcast, updateQuizAndBroadcast, updateQuestionPointsAndBroadcast };
 }

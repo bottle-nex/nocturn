@@ -19,4 +19,5 @@ export * from "../src/response/new/get_new_quiz.response";
 export * from "../src/const/nocturn.const";
 export * from "../src/const/dummyprompt.const";
 export * from "../src/socket/collaborators/collaborators.types";
+export * from "../src/socket/collaborators/question-edits";
 export * from "./premium/premium.types";

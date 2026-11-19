@@ -12,7 +12,7 @@ import {
     SubscriptionEnum,
     USER_TYPE,
 } from '@nocturn/types';
-import { redisCacheInstance } from '../../services/init.services';
+import { collabStateCacheInstance, redisCacheInstance } from '../../services/init.services';
 import Subscription from '../../middlewares/subscription.middleware';
 import { FEATURE, planManager } from '@nocturn/premium';
 
@@ -611,6 +611,22 @@ export default class QuizController {
         questions: QuestionType[],
         status?: QuizStatus,
     ): Promise<Partial<Quiz>> {
+        const session = await prisma.collabSession.findUnique({ where: { quizId } });
+        if (session) {
+            const liveQuestions = await collabStateCacheInstance.get_all_questions(
+                session.id,
+                quizId,
+            );
+            questions = questions.map((question) => {
+                const live = liveQuestions.find((item) => item.id === question.id);
+                return live
+                    ? {
+                          ...createQuizSchema.shape.questions.element.parse(live),
+                          orderIndex: question.orderIndex,
+                      }
+                    : question;
+            });
+        }
         return prisma.$transaction(async (tx) => {
             await tx.question.deleteMany({ where: { quizId } });
 
