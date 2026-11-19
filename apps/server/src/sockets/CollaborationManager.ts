@@ -38,7 +38,6 @@ export default class CollaborationManager {
 
     private socket_mapping: Map<string, CustomWebSocket>;
     private collaborator_sockets_mapping: Map<string, Set<string>>;
-    private collaborator_socket_mapping: Map<string, string> = new Map(); // Map<collaborator_id, socket_id>
     private collaborators_state_manager: CollaboratorsStateManager;
     private collaborator_quiz_state_cache: CollabStateCache = collabStateCacheInstance;
 
@@ -61,28 +60,21 @@ export default class CollaborationManager {
             ws.close(socket_codes.UNAUTHENTICATED, 'Invalid collaborator payload');
             return;
         }
-        const is_valid_user = await this.validate_collaborator_in_db(decoded_cookie_payload.userId);
+        ws.id = this.generateSocketId();
+        ws.collabUser = decoded_cookie_payload;
+        // Install listeners before awaiting membership so reconnect replay cannot be lost.
+        this.setup_message_handlers(ws);
+        const is_valid_user = await this.validate_collaborator_in_db(decoded_cookie_payload);
 
         if (!is_valid_user) {
             ws.close(socket_codes.UNAUTHENTICATED, 'User validation failed');
             return;
         }
 
-        this.cleanup_existing_collaborator_socket(
-            decoded_cookie_payload.userId,
-            decoded_cookie_payload.collabSessionId,
-        );
-
-        const new_collaborator_socket_id = this.generateSocketId();
-        ws.id = new_collaborator_socket_id;
-        ws.collabUser = decoded_cookie_payload;
+        if (ws.readyState !== WebSocket.OPEN) return;
+        const new_collaborator_socket_id = ws.id;
 
         this.socket_mapping.set(new_collaborator_socket_id, ws);
-        this.collaborator_socket_mapping.set(
-            decoded_cookie_payload.userId,
-            new_collaborator_socket_id,
-        );
-
         const session_collaborators_socket_ids = this.collaborator_sockets_mapping.get(
             decoded_cookie_payload.collabSessionId,
         );
@@ -96,7 +88,6 @@ export default class CollaborationManager {
         this.collaborator_sockets_mapping
             .get(decoded_cookie_payload.collabSessionId)
             ?.add(new_collaborator_socket_id);
-        this.setup_message_handlers(ws);
         this.collaborators_state_manager.on_collaborators_connect(
             decoded_cookie_payload.collabSessionId,
             decoded_cookie_payload.quizId,
@@ -104,13 +95,16 @@ export default class CollaborationManager {
     }
 
     private setup_message_handlers(ws: CollabWebSocket) {
+        let pending = Promise.resolve();
         ws.on('message', (data) => {
-            try {
-                const message = JSON.parse(data.toString());
-                this.handle_collaborator_message(ws, message);
-            } catch (err) {
-                console.error('Error parsing message', err);
-            }
+            pending = pending.then(async () => {
+                try {
+                    const message = JSON.parse(data.toString());
+                    await this.handle_collaborator_message(ws, message);
+                } catch (err) {
+                    console.error('Error handling collaboration message:', err);
+                }
+            });
         });
 
         ws.on('close', () => {
@@ -118,33 +112,32 @@ export default class CollaborationManager {
             if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(
-                ws.collabUser.userId,
-                ws.collabUser.collabSessionId,
-            );
+            this.cleanup_existing_collaborator_socket(ws.id, ws.collabUser.collabSessionId);
         });
 
         ws.on('error', () => {
             if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(
-                ws.collabUser.userId,
-                ws.collabUser.collabSessionId,
-            );
+            this.cleanup_existing_collaborator_socket(ws.id, ws.collabUser.collabSessionId);
         });
     }
 
-    private handle_collaborator_message(ws: CollabWebSocket, message: any) {
+    private async handle_collaborator_message(ws: CollabWebSocket, message: any) {
+        if (ws.readyState !== WebSocket.OPEN) return;
+        if (!(await this.validate_collaborator_in_db(ws.collabUser))) {
+            ws.close(socket_codes.UNAUTHENTICATED, 'Collaboration access revoked');
+            return;
+        }
         switch (message.type) {
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
-                this.handle_question_tap(ws, message.payload);
+                await this.handle_question_tap(ws, message.payload);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
-                this.handle_question_update(ws, message.payload);
+                await this.handle_question_update(ws, message.payload);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE:
-                this.handle_quiz_update(ws, message.payload);
+                await this.handle_quiz_update(ws, message.payload);
                 break;
             default:
                 console.warn('Unknown message type received from collaborator:', message.type);
@@ -152,35 +145,14 @@ export default class CollaborationManager {
     }
 
     private cleanup_existing_collaborator_socket(
-        collaborator_id: string,
+        socket_id: string,
         collab_session_id: string,
     ): void {
-        try {
-            const exisiting_collaborator_socket_id =
-                this.collaborator_socket_mapping.get(collaborator_id);
-
-            if (!exisiting_collaborator_socket_id) {
-                return;
-            }
-
-            const existing_socket = this.socket_mapping.get(exisiting_collaborator_socket_id);
-            if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
-                existing_socket.close(
-                    socket_codes.DUPLICATE_CONNECTION,
-                    'Another collaborator has connected',
-                );
-            }
-            this.socket_mapping.delete(exisiting_collaborator_socket_id);
-            this.collaborator_socket_mapping.delete(collaborator_id);
-
-            const session_collaborators_socket_ids =
-                this.collaborator_sockets_mapping.get(collab_session_id);
-            if (session_collaborators_socket_ids) {
-                session_collaborators_socket_ids.delete(exisiting_collaborator_socket_id);
-            }
-        } catch (error) {
-            console.error('error while cleaning up collaborator socket: ', error);
-            return;
+        this.socket_mapping.delete(socket_id);
+        const sockets = this.collaborator_sockets_mapping.get(collab_session_id);
+        sockets?.delete(socket_id);
+        if (sockets?.size === 0) {
+            this.collaborator_sockets_mapping.delete(collab_session_id);
         }
     }
 
@@ -238,7 +210,7 @@ export default class CollaborationManager {
         await this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
-    private handle_quiz_update(ws: CollabWebSocket, payload: any) {
+    private async handle_quiz_update(ws: CollabWebSocket, payload: any) {
         if (!ws.collabUser.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;
@@ -252,17 +224,26 @@ export default class CollaborationManager {
             },
             exclude_socket_id: ws.id,
         };
-        this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
+        await this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
     }
 
-    private async validate_collaborator_in_db(user_id: string): Promise<boolean> {
+    private async validate_collaborator_in_db(
+        payload: CollabSessionTokenPayload,
+    ): Promise<boolean> {
         try {
-            const user = await prisma.user.findUnique({
+            const session = await prisma.collabSession.findFirst({
                 where: {
-                    id: user_id,
+                    id: payload.collabSessionId,
+                    quizId: payload.quizId,
+                    quiz: { isDeleted: false, status: 'CREATED' },
+                    OR: [
+                        { hostId: payload.userId },
+                        { collaborators: { some: { userId: payload.userId, isBlocked: false } } },
+                    ],
                 },
+                select: { id: true },
             });
-            return !!user;
+            return !!session;
         } catch (error) {
             console.error('error while validating collaborator in db: ', error);
             return false;

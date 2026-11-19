@@ -50,13 +50,15 @@ export default class QuizController {
             }
 
             const { questions, ...quiz_data } = parsed.data;
-            const user_subscription = await Subscription.get_user_subscription(user.id);
-            quiz_data.liveChat = planManager.isEnabled(
-                user_subscription ?? SubscriptionEnum.FREE,
-                FEATURE.LIVE_CHAT,
-            )
-                ? quiz_data.liveChat
-                : false;
+            if (action !== QuizControllerAction.SAVE) {
+                const user_subscription = await Subscription.get_user_subscription(user.id);
+                quiz_data.liveChat = planManager.isEnabled(
+                    user_subscription ?? SubscriptionEnum.FREE,
+                    FEATURE.LIVE_CHAT,
+                )
+                    ? quiz_data.liveChat
+                    : false;
+            }
 
             switch (action) {
                 case QuizControllerAction.SAVE:
@@ -107,11 +109,16 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-            const [existing, validateOwner, subscription] = await Promise.all([
-                QuizController.findQuiz(quizId),
-                QuizController.validateOwner(res, hostId, quizId),
-                Subscription.get_user_subscription(hostId),
-            ]);
+            const existing = await QuizController.findQuiz(quizId);
+            const subscription = await Subscription.get_user_subscription(
+                existing?.hostId ?? hostId,
+            );
+            quiz_data.liveChat = planManager.isEnabled(
+                subscription ?? SubscriptionEnum.FREE,
+                FEATURE.LIVE_CHAT,
+            )
+                ? quiz_data.liveChat
+                : false;
 
             if (!existing) {
                 const quiz = await QuizController.createQuiz(
@@ -124,15 +131,26 @@ export default class QuizController {
                 return ResponseWriter.success(res, { quiz }, 'Quiz saved successfully', 201);
             }
 
-            if (!validateOwner) return;
+            const access = await prisma.quiz.findFirst({
+                where: {
+                    id: quizId,
+                    isDeleted: false,
+                    OR: [
+                        { hostId },
+                        {
+                            CollabSession: {
+                                collaborators: { some: { userId: hostId, isBlocked: false } },
+                            },
+                        },
+                    ],
+                },
+                select: { id: true },
+            });
+            if (!access) {
+                ResponseWriter.not_authorized(res);
+                return;
+            }
             if (!QuizController.validateEditable(res, existing.status)) return;
-
-            quiz_data.liveChat = planManager.isEnabled(
-                subscription ?? SubscriptionEnum.FREE,
-                FEATURE.LIVE_CHAT,
-            )
-                ? quiz_data.liveChat
-                : false;
 
             const quiz = await QuizController.updateQuizData(quizId, quiz_data, questions);
             return ResponseWriter.success(res, { quiz }, 'Quiz updated successfully', 200);

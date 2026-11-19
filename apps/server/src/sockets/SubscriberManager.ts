@@ -1,5 +1,12 @@
+import { prisma } from '@nocturn/database';
 import { WebSocket } from 'ws';
-import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, USER_TYPE } from '@nocturn/types';
+import {
+    COLLABORATORS_MESSAGE_TYPE,
+    MESSAGE_TYPES,
+    USER_TYPE,
+    socket_codes,
+    PubSubMessageTypes,
+} from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import QuizSettings from '../class/quizSettings';
 import Redis from 'ioredis';
@@ -23,6 +30,7 @@ export default class SubscriberManager {
     private session_host_mapping: Map<string, string> = new Map(); // Map<live_session_id, ws.id>
     private collaborator_sockets_mapping: Map<string, Set<string>> = new Map(); // Map<quiz_id, Set<ws.id>>;
     private quiz_settings: QuizSettings;
+    private collaboration_broadcasts: Map<string, Promise<void>> = new Map();
 
     constructor(config: SubscriberManagerProps) {
         this.subscriber = config.subscriber;
@@ -230,21 +238,50 @@ export default class SubscriberManager {
                     USER_TYPE.HOST,
                 ]);
                 break;
+            case COLLABORATORS_MESSAGE_TYPE.COLLABORATOR_REMOVED:
+                this.collaborator_sockets_mapping.get(session_id)?.forEach((id) => {
+                    const socket = this.socket_mapping.get(id);
+                    if (socket && socket.collabUser?.userId === message.payload.userId) {
+                        socket.close(socket_codes.UNAUTHENTICATED, 'Collaboration access revoked');
+                    }
+                });
+                break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_CHANGE:
-                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
+                this.queue_collaboration_broadcast(session_id, message, message.exclude_socket_id);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE:
-                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
+                this.queue_collaboration_broadcast(session_id, message, message.exclude_socket_id);
                 break;
             case COLLABORATORS_MESSAGE_TYPE.QUIZ_UPDATE:
-                this.broadcast_to_collaborators(session_id, message, message.exclude_socket_id);
+                this.queue_collaboration_broadcast(session_id, message, message.exclude_socket_id);
                 break;
         }
     }
 
-    private broadcast_to_collaborators(
+    private queue_collaboration_broadcast(
+        session_id: string,
+        message: PubSubMessageTypes,
+        exclude_socket_id?: string,
+    ) {
+        const previous = this.collaboration_broadcasts.get(session_id) ?? Promise.resolve();
+        const delivery = previous.then(() =>
+            this.broadcast_to_collaborators(session_id, message, exclude_socket_id),
+        );
+        this.collaboration_broadcasts.set(session_id, delivery);
+        const cleanup = () => {
+            if (this.collaboration_broadcasts.get(session_id) === delivery) {
+                this.collaboration_broadcasts.delete(session_id);
+            }
+        };
+        delivery.then(cleanup, (error) => {
+            console.error('Error delivering collaboration update:', error);
+            cleanup();
+        });
+    }
+
+    private async broadcast_to_collaborators(
         collab_session_id: string,
-        message: any,
+        message: PubSubMessageTypes,
         exclude_socket_id?: string,
     ) {
         const collaborator_socket_ids = this.collaborator_sockets_mapping.get(collab_session_id);
@@ -252,14 +289,50 @@ export default class SubscriberManager {
             return;
         }
 
-        collaborator_socket_ids.forEach((socket_id) => {
-            if (exclude_socket_id === socket_id) return;
+        await Promise.all(
+            Array.from(collaborator_socket_ids, async (socket_id) => {
+                if (exclude_socket_id === socket_id) return;
 
-            const collaborator_socket = this.socket_mapping.get(socket_id);
-            if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
-                collaborator_socket.send(JSON.stringify(message));
-            }
-        });
+                const collaborator_socket = this.socket_mapping.get(socket_id);
+                if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
+                    try {
+                        const payload = collaborator_socket.collabUser;
+                        if (!payload) return;
+                        const session = await prisma.collabSession.findFirst({
+                            where: {
+                                id: collab_session_id,
+                                quizId: payload.quizId,
+                                OR: [
+                                    { hostId: payload.userId },
+                                    {
+                                        collaborators: {
+                                            some: { userId: payload.userId, isBlocked: false },
+                                        },
+                                    },
+                                ],
+                            },
+                            select: { id: true },
+                        });
+                        if (!session) {
+                            collaborator_socket.close(
+                                socket_codes.UNAUTHENTICATED,
+                                'Collaboration access revoked',
+                            );
+                            return;
+                        }
+                        if (collaborator_socket.readyState === WebSocket.OPEN) {
+                            collaborator_socket.send(JSON.stringify(message));
+                        }
+                    } catch (error) {
+                        console.error('Error checking collaboration access:', error);
+                        collaborator_socket.close(
+                            socket_codes.UNAUTHENTICATED,
+                            'Unable to verify access',
+                        );
+                    }
+                }
+            }),
+        );
     }
 
     private broadcast_to_session(
