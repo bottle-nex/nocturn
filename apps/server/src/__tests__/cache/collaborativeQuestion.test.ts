@@ -116,6 +116,17 @@ describe('collaborative question merging', () => {
         expect(createQuizSchema.shape.questions.element.parse(base).id).toBe(base.id);
     });
 
+    it('lets the database generate IDs for multiple newly added questions', () => {
+        const parsed = createQuizSchema.parse({
+            title: 'New questions',
+            questions: [
+                { ...base, id: '' },
+                { ...base, id: '' },
+            ],
+        });
+        expect(parsed.questions.map((question) => question.id)).toEqual([undefined, undefined]);
+    });
+
     it('can explicitly restore option typing after a conflicting option removal', () => {
         const own = edit({ options: ['One', 'My answer', 'Three'] });
         const current = { ...base, options: ['One', 'Three'] };
