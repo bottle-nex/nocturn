@@ -42,6 +42,7 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            this.flush_message_queue();
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
@@ -104,8 +105,8 @@ export default class WebSocketClient {
 
     public send_message(message: MessagePayload) {
         if (this.is_connected && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify(message));
             this.flush_message_queue();
+            this.ws.send(JSON.stringify(message));
         } else {
             this.message_queue.push(message);
         }
@@ -136,11 +137,10 @@ export default class WebSocketClient {
     }
 
     private flush_message_queue() {
-        while (this.message_queue.length > 0) {
-            const message = this.message_queue.shift();
-            if (message) {
-                this.send_message(message);
-            }
+        while (this.message_queue.length > 0 && this.ws.readyState === WebSocket.OPEN) {
+            const message = this.message_queue[0]!;
+            this.ws.send(JSON.stringify(message));
+            this.message_queue.shift();
         }
     }
 

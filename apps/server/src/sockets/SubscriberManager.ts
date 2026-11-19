@@ -1,9 +1,10 @@
 import { WebSocket } from 'ws';
-import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, USER_TYPE } from '@nocturn/types';
+import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, USER_TYPE, socket_codes } from '@nocturn/types';
 import { CustomWebSocket } from '../types/web-socket-types';
 import QuizSettings from '../class/quizSettings';
 import Redis from 'ioredis';
 import QuizController from '../controllers/quiz-controller/quizController';
+import { hasCollaborationAccess } from './collaboration-access';
 
 interface SubscriberManagerProps {
     subscriber: Redis;
@@ -22,6 +23,7 @@ export default class SubscriberManager {
     private session_spectators_mapping: Map<string, Set<string>> = new Map(); // Map<live_session_id<Set<ws.id>>
     private session_host_mapping: Map<string, string> = new Map(); // Map<live_session_id, ws.id>
     private collaborator_sockets_mapping: Map<string, Set<string>> = new Map(); // Map<quiz_id, Set<ws.id>>;
+    private collaboration_broadcasts = new WeakMap<CustomWebSocket, Promise<void>>();
     private quiz_settings: QuizSettings;
 
     constructor(config: SubscriberManagerProps) {
@@ -257,7 +259,28 @@ export default class SubscriberManager {
 
             const collaborator_socket = this.socket_mapping.get(socket_id);
             if (collaborator_socket && collaborator_socket.readyState === WebSocket.OPEN) {
-                collaborator_socket.send(JSON.stringify(message));
+                const pending =
+                    this.collaboration_broadcasts.get(collaborator_socket) ?? Promise.resolve();
+                const next = pending
+                    .then(async () => {
+                        if (collaborator_socket.readyState !== WebSocket.OPEN) return;
+                        if (
+                            !collaborator_socket.collabUser ||
+                            !(await hasCollaborationAccess(collaborator_socket.collabUser))
+                        ) {
+                            collaborator_socket.close(
+                                socket_codes.UNAUTHENTICATED,
+                                'Collaboration access revoked',
+                            );
+                            return;
+                        }
+                        if (collaborator_socket.readyState !== WebSocket.OPEN) return;
+                        collaborator_socket.send(JSON.stringify(message));
+                    })
+                    .catch((error) => {
+                        console.error('Error broadcasting collaboration message:', error);
+                    });
+                this.collaboration_broadcasts.set(collaborator_socket, next);
             }
         });
     }

@@ -34,6 +34,7 @@ vi.mock('@nocturn/database', () => ({
         quiz: {
             create: vi.fn(),
             findUnique: vi.fn(),
+            findFirst: vi.fn(),
             findMany: vi.fn(),
             update: vi.fn(),
             delete: vi.fn(),
@@ -50,7 +51,9 @@ vi.mock('@nocturn/database', () => ({
         },
         collaborator: {
             createMany: vi.fn().mockResolvedValue({ count: 0 }),
+            findFirst: vi.fn(),
         },
+        collabSession: { findFirst: vi.fn() },
         // $transaction receives an async callback — invoke it with a mock tx object
         $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) =>
             fn({

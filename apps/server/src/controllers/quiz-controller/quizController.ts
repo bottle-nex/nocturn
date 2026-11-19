@@ -107,11 +107,7 @@ export default class QuizController {
         questions: QuestionType[],
     ) {
         try {
-            const [existing, validateOwner, subscription] = await Promise.all([
-                QuizController.findQuiz(quizId),
-                QuizController.validateOwner(res, hostId, quizId),
-                Subscription.get_user_subscription(hostId),
-            ]);
+            const existing = await QuizController.findQuiz(quizId);
 
             if (!existing) {
                 const quiz = await QuizController.createQuiz(
@@ -124,9 +120,28 @@ export default class QuizController {
                 return ResponseWriter.success(res, { quiz }, 'Quiz saved successfully', 201);
             }
 
-            if (!validateOwner) return;
+            if (existing.hostId !== hostId) {
+                const collaborator = await prisma.collaborator.findFirst({
+                    where: {
+                        userId: hostId,
+                        isBlocked: false,
+                        session: { quizId },
+                    },
+                });
+                if (!collaborator) {
+                    ResponseWriter.error(
+                        res,
+                        'NOT_OWNER',
+                        'You cannot edit this quiz',
+                        undefined,
+                        403,
+                    );
+                    return;
+                }
+            }
             if (!QuizController.validateEditable(res, existing.status)) return;
 
+            const subscription = await Subscription.get_user_subscription(existing.hostId);
             quiz_data.liveChat = planManager.isEnabled(
                 subscription ?? SubscriptionEnum.FREE,
                 FEATURE.LIVE_CHAT,

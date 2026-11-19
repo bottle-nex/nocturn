@@ -20,7 +20,7 @@ export function useCollaborativeEdit() {
             const debounceMs = options?.debounceMs ?? 1000;
 
             if (shouldDebounce) {
-                const field = Object.keys(partialQuestion)[0]!;
+                const field = `question:${questionIndex}:${Object.keys(partialQuestion)[0]}`;
                 const timerId = debounceTimers.current.get(field);
 
                 if (timerId) clearTimeout(timerId);
@@ -52,7 +52,7 @@ export function useCollaborativeEdit() {
             const debounceMs = options?.debounceMs ?? 1000;
 
             if (shouldDebounce) {
-                const field = Object.keys(quizPartial)[0]!;
+                const field = `quiz:${Object.keys(quizPartial)[0]}`;
                 const timerId = debounceTimers.current.get(field);
 
                 if (timerId) clearTimeout(timerId);
