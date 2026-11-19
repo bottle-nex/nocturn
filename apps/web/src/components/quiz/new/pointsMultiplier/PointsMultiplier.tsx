@@ -53,8 +53,12 @@ export default function PointsMultiplier({
     calculatedPoints,
     setCalculatedPoints,
 }: PointsMultiplierProps) {
-    const { quiz, updateQuestionPoints, changeQuestionPoint } = useNewQuizStore();
-    const { updateQuizAndBroadcast } = useCollaborativeEdit();
+    const { quiz } = useNewQuizStore();
+    const {
+        updateQuizAndBroadcast,
+        updateQuestionPointsAndBroadcast: updateQuestionPoints,
+        editQuestionAndBroadcast,
+    } = useCollaborativeEdit();
     const {
         enablePointMultiplier,
         multiplierType,
@@ -171,7 +175,7 @@ export default function PointsMultiplier({
     function handleManualPointChange(index: number, value: number) {
         if (isNaN(value) || value < 0) return;
         setManualPointAt(index, value);
-        changeQuestionPoint(index, value);
+        editQuestionAndBroadcast(index, { basePoints: value });
     }
 
     function renderMultiplier() {

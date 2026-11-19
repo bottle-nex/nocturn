@@ -3,6 +3,7 @@ import { useWebSocket } from './sockets/useWebSocket';
 import { QuestionType, QuizType } from '@nocturn/types';
 import { useRef, useCallback } from 'react';
 import CollaboratorsHandlers from '@/lib/collaborators.handlers';
+import { broadcastQuestionPoints } from '@/lib/question-point-edits';
 
 export function useCollaborativeEdit() {
     const { editQuestion, updateQuiz } = useNewQuizStore();
@@ -55,5 +56,16 @@ export function useCollaborativeEdit() {
         [updateQuiz, handleCollaboratorQuizUpdate],
     );
 
-    return { editQuestionAndBroadcast, updateQuizAndBroadcast };
+    const updateQuestionPointsAndBroadcast = useCallback(
+        (points: number[]) => {
+            broadcastQuestionPoints(
+                useNewQuizStore.getState().quiz.questions,
+                points,
+                editQuestionAndBroadcast,
+            );
+        },
+        [editQuestionAndBroadcast],
+    );
+
+    return { editQuestionAndBroadcast, updateQuizAndBroadcast, updateQuestionPointsAndBroadcast };
 }

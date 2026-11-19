@@ -20,7 +20,7 @@ const max = 600;
 
 export default function QuestionsDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, currentQuestionIndex, changeQuestionPoint, getQuestion } = useNewQuizStore();
+    const { quiz, currentQuestionIndex, getQuestion } = useNewQuizStore();
     const { editQuestionAndBroadcast } = useCollaborativeEdit();
 
     const currentQ = quiz.questions[currentQuestionIndex];
@@ -67,9 +67,7 @@ export default function QuestionsDraft() {
         if (value < 0 || isNaN(value)) return;
 
         setBasePoints(value.toString());
-        changeQuestionPoint(currentQuestionIndex, value);
         handleUpdateQuestionPoints(currentQuestionIndex, value);
-        editQuestionAndBroadcast(currentQuestionIndex, { basePoints: value, id: currentQ.id });
 
         if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -95,7 +93,7 @@ export default function QuestionsDraft() {
         let pointsItr = 0;
 
         while (questionIndex < quiz.questions.length) {
-            changeQuestionPoint(questionIndex, points[pointsItr]!);
+            editQuestionAndBroadcast(questionIndex, { basePoints: points[pointsItr]! });
             questionIndex++;
             pointsItr++;
         }

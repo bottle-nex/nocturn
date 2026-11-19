@@ -12,8 +12,9 @@ import { PointsMultiplier as PointsMultiplierEnum } from '@nocturn/types';
 
 export default function AdvancedDraft() {
     const { setState } = useDraftRendererStore();
-    const { quiz, updateQuestionPoints } = useNewQuizStore();
-    const { updateQuizAndBroadcast } = useCollaborativeEdit();
+    const { quiz } = useNewQuizStore();
+    const { updateQuizAndBroadcast, updateQuestionPointsAndBroadcast: updateQuestionPoints } =
+        useCollaborativeEdit();
     const [calculatedPoints, setCalculatedPoints] = useState<number[]>([]);
 
     const {
