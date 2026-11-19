@@ -138,6 +138,23 @@ describe('collaborative question merging', () => {
 });
 
 describe('optimistic question acknowledgements', () => {
+    it('does not send or block solo saves even when a disconnected socket would queue messages', () => {
+        const buffer = new QuestionEditBuffer();
+        const queueOnDisconnectedSocket = vi.fn().mockReturnValue(true);
+        buffer.send(edit({ question: 'Solo edit' }), undefined, queueOnDisconnectedSocket);
+        expect(queueOnDisconnectedSocket).not.toHaveBeenCalled();
+        expect(buffer.hasPending(base.quizId)).toBe(false);
+    });
+
+    it('tracks queued collaboration edits until acknowledged and drops edits without a socket', () => {
+        const buffer = new QuestionEditBuffer();
+        buffer.send(edit({ question: 'Collaborative edit' }), 'session-1', () => true);
+        expect(buffer.hasPending(base.quizId)).toBe(true);
+        buffer.receive({ mutationId: 'edit-1', question: base, conflicts: [] });
+        buffer.send(edit({ question: 'No socket' }), 'session-1', () => false);
+        expect(buffer.hasPending(base.quizId)).toBe(false);
+    });
+
     it('keeps newer local keystrokes until their acknowledgement', () => {
         const buffer = new QuestionEditBuffer();
         const first = edit({ question: 'A' });

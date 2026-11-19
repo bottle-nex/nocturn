@@ -40,13 +40,7 @@ export default class CollaboratorsHandlers {
             base: { ...base, quizId: useNewQuizStore.getState().quiz.id },
             changes,
         };
-        this.questionEdits.add(edit);
-        if (!send(edit))
-            this.questionEdits.receive({
-                mutationId: edit.mutationId,
-                question: base,
-                conflicts: [],
-            });
+        this.questionEdits.send(edit, useNewQuizStore.getState().quiz.CollabSession?.id, send);
     }
 
     static handleIncomingQuestionUpdate(payload: unknown) {

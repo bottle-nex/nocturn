@@ -117,6 +117,16 @@ export class QuestionEditBuffer {
     this.pending.set(edit.mutationId, edit);
   }
 
+  send(
+    edit: QuestionEdit,
+    sessionId: string | undefined,
+    send: (payload: QuestionEdit) => boolean,
+  ) {
+    if (!sessionId) return;
+    this.add(edit);
+    if (!send(edit)) this.pending.delete(edit.mutationId);
+  }
+
   receive(result: QuestionEditResult) {
     const ownEdit = this.pending.get(result.mutationId);
     this.pending.delete(result.mutationId);
