@@ -4,6 +4,7 @@ import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import BackendActions from '@/lib/backend/new/quiz-backend-actions';
 import QuizAutoSaveDB from '@/class/QuizAutoSaveDB';
 import { create } from 'zustand';
+import CollaboratorsHandlers from '@/lib/collaborators.handlers';
 
 export enum SAVE_STATUS {
     SAVED = 'SAVED',
@@ -58,6 +59,10 @@ export function useAutoSave() {
         const quiz = useNewQuizStore.getState().quiz;
         const token = useUserSessionStore.getState().session?.user.token;
         if (!quiz.id || !token || !quiz.autoSave) return;
+        if (CollaboratorsHandlers.hasPendingQuestionEdits(quiz.id)) {
+            setStatus(SAVE_STATUS.UNSAVED);
+            return;
+        }
 
         const isDirty = await db.isDirty(quiz.id);
         if (!isDirty) return;

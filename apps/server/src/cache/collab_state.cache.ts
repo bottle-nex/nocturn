@@ -1,6 +1,11 @@
 import Redis from 'ioredis';
 import { env } from '../configs/env';
-import { QuestionType } from '@nocturn/types';
+import {
+    COLLABORATORS_MESSAGE_TYPE,
+    mergeQuestionEdit,
+    QuestionEdit,
+    QuestionType,
+} from '@nocturn/types';
 
 export default class CollabStateCache {
     private collab_state_cache: Redis;
@@ -44,7 +49,7 @@ export default class CollabStateCache {
                 );
 
                 Object.entries(question).forEach(([field_name, field_value]) => {
-                    question_pipeline.hset(
+                    question_pipeline.hsetnx(
                         question_hash_key,
                         field_name,
                         JSON.stringify(field_value),
@@ -63,33 +68,58 @@ export default class CollabStateCache {
     public async update_question_state(
         collab_session_id: string,
         quiz_id: string,
-        question_state: any,
+        edit: QuestionEdit,
     ) {
-        const question_id = question_state.id;
-        if (!question_id) {
-            throw new Error('Question ID is required for update');
-        }
-
-        try {
-            const question_hash_key = this.get_session_to_question_key(
-                collab_session_id,
-                quiz_id,
-                question_id,
+        const key = this.get_session_to_question_key(collab_session_id, quiz_id, edit.base.id);
+        // Compare the snapshot and publish in the same Redis operation. A competing
+        // writer makes us re-read and check the original edit again, never overwrite it.
+        for (;;) {
+            const snapshot = await this.collab_state_cache.hgetall(key);
+            const current = {
+                ...edit.base,
+                ...Object.fromEntries(
+                    Object.entries(snapshot).map(([field, value]) => [
+                        field,
+                        this.parseField(value),
+                    ]),
+                ),
+            };
+            const result = mergeQuestionEdit(current, edit);
+            const event = {
+                type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
+                payload: { mutationId: edit.mutationId, ...result },
+            };
+            const applied = await this.collab_state_cache.eval(
+                `local expected = cjson.decode(ARGV[1])
+                local actual = redis.call('HGETALL', KEYS[1])
+                local count = 0
+                for field, value in pairs(expected) do
+                    count = count + 1
+                    if redis.call('HGET', KEYS[1], field) ~= value then return 0 end
+                end
+                if #actual ~= count * 2 then return 0 end
+                local question = cjson.decode(ARGV[2])
+                for field, value in pairs(question) do
+                    redis.call('HSET', KEYS[1], field, value)
+                end
+                redis.call('EXPIRE', KEYS[1], 86400)
+                redis.call('PUBLISH', ARGV[3], ARGV[4])
+                return 1`,
+                1,
+                key,
+                JSON.stringify(snapshot),
+                JSON.stringify(
+                    Object.fromEntries(
+                        Object.entries(result.question).map(([field, value]) => [
+                            field,
+                            JSON.stringify(value),
+                        ]),
+                    ),
+                ),
+                `collab_session:${collab_session_id}`,
+                JSON.stringify(event),
             );
-
-            const field_value_pairs: string[] = [];
-
-            Object.entries(question_state).forEach(([field_name, field_value]) => {
-                if (field_value === undefined) return;
-                field_value_pairs.push(field_name, JSON.stringify(field_value));
-            });
-
-            if (field_value_pairs.length > 0) {
-                await this.collab_state_cache.hset(question_hash_key, ...field_value_pairs);
-            }
-        } catch (err) {
-            console.error('Error updating question state in Redis:', err);
-            throw err;
+            if (applied === 1) return;
         }
     }
 
@@ -147,12 +177,13 @@ export default class CollabStateCache {
             question_keys.forEach((key) => pipeline.hgetall(key));
 
             const results = await pipeline.exec();
-            if (!results) return [];
+            if (!results) throw new Error('Could not read collaborative questions');
 
             const questions: QuestionType[] = [];
 
             results.forEach(([err, data]) => {
-                if (err || !data || Object.keys(data).length === 0) return;
+                if (err) throw err;
+                if (!data || Object.keys(data).length === 0) return;
 
                 const question: Record<string, any> = {};
                 Object.entries(data as Record<string, string>).forEach(
@@ -166,7 +197,7 @@ export default class CollabStateCache {
             return questions.sort((a, b) => a.orderIndex - b.orderIndex);
         } catch (err) {
             console.error('Error retrieving all questions from Redis:', err);
-            return [];
+            throw err;
         }
     }
 

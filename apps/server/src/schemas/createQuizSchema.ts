@@ -20,6 +20,7 @@ export enum Interactions {
 }
 
 const questionSchema = z.object({
+    id: z.string().optional(),
     question: z.string(),
     options: z.array(z.string()).min(2),
     correctAnswer: z.number(),

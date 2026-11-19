@@ -7,7 +7,6 @@ import {
     COLLABORATORS_MESSAGE_TYPE,
     CollabSessionTokenPayload,
     PubSubMessageTypes,
-    QuestionType,
     socket_codes,
 } from '@nocturn/types';
 import WebSocket from 'ws';
@@ -16,6 +15,46 @@ import QuizManager from './QuizManager';
 import CollaboratorsStateManager from './CollaboratorsStateManager';
 import CollabStateCache from '../cache/collab_state.cache';
 import { collabStateCacheInstance } from '../services/init.services';
+import { z } from 'zod';
+import { createQuizSchema } from '../schemas/createQuizSchema';
+
+const questionEditSchema = z.object({
+    mutationId: z.string().min(1),
+    base: createQuizSchema.shape.questions.element.extend({
+        id: z.string().min(1),
+        quizId: z.string(),
+        isAsked: z.boolean(),
+        explanation: z
+            .string()
+            .nullish()
+            .transform((value) => value ?? undefined),
+        hint: z
+            .string()
+            .nullish()
+            .transform((value) => value ?? undefined),
+        imageUrl: z
+            .string()
+            .nullish()
+            .transform((value) => value ?? undefined),
+    }),
+    changes: createQuizSchema.shape.questions.element
+        .partial()
+        .omit({ orderIndex: true, hintLaunched: true })
+        .extend({
+            explanation: z
+                .string()
+                .nullish()
+                .transform((value) => value ?? undefined),
+            hint: z
+                .string()
+                .nullish()
+                .transform((value) => value ?? undefined),
+            imageUrl: z
+                .string()
+                .nullish()
+                .transform((value) => value ?? undefined),
+        }),
+});
 
 export interface CollaborationManagerDependencies {
     publisher: Redis;
@@ -211,31 +250,42 @@ export default class CollaborationManager {
     }
 
     private async handle_question_update(ws: CollabWebSocket, payload: any) {
-        const {
-            questionIndex,
-            question,
-        }: { questionIndex: number; question: Partial<QuestionType> } = payload;
         if (!ws.collabUser.collabSessionId) {
             ws.close(socket_codes.UNAUTHENTICATED, 'Unauthenticated collaborator');
             return;
         }
-
-        await this.collaborator_quiz_state_cache.update_question_state(
-            ws.collabUser.collabSessionId,
-            ws.collabUser.quizId,
-            question,
-        );
-        const data: PubSubMessageTypes = {
-            type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
-            payload: {
-                questionIndex,
-                question,
-                collaboratorId: ws.collabUser.userId,
-                collaboratorName: ws.collabUser.name,
-            },
-            exclude_socket_id: ws.id,
-        };
-        await this.quizManager.publish_collab_event_to_redis(ws.collabUser.collabSessionId, data);
+        const parsed = questionEditSchema.safeParse(payload);
+        if (!parsed.success) {
+            ws.send(
+                JSON.stringify({
+                    type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
+                    payload: {
+                        error: 'Question edit could not be read. Reload before editing again.',
+                    },
+                }),
+            );
+            return;
+        }
+        try {
+            await this.collaborator_quiz_state_cache.update_question_state(
+                ws.collabUser.collabSessionId,
+                ws.collabUser.quizId,
+                parsed.data,
+            );
+        } catch (error) {
+            console.error('Error updating collaborative question:', error);
+            ws.send(
+                JSON.stringify({
+                    type: COLLABORATORS_MESSAGE_TYPE.QUESTION_UPDATE,
+                    payload: {
+                        mutationId: parsed.data.mutationId,
+                        question: parsed.data.base,
+                        conflicts: [],
+                        error: 'Your question edit could not be saved.',
+                    },
+                }),
+            );
+        }
     }
 
     private handle_quiz_update(ws: CollabWebSocket, payload: any) {
