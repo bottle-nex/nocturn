@@ -1,4 +1,4 @@
-import { prisma } from '@nocturn/database';
+import { prisma, QuizStatus } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
@@ -33,6 +33,11 @@ export default async function permanently_delete_quiz_controller(req: Request, r
 
         if (!quiz) {
             ResponseWriter.not_found(res, "quiz doesn't exist or already deleted");
+            return;
+        }
+
+        if (quiz.status === QuizStatus.LIVE) {
+            ResponseWriter.invalid_data(res, 'Cannot delete a live quiz');
             return;
         }
 

@@ -8,7 +8,7 @@ model Collaborator {
     color     String
     joinedAt  DateTime?
 
-    session CollabSession @relation(fields: [sessionId], references: [id])
+    session CollabSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
     user    User          @relation(fields: [userId], references: [id])
 
     @@unique([sessionId, userId])
@@ -39,7 +39,7 @@ model CollabSession {
     quizId String @unique
 
     host          User           @relation("HostSessions", fields: [hostId], references: [id])
-    quiz          Quiz           @relation(fields: [quizId], references: [id])
+    quiz          Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
     collaborators Collaborator[]
 
     createdAt DateTime @default(now())
