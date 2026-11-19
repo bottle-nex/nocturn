@@ -908,7 +908,7 @@ export default class RedisCache {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
             const pipeline = this.redis_cache.pipeline();
-            pipeline.zadd(leaderboard_key, 0, participant_id);
+            pipeline.zadd(leaderboard_key, 'NX', 0, participant_id);
             pipeline.expire(leaderboard_key, 60 * 60 * 24);
             await pipeline.exec();
         } catch (err) {

@@ -126,13 +126,9 @@ export class DatabaseQueueProcessors {
             await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
-                updatedParticipant,
-            );
-
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
+                Object.fromEntries(
+                    Object.entries(updatedParticipant).filter(([field]) => field in participant),
+                ),
             );
 
             return { success: true, participant: updatedParticipant };

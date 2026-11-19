@@ -59,7 +59,11 @@ export default class ParticipantManager {
             decoded_cookie_payload.quizId,
             decoded_cookie_payload.userId,
         );
-        if (!is_valid_participant) {
+        const cached_participant = await this.redis_cache.get_participant(
+            decoded_cookie_payload.gameSessionId,
+            decoded_cookie_payload.userId,
+        );
+        if (!is_valid_participant || cached_participant?.isKicked) {
             ws.close();
             return;
         }
@@ -516,7 +520,7 @@ export default class ParticipantManager {
 
         const quiz = await this.redis_cache.get_quiz(game_session_id);
         const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
-        if (!quiz || !participant) {
+        if (!quiz || !participant || participant.isKicked) {
             console.error('Quiz or participant not found');
             return;
         }
@@ -636,12 +640,16 @@ export default class ParticipantManager {
                 };
                 this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
+                await this.redis_cache.set_participant(game_session_id, participant_id, {
+                    isKicked: true,
+                });
+                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
                 await this.database_queue.update_participant(
                     participant_id,
                     { isKicked: true },
                     game_session_id,
                 );
-                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+                ws.close();
                 return;
             }
 
@@ -710,7 +718,7 @@ export default class ParticipantManager {
                 quizId: quizId,
             },
         });
-        return !!participant;
+        return !!participant && !participant.isKicked;
     }
 
     private generateSocketId(): string {
