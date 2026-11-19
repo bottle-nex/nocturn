@@ -923,12 +923,14 @@ export default class RedisCache {
     ) {
         try {
             const leaderboard_key = this.get_leaderboard_key(game_session_id);
-            const new_score = await this.redis_cache.zincrby(
+            const new_score = await this.redis_cache.zadd(
                 leaderboard_key,
+                'XX',
+                'INCR',
                 score_earned,
                 participant_id,
             );
-            return Number(new_score);
+            return new_score === null ? undefined : Number(new_score);
         } catch (err) {
             console.error('Error in update_leaderboard_score:', err);
         }
