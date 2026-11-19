@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma, QuizStatus } from '@nocturn/database';
+import deleteTrashedQuizzes from '../../services/delete-trashed-quizzes';
 
 export default async function permanentDeleteSelectedQuiz(req: Request, res: Response) {
     try {
@@ -40,21 +40,12 @@ export default async function permanentDeleteSelectedQuiz(req: Request, res: Res
             return;
         }
 
-        const result = await prisma.quiz.deleteMany({
-            where: {
-                id: { in: quizIds },
-                hostId: user.id,
-                isDeleted: true,
-                status: {
-                    not: QuizStatus.LIVE,
-                },
-            },
+        const result = await deleteTrashedQuizzes({
+            id: { in: quizIds },
+            hostId: user.id,
         });
 
-        ResponseWriter.success(res, {
-            message: 'Selected quizzes permanently deleted',
-            deletedCount: result.count,
-        });
+        ResponseWriter.success(res, result, 'Selected trash deletion completed');
     } catch (error) {
         console.error('error in permanently delete selected quiz controller: ', error);
         ResponseWriter.system_error(res);

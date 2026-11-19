@@ -23,6 +23,8 @@ export type TrashedQuizWithDaysLedt = QuizType & {
     daysLeftUntilPermanentDeletion?: number | null;
 };
 
+type TrashDeletionResult = { deletedIds: string[]; failedIds: string[] };
+
 export default class QuizActions {
     static async get_trashed_quizzes(
         token: string,
@@ -165,38 +167,21 @@ export default class QuizActions {
     }
 
     static async delete_selected_trashed_quizzes(token: string, quizIds: string[]) {
-        if (quizIds.length === 0) return;
-
-        try {
-            await axios.post(
-                PERMANENTLY_DELETE_SELECTED_QUIZ_URL,
-                {
-                    quizIds: quizIds,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
-            return;
-        } catch (error) {
-            console.error('Failed to delete selected quiz: ', error);
-            return;
-        }
+        const { data } = await axios.post<CustomResponse<TrashDeletionResult>>(
+            PERMANENTLY_DELETE_SELECTED_QUIZ_URL,
+            { quizIds },
+            { headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (!data.data) throw new Error('Missing trash deletion result');
+        return data.data;
     }
 
     static async delete_all_trashed_quizzes(token: string) {
-        try {
-            await axios.delete(CLEAR_TRASH_URL, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        } catch (error) {
-            console.error('Failed to clear trash: ', error);
-            return;
-        }
+        const { data } = await axios.delete<CustomResponse<TrashDeletionResult>>(CLEAR_TRASH_URL, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!data.data) throw new Error('Missing trash deletion result');
+        return data.data;
     }
 
     static async restore_trashed_quiz(token: string, quizId: string) {
@@ -219,18 +204,12 @@ export default class QuizActions {
     }
 
     static async permanently_delete_quiz(token: string, quizId: string) {
-        try {
-            const { data } = await axios.delete(`${PERMANENTLY_DELETE_QUIZ_URL}/${quizId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            return data.data;
-        } catch (error) {
-            console.error('Error in permanently deleting quiz: ', error);
-            return;
-        }
+        const { data } = await axios.delete<CustomResponse<QuizType>>(
+            `${PERMANENTLY_DELETE_QUIZ_URL}/${quizId}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (!data.data) throw new Error('Missing deleted quiz');
+        return data.data;
     }
 
     static async get_favourite_quizzes(token: string): Promise<QuizType[] | undefined> {

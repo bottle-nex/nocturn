@@ -26,7 +26,7 @@ type PendingDeleteAction = { type: 'single'; quizId: string } | { type: 'bulk' }
 
 export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
     const [clearingTrash, setClearingTrash] = useState<boolean>(false);
-    const { trashedQuizzes, resetTrashQuizStore, setAllTrashedQuizzes, removeTrashedQuizById } =
+    const { trashedQuizzes, setAllTrashedQuizzes, removeTrashedQuizById } =
         useAllTrashedQuizzesStore();
     const { addQuiz } = useAllQuizsStore();
     const { session } = useUserSessionStore();
@@ -90,16 +90,26 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
             setClearingTrash(true);
             setPendingDelete(null);
             try {
-                if (hasSelected) {
-                    const ids = Array.from(selectedQuizzes);
-                    await QuizActions.delete_selected_trashed_quizzes(session!.user.token, ids);
-                    ids.forEach((id) => removeTrashedQuizById(id));
-                    setSelectedQuizzes(new Set());
-                    toast.success('Selected quizzes deleted');
+                const result = hasSelected
+                    ? await QuizActions.delete_selected_trashed_quizzes(
+                          session!.user.token,
+                          Array.from(selectedQuizzes),
+                      )
+                    : await QuizActions.delete_all_trashed_quizzes(session!.user.token);
+                result.deletedIds.forEach((id) => removeTrashedQuizById(id));
+                setSelectedQuizzes((previous) => {
+                    const remaining = new Set(previous);
+                    result.deletedIds.forEach((id) => remaining.delete(id));
+                    return remaining;
+                });
+                if (result.failedIds.length > 0) {
+                    toast.error(
+                        'Some quizzes could not be deleted. Live quizzes cannot be deleted.',
+                    );
                 } else {
-                    await QuizActions.delete_all_trashed_quizzes(session!.user.token);
-                    resetTrashQuizStore();
-                    toast.success('Cleared trash successfully');
+                    toast.success(
+                        hasSelected ? 'Selected quizzes deleted' : 'Cleared trash successfully',
+                    );
                 }
             } catch {
                 toast.error('Failed to delete quizzes');
@@ -119,7 +129,7 @@ export default function HomeTrashPanel({ onClose }: { onClose: () => void }) {
                 removeTrashedQuizById(deletedQuiz.id);
                 toast.success('Quiz permanently deleted');
             } catch {
-                console.error('Failed to permanently delete quiz');
+                toast.error('Failed to permanently delete quiz. Live quizzes cannot be deleted.');
             } finally {
                 stopQuizAction(quizId);
             }

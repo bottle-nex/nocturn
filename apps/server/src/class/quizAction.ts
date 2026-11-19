@@ -1,4 +1,4 @@
-import { GameSession, HostScreen, prisma } from '@nocturn/database';
+import { GameSession, HostScreen, prisma, QuizStatus } from '@nocturn/database';
 import { customAlphabet } from 'nanoid';
 import jwt from 'jsonwebtoken';
 import {
@@ -52,21 +52,14 @@ export default class QuizAction {
     }
 
     static async permanentDeleteQuiz(quizId: string, userId: string) {
-        if (!quizId || !userId) {
-            console.error('Insufficient creds');
-            return;
-        }
-        try {
-            await prisma.quiz.delete({
-                where: {
-                    id: quizId,
-                    hostId: userId,
-                },
-            });
-        } catch (error) {
-            console.error('Error in permanently deleting quiz: ', error);
-            return;
-        }
+        return prisma.quiz.delete({
+            where: {
+                id: quizId,
+                hostId: userId,
+                isDeleted: true,
+                status: { not: QuizStatus.LIVE },
+            },
+        });
     }
 
     static async moveToTrash(quizId: string, userId: string) {

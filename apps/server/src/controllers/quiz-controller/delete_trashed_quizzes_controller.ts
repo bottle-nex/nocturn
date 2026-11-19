@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
-import { prisma } from '@nocturn/database';
+import deleteTrashedQuizzes from '../../services/delete-trashed-quizzes';
 
 export default async function delete_trashed_quizzes_controller(req: Request, res: Response) {
     const user = req.user;
@@ -11,14 +11,9 @@ export default async function delete_trashed_quizzes_controller(req: Request, re
     }
 
     try {
-        const trashedQuizzes = await prisma.quiz.deleteMany({
-            where: {
-                hostId: user.id,
-                isDeleted: true,
-            },
-        });
+        const result = await deleteTrashedQuizzes({ hostId: user.id });
 
-        ResponseWriter.success(res, trashedQuizzes.count, 'Cleared trash successfully');
+        ResponseWriter.success(res, result, 'Trash deletion completed');
         return;
     } catch (error) {
         console.error('Error in clearing trash: ', error);
