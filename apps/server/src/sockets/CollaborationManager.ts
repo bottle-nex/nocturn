@@ -10,7 +10,6 @@ import {
     QuestionType,
     socket_codes,
 } from '@nocturn/types';
-import WebSocket from 'ws';
 import { v4 as uuid } from 'uuid';
 import QuizManager from './QuizManager';
 import CollaboratorsStateManager from './CollaboratorsStateManager';
@@ -38,7 +37,6 @@ export default class CollaborationManager {
 
     private socket_mapping: Map<string, CustomWebSocket>;
     private collaborator_sockets_mapping: Map<string, Set<string>>;
-    private collaborator_socket_mapping: Map<string, string> = new Map(); // Map<collaborator_id, socket_id>
     private collaborators_state_manager: CollaboratorsStateManager;
     private collaborator_quiz_state_cache: CollabStateCache = collabStateCacheInstance;
 
@@ -68,20 +66,11 @@ export default class CollaborationManager {
             return;
         }
 
-        this.cleanup_existing_collaborator_socket(
-            decoded_cookie_payload.userId,
-            decoded_cookie_payload.collabSessionId,
-        );
-
         const new_collaborator_socket_id = this.generateSocketId();
         ws.id = new_collaborator_socket_id;
         ws.collabUser = decoded_cookie_payload;
 
         this.socket_mapping.set(new_collaborator_socket_id, ws);
-        this.collaborator_socket_mapping.set(
-            decoded_cookie_payload.userId,
-            new_collaborator_socket_id,
-        );
 
         const session_collaborators_socket_ids = this.collaborator_sockets_mapping.get(
             decoded_cookie_payload.collabSessionId,
@@ -118,20 +107,14 @@ export default class CollaborationManager {
             if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(
-                ws.collabUser.userId,
-                ws.collabUser.collabSessionId,
-            );
+            this.cleanup_collaborator_socket(ws);
         });
 
         ws.on('error', () => {
             if (!ws.collabUser.collabSessionId) {
                 return;
             }
-            this.cleanup_existing_collaborator_socket(
-                ws.collabUser.userId,
-                ws.collabUser.collabSessionId,
-            );
+            this.cleanup_collaborator_socket(ws);
         });
     }
 
@@ -151,32 +134,15 @@ export default class CollaborationManager {
         }
     }
 
-    private cleanup_existing_collaborator_socket(
-        collaborator_id: string,
-        collab_session_id: string,
-    ): void {
+    private cleanup_collaborator_socket(ws: CollabWebSocket): void {
         try {
-            const exisiting_collaborator_socket_id =
-                this.collaborator_socket_mapping.get(collaborator_id);
+            this.socket_mapping.delete(ws.id);
 
-            if (!exisiting_collaborator_socket_id) {
-                return;
-            }
-
-            const existing_socket = this.socket_mapping.get(exisiting_collaborator_socket_id);
-            if (existing_socket && existing_socket.readyState === WebSocket.OPEN) {
-                existing_socket.close(
-                    socket_codes.DUPLICATE_CONNECTION,
-                    'Another collaborator has connected',
-                );
-            }
-            this.socket_mapping.delete(exisiting_collaborator_socket_id);
-            this.collaborator_socket_mapping.delete(collaborator_id);
-
-            const session_collaborators_socket_ids =
-                this.collaborator_sockets_mapping.get(collab_session_id);
+            const session_collaborators_socket_ids = this.collaborator_sockets_mapping.get(
+                ws.collabUser.collabSessionId,
+            );
             if (session_collaborators_socket_ids) {
-                session_collaborators_socket_ids.delete(exisiting_collaborator_socket_id);
+                session_collaborators_socket_ids.delete(ws.id);
             }
         } catch (error) {
             console.error('error while cleaning up collaborator socket: ', error);
