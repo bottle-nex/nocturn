@@ -2,6 +2,7 @@ import { Router } from 'express';
 const router: Router = Router();
 
 // <---------------------- CONTROLLERS ---------------------->
+import removeCollaboratorController from '../controllers/collaborator-controller/removeCollaboratorController';
 import Collaborator from '../controllers/collaborator-controller/join_collaborator_controller';
 
 // <---------------------- MIDDLEWARES ---------------------->
@@ -15,5 +16,7 @@ router.post(
     Subscription.collaborator_limit,
     Collaborator.process,
 );
+
+router.delete('/quiz/:quizId/collaborators/:userId', authMiddleware, removeCollaboratorController);
 
 export default router;

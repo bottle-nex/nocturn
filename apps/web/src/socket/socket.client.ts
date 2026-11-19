@@ -1,3 +1,4 @@
+import { toast } from '@/lib/toast';
 import WebSocketEvents from '@/lib/handle_socket_events';
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES, isIntentionalClosure } from '@nocturn/types';
 
@@ -25,6 +26,7 @@ export default class WebSocketClient {
     private message_queue: MessagePayload[] = [];
     private handlers: Map<string, MessageHandler[]> = new Map();
     private is_manually_closed: boolean = false;
+    private reconnectToast: string | number | undefined;
 
     constructor(url: string) {
         this.url = url;
@@ -42,6 +44,11 @@ export default class WebSocketClient {
             this.is_connected = true;
             this.reconnect_attempts = 0;
             this.reconnect_delay = 1000;
+            if (this.reconnectToast !== undefined) {
+                toast.dismiss(this.reconnectToast);
+                this.reconnectToast = undefined;
+            }
+            this.flush_message_queue();
         };
 
         this.ws.onmessage = (event: MessageEvent<string>) => {
@@ -64,6 +71,9 @@ export default class WebSocketClient {
             const shouldReconnect = !this.is_manually_closed && !isIntentionalClosure(event.code);
 
             if (shouldReconnect) {
+                if (this.reconnectToast === undefined) {
+                    this.reconnectToast = toast('Reconnecting…', { duration: Infinity });
+                }
                 this.attempt_reconnect();
             }
         };
@@ -104,8 +114,8 @@ export default class WebSocketClient {
 
     public send_message(message: MessagePayload) {
         if (this.is_connected && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify(message));
             this.flush_message_queue();
+            this.ws.send(JSON.stringify(message));
         } else {
             this.message_queue.push(message);
         }
@@ -139,13 +149,17 @@ export default class WebSocketClient {
         while (this.message_queue.length > 0) {
             const message = this.message_queue.shift();
             if (message) {
-                this.send_message(message);
+                this.ws.send(JSON.stringify(message));
             }
         }
     }
 
     public close(code: number = 1000, reason: string = 'Client disconnect') {
         this.is_manually_closed = true;
+        if (this.reconnectToast !== undefined) {
+            toast.dismiss(this.reconnectToast);
+            this.reconnectToast = undefined;
+        }
 
         if (this.reconnect_timeout) {
             clearTimeout(this.reconnect_timeout);

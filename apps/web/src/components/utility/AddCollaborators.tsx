@@ -1,3 +1,6 @@
+import axios from 'axios';
+import { API_URL } from 'routes/api_routes';
+import { toast } from '@/lib/toast';
 import UtilityCard from './UtilityCard';
 import { Dispatch, JSX, SetStateAction, useRef, useState, useEffect, RefObject } from 'react';
 import { createPortal } from 'react-dom';
@@ -370,7 +373,28 @@ function AddCollaboratorsScreen({ setScreen, loading, setLoading }: AddCollabora
 }
 
 function CollaboratorsSettingsScreen({ setScreen }: ScreenSettings) {
-    const { collaborators } = useCollaboratorStore();
+    const { collaborators, setCollaborators } = useCollaboratorStore();
+    const { quiz } = useNewQuizStore();
+    const { session } = useUserSessionStore();
+    const [removingId, setRemovingId] = useState<string | null>(null);
+
+    async function removeCollaborator(userId: string) {
+        if (!session?.user.token || removingId) return;
+        setRemovingId(userId);
+        try {
+            await axios.delete(`${API_URL}/quiz/${quiz.id}/collaborators/${userId}`, {
+                headers: { Authorization: `Bearer ${session.user.token}` },
+            });
+            setCollaborators(
+                useCollaboratorStore.getState().collaborators.filter((entry) => entry.user.id !== userId),
+            );
+            toast.success('Collaborator removed');
+        } catch {
+            toast.error('Unable to remove collaborator. Please try again.');
+        } finally {
+            setRemovingId(null);
+        }
+    }
     const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
     const [permissions, setPermissions] = useState<Record<string, string>>({});
 
@@ -454,7 +478,15 @@ function CollaboratorsSettingsScreen({ setScreen }: ScreenSettings) {
                                     {permissions[collaborator.user.email] || 'edit'}
                                     <ChevronDown className="h-4 w-4 opacity-50" />
                                 </Button>
-                                <MdOutlineBlock className="size-7 p-1 hover:dark:bg-neutral-800 hover:bg-neutral-200 rounded transition-colors cursor-pointer text-neutral-800 dark:text-neutral-400" />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    aria-label={`Remove ${collaborator.user.name}`}
+                                    disabled={!!removingId || collaborator.user.id === quiz.hostId}
+                                    onClick={() => removeCollaborator(collaborator.user.id)}
+                                >
+                                    <MdOutlineBlock className="size-7 p-1 text-neutral-800 dark:text-neutral-400" />
+                                </Button>
                                 {openDropdownIndex === idx && (
                                     <div className="absolute top-full right-0 mt-1 dark:bg-dark-base bg-white rounded-sm border dark:border-neutral-700 border-neutral-300 shadow-xl z-101 min-w-30 overflow-hidden">
                                         <button
