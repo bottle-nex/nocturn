@@ -16,6 +16,7 @@ export default async function getSharedQuizController(req: Request, res: Respons
                     collaborators: {
                         some: {
                             userId: user.id,
+                            isBlocked: false,
                         },
                     },
                 },

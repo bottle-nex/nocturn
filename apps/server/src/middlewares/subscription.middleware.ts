@@ -185,8 +185,15 @@ export default class Subscription {
                 return;
             }
 
+            const quiz = req.params.quizId
+                ? await prisma.quiz.findUnique({
+                      where: { id: req.params.quizId },
+                      select: { hostId: true },
+                  })
+                : null;
             const tier =
-                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
+                (await Subscription.get_user_subscription(quiz?.hostId ?? user.id)) ??
+                SubscriptionEnum.FREE;
             const ceiling = planManager.getNumericLimit(tier, FEATURE.MAX_SLIDES_PER_PRESENTATION);
 
             if (ceiling === null) {
