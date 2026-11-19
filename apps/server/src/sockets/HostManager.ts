@@ -484,8 +484,16 @@ export default class HostManager {
         }
 
         // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
+        const eligible_ids = new Set(rankable.map((entry) => entry.id));
+        const leaderboard = await this.redis_cache.get_top_leaderboards(
+            game_session_id,
+            sorted_leaderboard.length,
+        );
+        const top_scores = leaderboard
+            .filter((entry) => eligible_ids.has(entry.id))
+            .slice(0, 10)
+            .map((entry, index) => ({ ...entry, rank: index + 1 }));
+        const total_participants = rankable.length;
 
         const rankers = top_scores.slice(0, 3).map((entry, index) => ({
             id: entry.id,
