@@ -31,23 +31,15 @@ export default function New({ params }: NewProps) {
     const [allowance, setAllowance] = useState<AllowanceEnum>(AllowanceEnum.NONE);
     const { quizId } = use(params);
     const { session } = useUserSessionStore();
-    const { quiz, updateQuiz, resetStore } = useNewQuizStore();
+    const { updateQuiz, resetStore } = useNewQuizStore();
     const { setCollaborators } = useCollaboratorStore();
     const { setTemplates } = useQuizTemplatesStore();
     const router = useRouter();
 
-    const storeHasQuiz = quiz.id === quizId && quiz.id !== '';
-
     useEffect(() => {
-        if (storeHasQuiz) {
-            setAllowance(AllowanceEnum.ALLOWED);
-        }
-
         const fetchQuiz = async () => {
             try {
-                if (!storeHasQuiz) {
-                    setAllowance(AllowanceEnum.LOADING);
-                }
+                setAllowance(AllowanceEnum.LOADING);
                 const { data } = await axios.get<CustomResponse<GetNewQuizResponse>>(
                     `${GET_OWNER_QUIZ_URL}/${quizId}`,
                     {
@@ -71,6 +63,8 @@ export default function New({ params }: NewProps) {
                                 if (pendingTemplate) setPendingTemplate(null);
                                 setCollaborators(data.data.quiz.CollabSession?.collaborators || []);
                                 setAllowance(AllowanceEnum.ALLOWED);
+                            } else {
+                                setAllowance(AllowanceEnum.NOT_ALLOWED);
                             }
                             break;
                         case QuizResponseType.ACCESS_DENIED:
@@ -79,6 +73,8 @@ export default function New({ params }: NewProps) {
                         default:
                             setAllowance(AllowanceEnum.NOT_ALLOWED);
                     }
+                } else {
+                    setAllowance(AllowanceEnum.NOT_ALLOWED);
                 }
             } catch (error) {
                 console.error('Error while fetching quiz', error);
@@ -87,15 +83,13 @@ export default function New({ params }: NewProps) {
                 if (error instanceof AxiosError) {
                     const data = error?.response?.data;
 
-                    if (data.url) {
+                    if (data?.url) {
                         toast.error(data.message);
                         router.push(data.url);
                         return;
                     }
                 }
-                if (!storeHasQuiz) {
-                    setAllowance(AllowanceEnum.NOT_ALLOWED);
-                }
+                setAllowance(AllowanceEnum.NOT_ALLOWED);
             }
         };
 
@@ -103,7 +97,7 @@ export default function New({ params }: NewProps) {
             fetchQuiz();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [quizId, session?.user.token, updateQuiz, storeHasQuiz]);
+    }, [quizId, session?.user.token, updateQuiz]);
 
     useEffect(() => {
         async function fetchTemplates() {
