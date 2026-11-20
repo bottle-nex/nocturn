@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
@@ -471,9 +472,13 @@ export default function ClaimRevampPage() {
             } else {
                 setPageStatus('pending');
             }
-        } catch {
-            setError('Unable to verify this prize. Please try again.');
-            setPageStatus('error');
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                setPageStatus('not_found');
+            } else {
+                setError('Unable to verify this prize. Please try again.');
+                setPageStatus('error');
+            }
         }
     }, [token, setClaimData, setPageStatus, setError]);
 
@@ -572,6 +577,9 @@ export default function ClaimRevampPage() {
                             </motion.div>
                         )}
 
+                        {pageStatus === 'error' && !claimData && (
+                            <ErrorNotice error={error} onRetry={fetchClaim} />
+                        )}
                         {claimData && pageStatus !== 'loading' && pageStatus !== 'not_found' && (
                             <motion.div key="claim-content" {...FADE_UP} className="mt-5 space-y-4">
                                 <RankAmountCard
@@ -598,10 +606,7 @@ export default function ClaimRevampPage() {
                                 )}
 
                                 {pageStatus === 'error' && (
-                                    <ErrorNotice
-                                        error={error}
-                                        onRetry={() => setPageStatus('pending')}
-                                    />
+                                    <ErrorNotice error={error} onRetry={fetchClaim} />
                                 )}
 
                                 {(pageStatus === 'pending' ||

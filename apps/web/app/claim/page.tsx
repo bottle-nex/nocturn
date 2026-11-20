@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
@@ -52,9 +53,13 @@ export default function ClaimPage() {
             } else {
                 setPageStatus('pending');
             }
-        } catch {
-            setError('Unable to verify this prize. Please try again.');
-            setPageStatus('error');
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                setPageStatus('not_found');
+            } else {
+                setError('Unable to verify this prize. Please try again.');
+                setPageStatus('error');
+            }
         }
     }, [token, setClaimData, setPageStatus, setError]);
 
@@ -126,6 +131,11 @@ export default function ClaimPage() {
                             ? error
                             : 'This claim link is invalid or has been removed.'}
                     </p>
+                    {pageStatus === 'error' && (
+                        <button onClick={fetchClaim} className="text-[#E84545] underline">
+                            Try Again
+                        </button>
+                    )}
                 </div>
             </div>
         );
@@ -280,10 +290,7 @@ export default function ClaimPage() {
                     <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center space-y-2">
                         <p className="text-red-400 font-medium">Claim Failed</p>
                         <p className="text-red-400/60 text-xs">{error}</p>
-                        <button
-                            onClick={() => setPageStatus('pending')}
-                            className="text-[#E84545] text-xs underline"
-                        >
+                        <button onClick={fetchClaim} className="text-[#E84545] text-xs underline">
                             Try Again
                         </button>
                     </div>
