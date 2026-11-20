@@ -26,7 +26,8 @@ export default async function getQuestionsController(req: Request, res: Response
                         CollabSession: {
                             collaborators: {
                                 some: {
-                                    id: user.id,
+                                    userId: user.id,
+                                    isBlocked: false,
                                 },
                             },
                         },

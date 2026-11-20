@@ -12,7 +12,19 @@ export default async function getAllQuizController(req: Request, res: Response) 
     try {
         const quizzes = await prisma.quiz.findMany({
             where: {
-                hostId: String(req.user.id),
+                OR: [
+                    { hostId: String(req.user.id) },
+                    {
+                        CollabSession: {
+                            collaborators: {
+                                some: {
+                                    userId: req.user.id,
+                                    isBlocked: false,
+                                },
+                            },
+                        },
+                    },
+                ],
                 isDeleted: false,
             },
             select: {

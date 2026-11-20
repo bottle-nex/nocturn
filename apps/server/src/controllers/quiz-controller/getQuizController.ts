@@ -29,7 +29,7 @@ export default async function getQuizController(req: Request, res: Response): Pr
                         CollabSession: {
                             collaborators: {
                                 some: {
-                                    id: user.id,
+                                    userId: user.id,
                                     isBlocked: false,
                                 },
                             },
