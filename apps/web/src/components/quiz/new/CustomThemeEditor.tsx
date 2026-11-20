@@ -43,12 +43,13 @@ export default function CustomThemeEditor({ onClose }: Props) {
     async function forceSaveTheme() {
         if (!session?.user?.token || !template) return;
         setIsSaving(true);
-        const resolvedTemplate = await BackendActions.upsertTemplateAction(
+        const result = await BackendActions.upsertTemplateAction(
             template,
             session.user.token,
         );
         setIsSaving(false);
-        if (resolvedTemplate) {
+        if (result.success) {
+            const resolvedTemplate = result.template;
             toast.success('Theme saved successfully!');
             // Update local template grid with new or updated template
             const exists = templates.some((t) => t.id === resolvedTemplate.id);
@@ -65,7 +66,7 @@ export default function CustomThemeEditor({ onClose }: Props) {
                 templateId: resolvedTemplate.id,
             });
         } else {
-            toast.error('Failed to save theme.');
+            toast.error(result.message);
         }
     }
 
