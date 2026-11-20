@@ -1,11 +1,19 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import { allocatePrizes, isValidPrizePercentages } from '@nocturn/types';
+import { z } from 'zod';
 
-interface DistributionEntry {
-    rank: number;
-    percentage: number;
-}
+const distributionSchema = z.object({
+    distributions: z
+        .array(
+            z.object({
+                rank: z.number().int().min(1),
+                percentage: z.number().min(0).max(100),
+            }),
+        )
+        .min(1),
+});
 
 export default async function setDistributionController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -14,12 +22,14 @@ export default async function setDistributionController(req: Request, res: Respo
     }
 
     const { quizId } = req.params;
-    const { distributions } = req.body as { distributions: DistributionEntry[] };
+    const parsed = distributionSchema.safeParse(req.body);
 
-    if (!quizId || !distributions || !Array.isArray(distributions) || distributions.length === 0) {
+    if (!quizId || !parsed.success) {
         ResponseWriter.invalid_data(res, 'Quiz ID and distributions array are required');
         return;
     }
+
+    const { distributions } = parsed.data;
 
     // Validate: ranks must be sequential 1..N
     const sortedDistributions = [...distributions].sort((a, b) => a.rank - b.rank);
@@ -31,8 +41,7 @@ export default async function setDistributionController(req: Request, res: Respo
     }
 
     // Validate: percentages must sum to 100
-    const totalPercentage = distributions.reduce((sum, d) => sum + d.percentage, 0);
-    if (Math.abs(totalPercentage - 100) > 0.01) {
+    if (!isValidPrizePercentages(distributions.map((d) => d.percentage))) {
         ResponseWriter.invalid_data(res, 'Percentages must sum to 100');
         return;
     }
@@ -52,19 +61,19 @@ export default async function setDistributionController(req: Request, res: Respo
             return;
         }
 
+        const allocations = allocatePrizes(quiz.prizePool, sortedDistributions);
+
         // Delete existing distributions and create new ones
         await prisma.$transaction([
             prisma.prizeDistribution.deleteMany({ where: { quizId } }),
-            ...sortedDistributions.map((d) => {
-                const amount = (quiz.prizePool * d.percentage) / 100;
-                const amountBaseUnits = BigInt(Math.floor(amount * 1e6));
+            ...allocations.map((d) => {
                 return prisma.prizeDistribution.create({
                     data: {
                         quizId,
                         rank: d.rank,
                         percentage: d.percentage,
-                        amount,
-                        amountBaseUnits,
+                        amount: d.amount,
+                        amountBaseUnits: d.amountBaseUnits,
                     },
                 });
             }),

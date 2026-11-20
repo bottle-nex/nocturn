@@ -16,6 +16,7 @@ import { toast } from '@/lib/toast';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import SolanaAction from '@/lib/solana/SolanaAction';
 import BackendActions from '@/lib/backend/new/quiz-backend-actions';
+import { allocatePrizes, isValidPrizePercentages, PRIZE_FEE_PERCENT } from '@nocturn/types';
 
 const DEFAULT_DISTRIBUTIONS: Record<number, number[]> = {
     1: [100],
@@ -43,7 +44,7 @@ function PrizeDistributionHeader({
                     <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Total Stake
                     </span>
-                    <ToolTipComponent content="Total USDC amount to be staked as the quiz prize pool. This will be distributed among winners based on their rank.">
+                    <ToolTipComponent content="Total USDC deposit. The prize pool is distributed among winners after the platform fee.">
                         <AiOutlineQuestionCircle size={15} />
                     </ToolTipComponent>
                 </div>
@@ -122,6 +123,16 @@ function PrizeDistributionList({
     totalPercentage: number;
     isValid: boolean;
 }) {
+    const allocations =
+        isValid &&
+        Number.isFinite(prizePool) &&
+        prizePool >= 0 &&
+        prizePool * 1e6 <= Number.MAX_SAFE_INTEGER
+            ? allocatePrizes(
+                  prizePool,
+                  percentages.map((percentage) => ({ percentage })),
+              )
+            : [];
     const barColors = ['bg-[#c44536]', 'bg-[#edddd4]', 'bg-[#197278]'];
 
     return (
@@ -131,12 +142,14 @@ function PrizeDistributionList({
                     <span className="text-sm font-normal text-dark-alpha dark:text-light-base">
                         Output
                     </span>
-                    <ToolTipComponent content="Shows how the total stake will be split among winners based on their rank percentages.">
+                    <ToolTipComponent
+                        content={`Shows how the stake, after the ${PRIZE_FEE_PERCENT}% platform fee, will be split among winners based on their rank percentages.`}
+                    >
                         <AiOutlineQuestionCircle size={15} />
                     </ToolTipComponent>
                 </div>
                 <div className="flex w-full items-center gap-x-2 mt-1 text-xs text-neutral-500 dark:text-white/40">
-                    computed distribution
+                    distribution after {PRIZE_FEE_PERCENT}% platform fee
                 </div>
             </div>
 
@@ -144,7 +157,7 @@ function PrizeDistributionList({
                 {percentages.map((pct, index) => {
                     const rank = index + 1;
                     const barColor = barColors[index] || 'bg-[#a5a5a5]';
-                    const amount = (prizePool * pct) / 100;
+                    const amount = allocations[index]?.amount;
 
                     return (
                         <div key={rank} className="flex items-center gap-3">
@@ -176,7 +189,8 @@ function PrizeDistributionList({
                             </div>
 
                             <div className="w-20 text-right text-xs dark:text-white/40 text-gray-400 tabular-nums shrink-0">
-                                {amount.toFixed(2)} <span className="text-[10px]">USDC</span>
+                                {amount == null ? '—' : amount.toFixed(2)}{' '}
+                                <span className="text-[10px]">USDC</span>
                             </div>
                         </div>
                     );
@@ -228,12 +242,11 @@ export default function StakeConfigModal({
     }, [quiz.prizeDistributions]);
 
     const totalPercentage = percentages.reduce((sum, p) => sum + p, 0);
-    const isValid = Math.abs(totalPercentage - 100) < 0.01;
+    const isValid = isValidPrizePercentages(percentages);
 
     const autoSave = useCallback(
         (pcts: number[]) => {
-            const total = pcts.reduce((sum, p) => sum + p, 0);
-            if (Math.abs(total - 100) < 0.01) {
+            if (isValidPrizePercentages(pcts)) {
                 const distributions = pcts.map((p, i) => ({
                     id: '',
                     quizId: '',
