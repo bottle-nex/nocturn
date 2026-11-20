@@ -538,7 +538,9 @@ export default class QuizController {
 
             if (
                 game_session.status === SessionStatusEnum.COMPLETED ||
-                quiz.status === QuizStatusEnum.COMPLETED
+                quiz.status === QuizStatusEnum.COMPLETED ||
+                quiz.status === QuizStatusEnum.PAYOUT_PENDING ||
+                quiz.status === QuizStatusEnum.PAYOUT_COMPLETED
             ) {
                 // means the session is manually ended no need to proceed
                 return;

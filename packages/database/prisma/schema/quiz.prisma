@@ -59,6 +59,8 @@ model Quiz {
     prizeDistributions      PrizeDistribution[]
     prizeClaims             PrizeClaim[]
 
+    fundedBaseUnits    String?
+    payoutPreparedAt   DateTime?
     escrowPda          String?
     quizAccountPda     String?
     onChainTxSignature String?
@@ -152,5 +154,6 @@ model PrizeClaim {
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
+    @@unique([quizId, participantId])
     @@map("prize_claims")
 }

@@ -59,6 +59,7 @@ export default async function confirmStakeController(req: Request, res: Response
         const updated = await prisma.quiz.update({
             where: { id: quizId },
             data: {
+                fundedBaseUnits: isValid.baseUnits === undefined ? null : String(isValid.baseUnits),
                 escrowPda,
                 quizAccountPda,
                 onChainTxSignature: txSignature,

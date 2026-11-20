@@ -21,7 +21,7 @@ import {
     QuizStatus,
 } from '@nocturn/database';
 import { v4 as uuid } from 'uuid';
-import crypto from 'crypto';
+import PrizeService from '../services/prize/PrizeService';
 import { WebSocket } from 'ws';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
@@ -147,7 +147,9 @@ export default class HostManager {
                 break;
 
             case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
-                this.handle_quiz_results(ws);
+                this.handle_quiz_results(ws).catch((error) => {
+                    console.error('Failed to prepare quiz results:', error);
+                });
                 break;
 
             case MESSAGE_TYPES.UPDATE_CURRENT_QUESTION:
@@ -467,6 +469,15 @@ export default class HostManager {
             return !isKicked;
         });
 
+        if (quiz.prizePool && quiz.prizePool > 0) {
+            await this.create_prize_claims(quiz_id, game_session_id, rankable);
+            const persistedQuiz = await prisma.quiz.findUniqueOrThrow({ where: { id: quiz_id } });
+            await this.redis_cache.set_quiz(game_session_id, { status: persistedQuiz.status });
+            await this.redis_cache.set_game_session(game_session_id, {
+                status: SessionStatusEnum.COMPLETED,
+            });
+        }
+
         // Assign final ranks with tie handling (same score = same rank)
         let currentRank = 1;
         for (let i = 0; i < rankable.length; i++) {
@@ -524,19 +535,12 @@ export default class HostManager {
         );
         await this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-        this.database_queue.update_quiz(
-            quiz_id,
-            {
-                status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
-            },
-            game_session_id,
-        );
-
-        // Create prize claims for winners if prize pool exists
-        if (quiz.prizePool && quiz.prizePool > 0) {
-            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
-                console.error('Failed to create prize claims:', err);
-            });
+        if (!quiz.prizePool) {
+            await this.database_queue.update_quiz(
+                quiz_id,
+                { status: QuizStatus.COMPLETED },
+                game_session_id,
+            );
         }
     }
 
@@ -603,119 +607,14 @@ export default class HostManager {
         game_session_id: string,
         rankable: { id: string; totalScore: number }[],
     ) {
-        const distributions = await prisma.prizeDistribution.findMany({
-            where: { quizId: quiz_id },
-            orderBy: { rank: 'asc' },
-        });
-
-        if (distributions.length === 0) return;
-
-        const quiz = await prisma.quiz.findUnique({
-            where: { id: quiz_id },
-            select: { prizePool: true, title: true },
-        });
-
-        if (!quiz || !quiz.prizePool) return;
-
-        // Assign finalRanks to rankable (already done in handle_quiz_results)
-        // Build rank-to-participants mapping with tie handling
-        const rankMap = new Map<number, string[]>();
-        let currentRank = 1;
-        for (let i = 0; i < rankable.length; i++) {
-            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
-                currentRank = i + 1;
-            }
-            const existing = rankMap.get(currentRank) || [];
-            existing.push(rankable[i]!.id);
-            rankMap.set(currentRank, existing);
-        }
-
-        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-
-        const claimsToCreate: Array<{
-            participantId: string;
-            rank: number;
-            amount: number;
-            amountBaseUnits: bigint;
-        }> = [];
-
-        for (const dist of distributions) {
-            const participantIds = rankMap.get(dist.rank);
-            if (!participantIds || participantIds.length === 0) continue;
-
-            if (participantIds.length === 1) {
-                // Single winner at this rank
-                claimsToCreate.push({
-                    participantId: participantIds[0]!,
-                    rank: dist.rank,
-                    amount: dist.amount || (quiz.prizePool * dist.percentage) / 100,
-                    amountBaseUnits:
-                        dist.amountBaseUnits ||
-                        BigInt(Math.floor(((quiz.prizePool * dist.percentage) / 100) * 1e6)),
-                });
-            } else {
-                // Tied participants: split the prize for this rank among them
-                // Also collect prizes from subsequent tied positions
-                const tiedCount = participantIds.length;
-                let totalAmountForTied = dist.amount || (quiz.prizePool * dist.percentage) / 100;
-
-                // Add amounts from ranks that are "consumed" by the tie
-                for (let r = 1; r < tiedCount; r++) {
-                    const nextDist = distributions.find((d) => d.rank === dist.rank + r);
-                    if (nextDist) {
-                        totalAmountForTied +=
-                            nextDist.amount || (quiz.prizePool * nextDist.percentage) / 100;
-                    }
-                }
-
-                const splitAmount = totalAmountForTied / tiedCount;
-                const splitBaseUnits = BigInt(Math.floor(splitAmount * 1e6));
-
-                for (const pid of participantIds) {
-                    claimsToCreate.push({
-                        participantId: pid,
-                        rank: dist.rank,
-                        amount: splitAmount,
-                        amountBaseUnits: splitBaseUnits,
-                    });
-                }
-            }
-        }
-
-        // Create PrizeClaim records in the database
-        for (const claim of claimsToCreate) {
-            const participant = await prisma.participant.findUnique({
-                where: { id: claim.participantId },
-                select: { email: true, nickname: true },
-            });
-
-            if (!participant) continue;
-
-            const claimToken = crypto.randomBytes(16).toString('hex');
-            const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
-            const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
-
-            await prisma.prizeClaim.create({
-                data: {
-                    quizId: quiz_id,
-                    participantId: claim.participantId,
-                    rank: claim.rank,
-                    amount: claim.amount,
-                    amountBaseUnits: claim.amountBaseUnits,
-                    claimToken,
-                    claimTokenHash,
-                    emailHash,
-                    expiresAt,
-                },
-            });
-        }
+        const claims = await PrizeService.prepare_claims(quiz_id, game_session_id, rankable);
 
         // Notify host via WebSocket that prize claims are ready
         const event_data: PubSubMessageTypes = {
             type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
             payload: {
                 quizId: quiz_id,
-                totalClaims: claimsToCreate.length,
+                totalClaims: claims.length,
             },
         };
         await this.quizManager.publish_event_to_redis(game_session_id, event_data);
