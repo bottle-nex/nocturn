@@ -61,6 +61,8 @@ model Quiz {
 
     fundedBaseUnits    String?
     payoutPreparedAt   DateTime?
+    payoutSealedAt     DateTime?
+    payoutError        String?
     escrowPda          String?
     quizAccountPda     String?
     onChainTxSignature String?
@@ -149,7 +151,9 @@ model PrizeClaim {
     claimedAt       DateTime?
     claimerWallet   String?
     txSignature     String?
-    expiresAt       DateTime
+    expiresAt       DateTime?
+    emailQueuedAt   DateTime?
+    emailAttemptedAt DateTime?
     emailSentAt     DateTime?
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt

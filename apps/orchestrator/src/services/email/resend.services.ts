@@ -80,11 +80,15 @@ export default class ResendService {
                     ? '3rd'
                     : `${data.rank}th`;
 
-        await resend.emails.send({
-            from: 'Nocturn <noreply@nocturn.app>',
-            to: data.email,
-            subject: `🏆 You placed ${rankLabel} in "${data.quizTitle}" — Claim your prize!`,
-            html,
-        });
+        const result = await resend.emails.send(
+            {
+                from: 'Nocturn <noreply@nocturn.app>',
+                to: data.email,
+                subject: `🏆 You placed ${rankLabel} in "${data.quizTitle}" — Claim your prize!`,
+                html,
+            },
+            { idempotencyKey: `winner-${data.claimId}` },
+        );
+        if (result.error) throw new Error(`Winner email failed: ${result.error.message}`);
     }
 }

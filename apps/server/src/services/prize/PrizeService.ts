@@ -27,6 +27,8 @@ export default class PrizeService {
                 quiz.prizeDistributions,
                 participants,
             );
+            if (allocation.claims.length > 255)
+                throw new Error('Too many winners for the on-chain counter');
             for (const entry of allocation.ranks) {
                 const participant = await tx.participant.findFirst({
                     where: { id: entry.participantId, quizId },
@@ -59,7 +61,7 @@ export default class PrizeService {
                             .createHash('sha256')
                             .update(participant.email)
                             .digest('hex'),
-                        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                        expiresAt: null,
                     },
                 });
             }

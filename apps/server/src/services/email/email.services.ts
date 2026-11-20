@@ -72,16 +72,14 @@ export default class EmailServiceQueue {
 
     public async email_winner_notification(
         data: WinnerNotificationEmailData,
-    ): Promise<Bull.Job<EmailJob> | undefined> {
-        try {
-            const job = await this.email_queue.add({
-                type: EmailJobType.WINNER_NOTIFICATION,
-                data,
-            });
-            return job;
-        } catch (err) {
-            console.error('Error adding winner notification email job to queue:', err);
-            return undefined;
-        }
+    ): Promise<Bull.Job<EmailJob>> {
+        return this.email_queue.add(
+            { type: EmailJobType.WINNER_NOTIFICATION, data },
+            {
+                jobId: `winner-${data.claimId}`,
+                removeOnComplete: false,
+                removeOnFail: false,
+            },
+        );
     }
 }

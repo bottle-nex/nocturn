@@ -81,6 +81,7 @@ export default class SolanaService {
         const account = await this.fetch_quiz(quizId, hostWallet);
         if (!account.platformAuthority.equals(this.platformPublicKey) || account.isCancelled)
             return false;
+        if (!signature) return true;
         const expected = await this.program.methods
             .authorizePlatform(quizId, this.platformPublicKey)
             .accounts({ host: new PublicKey(hostWallet) })
@@ -99,6 +100,7 @@ export default class SolanaService {
         hostWallet: string,
         claimerWallet: string,
         amount: bigint,
+        refund = false,
     ) {
         const tx = await this.connection.getTransaction(signature, {
             commitment: 'confirmed',
@@ -126,17 +128,29 @@ export default class SolanaService {
             [Buffer.from('escrow'), quizAccount.toBuffer()],
             this.program.programId,
         )[0];
-        const expected = await this.program.methods
-            .claimPrize(quizId, chainClaimId)
-            .accountsPartial({
-                quizAccount,
-                escrowAuthority,
-                escrowTokenAccount: escrow,
-                claimAccount: this.claim_pda(quizId, chainClaimId),
-                claimerTokenAccount: destination,
-                claimer: wallet,
-            })
-            .instruction();
+        const expected = refund
+            ? await this.program.methods
+                  .reclaimExpired(quizId, chainClaimId)
+                  .accountsPartial({
+                      quizAccount,
+                      escrowAuthority,
+                      escrowTokenAccount: escrow,
+                      claimAccount: this.claim_pda(quizId, chainClaimId),
+                      hostTokenAccount: destination,
+                      host: wallet,
+                  })
+                  .instruction()
+            : await this.program.methods
+                  .claimPrize(quizId, chainClaimId)
+                  .accountsPartial({
+                      quizAccount,
+                      escrowAuthority,
+                      escrowTokenAccount: escrow,
+                      claimAccount: this.claim_pda(quizId, chainClaimId),
+                      claimerTokenAccount: destination,
+                      claimer: wallet,
+                  })
+                  .instruction();
         if (
             !verifyPrizeTransaction(tx, expected, {
                 from: escrow,
@@ -157,6 +171,96 @@ export default class SolanaService {
         )
             return null;
         return { claimedAt: new Date(claim.claimedAt.toNumber() * 1000) };
+    }
+
+    public async reconcile_claim(
+        quizId: string,
+        claimToken: string,
+        hostWallet: string,
+        amount: bigint,
+    ): Promise<{
+        status: 'PENDING' | 'CLAIMED' | 'EXPIRED' | 'REFUNDED';
+        expiresAt: Date | null;
+        claimedAt?: Date | null;
+        claimerWallet?: string | null;
+        txSignature?: string;
+    }> {
+        const account = await this.fetch_claim(quizId, claimToken);
+        const quiz = await this.fetch_quiz(quizId, hostWallet);
+        if (!account) {
+            if (quiz.isFinalized) throw new Error('Finalized quiz has no claim account');
+            return { status: 'PENDING' as const, expiresAt: null };
+        }
+        if (account.quizId !== quizId || account.amount.toString() !== amount.toString())
+            throw new Error('Claim account does not match prize');
+        const expiresAt = quiz.isFinalized ? new Date(quiz.claimExpiry.toNumber() * 1000) : null;
+        if (account.isClaimed) {
+            let before: string | undefined;
+            while (true) {
+                const signatures = await this.connection.getSignaturesForAddress(
+                    this.claim_pda(quizId, claimToken),
+                    { before, limit: 100 },
+                    'confirmed',
+                );
+                if (!signatures.length) throw new Error('Claim settlement history is unavailable');
+                for (const signature of signatures) {
+                    if (signature.err) continue;
+                    const wallet = account.claimerPubkey.toBase58();
+                    const payment = await this.verify_claim_tx(
+                        signature.signature,
+                        quizId,
+                        claimToken,
+                        hostWallet,
+                        wallet,
+                        amount,
+                    );
+                    if (payment)
+                        return {
+                            status: 'CLAIMED' as const,
+                            expiresAt,
+                            claimedAt: payment.claimedAt,
+                            claimerWallet: wallet,
+                            txSignature: signature.signature,
+                        };
+                    if (wallet === hostWallet) {
+                        const refund = await this.verify_claim_tx(
+                            signature.signature,
+                            quizId,
+                            claimToken,
+                            hostWallet,
+                            wallet,
+                            amount,
+                            true,
+                        );
+                        if (refund)
+                            return {
+                                status: 'REFUNDED' as const,
+                                expiresAt,
+                                claimedAt: null,
+                                claimerWallet: null,
+                                txSignature: signature.signature,
+                            };
+                    }
+                }
+                before = signatures[signatures.length - 1]!.signature;
+            }
+        }
+        const slot = await this.connection.getSlot('confirmed');
+        const blockTime = await this.connection.getBlockTime(slot);
+        if (blockTime === null) throw new Error('Chain time is unavailable');
+        if (expiresAt && blockTime >= quiz.claimExpiry.toNumber()) {
+            const current = await this.fetch_claim(quizId, claimToken);
+            if (!current) throw new Error('Claim account disappeared during reconciliation');
+            if (current.isClaimed)
+                return this.reconcile_claim(quizId, claimToken, hostWallet, amount);
+        }
+        return {
+            status:
+                expiresAt && blockTime >= quiz.claimExpiry.toNumber()
+                    ? ('EXPIRED' as const)
+                    : ('PENDING' as const),
+            expiresAt,
+        };
     }
 
     public async verify_stake_tx(

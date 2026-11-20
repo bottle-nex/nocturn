@@ -26,6 +26,7 @@ function getRankBadgeColor(rank: number): string {
 
 export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
     const [claims, setClaims] = useState<PrizeClaim[]>([]);
+    const [authorized, setAuthorized] = useState(false);
     const [step, setStep] = useState<FinalizationStep>('loading');
     const [error, setError] = useState<string | null>(null);
     const { publicKey, signTransaction } = useWallet();
@@ -35,12 +36,22 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
 
     const fetchClaims = useCallback(async () => {
         try {
-            const claims = await SolanaAction.fetchPrizeClaims(
+            const result = await SolanaAction.fetchPrizeClaims(
                 localStorage.getItem('accessToken')!,
                 quizId,
             );
-            setClaims(claims);
-            setStep('ready');
+            setClaims(result.claims);
+            setAuthorized(result.authorized);
+            setError(result.error);
+            setStep(
+                result.status === 'FAILED'
+                    ? 'error'
+                    : result.status === 'COMPLETED'
+                      ? 'complete'
+                      : result.status === 'PROCESSING'
+                        ? 'finalizing'
+                        : 'ready',
+            );
         } catch {
             setError('Failed to fetch prize claims');
             setStep('error');
@@ -51,8 +62,14 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
         fetchClaims();
     }, [fetchClaims]);
 
+    useEffect(() => {
+        if (step !== 'finalizing') return;
+        const interval = setInterval(fetchClaims, 2000);
+        return () => clearInterval(interval);
+    }, [step, fetchClaims]);
+
     const handleAuthorize = async () => {
-        if (!publicKey || !signTransaction || !anchorWallet) {
+        if (!authorized && (!publicKey || !signTransaction || !anchorWallet)) {
             setError('Please connect your wallet first');
             return;
         }
@@ -60,23 +77,26 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
         setStep('authorizing');
 
         try {
-            const platformPubkey = new PublicKey(
-                process.env.NEXT_PUBLIC_PLATFORM_AUTHORITY_PUBKEY!,
-            );
-            const program = SolanaAction.getProgram(connection, anchorWallet);
-
-            const tx = await SolanaAction.buildAuthorizePlatformTx(
-                program,
-                quizId,
-                platformPubkey,
-                publicKey,
-            );
-            const txSignature = await SolanaAction.signSendAndConfirm(
-                connection,
-                tx,
-                publicKey,
-                signTransaction,
-            );
+            let txSignature = '';
+            if (!authorized && publicKey && signTransaction && anchorWallet) {
+                const platformPubkey = new PublicKey(
+                    process.env.NEXT_PUBLIC_PLATFORM_AUTHORITY_PUBKEY!,
+                );
+                const program = SolanaAction.getProgram(connection, anchorWallet);
+                const tx = await SolanaAction.buildAuthorizePlatformTx(
+                    program,
+                    quizId,
+                    platformPubkey,
+                    publicKey,
+                );
+                txSignature = await SolanaAction.signSendAndConfirm(
+                    connection,
+                    tx,
+                    publicKey,
+                    signTransaction,
+                );
+                setAuthorized(true);
+            }
 
             setStep('finalizing');
 
@@ -86,7 +106,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                 txSignature,
             );
 
-            setStep('complete');
+            await fetchClaims();
         } catch {
             setError('Authorization failed');
             setStep('error');
@@ -111,6 +131,11 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                     <p className="text-xs text-[#F3ECE7]/40 animate-pulse">Loading claims...</p>
                 )}
 
+                {!claims.length && step !== 'loading' && (
+                    <p className="text-xs text-[#F3ECE7]/60">
+                        No eligible prize winners. The prize batch can still be finalized.
+                    </p>
+                )}
                 {claims.map((claim) => (
                     <div key={claim.id} className="flex items-center gap-3">
                         <span
@@ -145,7 +170,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                         onClick={handleAuthorize}
                         className="w-full bg-[#E84545] hover:bg-[#E84545]/90 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
                     >
-                        Approve Distribution
+                        {authorized ? 'Resume Distribution' : 'Approve Distribution'}
                     </button>
                 )}
 
@@ -171,7 +196,7 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                 {step === 'complete' && (
                     <div className="text-center space-y-1">
                         <p className="text-xs text-green-400 font-medium">
-                            Distribution complete! Emails sent to winners.
+                            Payouts are claimable. Winner notifications are queued.
                         </p>
                     </div>
                 )}
@@ -182,7 +207,8 @@ export default function PrizeFinalizationPanel({ quizId }: { quizId: string }) {
                         <button
                             onClick={() => {
                                 setError(null);
-                                setStep('ready');
+                                if (authorized) handleAuthorize();
+                                else fetchClaims();
                             }}
                             className="text-xs text-[#E84545] underline"
                         >

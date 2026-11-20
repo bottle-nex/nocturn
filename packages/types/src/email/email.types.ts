@@ -28,6 +28,7 @@ export interface OtpEmailData {
 }
 
 export interface WinnerNotificationEmailData {
+  claimId: string;
   email: string;
   participantName: string;
   quizTitle: string;

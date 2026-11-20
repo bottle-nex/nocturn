@@ -21,7 +21,7 @@ pub fn claim_prize(
 
     let clock = Clock::get()?;
     require!(
-        clock.unix_timestamp < claim_account.expires_at,
+        clock.unix_timestamp < quiz_account.claim_expiry,
         ErrorCodes::ClaimExpired
     );
 
@@ -99,6 +99,7 @@ pub struct ClaimPrize<'info> {
         mut,
         seeds = [b"claim", quiz_id.as_bytes(), claim_token.as_bytes()],
         bump,
+        constraint = claim_account.quiz_id == quiz_account.quiz_id @ ErrorCodes::Unauthorized,
     )]
     pub claim_account: Account<'info, ClaimAccount>,
 

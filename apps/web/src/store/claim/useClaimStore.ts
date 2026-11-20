@@ -35,7 +35,7 @@ interface ClaimData {
     claimedAt: string | null;
     claimerWallet: string | null;
     txSignature: string | null;
-    expiresAt: string;
+    expiresAt: string | null;
 }
 
 interface ClaimStoreTypes {

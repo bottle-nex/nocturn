@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import { solanaServiceInstance } from '../../services/init.services';
 
 export default async function getClaimController(req: Request, res: Response) {
     const { token } = req.params;
@@ -45,6 +46,17 @@ export default async function getClaimController(req: Request, res: Response) {
             return;
         }
 
+        const settlement = await solanaServiceInstance.reconcile_claim(
+            claim.quizId,
+            claim.claimToken,
+            claim.quiz.hostWalletPubkey || '',
+            claim.amountBaseUnits,
+        );
+        await prisma.prizeClaim.updateMany({
+            where: { id: claim.id, updatedAt: claim.updatedAt },
+            data: settlement,
+        });
+
         // Return public claim data (no sensitive info)
         ResponseWriter.success(res, {
             id: claim.id,
@@ -67,11 +79,11 @@ export default async function getClaimController(req: Request, res: Response) {
             rank: claim.rank,
             amount: claim.amount,
             amountBaseUnits: claim.amountBaseUnits.toString(),
-            status: claim.status,
-            claimedAt: claim.claimedAt,
-            claimerWallet: claim.claimerWallet,
-            txSignature: claim.txSignature,
-            expiresAt: claim.expiresAt,
+            status: settlement.status,
+            claimedAt: 'claimedAt' in settlement ? settlement.claimedAt : null,
+            claimerWallet: 'claimerWallet' in settlement ? settlement.claimerWallet : null,
+            txSignature: 'txSignature' in settlement ? settlement.txSignature : null,
+            expiresAt: settlement.expiresAt,
         });
     } catch (error) {
         console.error('Failed to get claim:', error);
