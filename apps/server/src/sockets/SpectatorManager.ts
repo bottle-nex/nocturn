@@ -414,9 +414,10 @@ export default class SpectatorManager {
         const { gameSessionId, quizId, userId: sender_id, role: sender_role } = ws.user;
         const { senderName, message, repliedToId, senderAvatar } = payload;
 
-        const is_chat_allowed = this.quiz_settings.quiz_settings_mapping.get(
+        const is_chat_allowed = await this.quiz_settings.is_live_chat_allowed(
             ws.user.gameSessionId,
-        )?.liveChat;
+            ws.user.quizId,
+        );
         if (!is_chat_allowed) return;
 
         if (!quizId || !sender_id || !message) {
@@ -456,11 +457,17 @@ export default class SpectatorManager {
             });
     }
 
-    private handle_incoming_chat_reaction_event(payload: IncomingChatReaction, ws: GameWebSocket) {
+    private async handle_incoming_chat_reaction_event(
+        payload: IncomingChatReaction,
+        ws: GameWebSocket,
+    ) {
         if (!ws.user) {
             console.error('Missing ws.user in chat reaction handler');
             return;
         }
+
+        if (!(await this.quiz_settings.is_live_chat_allowed(ws.user.gameSessionId, ws.user.quizId)))
+            return;
 
         const { userId } = ws.user;
         const { chatMessageId, reactedAt, reaction, reactorAvatar, reactorName, reactorType } =

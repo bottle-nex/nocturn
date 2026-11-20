@@ -1,7 +1,8 @@
 'use client';
 
-import { createContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { SubscriptionEnum } from '@nocturn/types';
+import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { FEATURE, planManager as Plans } from '@nocturn/premium';
 
 export interface SubscriptionContextValue {
@@ -26,6 +27,12 @@ export default function SubscriptionProvider({ children, initialTier }: Subscrip
     const [tier, setTierState] = useState<SubscriptionEnum>(initialTier ?? SubscriptionEnum.FREE);
     const [isLoaded, setIsLoaded] = useState(!!initialTier);
 
+    const session = useUserSessionStore((state) => state.session);
+    useEffect(() => {
+        setTierState(session?.user.subscription ?? SubscriptionEnum.FREE);
+        setIsLoaded(true);
+    }, [session]);
+
     const setTier = useCallback((newTier: SubscriptionEnum) => {
         setTierState(newTier);
         setIsLoaded(true);
@@ -49,6 +56,17 @@ export default function SubscriptionProvider({ children, initialTier }: Subscrip
         <SubscriptionContext.Provider
             value={{ tier, isLoaded, setTier, isEnabled, getNumericLimit, getRateLimit, isPro }}
         >
+            {session?.user.subscriptionStatus === 'PAST_DUE' && (
+                <div
+                    role="alert"
+                    className="border-b border-border bg-muted px-4 py-3 text-sm text-foreground"
+                >
+                    Your payment failed.{' '}
+                    {tier === SubscriptionEnum.PRO && session.user.subscriptionAccessUntil
+                        ? `Update your payment before ${new Date(session.user.subscriptionAccessUntil).toLocaleString()} to keep Pro features.`
+                        : 'Your Pro access has ended. Update your payment to restore Pro features.'}
+                </div>
+            )}
             {children}
         </SubscriptionContext.Provider>
     );

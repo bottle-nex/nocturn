@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import ResponseWriter from '../class/response_writer';
 import { FEATURE, planManager } from '@nocturn/premium';
 import { SubscriptionEnum } from '@nocturn/types';
-import { prisma } from '@nocturn/database';
+import { getUserSubscription, prisma } from '@nocturn/database';
 
 export default class Subscription {
     static async spectator_limit_via_code(req: Request, res: Response, next: NextFunction) {
@@ -297,20 +297,8 @@ export default class Subscription {
 
     static async get_user_subscription(user_id: string): Promise<SubscriptionEnum | null> {
         try {
-            const userData = await prisma.user.findUnique({
-                where: { id: user_id },
-                select: {
-                    subscriptions: {
-                        select: { tier: { select: { name: true } } },
-                        orderBy: { createdAt: 'desc' },
-                        take: 1,
-                    },
-                },
-            });
-
-            if (!userData || userData.subscriptions.length === 0) return null;
-
-            return userData.subscriptions[0].tier.name as SubscriptionEnum;
+            const { tier } = await getUserSubscription(user_id);
+            return tier === 'PRO' ? SubscriptionEnum.PRO : SubscriptionEnum.FREE;
         } catch (error) {
             console.error('Error fetching user subscription:', error);
             return null;

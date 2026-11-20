@@ -7,6 +7,7 @@ import { JWT } from 'next-auth/jwt';
 import axios from 'axios';
 import { SIGNIN_URL, VERIFY_OTP_URL } from 'routes/api_routes';
 import { SubscriptionEnum } from '@nocturn/types';
+import { getUserSubscription } from '@nocturn/database';
 
 export interface UserType {
     id?: string | null;
@@ -14,6 +15,8 @@ export interface UserType {
     email?: string | null;
     image?: string | null;
     subscription?: SubscriptionEnum;
+    subscriptionStatus?: string | null;
+    subscriptionAccessUntil?: string | null;
     provider?: string | null;
     token?: string | null;
 }
@@ -67,7 +70,15 @@ export const authOption: AuthOptions = {
             return token;
         },
         async session({ session, token }: { session: CustomSession; token: JWT }) {
-            session.user = token.user as UserType;
+            const user: UserType = { ...token.user };
+            session.user = user;
+            if (user.id) {
+                const subscription = await getUserSubscription(user.id);
+                user.subscription =
+                    subscription.tier === 'PRO' ? SubscriptionEnum.PRO : SubscriptionEnum.FREE;
+                user.subscriptionStatus = subscription.status;
+                user.subscriptionAccessUntil = subscription.accessUntil?.toISOString() ?? null;
+            }
             return session;
         },
     },
