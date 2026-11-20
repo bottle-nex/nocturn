@@ -11,7 +11,9 @@ import Subscription from '../../../middlewares/subscription.middleware';
 import DodoWebhookService from '../../../services/premium/DodoWebhookService';
 
 const db = vi.hoisted(() => ({
-    userSubscription: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
+    userSubscription: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn(), upsert: vi.fn() },
+    subscriptionTier: { findUnique: vi.fn() },
+    checkoutSession: { findFirst: vi.fn() },
     quiz: { findUnique: vi.fn() },
     payment: { upsert: vi.fn() },
     user: { update: vi.fn() },
@@ -230,8 +232,8 @@ describe('payment recovery', () => {
                 type: 'subscription.renewed',
                 data: {
                     subscription_id: 'dodo-sub',
-                    current_period_start: end.getTime() / 1000,
-                    current_period_end: renewedEnd.getTime() / 1000,
+                    previous_billing_date: end.toISOString(),
+                    next_billing_date: renewedEnd.toISOString(),
                 },
             },
         });
@@ -241,11 +243,82 @@ describe('payment recovery', () => {
             where: { dodoSubscriptionId: 'dodo-sub' },
             data: { status: 'ACTIVE', currentPeriodStart: end, currentPeriodEnd: renewedEnd },
         });
-        expect(
-            resolveSubscription(
-                { ...subscription, currentPeriodEnd: renewedEnd },
-                new Date('2026-12-01T00:00:00Z'),
-            ).tier,
-        ).toBe('PRO');
+        const persisted = db.userSubscription.update.mock.calls[0][0].data;
+        db.userSubscription.findFirst.mockResolvedValue({ ...subscription, ...persisted });
+        vi.setSystemTime(new Date('2026-12-01T00:00:00Z'));
+        expect((await getUserSubscription('user')).tier).toBe('PRO');
+        vi.setSystemTime(renewedEnd);
+        expect((await getUserSubscription('user')).tier).toBe('FREE');
+    });
+});
+
+describe('Dodo billing dates', () => {
+    const billingStart = '2026-11-20T10:00:00Z';
+    const billingEnd = '2026-12-20T10:00:00Z';
+
+    beforeEach(() => {
+        db.subscriptionTier.findUnique.mockResolvedValue({ id: 'pro', name: 'PRO' });
+        db.userSubscription.findUnique.mockResolvedValue(subscription);
+        db.userSubscription.upsert.mockResolvedValue(subscription);
+        db.checkoutSession.findFirst.mockResolvedValue(null);
+    });
+
+    it('persists real activation dates in both create and update and keeps paid access', async () => {
+        db.webhookEvent.findUnique.mockResolvedValue({
+            payload: {
+                type: 'subscription.active',
+                data: {
+                    subscription_id: 'dodo-sub',
+                    metadata: { user_id: 'user', tier_id: 'pro' },
+                    previous_billing_date: billingStart,
+                    next_billing_date: billingEnd,
+                },
+            },
+        });
+        await new DodoWebhookService().processWebhookEvent('active');
+        const saved = db.userSubscription.upsert.mock.calls[0][0];
+        const expected = {
+            currentPeriodStart: new Date(billingStart),
+            currentPeriodEnd: new Date(billingEnd),
+            status: 'ACTIVE',
+        };
+        expect(saved.create).toMatchObject(expected);
+        expect(saved.update).toMatchObject(expected);
+        for (const persisted of [saved.create, saved.update]) {
+            db.userSubscription.findFirst.mockResolvedValue({ ...subscription, ...persisted });
+            vi.setSystemTime(new Date(now.getTime() + 1000));
+            expect((await getUserSubscription('user')).tier).toBe('PRO');
+            vi.setSystemTime(new Date(billingEnd));
+            expect((await getUserSubscription('user')).tier).toBe('FREE');
+        }
+    });
+
+    describe.each(['subscription.active', 'subscription.renewed'])('%s', (type) => {
+        it.each([
+            { previous_billing_date: undefined, next_billing_date: billingEnd },
+            { previous_billing_date: billingStart, next_billing_date: undefined },
+            { previous_billing_date: 'invalid', next_billing_date: billingEnd },
+            { previous_billing_date: billingStart, next_billing_date: 'invalid' },
+            { previous_billing_date: billingStart, next_billing_date: billingStart },
+            { previous_billing_date: billingEnd, next_billing_date: billingStart },
+        ])('rejects missing or invalid billing dates: %j', async (dates) => {
+            db.webhookEvent.findUnique.mockResolvedValue({
+                payload: {
+                    type,
+                    data: {
+                        subscription_id: 'dodo-sub',
+                        metadata: { user_id: 'user', tier_id: 'pro' },
+                        ...dates,
+                    },
+                },
+            });
+            await expect(new DodoWebhookService().processWebhookEvent('invalid')).rejects.toThrow(
+                /billing dates/,
+            );
+            expect(db.userSubscription.upsert).not.toHaveBeenCalled();
+            expect(db.userSubscription.update).not.toHaveBeenCalled();
+            expect(db.user.update).not.toHaveBeenCalled();
+            expect(db.webhookEvent.update).not.toHaveBeenCalled();
+        });
     });
 });

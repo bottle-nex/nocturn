@@ -10,8 +10,8 @@ export interface DodoWebhookEvent {
         total_amount?: number;
         currency?: string;
         customer_id?: string;
-        current_period_start?: number;
-        current_period_end?: number;
+        previous_billing_date?: string;
+        next_billing_date?: string;
         billing_interval?: 'monthly' | 'yearly';
         cancel_at?: number;
         status?: string;
