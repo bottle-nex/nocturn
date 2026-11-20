@@ -33,7 +33,13 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        if (quiz.escrowPda) {
+        if (
+            quiz.escrowPda &&
+            (quiz.escrowPda !== escrowPda ||
+                quiz.quizAccountPda !== quizAccountPda ||
+                quiz.hostWalletPubkey !== hostWalletPubkey ||
+                quiz.onChainTxSignature !== txSignature)
+        ) {
             ResponseWriter.error(
                 res,
                 'ALREADY_STAKED',
@@ -44,7 +50,13 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
-        const isValid = await solanaServiceInstance.verify_stake_tx(txSignature, escrowPda);
+        const isValid = await solanaServiceInstance.verify_stake_tx(
+            txSignature,
+            escrowPda,
+            quizId,
+            req.user.id,
+            hostWalletPubkey,
+        );
         if (!isValid.valid) {
             ResponseWriter.error(
                 res,
@@ -56,6 +68,12 @@ export default async function confirmStakeController(req: Request, res: Response
             return;
         }
 
+        if (
+            solanaServiceInstance.quiz_pda(quizId, hostWalletPubkey).toBase58() !== quizAccountPda
+        ) {
+            ResponseWriter.invalid_data(res, 'Quiz account does not match its host');
+            return;
+        }
         const updated = await prisma.quiz.update({
             where: { id: quizId },
             data: {

@@ -21,6 +21,7 @@ export default async function confirmClaimController(req: Request, res: Response
     try {
         const claim = await prisma.prizeClaim.findUnique({
             where: { claimToken: token },
+            include: { quiz: true },
         });
 
         if (!claim) {
@@ -28,28 +29,14 @@ export default async function confirmClaimController(req: Request, res: Response
             return;
         }
 
-        if (claim.status !== 'PENDING') {
-            ResponseWriter.error(
-                res,
-                'CLAIM_NOT_PENDING',
-                `Claim is already ${claim.status}`,
-                undefined,
-                400,
-            );
-            return;
-        }
-
-        if (new Date() > claim.expiresAt) {
-            await prisma.prizeClaim.update({
-                where: { id: claim.id },
-                data: { status: 'EXPIRED' },
-            });
-            ResponseWriter.error(res, 'CLAIM_EXPIRED', 'This claim has expired', undefined, 400);
-            return;
-        }
-
-        // Verify the claim_prize transaction on-chain
-        const isValid = await solanaServiceInstance.verify_transaction(txSignature);
+        const isValid = await solanaServiceInstance.verify_claim_tx(
+            txSignature,
+            claim.quizId,
+            claim.claimToken,
+            claim.quiz.hostWalletPubkey || '',
+            claimerWallet,
+            claim.amountBaseUnits,
+        );
         if (!isValid) {
             ResponseWriter.error(
                 res,
@@ -66,7 +53,7 @@ export default async function confirmClaimController(req: Request, res: Response
             where: { id: claim.id },
             data: {
                 status: 'CLAIMED',
-                claimedAt: new Date(),
+                claimedAt: isValid.claimedAt,
                 claimerWallet,
                 txSignature,
             },

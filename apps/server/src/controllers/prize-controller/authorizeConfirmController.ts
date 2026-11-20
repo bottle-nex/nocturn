@@ -39,7 +39,11 @@ export default async function authorizeConfirmController(req: Request, res: Resp
         }
 
         // Verify the authorize_platform transaction
-        const isValid = await solanaServiceInstance.verify_transaction(txSignature);
+        const isValid = await solanaServiceInstance.verify_authorization_tx(
+            txSignature,
+            quizId,
+            quiz.hostWalletPubkey || '',
+        );
         if (!isValid) {
             ResponseWriter.error(
                 res,
