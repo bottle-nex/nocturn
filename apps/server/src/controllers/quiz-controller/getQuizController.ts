@@ -2,7 +2,13 @@ import { prisma } from '@nocturn/database';
 import { Request, Response } from 'express';
 import QuizAction from '../../class/quizAction';
 import ResponseWriter from '../../class/response_writer';
-import { CollabRole, NOCTURN_COOKIE_NAME, QuizResponseType, QuizStatusEnum } from '@nocturn/types';
+import {
+    allocatePrizes,
+    CollabRole,
+    NOCTURN_COOKIE_NAME,
+    QuizResponseType,
+    QuizStatusEnum,
+} from '@nocturn/types';
 import { parse } from 'cookie';
 import { env } from '../../configs/env';
 
@@ -133,6 +139,12 @@ export default async function getQuizController(req: Request, res: Response): Pr
                 res.clearCookie(NOCTURN_COOKIE_NAME);
             }
         }
+
+        quiz.prizeDistributions = allocatePrizes(
+            quiz.prizePool,
+            quiz.prizeDistributions,
+            quiz.escrowPda ? 'escrow' : 'deposit',
+        );
 
         const serializedQuiz = JSON.parse(
             JSON.stringify(quiz, (_key, value) =>

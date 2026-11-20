@@ -1,5 +1,7 @@
 import Redis from 'ioredis';
 import {
+    allocatePrizes,
+    USDC_BASE_UNITS,
     IncomingChatMessage,
     IncomingChatReaction,
     LiveGameTokenPayload,
@@ -612,10 +614,16 @@ export default class HostManager {
 
         const quiz = await prisma.quiz.findUnique({
             where: { id: quiz_id },
-            select: { prizePool: true, title: true },
+            select: { prizePool: true, title: true, escrowPda: true },
         });
 
         if (!quiz || !quiz.prizePool) return;
+
+        const allocations = allocatePrizes(
+            quiz.prizePool,
+            distributions,
+            quiz.escrowPda ? 'escrow' : 'deposit',
+        );
 
         // Assign finalRanks to rankable (already done in handle_quiz_results)
         // Build rank-to-participants mapping with tie handling
@@ -639,7 +647,7 @@ export default class HostManager {
             amountBaseUnits: bigint;
         }> = [];
 
-        for (const dist of distributions) {
+        for (const dist of allocations) {
             const participantIds = rankMap.get(dist.rank);
             if (!participantIds || participantIds.length === 0) continue;
 
@@ -648,28 +656,25 @@ export default class HostManager {
                 claimsToCreate.push({
                     participantId: participantIds[0]!,
                     rank: dist.rank,
-                    amount: dist.amount || (quiz.prizePool * dist.percentage) / 100,
-                    amountBaseUnits:
-                        dist.amountBaseUnits ||
-                        BigInt(Math.floor(((quiz.prizePool * dist.percentage) / 100) * 1e6)),
+                    amount: dist.amount,
+                    amountBaseUnits: dist.amountBaseUnits,
                 });
             } else {
                 // Tied participants: split the prize for this rank among them
                 // Also collect prizes from subsequent tied positions
                 const tiedCount = participantIds.length;
-                let totalAmountForTied = dist.amount || (quiz.prizePool * dist.percentage) / 100;
+                let totalBaseUnitsForTied = dist.amountBaseUnits;
 
                 // Add amounts from ranks that are "consumed" by the tie
                 for (let r = 1; r < tiedCount; r++) {
-                    const nextDist = distributions.find((d) => d.rank === dist.rank + r);
+                    const nextDist = allocations.find((d) => d.rank === dist.rank + r);
                     if (nextDist) {
-                        totalAmountForTied +=
-                            nextDist.amount || (quiz.prizePool * nextDist.percentage) / 100;
+                        totalBaseUnitsForTied += nextDist.amountBaseUnits;
                     }
                 }
 
-                const splitAmount = totalAmountForTied / tiedCount;
-                const splitBaseUnits = BigInt(Math.floor(splitAmount * 1e6));
+                const splitBaseUnits = totalBaseUnitsForTied / BigInt(tiedCount);
+                const splitAmount = Number(splitBaseUnits) / USDC_BASE_UNITS;
 
                 for (const pid of participantIds) {
                     claimsToCreate.push({

@@ -4,7 +4,7 @@ import z from 'zod';
 import { parse } from 'cookie';
 import { NOCTURN_COOKIE_NAME } from '../../../../../packages/types/src/const/nocturn.const';
 import QuizAction from '../../class/quizAction';
-import { USER_TYPE } from '@nocturn/types';
+import { allocatePrizes, USER_TYPE } from '@nocturn/types';
 import { prisma, QuizStatus } from '@nocturn/database';
 
 const getLivePrizePoolSchema = z.object({
@@ -51,6 +51,8 @@ export default class GetLivePrizePoolController {
                 },
                 select: {
                     status: true,
+                    prizePool: true,
+                    escrowPda: true,
                     prizeDistributions: {
                         select: {
                             rank: true,
@@ -67,7 +69,11 @@ export default class GetLivePrizePoolController {
                 return;
             }
 
-            const distributions = quiz.prizeDistributions.map((d) => ({
+            const distributions = allocatePrizes(
+                quiz.prizePool,
+                quiz.prizeDistributions,
+                quiz.escrowPda ? 'escrow' : 'deposit',
+            ).map((d) => ({
                 ...d,
                 amountBaseUnits: d.amountBaseUnits?.toString() ?? null,
             }));
