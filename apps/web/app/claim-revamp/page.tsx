@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
@@ -461,15 +462,25 @@ export default function ClaimRevampPage() {
             setClaimData(data);
             if (data.status === 'CLAIMED') {
                 setPageStatus('claimed');
-            } else if (data.status === 'EXPIRED' || new Date(data.expiresAt) < new Date()) {
+            } else if (data.status === 'EXPIRED' || data.status === 'REFUNDED') {
                 setPageStatus('expired');
+            } else if (!data.expiresAt) {
+                setError(
+                    'Payouts are awaiting host approval or finalization. Please check back shortly.',
+                );
+                setPageStatus('error');
             } else {
                 setPageStatus('pending');
             }
-        } catch {
-            setPageStatus('not_found');
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                setPageStatus('not_found');
+            } else {
+                setError('Unable to verify this prize. Please try again.');
+                setPageStatus('error');
+            }
         }
-    }, [token, setClaimData, setPageStatus]);
+    }, [token, setClaimData, setPageStatus, setError]);
 
     useEffect(() => {
         fetchClaim();
@@ -502,6 +513,8 @@ export default function ClaimRevampPage() {
                 setClaimData({ ...claimData, status: 'CLAIMED', txSignature });
             }
         } catch {
+            await fetchClaim();
+            if (useClaimStore.getState().claimData?.status === 'CLAIMED') return;
             setError('Transaction failed. Please try again.');
             setPageStatus('error');
         }
@@ -511,7 +524,8 @@ export default function ClaimRevampPage() {
         if (pageStatus === 'loading') return 'Loading...';
         if (pageStatus === 'not_found') return 'Claim Not Found';
         if (pageStatus === 'claimed') return 'Prize Claimed';
-        if (pageStatus === 'expired') return 'Claim Expired';
+        if (pageStatus === 'expired')
+            return claimData?.status === 'REFUNDED' ? 'Prize Refunded' : 'Claim Expired';
         if (pageStatus === 'error') return 'Something Went Wrong';
         return 'Claim Your Prize';
     }
@@ -520,7 +534,10 @@ export default function ClaimRevampPage() {
         if (pageStatus === 'loading') return 'Verifying your claim link...';
         if (pageStatus === 'not_found') return 'This claim link is invalid or has been removed';
         if (pageStatus === 'claimed') return 'Your USDC has been transferred to your wallet';
-        if (pageStatus === 'expired') return 'The 7-day claim window has passed';
+        if (pageStatus === 'expired')
+            return claimData?.status === 'REFUNDED'
+                ? 'The host has reclaimed this prize'
+                : 'The 7-day claim window has passed';
         if (pageStatus === 'error') return error || 'An unexpected error occurred';
         return 'Connect your Solana wallet to withdraw your winnings';
     }
@@ -560,6 +577,9 @@ export default function ClaimRevampPage() {
                             </motion.div>
                         )}
 
+                        {pageStatus === 'error' && !claimData && (
+                            <ErrorNotice error={error} onRetry={fetchClaim} />
+                        )}
                         {claimData && pageStatus !== 'loading' && pageStatus !== 'not_found' && (
                             <motion.div key="claim-content" {...FADE_UP} className="mt-5 space-y-4">
                                 <RankAmountCard
@@ -571,9 +591,10 @@ export default function ClaimRevampPage() {
 
                                 {(pageStatus === 'pending' ||
                                     pageStatus === 'connecting' ||
-                                    pageStatus === 'claiming') && (
-                                    <CountdownBar expiresAt={claimData.expiresAt} />
-                                )}
+                                    pageStatus === 'claiming') &&
+                                    claimData.expiresAt && (
+                                        <CountdownBar expiresAt={claimData.expiresAt} />
+                                    )}
 
                                 {pageStatus === 'expired' && <ExpiredNotice />}
 
@@ -585,10 +606,7 @@ export default function ClaimRevampPage() {
                                 )}
 
                                 {pageStatus === 'error' && (
-                                    <ErrorNotice
-                                        error={error}
-                                        onRetry={() => setPageStatus('pending')}
-                                    />
+                                    <ErrorNotice error={error} onRetry={fetchClaim} />
                                 )}
 
                                 {(pageStatus === 'pending' ||

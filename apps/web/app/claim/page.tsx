@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useClaimStore } from '@/store/claim/useClaimStore';
@@ -42,15 +43,25 @@ export default function ClaimPage() {
 
             if (data.status === 'CLAIMED') {
                 setPageStatus('claimed');
-            } else if (data.status === 'EXPIRED' || new Date(data.expiresAt) < new Date()) {
+            } else if (data.status === 'EXPIRED' || data.status === 'REFUNDED') {
                 setPageStatus('expired');
+            } else if (!data.expiresAt) {
+                setError(
+                    'Payouts are awaiting host approval or finalization. Please check back shortly.',
+                );
+                setPageStatus('error');
             } else {
                 setPageStatus('pending');
             }
-        } catch {
-            setPageStatus('not_found');
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                setPageStatus('not_found');
+            } else {
+                setError('Unable to verify this prize. Please try again.');
+                setPageStatus('error');
+            }
         }
-    }, [token, setClaimData, setPageStatus]);
+    }, [token, setClaimData, setPageStatus, setError]);
 
     useEffect(() => {
         fetchClaim();
@@ -93,6 +104,8 @@ export default function ClaimPage() {
                 setClaimData({ ...claimData, status: 'CLAIMED', txSignature });
             }
         } catch {
+            await fetchClaim();
+            if (useClaimStore.getState().claimData?.status === 'CLAIMED') return;
             setError('Failed to claim prize');
             setPageStatus('error');
         }
@@ -106,14 +119,23 @@ export default function ClaimPage() {
         );
     }
 
-    if (pageStatus === 'not_found') {
+    if (pageStatus === 'not_found' || (pageStatus === 'error' && !claimData)) {
         return (
             <div className="min-h-screen bg-[#2B2E4A] flex items-center justify-center">
                 <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-bold text-[#F3ECE7]">Claim Not Found</h1>
+                    <h1 className="text-2xl font-bold text-[#F3ECE7]">
+                        {pageStatus === 'error' ? 'Unable to Verify Prize' : 'Claim Not Found'}
+                    </h1>
                     <p className="text-[#F3ECE7]/60">
-                        This claim link is invalid or has been removed.
+                        {pageStatus === 'error'
+                            ? error
+                            : 'This claim link is invalid or has been removed.'}
                     </p>
+                    {pageStatus === 'error' && (
+                        <button onClick={fetchClaim} className="text-[#E84545] underline">
+                            Try Again
+                        </button>
+                    )}
                 </div>
             </div>
         );
@@ -121,7 +143,7 @@ export default function ClaimPage() {
 
     if (!claimData) return null;
 
-    const timeLeft = Math.max(0, new Date(claimData.expiresAt).getTime() - Date.now());
+    const timeLeft = Math.max(0, new Date(claimData.expiresAt ?? 0).getTime() - Date.now());
     const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
     const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
@@ -163,10 +185,14 @@ export default function ClaimPage() {
                 {/* Status-based content */}
                 {pageStatus === 'expired' && (
                     <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center">
-                        <p className="text-red-400 font-medium">This claim has expired</p>
+                        <p className="text-red-400 font-medium">
+                            {claimData.status === 'REFUNDED'
+                                ? 'This prize was refunded to the host'
+                                : 'This claim has expired'}
+                        </p>
                         <p className="text-red-400/60 text-xs mt-1">
-                            The 7-day claim window has passed. The prize has been returned to the
-                            host.
+                            The 7-day claim window has passed. The prize is no longer available to
+                            claim.
                         </p>
                     </div>
                 )}
@@ -264,10 +290,7 @@ export default function ClaimPage() {
                     <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-center space-y-2">
                         <p className="text-red-400 font-medium">Claim Failed</p>
                         <p className="text-red-400/60 text-xs">{error}</p>
-                        <button
-                            onClick={() => setPageStatus('pending')}
-                            className="text-[#E84545] text-xs underline"
-                        >
+                        <button onClick={fetchClaim} className="text-[#E84545] text-xs underline">
                             Try Again
                         </button>
                     </div>

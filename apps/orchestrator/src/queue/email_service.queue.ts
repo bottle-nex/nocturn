@@ -8,6 +8,7 @@ import {
     OtpEmailData,
     WinnerNotificationEmailData,
 } from '@nocturn/types';
+import { prisma } from '@nocturn/database';
 import ResendService from '../services/email/resend.services';
 export default class EmailServiceProcessor {
     private email_queue: Bull.Queue;
@@ -50,6 +51,25 @@ export default class EmailServiceProcessor {
     }
 
     private async handle_winner_notification_email(data: WinnerNotificationEmailData) {
+        const claim = await prisma.prizeClaim.findUniqueOrThrow({ where: { id: data.claimId } });
+        if (claim.emailSentAt) return;
+        if (
+            claim.emailAttemptedAt &&
+            Date.now() - claim.emailAttemptedAt.getTime() > 23 * 60 * 60 * 1000
+        ) {
+            throw new Error(
+                'Winner email delivery needs reconciliation before retrying outside the provider idempotency window',
+            );
+        }
+        if (!claim.emailAttemptedAt)
+            await prisma.prizeClaim.update({
+                where: { id: claim.id },
+                data: { emailAttemptedAt: new Date() },
+            });
         await ResendService.send_winner_notification_email(data);
+        await prisma.prizeClaim.update({
+            where: { id: claim.id },
+            data: { emailSentAt: new Date() },
+        });
     }
 }

@@ -67,7 +67,7 @@ export interface ClaimData {
     claimedAt: string | null;
     claimerWallet: string | null;
     txSignature: string | null;
-    expiresAt: string;
+    expiresAt: string | null;
 }
 
 export default class SolanaAction {
@@ -205,11 +205,12 @@ export default class SolanaAction {
         const signed = await signTransaction(transaction);
         const txSignature = await connection.sendRawTransaction(signed.serialize());
 
-        await connection.confirmTransaction(
+        const confirmation = await connection.confirmTransaction(
             { signature: txSignature, blockhash, lastValidBlockHeight },
             'confirmed',
         );
 
+        if (confirmation.value.err) throw new Error('Transaction failed on-chain');
         return txSignature;
     }
 
@@ -280,7 +281,15 @@ export default class SolanaAction {
         );
     }
 
-    public static async fetchPrizeClaims(token: string, quizId: string): Promise<PrizeClaim[]> {
+    public static async fetchPrizeClaims(
+        token: string,
+        quizId: string,
+    ): Promise<{
+        claims: PrizeClaim[];
+        authorized: boolean;
+        status: 'FAILED' | 'COMPLETED' | 'PROCESSING' | 'AWAITING_APPROVAL';
+        error: string | null;
+    }> {
         const res = await axios.get(
             `${GET_PRIZE_CLAIMS_URL}/${quizId}`,
             SolanaAction.authHeaders(token),

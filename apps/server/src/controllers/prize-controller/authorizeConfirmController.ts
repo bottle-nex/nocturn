@@ -12,8 +12,8 @@ export default async function authorizeConfirmController(req: Request, res: Resp
     const { quizId } = req.params;
     const { txSignature } = req.body as { txSignature: string };
 
-    if (!quizId || !txSignature) {
-        ResponseWriter.invalid_data(res, 'Quiz ID and transaction signature are required');
+    if (!quizId) {
+        ResponseWriter.invalid_data(res, 'Quiz ID is required');
         return;
     }
 
@@ -39,7 +39,11 @@ export default async function authorizeConfirmController(req: Request, res: Resp
         }
 
         // Verify the authorize_platform transaction
-        const isValid = await solanaServiceInstance.verify_transaction(txSignature);
+        const isValid = await solanaServiceInstance.verify_authorization_tx(
+            txSignature,
+            quizId,
+            quiz.hostWalletPubkey || '',
+        );
         if (!isValid) {
             ResponseWriter.error(
                 res,
@@ -51,32 +55,11 @@ export default async function authorizeConfirmController(req: Request, res: Resp
             return;
         }
 
-        if (quiz.prizeClaims.length === 0) {
-            ResponseWriter.invalid_data(
-                res,
-                'No prize claims found. Quiz results must be completed first.',
-            );
+        if (!quiz.payoutPreparedAt) {
+            ResponseWriter.invalid_data(res, 'Quiz results must be completed first');
             return;
         }
-
-        // Enqueue finalization job
-        await prizeQueueInstance.enqueue_finalization({
-            quizId,
-            quizAccountPda: quiz.quizAccountPda,
-            escrowPda: quiz.escrowPda,
-            hostWalletPubkey: quiz.hostWalletPubkey || '',
-            claims: quiz.prizeClaims.map((claim) => ({
-                id: claim.id,
-                claimToken: claim.claimToken,
-                emailHash: claim.emailHash,
-                amountBaseUnits: claim.amountBaseUnits.toString(),
-                rank: claim.rank,
-                participantEmail: claim.participant.email || '',
-                participantName: claim.participant.nickname,
-                expiresAt: claim.expiresAt.toISOString(),
-            })),
-            quizTitle: quiz.title,
-        });
+        await prizeQueueInstance.enqueue_finalization({ quizId });
 
         ResponseWriter.success(
             res,

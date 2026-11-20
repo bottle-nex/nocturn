@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import { percentageBaseUnits, validateDistributions } from '../../services/prize/prize-allocation';
 
 interface DistributionEntry {
     rank: number;
@@ -21,19 +22,14 @@ export default async function setDistributionController(req: Request, res: Respo
         return;
     }
 
-    // Validate: ranks must be sequential 1..N
-    const sortedDistributions = [...distributions].sort((a, b) => a.rank - b.rank);
-    for (let i = 0; i < sortedDistributions.length; i++) {
-        if (sortedDistributions[i]!.rank !== i + 1) {
-            ResponseWriter.invalid_data(res, 'Ranks must be sequential starting from 1');
-            return;
-        }
-    }
-
-    // Validate: percentages must sum to 100
-    const totalPercentage = distributions.reduce((sum, d) => sum + d.percentage, 0);
-    if (Math.abs(totalPercentage - 100) > 0.01) {
-        ResponseWriter.invalid_data(res, 'Percentages must sum to 100');
+    let sortedDistributions: DistributionEntry[];
+    try {
+        sortedDistributions = validateDistributions(distributions);
+    } catch (error) {
+        ResponseWriter.invalid_data(
+            res,
+            error instanceof Error ? error.message : 'Invalid distribution',
+        );
         return;
     }
 
@@ -52,23 +48,34 @@ export default async function setDistributionController(req: Request, res: Respo
             return;
         }
 
-        // Delete existing distributions and create new ones
-        await prisma.$transaction([
-            prisma.prizeDistribution.deleteMany({ where: { quizId } }),
-            ...sortedDistributions.map((d) => {
-                const amount = (quiz.prizePool * d.percentage) / 100;
-                const amountBaseUnits = BigInt(Math.floor(amount * 1e6));
-                return prisma.prizeDistribution.create({
+        await prisma.$transaction(async (tx) => {
+            await tx.$queryRaw`SELECT id FROM quizzes WHERE id = ${quizId} FOR UPDATE`;
+            const current = await tx.quiz.findUniqueOrThrow({ where: { id: quizId } });
+            if (
+                current.payoutPreparedAt ||
+                ['LIVE', 'PAYOUT_PENDING', 'COMPLETED', 'PAYOUT_COMPLETED'].includes(current.status)
+            ) {
+                throw new Error('Prize distribution is frozen after launch');
+            }
+            await tx.prizeDistribution.deleteMany({ where: { quizId } });
+            for (const entry of sortedDistributions) {
+                const pool =
+                    current.fundedBaseUnits === null
+                        ? BigInt(Math.round(current.prizePool * 1e6))
+                        : BigInt(current.fundedBaseUnits);
+                const amountBaseUnits =
+                    (pool * percentageBaseUnits(entry.percentage)) / BigInt(10000);
+                await tx.prizeDistribution.create({
                     data: {
                         quizId,
-                        rank: d.rank,
-                        percentage: d.percentage,
-                        amount,
+                        rank: entry.rank,
+                        percentage: entry.percentage,
+                        amount: Number(amountBaseUnits) / 1e6,
                         amountBaseUnits,
                     },
                 });
-            }),
-        ]);
+            }
+        });
 
         const created = await prisma.prizeDistribution.findMany({
             where: { quizId },

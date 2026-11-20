@@ -18,7 +18,6 @@ pub fn seal_quiz(
 
     require!(!quiz_account.is_finalized, ErrorCodes::AlreadyFinalized);
     require!(!quiz_account.is_cancelled, ErrorCodes::QuizCancelled);
-    require!(quiz_account.total_winners > 0, ErrorCodes::NotFinalized);
 
     let clock = Clock::get()?;
     quiz_account.is_finalized = true;

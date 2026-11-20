@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ResponseWriter from '../../class/response_writer';
 import { prisma } from '@nocturn/database';
+import { solanaServiceInstance, prizeQueueInstance } from '../../services/init.services';
 
 export default async function getPrizeClaimsController(req: Request, res: Response) {
     if (!req.user?.id) {
@@ -35,13 +36,59 @@ export default async function getPrizeClaimsController(req: Request, res: Respon
             orderBy: { rank: 'asc' },
         });
 
-        // Serialize BigInt to string for JSON response
-        const serializedClaims = claims.map((claim) => ({
-            ...claim,
-            amountBaseUnits: claim.amountBaseUnits.toString(),
-        }));
+        const serializedClaims = [];
+        for (const claim of claims) {
+            const settlement = await solanaServiceInstance.reconcile_claim(
+                quizId,
+                claim.claimToken,
+                quiz.hostWalletPubkey || '',
+                claim.amountBaseUnits,
+            );
+            await prisma.prizeClaim.updateMany({
+                where: { id: claim.id, updatedAt: claim.updatedAt },
+                data: settlement,
+            });
+            serializedClaims.push({
+                id: claim.id,
+                rank: claim.rank,
+                amount: claim.amount,
+                amountBaseUnits: claim.amountBaseUnits.toString(),
+                participant: claim.participant,
+                ...settlement,
+                payoutStatus: quiz.payoutError
+                    ? 'FAILED'
+                    : quiz.payoutSealedAt
+                      ? 'COMPLETED'
+                      : 'PROCESSING',
+                payoutError: quiz.payoutError,
+            });
+        }
 
-        ResponseWriter.success(res, serializedClaims);
+        const chainQuiz = await solanaServiceInstance.fetch_quiz(
+            quizId,
+            quiz.hostWalletPubkey || '',
+        );
+        if (
+            quiz.payoutPreparedAt &&
+            !quiz.payoutSealedAt &&
+            !quiz.payoutError &&
+            chainQuiz.platformAuthority.equals(solanaServiceInstance.platformPublicKey)
+        ) {
+            // Recover an approved transaction whose HTTP confirmation was lost.
+            await prizeQueueInstance.enqueue_finalization({ quizId });
+        }
+        ResponseWriter.success(res, {
+            claims: serializedClaims,
+            authorized: chainQuiz.platformAuthority.equals(solanaServiceInstance.platformPublicKey),
+            status: quiz.payoutError
+                ? 'FAILED'
+                : quiz.payoutSealedAt
+                  ? 'COMPLETED'
+                  : chainQuiz.platformAuthority.equals(solanaServiceInstance.platformPublicKey)
+                    ? 'PROCESSING'
+                    : 'AWAITING_APPROVAL',
+            error: quiz.payoutError,
+        });
     } catch (error) {
         console.error('Failed to get prize claims:', error);
         ResponseWriter.system_error(res);
