@@ -36,8 +36,9 @@ export default class BackendActions {
     static async upsertTemplateAction(
         template: TemplateType,
         token: string,
-    ): Promise<TemplateType | null> {
-        if (!token || !template) return null;
+    ): Promise<{ success: true; template: TemplateType } | { success: false; message: string }> {
+        const fallbackMessage = 'Failed to save theme.';
+        if (!token || !template) return { success: false, message: fallbackMessage };
         try {
             const { data } = await axios.post(UPSERT_QUIZ_TEMPLATE, template, {
                 headers: {
@@ -45,12 +46,16 @@ export default class BackendActions {
                 },
             });
             if (data.success) {
-                return data.data as TemplateType;
+                return { success: true, template: data.data as TemplateType };
             }
-            return null;
+            return { success: false, message: data.message || fallbackMessage };
         } catch (err) {
             console.error('[UPSERT_TEMPLATE_ERROR]', err);
-            return null;
+            const message = axios.isAxiosError(err) ? err.response?.data?.message : undefined;
+            return {
+                success: false,
+                message: typeof message === 'string' ? message : fallbackMessage,
+            };
         }
     }
 

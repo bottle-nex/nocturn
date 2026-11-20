@@ -275,7 +275,8 @@ export default class Subscription {
                 return ResponseWriter.not_authorized(res);
             }
 
-            const tier = (await this.get_user_subscription(user.id)) || SubscriptionEnum.FREE;
+            const tier =
+                (await Subscription.get_user_subscription(user.id)) ?? SubscriptionEnum.FREE;
 
             const isEnabled = planManager.isEnabled(tier, FEATURE.CUSTOM_THEME);
 
@@ -284,6 +285,8 @@ export default class Subscription {
                     res,
                     'CANNOT_CREATE_CUSTOM_THEME',
                     'Become a Pro user to create custom templates',
+                    undefined,
+                    403,
                 );
             }
 
