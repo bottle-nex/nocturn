@@ -11,14 +11,20 @@ import {
 import ResendService from '../services/email/resend.services';
 export default class EmailServiceProcessor {
     private email_queue: Bull.Queue;
+    private winner_email_queue: Bull.Queue;
 
     constructor(queue_name: string) {
         this.email_queue = new Bull<EmailJob>(queue_name, Env.ORCH_REDIS_URL);
+        this.winner_email_queue = new Bull<EmailJob>(
+            `${queue_name}-winner-notifications`,
+            Env.ORCH_REDIS_URL,
+        );
         this.setup_processor();
     }
 
     private setup_processor() {
         this.email_queue.process(this.read_messages.bind(this));
+        this.winner_email_queue.process(this.read_messages.bind(this));
     }
 
     private async read_messages(job: Job<EmailJob>) {
