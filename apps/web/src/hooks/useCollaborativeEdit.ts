@@ -21,7 +21,8 @@ export function useCollaborativeEdit() {
 
             if (shouldDebounce) {
                 const field = Object.keys(partialQuestion)[0]!;
-                const timerId = debounceTimers.current.get(field);
+                const key = `question:${questionIndex}:${field}`;
+                const timerId = debounceTimers.current.get(key);
 
                 if (timerId) clearTimeout(timerId);
 
@@ -30,10 +31,10 @@ export function useCollaborativeEdit() {
                         questionIndex,
                         question: partialQuestion,
                     });
-                    debounceTimers.current.delete(field);
+                    debounceTimers.current.delete(key);
                 }, debounceMs);
 
-                debounceTimers.current.set(field, newTimerId);
+                debounceTimers.current.set(key, newTimerId);
             } else {
                 handleCollaboratorQuestionUpdate({
                     questionIndex,
