@@ -18,7 +18,7 @@ export default class PhaseQueueProcessor {
 
     private start_consuming() {
         this.phase_queue.process('phase_transition', async (job) => {
-            this.transition_worker.handle_transition_phase(job.data);
+            await this.transition_worker.handle_transition_phase(job.data);
         });
     }
 

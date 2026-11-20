@@ -1,3 +1,4 @@
+import { useLiveQuizHostStore } from '@/store/live-quiz/useLiveQuizHostStore';
 import { cleanWebSocketClient, getWebSocketClient } from '@/lib/singleton-socket';
 import WebSocketClient, { MessagePayload } from '@/socket/socket.client';
 import { COLLABORATORS_MESSAGE_TYPE, MESSAGE_TYPES } from '@nocturn/types';
@@ -204,6 +205,9 @@ export const useWebSocket = () => {
     }
 
     function handleHostQuizResults(payload: unknown) {
+        const { isEnding, setIsEnding } = useLiveQuizHostStore.getState();
+        if (!socket.current || isEnding) return;
+        setIsEnding(true);
         const message: MessagePayload = {
             type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
             payload: payload,

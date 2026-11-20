@@ -14,6 +14,8 @@ import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import QuizManager from './QuizManager';
 import {
     prisma,
+    Prisma,
+    withGameSessionLock,
     HostScreen,
     ParticipantScreen,
     SpectatorScreen,
@@ -214,135 +216,163 @@ export default class HostManager {
         const { questionId, questionIndex } = payload;
 
         const { gameSessionId: game_session_id } = ws.user;
-        const quiz = await this.redis_cache.get_quiz(game_session_id);
+        return withGameSessionLock(game_session_id, async (tx) => {
+            const session = await tx.gameSession.findUnique({ where: { id: game_session_id } });
+            if (
+                !session ||
+                session.currentPhase === QuizPhase.QUESTION_ACTIVE ||
+                session.currentPhase === QuizPhase.QUESTION_READING ||
+                session.currentPhase === QuizPhase.QUIZ_RESULTS
+            )
+                return;
+            const quiz = await tx.quiz.findUnique({
+                where: { id: ws.user.quizId },
+                include: { questions: true },
+            });
 
-        if (!quiz) {
-            throw new Error("Quiz doesn't exist in game_session");
-        }
+            if (!quiz) {
+                throw new Error("Quiz doesn't exist in game_session");
+            }
 
-        const question = quiz.questions?.find((q) => q && q.orderIndex === questionIndex);
+            const question = quiz.questions?.find(
+                (q) => q.id === questionId && q.orderIndex === questionIndex,
+            );
 
-        //check this line proeprly
-        if (!question) throw new Error("Questions doesn't exist in quiz");
+            if (!question) throw new Error("Questions doesn't exist in quiz");
 
-        if (question.isAsked) {
-            const pub_sub_message_to_host: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
-                payload: {
-                    error: 'Question is already asked',
-                    questionId: questionId,
-                    questionIndex: questionIndex,
+            if (question.isAsked) {
+                const pub_sub_message_to_host: PubSubMessageTypes = {
+                    type: MESSAGE_TYPES.QUESTION_ALREADY_ASKED,
+                    payload: {
+                        error: 'Question is already asked',
+                        questionId: questionId,
+                        questionIndex: questionIndex,
+                    },
+                    only_socket_id: ws.id,
+                };
+                await this.quizManager.publish_event_to_redis(
+                    game_session_id,
+                    pub_sub_message_to_host,
+                );
+                return;
+            }
+
+            const now = Date.now();
+            const buffer = 2 * SECONDS;
+            const question_reading_time = question.readingTime * SECONDS;
+
+            const start_time = now + buffer;
+            const end_time = start_time + question_reading_time;
+
+            const updatedSession = await tx.gameSession.update({
+                where: { id: game_session_id },
+                data: {
+                    currentQuestionIndex: questionIndex,
+                    currentQuestionId: questionId,
+                    hostScreen: HostScreen.QUESTION_READING,
+                    spectatorScreen: SpectatorScreen.QUESTION_READING,
+                    participantScreen: ParticipantScreen.QUESTION_READING,
+                    phaseStartTime: new Date(start_time),
+                    phaseEndTime: new Date(end_time),
+                    currentPhase: QuizPhase.QUESTION_READING,
                 },
-                only_socket_id: ws.id,
+            });
+            await tx.question.update({ where: { id: questionId }, data: { isAsked: true } });
+            question.isAsked = true;
+            await this.redis_cache.set_game_session(game_session_id, updatedSession);
+            await this.redis_cache.set_quiz(game_session_id, quiz);
+
+            const pub_sub_message_to_participant: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_PARTICIPANT,
+                payload: {
+                    currentQuestionIndex: questionIndex,
+                    currentQuestionId: questionId,
+                    questionTitle: question.question,
+                    startTime: start_time,
+                    endTime: end_time,
+                    currentPhase: QuizPhase.QUESTION_READING,
+                    participantScreen: ParticipantScreen.QUESTION_READING,
+                },
             };
-            this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_host);
-            return;
-        }
+            await this.quizManager.publish_event_to_redis(
+                game_session_id,
+                pub_sub_message_to_participant,
+            );
 
-        const now = Date.now();
-        const buffer = 2 * SECONDS;
-        const question_reading_time = question.readingTime * SECONDS;
+            const pub_sub_message_to_host: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_HOST,
+                payload: {
+                    currentQuestionIndex: questionIndex,
+                    currentQuestionId: questionId,
+                    questionTitle: question.question,
+                    startTime: start_time,
+                    endTime: end_time,
+                    currentPhase: QuizPhase.QUESTION_READING,
+                    hostScreen: HostScreen.QUESTION_READING,
+                },
+            };
+            await this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_host);
 
-        const start_time = now + buffer;
-        const end_time = start_time + question_reading_time;
+            const pub_sub_message_to_spectator: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_SPECTATOR,
+                payload: {
+                    currentQuestionIndex: questionIndex,
+                    currentQuestionId: questionId,
+                    questionTitle: question.question,
+                    startTime: start_time,
+                    endTime: end_time,
+                    currentPhase: QuizPhase.QUESTION_READING,
+                    spectatorScreen: SpectatorScreen.QUESTION_READING,
+                },
+            };
+            await this.quizManager.publish_event_to_redis(
+                game_session_id,
+                pub_sub_message_to_spectator,
+            );
 
-        this.database_queue.update_game_session(
-            game_session_id,
-            {
-                currentQuestionIndex: questionIndex,
-                currentQuestionId: questionId,
-                hostScreen: HostScreen.QUESTION_READING,
-                spectatorScreen: SpectatorScreen.QUESTION_READING,
-                participantScreen: ParticipantScreen.QUESTION_READING,
-                phaseStartTime: new Date(start_time),
-                phaseEndTime: new Date(end_time),
-                currentPhase: QuizPhase.QUESTION_READING,
-            },
-            game_session_id,
-        );
-
-        this.database_queue.update_question(game_session_id, questionId, { isAsked: true });
-
-        const pub_sub_message_to_participant: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_PARTICIPANT,
-            payload: {
-                currentQuestionIndex: questionIndex,
-                currentQuestionId: questionId,
-                questionTitle: question.question,
-                startTime: start_time,
-                endTime: end_time,
-                currentPhase: QuizPhase.QUESTION_READING,
-                participantScreen: ParticipantScreen.QUESTION_READING,
-            },
-        };
-        this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_participant);
-
-        const pub_sub_message_to_host: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_HOST,
-            payload: {
-                currentQuestionIndex: questionIndex,
-                currentQuestionId: questionId,
-                questionTitle: question.question,
-                startTime: start_time,
-                endTime: end_time,
-                currentPhase: QuizPhase.QUESTION_READING,
-                hostScreen: HostScreen.QUESTION_READING,
-            },
-        };
-        this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_host);
-
-        const pub_sub_message_to_spectator: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.QUESTION_READING_PHASE_TO_SPECTATOR,
-            payload: {
-                currentQuestionIndex: questionIndex,
-                currentQuestionId: questionId,
-                questionTitle: question.question,
-                startTime: start_time,
-                endTime: end_time,
-                currentPhase: QuizPhase.QUESTION_READING,
-                spectatorScreen: SpectatorScreen.QUESTION_READING,
-            },
-        };
-        this.quizManager.publish_event_to_redis(game_session_id, pub_sub_message_to_spectator);
-
-        await this.phase_queue.schedule_phase_transition({
-            gameSessionId: game_session_id,
-            questionId,
-            questionIndex,
-            fromPhase: QuizPhase.QUESTION_READING,
-            toPhase: QuizPhase.QUESTION_ACTIVE,
-            executeAt: end_time,
+            await this.phase_queue.schedule_phase_transition({
+                gameSessionId: game_session_id,
+                questionId,
+                questionIndex,
+                fromPhase: QuizPhase.QUESTION_READING,
+                toPhase: QuizPhase.QUESTION_ACTIVE,
+                executeAt: end_time,
+            });
         });
     }
 
     private async handle_host_question_preview_page_change(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
-        const gameSession = await this.redis_cache.get_game_session(game_session_id);
+        await withGameSessionLock(game_session_id, async (tx) => {
+            const session = await tx.gameSession.findUnique({ where: { id: game_session_id } });
+            if (
+                !session ||
+                session.currentPhase === QuizPhase.QUESTION_ACTIVE ||
+                session.currentPhase === QuizPhase.QUESTION_READING ||
+                session.currentPhase === QuizPhase.QUIZ_RESULTS
+            )
+                return;
+            const updatedSession = await tx.gameSession.update({
+                where: { id: game_session_id },
+                data: {
+                    hostScreen: HostScreen.QUESTION_PREVIEW,
+                    spectatorScreen: SpectatorScreen.QUESTION_MOTIVATION,
+                    participantScreen: ParticipantScreen.QUESTION_MOTIVATION,
+                    status: SessionStatusEnum.LIVE,
+                },
+            });
+            await this.redis_cache.set_game_session(game_session_id, updatedSession);
 
-        if (gameSession?.hostScreen === HostScreen.QUESTION_PREVIEW) {
-            return;
-        }
+            const event_data: PubSubMessageTypes = {
+                type: MESSAGE_TYPES.HOST_CHANGE_QUESTION_PREVIEW,
+                payload: {
+                    id: ws.user.userId,
+                    screen: ParticipantScreen.QUESTION_MOTIVATION,
+                },
+            };
 
-        this.database_queue.update_game_session(
-            ws.user.userId,
-            {
-                hostScreen: HostScreen.QUESTION_PREVIEW,
-                spectatorScreen: SpectatorScreen.QUESTION_MOTIVATION,
-                participantScreen: ParticipantScreen.QUESTION_MOTIVATION,
-                status: SessionStatusEnum.LIVE,
-            },
-            game_session_id,
-        );
-
-        const event_data: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.HOST_CHANGE_QUESTION_PREVIEW,
-            payload: {
-                id: ws.user.userId,
-                screen: ParticipantScreen.QUESTION_MOTIVATION,
-            },
-        };
-
-        this.quizManager.publish_event_to_redis(game_session_id, event_data);
+            await this.quizManager.publish_event_to_redis(game_session_id, event_data);
+        });
     }
 
     private async handle_send_chat_message(payload: IncomingChatMessage, ws: GameWebSocket) {
@@ -433,162 +463,197 @@ export default class HostManager {
 
     private async handle_quiz_results(ws: GameWebSocket) {
         const { gameSessionId: game_session_id, quizId: quiz_id } = ws.user;
-
-        const quiz = await this.redis_cache.get_quiz(game_session_id);
-        if (!quiz) return;
-
-        const questions = quiz.questions?.filter((q) => !q.isAsked);
-
-        if (!questions || questions.length !== 0) {
-            // show messaage that quiz is not ended yet
-            return;
-        }
-
-        // Get leaderboard pre-sorted from Redis ZSET (no JS sort needed)
-        const sorted_leaderboard = await this.redis_cache.get_full_leaderboard(game_session_id);
-
-        // Check isKicked for each participant via pipeline
-        const participants_key = this.redis_cache.get_participants_key(game_session_id);
-        const kicked_pipeline = this.redis_cache.redis_cache.pipeline();
-        for (const entry of sorted_leaderboard) {
-            kicked_pipeline.hget(participants_key, `${entry.id}:isKicked`);
-        }
-        const kicked_results = await kicked_pipeline.exec();
-
-        // Filter out kicked participants
-        const rankable = sorted_leaderboard.filter((_, index) => {
-            const kicked_val = kicked_results?.[index]?.[1] as string | null;
-            let isKicked = false;
-            try {
-                isKicked = kicked_val ? JSON.parse(kicked_val) : false;
-            } catch {
-                // ignore parse errors
-            }
-            return !isKicked;
-        });
-
-        // Assign final ranks with tie handling (same score = same rank)
-        let currentRank = 1;
-        for (let i = 0; i < rankable.length; i++) {
-            if (i > 0 && rankable[i]!.totalScore < rankable[i - 1]!.totalScore) {
-                currentRank = i + 1;
-            }
-            await this.redis_cache.set_participant(game_session_id, rankable[i]!.id, {
-                finalRank: currentRank,
+        try {
+            const result = await withGameSessionLock(game_session_id, async (tx) => {
+                const session = await tx.gameSession.findUniqueOrThrow({
+                    where: { id: game_session_id },
+                });
+                const quiz = await tx.quiz.findUniqueOrThrow({
+                    where: { id: quiz_id },
+                    include: { questions: true },
+                });
+                const alreadyEnded = session.currentPhase === QuizPhase.QUIZ_RESULTS;
+                if (
+                    !alreadyEnded &&
+                    (!quiz.questions.length ||
+                        quiz.questions.some((q) => !q.isAsked) ||
+                        session.currentPhase !== QuizPhase.SHOW_RESULTS ||
+                        session.hostScreen !== HostScreen.QUESTION_RESULTS)
+                ) {
+                    throw new Error('Wait for the last question results before ending the quiz.');
+                }
+                const rankable = await tx.participant.findMany({
+                    where: alreadyEnded
+                        ? { quizId: quiz_id, finalRank: { not: null } }
+                        : { quizId: quiz_id, isKicked: false },
+                    orderBy: [{ totalScore: 'desc' }, { id: 'desc' }],
+                });
+                let rank = 1;
+                let previousScore: number | undefined;
+                const ranked = rankable.map((entry, index) => {
+                    if (previousScore !== undefined && entry.totalScore < previousScore)
+                        rank = index + 1;
+                    previousScore = entry.totalScore;
+                    return { ...entry, finalRank: alreadyEnded ? (entry.finalRank ?? rank) : rank };
+                });
+                if (!alreadyEnded) {
+                    for (const entry of ranked) {
+                        await tx.participant.update({
+                            where: { id: entry.id },
+                            data: { finalRank: entry.finalRank },
+                        });
+                    }
+                }
+                const topScores = ranked.slice(0, 10).map((entry) => ({
+                    id: entry.id,
+                    totalScore: entry.totalScore,
+                    rank: entry.finalRank,
+                    nickname: entry.nickname,
+                    avatar: entry.avatar,
+                }));
+                const updatedSession = alreadyEnded
+                    ? session
+                    : await tx.gameSession.update({
+                          where: { id: game_session_id },
+                          data: {
+                              hostScreen: HostScreen.QUIZ_RESULTS,
+                              spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                              participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                              currentPhase: QuizPhase.QUIZ_RESULTS,
+                              quizEndScreen: QuizEndScreen.ARE_YOU_UP,
+                          },
+                      });
+                if (!alreadyEnded) {
+                    await tx.quiz.update({
+                        where: { id: quiz_id },
+                        data: {
+                            status: quiz.prizePool
+                                ? QuizStatus.PAYOUT_PENDING
+                                : QuizStatus.COMPLETED,
+                        },
+                    });
+                    if (quiz.prizePool && quiz.prizePool > 0) {
+                        await this.create_prize_claims(tx, quiz_id, ranked);
+                    }
+                }
+                return {
+                    updatedSession,
+                    ranked,
+                    status: alreadyEnded
+                        ? quiz.status
+                        : quiz.prizePool
+                          ? QuizStatus.PAYOUT_PENDING
+                          : QuizStatus.COMPLETED,
+                    topScores,
+                    totalParticipants: rankable.length,
+                    hasPrizes: !!quiz.prizePool,
+                };
             });
-            this.database_queue.update_participant(
-                rankable[i]!.id,
-                { finalRank: currentRank },
-                game_session_id,
-            );
-        }
-
-        // Get top 10 for display + top 3 as rankers (already sorted from ZSET)
-        const top_scores = await this.redis_cache.get_top_leaderboards(game_session_id, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(game_session_id);
-
-        const rankers = top_scores.slice(0, 3).map((entry, index) => ({
-            id: entry.id,
-            totalScore: entry.totalScore,
-            finalRank: index + 1,
-            nickname: entry.nickname,
-            avatar: entry.avatar,
-        }));
-
-        const event_data: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
-            payload: {
-                topScores: top_scores,
-                totalParticipants: total_participants,
-                rankers: rankers,
-                participantScreen: ParticipantScreen.QUIZ_RESULTS,
-                currentPhase: QuizPhase.QUIZ_RESULTS,
-                hostScreen: HostScreen.QUIZ_RESULTS,
-                spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
-                quizEndScreen: QuizEndScreen.ARE_YOU_UP,
-            },
-        };
-
-        await this.database_queue.update_game_session(
-            game_session_id,
-            {
-                hostScreen: HostScreen.QUIZ_RESULTS,
-                spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
-                participantScreen: ParticipantScreen.QUIZ_RESULTS,
-                currentPhase: QuizPhase.QUIZ_RESULTS,
-                quizEndScreen: QuizEndScreen.ARE_YOU_UP,
-                // this is setting the quiz completed if the quiz has no prize
-                // status: quiz.prizePool ? SessionStatus.LIVE : SessionStatus.COMPLETED,
-            },
-            game_session_id,
-        );
-        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
-
-        this.database_queue.update_quiz(
-            quiz_id,
-            {
-                status: quiz.prizePool ? QuizStatus.PAYOUT_PENDING : QuizStatus.COMPLETED,
-            },
-            game_session_id,
-        );
-
-        // Create prize claims for winners if prize pool exists
-        if (quiz.prizePool && quiz.prizePool > 0) {
-            this.create_prize_claims(quiz_id, game_session_id, rankable).catch((err) => {
-                console.error('Failed to create prize claims:', err);
+            await this.redis_cache.set_game_session(game_session_id, result.updatedSession);
+            await this.redis_cache.set_quiz(game_session_id, { status: result.status });
+            for (const entry of result.ranked) {
+                await this.redis_cache.set_participant(game_session_id, entry.id, {
+                    finalRank: entry.finalRank,
+                    totalScore: entry.totalScore,
+                });
+            }
+            await this.quizManager.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
+                payload: {
+                    topScores: result.topScores,
+                    totalParticipants: result.totalParticipants,
+                    rankers: result.topScores
+                        .slice(0, 3)
+                        .map((entry) => ({ ...entry, finalRank: entry.rank })),
+                    participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                    currentPhase: QuizPhase.QUIZ_RESULTS,
+                    hostScreen: HostScreen.QUIZ_RESULTS,
+                    spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                    quizEndScreen: result.updatedSession.quizEndScreen,
+                },
+            });
+            if (result.hasPrizes) {
+                const totalClaims = await prisma.prizeClaim.count({ where: { quizId: quiz_id } });
+                await this.quizManager.publish_event_to_redis(game_session_id, {
+                    type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
+                    payload: { quizId: quiz_id, totalClaims },
+                });
+            }
+        } catch (error) {
+            console.error('Failed to finalize quiz:', error);
+            await this.quizManager.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS,
+                payload: {
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : 'Failed to end quiz. Please try again.',
+                },
+                only_socket_id: ws.id,
             });
         }
     }
 
     private async handle_advance_quiz_end_screen(ws: GameWebSocket) {
         const { gameSessionId: game_session_id } = ws.user;
-        const gameSession = await this.redis_cache.get_game_session(game_session_id);
-        if (!gameSession?.quizEndScreen) return;
-
-        const commonPayload = {
-            participantScreen: ParticipantScreen.QUIZ_RESULTS,
-            currentPhase: QuizPhase.QUIZ_RESULTS,
-            hostScreen: HostScreen.QUIZ_RESULTS,
-            spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
-        };
-
-        if (gameSession.quizEndScreen === QuizEndScreen.ARE_YOU_UP) {
-            const event_data: PubSubMessageTypes = {
+        await withGameSessionLock(game_session_id, async (tx) => {
+            const session = await tx.gameSession.findUnique({ where: { id: game_session_id } });
+            if (!session || session.currentPhase !== QuizPhase.QUIZ_RESULTS) return;
+            const quizEndScreen =
+                session.quizEndScreen === QuizEndScreen.ARE_YOU_UP
+                    ? QuizEndScreen.READY_TO_ANNOUNCE
+                    : session.quizEndScreen === QuizEndScreen.READY_TO_ANNOUNCE
+                      ? QuizEndScreen.ANNOUNCED
+                      : null;
+            if (!quizEndScreen) return;
+            const updatedSession = await tx.gameSession.update({
+                where: { id: game_session_id },
+                data: { quizEndScreen },
+            });
+            await this.redis_cache.set_game_session(game_session_id, updatedSession);
+            await this.quizManager.publish_event_to_redis(game_session_id, {
                 type: MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN,
-                payload: { ...commonPayload, quizEndScreen: QuizEndScreen.READY_TO_ANNOUNCE },
-            };
-            await this.database_queue.update_game_session(
-                game_session_id,
-                { ...commonPayload, quizEndScreen: QuizEndScreen.READY_TO_ANNOUNCE },
-                game_session_id,
-            );
-            await this.quizManager.publish_event_to_redis(game_session_id, event_data);
-        } else if (gameSession.quizEndScreen === QuizEndScreen.READY_TO_ANNOUNCE) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN,
-                payload: { ...commonPayload, quizEndScreen: QuizEndScreen.ANNOUNCED },
-            };
-            await this.database_queue.update_game_session(
-                game_session_id,
-                { ...commonPayload, quizEndScreen: QuizEndScreen.ANNOUNCED },
-                game_session_id,
-            );
-            await this.quizManager.publish_event_to_redis(game_session_id, event_data);
-        }
+                payload: {
+                    participantScreen: ParticipantScreen.QUIZ_RESULTS,
+                    currentPhase: QuizPhase.QUIZ_RESULTS,
+                    hostScreen: HostScreen.QUIZ_RESULTS,
+                    spectatorScreen: SpectatorScreen.QUIZ_RESULTS,
+                    quizEndScreen,
+                },
+            });
+        });
     }
 
     private async handle_update_current_question(
         ws: GameWebSocket,
         payload: { questionId: string; questionIndex: number },
     ) {
-        this.database_queue.update_game_session(
-            ws.user.gameSessionId,
-            {
-                currentQuestionId: payload.questionId,
-                currentQuestionIndex: payload.questionIndex,
-            },
-            ws.user.gameSessionId,
-        );
+        await withGameSessionLock(ws.user.gameSessionId, async (tx) => {
+            const session = await tx.gameSession.findUnique({
+                where: { id: ws.user.gameSessionId },
+            });
+            if (
+                !session ||
+                session.currentPhase === QuizPhase.QUESTION_ACTIVE ||
+                session.currentPhase === QuizPhase.QUESTION_READING ||
+                session.currentPhase === QuizPhase.QUIZ_RESULTS
+            )
+                return;
+            const question = await tx.question.findFirst({
+                where: {
+                    id: payload.questionId,
+                    quizId: ws.user.quizId,
+                    orderIndex: payload.questionIndex,
+                    isAsked: false,
+                },
+            });
+            if (!question) return;
+            const updatedSession = await tx.gameSession.update({
+                where: { id: ws.user.gameSessionId },
+                data: { currentQuestionId: question.id, currentQuestionIndex: question.orderIndex },
+            });
+            await this.redis_cache.set_game_session(ws.user.gameSessionId, updatedSession);
+        });
     }
 
     private async validateHostInDB(quizId: string, hostId: string): Promise<boolean> {
@@ -599,18 +664,18 @@ export default class HostManager {
     }
 
     private async create_prize_claims(
+        tx: Prisma.TransactionClient,
         quiz_id: string,
-        game_session_id: string,
         rankable: { id: string; totalScore: number }[],
     ) {
-        const distributions = await prisma.prizeDistribution.findMany({
+        const distributions = await tx.prizeDistribution.findMany({
             where: { quizId: quiz_id },
             orderBy: { rank: 'asc' },
         });
 
         if (distributions.length === 0) return;
 
-        const quiz = await prisma.quiz.findUnique({
+        const quiz = await tx.quiz.findUnique({
             where: { id: quiz_id },
             select: { prizePool: true, title: true },
         });
@@ -684,7 +749,7 @@ export default class HostManager {
 
         // Create PrizeClaim records in the database
         for (const claim of claimsToCreate) {
-            const participant = await prisma.participant.findUnique({
+            const participant = await tx.participant.findUnique({
                 where: { id: claim.participantId },
                 select: { email: true, nickname: true },
             });
@@ -695,7 +760,12 @@ export default class HostManager {
             const claimTokenHash = crypto.createHash('sha256').update(claimToken).digest('hex');
             const emailHash = crypto.createHash('sha256').update(participant.email).digest('hex');
 
-            await prisma.prizeClaim.create({
+            const existing = await tx.prizeClaim.findFirst({
+                where: { quizId: quiz_id, participantId: claim.participantId },
+            });
+            if (existing) continue;
+
+            await tx.prizeClaim.create({
                 data: {
                     quizId: quiz_id,
                     participantId: claim.participantId,
@@ -709,16 +779,6 @@ export default class HostManager {
                 },
             });
         }
-
-        // Notify host via WebSocket that prize claims are ready
-        const event_data: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.PRIZE_CLAIMS_READY,
-            payload: {
-                quizId: quiz_id,
-                totalClaims: claimsToCreate.length,
-            },
-        };
-        await this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
     private generateSocketId(): string {

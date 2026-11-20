@@ -22,7 +22,7 @@ export default function HostQuestionResultsRenderer() {
         quiz,
         updateQuiz,
     } = useLiveQuizStore();
-    const { emptyLiveResponses } = useLiveQuizHostStore();
+    const { emptyLiveResponses, isEnding } = useLiveQuizHostStore();
     const [quizEnded, setQuizEnded] = useState<boolean>(false);
     const { handleHostQuizResults, handleUpdateCurrentQuestion } = useWebSocket();
     const { session } = useUserSessionStore();
@@ -94,9 +94,11 @@ export default function HostQuestionResultsRenderer() {
                     'px-3.5 pl-4! py-1.5 text-xs rounded-md tracking-wider',
                     'hover:-translate-y-0.5 transition-all transform duration-150',
                 )}
+                disabled={isEnding}
+                aria-busy={isEnding}
                 onClick={handleOnNextQuestion}
             >
-                {quizEnded ? 'Final Results' : 'Next Question'}
+                {isEnding ? 'Ending quiz…' : quizEnded ? 'Final Results' : 'Next Question'}
                 <MdNavigateNext className="group-hover:translate-x-0.5 transform ease-in duration-150" />
             </Button>
         </div>

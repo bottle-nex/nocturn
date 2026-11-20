@@ -97,7 +97,13 @@ export class SubscribeEventHandlers {
     }
 
     static handleIncomingQuizResultsPageChange(payload: unknown) {
+        useLiveQuizHostStore.getState().setIsEnding(false);
         if (typeof payload !== 'object' || payload === null) return;
+
+        if ('error' in payload && typeof payload.error === 'string') {
+            toast.error(payload.error);
+            return;
+        }
 
         const message = payload as {
             topScores: {

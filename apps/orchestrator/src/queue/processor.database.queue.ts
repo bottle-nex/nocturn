@@ -123,17 +123,24 @@ export class DatabaseQueueProcessors {
                 },
                 data: participant,
             });
+            const changedParticipant = Object.fromEntries(
+                Object.keys(participant).map((field) => [
+                    field,
+                    updatedParticipant[field as keyof Participant],
+                ]),
+            );
             await this.redis_cache.set_participant(
                 game_session_id,
                 updatedParticipant.id,
-                updatedParticipant,
+                changedParticipant,
             );
-
-            await this.redis_cache.set_leaderboard_score(
-                game_session_id,
-                updatedParticipant.id,
-                updatedParticipant.totalScore,
-            );
+            if (participant.totalScore !== undefined) {
+                await this.redis_cache.set_leaderboard_score(
+                    game_session_id,
+                    updatedParticipant.id,
+                    updatedParticipant.totalScore,
+                );
+            }
 
             return { success: true, participant: updatedParticipant };
         } catch (error) {

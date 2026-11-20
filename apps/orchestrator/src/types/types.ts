@@ -151,7 +151,7 @@ export interface PhaseQueueJobDataType {
     questionIndex: number;
     fromPhase: QuizPhase;
     toPhase: QuizPhase;
-    executeAt: Date;
+    executeAt: number;
 }
 
 export interface PhaseTransitionJob {

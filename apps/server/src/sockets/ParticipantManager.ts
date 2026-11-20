@@ -10,7 +10,7 @@ import { CustomWebSocket, GameWebSocket } from '../types/web-socket-types';
 import { v4 as uuid } from 'uuid';
 import DatabaseQueue from '../queue/database/database.queue';
 import RedisCache from '../cache/redis.cache';
-import { prisma, QuizPhase } from '@nocturn/database';
+import { prisma, QuizPhase, acceptAnswer, withGameSessionLock } from '@nocturn/database';
 import WebSocket from 'ws';
 import { socket_codes } from '@nocturn/types';
 import QuizSettings from '../class/quizSettings';
@@ -470,127 +470,54 @@ export default class ParticipantManager {
     }
 
     private async handle_participant_response(payload: any, ws: GameWebSocket) {
-        const { userId: participant_id, gameSessionId: game_session_id } = ws.user;
-
-        const { selectedAnswer } = payload;
-
-        if (typeof selectedAnswer !== 'number') {
-            console.error('Invalid type of selected answer');
-            return;
-        }
-
-        const game_session = await this.redis_cache.get_game_session(game_session_id);
-
-        if (!game_session) {
-            console.error('Game session not found');
-            return;
-        }
-
-        if (game_session.currentPhase !== QuizPhase.QUESTION_ACTIVE) {
-            console.error('quiz is not in active phase');
-            return;
-        }
-
-        if (Date.now() > new Date(game_session.phaseEndTime as any).getTime()) {
-            console.error('question time has expired');
-            return;
-        }
-
-        const old_response = await this.redis_cache.get_participant_response(
-            game_session_id,
-            game_session.currentQuestionId!,
-            participant_id,
-        );
-
-        if (old_response) {
-            const event_data: PubSubMessageTypes = {
-                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
-                payload: {
-                    error: 'Already opted an option.',
-                },
-                only_socket_id: ws.id,
-            };
-            this.quizManager.publish_event_to_redis(game_session_id, event_data);
-            return;
-        }
-
-        const quiz = await this.redis_cache.get_quiz(game_session_id);
-        const participant = await this.redis_cache.get_participant(game_session_id, participant_id);
-        if (!quiz || !participant) {
-            console.error('Quiz or participant not found');
-            return;
-        }
-
-        const question = quiz.questions?.find((q) => q.id === game_session.currentQuestionId);
-        console.log('question is : ', question);
-
-        if (!question) {
-            console.error(`Question with id: ${game_session.currentQuestionId} doesn't exist`);
-            return;
-        }
-
         const answeredAt = Date.now();
-        const question_active_time = new Date(game_session.phaseStartTime!).getTime();
-        const timeToAnswer = answeredAt - question_active_time;
+        const { userId: participant_id, gameSessionId: game_session_id } = ws.user;
+        const { selectedAnswer } = payload;
+        if (!Number.isInteger(selectedAnswer)) return;
 
-        const isCorrectAnswer = selectedAnswer === question.correctAnswer;
-
-        // Streak
-        const newCurrentStreak = isCorrectAnswer ? (participant.currentStreak ?? 0) + 1 : 0;
-        const newLongestStreak = Math.max(participant.longestStreak ?? 0, newCurrentStreak);
-
-        // Time bonus: up to 50% of basePoints for instant answer, 0 at deadline
-        let timeBonus = 0;
-        if (isCorrectAnswer && quiz.timeBonus) {
-            const totalTimeMs = question.timeLimit * 1000;
-            const remainingTime = Math.max(totalTimeMs - timeToAnswer, 0);
-            timeBonus = Math.round(
-                (question.basePoints ?? 0) * (remainingTime / totalTimeMs) * 0.5,
+        try {
+            const accepted = await acceptAnswer(
+                game_session_id,
+                participant_id,
+                selectedAnswer,
+                answeredAt,
             );
+            if (!accepted) {
+                await this.quizManager.publish_event_to_redis(game_session_id, {
+                    type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                    payload: { error: 'Answer already submitted or question is not active.' },
+                    only_socket_id: ws.id,
+                });
+                return;
+            }
+            await this.redis_cache.set_participant_response(
+                game_session_id,
+                accepted.response.questionId,
+                participant_id,
+                accepted.response,
+            );
+            await this.redis_cache.set_participant(
+                game_session_id,
+                participant_id,
+                accepted.participant,
+            );
+            await this.redis_cache.set_leaderboard_score(
+                game_session_id,
+                participant_id,
+                accepted.participant.totalScore,
+            );
+            await this.quizManager.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE,
+                payload: { selectedAnswer },
+            });
+        } catch (error) {
+            console.error('Failed to accept participant answer:', error);
+            await this.quizManager.publish_event_to_redis(game_session_id, {
+                type: MESSAGE_TYPES.PARTICIPANT_RESPONDED_MESSAGE,
+                payload: { error: 'Could not save your answer. Please try again.' },
+                only_socket_id: ws.id,
+            });
         }
-
-        // Streak bonus: 10 pts per streak, capped at 50
-        const streakBonus = isCorrectAnswer ? Math.min(newCurrentStreak * 10, 50) : 0;
-
-        const pointsEarned = isCorrectAnswer
-            ? (question.basePoints ?? 0) + timeBonus + streakBonus
-            : 0;
-        await this.database_queue.create_participant_response(participant_id, game_session_id, {
-            selectedAnswer,
-            isCorrect: isCorrectAnswer,
-            timeToAnswer,
-            pointsEarned,
-            timeBonus,
-            streakBonus,
-            answeredAt: new Date(answeredAt),
-            questionId: game_session.currentQuestionId!,
-        });
-
-        await this.database_queue.update_participant(
-            participant_id,
-            {
-                totalScore: (participant.totalScore ?? 0) + pointsEarned,
-                correctAnswers: isCorrectAnswer
-                    ? (participant.correctAnswers ?? 0) + 1
-                    : (participant.correctAnswers ?? 0),
-                currentStreak: newCurrentStreak,
-                longestStreak: newLongestStreak,
-            },
-            game_session_id,
-        );
-        await this.redis_cache.update_leaderboard_score(
-            game_session_id,
-            participant_id,
-            pointsEarned,
-        );
-
-        const event_data: PubSubMessageTypes = {
-            type: MESSAGE_TYPES.PARTICIPANT_RESPONSE_MESSAGE,
-            payload: {
-                selectedAnswer: selectedAnswer,
-            },
-        };
-        this.quizManager.publish_event_to_redis(game_session_id, event_data);
     }
 
     private async handle_participant_leave_gamesession(ws: GameWebSocket) {
@@ -636,12 +563,16 @@ export default class ParticipantManager {
                 };
                 this.quizManager.publish_event_to_redis(game_session_id, event_data);
 
-                await this.database_queue.update_participant(
-                    participant_id,
-                    { isKicked: true },
-                    game_session_id,
-                );
-                await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+                await withGameSessionLock(game_session_id, async (tx) => {
+                    await tx.participant.update({
+                        where: { id: participant_id },
+                        data: { isKicked: true },
+                    });
+                    await this.redis_cache.set_participant(game_session_id, participant_id, {
+                        isKicked: true,
+                    });
+                    await this.redis_cache.remove_from_leaderboard(game_session_id, participant_id);
+                });
                 return;
             }
 
