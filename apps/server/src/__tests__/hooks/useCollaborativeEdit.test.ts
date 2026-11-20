@@ -87,15 +87,15 @@ describe('collaborative edit debouncing', () => {
     it('keeps different fields and quiz edits independent', () => {
         const { editQuestionAndBroadcast, updateQuizAndBroadcast } = useCollaborativeEdit();
         editQuestionAndBroadcast(2, { question: 'Title' }, { debounce: true });
-        editQuestionAndBroadcast(2, { image: 'question.png' }, { debounce: true });
-        updateQuizAndBroadcast({ image: 'quiz.png' }, { debounce: true });
+        editQuestionAndBroadcast(2, { id: 'question-3' }, { debounce: true });
+        updateQuizAndBroadcast({ id: 'quiz-id' }, { debounce: true });
         vi.advanceTimersByTime(1000);
         expect(mocks.handleCollaboratorQuestionUpdate.mock.calls).toEqual([
             [{ questionIndex: 2, question: { question: 'Title' } }],
-            [{ questionIndex: 2, question: { image: 'question.png' } }],
+            [{ questionIndex: 2, question: { id: 'question-3' } }],
         ]);
         expect(mocks.handleCollaboratorQuizUpdate).toHaveBeenCalledExactlyOnceWith({
-            image: 'quiz.png',
+            id: 'quiz-id',
         });
     });
 
