@@ -7,6 +7,16 @@ interface FinalizationJobData {
     quizId: string;
 }
 
+interface WinnerNotificationClaim {
+    id: string;
+    claimToken: string;
+    rank: number;
+    amountBaseUnits: bigint;
+    expiresAt: Date | null;
+    emailSentAt: Date | null;
+    participant: { email: string; nickname: string };
+}
+
 export default class PrizeQueue {
     private queue: Bull.Queue;
 
@@ -16,6 +26,17 @@ export default class PrizeQueue {
     }
 
     private setup_processor() {
+        this.queue.process('RECOVER_WINNER_NOTIFICATIONS', async () => {
+            const claims = await prisma.prizeClaim.findMany({
+                where: {
+                    emailSentAt: null,
+                    expiresAt: { gt: new Date() },
+                    quiz: { payoutSealedAt: { not: null } },
+                },
+                include: { participant: true, quiz: true },
+            });
+            for (const claim of claims) await this.enqueue_notification(claim, claim.quiz.title);
+        });
         this.queue.process('RECONCILE_PRIZE_CLAIM', async (job) => {
             const claim = await prisma.prizeClaim.findUniqueOrThrow({
                 where: { id: job.data.claimId },
@@ -130,24 +151,29 @@ export default class PrizeQueue {
                 },
             }),
         ]);
-        // Claim records are the durable notification outbox. Completed Bull jobs
-        // are retained, so a crash between enqueue and this update is repeatable.
         for (const claim of quiz.prizeClaims) {
-            if (claim.emailQueuedAt || claim.emailSentAt) continue;
-            await email_service_queue_instance.email_winner_notification({
-                claimId: claim.id,
-                email: claim.participant.email,
-                participantName: claim.participant.nickname,
-                quizTitle: quiz.title,
-                rank: claim.rank,
-                prizeAmount: Number(claim.amountBaseUnits) / 1e6,
-                claimUrl: `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`,
-                expiresAt: expiresAt.toISOString(),
-            });
-            await prisma.prizeClaim.update({
-                where: { id: claim.id },
-                data: { emailQueuedAt: new Date() },
-            });
+            await this.enqueue_notification({ ...claim, expiresAt }, quiz.title);
         }
+    }
+
+    private async enqueue_notification(claim: WinnerNotificationClaim, quizTitle: string) {
+        if (claim.emailSentAt || !claim.expiresAt || claim.expiresAt.getTime() <= Date.now())
+            return;
+        // Enqueue is not delivery: inspect/retry the retained winner job until
+        // provider acceptance is recorded, even when emailQueuedAt was persisted.
+        await email_service_queue_instance.email_winner_notification({
+            claimId: claim.id,
+            email: claim.participant.email,
+            participantName: claim.participant.nickname,
+            quizTitle,
+            rank: claim.rank,
+            prizeAmount: Number(claim.amountBaseUnits) / 1e6,
+            claimUrl: `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`,
+            expiresAt: claim.expiresAt.toISOString(),
+        });
+        await prisma.prizeClaim.update({
+            where: { id: claim.id },
+            data: { emailQueuedAt: new Date() },
+        });
     }
 }

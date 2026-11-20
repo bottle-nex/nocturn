@@ -73,6 +73,11 @@ export default class EmailServiceQueue {
     public async email_winner_notification(
         data: WinnerNotificationEmailData,
     ): Promise<Bull.Job<EmailJob>> {
+        const existing = await this.email_queue.getJob(`winner-${data.claimId}`);
+        if (existing) {
+            if (await existing.isFailed()) await existing.retry();
+            return existing;
+        }
         return this.email_queue.add(
             { type: EmailJobType.WINNER_NOTIFICATION, data },
             {

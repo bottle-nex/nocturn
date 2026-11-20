@@ -19,7 +19,7 @@ export default class PrizeExpiryWorker {
             'check-expired-claims',
             {},
             {
-                repeat: { cron: '0 0 * * *' }, // daily at midnight
+                repeat: { cron: '*/5 * * * *' }, // recover delivery within the provider idempotency window
                 removeOnComplete: 5,
                 removeOnFail: 5,
             },
@@ -35,6 +35,16 @@ export default class PrizeExpiryWorker {
     private async expire_pending_claims() {
         const queue = new Bull('prize-finalization', { redis: Env.ORCH_REDIS_URL });
         try {
+            await queue.add(
+                'RECOVER_WINNER_NOTIFICATIONS',
+                {},
+                {
+                    jobId: 'recover-winner-notifications',
+                    attempts: 3,
+                    removeOnComplete: true,
+                    removeOnFail: true,
+                },
+            );
             const claims = await prisma.prizeClaim.findMany({
                 where: { status: { in: ['PENDING', 'EXPIRED'] } },
                 select: { id: true },

@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => ({
     },
     prisma: {
         quiz: { findUniqueOrThrow: vi.fn(), update: vi.fn() },
-        prizeClaim: { update: vi.fn(), updateMany: vi.fn() },
+        prizeClaim: { update: vi.fn(), updateMany: vi.fn(), findMany: vi.fn() },
         $transaction: vi.fn(async (operations: Promise<unknown>[]) => Promise.all(operations)),
     },
     solana: {
@@ -146,13 +146,52 @@ describe('prize finalization recovery', () => {
         expect(mocks.prisma.prizeClaim.update).not.toHaveBeenCalled();
     });
 
-    it('does not enqueue notifications already accepted for delivery', async () => {
+    it('does not enqueue notifications already delivered', async () => {
+        mocks.prisma.quiz.findUniqueOrThrow.mockResolvedValueOnce({
+            ...quiz,
+            prizeClaims: [
+                { ...quiz.prizeClaims[0], emailQueuedAt: new Date(), emailSentAt: new Date() },
+            ],
+        });
+        await processJob();
+        expect(mocks.email.email_winner_notification).not.toHaveBeenCalled();
+    });
+
+    it('revisits queued but undelivered notifications on a payout retry', async () => {
         mocks.prisma.quiz.findUniqueOrThrow.mockResolvedValueOnce({
             ...quiz,
             prizeClaims: [{ ...quiz.prizeClaims[0], emailQueuedAt: new Date() }],
         });
         await processJob();
-        expect(mocks.email.email_winner_notification).not.toHaveBeenCalled();
+        expect(mocks.email.email_winner_notification).toHaveBeenCalledOnce();
+    });
+
+    it('recovers unsent notifications independently of a completed finalization job', async () => {
+        mocks.prisma.prizeClaim.findMany.mockResolvedValueOnce([
+            {
+                ...quiz.prizeClaims[0],
+                emailQueuedAt: new Date(),
+                expiresAt: new Date(deadline * 1000),
+                quiz,
+            },
+        ]);
+        const recover = mocks.queue.process.mock.calls.find(
+            ([name]) => name === 'RECOVER_WINNER_NOTIFICATIONS',
+        )?.[1];
+        if (!recover) throw new Error('Notification recovery processor is missing');
+        await recover({ data: { quizId: 'quiz' } });
+        expect(mocks.prisma.prizeClaim.findMany).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: {
+                    emailSentAt: null,
+                    expiresAt: { gt: expect.any(Date) },
+                    quiz: { payoutSealedAt: { not: null } },
+                },
+            }),
+        );
+        expect(mocks.email.email_winner_notification).toHaveBeenCalledOnce();
+        expect(mocks.solana.fetch_quiz).not.toHaveBeenCalled();
+        expect(mocks.solana.seal_quiz_onchain).not.toHaveBeenCalled();
     });
 
     it('can finish an empty frozen batch', async () => {
