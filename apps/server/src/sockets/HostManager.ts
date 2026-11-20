@@ -614,12 +614,16 @@ export default class HostManager {
 
         const quiz = await prisma.quiz.findUnique({
             where: { id: quiz_id },
-            select: { prizePool: true, title: true },
+            select: { prizePool: true, title: true, escrowPda: true },
         });
 
         if (!quiz || !quiz.prizePool) return;
 
-        const allocations = allocatePrizes(quiz.prizePool, distributions);
+        const allocations = allocatePrizes(
+            quiz.prizePool,
+            distributions,
+            quiz.escrowPda ? 'escrow' : 'deposit',
+        );
 
         // Assign finalRanks to rankable (already done in handle_quiz_results)
         // Build rank-to-participants mapping with tie handling

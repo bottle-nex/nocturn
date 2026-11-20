@@ -116,12 +116,14 @@ function PrizeDistributionList({
     prizePool,
     totalPercentage,
     isValid,
+    poolType,
 }: {
     percentages: number[];
     handlePercentageChange: (i: number, v: number) => void;
     prizePool: number;
     totalPercentage: number;
     isValid: boolean;
+    poolType: 'deposit' | 'escrow';
 }) {
     const allocations =
         isValid &&
@@ -131,6 +133,7 @@ function PrizeDistributionList({
             ? allocatePrizes(
                   prizePool,
                   percentages.map((percentage) => ({ percentage })),
+                  poolType,
               )
             : [];
     const barColors = ['bg-[#c44536]', 'bg-[#edddd4]', 'bg-[#197278]'];
@@ -403,6 +406,7 @@ export default function StakeConfigModal({
                                         prizePool={prizePool}
                                         totalPercentage={totalPercentage}
                                         isValid={isValid}
+                                        poolType={quiz.escrowPda ? 'escrow' : 'deposit'}
                                     />
                                 </div>
                             </div>

@@ -61,7 +61,11 @@ export default async function setDistributionController(req: Request, res: Respo
             return;
         }
 
-        const allocations = allocatePrizes(quiz.prizePool, sortedDistributions);
+        const allocations = allocatePrizes(
+            quiz.prizePool,
+            sortedDistributions,
+            quiz.escrowPda ? 'escrow' : 'deposit',
+        );
 
         // Delete existing distributions and create new ones
         await prisma.$transaction([

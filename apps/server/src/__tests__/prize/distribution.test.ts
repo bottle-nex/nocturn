@@ -140,6 +140,47 @@ describe('saving prize distributions', () => {
 });
 
 describe('reading prize distributions', () => {
+    it('uses the full confirmed pool when saving and reading distributions', async () => {
+        db.quiz.findFirst.mockResolvedValue({
+            id: 'quiz',
+            hostId: TEST_USER.id,
+            status: 'CREATED',
+            prizePool: 99,
+            escrowPda: 'escrow',
+            prizeDistributions: legacy,
+        });
+        db.quiz.findUnique.mockResolvedValue({
+            status: 'LIVE',
+            prizePool: 99,
+            escrowPda: 'escrow',
+            prizeDistributions: legacy,
+        });
+        const saved = await request(saveApp)
+            .post('/distribution/quiz')
+            .set('Authorization', bearerHeader())
+            .send({ distributions: entries })
+            .expect(200);
+        const editor = await request(readApp)
+            .get('/quiz/quiz')
+            .set('Authorization', bearerHeader())
+            .expect(200);
+        const live = await request(liveApp)
+            .get('/live/quiz')
+            .set('Cookie', `${NOCTURN_COOKIE_NAME}=valid`)
+            .expect(200);
+        for (const distributions of [
+            saved.body.data,
+            editor.body.data.quiz.prizeDistributions,
+            live.body.data,
+        ]) {
+            expect(distributions.map((d: { amount: number }) => d.amount)).toEqual([
+                49.5, 29.7, 19.8,
+            ]);
+            expect(
+                distributions.map((d: { amountBaseUnits: string }) => d.amountBaseUnits),
+            ).toEqual(['49500000', '29700000', '19800000']);
+        }
+    });
     it('recalculates legacy gross amounts for the editor', async () => {
         const response = await request(readApp)
             .get('/quiz/quiz')

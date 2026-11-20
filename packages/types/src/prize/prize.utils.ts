@@ -33,7 +33,7 @@ function decimalRatio(value: number): {
       };
 }
 
-export function getNetPrizePoolBaseUnits(prizePool: number): bigint {
+function toUsdcBaseUnits(prizePool: number): bigint {
   if (!Number.isFinite(prizePool) || prizePool < 0) {
     throw new Error("Prize pool must be finite and non-negative");
   }
@@ -42,6 +42,11 @@ export function getNetPrizePoolBaseUnits(prizePool: number): bigint {
   if (gross > BigInt(Number.MAX_SAFE_INTEGER)) {
     throw new Error("Prize pool exceeds safe token precision");
   }
+  return gross;
+}
+
+export function getNetPrizePoolBaseUnits(prizePool: number): bigint {
+  const gross = toUsdcBaseUnits(prizePool);
   // The deployed contract divides before multiplying; preserve that order.
   const fee = (gross / BigInt(100)) * BigInt(PRIZE_FEE_PERCENT);
   return gross - fee;
@@ -50,6 +55,7 @@ export function getNetPrizePoolBaseUnits(prizePool: number): bigint {
 export function allocatePrizes<T extends { percentage: number }>(
   prizePool: number,
   distributions: readonly T[],
+  poolType: "deposit" | "escrow" = "deposit",
 ): (T & { amount: number; amountBaseUnits: bigint })[] {
   if (distributions.length === 0) return [];
   if (!isValidPrizePercentages(distributions.map((d) => d.percentage))) {
@@ -57,7 +63,11 @@ export function allocatePrizes<T extends { percentage: number }>(
       "Prize percentages must be finite, between 0 and 100, and sum to 100",
     );
   }
-  const net = getNetPrizePoolBaseUnits(prizePool);
+  // Stake confirmation stores the escrow balance, which already excludes fees.
+  const net =
+    poolType === "escrow"
+      ? toUsdcBaseUnits(prizePool)
+      : getNetPrizePoolBaseUnits(prizePool);
   const ratios = distributions.map((distribution) => ({
     distribution,
     ...decimalRatio(distribution.percentage),

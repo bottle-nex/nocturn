@@ -52,6 +52,7 @@ export default class GetLivePrizePoolController {
                 select: {
                     status: true,
                     prizePool: true,
+                    escrowPda: true,
                     prizeDistributions: {
                         select: {
                             rank: true,
@@ -68,12 +69,14 @@ export default class GetLivePrizePoolController {
                 return;
             }
 
-            const distributions = allocatePrizes(quiz.prizePool, quiz.prizeDistributions).map(
-                (d) => ({
-                    ...d,
-                    amountBaseUnits: d.amountBaseUnits?.toString() ?? null,
-                }),
-            );
+            const distributions = allocatePrizes(
+                quiz.prizePool,
+                quiz.prizeDistributions,
+                quiz.escrowPda ? 'escrow' : 'deposit',
+            ).map((d) => ({
+                ...d,
+                amountBaseUnits: d.amountBaseUnits?.toString() ?? null,
+            }));
 
             ResponseWriter.success(res, distributions);
             return;

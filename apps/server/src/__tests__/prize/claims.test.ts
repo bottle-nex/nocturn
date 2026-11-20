@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Redis from 'ioredis';
+import request from 'supertest';
+import { buildRouteApp } from '../helpers/app.helper';
+import { bearerHeader } from '../helpers/auth.helper';
+import authMiddleware from '../../middlewares/auth.middleware';
+import confirmStakeController from '../../controllers/prize-controller/confirmStakeController';
 import HostManager from '../../sockets/HostManager';
 import QuizManager from '../../sockets/QuizManager';
 import DatabaseQueue from '../../queue/database/database.queue';
@@ -8,12 +13,24 @@ import PhaseQueue from '../../queue/PhaseQueue';
 import { getNetPrizePoolBaseUnits } from '@nocturn/types';
 
 const db = vi.hoisted(() => ({
-    quiz: { findUnique: vi.fn() },
+    quiz: { findUnique: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
     prizeDistribution: { findMany: vi.fn() },
     participant: { findUnique: vi.fn() },
     prizeClaim: { create: vi.fn() },
 }));
 vi.mock('@nocturn/database', () => ({ prisma: db }));
+const solana = vi.hoisted(() => ({ verify_stake_tx: vi.fn() }));
+vi.mock('../../services/init.services', () => ({
+    solanaServiceInstance: solana,
+    quizSettingInstance: {},
+}));
+vi.mock('../../configs/env', () => ({
+    env: {
+        SERVER_JWT_SECRET: process.env.SERVER_JWT_SECRET,
+        SERVER_JWT_REFRESH_SECRET: process.env.SERVER_JWT_REFRESH_SECRET,
+        SERVER_NODE_ENV: 'test',
+    },
+}));
 // These dependencies are inert: exercise claim creation without starting Redis,
 // sockets or queue workers. QuizManager's publishing method is spied below.
 vi.mock('ioredis', () => ({ default: class {} }));
@@ -56,7 +73,7 @@ const createdAmounts = () =>
 
 beforeEach(() => {
     vi.clearAllMocks();
-    db.quiz.findUnique.mockResolvedValue({ prizePool: 100, title: 'Quiz' });
+    db.quiz.findUnique.mockResolvedValue({ prizePool: 99, escrowPda: 'escrow', title: 'Quiz' });
     db.prizeDistribution.findMany.mockResolvedValue(entries([50, 30, 20]));
     db.participant.findUnique.mockResolvedValue({
         email: 'winner@example.com',
@@ -66,6 +83,34 @@ beforeEach(() => {
 });
 
 describe('prize claim creation', () => {
+    it('uses the net pool saved by stake confirmation for the entire payout', async () => {
+        db.quiz.findFirst.mockResolvedValueOnce({ prizePool: 100 });
+        solana.verify_stake_tx.mockResolvedValueOnce({ valid: true, baseUnits: 99_000_000 });
+        db.quiz.update.mockImplementationOnce(async ({ data }) => data);
+        const app = buildRouteApp('post', '/stake/:quizId', authMiddleware, confirmStakeController);
+        const response = await request(app)
+            .post('/stake/quiz')
+            .set('Authorization', bearerHeader())
+            .send({
+                txSignature: 'signature',
+                escrowPda: 'escrow',
+                quizAccountPda: 'quiz-account',
+                hostWalletPubkey: 'host',
+            })
+            .expect(200);
+        expect(response.body.data.prizePool).toBe(99);
+        expect(solana.verify_stake_tx).toHaveBeenCalledWith('signature', 'escrow');
+        db.quiz.findUnique.mockResolvedValueOnce(response.body.data);
+        await host['create_prize_claims']('quiz', 'session', rankable([30, 20, 10]));
+        expect(createdAmounts()).toEqual([
+            BigInt(49_500_000),
+            BigInt(29_700_000),
+            BigInt(19_800_000),
+        ]);
+        expect(
+            createdAmounts().reduce((sum: bigint, amount: bigint) => sum + amount, BigInt(0)),
+        ).toBe(BigInt(99_000_000));
+    });
     it('recalculates legacy gross amounts before creating all three claims', async () => {
         await host['create_prize_claims']('quiz', 'session', rankable([30, 20, 10]));
         expect(createdAmounts()).toEqual([

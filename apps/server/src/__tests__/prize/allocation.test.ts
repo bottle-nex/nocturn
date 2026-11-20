@@ -38,6 +38,12 @@ describe('prize allocation', () => {
         }
     });
 
+    it('allocates the full confirmed escrow balance without deducting another fee', () => {
+        const prizes = allocatePrizes(99, entries([50, 30, 20]), 'escrow');
+        expect(prizes.map((p) => p.amount)).toEqual([49.5, 29.7, 19.8]);
+        expect(sum(prizes.map((p) => p.amountBaseUnits))).toBe(BigInt(99_000_000));
+    });
+
     it('matches the contract fee constant and division order', () => {
         const data = readFileSync(
             resolve(__dirname, '../../../../contract/programs/contract/src/data/nocturn_data.rs'),

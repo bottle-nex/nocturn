@@ -140,7 +140,11 @@ export default async function getQuizController(req: Request, res: Response): Pr
             }
         }
 
-        quiz.prizeDistributions = allocatePrizes(quiz.prizePool, quiz.prizeDistributions);
+        quiz.prizeDistributions = allocatePrizes(
+            quiz.prizePool,
+            quiz.prizeDistributions,
+            quiz.escrowPda ? 'escrow' : 'deposit',
+        );
 
         const serializedQuiz = JSON.parse(
             JSON.stringify(quiz, (_key, value) =>
