@@ -16,6 +16,7 @@ export default async function getSharedQuizController(req: Request, res: Respons
                     collaborators: {
                         some: {
                             userId: user.id,
+                            isBlocked: false,
                         },
                     },
                 },
@@ -44,6 +45,7 @@ export default async function getSharedQuizController(req: Request, res: Respons
                         collaborators: {
                             where: {
                                 userId: user.id,
+                                isBlocked: false,
                             },
                             select: {
                                 role: true,
