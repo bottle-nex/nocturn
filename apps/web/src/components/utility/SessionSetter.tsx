@@ -2,6 +2,7 @@
 
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
 import { INIT_REFRESH_URL, REFRESH_TOKEN_URL } from 'routes/api_routes';
 import axios from 'axios';
@@ -45,6 +46,31 @@ export default function SessionSetter({ session }: SessionSetterProps) {
         setSession(session);
     }, [session, setSession]);
 
+    // Re-read billing state for open tabs as well as after returning to the app.
+    useEffect(() => {
+        if (!session?.user?.id) return;
+        let active = true;
+        const refreshSubscription = async () => {
+            try {
+                const latest = await getSession();
+                const current = useUserSessionStore.getState().session;
+                if (active && latest?.user && current?.user && current.user.id === latest.user.id) {
+                    setSession({ ...latest, user: { ...latest.user, token: current.user.token } });
+                }
+            } catch (error) {
+                console.error('Failed to refresh subscription:', error);
+            }
+        };
+        void refreshSubscription();
+        const interval = setInterval(refreshSubscription, 60_000);
+        window.addEventListener('focus', refreshSubscription);
+        return () => {
+            active = false;
+            clearInterval(interval);
+            window.removeEventListener('focus', refreshSubscription);
+        };
+    }, [session?.user?.id, setSession]);
+
     // Pick up X-Access-Token from any axios response (set by auth middleware when
     // the access token has expired and the server auto-recovered via the refresh cookie)
     useEffect(() => {
@@ -87,13 +113,10 @@ export default function SessionSetter({ session }: SessionSetterProps) {
             // Step 2: Immediately refresh to get a fresh access token
             const newToken = await fetchNewAccessToken();
             if (newToken) {
-                setSession({
-                    ...session,
-                    user: {
-                        ...session.user,
-                        token: newToken,
-                    },
-                });
+                const current = useUserSessionStore.getState().session;
+                if (current?.user) {
+                    setSession({ ...current, user: { ...current.user, token: newToken } });
+                }
             }
         };
 
@@ -107,13 +130,10 @@ export default function SessionSetter({ session }: SessionSetterProps) {
         const refreshAndUpdate = async () => {
             const newToken = await fetchNewAccessToken();
             if (newToken) {
-                setSession({
-                    ...session,
-                    user: {
-                        ...session.user,
-                        token: newToken,
-                    },
-                });
+                const current = useUserSessionStore.getState().session;
+                if (current?.user) {
+                    setSession({ ...current, user: { ...current.user, token: newToken } });
+                }
             }
         };
 

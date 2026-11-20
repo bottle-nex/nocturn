@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { env, isProduction } from '../../configs/env';
-import { prisma } from '@nocturn/database';
+import { getUserSubscription, prisma } from '@nocturn/database';
 import ResponseWriter from '../../class/response_writer';
 import GenerateUser from '../../class/generateUser';
 import { publisherInstance, email_service_queue_instance } from '../../services/init.services';
@@ -126,7 +126,9 @@ export class SigninController {
             }
 
             const subscription =
-                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+                (await getUserSubscription(myUser.id)).tier === 'PRO'
+                    ? SubscriptionEnum.PRO
+                    : SubscriptionEnum.FREE;
 
             const { accessToken, refreshToken } = SigninController.generateTokens({
                 ...myUser,
@@ -263,7 +265,9 @@ export class SigninController {
             }
 
             const subscription =
-                (myUser?.subscriptions[0]?.tier.name as SubscriptionEnum) ?? SubscriptionEnum.FREE;
+                (await getUserSubscription(myUser.id)).tier === 'PRO'
+                    ? SubscriptionEnum.PRO
+                    : SubscriptionEnum.FREE;
 
             const { accessToken, refreshToken } = SigninController.generateTokens({
                 ...myUser,

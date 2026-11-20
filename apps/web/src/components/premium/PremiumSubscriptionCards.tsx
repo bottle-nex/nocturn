@@ -19,6 +19,7 @@ import PerspectiveCard from '../utility/PerspectiveCard';
 import { CREATE_CHECKOUT_URL, GET_TIERS_URL } from '../../../routes/api_routes';
 import { useUserSessionStore } from '@/store/user/useUserSessionStore';
 import { toast } from '@/lib/toast';
+import { useSubscription } from '@/hooks/subscription/useSubscription';
 import axios from 'axios';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -34,6 +35,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export default function PremiumSubscriptionCards() {
+    const { tier: currentTier, isLoaded } = useSubscription();
     const [loadingTier, setLoadingTier] = useState<string | null>(null);
     const [tiers, setTiers] = useState<SubscriptionTierDTO[] | null>(null);
     const [tiersLoading, setTiersLoading] = useState<boolean>(true);
@@ -113,6 +115,7 @@ export default function PremiumSubscriptionCards() {
                     const isDark = tier.name === 'PRO';
                     const isLoading = loadingTier === tier.id;
                     const isFree = tier.name === 'FREE';
+                    const isCurrent = tier.name === currentTier;
 
                     const price = tier.priceMonthly;
                     const priceLabel = isFree ? '/forever' : '/month';
@@ -199,8 +202,10 @@ export default function PremiumSubscriptionCards() {
                                         {billedLabel}
                                     </div>
                                     <Button
-                                        disabled={isFree || isLoading}
-                                        onClick={() => !isFree && handleUpgrade(tier.id)}
+                                        disabled={!isLoaded || isCurrent || isFree || isLoading}
+                                        onClick={() =>
+                                            !isFree && !isCurrent && handleUpgrade(tier.id)
+                                        }
                                         className={`mt-4 w-full py-2.5 text-[13px] font-semibold tracking-wide transition-all
                                         ${
                                             isDark
@@ -210,9 +215,11 @@ export default function PremiumSubscriptionCards() {
                                     >
                                         {isLoading
                                             ? 'Loading...'
-                                            : isFree
+                                            : isCurrent
                                               ? 'Current Plan'
-                                              : 'Upgrade Now'}
+                                              : isFree
+                                                ? 'Free Plan'
+                                                : 'Upgrade Now'}
                                     </Button>
                                 </div>
                             </div>

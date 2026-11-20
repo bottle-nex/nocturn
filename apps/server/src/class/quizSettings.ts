@@ -1,4 +1,4 @@
-import { Prisma } from '@nocturn/database';
+import { prisma, Prisma } from '@nocturn/database';
 import Redis from 'ioredis';
 import { QuizSetting, quizSettingsSchema } from '../schemas/quizSettingsSchema';
 import {
@@ -9,6 +9,7 @@ import {
 import QuizManager from '../sockets/QuizManager';
 import { MESSAGE_TYPES, PubSubMessageTypes, SubscriptionEnum } from '@nocturn/types';
 import DatabaseQueue from '../queue/database/database.queue';
+import Subscription from '../middlewares/subscription.middleware';
 import { FEATURE, planManager } from '@nocturn/premium';
 
 export default class QuizSettings {
@@ -22,6 +23,22 @@ export default class QuizSettings {
         this.quiz_manager = quizManagerInstance;
         this.redis = redisCacheInstance.redis_cache;
         this.fill_settings_on_boot();
+    }
+
+    public async is_live_chat_allowed(game_session_id: string, quiz_id: string): Promise<boolean> {
+        if (!this.quiz_settings_mapping.get(game_session_id)?.liveChat) return false;
+        try {
+            const quiz = await prisma.quiz.findUnique({
+                where: { id: quiz_id },
+                select: { hostId: true },
+            });
+            if (!quiz) return false;
+            const tier = await Subscription.get_user_subscription(quiz.hostId);
+            return planManager.isEnabled(tier ?? SubscriptionEnum.FREE, FEATURE.LIVE_CHAT);
+        } catch (error) {
+            console.error('Error checking live chat subscription:', error);
+            return false;
+        }
     }
 
     public async update_quiz_settings_on_db_and_cache(
@@ -38,16 +55,14 @@ export default class QuizSettings {
 
             const { liveChat, allowNewSpectator } = parsed_payload.data;
 
-            const subscription = await redisCacheInstance.get_host(game_session_id, host_id, [
-                'subscription',
-            ]);
+            const subscription = await Subscription.get_user_subscription(host_id);
 
             const liveChatAllowed = planManager.isEnabled(
-                (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
+                subscription ?? SubscriptionEnum.FREE,
                 FEATURE.LIVE_CHAT,
             );
             const spectatorsAllowed = planManager.isEnabled(
-                (subscription as unknown as SubscriptionEnum) ?? SubscriptionEnum.FREE,
+                subscription ?? SubscriptionEnum.FREE,
                 FEATURE.MAX_SPECTATORS_PER_SESSION,
             );
 

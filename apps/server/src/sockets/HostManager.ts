@@ -357,6 +357,8 @@ export default class HostManager {
             return;
         }
 
+        if (!(await this.quiz_settings.is_live_chat_allowed(gameSessionId, quizId))) return;
+
         const chatMessage = {
             senderId: sender_id,
             senderRole: String(sender_role),
@@ -384,14 +386,18 @@ export default class HostManager {
             });
     }
 
-    private handle_incoming_chat_reaction_event(payload: IncomingChatReaction, ws: GameWebSocket) {
+    private async handle_incoming_chat_reaction_event(
+        payload: IncomingChatReaction,
+        ws: GameWebSocket,
+    ) {
         const { userId, gameSessionId: game_session_id } = ws.user;
         const { chatMessageId, reactedAt, reaction, reactorAvatar, reactorName, reactorType } =
             payload;
 
-        const is_chat_allowed = this.quiz_settings.quiz_settings_mapping.get(
+        const is_chat_allowed = await this.quiz_settings.is_live_chat_allowed(
             ws.user.gameSessionId,
-        )?.liveChat;
+            ws.user.quizId,
+        );
         if (!is_chat_allowed) return;
 
         if (!chatMessageId) {

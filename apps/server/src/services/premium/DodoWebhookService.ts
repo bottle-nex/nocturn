@@ -1,4 +1,4 @@
-import { prisma } from '@nocturn/database';
+import { prisma, resolveSubscription } from '@nocturn/database';
 import { DodoWebhookEvent } from '../../types/webhook-types';
 
 export default class DodoWebhookService {
@@ -284,6 +284,7 @@ export default class DodoWebhookService {
             const subscriptionId = event.data.subscription_id || event.data.id;
             const subscription = await tx.userSubscription.findUnique({
                 where: { dodoSubscriptionId: subscriptionId },
+                include: { tier: true },
             });
 
             if (!subscription) {
@@ -301,7 +302,7 @@ export default class DodoWebhookService {
 
             const cancelAt = event.data.cancel_at
                 ? new Date(event.data.cancel_at * 1000)
-                : new Date();
+                : subscription.currentPeriodEnd;
 
             await tx.userSubscription.update({
                 where: { dodoSubscriptionId: subscriptionId },
@@ -313,7 +314,13 @@ export default class DodoWebhookService {
 
             await tx.user.update({
                 where: { id: subscription.userId },
-                data: { currentTier: 'FREE' },
+                data: {
+                    currentTier: resolveSubscription({
+                        ...subscription,
+                        status: 'CANCELLED',
+                        cancelAt,
+                    }).tier,
+                },
             });
 
             await tx.webhookEvent.update({
