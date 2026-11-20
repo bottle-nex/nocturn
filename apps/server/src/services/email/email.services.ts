@@ -11,6 +11,7 @@ import { env } from '../../configs/env';
 
 export default class EmailServiceQueue {
     private email_queue: Bull.Queue;
+    private winner_email_queue: Bull.Queue;
     private readonly job_options: Bull.JobOptions = {
         attempts: 3,
         backoff: {
@@ -25,6 +26,18 @@ export default class EmailServiceQueue {
         this.email_queue = new Bull<EmailJob>(queue_name, env.SERVER_REDIS_URL, {
             defaultJobOptions: this.job_options,
         });
+        // Count-based cleanup in the ordinary queue would also evict retained winner jobs.
+        this.winner_email_queue = new Bull<EmailJob>(
+            `${queue_name}-winner-notifications`,
+            env.SERVER_REDIS_URL,
+            {
+                defaultJobOptions: {
+                    ...this.job_options,
+                    removeOnComplete: false,
+                    removeOnFail: false,
+                },
+            },
+        );
     }
 
     public async email_to_add_collaborators(
@@ -71,17 +84,23 @@ export default class EmailServiceQueue {
     }
 
     public async email_winner_notification(
+        claimId: string,
         data: WinnerNotificationEmailData,
-    ): Promise<Bull.Job<EmailJob> | undefined> {
+    ): Promise<Bull.Job<EmailJob>> {
         try {
-            const job = await this.email_queue.add({
-                type: EmailJobType.WINNER_NOTIFICATION,
-                data,
-            });
+            const job = await this.winner_email_queue.add(
+                { type: EmailJobType.WINNER_NOTIFICATION, data },
+                {
+                    jobId: `winner_notification_${claimId}`,
+                    // Keep the identity if the payout retries before its checkpoint is saved.
+                    removeOnComplete: false,
+                    removeOnFail: false,
+                },
+            );
             return job;
         } catch (err) {
             console.error('Error adding winner notification email job to queue:', err);
-            return undefined;
+            throw err;
         }
     }
 }

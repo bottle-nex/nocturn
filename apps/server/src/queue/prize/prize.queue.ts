@@ -88,16 +88,17 @@ export default class PrizeQueue {
 
                 console.log(`[PrizeQueue] Finalized claim ${claim.id} for rank ${claim.rank}`);
 
-                // Update claim record with email sent timestamp
-                await prisma.prizeClaim.update({
+                const savedClaim = await prisma.prizeClaim.findUnique({
                     where: { id: claim.id },
-                    data: { emailSentAt: new Date() },
+                    select: { emailSentAt: true },
                 });
+                if (!savedClaim) {
+                    throw new Error(`Prize claim ${claim.id} not found`);
+                }
 
-                // Send winner notification email
-                if (claim.participantEmail) {
+                if (claim.participantEmail && !savedClaim.emailSentAt) {
                     const claimUrl = `${env.SERVER_WEB_URL}/claim?token=${claim.claimToken}`;
-                    await email_service_queue_instance.email_winner_notification({
+                    await email_service_queue_instance.email_winner_notification(claim.id, {
                         email: claim.participantEmail,
                         participantName: claim.participantName,
                         quizTitle: quizTitle,
@@ -105,6 +106,12 @@ export default class PrizeQueue {
                         prizeAmount: Number(claim.amountBaseUnits) / 1e6,
                         claimUrl,
                         expiresAt: claim.expiresAt,
+                    });
+
+                    // This checkpoint records successful queue handoff, not email delivery.
+                    await prisma.prizeClaim.update({
+                        where: { id: claim.id },
+                        data: { emailSentAt: new Date() },
                     });
                 }
             } catch (error) {
