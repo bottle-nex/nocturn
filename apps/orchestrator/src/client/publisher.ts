@@ -8,13 +8,9 @@ export default class Publisher {
         this.publisher = redisPublisherInstance;
     }
 
-    public publish_event_to_redis(game_session_id: string, event: PubSubMessageTypes) {
-        try {
-            const key = this.get_redis_key(game_session_id);
-            this.publisher.publish(key, JSON.stringify(event));
-        } catch (err) {
-            console.error('Error while publishing event to redis', err);
-        }
+    public async publish_event_to_redis(game_session_id: string, event: PubSubMessageTypes) {
+        const key = this.get_redis_key(game_session_id);
+        await this.publisher.publish(key, JSON.stringify(event));
     }
 
     private get_redis_key(game_session_id: string) {

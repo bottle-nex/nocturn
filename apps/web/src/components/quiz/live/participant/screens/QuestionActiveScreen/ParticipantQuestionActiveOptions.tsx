@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isQuestionAnswerable } from '@/lib/question-answer-window';
 import { useWebSocket } from '@/hooks/sockets/useWebSocket';
 import { useLiveParticipantsStore } from '@/store/live-quiz/useLiveParticipantsStore';
 import { useLiveQuizStore } from '@/store/live-quiz/useLiveQuizStore';
@@ -21,6 +22,7 @@ function getAccent(idx: number) {
 export default function ParticipantQuestionActiveOptions() {
     const {
         currentQuestion,
+        gameSession,
         alreadyResponded,
         setAlreadyResponded,
         lifelineRequested,
@@ -31,6 +33,22 @@ export default function ParticipantQuestionActiveOptions() {
     const { handleParticipantResponseMessage } = useWebSocket();
     const { setResponse } = useLiveParticipantsStore();
     const { participantData } = useLiveParticipantStore();
+    const [boundaryVersion, setBoundaryVersion] = useState(0);
+    const startTime = gameSession?.phaseStartTime;
+    const endTime = gameSession?.phaseEndTime;
+    useEffect(() => {
+        const currentTime = Date.now();
+        const nextBoundary = [startTime, endTime].find(
+            (time) => time !== undefined && time > currentTime,
+        );
+        if (nextBoundary === undefined) return;
+        const timer = setTimeout(
+            () => setBoundaryVersion((version) => version + 1),
+            nextBoundary - currentTime,
+        );
+        return () => clearTimeout(timer);
+    }, [startTime, endTime, boundaryVersion]);
+    const answerable = isQuestionAnswerable(startTime, endTime, Date.now());
     const [selected, setSelected] = useState<number | null>(null);
 
     useEffect(() => {
@@ -52,7 +70,12 @@ export default function ParticipantQuestionActiveOptions() {
     const showBars = (lifelineRequested || lifelineResult) && !hasUsedLifeline;
 
     function handleSelectOption(index: number) {
-        if (selected !== null || alreadyResponded) return;
+        if (
+            !isQuestionAnswerable(startTime, endTime, Date.now()) ||
+            selected !== null ||
+            alreadyResponded
+        )
+            return;
         setSelected(index);
         setAlreadyResponded(true);
         setResponse({
@@ -116,7 +139,7 @@ export default function ParticipantQuestionActiveOptions() {
                 {cells.map((option, idx) => {
                     if (option === null) return <div key={idx} className="w-full" />;
                     const isSelected = selected === idx;
-                    const isDisabled = selected !== null && !isSelected;
+                    const isDisabled = !answerable || (selected !== null && !isSelected);
                     const isLifelineSuggestion =
                         lifelineResult?.wasSuccessful && lifelineResult.mostPopularOption === idx;
                     const pct = getPct(idx);
@@ -125,6 +148,7 @@ export default function ParticipantQuestionActiveOptions() {
                     return (
                         <div
                             key={idx}
+                            aria-disabled={isDisabled}
                             onClick={() => !isDisabled && handleSelectOption(idx)}
                             className="w-full rounded-lg flex items-stretch overflow-hidden ring-1 ring-black/10 transition-all duration-150"
                             style={{
@@ -134,7 +158,7 @@ export default function ParticipantQuestionActiveOptions() {
                                       ? '#14b8a614'
                                       : '#ffffff',
                                 border: `1px solid ${isSelected ? ring : isLifelineSuggestion && !hasUsedLifeline ? '#14b8a666' : 'transparent'}`,
-                                opacity: 1,
+                                opacity: answerable ? 1 : 0.5,
                                 cursor: isDisabled ? 'default' : 'pointer',
                             }}
                         >

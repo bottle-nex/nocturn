@@ -2,6 +2,8 @@ import { HostScreenEnum } from '@nocturn/types';
 import { create } from 'zustand';
 
 interface LiveQuizHostStoreProps {
+    isEnding: boolean;
+    setIsEnding: (isEnding: boolean) => void;
     currentScreen: HostScreenEnum | null;
     setCurrentScreen: (currentScreen: HostScreenEnum) => void;
 
@@ -11,6 +13,8 @@ interface LiveQuizHostStoreProps {
 }
 
 export const useLiveQuizHostStore = create<LiveQuizHostStoreProps>((set) => ({
+    isEnding: false,
+    setIsEnding: (isEnding) => set({ isEnding }),
     currentScreen: null,
     setCurrentScreen: (currentScreen: HostScreenEnum) => {
         set({ currentScreen });

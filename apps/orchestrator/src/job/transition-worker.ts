@@ -1,45 +1,67 @@
 import RedisCache from '../cache/redis-cache';
 import PhaseQueueProcessor from '../client/phase-queue-processor';
 import Publisher from '../client/publisher';
-import DatabaseQueue from '../queue/database.queue';
 import {
-    databaseQueueInstance,
     phaseQueueProcessorInstance,
     publisherInstnace,
     redisCacheInstance,
 } from '../services/init-services';
 import { MESSAGE_TYPES, PhaseQueueJobDataType, PubSubMessageTypes, SECONDS } from '../types/types';
-import { HostScreen, ParticipantScreen, QuizPhase, SpectatorScreen } from '@nocturn/database';
+import {
+    Prisma,
+    withGameSessionLock,
+    HostScreen,
+    ParticipantScreen,
+    QuizPhase,
+    SpectatorScreen,
+} from '@nocturn/database';
 
 export default class TransitionWorker {
     private redis_cache: RedisCache;
-    private database_queue: DatabaseQueue;
     private publisher: Publisher;
     private phase_queue_processor: PhaseQueueProcessor;
 
     constructor() {
         this.redis_cache = redisCacheInstance;
-        this.database_queue = databaseQueueInstance;
         this.publisher = publisherInstnace;
         this.phase_queue_processor = phaseQueueProcessorInstance;
     }
 
     public async handle_transition_phase(data: PhaseQueueJobDataType) {
-        if (
-            data.fromPhase === QuizPhase.QUESTION_READING &&
-            data.toPhase === QuizPhase.QUESTION_ACTIVE
-        ) {
-            await this.handle_reading_to_active_transition_phase(data);
-        } else if (
-            data.fromPhase === QuizPhase.QUESTION_ACTIVE &&
-            data.toPhase === QuizPhase.SHOW_RESULTS
-        ) {
-            await this.handle_active_to_results_transition_phase(data);
-        }
+        await withGameSessionLock(data.gameSessionId, async (tx) => {
+            const session = await tx.gameSession.findUnique({ where: { id: data.gameSessionId } });
+            if (
+                !session ||
+                session.currentQuestionId !== data.questionId ||
+                session.currentQuestionIndex !== data.questionIndex ||
+                session.currentPhase !== data.fromPhase ||
+                !session.phaseEndTime ||
+                session.phaseEndTime.getTime() !== data.executeAt ||
+                Date.now() < data.executeAt
+            )
+                return;
+            if (
+                data.fromPhase === QuizPhase.QUESTION_READING &&
+                data.toPhase === QuizPhase.QUESTION_ACTIVE
+            ) {
+                await this.handle_reading_to_active_transition_phase(data, tx);
+            } else if (
+                data.fromPhase === QuizPhase.QUESTION_ACTIVE &&
+                data.toPhase === QuizPhase.SHOW_RESULTS
+            ) {
+                await this.handle_active_to_results_transition_phase(data, tx);
+            }
+        });
     }
 
-    private async handle_reading_to_active_transition_phase(data: PhaseQueueJobDataType) {
-        const quiz = await this.redis_cache.get_quiz(data.gameSessionId);
+    private async handle_reading_to_active_transition_phase(
+        data: PhaseQueueJobDataType,
+        tx: Prisma.TransactionClient,
+    ) {
+        const quiz = await tx.quiz.findFirst({
+            where: { GameSession: { id: data.gameSessionId } },
+            include: { questions: true },
+        });
 
         if (!quiz) {
             // send websocket message for error
@@ -61,22 +83,18 @@ export default class TransitionWorker {
         const start_time = now + buffer;
         const end_time = start_time + question_active_time;
 
-        this.database_queue
-            .update_game_session(
-                data.gameSessionId,
-                {
-                    hostScreen: HostScreen.QUESTION_ACTIVE,
-                    spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
-                    participantScreen: ParticipantScreen.QUESTION_ACTIVE,
-                    currentPhase: QuizPhase.QUESTION_ACTIVE,
-                    phaseStartTime: new Date(start_time),
-                    phaseEndTime: new Date(end_time),
-                },
-                data.gameSessionId,
-            )
-            .catch((err) => {
-                console.error('Failed to enqueue question active phase:', err);
-            });
+        const updatedSession = await tx.gameSession.update({
+            where: { id: data.gameSessionId },
+            data: {
+                hostScreen: HostScreen.QUESTION_ACTIVE,
+                spectatorScreen: SpectatorScreen.QUESTION_ACTIVE,
+                participantScreen: ParticipantScreen.QUESTION_ACTIVE,
+                currentPhase: QuizPhase.QUESTION_ACTIVE,
+                phaseStartTime: new Date(start_time),
+                phaseEndTime: new Date(end_time),
+            },
+        });
+        await this.redis_cache.set_game_session(data.gameSessionId, updatedSession);
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_PARTICIPANT,
@@ -87,7 +105,10 @@ export default class TransitionWorker {
                 endTime: end_time,
             },
         };
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_participant);
+        await this.publisher.publish_event_to_redis(
+            data.gameSessionId,
+            pub_sub_message_to_participant,
+        );
 
         const pub_sub_message_to_host: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_HOST,
@@ -98,7 +119,7 @@ export default class TransitionWorker {
                 endTime: end_time,
             },
         };
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_host);
+        await this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_host);
 
         const pub_sub_message_to_spectator: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_ACTIVE_PHASE_TO_SPECTATOR,
@@ -109,7 +130,10 @@ export default class TransitionWorker {
                 endTime: end_time,
             },
         };
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_spectator);
+        await this.publisher.publish_event_to_redis(
+            data.gameSessionId,
+            pub_sub_message_to_spectator,
+        );
 
         await this.phase_queue_processor.schedule_phase_transition({
             gameSessionId: data.gameSessionId,
@@ -121,8 +145,14 @@ export default class TransitionWorker {
         });
     }
 
-    private async handle_active_to_results_transition_phase(data: PhaseQueueJobDataType) {
-        const quiz = await this.redis_cache.get_quiz(data.gameSessionId);
+    private async handle_active_to_results_transition_phase(
+        data: PhaseQueueJobDataType,
+        tx: Prisma.TransactionClient,
+    ) {
+        const quiz = await tx.quiz.findFirst({
+            where: { GameSession: { id: data.gameSessionId } },
+            include: { questions: true },
+        });
 
         if (!quiz) {
             console.error('Quiz not found');
@@ -141,32 +171,41 @@ export default class TransitionWorker {
 
         const start_time = now + buffer;
 
-        this.database_queue
-            .update_game_session(
-                data.gameSessionId,
-                {
-                    hostScreen: HostScreen.QUESTION_RESULTS,
-                    spectatorScreen: SpectatorScreen.QUESTION_RESULTS,
-                    participantScreen: ParticipantScreen.QUESTION_RESULTS,
-                    currentPhase: QuizPhase.SHOW_RESULTS,
-                    phaseStartTime: new Date(start_time),
-                    phaseEndTime: null, // will be controlled by host to choose to go to next question
-                },
-                data.gameSessionId,
-            )
-            .catch((err) => {
-                console.error('Failed to enqueue show result phase:', err);
-            });
+        const updatedSession = await tx.gameSession.update({
+            where: { id: data.gameSessionId },
+            data: {
+                hostScreen: HostScreen.QUESTION_RESULTS,
+                spectatorScreen: SpectatorScreen.QUESTION_RESULTS,
+                participantScreen: ParticipantScreen.QUESTION_RESULTS,
+                currentPhase: QuizPhase.SHOW_RESULTS,
+                phaseStartTime: new Date(start_time),
+                phaseEndTime: null, // will be controlled by host to choose to go to next question
+            },
+        });
+        await this.redis_cache.set_game_session(data.gameSessionId, updatedSession);
 
-        const top_scores = await this.redis_cache.get_top_leaderboards(data.gameSessionId, 10);
-        const total_participants = await this.redis_cache.get_leaderboard_count(data.gameSessionId);
-        console.log('Total participants for question:', total_participants);
-        console.log('Top scores for question:', top_scores);
-        const response_of_all_participants = await this.redis_cache.get_all_question_responses(
-            data.gameSessionId,
-            data.questionId,
-            ['isCorrect', 'selectedAnswer', 'pointsEarned'],
-        );
+        const participants = await tx.participant.findMany({
+            where: { quizId: quiz.id, isKicked: false },
+            orderBy: [{ totalScore: 'desc' }, { id: 'desc' }],
+        });
+        const top_scores = participants.slice(0, 10).map((participant, index) => ({
+            id: participant.id,
+            totalScore: participant.totalScore,
+            nickname: participant.nickname,
+            avatar: participant.avatar,
+            rank: index + 1,
+        }));
+        const total_participants = participants.length;
+        const response_of_all_participants = await tx.response.findMany({
+            where: { gameSessionId: data.gameSessionId, questionId: data.questionId },
+            select: {
+                id: true,
+                participantId: true,
+                isCorrect: true,
+                selectedAnswer: true,
+                pointsEarned: true,
+            },
+        });
 
         const pub_sub_message_to_participant: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_PARTICIPANT,
@@ -181,7 +220,10 @@ export default class TransitionWorker {
             },
         };
 
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_participant);
+        await this.publisher.publish_event_to_redis(
+            data.gameSessionId,
+            pub_sub_message_to_participant,
+        );
 
         const pub_sub_message_to_host: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_HOST,
@@ -194,7 +236,7 @@ export default class TransitionWorker {
                 startTime: start_time,
             },
         };
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_host);
+        await this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_host);
 
         const pub_sub_message_to_spectator: PubSubMessageTypes = {
             type: MESSAGE_TYPES.QUESTION_RESULTS_PHASE_TO_SPECTATOR,
@@ -207,7 +249,10 @@ export default class TransitionWorker {
                 startTime: start_time,
             },
         };
-        this.publisher.publish_event_to_redis(data.gameSessionId, pub_sub_message_to_spectator);
+        await this.publisher.publish_event_to_redis(
+            data.gameSessionId,
+            pub_sub_message_to_spectator,
+        );
     }
 
     public setPhaseQueueProcessor(phase_queue_processor: PhaseQueueProcessor) {

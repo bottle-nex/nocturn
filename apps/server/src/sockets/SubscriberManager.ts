@@ -217,11 +217,13 @@ export default class SubscriberManager {
                 break;
             case MESSAGE_TYPES.LIFELINE_LIVE_UPDATE:
             case MESSAGE_TYPES.HOST_CHANGE_QUIZ_RESULTS:
-                this.broadcast_to_session(session_id, message, [
-                    USER_TYPE.PARTICIPANT,
-                    USER_TYPE.SPECTATOR,
-                    USER_TYPE.HOST,
-                ]);
+                this.broadcast_to_session(
+                    session_id,
+                    message,
+                    [USER_TYPE.PARTICIPANT, USER_TYPE.SPECTATOR, USER_TYPE.HOST],
+                    message.exclude_socket_id,
+                    message.only_socket_id,
+                );
                 break;
             case MESSAGE_TYPES.ADVANCE_QUIZ_END_SCREEN:
                 this.broadcast_to_session(session_id, message, [

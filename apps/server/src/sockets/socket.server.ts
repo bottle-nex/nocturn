@@ -160,58 +160,56 @@ export default class WebsocketServer {
     }
 
     private async extract_token(ws: CustomWebSocket, token: string, quizId: string): Promise<void> {
+        // Keep transport-open messages in the socket until authentication and
+        // role-specific message handlers are ready to receive them.
+        ws.pause();
         try {
-            jwt.verify(token, env.SERVER_JWT_SECRET, async (err, decoded) => {
-                if (err) {
-                    console.error('Error while verifying [JWT_SOCKET]', err);
-                    ws.close();
-                    return;
-                }
+            const decoded = jwt.verify(token, env.SERVER_JWT_SECRET);
+            const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
+            const redis_key: string =
+                'collabSessionId' in decoded_cookie_payload
+                    ? `collab_session:${decoded_cookie_payload.collabSessionId}`
+                    : `game_session:${decoded_cookie_payload.gameSessionId}`;
+            if (decoded_cookie_payload.quizId !== quizId) {
+                console.error('Token validation failed');
+                ws.close();
+                return;
+            }
+            this.subscriber.subscribe(redis_key);
 
-                const decoded_cookie_payload: CookiePayload = decoded as CookiePayload;
-                const redis_key: string =
-                    'collabSessionId' in decoded_cookie_payload
-                        ? `collab_session:${decoded_cookie_payload.collabSessionId}`
-                        : `game_session:${decoded_cookie_payload.gameSessionId}`;
-                if (decoded_cookie_payload.quizId !== quizId) {
-                    console.error('Token validation failed');
-                    ws.close();
-                    return;
+            if ('gameSessionId' in decoded_cookie_payload) {
+                switch (decoded_cookie_payload.role) {
+                    case USER_TYPE.HOST:
+                        await this.hostManager.handle_connection(
+                            ws as GameWebSocket,
+                            decoded_cookie_payload as LiveGameTokenPayload,
+                        );
+                        break;
+                    case USER_TYPE.PARTICIPANT:
+                        await this.participant_manager.handle_connection(
+                            ws as GameWebSocket,
+                            decoded_cookie_payload as LiveGameTokenPayload,
+                        );
+                        break;
+                    case USER_TYPE.SPECTATOR:
+                        await this.spectator_manager.handle_connection(
+                            ws as GameWebSocket,
+                            decoded_cookie_payload as LiveGameTokenPayload,
+                        );
+                        break;
+                    default:
                 }
-                this.subscriber.subscribe(redis_key);
-
-                if ('gameSessionId' in decoded_cookie_payload) {
-                    switch (decoded_cookie_payload.role) {
-                        case USER_TYPE.HOST:
-                            await this.hostManager.handle_connection(
-                                ws as GameWebSocket,
-                                decoded_cookie_payload as LiveGameTokenPayload,
-                            );
-                            break;
-                        case USER_TYPE.PARTICIPANT:
-                            await this.participant_manager.handle_connection(
-                                ws as GameWebSocket,
-                                decoded_cookie_payload as LiveGameTokenPayload,
-                            );
-                            break;
-                        case USER_TYPE.SPECTATOR:
-                            await this.spectator_manager.handle_connection(
-                                ws as GameWebSocket,
-                                decoded_cookie_payload as LiveGameTokenPayload,
-                            );
-                            break;
-                        default:
-                    }
-                } else if ('collabSessionId' in decoded_cookie_payload) {
-                    await this.collaboration_manager.handle_connection(
-                        ws as CollabWebSocket,
-                        decoded_cookie_payload as CollabSessionTokenPayload,
-                    );
-                }
-            });
+            } else if ('collabSessionId' in decoded_cookie_payload) {
+                await this.collaboration_manager.handle_connection(
+                    ws as CollabWebSocket,
+                    decoded_cookie_payload as CollabSessionTokenPayload,
+                );
+            }
         } catch (err) {
             console.error('Error while verifying [JWT_SOCKET]', err);
             ws.close();
+        } finally {
+            ws.resume();
         }
     }
 }
