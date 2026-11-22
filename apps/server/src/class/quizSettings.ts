@@ -52,7 +52,7 @@ export default class QuizSettings {
             );
 
             if (liveChat && !liveChatAllowed) {
-                // send a reponse that you're not a pro user
+                // send a response that you're not a pro user
                 return;
             }
 
