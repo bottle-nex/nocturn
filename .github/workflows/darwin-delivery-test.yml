@@ -1,0 +1,44 @@
+name: Darwin delivery test
+
+on:
+  push:
+    branches: [main]
+    paths: ["delivery-test/**"]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to deploy
+        type: choice
+        options: [staging, production]
+        default: staging
+
+jobs:
+  deploy-staging:
+    if: github.event_name == 'push' || inputs.target == 'staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.nocturn.example
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy staging
+        run: |
+          echo "Deploying ${GITHUB_SHA} to staging"
+          cat delivery-test/RELEASE.md
+          sleep 10
+          echo "Staging deploy finished"
+
+  deploy-production:
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'production'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://nocturn.example
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy production
+        run: |
+          echo "Deploying ${GITHUB_SHA} to production"
+          cat delivery-test/RELEASE.md
+          sleep 10
+          echo "Production deploy finished"
