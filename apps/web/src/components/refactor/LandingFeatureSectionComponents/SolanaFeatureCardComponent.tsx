@@ -10,7 +10,7 @@ export default function SolanaFeatureCardComponent() {
                 <div className="text-dark-base/80 text-base">Prize Pool</div>
                 <div className="text-dark-base/50 text-[13px] leading-[1.1]">
                     Stop making quizzes that is worth nothing, rewards your kids with crypto, cause
-                    applause alone doesnt help them grow.
+                    applause alone doesn&apos;t help them grow.
                 </div>
             </div>
         </div>
