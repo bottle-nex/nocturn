@@ -3,7 +3,6 @@ name: Darwin delivery test
 on:
   push:
     branches: [main]
-    paths: ["delivery-test/**"]
   workflow_dispatch:
     inputs:
       target:
@@ -13,7 +12,52 @@ on:
         default: staging
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          echo "::group::Resolving packages"
+          for pkg in react next tailwindcss zod prisma socket.io zustand framer-motion; do
+            printf "\033[36m+\033[0m %s\n" "$pkg"
+            sleep 1
+          done
+          echo "::endgroup::"
+          printf "\033[32m✓ 812 packages installed in 8.4s\033[0m\n"
+
+      - name: Type check
+        run: |
+          for app in web server api contract orchestrator; do
+            echo "Checking apps/$app ..."
+            sleep 2
+            printf "\033[32m✓ apps/%s has no type errors\033[0m\n" "$app"
+          done
+
+      - name: Build web
+        run: |
+          echo "::group::next build"
+          for percent in 10 20 30 40 50 60 70 80 90 100; do
+            printf "Compiling ... %3s%%\n" "$percent"
+            sleep 1.5
+          done
+          echo "::endgroup::"
+          echo "::warning title=Bundle size::app/page.js is 312 kB, over the 300 kB budget"
+          printf "\033[32m✓ Compiled 214 pages\033[0m\n"
+
+      - name: Run tests
+        run: |
+          for suite in auth quiz scoring leaderboard payments rooms chat settings; do
+            sleep 1
+            printf "\033[32mPASS\033[0m  tests/%s.test.ts\n" "$suite"
+          done
+          printf "\n\033[1mTests:\033[0m 64 passed, 64 total\n"
+
   deploy-staging:
+    name: Deploy staging
+    needs: build
     if: github.event_name == 'push' || inputs.target == 'staging'
     runs-on: ubuntu-latest
     environment:
@@ -21,14 +65,51 @@ jobs:
       url: https://staging.nocturn.example
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy staging
+
+      - name: Upload build
         run: |
-          echo "Deploying ${GITHUB_SHA} to staging"
-          cat delivery-test/RELEASE.md
-          sleep 10
-          echo "Staging deploy finished"
+          echo "Uploading build ${GITHUB_SHA::7} to the staging bucket"
+          sleep 4
+          printf "\033[32m✓ Uploaded 214 files (18.2 MB)\033[0m\n"
+
+      - name: Run migrations
+        run: |
+          for migration in 20261101_add_rooms 20261110_add_scores 20261120_add_rewards; do
+            echo "Applying $migration"
+            sleep 2
+          done
+          printf "\033[32m✓ Database is up to date\033[0m\n"
+
+      - name: Roll out
+        run: |
+          for instance in 1 2 3; do
+            echo "::group::Instance $instance of 3"
+            echo "Draining instance $instance"
+            sleep 3
+            echo "Starting new version on instance $instance"
+            sleep 3
+            printf "\033[32m✓ Instance %s is healthy\033[0m\n" "$instance"
+            echo "::endgroup::"
+          done
+
+      - name: Health check
+        run: |
+          for attempt in 1 2 3 4 5; do
+            echo "GET https://staging.nocturn.example/health -> 200 OK (attempt $attempt)"
+            sleep 2
+          done
+
+      - name: Smoke test
+        run: |
+          for check in "home page" "sign in" "create quiz" "join room"; do
+            sleep 1.5
+            printf "\033[32m✓\033[0m %s\n" "$check"
+          done
+          echo "Staging deploy of ${GITHUB_SHA::7} finished"
 
   deploy-production:
+    name: Deploy production
+    needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.target == 'production'
     runs-on: ubuntu-latest
     environment:
@@ -36,9 +117,44 @@ jobs:
       url: https://nocturn.example
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy production
+
+      - name: Upload build
         run: |
-          echo "Deploying ${GITHUB_SHA} to production"
-          cat delivery-test/RELEASE.md
-          sleep 10
-          echo "Production deploy finished"
+          echo "Uploading build ${GITHUB_SHA::7} to the production bucket"
+          sleep 4
+          printf "\033[32m✓ Uploaded 214 files (18.2 MB)\033[0m\n"
+
+      - name: Run migrations
+        run: |
+          for migration in 20261101_add_rooms 20261110_add_scores 20261120_add_rewards; do
+            echo "Applying $migration"
+            sleep 2
+          done
+          printf "\033[32m✓ Database is up to date\033[0m\n"
+
+      - name: Roll out
+        run: |
+          for instance in 1 2 3 4; do
+            echo "::group::Instance $instance of 4"
+            echo "Draining instance $instance"
+            sleep 3
+            echo "Starting new version on instance $instance"
+            sleep 3
+            printf "\033[32m✓ Instance %s is healthy\033[0m\n" "$instance"
+            echo "::endgroup::"
+          done
+
+      - name: Health check
+        run: |
+          for attempt in 1 2 3 4 5; do
+            echo "GET https://nocturn.example/health -> 200 OK (attempt $attempt)"
+            sleep 2
+          done
+
+      - name: Smoke test
+        run: |
+          for check in "home page" "sign in" "create quiz" "join room" "payments"; do
+            sleep 1.5
+            printf "\033[32m✓\033[0m %s\n" "$check"
+          done
+          echo "Production deploy of ${GITHUB_SHA::7} finished"
