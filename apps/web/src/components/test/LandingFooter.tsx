@@ -44,7 +44,7 @@ export default function LandingFooter() {
 
                     <div className="text-[#F3ECE7] flex items-center gap-x-1">
                         <MdOutlineCopyright className="size-4.5" />
-                        2026 All rights reserved
+                        {new Date().getFullYear()} All rights reserved
                     </div>
                 </div>
 
